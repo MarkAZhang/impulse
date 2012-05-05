@@ -1,14 +1,20 @@
-var draw = require('gamejs/draw');
+require = window.require;
 
-function drawWorld(world, surface) {
+require.define({
+    'impulse_draw': function(require, exports, module) {
+
+var draw = require('gamejs/draw');
+console.log(EXPORTS)
+    console.log(exports)
+exports.drawWorld = function(world, surface) {
 	for (var b = world.m_bodyList; b; b = b.m_next) {
 		for (var s = b.GetShapeList(); s != null; s = s.GetNext()) {
 			drawShape(s, surface);
 		}
 	}
-}
+};
 
-function drawShape(shape, surface) {
+var drawShape = exports.drawShape = function(shape, surface) {
 	switch (shape.m_type) {
 	case b2Shape.e_circleShape:
 		{
@@ -47,4 +53,4 @@ function drawShape(shape, surface) {
 	}
 	//context.stroke();
 }
-
+}}, ['gamejs/draw']);

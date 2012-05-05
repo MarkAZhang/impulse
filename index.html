@@ -86,26 +86,15 @@
     <script src='js/box2d/dynamics/joints/b2RevoluteJoint.js'></script>
     <script src='js/box2d/dynamics/joints/b2RevoluteJointDef.js'></script>
 
-    <script src="public/yabble.js"></script>
-    <script src="public/gamejs.min.js"></script>
-    <script>
-        require.setModuleRoot('./js/');
-        require.run('impulse_draw')
-        require.run('impulse_main')
-    </script>
+    <script src="js/impulse_draw.js"></script>
+    <script src="js/impulse_main.js"></script>
 
 </head>
 <!-- Html -->
 <body>
     <div>
 
-        <div id="gjs-loader">
-         Loading...
-        </div>
-        <canvas id="gjs-canvas" style="border: 1px solid black; top:260px; left:125px;"></canvas>
-        <p>
-        Powered by <a href="http://gamejs.org">GameJs</a>.
-        </p>
+        <canvas id="canvas" style="width: 800px; height: 600px; border: 1px solid black; top:260px; left:125px;"></canvas>
     </div>
 </body>
 </html>
