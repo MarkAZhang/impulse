@@ -2,47 +2,56 @@ var ctx;
 var world;
 var canvasWidth, canvasHeight;
 var player;
-var player_x = 0;
-var player_y = 0;
-var player_force = .5;
-var player_lin_damp = .96;
+var draw_factor = 10;
+var enemies = [];
+var obstacles = []
 
 function setupWorld() {
-    var worldAABB = new b2AABB();
-    worldAABB.minVertex.Set(-1000, -1000);
-    worldAABB.maxVertex.Set(1000, 1000);
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
-    world = new b2World(worldAABB, gravity, doSleep); 
-    makePlayer()
+    world = new b2World(gravity, doSleep); 
+    player = new Player(world, 40, 30)
+    generate_level()
 }
 
-function makePlayer()
-{
-    var circleSd = new b2CircleDef();
-    circleSd.density = 1.0;
-    circleSd.radius = .5;
-    circleSd.restitution = 1.0;
-    circleSd.friction = 0;
-    var circleBd = new b2BodyDef();
-    circleBd.AddShape(circleSd);
-    circleBd.position.Set(20,20);
-    player = world.CreateBody(circleBd);
-    player.m_linearDamping = player_lin_damp;
+function generate_level() {
+  for(var i = 0; i < 10; i++) {
+    enemies.push(new BasicEnemy(world, Math.random()*80, Math.random()*60))
+  }
+  //obstacles.push(new BasicObstacle(world, [new b2Vec2(20,20), new b2Vec2(40,20), new b2Vec2(20,40)]))
 }
 
 function step() {
     processGame();
-    world.Step(1.0/60, 1);
+    world.Step(1.0/60, 1, 10, 10);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-	drawWorld(world, ctx);
+	  drawWorld();
+  	setTimeout('step()', 10);
+}
 
-	setTimeout('step()', 10);
+function drawWorld() {
+  player.draw(ctx, draw_factor)
+  for(var i = 0; i < enemies.length; i++) {
+    enemies[i].draw(ctx, draw_factor)
+  }
 }
 
 
 
 Event.observe(window, 'load', function() {
+    b2Vec2 = Box2D.Common.Math.b2Vec2
+    , b2AABB = Box2D.Collision.b2AABB
+    ,	b2BodyDef = Box2D.Dynamics.b2BodyDef
+    ,	b2Body = Box2D.Dynamics.b2Body
+    ,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+    ,	b2Fixture = Box2D.Dynamics.b2Fixture
+    ,	b2World = Box2D.Dynamics.b2World
+    ,	b2MassData = Box2D.Collision.Shapes.b2MassData
+    ,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+    ,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+    ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+    
     canvasWidth = 800;
     canvasHeight = 600;
    // screen setup
@@ -62,48 +71,16 @@ Event.observe(window, 'load', function() {
 
 function onKeyDown(event) {
     var keyCode = event==null? window.event.keyCode : event.keyCode;
-    switch(keyCode)
-    {
-        case 65:
-            player_x = -1;
-            break;
-        case 68:
-            player_x = 1;
-            break;
-        case 83:
-            player_y = 1;
-            break;
-        case 87:
-            player_y = -1;
-            break;
-    }
-
-    console.log("KEY_DOWN "+keyCode);
+    player.keyDown(keyCode)
 }
 
 function onKeyUp(event) {
     var keyCode = event==null? window.event.keyCode : event.keyCode;
-    console.log("KEY_UP "+keyCode);
-    switch(keyCode)
-    {
-        case 65:
-            player_x = 0;
-            break;
-        case 68:
-            player_x = 0;
-            break;
-        case 83:
-            player_y = 0;
-            break;
-        case 87:
-            player_y = 0;
-            break;
-    }
+    player.keyUp(keyCode)
 }
 
 function processGame() {
-    var force = Math.abs(player_x)+Math.abs(player_y)==2 ? player_force/Math.sqrt(2) : player_force;
-    player.ApplyImpulse(new b2Vec2(force*player_x, force*player_y), player.GetCenterPosition())
+  player.process()
 }
 
 function getCursorPosition(){

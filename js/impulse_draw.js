@@ -1,6 +1,11 @@
 var draw_factor = 10; //everything is scaled by this factor
 
-function drawWorld(world, context) {
+/*function drawWorld(player, enemies, context) {
+  player.draw(context)
+
+}*/
+
+/*function drawWorld(world, context) {
 	for (var b = world.m_bodyList; b; b = b.m_next) {
 		for (var s = b.GetShapeList(); s != null; s = s.GetNext()) {
 			drawShape(s, context);
@@ -24,5 +29,5 @@ function drawShape(shape, context) {
 	
 	}
 	context.fill();
-}
+}*/
 
