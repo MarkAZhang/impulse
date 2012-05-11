@@ -2,7 +2,7 @@ var BasicEnemy = function(world, x, y) {
   this.init(world, x, y)
 }
 
-BasicEnemy.prototype.lin_damp = .96
+BasicEnemy.prototype.lin_damp = 2.99
 
 BasicEnemy.prototype.force = .5
 

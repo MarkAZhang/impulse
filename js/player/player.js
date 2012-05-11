@@ -6,6 +6,10 @@ Player.prototype.lin_damp = 2.99
 
 Player.prototype.force = .5
 
+Player.prototype.impulse_force = 50
+
+Player.prototype.impulse_radius = 10
+
 Player.prototype.init = function(world, x, y) {
   var fixDef = new b2FixtureDef;
   fixDef.density = 1.0;
@@ -23,6 +27,7 @@ Player.prototype.init = function(world, x, y) {
   this.shape = fixDef.shape
   this.f_x = 0 //horizontal movement force
   this.f_y = 0 //vertical movement force
+  this.impulse_angle = 0
 
 }
 
@@ -62,6 +67,30 @@ Player.prototype.keyUp = function(keyCode) {
   }
 }
 
+Player.prototype.mouseMove = function(pos, draw_factor) {
+  this.impulse_angle = _atan({x: this.body.GetPosition().x*draw_factor, y: this.body.GetPosition().y*draw_factor}, pos)
+}
+
+
+Player.prototype.click = function(pos, enemies) {
+  for(var i = 0; i < enemies.length; i++)
+  {
+    var angle = _atan(this.body.GetPosition(), enemies[i].body.GetPosition())
+    
+    if(angle>=this.impulse_angle - Math.PI/3 && angle <= this.impulse_angle + Math.PI/3)
+    {
+      var dist = this.body.GetPosition().Copy()
+      dist.Subtract(enemies[i].body.GetPosition())
+      dist = dist.Normalize()
+      if (dist <= this.impulse_radius)
+      {
+        console.log(Math.cos(angle)+" "+Math.sin(angle))
+        enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
+      }
+    }
+  }
+}
+
 Player.prototype.process = function() {
   var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
   this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
@@ -72,5 +101,10 @@ Player.prototype.draw = function(context, draw_factor) {
 	context.fillStyle = 'black';
 	context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
 	context.fill()
+  context.beginPath()
+  context.fillStyle = 'cyan';
+  context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.impulse_radius * draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+  context.fill()
+
 }
 

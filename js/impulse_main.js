@@ -23,7 +23,7 @@ function setupWorld() {
 }
 
 function generate_level() {
-  for(var i = 0; i < (canvasWidth/50*canvasHeight/50); i++) {
+  for(var i = 0; i < 10; i++) {
     enemies.push(new BasicEnemy(world, Math.random()*canvasWidth/10, Math.random()*canvasHeight/10))
   }
   //obstacles.push(new BasicObstacle(world, 30, 30, [new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)]))
@@ -62,27 +62,8 @@ Event.observe(window, 'load', function() {
     ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
     
-    canvasWidth = 1200;
-    canvasHeight = 1000;
-var winW = 630, winH = 460;
-if (document.body && document.body.offsetWidth) {
- canvasWidth = document.body.offsetWidth;
- canvasHeight = document.body.offsetHeight;
-}
-if (document.compatMode=='CSS1Compat' &&
-    document.documentElement &&
-    document.documentElement.offsetWidth ) {
- canvasWidth = document.documentElement.offsetWidth;
- canvasHeight = document.documentElement.offsetHeight;
-}
-if (window.innerWidth && window.innerHeight) {
- canvasWidth = window.innerWidth;
- canvasHeight = window.innerHeight;
-}
-
-canvasWidth-=10
-canvasHeight-=10
-
+    canvasWidth = 800;
+    canvasHeight = 600;
     
    // screen setup
     var canvas = document.getElementById("canvas");
@@ -114,13 +95,13 @@ function onKeyUp(event) {
 }
 
 function onMouseMove(event) {
-    var keyCode = event==null? window.event.keyCode : event.keyCode;
-    player.mouseMove(keyCode)
+    var mPos = getCursorPosition(event)
+    player.mouseMove(mPos, draw_factor)
 }
 
 function onClick(event) {
-    var keyCode = event==null? window.event.keyCode : event.keyCode;
-    player.click(keyCode)
+    var mPos = getCursorPosition(event)
+    player.click(mPos, enemies)
 }
 
 function processGame() {
@@ -130,7 +111,7 @@ function processGame() {
   }
 }
 
-function getCursorPosition(){
+function getCursorPosition(e){
 
     var x;
     var y;
@@ -142,7 +123,29 @@ function getCursorPosition(){
       x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
       y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
     } 
-    x -= gCanvasElement.offsetLeft;
-    y -= gCanvasElement.offsetTop;
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
+    return {x: x, y: y}
 
+}
+
+var _atan = function(center, ray) {
+  var angle
+  if(center.x == ray.x)
+  {
+    if(center.y > ray.y)
+    {
+      angle = -Math.PI/2
+    }
+    else
+    {
+      angle = Math.PI/2
+    }
+  }
+  angle = Math.atan((center.y-ray.y)/(center.x-ray.x))
+  if(center.x > ray.x)
+  {
+    angle +=Math.PI
+  }
+  return angle
 }
