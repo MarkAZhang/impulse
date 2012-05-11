@@ -4,6 +4,8 @@ var BasicEnemy = function(world, x, y) {
 
 BasicEnemy.prototype.lin_damp = .96
 
+BasicEnemy.prototype.force = .5
+
 BasicEnemy.prototype.init = function(world, x, y) {
   var fixDef = new b2FixtureDef;
   fixDef.density = 1.0;
@@ -23,7 +25,14 @@ BasicEnemy.prototype.init = function(world, x, y) {
   this.f_y = 0 //vertical movement force
 }
 
-BasicEnemy.prototype.process = function() {
+BasicEnemy.prototype.process = function(getTarget) {
+  var endPt = getTarget(this.body.GetPosition())
+  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  dir.Normalize()
+  dir.Multiply(this.force)
+
+  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+  
 }
 
 BasicEnemy.prototype.draw = function(context, draw_factor) {
