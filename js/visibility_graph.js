@@ -1,0 +1,414 @@
+var VisibilityGraph = function(polygons) {
+  this.init(polygons)
+}
+
+VisibilityGraph.prototype.init = function(polygons) {
+//polygons is an array of array of vertices
+  this.poly_edges = []
+  this.vertices = []
+  this.edges = []
+  this.edge_list = {}
+  this.shortest_paths = {}
+  this.polygons = polygons
+  //edge_list stores the adjacencies from each vertex
+  //edge_list uses the indices according to this.vertices
+  for(var i = 0; i < polygons.length; i++)
+  {
+    var polygon = polygons[i]
+    var m = polygon.length - 1
+    for(var j = 0; j < polygon.length; j++)
+    {
+      var vertex = polygon[j]
+      var inPoly = false
+      for(var k = 0; k < polygons.length; k++)
+      {
+        if(i != k && pointInPolygon(polygons[k], vertex))
+        {
+          inPoly = true
+        }
+      }
+
+      if(!inPoly)
+      {
+        this.vertices.push(vertex)
+      }
+      this.poly_edges.push({p1: polygon[j], p2: polygon[m]})
+      m = j
+    }
+  }
+
+  for(var i = 0; i < this.vertices.length; i++)
+  {
+    this.edge_list[i] = {}
+    for(var j = 0; j < i; j++)
+    {
+      var visible = true
+      var v_i = this.vertices[i]
+      var v_j = this.vertices[j]
+      
+      if(isVisible(v_i, v_j, this.poly_edges))
+      {
+        this.edges.push({p1: v_i, p2: v_j})
+        var dist =  p_dist(v_j, v_i)
+        this.edge_list[i][j] = dist
+        this.edge_list[j][i] = dist
+      }
+
+    }
+  }
+  //console.log(this.edge_list)
+  for(var h = 0; h < this.vertices.length; h++)
+  {
+
+    var predecessors = dijkstra.single_source_shortest_paths(this.edge_list, h)
+    //console.log("SHORTEST PATH "+h)
+    this.shortest_paths[h] = {}
+    for(var i = 0; i < h; i++)
+    {
+       var path = dijkstra.extract_shortest_path_from_predecessor_list(predecessors, i);
+       //console.log(path)
+       var sum = 0
+       var j = path[0]
+       for( var k = 1; k < path.length; k++)
+       {
+        sum+=this.edge_list[j][path[k]]
+        //console.log(j+" "+path[k])
+          j = path[k]
+       }
+       //console.log(sum)
+       this.shortest_paths[h][i] = {path: path, dist: sum}
+       this.shortest_paths[i][h] = {path: path.slice(0).reverse(), dist: sum}
+
+    }
+  }
+}
+
+VisibilityGraph.prototype.query = function(point1, point2)
+//returns the shortest path from point1 to VISIBILITY_GRAPH to point2
+{
+  
+  var inPoly = false
+  for(var k = 0; k < this.polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(this.polygons[k], point1))
+    {
+      inPoly = true
+    }
+  }
+  for(var k = 0; k < this.polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(this.polygons[k], point2))
+    {
+      inPoly = true
+    }
+  }
+  if(inPoly)
+  {
+    return null
+  }
+
+  var min_distance = null
+  var min_path = null
+  var point1_adj = []
+  var point2_adj = []
+  if(isVisible(point1, point2, this.poly_edges))//if visible, go there directly
+  {
+    return [point1, point2]
+  }
+
+  for(var i = 0; i < this.vertices.length; i++)
+  {
+    if(isVisible(point1, this.vertices[i], this.poly_edges))
+    {
+      point1_adj.push(i)
+    }
+    if(isVisible(point2, this.vertices[i], this.poly_edges))
+    {
+      point2_adj.push(i)
+    }
+  }
+  //console.log(point1_adj)
+  //console.log(point2_adj)
+  for(var i = 0; i < point1_adj.length; i++)
+  {
+    for(var j = 0; j < point2_adj.length; j++)
+    {
+      var v_dist;
+      if(point1_adj[i] == point2_adj[j])//same point
+      {
+        v_dist = 0
+      }
+      else
+      {
+        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
+      }
+      var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
+        + p_dist(this.vertices[point2_adj[j]], point2);
+      if(!min_distance || dist < min_distance)
+      {
+        min_distance = dist
+        if(point1_adj[i] == point2_adj[j])
+        {
+          min_path = [point1_adj[i]]
+          //console.log(min_path)
+        }
+        else
+        {
+
+          min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
+          //console.log(min_path)
+        }
+      }
+    }
+  }
+
+  if(!min_path) return null//it's possible that player is inside an open-space that is surrouded by triangle edges.
+    //thus, no visible vertices
+    //this is only if the player "tunnels" (cheats)
+  var ans = [point1]
+
+  for (var i = 0; i < min_path.length; i++)
+  {
+    ans.push(this.vertices[min_path[i]])
+  }
+  ans.push(point2)
+  //console.log("ANSWER ")
+  //console.log(ans)
+  return ans
+
+
+}
+
+function isVisible(v_i, v_j, edges)
+{
+  for(var k = 0; k < edges.length; k++)
+  {
+    var sum1 = v_i.x+v_i.y
+    var sum2 = v_j.x+v_j.y
+    var sum3 = edges[k].p1.x+edges[k].p1.y
+    var sum4 = edges[k].p2.x+edges[k].p2.y
+    if(sum1==sum3 || sum1==sum4 || sum2==sum3 || sum2==sum4)//having the same point in two edges can lead to problems
+      continue
+    if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
+    {
+      return false
+    }
+  }
+  return true
+}
+
+function pointInPolygon(polygon, point)
+//polygon is an array of b2Vec2
+{
+  var j = polygon.length - 1
+  var ans = false
+
+  for( var i = 0; i < polygon.length; i++)
+  {
+    if(polygon[i].y < point.y && polygon[j].y >=point.y || polygon[i].y >= point.y && polygon[j].y < point.y)
+    {
+      if(polygon[i].y!=polygon[j].y && (polygon[i].x + (point.y - polygon[i].y)/(polygon[j].y - polygon[i].y)*(polygon[j].x - polygon[i].x) < point.x))
+      {
+        ans = !ans
+      }
+    }
+    j = i      
+  }
+  return ans
+}
+
+function p_dist(p1, p2)
+{
+  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
+}
+
+function segIntersection(seg1s, seg1f, seg2s, seg2f)
+{
+  var seg1d = {x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}
+  var seg2d = {x: seg2f.x - seg2s.x, y: seg2f.y - seg2s.y}
+  var a = {x: seg2s.x - seg1s.x, y: seg2s.y - seg1s.y}
+  var b = crossProduct(seg1d, seg2d)
+  if(b==0)
+  {
+    if(crossProduct(a, seg2d)==0)
+    {
+      return false//lines are collinear. For the purposes of our visibility_graph, this does not count as an intersection
+    }
+    //lines are parallel
+  }
+  var t = crossProduct(a, seg2d)/b
+  var s = crossProduct(a, seg1d)/b
+  return t>0 && t<1 && s>0 && s<1
+}
+
+function crossProduct(v1, v2)
+{
+  return v1.x*v2.y - v1.y*v2.x
+}
+
+function dotProduct(v1, v2)
+{
+  return v1.x*v2.x + v1.y*v2.y
+}
+
+
+var dijkstra = {
+  single_source_shortest_paths: function(graph, s, d) {
+    // Predecessor map for each node that has been encountered.
+    // node ID => predecessor node ID
+    var predecessors = {};
+
+    // Costs of shortest paths from s to all nodes encountered.
+    // node ID => cost
+    var costs = {};
+    costs[s] = 0;
+
+    // Costs of shortest paths from s to all nodes encountered; differs from
+    // `costs` in that it provides easy access to the node that currently has
+    // the known shortest path from s.
+    // XXX: Do we actually need both `costs` and `open`?
+    var open = dijkstra.PriorityQueue.make();
+    open.push(s, 0);
+
+    var closest,
+        u,
+        cost_of_s_to_u,
+        adjacent_nodes,
+        cost_of_e,
+        cost_of_s_to_u_plus_cost_of_e,
+        cost_of_s_to_v,
+        first_visit;
+    while (open) {
+      // In the nodes remaining in graph that have a known cost from s,
+      // find the node, u, that currently has the shortest path from s.
+      closest = open.pop();
+      if(!closest)
+      {
+        break
+      }
+      u = closest.value;
+      cost_of_s_to_u = closest.cost;
+
+      // Get nodes adjacent to u...
+      adjacent_nodes = graph[u] || {};
+
+      // ...and explore the edges that connect u to those nodes, updating
+      // the cost of the shortest paths to any or all of those nodes as
+      // necessary. v is the node across the current edge from u.
+      for (var v in adjacent_nodes) {
+        // Get the cost of the edge running from u to v.
+        cost_of_e = adjacent_nodes[v];
+
+        // Cost of s to u plus the cost of u to v across e--this is *a*
+        // cost from s to v that may or may not be less than the current
+        // known cost to v.
+        cost_of_s_to_u_plus_cost_of_e = cost_of_s_to_u + cost_of_e;
+
+        // If we haven't visited v yet OR if the current known cost from s to
+        // v is greater than the new cost we just found (cost of s to u plus
+        // cost of u to v across e), update v's cost in the cost list and
+        // update v's predecessor in the predecessor list (it's now u).
+        cost_of_s_to_v = costs[v];
+        first_visit = (typeof costs[v] === 'undefined');
+        if (first_visit || cost_of_s_to_v > cost_of_s_to_u_plus_cost_of_e) {
+          costs[v] = cost_of_s_to_u_plus_cost_of_e;
+          open.push(v, cost_of_s_to_u_plus_cost_of_e);
+          predecessors[v] = u;
+        }
+
+        // If a destination node was specified and we reached it, we're done.
+        if (v === d) {
+          open = null;
+          break;
+        }
+      }
+    }
+
+    if (d && typeof costs[d] === 'undefined') {
+      var msg = ['Could not find a path from ', s, ' to ', d, '.'].join('');
+      throw new Error(msg);
+    }
+
+    return predecessors;
+  },
+
+  extract_shortest_path_from_predecessor_list: function(predecessors, d) {
+    var nodes = [];
+    var u = d;
+    var predecessor;
+    while (u != undefined) {
+      nodes.push(u);
+      predecessor = predecessors[u];
+      u = predecessors[u];
+    }
+    nodes.reverse();
+    return nodes;
+  },
+
+  find_path: function(graph, s, d) {
+    var predecessors = dijkstra.single_source_shortest_paths(graph, s, d);
+    return dijkstra.extract_shortest_path_from_predecessor_list(
+      predecessors, d);
+  },
+
+  /**
+   * A very naive priority queue implementation.
+   */
+  PriorityQueue: {
+    make: function (opts) {
+      var T = dijkstra.PriorityQueue,
+          t = {},
+          opts = opts || {},
+          key;
+      for (key in T) {
+        t[key] = T[key];
+      }
+      t.queue = [];
+      t.sorter = opts.sorter || T.default_sorter;
+      return t;
+    },
+
+    default_sorter: function (a, b) {
+      return a.cost - b.cost;
+    },
+
+    /**
+     * Add a new item to the queue and ensure the highest priority element
+     * is at the front of the queue.
+     */
+    push: function (value, cost) {
+      var item = {value: value, cost: cost};
+      this.queue.push(item);
+      this.queue.sort(this.sorter);
+    },
+
+    /**
+     * Return the highest priority element in the queue.
+     */
+    pop: function () {
+      return this.queue.shift();
+    }
+  },
+
+  test: function() {
+    // A B C
+    // D E F
+    // G H I
+    graph = {
+      a: {b: 10, d: 1},
+      b: {a: 1, c: 1, e: 1},
+      c: {b: 1, f: 1},
+      d: {a: 1, e: 1, g: 1},
+      e: {b: 1, d: 1, f: 1, h: 1},
+      f: {c: 1, e: 1, i: 1},
+      g: {d: 1, h: 1},
+      h: {e: 1, g: 1, i: 1},
+      i: {f: 1, h: 1}
+    };
+    var path = dijkstra.find_path(graph, 'a', 'i');
+    if (path.join() !== ['a', 'd', 'e', 'f', 'i'].join()) {
+      throw new Error('Path finding error!');
+    }
+  }
+};
+

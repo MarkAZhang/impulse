@@ -84,7 +84,6 @@ Player.prototype.click = function(pos, enemies) {
       dist = dist.Normalize()
       if (dist <= this.impulse_radius)
       {
-        console.log(Math.cos(angle)+" "+Math.sin(angle))
         enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
       }
     }
