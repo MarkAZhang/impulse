@@ -6,11 +6,20 @@ var draw_factor = 10;
 var enemies = [];
 var obstacles = []
 var pointToPlayer; //function for enemies to process
-var vertices = []
+var polygons = []
 var visibility_graph;
 var this_path = null
+var last_time = 0
+var fps_counter = null
+var fps = 0
+var game_state = 0
+var step_id;
+var dead_enemies = [];
 
 function setupWorld() {
+    enemies = []
+    obstacles = []
+    polygons = []
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
     world = new b2World(gravity, doSleep); 
@@ -27,13 +36,12 @@ function setupWorld() {
 }
 
 function generate_level() {
-  for(var i = 0; i < 1; i++) {
-    //enemies.push(new BasicEnemy(world, Math.random()*canvasWidth/10, Math.random()*canvasHeight/10))
-    enemies.push(new BasicEnemy(world, canvasWidth/10, canvasHeight/10))
+  for(var i = 0; i < 50; i++) {
+    enemies.push(new BasicEnemy(world, Math.random()*canvasWidth/10, Math.random()*canvasHeight/10))
+    //enemies.push(new BasicEnemy(world, canvasWidth/10, canvasHeight/10))
   }
   generate_obstacles()
-  visibility_graph = new VisibilityGraph(vertices)
-  
+  visibility_graph = new VisibilityGraph(polygons)
   
 }
 
@@ -55,7 +63,7 @@ function generate_obstacles() {
     var temp_vv = [new b2Vec2(r1*Math.cos(r4+Math.PI)+x, r1*Math.sin(r4+Math.PI)+y),
           new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
           new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
-    vertices.push(temp_vv)
+    polygons.push(temp_vv)
   }
 
 }
@@ -66,10 +74,23 @@ function step() {
     world.Step(1.0/60, 1, 10, 10);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 	  drawWorld();
-  	setTimeout('step()', 10);
+    if(game_state==0)
+    	step_id = setTimeout('step()', 20);
 }
 
 function drawWorld() {
+
+  if(game_state==1)
+  {
+    clearTimeout(step_id)
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath()
+    ctx.font = '30px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText("GAME OVER", canvasWidth/2, canvasHeight/2)
+    ctx.fillText("CLICK TO PLAY AGAIN", canvasWidth/2, canvasHeight/2+100)
+    return
+  }
   for(var i = 0; i < obstacles.length; i++) {
     obstacles[i].draw(ctx, draw_factor)
   }
@@ -77,6 +98,22 @@ function drawWorld() {
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
   }
+  fps_counter+=1
+  if(fps_counter == null)
+  {
+    last_time = (new Date()).getTime()
+    fps_counter = 0
+  }
+  else if(fps_counter == 100)
+  {
+    fps_counter = 0
+    fps = 100000/((new Date()).getTime()-last_time)
+    last_time = (new Date()).getTime()
+  }
+  ctx.beginPath()
+  ctx.font = '10px sans-serif'
+  ctx.fillText(fps, canvasWidth - 20, canvasHeight - 20)
+  ctx.fill()
  
   for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
@@ -111,8 +148,7 @@ function drawWorld() {
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
   }*/
-  if(Math.random() < .1) 
-    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition())
+  /*this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition())
   if(this_path)
   {
 
@@ -126,7 +162,7 @@ function drawWorld() {
     }
     ctx.stroke()
     ctx.lineWidth = 1
-  }
+  }*/
 
 }
 
@@ -157,7 +193,7 @@ Event.observe(window, 'load', function() {
     canvas.addEventListener('click', onClick);
     canvas.addEventListener('mousemove', onMouseMove)
     //canvas.addEventListener("click", onClick, false);
-    setupWorld(); // as you like
+    setupWorld(); 
     canvas.focus()
     // game loop
     // msDuration = time since last tick() call
@@ -182,19 +218,37 @@ function onMouseMove(event) {
 }
 
 function onClick(event) {
+    if(game_state==1)
+    {
+      game_state = 0
+      setupWorld()
+      step()
+    }
 
     var mPos = getCursorPosition(event)
     player.click(mPos, enemies)
 }
 
-
-
-
 function processGame() {
-  player.process()
-  /*for(var i = 0; i < enemies.length; i++) {
-    enemies[i].process(pointToPlayer)
-  }*/
+  dead_enemies = []
+  player.process(polygons)
+  for(var i = 0; i < enemies.length; i++) {
+    enemies[i].process(i)
+  }
+  while(dead_enemies.length > 0)
+  {
+    var dead_i = dead_enemies.pop()
+    enemies.splice(dead_i, 1)
+    console.log(dead_enemies)
+  }
+  
+
+
+}
+
+function gameOver() {
+  game_state = 1
+  
 }
 
 

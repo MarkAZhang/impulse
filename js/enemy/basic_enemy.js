@@ -6,6 +6,8 @@ BasicEnemy.prototype.lin_damp = 2.99
 
 BasicEnemy.prototype.force = .5
 
+BasicEnemy.prototype.pathfinding_delay = 100
+
 BasicEnemy.prototype.init = function(world, x, y) {
   var fixDef = new b2FixtureDef;
   fixDef.density = 1.0;
@@ -21,12 +23,44 @@ BasicEnemy.prototype.init = function(world, x, y) {
   this.body = world.CreateBody(bodyDef)
   this.body.CreateFixture(fixDef);
   this.shape = fixDef.shape
-  this.f_x = 0 //horizontal movement force
-  this.f_y = 0 //vertical movement force
+  this.path = null
+  this.pathfinding_counter = 0
+
 }
 
-BasicEnemy.prototype.process = function(getTarget) {
-  var endPt = getTarget(this.body.GetPosition())
+BasicEnemy.prototype.process = function(enemy_index) {
+
+  for(var k = 0; k < polygons.length; k++)
+  {
+    if(pointInPolygon(polygons[k], this.body.GetPosition()))
+    {
+      dead_enemies.push(enemy_index)
+      return
+    }
+  }
+
+  if(!this.path || this.pathfinding_counter == this.pathfinding_delay)
+  {
+    this.path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition())
+    this.pathfinding_counter = 0
+  }
+  if(!this.path)
+  {
+    return
+  }
+  this.pathfinding_counter+=1
+  var endPt = this.path[0]
+  while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
+  {
+    this.path = this.path.slice(1)
+    endPt = this.path[0]
+  }
+
+  if(!endPt)
+  {
+    return
+  }
+
   var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
   dir.Multiply(this.force)

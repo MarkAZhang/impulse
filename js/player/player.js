@@ -91,6 +91,16 @@ Player.prototype.click = function(pos, enemies) {
 }
 
 Player.prototype.process = function() {
+
+  for(var k = 0; k < polygons.length; k++)
+  {
+    if(pointInPolygon(polygons[k], this.body.GetPosition()))
+    {
+      gameOver()
+      break
+    }
+  }
+  
   var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
   this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
 }
