@@ -15,6 +15,8 @@ Player.prototype.init = function(world, x, y) {
   fixDef.density = 1.0;
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0003
+  fixDef.filter.maskBits = 0x0003
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = new b2CircleShape(.5);
@@ -92,10 +94,13 @@ Player.prototype.click = function(pos, enemies) {
 
 Player.prototype.process = function() {
 
-  for(var k = 0; k < polygons.length; k++)
+  for(var k = 0; k < obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
     {
+      console.log("PLAYER DEATH")
+      console.log(obstacle_polygons[k])
+      console.log(this.body.GetPosition())
       gameOver()
       break
     }

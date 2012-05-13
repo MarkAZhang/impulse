@@ -2,7 +2,7 @@ var ctx;
 var world;
 var canvasWidth, canvasHeight;
 var player;
-var draw_factor = 10;
+var draw_factor = 15;
 var enemies = [];
 var obstacles = []
 var pointToPlayer; //function for enemies to process
@@ -15,15 +15,23 @@ var fps = 0
 var game_state = 0
 var step_id;
 var dead_enemies = [];
+var other_polygon;
+var obstacle_polygons = [];
+var buffer_radius = 1;  //radius around obstacles and around outer wall
 
 function setupWorld() {
     enemies = []
     obstacles = []
     polygons = []
+    obstacle_polygons = []
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
     world = new b2World(gravity, doSleep); 
     //player = new Player(world, canvasWidth/20, canvasHeight/20)
+    
+    //add walls
+    addWalls()
+
     player = new Player(world, 0, 0)
     pointToPlayer = (function(player) {
       var _player = player
@@ -35,35 +43,93 @@ function setupWorld() {
     generate_level()
 }
 
+function addWalls() {
+  var fixDef = new b2FixtureDef;
+  fixDef.density = 1.0;
+  fixDef.friction = 0;
+  fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0001
+  fixDef.filter.maskBits = 0x0002
+  var bodyDef = new b2BodyDef;
+  bodyDef.type = b2Body.b2_staticBody;
+  fixDef.shape = new b2PolygonShape
+  fixDef.shape.SetAsBox(canvasWidth/draw_factor/2, 2)
+  bodyDef.position.Set(canvasWidth/draw_factor/2, -2)
+  world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+  fixDef = new b2FixtureDef;
+  fixDef.density = 1.0;
+  fixDef.friction = 0;
+  fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0001
+  fixDef.filter.maskBits = 0x0002
+  var bodyDef = new b2BodyDef;
+  bodyDef.type = b2Body.b2_staticBody;
+  fixDef.shape = new b2PolygonShape
+  fixDef.shape.SetAsBox(canvasWidth/draw_factor/2, 2)
+  bodyDef.position.Set(canvasWidth/draw_factor/2, canvasHeight/draw_factor+2)
+  world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+  fixDef = new b2FixtureDef;
+  fixDef.density = 1.0;
+  fixDef.friction = 0;
+  fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0001
+  fixDef.filter.maskBits = 0x0002
+  bodyDef = new b2BodyDef;
+  bodyDef.type = b2Body.b2_staticBody;
+  fixDef.shape = new b2PolygonShape
+  fixDef.shape.SetAsBox(2, canvasHeight/draw_factor/2)
+  bodyDef.position.Set(-2, canvasHeight/draw_factor/2)
+  world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+  fixDef = new b2FixtureDef;
+  fixDef.density = 1.0;
+  fixDef.friction = 0;
+  fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0001
+  fixDef.filter.maskBits = 0x0002
+  bodyDef = new b2BodyDef;
+  bodyDef.type = b2Body.b2_staticBody;
+  fixDef.shape = new b2PolygonShape
+  fixDef.shape.SetAsBox(2, canvasHeight/draw_factor/2)
+  bodyDef.position.Set(canvasWidth/draw_factor+2, canvasHeight/draw_factor/2)
+  world.CreateBody(bodyDef).CreateFixture(fixDef);
+
+
+}
+
 function generate_level() {
-  for(var i = 0; i < 50; i++) {
-    enemies.push(new BasicEnemy(world, Math.random()*canvasWidth/10, Math.random()*canvasHeight/10))
-    //enemies.push(new BasicEnemy(world, canvasWidth/10, canvasHeight/10))
-  }
+  
+  
   generate_obstacles()
   visibility_graph = new VisibilityGraph(polygons)
-  
+  for(var i = 0; i < 50; i++) {
+    var r_p = getRandomValidLocation()
+    enemies.push(new BasicEnemy(world, r_p.x, r_p.y))
+    //enemies.push(new BasicEnemy(world, canvasWidth/10, canvasHeight/10))
+  }
 }
 
 function generate_obstacles() {
+  console.log("GENERATING POLYGONS")
   //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)], 
   //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
-  for(var i = 0; i < 50; i++)
+  for(var i = 0; i < 20; i++)
   {
-    var x = Math.random()*canvasWidth*4/50+canvasWidth*1/100
-    var y =  Math.random()*canvasHeight*4/50+canvasHeight*1/100
+    var x = Math.random()*canvasWidth/draw_factor
+    var y =  Math.random()*canvasHeight/draw_factor
     var r1 = Math.random()*4+3
     var r2 = Math.random()*4+3
     var r3 = Math.random()*4+3
     var r4 = Math.random()*2*Math.PI
-    var temp_v = [new b2Vec2(r1*Math.cos(r4+Math.PI), r1*Math.sin(r4+Math.PI)),
-          new b2Vec2(r2*Math.cos(r4+Math.PI*2/3), r2*Math.sin(r4+Math.PI*2/3)),
-          new b2Vec2(r3*Math.cos(r4+Math.PI*4/3), r3*Math.sin(r4+Math.PI*4/3))]
-    obstacles.push(new BasicObstacle(world, x, y, [temp_v]))
-    var temp_vv = [new b2Vec2(r1*Math.cos(r4+Math.PI)+x, r1*Math.sin(r4+Math.PI)+y),
+    var temp_v = [new b2Vec2(r1*Math.cos(r4+Math.PI)+x, r1*Math.sin(r4+Math.PI)+y),
           new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
           new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
-    polygons.push(temp_vv)
+    obstacles.push(new BasicObstacle(temp_v))
+    obstacle_polygons.push(temp_v)
+    polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
+    
   }
 
 }
@@ -91,9 +157,11 @@ function drawWorld() {
     ctx.fillText("CLICK TO PLAY AGAIN", canvasWidth/2, canvasHeight/2+100)
     return
   }
+
   for(var i = 0; i < obstacles.length; i++) {
     obstacles[i].draw(ctx, draw_factor)
   }
+
   player.draw(ctx, draw_factor)
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
@@ -115,27 +183,24 @@ function drawWorld() {
   ctx.fillText(fps, canvasWidth - 20, canvasHeight - 20)
   ctx.fill()
  
-  for(var i = 0; i < visibility_graph.vertices.length; i++)
+  /*for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
-      if(i==0)
-        ctx.arc(visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor, 5, 0, 2*Math.PI, true)
-      else
-      	ctx.arc(visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor, 2, 0, 2*Math.PI, true)
+    	ctx.arc(visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor, 2, 0, 2*Math.PI, true)
       //ctx.font = 'italic 10px sans-serif'
       //ctx.fillText(i, visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor)
     	ctx.fill()
-  }
+  }*/
 
-  for(var i = 0; i < visibility_graph.poly_edges.length; i++)
+  /*for(var i = 0; i < visibility_graph.poly_edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'green';
       ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }
+  }*/
   /*for(var i = 0; i < visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
@@ -147,21 +212,24 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }*/
-  /*this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition())
-  if(this_path)
+  }
+  if(enemies[0])
   {
-
-    ctx.beginPath()
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 3
-    ctx.moveTo(this_path[0].x*draw_factor, this_path[0].y*draw_factor)
-    for(var i = 1; i < this_path.length; i++)
+    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), obstacle_polygons)
+    if(this_path)
     {
-        ctx.lineTo(this_path[i].x*draw_factor, this_path[i].y*draw_factor)
+
+      ctx.beginPath()
+      ctx.strokeStyle = 'blue';
+      ctx.lineWidth = 3
+      ctx.moveTo(this_path[0].x*draw_factor, this_path[0].y*draw_factor)
+      for(var i = 1; i < this_path.length; i++)
+      {
+          ctx.lineTo(this_path[i].x*draw_factor, this_path[i].y*draw_factor)
+      }
+      ctx.stroke()
+      ctx.lineWidth = 1
     }
-    ctx.stroke()
-    ctx.lineWidth = 1
   }*/
 
 }
@@ -238,10 +306,31 @@ function processGame() {
   while(dead_enemies.length > 0)
   {
     var dead_i = dead_enemies.pop()
+    world.DestroyBody(enemies[dead_i].body)
     enemies.splice(dead_i, 1)
     console.log(dead_enemies)
   }
-  
+}
+
+function getRandomValidLocation() {
+  var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*(canvasHeight/draw_factor-2*buffer_radius)+buffer_radius}
+  var inPoly = false
+  for(var k = 0; k < obstacle_polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(obstacle_polygons[k], r_point))
+    {
+      inPoly = true
+    }
+  }
+  if(inPoly)
+  {
+    return getRandomValidLocation()
+  }
+  if(visibility_graph.query(r_point, player.body.GetPosition(), obstacle_polygons)==null)
+  {
+    return getRandomValidLocation()
+  }
+  return r_point
 
 
 }
@@ -289,4 +378,26 @@ var _atan = function(center, ray) {
     angle +=Math.PI
   }
   return angle
+}
+
+function getBoundaryPolygon(polygon, radius) {
+
+  var j = polygon.length - 1
+  var ans = []
+  for(var i = 0; i < polygon.length; i++)
+  {
+    
+    var k = (i+1)%polygon.length
+    var j_to_i_normal = new b2Vec2(polygon[j].y - polygon[i].y, polygon[i].x - polygon[j].x)
+    var k_to_i_normal = new b2Vec2(polygon[i].y - polygon[k].y, polygon[k].x - polygon[i].x)
+    j_to_i_normal.Normalize()
+    k_to_i_normal.Normalize()
+    ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})
+    ans.push({x: polygon[i].x+j_to_i_normal.x*radius, y: polygon[i].y + j_to_i_normal.y*radius})
+    var sum = new b2Vec2(j_to_i_normal.x + k_to_i_normal.x, j_to_i_normal.y + k_to_i_normal.y)
+    sum.Normalize()
+    ans.push({x: polygon[i].x+sum.x * radius, y: polygon[i].y+sum.y * radius})
+    j = i
+  }
+  return ans
 }

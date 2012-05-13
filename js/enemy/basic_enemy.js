@@ -13,6 +13,8 @@ BasicEnemy.prototype.init = function(world, x, y) {
   fixDef.density = 1.0;
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
+  fixDef.filter.categoryBits = 0x0011
+  fixDef.filter.maskBits = 0x0012
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = new b2CircleShape(.5);
@@ -30,19 +32,25 @@ BasicEnemy.prototype.init = function(world, x, y) {
 
 BasicEnemy.prototype.process = function(enemy_index) {
 
-  for(var k = 0; k < polygons.length; k++)
+  for(var k = 0; k < obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
     {
+      console.log("ENEMY DEATH")
+      console.log(obstacle_polygons[k])
+      console.log(this.body.GetPosition())
       dead_enemies.push(enemy_index)
       return
     }
   }
 
-  if(!this.path || this.pathfinding_counter == this.pathfinding_delay)
+  if(!this.path || this.path.length == 1 || this.pathfinding_counter == this.pathfinding_delay)
+    //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
-    this.path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition())
-    this.pathfinding_counter = 0
+    var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), obstacle_polygons)
+    if(new_path!=null)
+      this.path = new_path
+    this.pathfinding_counter = Math.floor(Math.random()*100)
   }
   if(!this.path)
   {

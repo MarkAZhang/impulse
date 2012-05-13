@@ -1,4 +1,5 @@
 var VisibilityGraph = function(polygons) {
+  console.log("CREATING VISIBILITY GRAPH")
   this.init(polygons)
 }
 
@@ -30,6 +31,9 @@ VisibilityGraph.prototype.init = function(polygons) {
 
       if(!inPoly)
       {
+        vertex.p_n = i
+        vertex.p_v = polygon.length
+        vertex.p_i = j
         this.vertices.push(vertex)
       }
       this.poly_edges.push({p1: polygon[j], p2: polygon[m]})
@@ -42,18 +46,19 @@ VisibilityGraph.prototype.init = function(polygons) {
     this.edge_list[i] = {}
     for(var j = 0; j < i; j++)
     {
-      var visible = true
+
       var v_i = this.vertices[i]
       var v_j = this.vertices[j]
-      
-      if(isVisible(v_i, v_j, this.poly_edges))
+      if(v_i.p_n!=v_j.p_n || (v_i.p_n==v_j.p_n && (Math.max(v_i.p_i, v_j.p_i) - Math.min(v_i.p_i, v_j.p_i) == 1 || Math.min(v_i.p_i, v_j.p_i) == 0 && Math.max(v_i.p_i, v_j.p_i) == v_i.p_v - 1)))
       {
-        this.edges.push({p1: v_i, p2: v_j})
-        var dist =  p_dist(v_j, v_i)
-        this.edge_list[i][j] = dist
-        this.edge_list[j][i] = dist
+        if(isVisible(v_i, v_j, this.poly_edges))
+        {
+          this.edges.push({p1: v_i, p2: v_j})
+          var dist =  p_dist(v_j, v_i)
+          this.edge_list[i][j] = dist
+          this.edge_list[j][i] = dist
+        }
       }
-
     }
   }
   //console.log(this.edge_list)
@@ -78,26 +83,25 @@ VisibilityGraph.prototype.init = function(polygons) {
        //console.log(sum)
        this.shortest_paths[h][i] = {path: path, dist: sum}
        this.shortest_paths[i][h] = {path: path.slice(0).reverse(), dist: sum}
-
     }
   }
 }
 
-VisibilityGraph.prototype.query = function(point1, point2)
+VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
 //returns the shortest path from point1 to VISIBILITY_GRAPH to point2
 {
   
   var inPoly = false
-  for(var k = 0; k < this.polygons.length; k++)
+  for(var k = 0; k < bad_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(this.polygons[k], point1))
+    if(i != k && pointInPolygon(bad_polygons[k], point1))
     {
       inPoly = true
     }
   }
-  for(var k = 0; k < this.polygons.length; k++)
+  for(var k = 0; k < bad_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(this.polygons[k], point2))
+    if(i != k && pointInPolygon(bad_polygons[k], point2))
     {
       inPoly = true
     }
@@ -165,7 +169,7 @@ VisibilityGraph.prototype.query = function(point1, point2)
   if(!min_path) return null//it's possible that player is inside an open-space that is surrouded by triangle edges.
     //thus, no visible vertices
     //this is only if the player "tunnels" (cheats)
-  var ans = [point1]
+  var ans = []
 
   for (var i = 0; i < min_path.length; i++)
   {
