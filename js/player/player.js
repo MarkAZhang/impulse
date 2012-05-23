@@ -75,11 +75,25 @@ Player.prototype.mouseMove = function(pos, draw_factor) {
 
 
 Player.prototype.click = function(pos, enemies) {
+  console.log(this.impulse_angle)
   for(var i = 0; i < enemies.length; i++)
   {
     var angle = _atan(this.body.GetPosition(), enemies[i].body.GetPosition())
     
-    if(angle>=this.impulse_angle - Math.PI/3 && angle <= this.impulse_angle + Math.PI/3)
+    var struck;
+
+    if(this.impulse_angle < -Math.PI/6)
+    {
+      struck = angle <= this.impulse_angle + Math.PI/3 || angle >= this.impulse_angle + 5*Math.PI/3
+    }
+    else if(this.impulse_angle > 7*Math.PI/6)
+    {
+      struck = angle <= this.impulse_angle - 5*Math.PI/3 || angle >= this.impulse_angle - Math.PI/3
+    }
+    else
+      struck = angle>=this.impulse_angle - Math.PI/3 && angle <= this.impulse_angle + Math.PI/3
+    
+    if(struck)
     {
       var dist = this.body.GetPosition().Copy()
       dist.Subtract(enemies[i].body.GetPosition())
@@ -98,9 +112,6 @@ Player.prototype.process = function() {
   {
     if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
     {
-      console.log("PLAYER DEATH")
-      console.log(obstacle_polygons[k])
-      console.log(this.body.GetPosition())
       gameOver()
       break
     }
@@ -116,8 +127,12 @@ Player.prototype.draw = function(context, draw_factor) {
 	context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
 	context.fill()
   context.beginPath()
-  context.fillStyle = 'cyan';
+  context.fillStyle = "rgba(0, 255, 255, 0.5)";
   context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.impulse_radius * draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+  context.moveTo(this.body.GetPosition().x*draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * draw_factor, this.body.GetPosition().y*draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * draw_factor)
+  context.lineTo(this.body.GetPosition().x*draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * draw_factor, this.body.GetPosition().y*draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * draw_factor)
+  context.lineTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor)
+  context.closePath()
   context.fill()
 
 }

@@ -1,5 +1,5 @@
-var BasicEnemy = function(world, x, y) {
-  this.init(world, x, y)
+var BasicEnemy = function(world, x, y, id) {
+  this.init(world, x, y, id)
 }
 
 BasicEnemy.prototype.lin_damp = 2.99
@@ -8,7 +8,9 @@ BasicEnemy.prototype.force = .5
 
 BasicEnemy.prototype.pathfinding_delay = 100
 
-BasicEnemy.prototype.init = function(world, x, y) {
+BasicEnemy.prototype.yield_delay = 10
+
+BasicEnemy.prototype.init = function(world, x, y, id) {
   var fixDef = new b2FixtureDef;
   fixDef.density = 1.0;
   fixDef.friction = 0;
@@ -27,6 +29,9 @@ BasicEnemy.prototype.init = function(world, x, y) {
   this.shape = fixDef.shape
   this.path = null
   this.pathfinding_counter = 0
+  this.yield_counter = 0
+  this.yield = false
+  this.id = id
 
 }
 
@@ -36,9 +41,6 @@ BasicEnemy.prototype.process = function(enemy_index) {
   {
     if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
     {
-      console.log("ENEMY DEATH")
-      console.log(obstacle_polygons[k])
-      console.log(this.body.GetPosition())
       dead_enemies.push(enemy_index)
       return
     }
@@ -68,12 +70,30 @@ BasicEnemy.prototype.process = function(enemy_index) {
   {
     return
   }
+  
+  if(this.yield_counter == this.yield_delay)
+  {
+    var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.shape.GetRadius()*4, enemies, function(enemy) {return enemy.body.GetPosition()})
+    this.yield = false
+    for(var i = 0; i < nearby_enemies.length; i++)
+    {
+      if(nearby_enemies[i].id > this.id)
+      {
+        this.yield = true
+        break
+      }
+    }
+    this.yield_counter = 0
+  }
+  this.yield_counter++
 
-  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
-  dir.Normalize()
-  dir.Multiply(this.force)
-
-  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+  if(!this.yield)
+  {
+    var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+    dir.Normalize()
+    dir.Multiply(this.force)
+    this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+  }
   
 }
 
