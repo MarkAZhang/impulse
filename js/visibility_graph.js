@@ -1,9 +1,10 @@
+
 var VisibilityGraph = function(polygons) {
   console.log("CREATING VISIBILITY GRAPH")
   this.init(polygons)
 }
 
-VisibilityGraph.prototype.init = function(polygons) {
+VisibilityGraph.prototype.init = function(polygons, obstacles) {
 //polygons is an array of array of vertices
   this.poly_edges = []
   this.vertices = []
@@ -88,10 +89,20 @@ VisibilityGraph.prototype.init = function(polygons) {
 }
 
 VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
+//start point, end point, list of bad polygons
 //returns the shortest path from point1 to VISIBILITY_GRAPH to point2
 {
   
   var inPoly = false
+
+  //if it is possible to go from current location to player, always go there directly
+  if(isVisible(point1, point2, obstacle_edges))//if visible, go there directly
+  {
+    return [point1, point2]
+  }
+  
+  /*//if start point is inside a bad polygon (but we aren't dead...)  
+  //get out of there ASAP
   for(var k = 0; k < bad_polygons.length; k++)
   {
     if(i != k && pointInPolygon(bad_polygons[k], point1))
@@ -99,6 +110,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
       inPoly = true
     }
   }
+
   for(var k = 0; k < bad_polygons.length; k++)
   {
     if(i != k && pointInPolygon(bad_polygons[k], point2))
@@ -109,16 +121,14 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
   if(inPoly)
   {
     return null
-  }
+  }*/
 
   var min_distance = null
   var min_path = null
   var point1_adj = []
   var point2_adj = []
-  if(isVisible(point1, point2, this.poly_edges))//if visible, go there directly
-  {
-    return [point1, point2]
-  }
+ 
+  
 
   for(var i = 0; i < this.vertices.length; i++)
   {
@@ -126,7 +136,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
     {
       point1_adj.push(i)
     }
-    if(isVisible(point2, this.vertices[i], this.poly_edges))
+    if(isVisible(point2, this.vertices[i], obstacle_edges))
     {
       point2_adj.push(i)
     }

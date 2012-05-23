@@ -2,12 +2,19 @@ var BasicEnemy = function(world, x, y, id) {
   this.init(world, x, y, id)
 }
 
+//the dampening factor that determines how much "air resistance" unit has
 BasicEnemy.prototype.lin_damp = 2.99
 
+//how fast enemies move
 BasicEnemy.prototype.force = .5
 
+//how fast enemies move when cautious
+BasicEnemy.prototype.slow_force = .1
+
+//how often enemy path_finds
 BasicEnemy.prototype.pathfinding_delay = 100
 
+//how often enemy checks to see if it can move if yielding
 BasicEnemy.prototype.yield_delay = 10
 
 BasicEnemy.prototype.init = function(world, x, y, id) {
@@ -37,6 +44,7 @@ BasicEnemy.prototype.init = function(world, x, y, id) {
 
 BasicEnemy.prototype.process = function(enemy_index) {
 
+  //check if enemy has intersected polygon, if so die
   for(var k = 0; k < obstacle_polygons.length; k++)
   {
     if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
@@ -46,10 +54,11 @@ BasicEnemy.prototype.process = function(enemy_index) {
     }
   }
 
+
   if(!this.path || this.path.length == 1 || this.pathfinding_counter == this.pathfinding_delay)
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
-    var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), obstacle_polygons)
+    var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), boundary_polygons)
     if(new_path!=null)
       this.path = new_path
     this.pathfinding_counter = Math.floor(Math.random()*100)
@@ -71,6 +80,7 @@ BasicEnemy.prototype.process = function(enemy_index) {
     return
   }
   
+  //check if yielding
   if(this.yield_counter == this.yield_delay)
   {
     var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.shape.GetRadius()*4, enemies, function(enemy) {return enemy.body.GetPosition()})
@@ -87,11 +97,29 @@ BasicEnemy.prototype.process = function(enemy_index) {
   }
   this.yield_counter++
 
+  //apply impulse to move enemy
+  var in_poly = false
+  for(var i = 0; i < obstacle_polygons.length; i++)
+  {
+    if(pointInPolygon(obstacle_polygons[i], this.body.GetPosition()))
+    {
+      in_poly = true
+    }
+  }
+
   if(!this.yield)
   {
     var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
     dir.Normalize()
-    dir.Multiply(this.force)
+    if(in_poly)
+    {
+      dir.Multiply(this.slow_force)
+    }
+    else
+    {
+      dir.Multiply(this.force)
+    }
+   
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
   }
   

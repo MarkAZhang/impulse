@@ -5,6 +5,7 @@ var player;
 var draw_factor = 15;
 var enemies = [];
 var obstacles = []
+var obstacle_edges = []
 var pointToPlayer; //function for enemies to process
 var polygons = []
 var visibility_graph;
@@ -16,7 +17,8 @@ var game_state = 0
 var step_id;
 var dead_enemies = [];
 var other_polygon;
-var obstacle_polygons = [];
+var boundary_polygons = []; //the polygons that enemies use to calculate pathfinding
+var obstacle_polygons = []; //the actual polygons that kill players and enemies
 var buffer_radius = 1;  //radius around obstacles and around outer wall
 var enemy_counter; //give each enemy an ID
 var offset_left, offset_top
@@ -82,8 +84,9 @@ function setupWorld() {
     enemy_counter = 0
     enemies = []
     obstacles = []
-    polygons = []
+    boundary_polygons = []
     obstacle_polygons = []
+    obstacle_edges = []
     game_numbers.score = 0
     game_numbers.kills = 0
     game_numbers.seconds = 0
@@ -91,7 +94,7 @@ function setupWorld() {
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
     world = new b2World(gravity, doSleep); 
-    player = new Player(world, canvasWidth/20, canvasHeight/20)
+    player = new Player(world, canvasWidth/20, canvasHeight/20, draw_factor)
     
     //add walls
     addWalls()
@@ -163,7 +166,7 @@ function generate_level() {
   
   
   generate_obstacles()
-  visibility_graph = new VisibilityGraph(polygons)
+  visibility_graph = new VisibilityGraph(boundary_polygons)
   
 }
 
@@ -184,10 +187,24 @@ function generate_obstacles() {
           new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
     obstacles.push(new BasicObstacle(temp_v))
     obstacle_polygons.push(temp_v)
-    polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
+    boundary_polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
     
   }
+  generate_obstacle_edges()
 
+}
+
+function generate_obstacle_edges() {
+  for(var i = 0; i < obstacles.length; i++)
+  {
+    var obstacle = obstacles[i]
+    var k = obstacle.verticeSet.length - 1
+    for(var j = 0; j < obstacle.verticeSet.length; j++)
+    {
+      obstacle_edges.push({p1: obstacle.verticeSet[k], p2: obstacle.verticeSet[j]})
+      k = j
+    }
+  }
 }
 
 function drawWorld() {
@@ -195,7 +212,7 @@ function drawWorld() {
     obstacles[i].draw(ctx, draw_factor)
   }
 
-  player.draw(ctx, draw_factor)
+  player.draw(ctx)
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
   }
@@ -214,12 +231,13 @@ function drawWorld() {
   for(var i = 0; i < visibility_graph.poly_edges.length; i++)
   {
       ctx.beginPath()
+      ctx.lineWidth = 1
     	ctx.strokeStyle = 'green';
       ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
   }
-  for(var i = 0; i < visibility_graph.edges.length; i++)
+  /*for(var i = 0; i < visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
@@ -230,10 +248,10 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }
+  }*/
   if(enemies[0])
   {
-    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), obstacle_polygons)
+    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), boundary_polygons)
     if(this_path)
     {
 
@@ -387,7 +405,7 @@ function onMouseMove(event) {
   switch(game_state)
   {
     case 2:
-      player.mouseMove(mPos, draw_factor)
+      player.mouseMove(mPos)
       break
   }
 }
@@ -417,7 +435,7 @@ function onClick(event) {
 
 function processGame() {
   dead_enemies = []
-  player.process(polygons)
+  player.process(obstacle_polygons)
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].process(i)
   }
@@ -465,13 +483,13 @@ function generate_enemy() {
   enemy_counter+=1
 }
 
-
+//gets random point that is not inside a boundary polygon
 function getRandomValidLocation(testPoint) {
   var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*(canvasHeight/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
-  for(var k = 0; k < obstacle_polygons.length; k++)
+  for(var k = 0; k < boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(obstacle_polygons[k], r_point))
+    if(i != k && pointInPolygon(boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -480,7 +498,7 @@ function getRandomValidLocation(testPoint) {
   {
     return getRandomValidLocation(testPoint)
   }
-  if(visibility_graph.query(r_point, testPoint, obstacle_polygons)==null)
+  if(visibility_graph.query(r_point, testPoint, boundary_polygons)==null)
   {
     return getRandomValidLocation(testPoint)
   }
