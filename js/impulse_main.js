@@ -4,8 +4,6 @@ var canvasWidth, canvasHeight;
 var player;
 var draw_factor = 15;
 var enemies = [];
-var obstacles = []
-var obstacle_edges = []
 var pointToPlayer; //function for enemies to process
 var polygons = []
 var visibility_graph;
@@ -17,15 +15,15 @@ var game_state
 var step_id;
 var dead_enemies = [];
 var other_polygon;
-var boundary_polygons = []; //the polygons that enemies use to calculate pathfinding
-var obstacle_polygons = []; //the actual polygons that kill players and enemies
+
 var buffer_radius = 1;  //radius around obstacles and around outer wall
 var enemy_counter; //give each enemy an ID
 var offset_left, offset_top
-var game_numbers = {score: 0, seconds: 0, kills: 0, game_start: 0, max_enemies: [10, 0, 0, 0]}
+var game_numbers = {score: 0, seconds: 0, kills: 0, game_start: 0}
 var start_clicked
 var buttons = []
 var pause = true
+var level;
 
 Event.observe(window, 'load', function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -40,6 +38,7 @@ Event.observe(window, 'load', function() {
     ,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
     ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+    , b2ContactListener = Box2D.Dynamics.b2ContactListener
     
     canvasWidth = 800;
     canvasHeight = 600;
@@ -112,10 +111,6 @@ function setupWorld() {
 function setupWorld_next() {
   enemy_counter = 0
     enemies = []
-    obstacles = []
-    boundary_polygons = []
-    obstacle_polygons = []
-    obstacle_edges = []
     buttons = []
     game_numbers.score = 0
     game_numbers.kills = 0
@@ -127,6 +122,8 @@ function setupWorld_next() {
     
     //add walls
     addWalls()
+
+    level = new Level(1)
     
     generate_level()
     var r_p = getRandomValidLocation({x: -10, y: -10})
@@ -135,6 +132,32 @@ function setupWorld_next() {
     game_numbers.last_time = null
     pause = false
     game_state = 2
+
+    var contactListener = new b2ContactListener;
+    contactListener.PreSolve = handle_collisions
+   world.SetContactListener(contactListener);
+    
+}
+
+function handle_collisions(contact) {
+  var first = contact.GetFixtureA().GetUserData()
+  var second = contact.GetFixtureB().GetUserData()
+  if(first === player)
+  {
+    var _player = first
+    var _other = second
+  }
+  else if(second === player)
+  {
+    var _player = second
+    var _other = first
+  }
+  else
+  {
+    return
+  }
+  if(_other)
+    _other.collide_with(_player)
 }
 
 function addWalls() {
@@ -196,53 +219,16 @@ function addWalls() {
 function generate_level() {
   
   
-  generate_obstacles()
-  visibility_graph = new VisibilityGraph(boundary_polygons)
+  level.generate_obstacles()
+  visibility_graph = new VisibilityGraph(level.boundary_polygons)
   
 }
 
-function generate_obstacles() {
-  console.log("GENERATING POLYGONS")
-  //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)], 
-  //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
-  for(var i = 0; i < 20; i++)
-  {
-    var x = Math.random()*canvasWidth/draw_factor
-    var y =  Math.random()*canvasHeight/draw_factor
-    var r1 = Math.random()*4+3
-    var r2 = Math.random()*4+3
-    var r3 = Math.random()*4+3
-    var r4 = Math.random()*2*Math.PI
-    var temp_v = [new b2Vec2(r1*Math.cos(r4+Math.PI)+x, r1*Math.sin(r4+Math.PI)+y),
-          new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
-          new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
-    obstacles.push(new BasicObstacle(temp_v))
-    obstacle_polygons.push(temp_v)
-    boundary_polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
-    
-  }
-  generate_obstacle_edges()
 
-}
-
-function generate_obstacle_edges() {
-  for(var i = 0; i < obstacles.length; i++)
-  {
-    var obstacle = obstacles[i]
-    var k = obstacle.verticeSet.length - 1
-    for(var j = 0; j < obstacle.verticeSet.length; j++)
-    {
-      obstacle_edges.push({p1: obstacle.verticeSet[k], p2: obstacle.verticeSet[j]})
-      k = j
-    }
-  }
-}
 
 function drawWorld() {
-  for(var i = 0; i < obstacles.length; i++) {
-    obstacles[i].draw(ctx, draw_factor)
-  }
-
+  
+  level.draw(ctx)
   player.draw(ctx)
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
@@ -293,7 +279,7 @@ function drawWorld() {
   }*/
   if(enemies[0])
   {
-    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), boundary_polygons)
+    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
     if(this_path)
     {
 
@@ -534,60 +520,63 @@ function processGame() {
   if(!pause)
   {
     dead_enemies = []
-    player.process(obstacle_polygons)
+    player.process()
     for(var i = 0; i < enemies.length; i++) {
       enemies[i].process(i)
     }
     while(dead_enemies.length > 0)
     {
       var dead_i = dead_enemies.pop()
-      game_numbers.kills +=1
+      
       world.DestroyBody(enemies[dead_i].body)
       enemies.splice(dead_i, 1)
     }
-    adjust_difficulty()
     generate_enemies()
   }
 }
 
-function adjust_difficulty() {
-//adjust difficult depending on time
-  var seconds = game_numbers.seconds
-  game_numbers.max_enemies = [Math.min(Math.floor(seconds/2), 20), 1, 1, 1]
-
-}
-
 function generate_enemies() {
-  if(enemies.length >= game_numbers.max_enemies[0])
+
+  if(enemies.length >= level.getEnemyCap(game_numbers.seconds))
   {
     return
   }
-  while(enemies.length < .2 * game_numbers.max_enemies[0])
+  while(enemies.length < .2 * level.getEnemyCap(game_numbers.seconds))
   {
-    generate_enemy()
+    generate_enemy(level.getRandomEnemy(game_numbers.seconds))
   }
-  if(Math.random() < .1)
+  if(Math.random() < .05)
   {
-    generate_enemy()
+    generate_enemy(level.getRandomEnemy(game_numbers.seconds))
   }
 
   
 }
 
-function generate_enemy() {
+function generate_enemy(enemy_type) {
   var r_p = getRandomOutsideLocation(5, 2)
+  
+  switch(enemy_type) {
+    case 0:
+      enemies.push(new Stunner(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    case 1:
+      enemies.push(new Spear(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    
 
-  enemies.push(new BasicEnemy(world, r_p.x, r_p.y, enemy_counter))
-  enemy_counter+=1
+  }
 }
 
 //gets random point that is not inside a boundary polygon
 function getRandomValidLocation(testPoint) {
   var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*(canvasHeight/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
-  for(var k = 0; k < boundary_polygons.length; k++)
+  for(var k = 0; k < level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(boundary_polygons[k], r_point))
+    if(i != k && pointInPolygon(level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -596,7 +585,7 @@ function getRandomValidLocation(testPoint) {
   {
     return getRandomValidLocation(testPoint)
   }
-  if(visibility_graph.query(r_point, testPoint, boundary_polygons)==null)
+  if(visibility_graph.query(r_point, testPoint, level.boundary_polygons)==null)
   {
     return getRandomValidLocation(testPoint)
   }

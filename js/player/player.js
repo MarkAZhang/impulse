@@ -2,9 +2,9 @@ var Player = function(world, x, y, draw_factor) {
   this.init(world, x, y, draw_factor)
 }
 
-Player.prototype.lin_damp = 2.99
+Player.prototype.lin_damp = 3.49 //old = 2.99
 
-Player.prototype.force = .5
+Player.prototype.force = 1 //old = .5
 
 Player.prototype.impulse_force = 50
 
@@ -25,8 +25,9 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
   this.body = world.CreateBody(bodyDef)
-  this.body.CreateFixture(fixDef);
+  this.body.CreateFixture(fixDef).SetUserData(this);
   this.shape = fixDef.shape
+  
   this.f_x = 0 //horizontal movement force
   this.f_y = 0 //vertical movement force
   this.impulse_angle = 0
@@ -37,6 +38,10 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.attack_angle = 0
   this.mouse_pos = {}//keeps track of last mouse position on player's part
   this.draw_factor = draw_factor
+  this.status = "normal"
+  this.status_start = 0
+  this.status_duration = 0
+  this.attack_duration = 500
 
 }
 
@@ -80,10 +85,16 @@ Player.prototype.mouseMove = function(pos) {
   this.mouse_pos = pos
 }
 
+Player.prototype.stun = function(dur) {
+  this.status = "stunned"
+  this.status_start = (new Date()).getTime()
+  this.status_duration = dur
+}
+
 
 Player.prototype.click = function(pos, enemies) {
 
-  if(!this.attacking)
+  if(!this.attacking && this.status == "normal")
   {
     this.attacking = true
     this.attack_start = (new Date()).getTime()
@@ -96,10 +107,15 @@ Player.prototype.click = function(pos, enemies) {
 
 Player.prototype.process = function() {
 
-  this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
-  for(var k = 0; k < obstacle_polygons.length; k++)
+  if(this.status!="normal" && ((new Date()).getTime()-this.status_start)/1000 > this.status_duration)
   {
-    if(pointInPolygon(obstacle_polygons[k], this.body.GetPosition()))
+    this.status = "normal"
+  }
+
+  this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
+  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  {
+    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
     {
       gameOver()
       break
@@ -109,7 +125,7 @@ Player.prototype.process = function() {
   if(this.attacking)
   {
     var cur_time = (new Date()).getTime()
-    if(cur_time > this.attack_start + 500)//attack lasts 500 ms
+    if(cur_time > this.attack_start + this.attack_duration)//attack lasts 500 ms
     {
       this.attacking = false
       this.enemies_hit = []
@@ -119,7 +135,7 @@ Player.prototype.process = function() {
 
       for(var i = 0; i < enemies.length; i++)
       {
-        if(this.enemies_hit.indexOf(enemies[i].id)==-1)//enemy has not been hit
+        if(this.enemies_hit.indexOf(enemies[i].id)==-1 && !enemies[i].dying)//enemy has not been hit
         {
           var angle = _atan(this.attack_loc, enemies[i].body.GetPosition())
           
@@ -141,7 +157,7 @@ Player.prototype.process = function() {
             var dist = this.attack_loc.Copy()
             dist.Subtract(enemies[i].body.GetPosition())
             dist = dist.Normalize()
-            if (dist >= this.impulse_radius * (cur_time - this.attack_start)/600 && dist <= this.impulse_radius * (cur_time - this.attack_start + 100)/600)
+            if (dist >= this.impulse_radius * (cur_time - this.attack_start)/(this.attack_duration + this.attack_duration * .2) && dist <= this.impulse_radius * (cur_time - this.attack_start + this.attack_duration * .2)/(this.attack_duration + this.attack_duration * .2))
             {
               enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
               this.enemies_hit.push(enemies[i].id)
@@ -153,8 +169,11 @@ Player.prototype.process = function() {
 
   }
   
-  var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
-  this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
+  if(this.status=="normal")
+  {
+    var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
+    this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
+  }
 }
 
 Player.prototype.draw = function(context) {
@@ -163,7 +182,14 @@ Player.prototype.draw = function(context) {
 	context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
 	context.fill()
   context.beginPath()
-  context.fillStyle = "rgba(0, 255, 255, 0.2)";
+  if(this.status=="normal")
+  {
+    context.fillStyle = "rgba(0, 255, 255, 0.2)";
+  }
+  else
+  {
+    context.fillStyle = "rgba(255, 0, 0, 0.5)";
+  }
   context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
   context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
   context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
@@ -176,10 +202,10 @@ Player.prototype.draw = function(context) {
     var cur_time = (new Date()).getTime()
     context.beginPath();
     context.lineWidth = this.impulse_radius * 1/6 * this.draw_factor
-    context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (cur_time - this.attack_start + 100)/600) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+    context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (cur_time - this.attack_start + this.attack_duration * .2)/(this.attack_duration + this.attack_duration * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
     context.lineWidth = 15;
     // line color
-    context.strokeStyle = "rgba(0,255,255)";
+    context.strokeStyle = "rgba(0,255,255, 1)";
     context.stroke();
     
   }
