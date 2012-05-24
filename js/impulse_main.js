@@ -13,7 +13,7 @@ var this_path = null
 var last_time = 0
 var fps_counter = null
 var fps = 0
-var game_state = 0
+var game_state
 var step_id;
 var dead_enemies = [];
 var other_polygon;
@@ -23,6 +23,9 @@ var buffer_radius = 1;  //radius around obstacles and around outer wall
 var enemy_counter; //give each enemy an ID
 var offset_left, offset_top
 var game_numbers = {score: 0, seconds: 0, kills: 0, game_start: 0, max_enemies: [10, 0, 0, 0]}
+var start_clicked
+var buttons = []
+var pause = true
 
 Event.observe(window, 'load', function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -65,28 +68,55 @@ Event.observe(window, 'load', function() {
       offset_left = (dim.w-canvasWidth)/2
       canvas_container.style.left =  Math.round(offset_left) + 'px'
     }
+    else
+    {
+      offset_left = 0
+    }
     if(canvasHeight < dim.h)
     {
       offset_top = (dim.h-canvasHeight)/2
       canvas_container.style.top = Math.round(offset_top) + 'px'
     }
+    else
+    {
+      offset_top = 0
+    }
 
       
     //canvas.addEventListener("click", onClick, false);
 
-    draw()
+    game_state = 0
+    start_clicked = false
+    step()
 
     
 });
 
+function loadingScreen() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath()
+  ctx.font = '30px Century Gothic'
+  ctx.fillStyle = 'black'
+  ctx.textAlign = 'center'
+  ctx.fillText("LOADING", canvasWidth/2, canvasHeight/2)
+  ctx.fill()
+}
 
 function setupWorld() {
-    enemy_counter = 0
+    pause = true
+    loadingScreen()
+    setTimeout('setupWorld_next()', 5)
+    
+}
+
+function setupWorld_next() {
+  enemy_counter = 0
     enemies = []
     obstacles = []
     boundary_polygons = []
     obstacle_polygons = []
     obstacle_edges = []
+    buttons = []
     game_numbers.score = 0
     game_numbers.kills = 0
     game_numbers.seconds = 0
@@ -94,16 +124,17 @@ function setupWorld() {
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
     world = new b2World(gravity, doSleep); 
-    player = new Player(world, canvasWidth/20, canvasHeight/20, draw_factor)
     
     //add walls
     addWalls()
     
     generate_level()
     var r_p = getRandomValidLocation({x: -10, y: -10})
-    //player = new Player(world, r_p.x, r_p.y)
+    player = new Player(world, r_p.x, r_p.y, draw_factor)
     game_numbers.game_start = (new Date()).getTime()
     game_numbers.last_time = null
+    pause = false
+    game_state = 2
 }
 
 function addWalls() {
@@ -237,6 +268,17 @@ function drawWorld() {
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
   }
+
+  /*for(var i = 0; i < obstacle_edges.length; i++)
+  {
+      ctx.beginPath()
+      ctx.lineWidth = 3
+    	ctx.strokeStyle = 'brown';
+      ctx.moveTo(obstacle_edges[i].p1.x*draw_factor, obstacle_edges[i].p1.y*draw_factor)
+      ctx.lineTo(obstacle_edges[i].p2.x*draw_factor, obstacle_edges[i].p2.y*draw_factor)
+    	ctx.stroke()
+  }*/
+
   /*for(var i = 0; i < visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
@@ -308,30 +350,44 @@ function draw_interface() {
 }
 
 function step() {
-    processGame();
-    world.Step(1.0/60, 1, 10, 10);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(game_state==2 && !pause)
+    {
+      processGame();
+      world.Step(1.0/60, 1, 10, 10);
+    }
 	  draw();
-    if(game_state==2)
-    	step_id = setTimeout('step()', 20);
+   	step_id = setTimeout('step()', 20);
 }
 
 function draw() {
+
   
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   switch(game_state) {
     case 0: //start screen
-      clearTimeout(step_id)
       ctx.beginPath()
       ctx.font = '30px Century Gothic'
       ctx.fillStyle = 'black'
       ctx.textAlign = 'center'
       ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2)
-      ctx.font = '20px Century Gothic'
-      ctx.fillText("CLICK TO BEGIN", canvasWidth/2, canvasHeight/2+50)
-      ctx.fill()
+      
+      if(start_clicked)
+      {
+        for(var i = 0; i < buttons.length; i++)
+        {
+          buttons[i].draw(ctx)
+        }
+        
+      }
+      else
+      {
+        ctx.font = '20px Century Gothic'
+        ctx.fillText("CLICK TO BEGIN", canvasWidth/2, canvasHeight/2+150)
+        ctx.fill()
+      }
       break
-    case 1:
-      clearTimeout(step_id)
+    case 1://death screen
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath()
       ctx.fillStyle = 'red'
@@ -346,11 +402,18 @@ function draw() {
       ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth/2, canvasHeight/2+25)
       ctx.fillText("SURVIVED FOR "+game_numbers.last_time, canvasWidth/2, canvasHeight/2+50)
 
-      ctx.fillText("CLICK TO PLAY AGAIN", canvasWidth/2, canvasHeight/2+100)
+      for(var i = 0; i < buttons.length; i++)
+        {
+          buttons[i].draw(ctx)
+        }
       ctx.fill()
       break
     case 2:
-      drawWorld()
+      if(!pause)
+        drawWorld()
+      break
+    case 3:
+      loadingScreen()
       break
   }
 
@@ -404,8 +467,16 @@ function onMouseMove(event) {
   var mPos = getCursorPosition(event)
   switch(game_state)
   {
+    case 0:
+    case 1:
+      for(var i = 0; i < buttons.length; i++)
+      {
+        buttons[i].onMouseMove(mPos.x, mPos.y)
+      }
+      break
     case 2:
-      player.mouseMove(mPos)
+      if(!pause)
+        player.mouseMove(mPos)
       break
   }
 }
@@ -415,44 +486,71 @@ function onClick(event) {
   switch(game_state)
   {
     case 0:
-      game_state = 2
-      setupWorld()
-      step()
+      if(!start_clicked)
+      {
+        start_clicked = true
+        setupMainMenu()
+        
+
+      }  
+      else
+      {
+        for(var i = 0; i < buttons.length; i++)
+        {
+          buttons[i].onClick(mPos.x, mPos.y)
+        }
+      }
       break
     case 1:
-      game_state = 2
-      setupWorld()
-      step()
+      for(var i = 0; i < buttons.length; i++)
+        {
+          buttons[i].onClick(mPos.x, mPos.y)
+        }
       break
 
     case 2:
-      player.click(mPos, enemies)
+      if(!pause)
+      {
+        player.click(mPos, enemies)
+      }
       break
 
   }
     
 }
 
+function setupMainMenu() {
+  buttons = []
+  buttons.push(new ImpulseButton("ARENA", 20, canvasWidth/2, canvasHeight/2+70, 200, 50, function(){}))
+  buttons.push(new ImpulseButton("SURVIVAL", 20, canvasWidth/2, canvasHeight/2+120, 200, 50, function(){game_state = 3; setupWorld();}))
+  buttons.push(new ImpulseButton("ENEMIES", 20, canvasWidth/2, canvasHeight/2+170, 200, 50, function(){}))
+  buttons.push(new ImpulseButton("CREDITS", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(){}))
+  buttons[0].setActive(false)
+  buttons[2].setActive(false)
+  buttons[3].setActive(false)
+}
+
 function processGame() {
-  dead_enemies = []
-  player.process(obstacle_polygons)
-  for(var i = 0; i < enemies.length; i++) {
-    enemies[i].process(i)
-  }
-  while(dead_enemies.length > 0)
+  if(!pause)
   {
-    var dead_i = dead_enemies.pop()
-    game_numbers.kills +=1
-    world.DestroyBody(enemies[dead_i].body)
-    enemies.splice(dead_i, 1)
+    dead_enemies = []
+    player.process(obstacle_polygons)
+    for(var i = 0; i < enemies.length; i++) {
+      enemies[i].process(i)
+    }
+    while(dead_enemies.length > 0)
+    {
+      var dead_i = dead_enemies.pop()
+      game_numbers.kills +=1
+      world.DestroyBody(enemies[dead_i].body)
+      enemies.splice(dead_i, 1)
+    }
+    adjust_difficulty()
+    generate_enemies()
   }
-  adjust_difficulty()
-  generate_enemies()
 }
 
 function adjust_difficulty() {
-  game_numbers.max_enemies = [1, 1, 1, 1]
-  return
 //adjust difficult depending on time
   var seconds = game_numbers.seconds
   game_numbers.max_enemies = [Math.min(Math.floor(seconds/2), 20), 1, 1, 1]
@@ -460,7 +558,7 @@ function adjust_difficulty() {
 }
 
 function generate_enemies() {
-  if(enemies.length > game_numbers.max_enemies[0])
+  if(enemies.length >= game_numbers.max_enemies[0])
   {
     return
   }
@@ -529,6 +627,9 @@ function getRandomOutsideLocation(buffer, range) {
 
 function gameOver() {
   game_state = 1
+  buttons = []
+  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+100, 300, 50, function(){game_state = 3; setupWorld();}))
+  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
   
 }
 
