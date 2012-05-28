@@ -11,6 +11,7 @@ Level.prototype.init = function(id) {
   this.obstacle_polygons = []; //the actual polygons that kill players and enemies
   this.obstacles = []
   this.obstacle_edges = []
+  this.kills_to_win = 300
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -64,10 +65,18 @@ Level.prototype.getEnemyCap = function(time) {
   }
 }
 
+Level.prototype.getSpawnRate = function (time) {
+  switch(this.id) {
+    case 1:
+      return Math.min(0.01+time/60*0.02, 0.03)
+      break
+  }
+}
+
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, Math.max(Math.min((Math.floor(time/2)-10)/20, .2),0)]
+      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.2), 0)]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]
@@ -95,3 +104,10 @@ Level.prototype.draw = function(context) {
   
 }
 
+Level.prototype.has_won = function (game_numbers) {
+  return game_numbers.kills >= this.kills_to_win
+}
+
+Level.prototype.get_win_progress_text = function (game_numbers) {
+  return "KILLS LEFT: "+(Math.max(0, this.kills_to_win - game_numbers.kills))
+}

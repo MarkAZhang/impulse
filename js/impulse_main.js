@@ -311,7 +311,8 @@ function draw_interface() {
 
   ctx.fillText(game_numbers.last_time, 5, canvasHeight - 5)
   ctx.textAlign = 'right'
-  ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth - 5, canvasHeight - 5)
+  ctx.fillText(level.get_win_progress_text(game_numbers), canvasWidth - 5, canvasHeight - 5)
+  //ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth - 5, canvasHeight - 5)
 
   if(fps_counter == null)
   {
@@ -401,6 +402,26 @@ function draw() {
     case 3:
       loadingScreen()
       break
+    case 4: //win screen
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath()
+      ctx.fillStyle = 'blue'
+      ctx.font = '30px Century Gothic'
+      ctx.textAlign = 'center'
+
+      ctx.fillText("LEVEL COMPLETE", canvasWidth/2, canvasHeight/2-25)
+      ctx.fill()
+      ctx.beginPath()
+      ctx.font = '20px Century Gothic'
+      ctx.fillStyle = 'black'
+      ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth/2, canvasHeight/2+25)
+      ctx.fillText("TIME: "+game_numbers.last_time, canvasWidth/2, canvasHeight/2+50)
+      for(var i = 0; i < buttons.length; i++)
+        {
+          buttons[i].draw(ctx)
+        }
+      ctx.fill()
+      break
   }
 
 }
@@ -455,6 +476,7 @@ function onMouseMove(event) {
   {
     case 0:
     case 1:
+    case 4:
       for(var i = 0; i < buttons.length; i++)
       {
         buttons[i].onMouseMove(mPos.x, mPos.y)
@@ -488,6 +510,7 @@ function onClick(event) {
       }
       break
     case 1:
+    case 4:
       for(var i = 0; i < buttons.length; i++)
         {
           buttons[i].onClick(mPos.x, mPos.y)
@@ -519,6 +542,7 @@ function setupMainMenu() {
 function processGame() {
   if(!pause)
   {
+    check_win()
     dead_enemies = []
     player.process()
     for(var i = 0; i < enemies.length; i++) {
@@ -531,8 +555,26 @@ function processGame() {
       world.DestroyBody(enemies[dead_i].body)
       enemies.splice(dead_i, 1)
     }
-    generate_enemies()
+    if(!level.has_won(game_numbers))
+    {
+      generate_enemies()
+    }
   }
+}
+
+function check_win() {
+ if(level.has_won(game_numbers) && enemies.length == 0) {//all enemies are dead
+    game_won()
+  } 
+
+}
+
+function game_won() {
+  game_state = 4
+  buttons = []
+  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+100, 300, 50, function(){game_state = 3; setupWorld();}))
+  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
+    
 }
 
 function generate_enemies() {
@@ -541,11 +583,7 @@ function generate_enemies() {
   {
     return
   }
-  while(enemies.length < .2 * level.getEnemyCap(game_numbers.seconds))
-  {
-    generate_enemy(level.getRandomEnemy(game_numbers.seconds))
-  }
-  if(Math.random() < .05)
+  if(Math.random() < level.getSpawnRate(game_numbers.seconds))
   {
     generate_enemy(level.getRandomEnemy(game_numbers.seconds))
   }

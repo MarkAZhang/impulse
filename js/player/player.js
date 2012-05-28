@@ -178,9 +178,10 @@ Player.prototype.process = function() {
 
 Player.prototype.draw = function(context) {
   context.beginPath()
-	context.fillStyle = 'black';
+	context.strokeStyle = 'black';
 	context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
-	context.fill()
+  context.lineWidth = 2
+	context.stroke()
   context.beginPath()
   if(this.status=="normal")
   {

@@ -1,1 +1,12 @@
 particle/antiparticle
+
+
+NEXT:
+
+Add win conditions (time and kills for now)
+
+Make green enemy a triangle.
+
+
+
+Make green enemy impulse you
