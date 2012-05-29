@@ -3,10 +3,6 @@ particle/antiparticle
 
 NEXT:
 
-Add win conditions (time and kills for now)
+Third enemy?
 
-Make green enemy a triangle.
-
-
-
-Make green enemy impulse you
+(later)Add increase-able range and force

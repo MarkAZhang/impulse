@@ -9,6 +9,8 @@ var polygons = []
 var visibility_graph;
 var this_path = null
 var last_time = 0
+var dt = 0
+var last_fps_time = 0
 var fps_counter = null
 var fps = 0
 var game_state
@@ -19,7 +21,7 @@ var other_polygon;
 var buffer_radius = 1;  //radius around obstacles and around outer wall
 var enemy_counter; //give each enemy an ID
 var offset_left, offset_top
-var game_numbers = {score: 0, seconds: 0, kills: 0, game_start: 0}
+var game_numbers = {score: 0, seconds: 0, kills: 0, game_length: 0}
 var start_clicked
 var buttons = []
 var pause = true
@@ -128,14 +130,15 @@ function setupWorld_next() {
     generate_level()
     var r_p = getRandomValidLocation({x: -10, y: -10})
     player = new Player(world, r_p.x, r_p.y, draw_factor)
-    game_numbers.game_start = (new Date()).getTime()
+    game_numbers.game_length = 0
     game_numbers.last_time = null
     pause = false
     game_state = 2
 
     var contactListener = new b2ContactListener;
     contactListener.PreSolve = handle_collisions
-   world.SetContactListener(contactListener);
+    world.SetContactListener(contactListener);
+    last_time = (new Date()).getTime()
     
 }
 
@@ -304,7 +307,7 @@ function draw_interface() {
   ctx.font = '15px Century Gothic'
   ctx.fillColor = 'black'
   ctx.textAlign = 'left'
-  game_numbers.seconds = Math.round(((new Date()).getTime() - game_numbers.game_start)/1000)
+  game_numbers.seconds = Math.round(game_numbers.game_length/1000)
   var a =  game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   game_numbers.last_time = Math.floor( game_numbers.seconds/60)+":"+a
@@ -316,7 +319,7 @@ function draw_interface() {
 
   if(fps_counter == null)
   {
-    last_time = (new Date()).getTime()
+    last_fps_time = (new Date()).getTime()
     fps_counter = 0
     fps = "???"
   }
@@ -324,9 +327,8 @@ function draw_interface() {
   {
     fps_counter = 0
     var a = (new Date()).getTime()
-    console.log(a+" "+last_time+" "+(a-last_time))
-    fps = Math.round(100000/(a-last_time))
-    last_time = (new Date()).getTime()
+    fps = Math.round(100000/(a-last_fps_time))
+    last_fps_time = (new Date()).getTime()
   }
   fps_counter+=1
   ctx.beginPath()
@@ -337,13 +339,41 @@ function draw_interface() {
 }
 
 function step() {
-    if(game_state==2 && !pause)
-    {
-      processGame();
-      world.Step(1.0/60, 1, 10, 10);
+  var cur_time = (new Date()).getTime()
+  dt = cur_time - last_time
+  if(game_state==2 && !pause)
+  {
+    processGame();
+    world.Step(1.0/60, 1, 10, 10);
+  }
+	draw();
+  last_time = (new Date()).getTime()
+  step_id = setTimeout('step()', 20);
+
+}
+
+function processGame() {
+  if(!pause)
+  {
+    check_win()
+    dead_enemies = []
+    player.process(dt)
+    for(var i = 0; i < enemies.length; i++) {
+      enemies[i].process(i, dt)
     }
-	  draw();
-   	step_id = setTimeout('step()', 20);
+    while(dead_enemies.length > 0)
+    {
+      var dead_i = dead_enemies.pop()
+      
+      world.DestroyBody(enemies[dead_i].body)
+      enemies.splice(dead_i, 1)
+    }
+    if(!level.has_won(game_numbers))
+    {
+      generate_enemies()
+    }
+    game_numbers.game_length += dt
+  }
 }
 
 function draw() {
@@ -396,8 +426,7 @@ function draw() {
       ctx.fill()
       break
     case 2:
-      if(!pause)
-        drawWorld()
+      drawWorld()
       break
     case 3:
       loadingScreen()
@@ -450,6 +479,10 @@ function getWindowDimensions() {
 
 function onKeyDown(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
+  if(keyCode == 32)//pause
+  {
+    pause = !pause 
+  }
   switch(game_state)
   {
     case 2:
@@ -461,6 +494,8 @@ function onKeyDown(event) {
 
 function onKeyUp(event) {
     var keyCode = event==null? window.event.keyCode : event.keyCode;
+   //
+
     switch(game_state)
     {
       case 2:
@@ -539,28 +574,7 @@ function setupMainMenu() {
   buttons[3].setActive(false)
 }
 
-function processGame() {
-  if(!pause)
-  {
-    check_win()
-    dead_enemies = []
-    player.process()
-    for(var i = 0; i < enemies.length; i++) {
-      enemies[i].process(i)
-    }
-    while(dead_enemies.length > 0)
-    {
-      var dead_i = dead_enemies.pop()
-      
-      world.DestroyBody(enemies[dead_i].body)
-      enemies.splice(dead_i, 1)
-    }
-    if(!level.has_won(game_numbers))
-    {
-      generate_enemies()
-    }
-  }
-}
+
 
 function check_win() {
  if(level.has_won(game_numbers) && enemies.length == 0) {//all enemies are dead

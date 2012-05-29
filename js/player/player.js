@@ -41,7 +41,8 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.status = "normal"
   this.status_start = 0
   this.status_duration = 0
-  this.attack_duration = 500
+  this.attack_length = 500
+  this.attack_duration = 0
 
 }
 
@@ -87,7 +88,6 @@ Player.prototype.mouseMove = function(pos) {
 
 Player.prototype.stun = function(dur) {
   this.status = "stunned"
-  this.status_start = (new Date()).getTime()
   this.status_duration = dur
 }
 
@@ -97,19 +97,24 @@ Player.prototype.click = function(pos, enemies) {
   if(!this.attacking && this.status == "normal")
   {
     this.attacking = true
-    this.attack_start = (new Date()).getTime()
     this.attack_loc = this.body.GetPosition().Copy()
     this.attack_angle = this.impulse_angle
+    this.attack_duration = this.attack_length
   }
 
   
 }
 
-Player.prototype.process = function() {
+Player.prototype.process = function(dt) {
 
-  if(this.status!="normal" && ((new Date()).getTime()-this.status_start)/1000 > this.status_duration)
-  {
-    this.status = "normal"
+  if(this.status!="normal") {
+    if(this.status_duration < 0) {
+      this.status = "normal"
+    }
+    else {
+      this.status_duration -= dt
+    }
+
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
@@ -124,8 +129,9 @@ Player.prototype.process = function() {
 
   if(this.attacking)
   {
-    var cur_time = (new Date()).getTime()
-    if(cur_time > this.attack_start + this.attack_duration)//attack lasts 500 ms
+
+    
+    if(this.attack_duration < 0)//attack lasts 500 ms
     {
       this.attacking = false
       this.enemies_hit = []
@@ -157,7 +163,7 @@ Player.prototype.process = function() {
             var dist = this.attack_loc.Copy()
             dist.Subtract(enemies[i].body.GetPosition())
             dist = dist.Normalize()
-            if (dist >= this.impulse_radius * (cur_time - this.attack_start)/(this.attack_duration + this.attack_duration * .2) && dist <= this.impulse_radius * (cur_time - this.attack_start + this.attack_duration * .2)/(this.attack_duration + this.attack_duration * .2))
+            if (dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2))
             {
               enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
               this.enemies_hit.push(enemies[i].id)
@@ -165,8 +171,8 @@ Player.prototype.process = function() {
           }
         }
       }
+      this.attack_duration -= dt
     }
-
   }
   
   if(this.status=="normal")
@@ -182,6 +188,10 @@ Player.prototype.draw = function(context) {
 	context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
   context.lineWidth = 2
 	context.stroke()
+  context.globalAlpha = .5
+  context.fillStyle = 'black'
+  context.fill()
+  context.globalAlpha = 1
   context.beginPath()
   if(this.status=="normal")
   {
@@ -203,7 +213,7 @@ Player.prototype.draw = function(context) {
     var cur_time = (new Date()).getTime()
     context.beginPath();
     context.lineWidth = this.impulse_radius * 1/6 * this.draw_factor
-    context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (cur_time - this.attack_start + this.attack_duration * .2)/(this.attack_duration + this.attack_duration * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+    context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
     context.lineWidth = 15;
     // line color
     context.strokeStyle = "rgba(0,255,255, 1)";

@@ -28,13 +28,14 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.yield = false
   this.id = id
   this.dying = false
-  this.dying_start = 0
+  this.dying_length = 500
+  this.dying_duration = 0
 
 }
 
-Enemy.prototype.process = function(enemy_index) {
+Enemy.prototype.process = function(enemy_index, dt) {
 
-  if(this.dying && (new Date()).getTime() - this.dying_start > 500)
+  if(this.dying && this.dying_duration < 0)
   {
     dead_enemies.push(enemy_index)
     if(this.dying=="kill")
@@ -46,6 +47,7 @@ Enemy.prototype.process = function(enemy_index) {
 
   if(this.dying)
   {
+    this.dying_duration -= dt
     return
   }
   //check if enemy has intersected polygon, if so die
@@ -142,6 +144,7 @@ Enemy.prototype.move = function(endPt) {
 Enemy.prototype.start_death = function(death) {
   this.dying_start = (new Date()).getTime()
   this.dying = death
+  this.dying_duration = this.dying_length
 }
 
 Enemy.prototype.collide_with = function(player) {
@@ -159,9 +162,9 @@ Enemy.prototype.collide_with = function(player) {
 
 Enemy.prototype.draw = function(context, draw_factor) {
   if(this.dying) {
+    var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)
     if(this.shape instanceof b2CircleShape)
     {
-      var prog = ((new Date()).getTime() - this.dying_start) / 500
       context.beginPath()
       context.globalAlpha = (1 - prog)
       context.strokeStyle = this.color
@@ -175,7 +178,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
     else if(this.shape instanceof b2PolygonShape)
     {
-      var prog = ((new Date()).getTime() - this.dying_start) / 500
       var tp = this.body.GetPosition()
       context.save();
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
