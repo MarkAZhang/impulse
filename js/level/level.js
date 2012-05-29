@@ -60,7 +60,7 @@ Level.prototype.generate_obstacle_edges = function() {
 Level.prototype.getEnemyCap = function(time) {
   switch(this.id) {
     case 1:
-      return Math.min(Math.floor(time/2), 20)
+      return Math.min(Math.floor(time), 20)
       break
   }
 }
@@ -68,7 +68,7 @@ Level.prototype.getEnemyCap = function(time) {
 Level.prototype.getSpawnRate = function (time) {
   switch(this.id) {
     case 1:
-      return Math.min(0.01+time/60*0.02, 0.03)
+      return Math.min(0.01+time/200*0.02, 0.03)
       break
   }
 }
@@ -76,7 +76,7 @@ Level.prototype.getSpawnRate = function (time) {
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1)), Math.max(Math.min((time-20)/100, 0.1)) ]
+      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 1), Math.max(Math.min((time-10)/100, 0.1), 0) ]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]
@@ -91,7 +91,6 @@ Level.prototype.getRandomEnemy = function(time) {
       return index
 
       break
-
 
   }
 }

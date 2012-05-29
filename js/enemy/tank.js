@@ -21,10 +21,11 @@ function Tank(world, x, y, id) {
   //the dampening factor that determines how much "air resistance" unit has
   this.lin_damp = 2.99
 
+  this.init(world, x, y, id)
   //this.fast_lin_damp = 1.5
 
   //how fast enemies move
-  this.force = .5
+  this.force = 1
 
   //how often enemy path_finds
   this.pathfinding_delay = 100
@@ -38,60 +39,103 @@ function Tank(world, x, y, id) {
 
   this.death_radius = 5
 
-  this.init(world, x, y, id)
+  this.detonate_timer = 200 
+  this.detonate_duration = 200
+  this.death_delay = 200
+  this.bomb_factor = 6
+
+  this.activated = false
+
+  this.cause_of_death = null
+
 }
 
-Tank.prototype.move = function(endPt) {
-
-  //apply impulse to move enemy
-  var in_poly = false
-  for(var i = 0; i < level.obstacle_polygons.length; i++)
+Tank.prototype.activated_processing = function(dt) {
+  if(this.activated)
   {
-    if(pointInPolygon(level.obstacle_polygons[i], this.body.GetPosition()))
+    console.log(this.detonate_timer + " " + this.id)
+    if(this.detonate_timer <= 0 && !this.dying)
     {
-      in_poly = true
+      this.start_death(this.cause_of_death)
+      this.explode()
+    }
+    if(this.detonate_timer > 0)
+    {
+      this.detonate_timer -= dt
     }
   }
-
-  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
-  dir.Normalize()
-  dir.Multiply(this.force)
-  
-  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
-
-  var heading = _atan(this.body.GetPosition(), endPt)
-
-  this.body.SetAngle(heading)
-    
 }
 
-Tank.prototype.additionalProcessing = function() {
+Tank.prototype.check_death = function()
+{
+  //check if enemy has intersected polygon, if so die
+  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  {
+    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    {
+      console.log(this.id + " HAS DIED")
+      this.activated = true
+      this.cause_of_death = "kill"
+      return
+    }
+  }
 }
 
-Tank.prototype.collide_with = function(player) {
+Tank.prototype.collide_with = function(other) {
+  if(other instanceof Tank)
+  {
+    this.activated = true
+    this.cause_of_death = "kill"
+  }
+
+  if(other !== player) {
+    return
+  }
 //function for colliding with the player
   if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
   {
     return
   }
-  if(!this.dying)//this ensures it only collides once
+  if(!this.dying && !this.activated)//this ensures it only collides once
   {
-    this.start_death("hit_player")
-    console.log("PLAYER HIT! " + this.tank_force)
-    var tank_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
-    player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), player.body.GetWorldCenter())
-      for(var i = 0; i < enemies.length; i++)
-      {
-        if(p_dist(this.body.GetPosition(), enemies[i].body.GetPosition()) <= this.effective_radius)
-        {
-          var _angle = _atan(this.body.GetPosition(), enemies[i].body.GetPosition())
-          enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * .8 * Math.cos(tank_angle), this.tank_force * .8 * Math.sin(tank_angle)), player.body.GetWorldCenter())
-
-        }
-      }
+    console.log(this.id + " HAS HIT PLAYER" )
+    this.activated = true
+    this.cause_of_death = "hit_player"
   }
   
 
 }
 
+Tank.prototype.explode = function() {
+  console.log("EXPLODE! " + this.id)
+  if(p_dist(this.body.GetPosition(), player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+  {
+    var tank_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+    player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), player.body.GetWorldCenter())
+  }
 
+  for(var i = 0; i < enemies.length; i++)
+  {
+
+    if(enemies[i] !== this && p_dist(this.body.GetPosition(), enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    {
+      var _angle = _atan(this.body.GetPosition(), enemies[i].body.GetPosition())
+      enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), enemies[i].body.GetWorldCenter())
+      console.log("EXPLODE ON ENEMY "+i+" "+_angle)
+
+    }
+  }
+}
+
+Tank.prototype.additional_drawing = function(context, draw_factor) {
+
+  if(this.activated && this.detonate_timer > 0)
+  {
+    context.beginPath()
+    context.strokeStyle = this.color;
+    context.lineWidth = 2
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
+    context.stroke()
+  }
+
+}

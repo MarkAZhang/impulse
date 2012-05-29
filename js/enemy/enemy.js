@@ -33,6 +33,20 @@ Enemy.prototype.init = function(world, x, y, id) {
 
 }
 
+Enemy.prototype.check_death = function()
+{
+  //check if enemy has intersected polygon, if so die
+  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  {
+    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    {
+      this.start_death("kill")
+      
+      return
+    }
+  }
+}
+
 Enemy.prototype.process = function(enemy_index, dt) {
 
   if(this.dying && this.dying_duration < 0)
@@ -45,29 +59,28 @@ Enemy.prototype.process = function(enemy_index, dt) {
     return
   }
 
-  if(this.dying)
+  if(this.dying )
   {
     this.dying_duration -= dt
     return
   }
-  //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
-  {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
-    {
-      this.start_death("kill")
-      
-      return
-    }
-  }
 
-  if(!this.path || this.path.length == 1 || this.pathfinding_counter == this.pathfinding_delay)
+  if(this.activated) {
+    this.activated_processing(dt)
+    return 
+  }//for tank, and potentially other enemies
+
+  
+  
+  this.check_death()
+
+  if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay)
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
     var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
     if(new_path!=null)
       this.path = new_path
-    this.pathfinding_counter = Math.floor(Math.random()*100)
+    this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
   }
   if(!this.path)
   {
@@ -110,10 +123,14 @@ Enemy.prototype.process = function(enemy_index, dt) {
     this.move(endPt)
   }
   
-  this.additionalProcessing()
+  this.additional_processing(dt)
 }
 
-Enemy.prototype.additionalProcessing = function() {
+Enemy.prototype.additional_processing = function(dt) {
+
+}
+
+Enemy.prototype.activated_processing = function(dt) {
 
 }
 
@@ -139,16 +156,24 @@ Enemy.prototype.move = function(endPt) {
   }
  
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+
+  if(this.shape instanceof b2PolygonShape) {
+    var heading = _atan(this.body.GetPosition(), endPt)
+    this.body.SetAngle(heading)
+  }
 }
 
 Enemy.prototype.start_death = function(death) {
-  this.dying_start = (new Date()).getTime()
   this.dying = death
   this.dying_duration = this.dying_length
 }
 
-Enemy.prototype.collide_with = function(player) {
+Enemy.prototype.collide_with = function(other) {
 //function for colliding with the player
+
+  if(other !== player) {
+    return
+  }
   if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
   {
     return
@@ -157,7 +182,7 @@ Enemy.prototype.collide_with = function(player) {
   {
     this.start_death("hit_player")
   }
-  player.stun(0.5)
+  player.stun(500)
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
@@ -264,5 +289,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.restore()
       context.globalAlpha = 1
     }
+    this.additional_drawing(context, draw_factor)
   }
+}
+
+Enemy.prototype.additional_drawing = function(context, draw_factor)
+{
+
 }

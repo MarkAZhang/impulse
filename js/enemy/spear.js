@@ -23,7 +23,7 @@ function Spear(world, x, y, id) {
   //this.fast_lin_damp = 1.5
 
   //how fast enemies move
-  this.force = .3
+  this.force = .2
 
   this.fast_force = 1
 
@@ -79,12 +79,15 @@ Spear.prototype.move = function(endPt) {
    
 }
 
-Spear.prototype.additionalProcessing = function() {
+Spear.prototype.additional_processing = function(dt) {
   this.special_mode = (this.path && this.path.length == 1)
 
 }
 
-Spear.prototype.collide_with = function(player) {
+Spear.prototype.collide_with = function(other) {
+  if(other !== player) {
+    return
+  }
 //function for colliding with the player
   if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
   {

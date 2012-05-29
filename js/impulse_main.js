@@ -145,6 +145,12 @@ function setupWorld_next() {
 function handle_collisions(contact) {
   var first = contact.GetFixtureA().GetUserData()
   var second = contact.GetFixtureB().GetUserData()
+
+  if(!first || !second) return
+
+  first.collide_with(second)
+  second.collide_with(first)
+
   if(first === player)
   {
     var _player = first
@@ -619,6 +625,10 @@ function generate_enemy(enemy_type) {
     break
     case 2:
       enemies.push(new Tank(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    case 3:
+      enemies.push(new Feather(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
 

@@ -38,9 +38,8 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.attack_angle = 0
   this.mouse_pos = {}//keeps track of last mouse position on player's part
   this.draw_factor = draw_factor
-  this.status = "normal"
-  this.status_start = 0
-  this.status_duration = 0
+  this.status = "normal"  //currently unused
+  this.status_duration = [0, 0] //[locked, silenced], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
 
@@ -87,14 +86,21 @@ Player.prototype.mouseMove = function(pos) {
 }
 
 Player.prototype.stun = function(dur) {
-  this.status = "stunned"
-  this.status_duration = dur
+  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
+  this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
 }
 
+Player.prototype.silence = function(dur) {
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+}
+
+Player.prototype.lock = function(dur) {
+  this.status_duration[0] = Math.max(dur, this.status_duration[0])
+}
 
 Player.prototype.click = function(pos, enemies) {
 
-  if(!this.attacking && this.status == "normal")
+  if(!this.attacking && this.status_duration[1] <= 0)
   {
     this.attacking = true
     this.attack_loc = this.body.GetPosition().Copy()
@@ -106,15 +112,12 @@ Player.prototype.click = function(pos, enemies) {
 }
 
 Player.prototype.process = function(dt) {
-
-  if(this.status!="normal") {
-    if(this.status_duration < 0) {
-      this.status = "normal"
-    }
-    else {
-      this.status_duration -= dt
-    }
-
+  
+  if(this.status_duration[0] > 0) {
+    this.status_duration[0] -= dt
+  }
+  if(this.status_duration[1] > 0) {
+    this.status_duration[1] -= dt
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
@@ -141,6 +144,7 @@ Player.prototype.process = function(dt) {
 
       for(var i = 0; i < enemies.length; i++)
       {
+        if(enemies[i] instanceof Feather) continue
         if(this.enemies_hit.indexOf(enemies[i].id)==-1 && !enemies[i].dying)//enemy has not been hit
         {
           var angle = _atan(this.attack_loc, enemies[i].body.GetPosition())
@@ -175,7 +179,7 @@ Player.prototype.process = function(dt) {
     }
   }
   
-  if(this.status=="normal")
+  if(this.status_duration[0] <= 0)
   {
     var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
     this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
@@ -184,16 +188,16 @@ Player.prototype.process = function(dt) {
 
 Player.prototype.draw = function(context) {
   context.beginPath()
-	context.strokeStyle = 'black';
+	context.strokeStyle = this.status_duration[0] <= 0 ? 'black' : 'red';
 	context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
   context.lineWidth = 2
 	context.stroke()
   context.globalAlpha = .5
-  context.fillStyle = 'black'
+  context.fillStyle = this.status_duration[0] <= 0 ? 'black' : 'red';
   context.fill()
   context.globalAlpha = 1
   context.beginPath()
-  if(this.status=="normal")
+  if(this.status_duration[1] <= 0)
   {
     context.fillStyle = "rgba(0, 255, 255, 0.2)";
   }
@@ -223,3 +227,6 @@ Player.prototype.draw = function(context) {
 
 }
 
+Player.prototype.collide_with = function(other) {
+
+}
