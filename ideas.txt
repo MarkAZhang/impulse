@@ -3,6 +3,6 @@ particle/antiparticle
 
 NEXT:
 
-Third enemy?
-
 (later)Add increase-able range and force
+
+More enemies!!

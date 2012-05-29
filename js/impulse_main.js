@@ -617,6 +617,11 @@ function generate_enemy(enemy_type) {
       enemies.push(new Spear(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
+    case 2:
+      enemies.push(new Tank(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+
     
 
   }

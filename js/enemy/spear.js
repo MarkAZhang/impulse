@@ -5,7 +5,7 @@ Spear.prototype.constructor = Spear
 function Spear(world, x, y, id) {
   
   vertices = []
-  var s_radius = 1  //temp var
+  var s_radius = .7  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))  
@@ -73,10 +73,10 @@ Spear.prototype.move = function(endPt) {
   }
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-  var spear_heading = _atan(this.body.GetPosition(), endPt)
+  var heading = _atan(this.body.GetPosition(), endPt)
 
-  this.body.SetAngle(spear_heading)
-    
+  this.body.SetAngle(heading)
+   
 }
 
 Spear.prototype.additionalProcessing = function() {
