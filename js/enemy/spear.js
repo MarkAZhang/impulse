@@ -4,11 +4,17 @@ Spear.prototype.constructor = Spear
 
 function Spear(world, x, y, id) {
   
-  b2Vec2 vertices[3]
+  vertices = []
+  var s_radius = 1  //temp var
+  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
+  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
+  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))  
+//  this.shape = new b2CircleShape(.5)
 
-  vertices[0].Set(Math.cos(Math.PI*5/6), Math.sin(Math.PI*5/6))
+  this.effective_radius =  s_radius//an approximation of the radius of this shape
 
-  this.shape = new b2CircleShape(.5)
+  this.shape = new b2PolygonShape
+  this.shape.SetAsArray(vertices, vertices.length)
   this.color = "green"
   this.density = 0.5
   //the dampening factor that determines how much "air resistance" unit has
@@ -51,32 +57,36 @@ Spear.prototype.move = function(endPt) {
     }
   }
 
-    var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
-    dir.Normalize()
-    if(in_poly)
-    {
-      dir.Multiply(this.slow_force)
-    }
-    else if(this.special_mode)
-    {
-      dir.Multiply(this.fast_force)
-    }
-    else
-    {
-      dir.Multiply(this.force)
-    }
+  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  dir.Normalize()
+  if(in_poly)
+  {
+    dir.Multiply(this.slow_force)
+  }
+  else if(this.special_mode)
+  {
+    dir.Multiply(this.fast_force)
+  }
+  else
+  {
+    dir.Multiply(this.force)
+  }
+  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-    this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+  var spear_heading = _atan(this.body.GetPosition(), endPt)
+
+  this.body.SetAngle(spear_heading)
     
 }
 
 Spear.prototype.additionalProcessing = function() {
   this.special_mode = (this.path && this.path.length == 1)
+
 }
 
 Spear.prototype.collide_with = function(player) {
 //function for colliding with the player
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.shape.GetRadius())
+  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
   {
     return
   }
@@ -85,7 +95,6 @@ Spear.prototype.collide_with = function(player) {
     this.start_death("hit_player")
     var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-    console.log(a.x +" "+a.y + " "+this.id)
     player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
   }
   
