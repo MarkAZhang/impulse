@@ -237,6 +237,9 @@ function generate_level() {
 
 function drawWorld() {
   
+  for(var i = 0; i < enemies.length; i++) {
+    enemies[i].pre_draw(ctx, draw_factor)
+  }
   level.draw(ctx)
   player.draw(ctx)
   for(var i = 0; i < enemies.length; i++) {
@@ -328,6 +331,7 @@ function draw_interface() {
 
   //ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth - 5, canvasHeight - 5)
 
+  ctx.textAlign = 'right'
   if(fps_counter == null)
   {
     last_fps_time = (new Date()).getTime()
@@ -637,6 +641,10 @@ function generate_enemy(enemy_type) {
     break
     case 3:
       enemies.push(new Feather(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    case 4:
+      enemies.push(new Goo(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
 

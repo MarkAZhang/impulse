@@ -160,10 +160,10 @@ Enemy.prototype.move = function(endPt) {
  
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-  if(this.shape instanceof b2PolygonShape) {
+  //if(this.shape instanceof b2PolygonShape) {
     var heading = _atan(this.body.GetPosition(), endPt)
     this.body.SetAngle(heading)
-  }
+  //}
 }
 
 Enemy.prototype.start_death = function(death) {
@@ -305,6 +305,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
 Enemy.prototype.additional_drawing = function(context, draw_factor)
 {
+
+}
+
+Enemy.prototype.pre_draw = function(context, draw_factor) {
+//things that should be drawn before anything else in the world
 
 }
 

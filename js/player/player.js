@@ -39,9 +39,10 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.mouse_pos = {}//keeps track of last mouse position on player's part
   this.draw_factor = draw_factor
   this.status = "normal"  //currently unused
-  this.status_duration = [0, 0] //[locked, silenced], time left for each status
+  this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
+  this.slow_factor = .3
   this.dying = false
   this.dying_length = 1000
   this.dying_duration = 0
@@ -102,6 +103,10 @@ Player.prototype.lock = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0])
 }
 
+Player.prototype.slow = function(dur) {
+  this.status_duration[2] = Math.max(dur, this.status_duration[2])
+}
+
 Player.prototype.click = function(pos, enemies) {
 
   if(!this.attacking && this.status_duration[1] <= 0)
@@ -116,7 +121,6 @@ Player.prototype.click = function(pos, enemies) {
 }
 
 Player.prototype.process = function(dt) {
- console.log("PLAYER DYING "+this.dying_duration)
  if(this.dying && this.dying_duration < 0)
   {
     gameOver()
@@ -134,6 +138,9 @@ Player.prototype.process = function(dt) {
   }
   if(this.status_duration[1] > 0) {
     this.status_duration[1] -= dt
+  }
+  if(this.status_duration[2] > 0) {
+    this.status_duration[2] -= dt
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
@@ -198,8 +205,10 @@ Player.prototype.process = function(dt) {
   
   if(this.status_duration[0] <= 0)
   {
-    var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? this.force/Math.sqrt(2) : this.force;
-    this.body.ApplyImpulse(new b2Vec2(this.force*this.f_x, this.force*this.f_y), this.body.GetWorldCenter())
+    var f = this.status_duration[2] <= 0 ? this.force : this.force * this.slow_factor
+    var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? f/Math.sqrt(2) : f;
+
+    this.body.ApplyImpulse(new b2Vec2(force*this.f_x, force*this.f_y), this.body.GetWorldCenter())
   }
 }
 
@@ -219,23 +228,20 @@ Player.prototype.draw = function(context) {
   }
   else {
     context.beginPath()
+    
     context.strokeStyle = this.status_duration[0] <= 0 ? this.color : 'red';
+    context.strokeStyle = this.status_duration[2] <= 0 ? context.strokeStyle : 'yellow'
     context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
     context.lineWidth = 2
     context.stroke()
     context.globalAlpha = .5
     context.fillStyle = this.status_duration[0] <= 0 ? this.color : 'red';
+    context.fillStyle = this.status_duration[2] <= 0 ? context.fillStyle : 'yellow'
     context.fill()
     context.globalAlpha = 1
     context.beginPath()
-    if(this.status_duration[1] <= 0)
-    {
-      context.fillStyle = "rgba(0, 255, 255, 0.2)";
-    }
-    else
-    {
-      context.fillStyle = "rgba(255, 0, 0, 0.5)";
-    }
+    context.fillStyle = this.status_duration[1] <= 0 ? "rgba(0, 255, 255, 0.2)" : "rgba(255, 0, 0, 0.5)"
+
     context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
     context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
     context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
