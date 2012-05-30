@@ -11,7 +11,7 @@ Level.prototype.init = function(id) {
   this.obstacle_polygons = []; //the actual polygons that kill players and enemies
   this.obstacles = []
   this.obstacle_edges = []
-  this.kills_to_win = 300
+  this.kills_to_win = 100
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -76,7 +76,7 @@ Level.prototype.getSpawnRate = function (time) {
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 1), Math.max(Math.min((time-10)/100, 0.1), 0) ]
+      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0) ]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

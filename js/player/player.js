@@ -42,6 +42,10 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.status_duration = [0, 0] //[locked, silenced], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
+  this.dying = false
+  this.dying_length = 1000
+  this.dying_duration = 0
+  this.color = "black"
 
 }
 
@@ -112,7 +116,19 @@ Player.prototype.click = function(pos, enemies) {
 }
 
 Player.prototype.process = function(dt) {
-  
+ console.log("PLAYER DYING "+this.dying_duration)
+ if(this.dying && this.dying_duration < 0)
+  {
+    gameOver()
+    return
+  }
+
+  if(this.dying )
+  {
+    this.dying_duration -= dt
+    return
+  } 
+
   if(this.status_duration[0] > 0) {
     this.status_duration[0] -= dt
   }
@@ -125,7 +141,7 @@ Player.prototype.process = function(dt) {
   {
     if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      gameOver()
+      this.start_death()
       break
     }
   }
@@ -171,6 +187,7 @@ Player.prototype.process = function(dt) {
             {
               enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
               this.enemies_hit.push(enemies[i].id)
+              enemies[i].process_impulse()
             }
           }
         }
@@ -187,31 +204,45 @@ Player.prototype.process = function(dt) {
 }
 
 Player.prototype.draw = function(context) {
-  context.beginPath()
-	context.strokeStyle = this.status_duration[0] <= 0 ? 'black' : 'red';
-	context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
-  context.lineWidth = 2
-	context.stroke()
-  context.globalAlpha = .5
-  context.fillStyle = this.status_duration[0] <= 0 ? 'black' : 'red';
-  context.fill()
-  context.globalAlpha = 1
-  context.beginPath()
-  if(this.status_duration[1] <= 0)
-  {
-    context.fillStyle = "rgba(0, 255, 255, 0.2)";
+  if(this.dying) {
+    var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)
+    context.beginPath()
+    context.globalAlpha = (1 - prog)
+    context.strokeStyle = this.color
+    context.lineWidth = (1 - prog) * 2
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shape.GetRadius()*draw_factor) * (1 + 1 * prog), 0, 2*Math.PI, true)
+    context.stroke()
+    context.fillStyle = this.color
+    context.globalAlpha/=2
+    context.fill()
+    context.globalAlpha = 1
   }
-  else
-  {
-    context.fillStyle = "rgba(255, 0, 0, 0.5)";
+  else {
+    context.beginPath()
+    context.strokeStyle = this.status_duration[0] <= 0 ? this.color : 'red';
+    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
+    context.lineWidth = 2
+    context.stroke()
+    context.globalAlpha = .5
+    context.fillStyle = this.status_duration[0] <= 0 ? this.color : 'red';
+    context.fill()
+    context.globalAlpha = 1
+    context.beginPath()
+    if(this.status_duration[1] <= 0)
+    {
+      context.fillStyle = "rgba(0, 255, 255, 0.2)";
+    }
+    else
+    {
+      context.fillStyle = "rgba(255, 0, 0, 0.5)";
+    }
+    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+    context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
+    context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
+    context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
+    context.closePath()
+    context.fill()
   }
-  context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-  context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
-  context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
-  context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
-  context.closePath()
-  context.fill()
-
   if(player.attacking)
   {
     var cur_time = (new Date()).getTime()
@@ -229,4 +260,9 @@ Player.prototype.draw = function(context) {
 
 Player.prototype.collide_with = function(other) {
 
+}
+
+Player.prototype.start_death = function() {
+  this.dying = true
+  this.dying_duration = this.dying_length
 }

@@ -21,6 +21,7 @@ function Spear(world, x, y, id) {
   this.lin_damp = 2.99
 
   //this.fast_lin_damp = 1.5
+  this.spear_range = 30
 
   //how fast enemies move
   this.force = .2
@@ -41,6 +42,9 @@ function Spear(world, x, y, id) {
   this.spear_force = 30 //force that the spear impulses the player
 
   this.death_radius = 5
+
+  this.stun_length = 5000 //after being hit by player, becomes stunned
+  this.stun_duration = 0
 
   this.init(world, x, y, id)
 }
@@ -80,8 +84,14 @@ Spear.prototype.move = function(endPt) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = (this.path && this.path.length == 1)
+  this.special_mode = this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && !(this.stun_duration > 0)
+  
+  this.color = this.stun_duration > 0 ? "red" : "green"
 
+  if(this.stun_duration > 0)
+  {
+    this.stun_duration -= dt
+  }
 }
 
 Spear.prototype.collide_with = function(other) {
@@ -104,4 +114,7 @@ Spear.prototype.collide_with = function(other) {
 
 }
 
+Spear.prototype.process_impulse = function() {
+  this.stun_duration = this.stun_length
+}
 

@@ -297,3 +297,7 @@ Enemy.prototype.additional_drawing = function(context, draw_factor)
 {
 
 }
+
+Enemy.prototype.process_impulse = function() {
+
+}
