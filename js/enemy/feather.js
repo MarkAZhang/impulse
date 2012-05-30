@@ -21,6 +21,8 @@ function Feather(world, x, y, id) {
   //the dampening factor that determines how much "air resistance" unit has
   this.lin_damp = 2.99
 
+  this.init(world, x, y, id)
+
   //this.fast_lin_damp = 1.5
 
   //how fast enemies move
@@ -38,7 +40,8 @@ function Feather(world, x, y, id) {
 
   this.death_radius = 5
 
-  this.init(world, x, y, id)
+  this.score_value = 1000
+
 }
 
 Feather.prototype.additional_processing = function() {
@@ -56,6 +59,7 @@ Feather.prototype.collide_with = function(other) {
   if(!this.dying)//this ensures it only collides once
   {
     this.start_death("hit_player")
+    reset_combo()
     player.silence(2000)
   }
   

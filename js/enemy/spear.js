@@ -20,6 +20,7 @@ function Spear(world, x, y, id) {
   //the dampening factor that determines how much "air resistance" unit has
   this.lin_damp = 2.99
 
+  this.init(world, x, y, id)
   //this.fast_lin_damp = 1.5
   this.spear_range = 30
 
@@ -46,7 +47,9 @@ function Spear(world, x, y, id) {
   this.stun_length = 5000 //after being hit by player, becomes stunned
   this.stun_duration = 0
 
-  this.init(world, x, y, id)
+  this.score_value = 300
+
+  this.do_yield = true
 }
 
 Spear.prototype.move = function(endPt) {
@@ -109,6 +112,8 @@ Spear.prototype.collide_with = function(other) {
     var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
     player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
+    game_numbers.combo = 1
+    reset_combo()
   }
   
 

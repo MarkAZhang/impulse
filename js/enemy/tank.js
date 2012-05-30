@@ -47,6 +47,9 @@ function Tank(world, x, y, id) {
   this.activated = false
 
   this.cause_of_death = null
+  this.do_yield = false
+
+  this.score_value = 700
 
 }
 
@@ -101,6 +104,7 @@ Tank.prototype.collide_with = function(other) {
     console.log(this.id + " HAS HIT PLAYER" )
     this.activated = true
     this.cause_of_death = "hit_player"
+    reset_combo()
   }
   
 

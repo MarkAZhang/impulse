@@ -30,6 +30,7 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.dying = false
   this.dying_length = 500
   this.dying_duration = 0
+  this.do_yield = true
 
 }
 
@@ -52,10 +53,6 @@ Enemy.prototype.process = function(enemy_index, dt) {
   if(this.dying && this.dying_duration < 0)
   {
     dead_enemies.push(enemy_index)
-    if(this.dying=="kill")
-    {
-      game_numbers.kills +=1
-    }
     return
   }
 
@@ -74,7 +71,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
   
   this.check_death()
 
-  if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay)
+  if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
     var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
@@ -98,27 +95,33 @@ Enemy.prototype.process = function(enemy_index, dt) {
   {
     return
   }
+
+  if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
+    this.path = [player.body.GetPosition()]
+    endPt = this.path[0]
+  }
   
   //check if yielding
-  if(this.yield_counter == this.yield_delay)
-  {
-    var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, enemies, function(enemy) {return enemy.body.GetPosition()})
-    this.yield = false
-    for(var i = 0; i < nearby_enemies.length; i++)
+  if(this.do_yield) {
+    if(this.yield_counter == this.yield_delay)
     {
-      if(nearby_enemies[i].id > this.id)
+      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, enemies, function(enemy) {return enemy.body.GetPosition()})
+      this.yield = false
+      for(var i = 0; i < nearby_enemies.length; i++)
       {
-        this.yield = true
-        break
+        if(nearby_enemies[i].id > this.id)
+        {
+          this.yield = true
+          break
+        }
       }
+      this.yield_counter = 0
     }
-    this.yield_counter = 0
+    this.yield_counter++
   }
-  this.yield_counter++
-
   
 
-  if(!this.yield)
+  if(!this.do_yield || !this.yield)
   {
     this.move(endPt)
   }
@@ -166,6 +169,12 @@ Enemy.prototype.move = function(endPt) {
 Enemy.prototype.start_death = function(death) {
   this.dying = death
   this.dying_duration = this.dying_length
+  if(this.dying == "kill" && !player.dying) {
+    game_numbers.kills +=1
+    game_numbers.score += game_numbers.combo * this.score_value
+    increment_combo()
+  }
+  
 }
 
 Enemy.prototype.collide_with = function(other) {
@@ -182,6 +191,7 @@ Enemy.prototype.collide_with = function(other) {
   {
     this.start_death("hit_player")
   }
+  reset_combo()
   player.stun(500)
 }
 

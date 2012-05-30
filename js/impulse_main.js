@@ -21,7 +21,7 @@ var other_polygon;
 var buffer_radius = 1;  //radius around obstacles and around outer wall
 var enemy_counter; //give each enemy an ID
 var offset_left, offset_top
-var game_numbers = {score: 0, seconds: 0, kills: 0, game_length: 0}
+var game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0}
 var start_clicked
 var buttons = []
 var pause = true
@@ -244,7 +244,7 @@ function drawWorld() {
   }
   
  
-  for(var i = 0; i < visibility_graph.vertices.length; i++)
+  /*for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -285,42 +285,47 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }*/
-  if(enemies[0])
-  {
-    this_path = visibility_graph.query(enemies[0].body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
-    if(this_path)
-    {
-
-      ctx.beginPath()
-      ctx.strokeStyle = 'blue';
-      ctx.lineWidth = 3
-      ctx.moveTo(enemies[0].body.GetPosition().x*draw_factor, enemies[0].body.GetPosition().y*draw_factor)
-      for(var i = 0; i < this_path.length; i++)
-      {
-          ctx.lineTo(this_path[i].x*draw_factor, this_path[i].y*draw_factor)
-      }
-      ctx.stroke()
-      ctx.lineWidth = 1
-    }
   }
+  for(var j = 0; j < Math.min(enemies.length, 10); j++)
+  {
+    if(enemies[j])
+    {
+      this_path = enemies[j].path
+      if(this_path)
+      {
+
+        ctx.beginPath()
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 3
+        ctx.moveTo(enemies[j].body.GetPosition().x*draw_factor, enemies[j].body.GetPosition().y*draw_factor)
+        for(var i = 0; i < this_path.length; i++)
+        {
+            ctx.lineTo(this_path[i].x*draw_factor, this_path[i].y*draw_factor)
+        }
+        ctx.stroke()
+        ctx.lineWidth = 1
+      }
+    }
+  }*/
 
   draw_interface()
 }
 
 function draw_interface() {
   ctx.beginPath()
-  ctx.font = '15px Century Gothic'
-  ctx.fillColor = 'black'
+  ctx.font = '25px Century Gothic'
   ctx.textAlign = 'left'
   game_numbers.seconds = Math.round(game_numbers.game_length/1000)
   var a =  game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   game_numbers.last_time = Math.floor( game_numbers.seconds/60)+":"+a
-
+  ctx.fillStyle = 'black'
   ctx.fillText(game_numbers.last_time, 5, canvasHeight - 5)
   ctx.textAlign = 'right'
-  ctx.fillText(level.get_win_progress_text(game_numbers), canvasWidth - 5, canvasHeight - 5)
+  ctx.fillText(game_numbers.score, canvasWidth - 5, canvasHeight - 5)
+  ctx.textAlign = 'center'
+  ctx.fillText("x"+game_numbers.combo, canvasWidth/2, canvasHeight - 5)
+
   //ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth - 5, canvasHeight - 5)
 
   if(fps_counter == null)
@@ -364,6 +369,7 @@ function processGame() {
     check_win()
     dead_enemies = []
     player.process(dt)
+    game_numbers.combo = game_numbers.base_combo + Math.floor(game_numbers.seconds/10)
     for(var i = 0; i < enemies.length; i++) {
       enemies[i].process(i, dt)
     }
@@ -379,6 +385,7 @@ function processGame() {
       generate_enemies()
     }
     game_numbers.game_length += dt
+
   }
 }
 
@@ -423,7 +430,8 @@ function draw() {
       ctx.font = '20px Century Gothic'
       ctx.fillStyle = 'black'
       ctx.fillText("KILLS: "+game_numbers.kills, canvasWidth/2, canvasHeight/2+25)
-      ctx.fillText("SURVIVED FOR "+game_numbers.last_time, canvasWidth/2, canvasHeight/2+50)
+      ctx.fillText("SURVIVED FOR "+game_numbers.last_time, canvasWidth/2, canvasHeight/2+60)
+      ctx.fillText("SCORE: "+game_numbers.score, canvasWidth/2, canvasHeight/2+95)
 
       for(var i = 0; i < buttons.length; i++)
         {
@@ -592,8 +600,8 @@ function check_win() {
 function game_won() {
   game_state = 4
   buttons = []
-  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+100, 300, 50, function(){game_state = 3; setupWorld();}))
-  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
+  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(){game_state = 3; setupWorld();}))
+  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
     
 }
 
@@ -632,9 +640,17 @@ function generate_enemy(enemy_type) {
       enemy_counter+=1
     break
 
-    
-
   }
+}
+
+function increment_combo() {
+  game_numbers.base_combo += 1
+  game_numbers.combo = game_numbers.base_combo + Math.floor(game_numbers.seconds/10)
+}
+
+function reset_combo() {
+  game_numbers.base_combo = 1
+  game_numbers.combo = game_numbers.base_combo + Math.floor(game_numbers.seconds/10)
 }
 
 //gets random point that is not inside a boundary polygon
@@ -684,8 +700,8 @@ function getRandomOutsideLocation(buffer, range) {
 function gameOver() {
   game_state = 1
   buttons = []
-  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+100, 300, 50, function(){game_state = 3; setupWorld();}))
-  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
+  buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(){game_state = 3; setupWorld();}))
+  buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
   
 }
 
