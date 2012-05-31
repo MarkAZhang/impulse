@@ -94,7 +94,7 @@ Tank.prototype.check_death = function()
 }
 
 Tank.prototype.collide_with = function(other) {
-  if(other instanceof Tank && !this.dying && !this.activated)
+  if((other instanceof Tank || other instanceof FighterBullet) && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {

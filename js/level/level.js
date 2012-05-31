@@ -96,14 +96,15 @@ Level.prototype.getSpawnRate = function (time) {
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, 
-          Math.max(Math.min((time-10)/100, 0.1), 0),
-          Math.max(Math.min((time-10)/100, 0.1), 0),
-          Math.max(Math.min((time-10)/100, 0.1), 0), 
-          Math.max(Math.min((time-10)/100, 0.1), 0), 
-          Math.max(Math.min((time-10)/100, 0.1), 0), 
-          Math.max(Math.min((time-10)/100, 0.1), 0), 
-          Math.max(Math.min((time-10)/100, 0.1), 0) ]
+      var enemy_prob = [1,                              //Stunner
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Spear
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Tank
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Feather
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Goo
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Disarmer
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Crippler
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Wisp
+          Math.max(Math.min((time-10)/100, 0.1), 0) ]   //Fighter
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

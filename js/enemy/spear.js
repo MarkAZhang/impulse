@@ -125,7 +125,7 @@ Spear.prototype.player_hit_proc = function() {
     
 }
 
-Spear.prototype.process_impulse = function() {
+Spear.prototype.process_impulse = function(attack_loc, impulse_force) {
   this.stun_duration = this.stun_length
 }
 

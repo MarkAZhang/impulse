@@ -33,6 +33,7 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.do_yield = true
   this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
   this.slow_factor = .3
+  this.is_enemy = true
 }
 
 Enemy.prototype.check_death = function()

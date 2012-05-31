@@ -195,7 +195,7 @@ Player.prototype.process = function(dt) {
             {
               enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
               this.enemies_hit.push(enemies[i].id)
-              enemies[i].process_impulse()
+              enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
             }
           }
         }

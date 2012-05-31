@@ -16,6 +16,7 @@ var fps = 0
 var game_state
 var step_id;
 var dead_enemies = [];
+var spawned_enemies = [];
 var other_polygon;
 
 var buffer_radius = 1;  //radius around obstacles and around outer wall
@@ -391,6 +392,7 @@ function processGame() {
   {
     check_win()
     dead_enemies = []
+    spawned_enemies = []
     player.process(dt)
     game_numbers.combo = game_numbers.base_combo + Math.floor(game_numbers.seconds/10)
     for(var i = 0; i < enemies.length; i++) {
@@ -407,6 +409,8 @@ function processGame() {
       world.DestroyBody(enemies[dead_i].body)
       enemies.splice(dead_i, 1)
     }
+    for(var i = 0; i < spawned_enemies.length; i++)
+      enemies.push(spawned_enemies[i])
     if(!level.has_won(game_numbers))
     {
       generate_enemies()
@@ -689,6 +693,10 @@ function generate_enemy(enemy_type) {
     break
     case 7:
       enemies.push(new Wisp(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    case 8:
+      enemies.push(new Fighter(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
 
