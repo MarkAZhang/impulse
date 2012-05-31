@@ -3,8 +3,16 @@ Goo.prototype = new Enemy()
 Goo.prototype.constructor = Goo
 
 function Goo(world, x, y, id) {
-  this.effective_radius = 1
-  this.shape = new b2CircleShape(this.effective_radius)
+  if(world == null) return  //allows others to use Goo as super-class
+
+  this.effective_radius = 2
+  var s_radius = this.effective_radius  //temp var
+  var vertices = []
+  vertices.push(new b2Vec2(s_radius * .25 * Math.cos(Math.PI * 0), s_radius * .5 * Math.sin(Math.PI*0)))
+  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 2/3), s_radius*Math.sin(Math.PI * 2/3)))
+  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))
+  this.shape = new b2PolygonShape
+  this.shape.SetAsArray(vertices, vertices.length)
   this.color = "yellow"
   this.density = .5
   //the dampening factor that determines how much "air resistance" unit has
@@ -12,7 +20,7 @@ function Goo(world, x, y, id) {
   this.init(world, x, y, id)
 
   //how fast enemies move
-  this.force = .5
+  this.force = .7
 
   //how fast enemies move when cautious
   this.slow_force = .1
@@ -23,16 +31,17 @@ function Goo(world, x, y, id) {
   //how often enemy checks to see if it can move if yielding
   this.yield_delay = 10
   this.death_radius = 2
-  this.score_value = 300
+  this.score_value = 500
   this.goo_polygons = []
   this.goo_interval = 250
   this.goo_timer = this.goo_interval
   this.goo_radius = 2 //radius of goo trail
   this.goo_duration = 5000 //amount of time a given goo polygon lasts
   this.goo_death_duration = 500
+  this.goo_color = [255, 255, 120]
   this.last_left = null
   this.last_right = null
-
+  this.do_yield = false
   this.effective_heading = this.body.GetAngle()//the heading used to calculate the goo, does not turn instantaneously
   
 }
@@ -58,7 +67,7 @@ Goo.prototype.additional_processing = function(dt) {
   {
 
     if(pointInPolygon(this.goo_polygons[i]['points'], player.body.GetPosition())) {
-      player.slow(100)
+      this.trail_effect()
     }
     this.goo_polygons[i]['duration'] -= dt
   }
@@ -98,13 +107,13 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
     
     if(this.goo_polygons[i]['duration'] > 0)
     {
-      context.fillStyle = "rgb(255, 255, 120)" 
+      context.fillStyle = "rgb(" + this.goo_color[0] + ", " + this.goo_color[1] + ", " + this.goo_color[2] + ")" 
     }
     else
     {
       var prog =  1 - Math.min((this.goo_polygons[i]['duration']/-this.goo_death_duration), 1)
-        console.log(prog)
-      context.fillStyle = "rgb(255, 255, " + Math.round(255 - prog * 135) + ")"
+      console.log(prog)
+      context.fillStyle = "rgb(" + Math.round((1 - prog) * 255 + prog * this.goo_color[0]) + ", " + Math.round((1 - prog) * 255 + prog * this.goo_color[1]) + ", " + Math.round((1 - prog) * 255 + prog * this.goo_color[2]) + ")" 
     }
 
     context.fill()
@@ -128,4 +137,8 @@ Goo.prototype.collide_with = function(other) {
   }
   reset_combo()
   player.slow(2000)
+}
+
+Goo.prototype.trail_effect = function() {
+  player.slow(100)
 }

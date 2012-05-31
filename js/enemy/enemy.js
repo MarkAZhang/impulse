@@ -206,7 +206,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.lineWidth = (1 - prog) * 2
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
       context.stroke()
-      context.fillStyle = this.color
+      context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.globalAlpha/=2
       context.fill()
       context.globalAlpha = 1
@@ -231,13 +231,15 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.closePath()
       //var vertices = 
       context.stroke()
-      context.fillStyle = this.color
+      context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.globalAlpha/=2
       context.fill()
       context.restore()
     }
   }
   else {
+
+    context.globalAlpha = this.visibility ? this.visibility : 1
     if(this.shape instanceof b2CircleShape)
     {
       context.beginPath()
@@ -245,8 +247,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.lineWidth = 2
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
       context.stroke()
-      context.globalAlpha = .5
-      context.fillStyle = this.color
+      context.globalAlpha = this.visibility ? this.visibility/2 : .5
+
+      context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.fill()
       if(this.special_mode) {
         context.beginPath()
@@ -278,8 +281,8 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.strokeStyle = this.color
       //var vertices = 
       context.stroke()
-      context.globalAlpha = .5
-      context.fillStyle = this.color
+      context.globalAlpha = this.visibility ? this.visibility/2 : .5
+      context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.fill() 
       if(this.special_mode) {
          context.beginPath()

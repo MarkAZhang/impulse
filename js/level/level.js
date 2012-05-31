@@ -12,6 +12,20 @@ Level.prototype.init = function(id) {
   this.obstacles = []
   this.obstacle_edges = []
   this.kills_to_win = 100
+  this.obstacle_visibility = 1
+  this.obstacles_visible = true
+}
+
+Level.prototype.process = function(dt) {
+  //handle obstacle visibility
+    if(this.obstacles_visible && this.obstacle_visibility < 1)
+    {
+      this.obstacle_visibility = Math.min(1, this.obstacle_visibility + dt/1000)
+    }
+    else if(!this.obstacles_visible && this.obstacle_visibility > 0)
+    {
+      this.obstacle_visibility = Math.max(0, this.obstacle_visibility - dt/1000)
+    }
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -35,7 +49,8 @@ Level.prototype.generate_obstacles = function() {
     this.obstacles.push(new BasicObstacle(temp_v))
     this.obstacle_polygons.push(temp_v)
     this.boundary_polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
-    
+    this.trail_enemies_cap = 5
+    this.trail_enemies_num = 0
   }
   this.generate_obstacle_edges()
 
@@ -60,7 +75,7 @@ Level.prototype.generate_obstacle_edges = function() {
 Level.prototype.getEnemyCap = function(time) {
   switch(this.id) {
     case 1:
-      return Math.min(Math.floor(time), 1)
+      return Math.min(Math.floor(time), 20)
       break
   }
 }
@@ -76,7 +91,7 @@ Level.prototype.getSpawnRate = function (time) {
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1),0), Math.max(Math.min((time-10)/100, 0.1), 1) ]
+      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1),0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 1) ]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]
@@ -87,6 +102,13 @@ Level.prototype.getRandomEnemy = function(time) {
         cumul+=enemy_prob[index]
       }
       console.log(enemy_prob)
+      if( index == 4 || index == 5 || index == 6)
+      {//impose a cap on number of trail-enemies
+        if(this.trail_enemies_num >= this.trail_enemies_cap)
+        {
+          return this.getRandomEnemy(time)
+        }
+      }
       console.log("RETURNING "+index +" "+choice)
       return index
 
@@ -96,11 +118,11 @@ Level.prototype.getRandomEnemy = function(time) {
 }
 
 Level.prototype.draw = function(context) {
-
+  context.globalAlpha = this.obstacle_visibility
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(ctx, draw_factor)
   }
-  
+  context.globalAlpha = 1  
 }
 
 Level.prototype.has_won = function (game_numbers) {

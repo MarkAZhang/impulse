@@ -27,6 +27,7 @@ var buttons = []
 var pause = true
 var level;
 
+
 Event.observe(window, 'load', function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2AABB = Box2D.Collision.b2AABB
@@ -380,6 +381,9 @@ function processGame() {
     while(dead_enemies.length > 0)
     {
       var dead_i = dead_enemies.pop()
+      if(enemies[dead_i] instanceof Goo || enemies[dead_i] instanceof Disarmer || enemies[dead_i] instanceof Crippler) {
+        level.trail_enemies_num -= 1
+      }
       
       world.DestroyBody(enemies[dead_i].body)
       enemies.splice(dead_i, 1)
@@ -389,13 +393,11 @@ function processGame() {
       generate_enemies()
     }
     game_numbers.game_length += dt
-
+    level.process(dt)
   }
 }
 
 function draw() {
-
-  
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   switch(game_state) {
@@ -646,7 +648,23 @@ function generate_enemy(enemy_type) {
     case 4:
       enemies.push(new Goo(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
+      level.trail_enemies_num +=1
     break
+    case 5:
+      enemies.push(new Disarmer(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+      level.trail_enemies_num +=1
+    break
+    case 6:
+      enemies.push(new Crippler(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+      level.trail_enemies_num +=1
+    break
+    case 7:
+      enemies.push(new Wisp(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+      level.trail_enemies_num +=1
+
 
   }
 }

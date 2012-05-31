@@ -240,7 +240,7 @@ Player.prototype.draw = function(context) {
     context.fill()
     context.globalAlpha = 1
     context.beginPath()
-    context.fillStyle = this.status_duration[1] <= 0 ? "rgba(0, 255, 255, 0.2)" : "rgba(255, 0, 0, 0.5)"
+    context.fillStyle = this.status_duration[1] <= 0 ? "rgba(0, 255, 255, 0.2)" : "rgba(122, 122, 122, 0.5)"
 
     context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
     context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
@@ -271,4 +271,5 @@ Player.prototype.collide_with = function(other) {
 Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
+  level.obstacles_visible = true
 }
