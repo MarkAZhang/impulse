@@ -29,7 +29,6 @@ Level.prototype.process = function(dt) {
 }
 
 Level.prototype.generate_obstacles = function() {
-
   switch(this.id){
     case 1:
       console.log("GENERATING POLYGONS")
@@ -38,14 +37,20 @@ Level.prototype.generate_obstacles = function() {
   for(var i = 0; i < 20; i++)
   {
     var x = Math.random()*canvasWidth/draw_factor
-    var y =  Math.random()*canvasHeight/draw_factor
+    var y = Math.random()*canvasHeight/draw_factor
     var r1 = Math.random()*4+3
     var r2 = Math.random()*4+3
     var r3 = Math.random()*4+3
     var r4 = Math.random()*2*Math.PI
-    var temp_v = [new b2Vec2(r1*Math.cos(r4+Math.PI)+x, r1*Math.sin(r4+Math.PI)+y),
+    var temp_v = [new b2Vec2(r1*Math.cos(r4+Math.PI * 0)+x, r1*Math.sin(r4+Math.PI* 0)+y),
           new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
           new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
+    /*temp_v = [new b2Vec2(3 * Math.cos(Math.PI * 0) + x, 3 * Math.sin(Math.PI * 0) + y),
+            new b2Vec2(3 * Math.cos(Math.PI * 2/3) + x, 3 * Math.sin(Math.PI * 2/3) + y),
+            new b2Vec2(3 * Math.cos(Math.PI * 4/3) + x, 3 * Math.sin(Math.PI * 4/3) + y)]
+/*            new b2Vec2(3 * Math.cos(Math.PI * 3/4) + x, 3 * Math.sin(Math.PI * 3/4) + y),
+            new b2Vec2(3 * Math.cos(Math.PI * 1/4) + x, 3 * Math.sin(Math.PI * 1/4) + y)]*/
+
     this.obstacles.push(new BasicObstacle(temp_v))
     this.obstacle_polygons.push(temp_v)
     this.boundary_polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
@@ -94,11 +99,11 @@ Level.prototype.getRandomEnemy = function(time) {
       var enemy_prob = [1, 
           Math.max(Math.min((time-10)/100, 0.1), 0),
           Math.max(Math.min((time-10)/100, 0.1), 0),
-          Math.max(Math.min((time-10)/100, 0), 0), 
-          Math.max(Math.min((time-10)/100, 0), 0), 
           Math.max(Math.min((time-10)/100, 0.1), 0), 
-          Math.max(Math.min((time-10)/100, 0), 0.5), 
-          Math.max(Math.min((time-10)/100, 0), 0.5) ]
+          Math.max(Math.min((time-10)/100, 0.1), 0), 
+          Math.max(Math.min((time-10)/100, 0.1), 0), 
+          Math.max(Math.min((time-10)/100, 0.1), 0), 
+          Math.max(Math.min((time-10)/100, 0.1), 0) ]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

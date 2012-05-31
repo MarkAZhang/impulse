@@ -15,6 +15,7 @@ function Spear(world, x, y, id) {
 
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
+  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
   this.color = "green"
   this.density = 0.5
   //the dampening factor that determines how much "air resistance" unit has
@@ -110,14 +111,18 @@ Spear.prototype.collide_with = function(other) {
   {
     this.start_death("hit_player")
     if(this.status_duration[1] <=0) {
-      var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
-      var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-      player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
-    }
+      }
     reset_combo()
   }
   
 
+}
+
+Spear.prototype.player_hit_proc = function() {
+  var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+  var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
+  player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
+    
 }
 
 Spear.prototype.process_impulse = function() {

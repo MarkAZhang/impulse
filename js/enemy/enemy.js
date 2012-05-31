@@ -193,20 +193,20 @@ Enemy.prototype.start_death = function(death) {
 Enemy.prototype.collide_with = function(other) {
 //function for colliding with the player
 
-  if(other !== player) {
+  if(this.dying)//ensures the collision effect only activates once
     return
-  }
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
-  {
-    return
-  }
-  if(!this.dying)//this ensures it only collides once
-  {
+
+  if(other === player && this.check_player_intersection(player)) {
+   
     this.start_death("hit_player")
+    reset_combo()
+    if(this.status_duration[1] <= 0)
+      this.player_hit_proc()
   }
-  reset_combo()
-  if(this.status_duration[1] <= 0)
-    player.stun(500)
+}
+
+Enemy.prototype.player_hit_proc = function() {
+  player.stun(500)
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
@@ -360,9 +360,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   }
 }
 
-Enemy.prototype.additional_drawing = function(context, draw_factor)
-{
-
+Enemy.prototype.additional_drawing = function(context, draw_factor) {
 }
 
 Enemy.prototype.pre_draw = function(context, draw_factor) {
@@ -389,4 +387,20 @@ Enemy.prototype.lock = function(dur) {
 
 Enemy.prototype.slow = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
+}
+
+Enemy.prototype.check_player_intersection = function(other) {
+
+  
+  if(this.collision_polygon) {
+    var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
+    var temp_ang = _atan({x:0, y:0}, temp_vec)
+    var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
+    var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
+    return pointInPolygon(this.collision_polygon, rotated_vec)
+  }
+  else
+  {
+    return (p_dist(other.body.GetPosition(), this.body.GetPosition() <= other.shape.GetRadius() + this.effective_radius + 0.1))
+  }
 }

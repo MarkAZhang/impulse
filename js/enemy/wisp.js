@@ -16,6 +16,8 @@ function Wisp(world, x, y, id) {
 
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
+
+  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
   
   this.density = 1
   //the dampening factor that determines how much "air resistance" unit has
@@ -55,26 +57,8 @@ Wisp.prototype.additional_processing = function(dt) {
   
 }
 
-Wisp.prototype.collide_with = function(other) {
-  if(other !== player) {
-    return
-  }
-//function for colliding with the player
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
-  {
-    return
-  }
-  if(!this.dying)//this ensures it only collides once
-  {
-    this.start_death("hit_player")
-    reset_combo()
-    if(this.status_duration[1] <=0) {
-      level.obstacles_visible = false
-      setTimeout("level.obstacles_visible = true", 5000)
-    }
-  }
-  
-
+Wisp.prototype.player_hit_proc = function() {
+  level.obstacles_visible = false
+  setTimeout("level.obstacles_visible = true", 5000)
 }
-
 

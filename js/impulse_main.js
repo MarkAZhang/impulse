@@ -250,7 +250,7 @@ function drawWorld() {
   }
   
  
-  /*for(var i = 0; i < visibility_graph.vertices.length; i++)
+  for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -615,7 +615,6 @@ function game_won() {
 }
 
 function generate_enemies() {
-
   if(enemies.length >= level.getEnemyCap(game_numbers.seconds))
   {
     return
@@ -733,7 +732,6 @@ function gameOver() {
   
 }
 
-
 function getCursorPosition(e){
 
     var x;
@@ -764,6 +762,7 @@ var _atan = function(center, ray) {
     {
       angle = Math.PI/2
     }
+    return angle
   }
   angle = Math.atan((center.y-ray.y)/(center.x-ray.x))
   if(center.x > ray.x)
@@ -786,18 +785,14 @@ function getObjectsWithinRadius(pt, r, objects, getLocation)
   }
   return ans
 
-
-
-
 }
 
-function getBoundaryPolygon(polygon, radius) {
+function getBoundaryPolygonOld(polygon, radius) {
 
   var j = polygon.length - 1
   var ans = []
   for(var i = 0; i < polygon.length; i++)
   {
-    
     var k = (i+1)%polygon.length
     var j_to_i_normal = new b2Vec2(polygon[j].y - polygon[i].y, polygon[i].x - polygon[j].x)
     var k_to_i_normal = new b2Vec2(polygon[i].y - polygon[k].y, polygon[k].x - polygon[i].x)
@@ -811,4 +806,55 @@ function getBoundaryPolygon(polygon, radius) {
     j = i
   }
   return ans
+}
+
+function getBoundaryPolygon(polygon, radius) {
+  var j = polygon.length - 1
+  var ans = []
+  for(var i = 0; i < polygon.length; i++)
+  {
+    var k = (i+1)%polygon.length
+    var j_to_i_normal = new b2Vec2(polygon[i].y - polygon[j].y, polygon[j].x - polygon[i].x)
+    var j_to_i = new b2Vec2(polygon[i].x - polygon[j].x, polygon[i].y - polygon[j].y)
+    var k_to_i_normal = new b2Vec2(polygon[k].y - polygon[i].y, polygon[i].x - polygon[k].x)
+    var k_to_i = new b2Vec2(polygon[i].x - polygon[k].x, polygon[i].y - polygon[k].y)
+    j_to_i_normal.Normalize()
+    k_to_i_normal.Normalize()
+    j_to_i.Normalize()
+    k_to_i.Normalize()
+    console.log("K: "+polygon[k].x+" "+polygon[k].y +" "+k)
+    console.log("I: "+polygon[i].x+" "+polygon[i].y +" "+i)
+    console.log("J: "+polygon[j].x+" "+polygon[j].y +" "+j)
+    var first_angle = _atan({x: 0, y: 0}, k_to_i_normal)
+    var second_angle = _atan({x: 0, y: 0}, j_to_i_normal)
+    console.log("FIRST "+first_angle)
+    console.log("SECOND "+second_angle)
+    console.log(k_to_i_normal)
+    console.log(j_to_i_normal)
+    console.log(k_to_i)
+    console.log(j_to_i)
+    var cur_angle = first_angle - second_angle
+    cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
+    cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
+    if(cur_angle > Math.PI/2)
+    {
+      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
+      ans.push({x: polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, y: polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})
+    }
+    else
+    {
+      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*Math.tan(cur_angle/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y *Math.tan(cur_angle/2)* radius})
+      
+    }
+    console.log(cur_angle)
+
+
+    /*ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})
+    ans.push({x: polygon[i].x+j_to_i_normal.x*radius, y: polygon[i].y + j_to_i_normal.y*radius})
+    var sum = new b2Vec2(j_to_i_normal.x + k_to_i_normal.x, j_to_i_normal.y + k_to_i_normal.y)
+    sum.Normalize()
+    ans.push({x: polygon[i].x+sum.x * radius, y: polygon[i].y+sum.y * radius})
+    */j = i
+  }
+  return ans 
 }

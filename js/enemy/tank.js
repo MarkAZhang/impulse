@@ -16,6 +16,7 @@ function Tank(world, x, y, id) {
 
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
+  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
   this.color = "purple"
   this.density = 2
   //the dampening factor that determines how much "air resistance" unit has
@@ -103,19 +104,13 @@ Tank.prototype.collide_with = function(other) {
     else {
       this.start_death("kill")
     }
-    
   }
 
-  if(other !== player) {
+  if(this.dying || this.activated)//ensures the collision effect only activates once
     return
-  }
-//function for colliding with the player
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
-  {
-    return
-  }
-  if(!this.dying && !this.activated)//this ensures it only collides once
-  {
+
+  if(other === player && this.check_player_intersection(player)) {
+   
     if(this.status_duration[1] <= 0) {
       this.activated = true
       this.cause_of_death = "hit_player"
@@ -125,8 +120,6 @@ Tank.prototype.collide_with = function(other) {
     }
     reset_combo()
   }
-  
-
 }
 
 Tank.prototype.explode = function() {

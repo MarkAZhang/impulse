@@ -13,6 +13,7 @@ function Goo(world, x, y, id) {
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
+  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
   this.color = "yellow"
   this.density = .5
   //the dampening factor that determines how much "air resistance" unit has
@@ -127,23 +128,8 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
   context.globalAlpha = 1
 }
 
-Goo.prototype.collide_with = function(other) {
-//function for colliding with the player
-
-  if(other !== player) {
-    return
-  }
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
-  {
-    return
-  }
-  if(!this.dying)//this ensures it only collides once
-  {
-    this.start_death("hit_player")
-  }
-  reset_combo()
-  if(this.status_duration[1] <= 0)
-    player.slow(2000)
+Goo.prototype.player_hit_proc = function() {
+  player.slow(2000)
 }
 
 Goo.prototype.trail_effect = function(obj) {
