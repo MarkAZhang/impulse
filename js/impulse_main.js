@@ -26,6 +26,10 @@ var start_clicked
 var buttons = []
 var pause = true
 var level;
+var score_labels = []
+var score_label_duration = 1000
+var score_label_rise = 30
+var score_label_font = '20px Century Gothic'
 
 
 Event.observe(window, 'load', function() {
@@ -118,7 +122,7 @@ function setupWorld_next() {
     game_numbers.score = 0
     game_numbers.kills = 0
     game_numbers.seconds = 0
-    game_numbers.base_combo = 0
+    game_numbers.base_combo = 1
 
 
     var gravity = new b2Vec2(000, 000);
@@ -250,7 +254,7 @@ function drawWorld() {
   }
   
  
-  for(var i = 0; i < visibility_graph.vertices.length; i++)
+  /*for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -268,7 +272,7 @@ function drawWorld() {
       ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
   /*for(var i = 0; i < obstacle_edges.length; i++)
   {
@@ -354,6 +358,18 @@ function draw_interface() {
   ctx.fillText("FPS: "+fps, canvasWidth - 5, 10)
   ctx.fill()
 
+  for(var i = 0; i < score_labels.length; i++)
+  {
+    ctx.beginPath()
+    ctx.font = score_label_font
+    var prog = score_labels[i].duration / score_label_duration
+    ctx.globalAlpha = prog
+    ctx.fillStyle = score_labels[i].color
+    ctx.fillText(score_labels[i].text, score_labels[i].x * draw_factor, score_labels[i].y * draw_factor - (1 - prog) * score_label_rise)
+    ctx.fill()
+  }
+  ctx.globalAlpha = 1
+
 }
 
 function step() {
@@ -397,6 +413,15 @@ function processGame() {
     }
     game_numbers.game_length += dt
     level.process(dt)
+    for(var i = 0; i < score_labels.length; i++) {
+      score_labels[i].duration -= dt
+    }
+    while(score_labels[0] && score_labels[0].duration <= 0)
+    {
+      score_labels = score_labels.slice(1)
+    }
+
+
   }
 }
 
@@ -731,6 +756,14 @@ function gameOver() {
   buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
   
 }
+
+function addScoreLabel(str, color, x, y) {
+  var temp_score_label = {text: str, color: color, x: x, y: y, duration: score_label_duration}
+  score_labels.push(temp_score_label)
+}
+
+
+
 
 function getCursorPosition(e){
 

@@ -184,6 +184,7 @@ Enemy.prototype.start_death = function(death) {
   this.dying_duration = this.dying_length
   if(this.dying == "kill" && !player.dying) {
     game_numbers.kills +=1
+    addScoreLabel(game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y)
     game_numbers.score += game_numbers.combo * this.score_value
     increment_combo()
   }
@@ -401,6 +402,6 @@ Enemy.prototype.check_player_intersection = function(other) {
   }
   else
   {
-    return (p_dist(other.body.GetPosition(), this.body.GetPosition() <= other.shape.GetRadius() + this.effective_radius + 0.1))
+    return (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
   }
 }
