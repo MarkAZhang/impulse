@@ -22,7 +22,7 @@ function Wisp(world, x, y, id) {
   this.lin_damp = 2.99
 
   this.init(world, x, y, id)
-  this.color = "rgb(245, 222, 179)"
+  this.color = "rgb(152, 251, 152)"
   this.interior_color = "white"
   //this.fast_lin_damp = 1.5
 
@@ -41,7 +41,7 @@ function Wisp(world, x, y, id) {
 
   this.death_radius = 5
 
-  this.score_value = 1000
+  this.score_value = 400
 
   this.visibility_timer = 0
 
@@ -51,7 +51,7 @@ Wisp.prototype.additional_processing = function(dt) {
   this.visibility_timer +=dt
   var leftover = this.visibility_timer % 2000
   if(leftover > 1000) leftover = 2000 - leftover
-  this.visibility = leftover / 1000
+  this.visibility = this.status_duration[1] <= 0 ? leftover / 1000 : 1
   
 }
 
@@ -68,8 +68,10 @@ Wisp.prototype.collide_with = function(other) {
   {
     this.start_death("hit_player")
     reset_combo()
-    level.obstacles_visible = false
-    setTimeout("level.obstacles_visible = true", 5000)
+    if(this.status_duration[1] <=0) {
+      level.obstacles_visible = false
+      setTimeout("level.obstacles_visible = true", 5000)
+    }
   }
   
 

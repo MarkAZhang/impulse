@@ -5,8 +5,8 @@ Goo.prototype.constructor = Goo
 function Goo(world, x, y, id) {
   if(world == null) return  //allows others to use Goo as super-class
 
-  this.effective_radius = 2
-  var s_radius = this.effective_radius  //temp var
+  var s_radius = 2  //temp var
+  this.effective_radius = .5
   var vertices = []
   vertices.push(new b2Vec2(s_radius * .25 * Math.cos(Math.PI * 0), s_radius * .5 * Math.sin(Math.PI*0)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 2/3), s_radius*Math.sin(Math.PI * 2/3)))
@@ -53,7 +53,7 @@ Goo.prototype.additional_processing = function(dt) {
 
     var left_goo_v = new b2Vec2(this.body.GetPosition().x + Math.cos(cur_angle + Math.PI/2) * this.goo_radius, this.body.GetPosition().y + Math.sin(cur_angle + Math.PI/2) * this.goo_radius)
     var right_goo_v = new b2Vec2(this.body.GetPosition().x + Math.cos(cur_angle - Math.PI/2) * this.goo_radius, this.body.GetPosition().y + Math.sin(cur_angle - Math.PI/2) * this.goo_radius)
-    if(this.last_left !=null)
+    if(this.last_left !=null && this.status_duration[1] <= 0)
     {
       this.goo_polygons.push({duration: this.goo_duration, points: [this.last_left, this.last_right, right_goo_v, left_goo_v]})
     }
@@ -67,7 +67,14 @@ Goo.prototype.additional_processing = function(dt) {
   {
 
     if(pointInPolygon(this.goo_polygons[i]['points'], player.body.GetPosition())) {
-      this.trail_effect()
+      this.trail_effect(player)
+    }
+    for(var j = 0; j < enemies.length; j++) {
+      if(pointInPolygon(this.goo_polygons[i]['points'], enemies[j].body.GetPosition()))
+      {
+        if(enemies[j]!==this)
+        this.trail_effect(enemies[j])
+      }
     }
     this.goo_polygons[i]['duration'] -= dt
   }
@@ -86,7 +93,7 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
   for(var i = 0; i < this.goo_polygons.length; i++)
   {
     context.beginPath()
-    if(i == this.goo_polygons.length - 1)
+    if(i == this.goo_polygons.length - 1 && this.status_duration[1] <=0)
     {
       context.moveTo(this.goo_polygons[i]['points'][0].x*draw_factor, this.goo_polygons[i]['points'][0].y * draw_factor)
       context.lineTo(this.goo_polygons[i]['points'][1].x*draw_factor, this.goo_polygons[i]['points'][1].y * draw_factor)
@@ -112,7 +119,6 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
     else
     {
       var prog =  1 - Math.min((this.goo_polygons[i]['duration']/-this.goo_death_duration), 1)
-      console.log(prog)
       context.fillStyle = "rgb(" + Math.round((1 - prog) * 255 + prog * this.goo_color[0]) + ", " + Math.round((1 - prog) * 255 + prog * this.goo_color[1]) + ", " + Math.round((1 - prog) * 255 + prog * this.goo_color[2]) + ")" 
     }
 
@@ -136,9 +142,10 @@ Goo.prototype.collide_with = function(other) {
     this.start_death("hit_player")
   }
   reset_combo()
-  player.slow(2000)
+  if(this.status_duration[1] <= 0)
+    player.slow(2000)
 }
 
-Goo.prototype.trail_effect = function() {
-  player.slow(100)
+Goo.prototype.trail_effect = function(obj) {
+  obj.slow(100)
 }

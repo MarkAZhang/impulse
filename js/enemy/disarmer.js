@@ -5,8 +5,8 @@ Disarmer.prototype = new Goo()
 Disarmer.prototype.constructor = Disarmer
 
 function Disarmer(world, x, y, id) {
-  this.effective_radius = 2
-  var s_radius = this.effective_radius  //temp var
+  var s_radius = 2  //temp var
+  this.effective_radius = .5 //just the short side
   var vertices = []
   vertices.push(new b2Vec2(s_radius * .25 * Math.cos(Math.PI * 0), s_radius * .5 * Math.sin(Math.PI*0)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1/2), s_radius*Math.sin(Math.PI * 1/2)))
@@ -63,9 +63,11 @@ Disarmer.prototype.collide_with = function(other) {
     this.start_death("hit_player")
   }
   reset_combo()
-  player.silence(2000)
+  if(this.status_duration[1] <= 0) {
+    player.silence(2000)
+  }
 }
 
-Disarmer.prototype.trail_effect = function() {
-  player.silence(100)
+Disarmer.prototype.trail_effect = function(obj) {
+  obj.silence(100)
 }

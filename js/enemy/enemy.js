@@ -31,7 +31,8 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.dying_length = 500
   this.dying_duration = 0
   this.do_yield = true
-
+  this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
+  this.slow_factor = .3
 }
 
 Enemy.prototype.check_death = function()
@@ -67,7 +68,15 @@ Enemy.prototype.process = function(enemy_index, dt) {
     return 
   }//for tank, and potentially other enemies
 
-  
+  if(this.status_duration[0] > 0) {
+    this.status_duration[0] -= dt
+  }
+  if(this.status_duration[1] > 0) {
+    this.status_duration[1] -= dt
+  }
+  if(this.status_duration[2] > 0) {
+    this.status_duration[2] -= dt
+  }
   
   this.check_death()
 
@@ -138,6 +147,9 @@ Enemy.prototype.activated_processing = function(dt) {
 }
 
 Enemy.prototype.move = function(endPt) {
+
+  if(this.status_duration[0] > 0) return //locked
+
   //apply impulse to move enemy
   var in_poly = false
   for(var i = 0; i < level.obstacle_polygons.length; i++)
@@ -155,7 +167,8 @@ Enemy.prototype.move = function(endPt) {
   }
   else
   {
-    dir.Multiply(this.force)
+    var f = this.status_duration[2] <= 0 ? this.force : this.force * this.slow_factor
+    dir.Multiply(f)
   }
  
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
@@ -192,7 +205,8 @@ Enemy.prototype.collide_with = function(other) {
     this.start_death("hit_player")
   }
   reset_combo()
-  player.stun(500)
+  if(this.status_duration[1] <= 0)
+    player.stun(500)
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
@@ -243,14 +257,34 @@ Enemy.prototype.draw = function(context, draw_factor) {
     if(this.shape instanceof b2CircleShape)
     {
       context.beginPath()
-      context.strokeStyle = this.color;
+      context.strokeStyle = this.status_duration[0] <= 0 ? this.color : 'red';
+      context.strokeStyle = this.status_duration[2] <= 0 ? context.strokeStyle : 'yellow'
       context.lineWidth = 2
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
       context.stroke()
       context.globalAlpha = this.visibility ? this.visibility/2 : .5
 
       context.fillStyle = this.interior_color ? this.interior_color : this.color
+      
       context.fill()
+      if(this.status_duration[0] > 0)
+      {
+        context.fillStyle = 'red'
+        context.globalAlpha = .5
+        context.fill()
+      }
+      else if(this.status_duration[2] > 0)
+      {
+        context.fillStyle = 'yellow'
+        context.globalAlpha = .5
+        context.fill()
+      }
+      else if(this.status_duration[1] > 0)
+      {
+        context.fillStyle = 'gray'
+        context.globalAlpha = .5
+        context.fill()
+      }
       if(this.special_mode) {
         context.beginPath()
         context.strokeStyle = this.color
@@ -278,12 +312,32 @@ Enemy.prototype.draw = function(context, draw_factor) {
       }
       context.closePath()
       context.lineWidth = 2
+
+      
       context.strokeStyle = this.color
       //var vertices = 
       context.stroke()
       context.globalAlpha = this.visibility ? this.visibility/2 : .5
       context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.fill() 
+      if(this.status_duration[0] > 0)
+      {
+        context.fillStyle = 'red'
+        context.globalAlpha = .5
+        context.fill()
+      }
+      else if(this.status_duration[2] > 0)
+      {
+        context.fillStyle = 'yellow'
+        context.globalAlpha = .5
+        context.fill()
+      }
+      else if(this.status_duration[1] > 0)
+      {
+        context.fillStyle = 'gray'
+        context.globalAlpha = .5
+        context.fill()
+      }
       if(this.special_mode) {
          context.beginPath()
       
@@ -318,4 +372,21 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 
 Enemy.prototype.process_impulse = function() {
 
+}
+
+Enemy.prototype.stun = function(dur) {
+  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
+  this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
+}
+
+Enemy.prototype.silence = function(dur) {
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+}
+
+Enemy.prototype.lock = function(dur) {
+  this.status_duration[0] = Math.max(dur, this.status_duration[0])
+}
+
+Enemy.prototype.slow = function(dur) {
+  this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }

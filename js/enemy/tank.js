@@ -53,6 +53,10 @@ function Tank(world, x, y, id) {
 
 }
 
+Tank.prototype.additional_processing = function(dt) {
+  this.special_mode = this.status_duration[1] <= 0
+}
+
 Tank.prototype.activated_processing = function(dt) {
   if(this.activated)
   {
@@ -76,19 +80,30 @@ Tank.prototype.check_death = function()
   {
     if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      console.log(this.id + " HAS DIED")
-      this.activated = true
-      this.cause_of_death = "kill"
+      if(this.status_duration[1] <= 0) {
+        this.activated = true
+        this.cause_of_death = "kill"
+      }
+      else {
+        this.start_death("kill")
+      }
       return
     }
   }
 }
 
 Tank.prototype.collide_with = function(other) {
-  if(other instanceof Tank)
+  if(other instanceof Tank && !this.dying && !this.activated)
   {
-    this.activated = true
-    this.cause_of_death = "kill"
+
+    if(this.status_duration[1] <= 0) {
+      this.activated = true
+      this.cause_of_death = "kill"
+    }
+    else {
+      this.start_death("kill")
+    }
+    
   }
 
   if(other !== player) {
@@ -101,9 +116,13 @@ Tank.prototype.collide_with = function(other) {
   }
   if(!this.dying && !this.activated)//this ensures it only collides once
   {
-    console.log(this.id + " HAS HIT PLAYER" )
-    this.activated = true
-    this.cause_of_death = "hit_player"
+    if(this.status_duration[1] <= 0) {
+      this.activated = true
+      this.cause_of_death = "hit_player"
+    }
+    else {
+      this.start_death("hit_player")
+    }
     reset_combo()
   }
   

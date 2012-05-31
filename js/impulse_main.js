@@ -118,6 +118,8 @@ function setupWorld_next() {
     game_numbers.score = 0
     game_numbers.kills = 0
     game_numbers.seconds = 0
+    game_numbers.base_combo = 0
+
 
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
@@ -383,6 +385,7 @@ function processGame() {
       var dead_i = dead_enemies.pop()
       if(enemies[dead_i] instanceof Goo || enemies[dead_i] instanceof Disarmer || enemies[dead_i] instanceof Crippler) {
         level.trail_enemies_num -= 1
+        console.log("LOST A TRAIL ENEMY")
       }
       
       world.DestroyBody(enemies[dead_i].body)
@@ -663,8 +666,7 @@ function generate_enemy(enemy_type) {
     case 7:
       enemies.push(new Wisp(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
-      level.trail_enemies_num +=1
-
+    break
 
   }
 }

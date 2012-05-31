@@ -20,6 +20,7 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = new b2CircleShape(.5);
+  this.r = .5
   
   bodyDef.position.x = x;
   bodyDef.position.y = y;
@@ -229,15 +230,25 @@ Player.prototype.draw = function(context) {
   else {
     context.beginPath()
     
-    context.strokeStyle = this.status_duration[0] <= 0 ? this.color : 'red';
-    context.strokeStyle = this.status_duration[2] <= 0 ? context.strokeStyle : 'yellow'
+    context.strokeStyle = this.color
     context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
     context.lineWidth = 2
     context.stroke()
     context.globalAlpha = .5
-    context.fillStyle = this.status_duration[0] <= 0 ? this.color : 'red';
-    context.fillStyle = this.status_duration[2] <= 0 ? context.fillStyle : 'yellow'
+    context.fillStyle = this.color
     context.fill()
+    if(this.status_duration[0] > 0)
+    {
+      context.fillStyle = 'red'
+      context.globalAlpha = .5
+      context.fill()
+    }
+    else if(this.status_duration[2] > 0)
+    {
+      context.fillStyle = 'yellow'
+      context.globalAlpha = .5
+      context.fill()
+    }
     context.globalAlpha = 1
     context.beginPath()
     context.fillStyle = this.status_duration[1] <= 0 ? "rgba(0, 255, 255, 0.2)" : "rgba(122, 122, 122, 0.5)"
@@ -248,19 +259,20 @@ Player.prototype.draw = function(context) {
     context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
     context.closePath()
     context.fill()
+    if(player.attacking)
+    {
+      var cur_time = (new Date()).getTime()
+      context.beginPath();
+      context.lineWidth = this.impulse_radius * 1/6 * this.draw_factor
+      context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+      context.lineWidth = 15;
+      // line color
+      context.strokeStyle = "rgba(0,255,255, 1)";
+      context.stroke();
+      
+    }
   }
-  if(player.attacking)
-  {
-    var cur_time = (new Date()).getTime()
-    context.beginPath();
-    context.lineWidth = this.impulse_radius * 1/6 * this.draw_factor
-    context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
-    context.lineWidth = 15;
-    // line color
-    context.strokeStyle = "rgba(0,255,255, 1)";
-    context.stroke();
-    
-  }
+  
 
 }
 

@@ -60,7 +60,8 @@ Feather.prototype.collide_with = function(other) {
   {
     this.start_death("hit_player")
     reset_combo()
-    player.silence(2000)
+    if(this.status_duration[1] <=0)
+      player.silence(2000)
   }
   
 

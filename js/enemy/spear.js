@@ -87,7 +87,7 @@ Spear.prototype.move = function(endPt) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && !(this.stun_duration > 0)
+  this.special_mode = this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && !(this.stun_duration > 0) && (this.status_duration[1] <= 0)
   
   this.color = this.stun_duration > 0 ? "red" : "green"
 
@@ -109,10 +109,11 @@ Spear.prototype.collide_with = function(other) {
   if(!this.dying)//this ensures it only collides once
   {
     this.start_death("hit_player")
-    var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
-    var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-    player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
-    game_numbers.combo = 1
+    if(this.status_duration[1] <=0) {
+      var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+      var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
+      player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
+    }
     reset_combo()
   }
   

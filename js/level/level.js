@@ -91,7 +91,14 @@ Level.prototype.getSpawnRate = function (time) {
 Level.prototype.getRandomEnemy = function(time) {
   switch(this.id) {
     case 1:
-      var enemy_prob = [1, Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1),0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 0), Math.max(Math.min((time-10)/100, 0.1), 1) ]
+      var enemy_prob = [1, 
+          Math.max(Math.min((time-10)/100, 0.1), 0),
+          Math.max(Math.min((time-10)/100, 0.1), 0),
+          Math.max(Math.min((time-10)/100, 0), 0), 
+          Math.max(Math.min((time-10)/100, 0), 0), 
+          Math.max(Math.min((time-10)/100, 0.1), 0), 
+          Math.max(Math.min((time-10)/100, 0), 0.5), 
+          Math.max(Math.min((time-10)/100, 0), 0.5) ]
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]
@@ -106,6 +113,7 @@ Level.prototype.getRandomEnemy = function(time) {
       {//impose a cap on number of trail-enemies
         if(this.trail_enemies_num >= this.trail_enemies_cap)
         {
+          return 0
           return this.getRandomEnemy(time)
         }
       }
