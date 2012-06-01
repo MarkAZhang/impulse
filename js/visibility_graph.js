@@ -255,6 +255,31 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   return t>0 && t<1 && s>0 && s<1
 }
 
+function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
+{
+  var seg1d = {x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}
+  var seg2d = {x: seg2f.x - seg2s.x, y: seg2f.y - seg2s.y}
+  var a = {x: seg2s.x - seg1s.x, y: seg2s.y - seg1s.y}
+  var b = crossProduct(seg1d, seg2d)
+  if(b==0)
+  {
+    if(crossProduct(a, seg2d)==0)
+    {
+      return null//lines are collinear. For the purposes of our visibility_graph, this does not count as an intersection
+    }
+    //lines are parallel
+  }
+  var t = crossProduct(a, seg2d)/b
+  var s = crossProduct(a, seg1d)/b
+  if(t>=0 && t<=1 && s>=0 && s<=1)
+  {
+    return {x: seg1s.x + seg1d.x * t, y: seg1s.y + seg1d.y * t}
+  }
+  else
+    return null
+}
+
+
 function crossProduct(v1, v2)
 {
   return v1.x*v2.y - v1.y*v2.x

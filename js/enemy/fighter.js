@@ -53,15 +53,16 @@ function Fighter(world, x, y, id) {
 }
 
 Fighter.prototype.additional_processing = function(dt) {
-  if(this.shoot_duration < 0) {
+  if(this.shoot_duration < 0 && this.status_duration[1] <= 0) {
     this.shoot_duration = this.shoot_interval
-    if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {
+    if(this.path.length == 1) {
       spawned_enemies.push(new FighterBullet(world, this.body.GetPosition().x + this.effective_radius * 3 * Math.cos(this.body.GetAngle()), this.body.GetPosition().y + this.effective_radius * 3 * Math.sin(this.body.GetAngle()), enemy_counter, (player.body.GetPosition().x - this.body.GetPosition().x), (player.body.GetPosition().y - this.body.GetPosition().y), this.id))
       enemy_counter += 1
     }
   }
   this.shoot_duration -= dt
 
+  this.special_mode = this.path.length == 1 && this.status_duration[1] <= 0
 }
 
 Fighter.prototype.player_hit_proc = function() {

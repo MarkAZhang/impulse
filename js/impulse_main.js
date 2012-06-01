@@ -254,7 +254,23 @@ function drawWorld() {
     enemies[i].draw(ctx, draw_factor)
   }
   
- 
+  var a = {x: 200, y: 350}
+  var b = {x: 400, y: 350}
+  var c = {x: 300, y: 300}
+  var d = {x: 300, y: 700}
+
+  ctx.beginPath()
+  ctx.strokeStyle = "blue"
+  ctx.moveTo(a.x, a.y)
+  ctx.lineTo(b.x, b.y)
+  ctx.moveTo(c.x, c.y)
+  ctx.lineTo(d.x, d.y)
+  ctx.stroke()
+  ctx.beginPath()
+  var s = getSegIntersection(a, b, c, d)
+  if(s)
+  ctx.arc(s.x, s.y, 20, 0, 2 * Math.PI, true)
+  ctx.stroke()
   /*for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
@@ -296,7 +312,7 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }
+  }*/
   for(var j = 0; j < Math.min(enemies.length, 10); j++)
   {
     if(enemies[j])
@@ -317,7 +333,7 @@ function drawWorld() {
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
 
   draw_interface()
 }
@@ -403,7 +419,6 @@ function processGame() {
       var dead_i = dead_enemies.pop()
       if(enemies[dead_i] instanceof Goo || enemies[dead_i] instanceof Disarmer || enemies[dead_i] instanceof Crippler) {
         level.trail_enemies_num -= 1
-        console.log("LOST A TRAIL ENEMY")
       }
       
       world.DestroyBody(enemies[dead_i].body)
@@ -699,6 +714,10 @@ function generate_enemy(enemy_type) {
       enemies.push(new Fighter(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
+    case 9:
+      enemies.push(new DeathRay(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
 
   }
 }
@@ -733,8 +752,28 @@ function getRandomValidLocation(testPoint) {
     return getRandomValidLocation(testPoint)
   }
   return r_point
+}
 
-
+//gets random point that is not inside a boundary polygon
+function getRandomCentralValidLocation(testPoint) {
+  var r_point = {x:Math.random()*(canvasWidth/2/draw_factor)+canvasWidth/4/draw_factor, y: Math.random()*(canvasHeight/2/draw_factor)+canvasHeight/4/draw_factor}
+  var inPoly = false
+  for(var k = 0; k < level.boundary_polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(level.boundary_polygons[k], r_point))
+    {
+      inPoly = true
+    }
+  }
+  if(inPoly)
+  {
+    return getRandomCentralValidLocation(testPoint)
+  }
+  if(visibility_graph.query(r_point, testPoint, level.boundary_polygons)==null)
+  {
+    return getRandomCentralValidLocation(testPoint)
+  }
+  return r_point
 }
 
 function getRandomOutsideLocation(buffer, range) {
@@ -863,17 +902,8 @@ function getBoundaryPolygon(polygon, radius) {
     k_to_i_normal.Normalize()
     j_to_i.Normalize()
     k_to_i.Normalize()
-    console.log("K: "+polygon[k].x+" "+polygon[k].y +" "+k)
-    console.log("I: "+polygon[i].x+" "+polygon[i].y +" "+i)
-    console.log("J: "+polygon[j].x+" "+polygon[j].y +" "+j)
     var first_angle = _atan({x: 0, y: 0}, k_to_i_normal)
     var second_angle = _atan({x: 0, y: 0}, j_to_i_normal)
-    console.log("FIRST "+first_angle)
-    console.log("SECOND "+second_angle)
-    console.log(k_to_i_normal)
-    console.log(j_to_i_normal)
-    console.log(k_to_i)
-    console.log(j_to_i)
     var cur_angle = first_angle - second_angle
     cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
     cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
@@ -887,7 +917,6 @@ function getBoundaryPolygon(polygon, radius) {
       ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*Math.tan(cur_angle/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y *Math.tan(cur_angle/2)* radius})
       
     }
-    console.log(cur_angle)
 
 
     /*ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})

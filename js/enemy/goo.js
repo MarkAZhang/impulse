@@ -48,6 +48,7 @@ function Goo(world, x, y, id) {
 }
 
 Goo.prototype.additional_processing = function(dt) {
+  this.special_mode = this.status_duration[1] <= 0
   if(this.goo_timer < 0) {
     this.goo_timer = this.goo_interval
     var cur_angle = this.body.GetAngle()
@@ -127,6 +128,8 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
   }
   context.globalAlpha = 1
 }
+
+
 
 Goo.prototype.player_hit_proc = function() {
   player.slow(2000)

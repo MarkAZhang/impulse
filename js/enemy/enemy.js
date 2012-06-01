@@ -34,6 +34,8 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
   this.slow_factor = .3
   this.is_enemy = true
+  this.special_mode_visibility_timer = 0
+  this.sp_visibility
 }
 
 Enemy.prototype.check_death = function()
@@ -78,9 +80,29 @@ Enemy.prototype.process = function(enemy_index, dt) {
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
   }
+
+  this.special_mode_visibility_timer +=dt
+  var leftover = this.special_mode_visibility_timer % 1000
+  if(leftover > 500) leftover = 1000 - leftover
+  this.sp_visibility = leftover/500
   
   this.check_death()
 
+  this.move()
+  
+  
+  this.additional_processing(dt)
+}
+
+Enemy.prototype.additional_processing = function(dt) {
+
+}
+
+Enemy.prototype.activated_processing = function(dt) {
+
+}
+
+Enemy.prototype.move = function() {
   if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
@@ -133,21 +155,11 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
   if(!this.do_yield || !this.yield)
   {
-    this.move(endPt)
+    this.move_to(endPt)
   }
-  
-  this.additional_processing(dt)
 }
 
-Enemy.prototype.additional_processing = function(dt) {
-
-}
-
-Enemy.prototype.activated_processing = function(dt) {
-
-}
-
-Enemy.prototype.move = function(endPt) {
+Enemy.prototype.move_to = function(endPt) {
 
   if(this.status_duration[0] > 0) return //locked
 
@@ -341,6 +353,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.fill()
       }
       if(this.special_mode) {
+        context.globalAlpha = this.sp_visibility
          context.beginPath()
       
         context.moveTo((tp.x+this.points[0].x * 2)*draw_factor, (tp.y+this.points[0].y * 2)*draw_factor)

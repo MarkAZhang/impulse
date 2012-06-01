@@ -53,7 +53,7 @@ function Spear(world, x, y, id) {
   this.do_yield = true
 }
 
-Spear.prototype.move = function(endPt) {
+Spear.prototype.move_to = function(endPt) {
 
   //apply impulse to move enemy
   var in_poly = false
