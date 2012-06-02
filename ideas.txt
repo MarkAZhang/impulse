@@ -6,3 +6,28 @@ NEXT:
 (later)Add increase-able range and force
 
 More enemies!!
+
+Enemy Ideas:
+Really light enemy that you can't hit. (gets knocked about by other enemies)
+Enemies that fire at you (you can reflect the bullets)
+Teleport enemies (you can see an indicatior before they appear)
+
+Collecting things. Health? Gold?
+
+Need rewards!!
+
+
+Special modes:
+Obstacles that suck you in.
+Colored obstacles that only kill differently colored enemies.
+A mode where you can only attract enemies.
+
+
+EFFICIENCY:
+Bounded by number of vertices in boundary polygons of obstacles
+Number of shapes (esp polygons) that canvas has to draw every frame
+
+NEXT:
+Need good border polygon for both polygon testing and also collision testing
+
+Fighter enemy type.

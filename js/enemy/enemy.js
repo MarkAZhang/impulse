@@ -187,9 +187,13 @@ Enemy.prototype.move_to = function(endPt) {
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
   //if(this.shape instanceof b2PolygonShape) {
-    var heading = _atan(this.body.GetPosition(), endPt)
-    this.body.SetAngle(heading)
+  this.setHeading(endPt)
   //}
+}
+
+Enemy.prototype.setHeading = function(endPt) {
+  var heading = _atan(this.body.GetPosition(), endPt)
+  this.body.SetAngle(heading)
 }
 
 Enemy.prototype.start_death = function(death) {

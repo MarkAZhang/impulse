@@ -4,6 +4,7 @@ var canvasWidth, canvasHeight;
 var player;
 var draw_factor = 15;
 var enemies = [];
+var num_enemies = 0
 var pointToPlayer; //function for enemies to process
 var polygons = []
 var visibility_graph;
@@ -124,7 +125,7 @@ function setupWorld_next() {
     game_numbers.kills = 0
     game_numbers.seconds = 0
     game_numbers.base_combo = 1
-
+    num_enemies = 0
 
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
@@ -147,7 +148,6 @@ function setupWorld_next() {
     contactListener.PreSolve = handle_collisions
     world.SetContactListener(contactListener);
     last_time = (new Date()).getTime()
-    
 }
 
 function handle_collisions(contact) {
@@ -253,24 +253,7 @@ function drawWorld() {
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
   }
-  
-  var a = {x: 200, y: 350}
-  var b = {x: 400, y: 350}
-  var c = {x: 300, y: 300}
-  var d = {x: 300, y: 700}
 
-  ctx.beginPath()
-  ctx.strokeStyle = "blue"
-  ctx.moveTo(a.x, a.y)
-  ctx.lineTo(b.x, b.y)
-  ctx.moveTo(c.x, c.y)
-  ctx.lineTo(d.x, d.y)
-  ctx.stroke()
-  ctx.beginPath()
-  var s = getSegIntersection(a, b, c, d)
-  if(s)
-  ctx.arc(s.x, s.y, 20, 0, 2 * Math.PI, true)
-  ctx.stroke()
   /*for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
@@ -312,7 +295,7 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }*/
+  }
   for(var j = 0; j < Math.min(enemies.length, 10); j++)
   {
     if(enemies[j])
@@ -333,7 +316,7 @@ function drawWorld() {
         ctx.lineWidth = 1
       }
     }
-  }
+  }*/
 
   draw_interface()
 }
@@ -420,12 +403,24 @@ function processGame() {
       if(enemies[dead_i] instanceof Goo || enemies[dead_i] instanceof Disarmer || enemies[dead_i] instanceof Crippler) {
         level.trail_enemies_num -= 1
       }
+      if(! (enemies[dead_i] instanceof FighterBullet)) {
+        num_enemies -= 1
+      }
       
       world.DestroyBody(enemies[dead_i].body)
       enemies.splice(dead_i, 1)
+      console.log("REMOVED ENEMY " + " " + num_enemies)
+      console.log(enemies)
+      
     }
-    for(var i = 0; i < spawned_enemies.length; i++)
+    for(var i = 0; i < spawned_enemies.length; i++) {
       enemies.push(spawned_enemies[i])
+      if(! (spawned_enemies[i] instanceof FighterBullet)) {
+        num_enemies += 1
+      }
+      console.log("PUSHED SPAWN " + num_enemies)
+      console.log(enemies)
+    }
     if(!level.has_won(game_numbers))
     {
       generate_enemies()
@@ -659,13 +654,16 @@ function game_won() {
 }
 
 function generate_enemies() {
-  if(enemies.length >= level.getEnemyCap(game_numbers.seconds))
+  if(num_enemies >= level.getEnemyCap(game_numbers.seconds))
   {
     return
   }
   if(Math.random() < level.getSpawnRate(game_numbers.seconds))
   {
     generate_enemy(level.getRandomEnemy(game_numbers.seconds))
+    num_enemies += 1
+    console.log("ADDED ENEMY " +  " " + num_enemies)
+    console.log(enemies)
   }
 
   

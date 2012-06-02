@@ -98,6 +98,8 @@ FighterBullet.prototype.process = function(enemy_index, dt) {
   this.check_death()
 
   this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
+
+  this.body.SetAngle(_atan({x: 0, y: 0}, this.v))
 }
 
 FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force) {
@@ -109,6 +111,23 @@ FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force) {
 
 }
 
+FighterBullet.prototype.check_death = function()
+{
+  //check if enemy has intersected polygon, if so die
+  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  {
+    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    {
+      this.start_death("kill")
+      
+      return
+    }
+  }
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= canvasWidth/draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= canvasWidth/draw_factor + 5)
+  {
+    this.start_death("kill")
+  }
+}
 FighterBullet.prototype.player_hit_proc = function() {
 }
 

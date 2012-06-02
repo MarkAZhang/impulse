@@ -29,7 +29,7 @@ function DeathRay(world, x, y, id) {
   //this.fast_lin_damp = 1.5
 
   //how fast enemies move
-  this.force = .7
+  this.force = .8
 
   //how often enemy path_finds
   this.pathfinding_delay = 100
@@ -41,17 +41,13 @@ function DeathRay(world, x, y, id) {
 
   this.tank_force = 100 //force that the spear impulses the player
 
-  this.death_radius = 5
-
-  this.score_value = 10000
-
-  this.shoot_interval = 750
-
-  this.shoot_duration = this.shoot_interval
+  this.score_value = 5000
 
   this.do_yield = false
 
-  this.safe_radius = 15
+  this.safe_radius = 10
+
+  this.safe_radius_buffer = 2 //prevents the Death Ray from immediately toggling between running away and running towards
 
   this.interior_buffer = 5
   this.safe = true
@@ -62,6 +58,25 @@ function DeathRay(world, x, y, id) {
   this.turret_mode = false
   this.turret_timer = 0 //1 indicates ready to fire, 0 indicates ready to move
   this.turret_duration = 1000
+
+  this.shoot_interval = 2000  //first 50% is nothing, second 50% is aiming
+
+  this.shoot_duration = this.shoot_interval
+
+  this.fire_interval = 200
+
+  this.fire_duration = this.fire_interval
+
+  this.ray_angle = null
+
+  this.ray_radius = 3
+  this.ray_buffer_radius = 3
+  this.ray_polygon = []
+
+  this.ray_force = 100
+
+  this.aimed = false
+  this.fired = false
 
 }
 
@@ -77,6 +92,14 @@ DeathRay.prototype.additional_processing = function(dt) {
   this.special_mode = this.safe && this.within_bounds && this.status_duration[1] <= 0
 
   this.turret_mode = this.safe && this.within_bounds
+
+  if(!this.turret_mode) {
+    this.shoot_duration = this.shoot_interval
+    this.fire_duration = this.fire_interval
+    this.aimed = false
+    this.fired = false
+  }
+
   if(this.turret_mode && this.turret_timer < 1)
   {
     this.turret_timer = Math.min(this.turret_timer + dt/this.turret_duration, 1)
@@ -84,6 +107,47 @@ DeathRay.prototype.additional_processing = function(dt) {
   else if(!this.turret_mode && this.turret_timer > 0)
   {
     this.turret_timer = Math.max(this.turret_timer - dt/this.turret_duration, 0)
+  }
+
+  if(this.turret_timer == 1) {
+    if(this.shoot_duration <= 0) {
+      if(this.fire_duration <= 0) {
+        this.shoot_duration = this.shoot_interval
+        this.fire_duration = this.fire_interval
+        this.aimed = false
+        this.fired = false
+        this.ray_angle = null
+      }
+      else {
+        this.fire_duration = Math.max(this.fire_duration - dt, 0)
+        if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
+          this.fired = true
+          console.log("FIRED")
+          if(pointInPolygon(this.ray_polygon, player.body.GetPosition())) {
+            player.body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), player.body.GetWorldCenter()) 
+            reset_combo()
+          }
+          for(var i = 0; i < enemies.length; i++) {
+            if(pointInPolygon(this.ray_polygon, enemies[i].body.GetPosition())) {
+              enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), player.body.GetWorldCenter()) 
+            }
+          }
+        }
+      }
+
+    }
+    else {
+      this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
+      if(this.shoot_duration <= this.shoot_interval/2 && !this.aimed) {//if it hasn't been aimed, aim it now
+        this.ray_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+        this.ray_polygon = []
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + 100 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2), y: this.body.GetPosition().y + 100 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + 100 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + 100 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
+        this.aimed = true
+      }
+    }
   }
 }
 
@@ -106,7 +170,7 @@ DeathRay.prototype.move = function() {
         var j = this.safe_lines.length - 1
         for(var i = 0; i < this.safe_lines.length; i++)
         {
-          var temp = getSegIntersection(this.body.GetPosition(), {x: player.body.GetPosition().x + rayOut.x, y: player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
+          var temp = getSegIntersection(player.body.GetPosition(), {x: player.body.GetPosition().x + rayOut.x, y: player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
 
           if(temp!=null)
           {
@@ -151,7 +215,7 @@ DeathRay.prototype.move = function() {
     {//within bounds
       this.path = null
     }
-    else
+    else if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius + this.safe_radius_buffer)
     {
       if(!this.path)
       {
@@ -185,7 +249,7 @@ DeathRay.prototype.move = function() {
 
 }
 
-DeathRay.prototype.additional_drawing = function(context, draw_factor) {
+DeathRay.prototype.pre_draw = function(context, draw_factor) {
   if(this.turret_timer > 0) {
     var tp = this.body.GetPosition()
     context.beginPath()
@@ -197,6 +261,63 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
       context.lineTo((tp.x + this.effective_radius * (1 + 2 * prog) * Math.cos(Math.PI * i / 3 + this.body.GetAngle()))*draw_factor, (tp.y + this.effective_radius * (1 + 2 * prog) * Math.sin(Math.PI * i / 3 + this.body.GetAngle()))*draw_factor)
     }
     context.stroke()
+  }
+}
+
+DeathRay.prototype.additional_drawing = function(context, draw_factor) {
+
+  if(!this.aimed && this.turret_timer > 0)
+  {
+    context.beginPath()
+    var ray_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+    context.moveTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle + Math.PI/2))*draw_factor, (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle + Math.PI/2))*draw_factor)
+    context.lineTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle - Math.PI/2))*draw_factor, (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle - Math.PI/2))*draw_factor)
+    context.strokeStyle = this.color
+    context.lineWidth = Math.ceil(5 * this.turret_timer/2)
+    context.stroke()
+  }
+  else if(this.turret_timer > 0){
+    context.beginPath()
+    context.moveTo(this.ray_polygon[0].x * draw_factor, this.ray_polygon[0].y * draw_factor)
+    context.lineTo(this.ray_polygon[1].x * draw_factor, this.ray_polygon[1].y * draw_factor)
+    context.strokeStyle = this.color
+    context.lineWidth = Math.ceil(5 * this.turret_timer/2)
+    context.stroke()
+  }
+
+  if(this.shoot_duration <= this.shoot_interval/2 && this.ray_angle!= null) {
+    var prog = 1 - this.shoot_duration / (this.shoot_interval/2)
+
+    context.beginPath()
+    context.globalAlpha = prog
+    context.moveTo(this.ray_polygon[1].x * draw_factor, this.ray_polygon[1].y * draw_factor)
+    context.lineTo(this.ray_polygon[2].x * draw_factor, this.ray_polygon[2].y * draw_factor)
+    context.moveTo(this.ray_polygon[3].x * draw_factor, this.ray_polygon[3].y * draw_factor)
+    context.lineTo(this.ray_polygon[0].x * draw_factor, this.ray_polygon[0].y * draw_factor)
+    context.lineWidth = 1
+    context.strokeStyle = this.color
+    context.stroke()
+
+    if(this.fire_duration < this.fire_interval) {
+
+      var vis = this.fire_duration > this.fire_interval/2 ? this.fire_interval - this.fire_duration : this.fire_duration
+      vis /= (this.fire_interval/2)
+      context.globalAlpha = vis
+
+      context.beginPath()
+
+      context.moveTo(this.ray_polygon[0].x * draw_factor, this.ray_polygon[0].y * draw_factor)
+
+      for(var i = 1; i < this.ray_polygon.length; i++)
+      {
+        context.lineTo(this.ray_polygon[i].x * draw_factor, this.ray_polygon[i].y * draw_factor)
+      }
+      context.closePath()
+      context.fillStyle = this.color
+      context.fill()
+      context.globalAlpha = 1
+    }
+
   }
 }
 

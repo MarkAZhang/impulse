@@ -50,22 +50,122 @@ function Fighter(world, x, y, id) {
 
   this.do_yield = false
 
+  this.safe_radius = 10
+
+  this.safe_radius_buffer = 2
+
+  this.safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
+
+  this.safe = true
+
 }
 
 Fighter.prototype.additional_processing = function(dt) {
+
+  if(this.safe != p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
+  {
+    this.safe = !this.safe
+    this.path = null
+  }
+
   if(this.shoot_duration < 0 && this.status_duration[1] <= 0) {
     this.shoot_duration = this.shoot_interval
-    if(this.path.length == 1) {
+    if(this.special_mode) {
       spawned_enemies.push(new FighterBullet(world, this.body.GetPosition().x + this.effective_radius * 3 * Math.cos(this.body.GetAngle()), this.body.GetPosition().y + this.effective_radius * 3 * Math.sin(this.body.GetAngle()), enemy_counter, (player.body.GetPosition().x - this.body.GetPosition().x), (player.body.GetPosition().y - this.body.GetPosition().y), this.id))
       enemy_counter += 1
     }
   }
   this.shoot_duration -= dt
 
-  this.special_mode = this.path.length == 1 && this.status_duration[1] <= 0
+  this.special_mode = isVisible(player.body.GetPosition(), this.body.GetPosition(), level.obstacle_edges) && this.status_duration[1] <= 0
 }
 
 Fighter.prototype.player_hit_proc = function() {
 }
 
+Fighter.prototype.move = function() {
+  if(!this.safe) {
+    if(!this.path || this.pathfinding_counter == this.pathfinding_delay)
+      {
+        var targetPt = null
+        var rayOut = new b2Vec2(this.body.GetPosition().x - player.body.GetPosition().x, this.body.GetPosition().y - player.body.GetPosition().y)
+        rayOut.Normalize()
+        rayOut.Multiply(200)
+        var j = this.safe_lines.length - 1
+        for(var i = 0; i < this.safe_lines.length; i++)
+        {
+          var temp = getSegIntersection(player.body.GetPosition(), {x: player.body.GetPosition().x + rayOut.x, y: player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
 
+          if(temp!=null)
+          {
+            targetPt = temp
+            break
+          }
+
+          j = i
+        }
+        console.log("RUNNING! target is "+targetPt)
+        console.log(rayOut)
+        console.log(this.body.GetPosition())
+        console.log(player.body.GetPosition())
+
+        var new_path = visibility_graph.query(this.body.GetPosition(), targetPt, level.boundary_polygons)
+        if(new_path!=null)
+          this.path = new_path
+        this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
+      }
+    this.pathfinding_counter +=1
+    if(!this.path)
+    {
+      return
+    }
+    
+    var endPt = this.path[0]
+    while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
+    {
+      this.path = this.path.slice(1)
+      endPt = this.path[0]
+    }
+
+    if(!endPt)
+    {
+      return
+    }
+    this.move_to(endPt)
+  }
+  else if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius + this.safe_radius_buffer)
+    {
+      if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
+      {
+        var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
+        if(new_path!=null)
+          this.path = new_path
+        this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
+      }
+      if(!this.path)
+      {
+        return
+      }
+      
+      var endPt = this.path[0]
+      while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
+      {
+        this.path = this.path.slice(1)
+        endPt = this.path[0]
+      }
+
+      if(!endPt)
+      {
+        return
+      }
+      this.move_to(endPt)
+
+    }
+  else 
+    this.path = null
+}
+
+Fighter.prototype.setHeading = function(endPt) {
+  var heading = _atan(this.body.GetPosition(), player.body.GetPosition())
+  this.body.SetAngle(heading)
+}
