@@ -98,26 +98,6 @@ Spear.prototype.additional_processing = function(dt) {
   }
 }
 
-Spear.prototype.collide_with = function(other) {
-  if(other !== player) {
-    return
-  }
-//function for colliding with the player
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > player.shape.GetRadius() + this.effective_radius)
-  {
-    return
-  }
-  if(!this.dying)//this ensures it only collides once
-  {
-    this.start_death("hit_player")
-    if(this.status_duration[1] <=0) {
-      }
-    reset_combo()
-  }
-  
-
-}
-
 Spear.prototype.player_hit_proc = function() {
   var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
   var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))

@@ -80,7 +80,7 @@ Level.prototype.generate_obstacle_edges = function() {
 Level.prototype.getEnemyCap = function(time) {
   switch(this.id) {
     case 1:
-      return Math.min(Math.floor(time), 5)
+      return Math.min(Math.floor(time), 40)
       break
   }
 }
@@ -104,8 +104,9 @@ Level.prototype.getRandomEnemy = function(time) {
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Disarmer
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Crippler
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Wisp
-          Math.max(Math.min((time-10)/100, 0.1), 1),    //Fighter
-          Math.max(Math.min((time-10)/100, 0.1), 0) ]   //DeathRay
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Fighter
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //DeathRay
+          Math.max(Math.min((time-10)/100, 0.1), 0) ]   //Slingshot
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

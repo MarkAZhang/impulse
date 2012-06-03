@@ -716,6 +716,10 @@ function generate_enemy(enemy_type) {
       enemies.push(new DeathRay(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
+    case 10:
+      enemies.push(new Slingshot(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
 
   }
 }
