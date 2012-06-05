@@ -59,6 +59,8 @@ function Slingshot(world, x, y, id) {
   this.empowered_force = 100
 }
 
+Slingshot.prototype.enemy_move = Enemy.prototype.move
+
 Slingshot.prototype.move = function() {
   if(this.slingshot_mode) {
     var dir = new b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
@@ -69,60 +71,7 @@ Slingshot.prototype.move = function() {
     this.body.SetAngle(heading)
   }
   else {
-    if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
-    //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
-    {
-      var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
-      if(new_path!=null)
-        this.path = new_path
-      this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
-    }
-    if(!this.path)
-    {
-      return
-    }
-    this.pathfinding_counter+=1
-    var endPt = this.path[0]
-    while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
-    {
-      this.path = this.path.slice(1)
-      endPt = this.path[0]
-    }
-
-    if(!endPt)
-    {
-      return
-    }
-
-    if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
-      this.path = [player.body.GetPosition()]
-      endPt = this.path[0]
-    }
-    
-    //check if yielding
-    if(this.do_yield) {
-      if(this.yield_counter == this.yield_delay)
-      {
-        var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, enemies, function(enemy) {return enemy.body.GetPosition()})
-        this.yield = false
-        for(var i = 0; i < nearby_enemies.length; i++)
-        {
-          if(nearby_enemies[i].id > this.id)
-          {
-            this.yield = true
-            break
-          }
-        }
-        this.yield_counter = 0
-      }
-      this.yield_counter++
-    }
-    
-
-    if(!this.do_yield || !this.yield)
-    {
-      this.move_to(endPt)
-    }
+    this.enemy_move()
   }
 }
 
@@ -162,6 +111,20 @@ Slingshot.prototype.player_hit_proc = function() {
   }
   player.body.ApplyImpulse(a, player.body.GetWorldCenter())
     
+}
+
+Slingshot.prototype.check_death = function() {
+  //check if enemy has intersected polygon, if so die
+  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  {
+    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    {
+      this.start_death("kill")
+      this.body.SetLinearDamping(6)
+      return
+    }
+  }
+  
 }
 
 Slingshot.prototype.process_impulse = function(attack_loc, impulse_force) {

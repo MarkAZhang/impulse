@@ -141,8 +141,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
       point2_adj.push(i)
     }
   }
-  //console.log(point1_adj)
-  //console.log(point2_adj)
+  console.log(point1_adj)
+  console.log(point2_adj)
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)

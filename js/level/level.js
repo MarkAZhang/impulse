@@ -14,6 +14,7 @@ Level.prototype.init = function(id) {
   this.kills_to_win = 100
   this.obstacle_visibility = 1
   this.obstacles_visible = true
+  this.obstacle_vertices = []
 }
 
 Level.prototype.process = function(dt) {
@@ -53,6 +54,9 @@ Level.prototype.generate_obstacles = function() {
 
     this.obstacles.push(new BasicObstacle(temp_v))
     this.obstacle_polygons.push(temp_v)
+    for(var j = 0; j < temp_v.length; j++) {
+      this.obstacle_vertices.push(temp_v[j])
+    }
     this.boundary_polygons.push(getBoundaryPolygon(temp_v, buffer_radius))
     this.trail_enemies_cap = 5
     this.trail_enemies_num = 0
@@ -80,7 +84,7 @@ Level.prototype.generate_obstacle_edges = function() {
 Level.prototype.getEnemyCap = function(time) {
   switch(this.id) {
     case 1:
-      return Math.min(Math.floor(time), 40)
+      return Math.min(Math.floor(time), 1)
       break
   }
 }
@@ -106,7 +110,8 @@ Level.prototype.getRandomEnemy = function(time) {
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Wisp
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Fighter
           Math.max(Math.min((time-10)/100, 0.1), 0),    //DeathRay
-          Math.max(Math.min((time-10)/100, 0.1), 0) ]   //Slingshot
+          Math.max(Math.min((time-10)/100, 0.1), 0),    //Slingshot
+          Math.max(Math.min((time-10)/100, 0.1), 1) ]   //Harpoon
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

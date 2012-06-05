@@ -254,7 +254,7 @@ function drawWorld() {
     enemies[i].draw(ctx, draw_factor)
   }
 
-  /*for(var i = 0; i < visibility_graph.vertices.length; i++)
+  for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -272,7 +272,7 @@ function drawWorld() {
       ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
   /*for(var i = 0; i < obstacle_edges.length; i++)
   {
@@ -284,8 +284,7 @@ function drawWorld() {
     	ctx.stroke()
   }*/
 
-  /*for(var i = 0; i < visibility_graph.edges.length; i++)
-  {
+  /*for({
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
       ctx.moveTo(visibility_graph.edges[i].p1.x*draw_factor, visibility_graph.edges[i].p1.y*draw_factor)
@@ -296,6 +295,7 @@ function drawWorld() {
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
   }
+  */
   for(var j = 0; j < Math.min(enemies.length, 10); j++)
   {
     if(enemies[j])
@@ -316,7 +316,7 @@ function drawWorld() {
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
 
   draw_interface()
 }
@@ -718,6 +718,10 @@ function generate_enemy(enemy_type) {
     break
     case 10:
       enemies.push(new Slingshot(world, r_p.x, r_p.y, enemy_counter))
+      enemy_counter+=1
+    break
+    case 11:
+      enemies.push(new Harpoon(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
 

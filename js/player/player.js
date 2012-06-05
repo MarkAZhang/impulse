@@ -280,6 +280,10 @@ Player.prototype.collide_with = function(other) {
 
 }
 
+Player.prototype.point_intersect = function(pt) {
+  return p_dist(pt, this.body.GetPosition()) < this.r
+}
+
 Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
