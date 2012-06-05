@@ -197,6 +197,9 @@ Player.prototype.process = function(dt) {
               this.enemies_hit.push(enemies[i].id)
               enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
             }
+            if(enemies[i] instanceof Harpoon && enemies[i].harpooned) {
+              enemies[i].disengage()
+            }
           }
         }
       }
