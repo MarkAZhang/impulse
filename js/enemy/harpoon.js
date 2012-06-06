@@ -3,7 +3,7 @@ Harpoon.prototype = new Enemy()
 Harpoon.prototype.constructor = Harpoon
 
 function Harpoon(world, x, y, id) {
-  vertices = []
+  var vertices = []
   var s_radius = .7  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*2/5), s_radius*Math.sin(Math.PI*2/5)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*4/5), s_radius*Math.sin(Math.PI*4/5)))
@@ -11,6 +11,16 @@ function Harpoon(world, x, y, id) {
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*8/5), s_radius*Math.sin(Math.PI*8/5)))  
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/5), s_radius*Math.sin(Math.PI*0/5)))  
   this.shape = new b2PolygonShape
+
+  var h_vertices = []
+
+  s_radius = .3
+
+  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0), s_radius*Math.sin(Math.PI*0)))
+  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
+  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))  
+  this.harpoon_shape = h_vertices
+
   this.shape.SetAsArray(vertices, vertices.length)
   this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
   this.effective_radius = s_radius
@@ -202,6 +212,11 @@ Harpoon.prototype.move = function() {
 }
 
 Harpoon.prototype.additional_processing = function(dt) {
+
+  if(this.status_duration[1] > 0 && (this.harpooning || this.harpooned)) {
+    this.disengage()
+    this.harpooning = false
+  }
   
   if(this.safe != (p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius || !isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)))
   {
@@ -209,7 +224,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.path = null
   }
 
-  if(!this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {
+  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {
     this.harpooning = true
     this.harpoon_loc = this.body.GetPosition().Copy()
     var temp = this.body.GetPosition().Copy()
@@ -238,22 +253,45 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpoon_loc.Subtract(temp_v)
 
   }
-
+  else if(this.harpooned && (player.body.GetPosition().x >= canvasWidth/draw_factor - 1|| player.body.GetPosition().x <= 1 || player.body.GetPosition().y >= canvasHeight/draw_factor - 1|| player.body.GetPosition().y <= 1)) {
+    this.disengage()
+  }
+  else if(this.harpooned && player.dying) {
+    this.disengage()
+  }
 }
 
 Harpoon.prototype.additional_drawing = function(context, draw_factor) {
   if(this.harpooning) {
     context.beginPath()
     context.strokeStyle = this.color
-    context.lineWidth = 2
+    context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(this.harpoon_loc.x * draw_factor, this.harpoon_loc.y * draw_factor)
     context.stroke()
+
+    context.save()
+    context.translate(this.harpoon_loc.x * draw_factor, this.harpoon_loc.y * draw_factor);
+    context.rotate(_atan(this.body.GetPosition(), this.harpoon_loc));
+    context.translate(-(this.harpoon_loc.x) * draw_factor, -(this.harpoon_loc.y) * draw_factor);
+
+    var tp = this.harpoon_loc
+
+    context.moveTo((tp.x+this.harpoon_shape[0].x)*draw_factor, (tp.y+this.harpoon_shape[0].y)*draw_factor)
+      for(var i = 1; i < this.harpoon_shape.length; i++)
+      {
+        context.lineTo((tp.x+this.harpoon_shape[i].x)*draw_factor, (tp.y+this.harpoon_shape[i].y)*draw_factor)
+      }
+      context.closePath()
+      context.lineWidth = 2
+      context.strokeStyle = this.color
+      context.stroke()
+      context.restore()
   }
   if(this.harpooned) {
     context.beginPath()
     context.strokeStyle = this.harpoon_color
-    context.lineWidth = 2
+    context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(player.body.GetPosition().x * draw_factor, player.body.GetPosition().y * draw_factor)
     context.stroke()
@@ -271,4 +309,8 @@ Harpoon.prototype.disengage = function() {
     this.harpoon_joint = null
     this.harpooned = false
   }
+}
+
+Harpoon.prototype.collide_with = function() {
+  
 }

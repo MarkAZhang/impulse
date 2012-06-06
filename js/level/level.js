@@ -84,7 +84,7 @@ Level.prototype.generate_obstacle_edges = function() {
 Level.prototype.getEnemyCap = function(time) {
   switch(this.id) {
     case 1:
-      return Math.min(Math.floor(time), 1)
+      return Math.min(Math.floor(time), 20)
       break
   }
 }
@@ -102,16 +102,16 @@ Level.prototype.getRandomEnemy = function(time) {
     case 1:
       var enemy_prob = [1,                              //Stunner
           Math.max(Math.min((time-10)/100, 0.1), 0),    //Spear
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Tank
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Feather
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Goo
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Disarmer
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Crippler
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Wisp
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Fighter
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //DeathRay
-          Math.max(Math.min((time-10)/100, 0.1), 0),    //Slingshot
-          Math.max(Math.min((time-10)/100, 0.1), 1) ]   //Harpoon
+          Math.max(Math.min((time-20)/100, 0.1), 0),    //Tank
+          Math.max(Math.min((time-30)/100, 0.1), 0),    //Feather
+          Math.max(Math.min((time-40)/100, 0.1), 0),    //Goo
+          Math.max(Math.min((time-50)/100, 0.1), 0),    //Disarmer
+          Math.max(Math.min((time-60)/100, 0.1), 0),    //Crippler
+          Math.max(Math.min((time-70)/100, 0.1), 0),    //Wisp
+          Math.max(Math.min((time-80)/100, 0.1), 0),    //Fighter
+          Math.max(Math.min((time-90)/100, 0.1), 0),    //DeathRay
+          Math.max(Math.min((time-100)/100, 0.05), 0),    //Slingshot
+          Math.max(Math.min((time-110)/100, 0.05), 0) ]   //Harpoon
       index = enemy_prob.length - 1
       var choice = Math.random()
       var cumul = enemy_prob[index]

@@ -63,12 +63,16 @@ Slingshot.prototype.enemy_move = Enemy.prototype.move
 
 Slingshot.prototype.move = function() {
   if(this.slingshot_mode) {
-    var dir = new b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
-    dir.Multiply(this.slingshot_multiplier)
-    this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+    if(this.status_duration[0] <= 0) {
+      var dir = new b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
+      dir.Multiply(this.slingshot_multiplier)
+      if(this.status_duration[2] > 0)
+        dir.Multiply(this.slow_factor)
+      this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-    var heading = _atan(this.body.GetPosition(), this.slingshot_point)
-    this.body.SetAngle(heading)
+      var heading = _atan(this.body.GetPosition(), this.slingshot_point)
+      this.body.SetAngle(heading)
+    }
   }
   else {
     this.enemy_move()
@@ -77,7 +81,7 @@ Slingshot.prototype.move = function() {
 
 Slingshot.prototype.additional_processing = function(dt) {
   
-  if(this.slingshot_mode && this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) {
+  if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.status_duration[1] > 0) {
     this.slingshot_mode = false
     this.body.SetLinearDamping(6)
   }
@@ -128,11 +132,13 @@ Slingshot.prototype.check_death = function() {
 }
 
 Slingshot.prototype.process_impulse = function(attack_loc, impulse_force) {
-  this.slingshot_point = this.body.GetPosition().Copy()
-  this.slingshot_mode = true
-  this.slingshot_duration = this.slingshot_interval
-  this.empowered_duration = this.empowered_interval
-  this.body.SetLinearDamping(1)
+  if(this.status_duration[1] <= 0) {
+    this.slingshot_point = this.body.GetPosition().Copy()
+    this.slingshot_mode = true
+    this.slingshot_duration = this.slingshot_interval
+    this.empowered_duration = this.empowered_interval
+    this.body.SetLinearDamping(1)
+  }
 }
 
 Slingshot.prototype.additional_drawing = function(context, draw_factor) {

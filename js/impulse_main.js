@@ -253,7 +253,7 @@ function drawWorld() {
   for(var i = 0; i < enemies.length; i++) {
     enemies[i].draw(ctx, draw_factor)
   }
-
+  /*
   for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
@@ -295,7 +295,7 @@ function drawWorld() {
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
   }
-  */
+ 
   for(var j = 0; j < Math.min(enemies.length, 10); j++)
   {
     if(enemies[j])
@@ -316,7 +316,7 @@ function drawWorld() {
         ctx.lineWidth = 1
       }
     }
-  }
+  }*/
 
   draw_interface()
 }
@@ -713,7 +713,7 @@ function generate_enemy(enemy_type) {
       enemy_counter+=1
     break
     case 9:
-      enemies.push(new DeathRay(world, r_p.x, r_p.y, enemy_counter))
+      enemies.push(new Harpoon(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
     case 10:
@@ -721,7 +721,7 @@ function generate_enemy(enemy_type) {
       enemy_counter+=1
     break
     case 11:
-      enemies.push(new Harpoon(world, r_p.x, r_p.y, enemy_counter))
+      enemies.push(new DeathRay(world, r_p.x, r_p.y, enemy_counter))
       enemy_counter+=1
     break
 
