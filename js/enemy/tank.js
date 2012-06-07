@@ -20,19 +20,13 @@ function Tank(world, x, y, id) {
   this.color = "purple"
   this.density = 2
   //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 2.99
-
-  this.init(world, x, y, id)
-  //this.fast_lin_damp = 1.5
+  this.lin_damp = 3
 
   //how fast enemies move
   this.force = 1
 
-  //how often enemy path_finds
-  this.pathfinding_delay = 100
-
-  //how often enemy checks to see if it can move if yielding
-  this.yield_delay = 10
+  this.init(world, x, y, id)
+  //this.fast_lin_damp = 1.5
 
   this.special_mode = false
 

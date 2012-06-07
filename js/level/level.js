@@ -110,7 +110,6 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
   
   var temp_enemy = new this.enemy_map[enemy_type](world, r_p.x, r_p.y, this.enemy_counter)
 
-  temp_enemy.type = enemy_type
   this.enemies.push(temp_enemy)
 
   this.enemy_counter+=1
@@ -146,64 +145,6 @@ Level.prototype.generate_obstacle_edges = function() {
       this.obstacle_edges.push({p1: obstacle.verticeSet[k], p2: obstacle.verticeSet[j]})
       k = j
     }
-  }
-}
-
-Level.prototype.getEnemyCap = function(time) {
-  switch(this.id) {
-    case 1:
-      return Math.min(Math.floor(time), 20)
-      break
-  }
-}
-
-Level.prototype.getSpawnRate = function (time) {
-  switch(this.id) {
-    case 1:
-      return Math.min(0.01+time/200*0.02, 0.03)
-      break
-  }
-}
-
-Level.prototype.getRandomEnemy = function(time) {
-  switch(this.id) {
-    case 1:
-      var enemy_prob = [1,                              //Stunner
-          Math.max(Math.min((time-10)/100, 0), 1),    //Spear
-
-          Math.max(Math.min((time-20)/100, 0), 0),    //Tank
-          Math.max(Math.min((time-30)/100, 0), 0),    //Feather
-          Math.max(Math.min((time-40)/100, 0), 0),    //Goo
-          Math.max(Math.min((time-50)/100, 0), 0),    //Disarmer
-          Math.max(Math.min((time-60)/100, 0), 0),    //Crippler
-          Math.max(Math.min((time-70)/100, 0), 0),    //Wisp
-          Math.max(Math.min((time-80)/100, 0), 0),    //Fighter
-          Math.max(Math.min((time-90)/100, 0), 0),    //DeathRay
-          Math.max(Math.min((time-100)/100, 0), 0),    //Slingshot
-          Math.max(Math.min((time-110)/100, 0), 0) ]   //Harpoon
-      index = enemy_prob.length - 1
-      var choice = Math.random()
-      var cumul = enemy_prob[index]
-      
-      while( choice > cumul)
-      {
-        index-=1
-        cumul+=enemy_prob[index]
-      }
-      console.log(enemy_prob)
-      if( index == 4 || index == 5 || index == 6)
-      {//impose a cap on number of trail-enemies
-        if(this.trail_enemies_num >= this.trail_enemies_cap)
-        {
-          return 0
-          return this.getRandomEnemy(time)
-        }
-      }
-      console.log("RETURNING "+index +" "+choice)
-      return index
-
-      break
-
   }
 }
 

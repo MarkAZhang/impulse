@@ -3,9 +3,13 @@ var Enemy = function(world, x, y, id) {
 }
 
 Enemy.prototype.init = function(world, x, y, id) {
-//need to set this.density, this.shape, this.lin_damp, this.force before calling init
+//need to set this.type before calling init
 
 //need to set effective_radius if do_yield = true
+
+  for(i in impulse_enemy_stats[this.type]) {
+    this[i] = impulse_enemy_stats[this.type][i]
+  }
 
   var fixDef = new b2FixtureDef;//make the shape
   fixDef.density = this.density;

@@ -3,30 +3,19 @@ Spear.prototype = new Enemy()
 Spear.prototype.constructor = Spear
 
 function Spear(world, x, y, id) {
+  this.type = "spear"
   vertices = []
-  var s_radius = .7  //temp var
+  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))
 
-  this.effective_radius = s_radius
-
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
-
-  this.color = "green"
-  this.density = 0.5
-
-  //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 3
-
-  //how fast enemies move
-  this.force = .2
 
   this.init(world, x, y, id)
 
   this.spear_range = 30   //distance from which spear effects activate
-
 
   this.fast_factor = 5
 
@@ -35,8 +24,6 @@ function Spear(world, x, y, id) {
   this.death_radius = 5
 
   this.stun_length = 5000 //after being hit by player, becomes stunned
-
-  this.score_value = 300
 
   this.do_yield = false
 }
