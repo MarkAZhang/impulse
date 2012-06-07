@@ -8,26 +8,13 @@ function Stunner(world, x, y, id) {
   this.color = "red"
   this.density = 1
   //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 2.99
-  this.init(world, x, y, id)
+  this.lin_damp = 3
 
   //how fast enemies move
   this.force = .5
 
-  //how fast enemies move when cautious
-  this.slow_force = .1
+  this.init(world, x, y, id)
 
-  //how often enemy path_finds
-  this.pathfinding_delay = 100
-
-  //how often enemy checks to see if it can move if yielding
-  this.yield_delay = 10
-  this.death_radius = 2
   this.score_value = 100
 
- 
 }
-
-
-
-

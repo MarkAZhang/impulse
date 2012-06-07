@@ -166,12 +166,12 @@ Player.prototype.process = function(dt) {
     else
     {
 
-      for(var i = 0; i < enemies.length; i++)
+      for(var i = 0; i < level.enemies.length; i++)
       {
-        if(enemies[i] instanceof Feather) continue
-        if(this.enemies_hit.indexOf(enemies[i].id)==-1 && !enemies[i].dying)//enemy has not been hit
+        if(level.enemies[i] instanceof Feather) continue
+        if(this.enemies_hit.indexOf(level.enemies[i].id)==-1 && !level.enemies[i].dying)//enemy has not been hit
         {
-          var angle = _atan(this.attack_loc, enemies[i].body.GetPosition())
+          var angle = _atan(this.attack_loc, level.enemies[i].body.GetPosition())
           
           var struck;
 
@@ -189,16 +189,16 @@ Player.prototype.process = function(dt) {
           if(struck)
           {
             var dist = this.attack_loc.Copy()
-            dist.Subtract(enemies[i].body.GetPosition())
+            dist.Subtract(level.enemies[i].body.GetPosition())
             dist = dist.Normalize()
             if (dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2))
             {
-              enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), enemies[i].body.GetWorldCenter())
-              this.enemies_hit.push(enemies[i].id)
-              enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
+              level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), level.enemies[i].body.GetWorldCenter())
+              this.enemies_hit.push(level.enemies[i].id)
+              level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
             }
-            if(enemies[i] instanceof Harpoon && enemies[i].harpooned) {
-              enemies[i].disengage()
+            if(level.enemies[i] instanceof Harpoon && level.enemies[i].harpooned) {
+              level.enemies[i].disengage()
             }
           }
         }

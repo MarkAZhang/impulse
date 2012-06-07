@@ -1,8 +1,13 @@
 var Enemy = function(world, x, y, id) {
+  //empty constructor since Enemy should not be constructed
 }
 
 Enemy.prototype.init = function(world, x, y, id) {
-  var fixDef = new b2FixtureDef;
+//need to set this.density, this.shape, this.lin_damp, this.force before calling init
+
+//need to set effective_radius if do_yield = true
+
+  var fixDef = new b2FixtureDef;//make the shape
   fixDef.density = this.density;
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
@@ -12,34 +17,59 @@ Enemy.prototype.init = function(world, x, y, id) {
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = this.shape
 
-  if(this.shape instanceof b2PolygonShape)
+  if(this.shape instanceof b2PolygonShape) {
     this.points = fixDef.shape.m_vertices
+    this.collision_polygon = getBoundaryPolygon(this.points, (player.r + 0.1))
+  }
   
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
   bodyDef.fixedRotation = true  //polygonShapes do not rotate
+
   this.body = world.CreateBody(bodyDef)
   this.body.CreateFixture(fixDef).SetUserData(this)
   this.shape = fixDef.shape
+
   this.path = null
-  this.pathfinding_counter = 0
-  this.yield_counter = 0
+  this.pathfinding_counter = 0  //pathfinding_delay and yield are defined in enemy
+  this.yield_counter = 0    
+
+  
+  
+
   this.yield = false
   this.id = id
   this.dying = false
   this.dying_length = 500
   this.dying_duration = 0
-  this.do_yield = true
+  
   this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
-  this.slow_factor = .3
+  
   this.is_enemy = true
-  this.special_mode_visibility_timer = 0
-  this.sp_visibility
+
+  this.special_mode = false
+  this.special_mode_visibility_timer = 0  //helps with the flashing special_mode appearance
+  this.sp_visibility = 0  
+
+
+  //DEFAULTS, CAN BE OVERRIDDEN
+  //how often enemy path_finds
+  this.pathfinding_delay = 100
+
+  //how often enemy checks to see if it can move if yielding
+  this.yield_delay = 10
+
+  this.slow_factor = .3
+
+  this.do_yield = true
+
+  this.slow_force = this.force / 3
+
+  this.death_radius = 2
 }
 
-Enemy.prototype.check_death = function()
-{
+Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < level.obstacle_polygons.length; k++)
   {
@@ -55,13 +85,13 @@ Enemy.prototype.check_death = function()
 Enemy.prototype.process = function(enemy_index, dt) {
 
   if(this.dying && this.dying_duration < 0)
-  {
-    dead_enemies.push(enemy_index)
+  {//if expired, dispose of it
+    level.dead_enemies.push(enemy_index)
     return
   }
 
   if(this.dying )
-  {
+  {//if dying, expire
     this.dying_duration -= dt
     return
   }
@@ -89,7 +119,6 @@ Enemy.prototype.process = function(enemy_index, dt) {
   this.check_death()
 
   this.move()
-  
   
   this.additional_processing(dt)
 }
@@ -137,10 +166,10 @@ Enemy.prototype.move = function() {
   if(this.do_yield) {
     if(this.yield_counter == this.yield_delay)
     {
-      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, enemies, function(enemy) {return enemy.body.GetPosition()})
+      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, level.enemies, function(enemy) {return enemy.body.GetPosition()})
       this.yield = false
       for(var i = 0; i < nearby_enemies.length; i++)
-      {
+      {//move if the highest id enemy
         if(nearby_enemies[i].id > this.id)
         {
           this.yield = true
@@ -151,10 +180,9 @@ Enemy.prototype.move = function() {
     }
     this.yield_counter++
   }
-  
 
   if(!this.do_yield || !this.yield)
-  {
+  {//move if not yielding
     this.move_to(endPt)
   }
 }
@@ -163,6 +191,19 @@ Enemy.prototype.move_to = function(endPt) {
 
   if(this.status_duration[0] > 0) return //locked
 
+  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  dir.Normalize()
+
+  this.modify_movement_vector(dir)  //primarily for Spear
+  
+  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+
+  //if(this.shape instanceof b2PolygonShape) {
+  this.set_heading(endPt)
+  //}
+}
+
+Enemy.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
   var in_poly = false
   for(var i = 0; i < level.obstacle_polygons.length; i++)
@@ -172,26 +213,20 @@ Enemy.prototype.move_to = function(endPt) {
       in_poly = true
     }
   }
-  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
-  dir.Normalize()
-  if(in_poly)
+  if(in_poly)//move cautiously...isn't very effective in preventing accidental deaths
   {
     dir.Multiply(this.slow_force)
   }
   else
   {
-    var f = this.status_duration[2] <= 0 ? this.force : this.force * this.slow_factor
-    dir.Multiply(f)
+    if(this.status_duration[2] > 0) {
+      dir.Multiply(this.slow_factor)
+    }
+    dir.Multiply(this.force)
   }
- 
-  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
-
-  //if(this.shape instanceof b2PolygonShape) {
-  this.setHeading(endPt)
-  //}
 }
 
-Enemy.prototype.setHeading = function(endPt) {
+Enemy.prototype.set_heading = function(endPt) {
   var heading = _atan(this.body.GetPosition(), endPt)
   this.body.SetAngle(heading)
 }
@@ -200,6 +235,7 @@ Enemy.prototype.start_death = function(death) {
   this.dying = death
   this.dying_duration = this.dying_length
   if(this.dying == "kill" && !player.dying) {
+    //if the player hasn't died and this was a kill, increase score
     game_numbers.kills +=1
     addScoreLabel(game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y)
     game_numbers.score += game_numbers.combo * this.score_value
@@ -218,12 +254,13 @@ Enemy.prototype.collide_with = function(other) {
    
     this.start_death("hit_player")
     reset_combo()
-    if(this.status_duration[1] <= 0)
+    if(this.status_duration[1] <= 0)//do not proc if silenced
       this.player_hit_proc()
   }
 }
 
 Enemy.prototype.player_hit_proc = function() {
+  //what happens when hits player
   player.stun(500)
 }
 
@@ -261,7 +298,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.lineTo((tp.x+this.points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+this.points[i].y*(1 + this.death_radius * prog))*draw_factor)
       }
       context.closePath()
-      //var vertices = 
       context.stroke()
       context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.globalAlpha/=2
@@ -333,7 +369,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
       
       context.strokeStyle = this.color
-      //var vertices = 
       context.stroke()
       context.globalAlpha = this.visibility ? this.visibility/2 : .5
       context.fillStyle = this.interior_color ? this.interior_color : this.color

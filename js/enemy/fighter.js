@@ -165,7 +165,7 @@ Fighter.prototype.move = function() {
     this.path = null
 }
 
-Fighter.prototype.setHeading = function(endPt) {
+Fighter.prototype.set_heading = function(endPt) {
   var heading = _atan(this.body.GetPosition(), player.body.GetPosition())
   this.body.SetAngle(heading)
 }

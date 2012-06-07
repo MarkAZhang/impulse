@@ -3,8 +3,6 @@ var world;
 var canvasWidth, canvasHeight;
 var player;
 var draw_factor = 15;
-var enemies = [];
-var num_enemies = 0
 var pointToPlayer; //function for enemies to process
 var polygons = []
 var visibility_graph;
@@ -16,8 +14,6 @@ var fps_counter = null
 var fps = 0
 var game_state
 var step_id;
-var dead_enemies = [];
-var spawned_enemies = [];
 var other_polygon;
 
 var buffer_radius = 1;  //radius around obstacles and around outer wall
@@ -119,13 +115,11 @@ function setupWorld() {
 
 function setupWorld_next() {
   enemy_counter = 0
-    enemies = []
     buttons = []
     game_numbers.score = 0
     game_numbers.kills = 0
     game_numbers.seconds = 0
     game_numbers.base_combo = 1
-    num_enemies = 0
 
     var gravity = new b2Vec2(000, 000);
     var doSleep = false; //objects in our world will rarely go to sleep
@@ -134,7 +128,7 @@ function setupWorld_next() {
     //add walls
     addWalls()
 
-    level = new Level(1)
+    level = new Level(impulse_level_data['survival'])
     
     generate_level()
     var r_p = getRandomValidLocation({x: -10, y: -10})
@@ -245,14 +239,9 @@ function generate_level() {
 
 function drawWorld() {
   
-  for(var i = 0; i < enemies.length; i++) {
-    enemies[i].pre_draw(ctx, draw_factor)
-  }
-  level.draw(ctx)
+  level.draw(ctx, draw_factor)
   player.draw(ctx)
-  for(var i = 0; i < enemies.length; i++) {
-    enemies[i].draw(ctx, draw_factor)
-  }
+  
   /*
   for(var i = 0; i < visibility_graph.vertices.length; i++)
   {
@@ -390,41 +379,9 @@ function processGame() {
   if(!pause)
   {
     check_win()
-    dead_enemies = []
-    spawned_enemies = []
     player.process(dt)
     game_numbers.combo = game_numbers.base_combo + Math.floor(game_numbers.seconds/10)
-    for(var i = 0; i < enemies.length; i++) {
-      enemies[i].process(i, dt)
-    }
-    while(dead_enemies.length > 0)
-    {
-      var dead_i = dead_enemies.pop()
-      if(enemies[dead_i] instanceof Goo || enemies[dead_i] instanceof Disarmer || enemies[dead_i] instanceof Crippler) {
-        level.trail_enemies_num -= 1
-      }
-      if(! (enemies[dead_i] instanceof FighterBullet)) {
-        num_enemies -= 1
-      }
-      
-      world.DestroyBody(enemies[dead_i].body)
-      enemies.splice(dead_i, 1)
-      console.log("REMOVED ENEMY " + " " + num_enemies)
-      console.log(enemies)
-      
-    }
-    for(var i = 0; i < spawned_enemies.length; i++) {
-      enemies.push(spawned_enemies[i])
-      if(! (spawned_enemies[i] instanceof FighterBullet)) {
-        num_enemies += 1
-      }
-      console.log("PUSHED SPAWN " + num_enemies)
-      console.log(enemies)
-    }
-    if(!level.has_won(game_numbers))
-    {
-      generate_enemies()
-    }
+    
     game_numbers.game_length += dt
     level.process(dt)
     for(var i = 0; i < score_labels.length; i++) {
@@ -434,8 +391,6 @@ function processGame() {
     {
       score_labels = score_labels.slice(1)
     }
-
-
   }
 }
 
@@ -595,8 +550,6 @@ function onClick(event) {
       {
         start_clicked = true
         setupMainMenu()
-        
-
       }  
       else
       {
@@ -617,12 +570,10 @@ function onClick(event) {
     case 2:
       if(!pause)
       {
-        player.click(mPos, enemies)
+        player.click(mPos, level.enemies)
       }
       break
-
   }
-    
 }
 
 function setupMainMenu() {
@@ -639,7 +590,7 @@ function setupMainMenu() {
 
 
 function check_win() {
- if(level.has_won(game_numbers) && enemies.length == 0) {//all enemies are dead
+ if(level.has_won(game_numbers) && level.enemies.length == 0) {//all enemies are dead
     game_won()
   } 
 
@@ -651,81 +602,6 @@ function game_won() {
   buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(){game_state = 3; setupWorld();}))
   buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(){game_state = 0; start_clicked = true; setupMainMenu();}))
     
-}
-
-function generate_enemies() {
-  if(num_enemies >= level.getEnemyCap(game_numbers.seconds))
-  {
-    return
-  }
-  if(Math.random() < level.getSpawnRate(game_numbers.seconds))
-  {
-    generate_enemy(level.getRandomEnemy(game_numbers.seconds))
-    num_enemies += 1
-    console.log("ADDED ENEMY " +  " " + num_enemies)
-    console.log(enemies)
-  }
-
-  
-}
-
-function generate_enemy(enemy_type) {
-  var r_p = getRandomOutsideLocation(5, 2)
-  
-  switch(enemy_type) {
-    case 0:
-      enemies.push(new Stunner(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 1:
-      enemies.push(new Spear(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 2:
-      enemies.push(new Tank(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 3:
-      enemies.push(new Feather(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 4:
-      enemies.push(new Goo(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-      level.trail_enemies_num +=1
-    break
-    case 5:
-      enemies.push(new Disarmer(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-      level.trail_enemies_num +=1
-    break
-    case 6:
-      enemies.push(new Crippler(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-      level.trail_enemies_num +=1
-    break
-    case 7:
-      enemies.push(new Wisp(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 8:
-      enemies.push(new Fighter(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 9:
-      enemies.push(new Harpoon(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 10:
-      enemies.push(new Slingshot(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-    case 11:
-      enemies.push(new DeathRay(world, r_p.x, r_p.y, enemy_counter))
-      enemy_counter+=1
-    break
-
-  }
 }
 
 function increment_combo() {
@@ -794,7 +670,6 @@ function getRandomOutsideLocation(buffer, range) {
     y_anchor = Math.random() < .5 ? -buffer-range : canvasHeight/draw_factor + buffer
     x_anchor = Math.random() * (canvasWidth/draw_factor + 2 * buffer + range) - (buffer + range)
   }
-
 
   //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay
   var r_point = {x: x_anchor + Math.random() * range, y: y_anchor + Math.random() * range }
