@@ -33,9 +33,9 @@ Level.prototype.init = function(data) {
     "stunner": Stunner,
     "spear": Spear,
     "tank": Tank,
-    "feather": Feather,
+    "mote": Mote,
     "goo": Goo,
-    "disarmer": Disarmer,
+    "disabler": Disabler,
     "crippler": Crippler,
     "wisp": Wisp,
     "fighter": Fighter,
@@ -77,6 +77,16 @@ Level.prototype.process = function(dt) {
       console.log(this.enemies)
       
     }
+    
+    while(this.spawned_enemies.length > 0)
+    {
+      var new_enemy = this.spawned_enemies.pop()
+
+      this.enemy_numbers[new_enemy.type] += 1
+      this.enemies.push(new_enemy)
+      
+    }
+
     
     this.spawn_enemies(dt)
 

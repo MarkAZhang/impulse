@@ -135,11 +135,19 @@ Enemy.prototype.activated_processing = function(dt) {
 
 }
 
+Enemy.prototype.get_target_point = function() {
+  console.log("ENEMY TARGET POINT")
+  return player.body.GetPosition()
+
+}
+
 Enemy.prototype.move = function() {
-  if(!this.path || this.path.length == 1 || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
+  if(player.dying) return
+  var target_point = this.get_target_point()
+  if(!this.path || (this.path.length == 1 && target_point == player.body.GetPosition()) || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
-    var new_path = visibility_graph.query(this.body.GetPosition(), player.body.GetPosition(), level.boundary_polygons)
+    var new_path = visibility_graph.query(this.body.GetPosition(), target_point, level.boundary_polygons)
     if(new_path!=null)
       this.path = new_path
     this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
@@ -161,7 +169,7 @@ Enemy.prototype.move = function() {
     return
   }
 
-  if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
+  if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges) && target_point == player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
     this.path = [player.body.GetPosition()]
     endPt = this.path[0]
   }
@@ -392,7 +400,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
       else if(this.status_duration[1] > 0)
       {
         context.fillStyle = 'gray'
-        context.globalAlpha = .5
+        context.globalAlpha = 1
         context.fill()
       }
       if(this.special_mode) {

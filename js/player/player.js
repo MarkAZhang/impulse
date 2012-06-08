@@ -41,7 +41,7 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.draw_factor = draw_factor
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
-  this.attack_length = 500
+  this.attack_length = 250
   this.attack_duration = 0
   this.slow_factor = .3
   this.dying = false
@@ -168,7 +168,7 @@ Player.prototype.process = function(dt) {
 
       for(var i = 0; i < level.enemies.length; i++)
       {
-        if(level.enemies[i] instanceof Feather) continue
+        if(level.enemies[i] instanceof Mote && level.enemies[i].status_duration[1] <= 0) continue
         if(this.enemies_hit.indexOf(level.enemies[i].id)==-1 && !level.enemies[i].dying)//enemy has not been hit
         {
           var angle = _atan(this.attack_loc, level.enemies[i].body.GetPosition())

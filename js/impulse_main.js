@@ -261,7 +261,7 @@ function drawWorld() {
       ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
   /*for(var i = 0; i < obstacle_edges.length; i++)
   {
@@ -283,20 +283,20 @@ function drawWorld() {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
       ctx.fill()
-  }
+  }*/
  
-  for(var j = 0; j < Math.min(enemies.length, 10); j++)
+  for(var j = 0; j < Math.min(level.enemies.length, 10); j++)
   {
-    if(enemies[j])
+    if(level.enemies[j])
     {
-      this_path = enemies[j].path
+      this_path = level.enemies[j].path
       if(this_path)
       {
 
         ctx.beginPath()
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 3
-        ctx.moveTo(enemies[j].body.GetPosition().x*draw_factor, enemies[j].body.GetPosition().y*draw_factor)
+        ctx.moveTo(level.enemies[j].body.GetPosition().x*draw_factor, level.enemies[j].body.GetPosition().y*draw_factor)
         for(var i = 0; i < this_path.length; i++)
         {
             ctx.lineTo(this_path[i].x*draw_factor, this_path[i].y*draw_factor)
@@ -305,7 +305,7 @@ function drawWorld() {
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
 
   draw_interface()
 }
@@ -688,124 +688,4 @@ function gameOver() {
 function addScoreLabel(str, color, x, y) {
   var temp_score_label = {text: str, color: color, x: x, y: y, duration: score_label_duration}
   score_labels.push(temp_score_label)
-}
-
-
-
-
-function getCursorPosition(e){
-
-    var x;
-    var y;
-    if (e.pageX || e.pageY) { 
-      x = e.pageX;
-      y = e.pageY;
-    }
-    else { 
-      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-    } 
-    x -= offset_left;
-    y -= offset_top;
-    return {x: x, y: y}
-
-}
-
-var _atan = function(center, ray) {
-  var angle
-  if(center.x == ray.x)
-  {
-    if(center.y > ray.y)
-    {
-      angle = -Math.PI/2
-    }
-    else
-    {
-      angle = Math.PI/2
-    }
-    return angle
-  }
-  angle = Math.atan((center.y-ray.y)/(center.x-ray.x))
-  if(center.x > ray.x)
-  {
-    angle +=Math.PI
-  }
-  return angle
-}
-
-function getObjectsWithinRadius(pt, r, objects, getLocation)
-{
-  var ans = []
-  for(var i = 0; i < objects.length; i++)
-  {
-    var loc = getLocation(objects[i])
-    if (p_dist(pt, loc)<r)
-    {
-      ans.push(objects[i])
-    } 
-  }
-  return ans
-
-}
-
-function getBoundaryPolygonOld(polygon, radius) {
-
-  var j = polygon.length - 1
-  var ans = []
-  for(var i = 0; i < polygon.length; i++)
-  {
-    var k = (i+1)%polygon.length
-    var j_to_i_normal = new b2Vec2(polygon[j].y - polygon[i].y, polygon[i].x - polygon[j].x)
-    var k_to_i_normal = new b2Vec2(polygon[i].y - polygon[k].y, polygon[k].x - polygon[i].x)
-    j_to_i_normal.Normalize()
-    k_to_i_normal.Normalize()
-    ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})
-    ans.push({x: polygon[i].x+j_to_i_normal.x*radius, y: polygon[i].y + j_to_i_normal.y*radius})
-    var sum = new b2Vec2(j_to_i_normal.x + k_to_i_normal.x, j_to_i_normal.y + k_to_i_normal.y)
-    sum.Normalize()
-    ans.push({x: polygon[i].x+sum.x * radius, y: polygon[i].y+sum.y * radius})
-    j = i
-  }
-  return ans
-}
-
-function getBoundaryPolygon(polygon, radius) {
-  var j = polygon.length - 1
-  var ans = []
-  for(var i = 0; i < polygon.length; i++)
-  {
-    var k = (i+1)%polygon.length
-    var j_to_i_normal = new b2Vec2(polygon[i].y - polygon[j].y, polygon[j].x - polygon[i].x)
-    var j_to_i = new b2Vec2(polygon[i].x - polygon[j].x, polygon[i].y - polygon[j].y)
-    var k_to_i_normal = new b2Vec2(polygon[k].y - polygon[i].y, polygon[i].x - polygon[k].x)
-    var k_to_i = new b2Vec2(polygon[i].x - polygon[k].x, polygon[i].y - polygon[k].y)
-    j_to_i_normal.Normalize()
-    k_to_i_normal.Normalize()
-    j_to_i.Normalize()
-    k_to_i.Normalize()
-    var first_angle = _atan({x: 0, y: 0}, k_to_i_normal)
-    var second_angle = _atan({x: 0, y: 0}, j_to_i_normal)
-    var cur_angle = first_angle - second_angle
-    cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
-    cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
-    if(cur_angle > Math.PI/2)
-    {
-      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
-      ans.push({x: polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, y: polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})
-    }
-    else
-    {
-      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*Math.tan(cur_angle/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y *Math.tan(cur_angle/2)* radius})
-      
-    }
-
-
-    /*ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})
-    ans.push({x: polygon[i].x+j_to_i_normal.x*radius, y: polygon[i].y + j_to_i_normal.y*radius})
-    var sum = new b2Vec2(j_to_i_normal.x + k_to_i_normal.x, j_to_i_normal.y + k_to_i_normal.y)
-    sum.Normalize()
-    ans.push({x: polygon[i].x+sum.x * radius, y: polygon[i].y+sum.y * radius})
-    */j = i
-  }
-  return ans 
 }

@@ -1,10 +1,9 @@
-Wisp.prototype = new Enemy()
+Mote.prototype = new Enemy()
 
-Wisp.prototype.constructor = Wisp
+Mote.prototype.constructor = Mote
 
-function Wisp(world, x, y, id) {
-  
-  this.type = "wisp"
+function Mote(world, x, y, id) {
+  this.type = "mote"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 0), s_radius*Math.sin(Math.PI*0)))
@@ -16,26 +15,17 @@ function Wisp(world, x, y, id) {
   this.shape.SetAsArray(vertices, vertices.length)
 
   this.init(world, x, y, id)
-  this.interior_color = "white"
 
   this.special_mode = false
 
   this.death_radius = 5
 
-  this.visibility_timer = 0
-
 }
 
-Wisp.prototype.additional_processing = function(dt) {
-  this.visibility_timer +=dt
-  var leftover = this.visibility_timer % 2000
-  if(leftover > 1000) leftover = 2000 - leftover
-  this.visibility = this.status_duration[1] <= 0 ? leftover / 1000 : 1
-  
+Mote.prototype.player_hit_proc = function() {
+  player.silence(2000)
 }
 
-Wisp.prototype.player_hit_proc = function() {
-  level.obstacles_visible = false
-  setTimeout("level.obstacles_visible = true", 5000)
+Mote.prototype.additional_processing = function(dt) {
 }
 

@@ -4,8 +4,18 @@ impulse_level_data = {}
 
 impulse_level_data['survival'] = {
   enemies: {
-              stunner: [0, 3, 1, 3, 20],
-              spear: [30, 5, 1, 3, 10]
+              stunner: [0, 3, 1, 3, 0],
+              spear: [0, 1, 0, 3, 0],
+              tank: [0, 1, 0, 2, 0],
+              mote: [0, 1, 0, 1, 0],
+              goo: [0, 1, 0, 0, 0],
+              disabler: [0, 1, 0, 0, 0],
+              crippler: [0, 1, 0, 0, 0],
+              wisp: [0, 1, 0, 0, 0],
+              fighter: [0, 1, 0, 0, 1],
+              harpoon: [0, 1, 0, 0, 1],
+              slingshot: [0, 1, 0, 0, 1],
+              deathray: [0, 1, 1, 1, 1]
            },
   obstacle_num: 20, 
   get_obstacle_vertices: function (index) {

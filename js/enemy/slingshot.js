@@ -3,49 +3,23 @@ Slingshot.prototype = new Enemy()
 Slingshot.prototype.constructor = Slingshot
 
 function Slingshot(world, x, y, id) {
-  
+  this.type = "slingshot"
   vertices = []
-  var s_radius = 1  //temp var
+  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*2/3), s_radius*Math.sin(Math.PI*2/3)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*4/3), s_radius*Math.sin(Math.PI*4/3)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))  
-//  this.shape = new b2CircleShape(.5)
-
-  this.effective_radius =  s_radius//an approximation of the radius of this shape
 
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
-  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
-  this.color = "rgb(160, 82, 45)"
-  this.density = .2
-  //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 6
 
   this.init(world, x, y, id)
-  //this.fast_lin_damp = 1.5
-  this.spear_range = 30
-
-  //how fast enemies move
-  this.force = .4
-
-  this.fast_force = 1
-
-  //how fast enemies move when cautious
-  this.slow_force = .1
-
-  //how often enemy path_finds
-  this.pathfinding_delay = 100
-
-  //how often enemy checks to see if it can move if yielding
-  this.yield_delay = 10
 
   this.special_mode = false
 
   this.slingshot_force = 30 //force that the spear impulses the player
 
   this.death_radius = 5
-
-  this.score_value = 800
 
   this.do_yield = true
 

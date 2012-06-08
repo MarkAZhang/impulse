@@ -55,7 +55,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0)
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && check_bounds(5, this.body.GetPosition())
   
 }
 
@@ -67,5 +67,16 @@ Spear.prototype.player_hit_proc = function() {
 
 Spear.prototype.process_impulse = function(attack_loc, impulse_force) {
   this.silence(this.stun_length)
+}
+
+Spear.prototype.additional_drawing = function(context, draw_factor) {
+  if(this.status_duration[1] > 0) {
+    context.beginPath()
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.stun_length), true)
+    context.lineWidth = 2
+    context.strokeStyle = "gray"
+    context.stroke()
+
+  }
 }
 

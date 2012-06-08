@@ -4,51 +4,46 @@ Goo.prototype.constructor = Goo
 
 function Goo(world, x, y, id) {
   if(world == null) return  //allows others to use Goo as super-class
-
-  var s_radius = 2  //temp var
-  this.effective_radius = .5
+  this.type = "goo"
+  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   var vertices = []
   vertices.push(new b2Vec2(s_radius * .25 * Math.cos(Math.PI * 0), s_radius * .5 * Math.sin(Math.PI*0)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 2/3), s_radius*Math.sin(Math.PI * 2/3)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
-  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
-  this.color = "yellow"
-  this.density = .5
-  //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 2.99
   this.init(world, x, y, id)
 
-  //how fast enemies move
-  this.force = .7
-
-  //how fast enemies move when cautious
-  this.slow_force = .1
-
-  //how often enemy path_finds
-  this.pathfinding_delay = 100
-
-  //how often enemy checks to see if it can move if yielding
-  this.yield_delay = 10
   this.death_radius = 2
-  this.score_value = 500
+  
+  this.goo_color = [255, 255, 120]
+  this.life_time = 7500 //goo automatically dies after this
+  this.trailing_enemy_init()
+}
+
+Goo.prototype.trailing_enemy_init = function() {
   this.goo_polygons = []
-  this.goo_interval = 250
+  this.goo_interval = 300
   this.goo_timer = this.goo_interval
   this.goo_radius = 2 //radius of goo trail
-  this.goo_duration = 5000 //amount of time a given goo polygon lasts
+  this.goo_duration = 3000 //amount of time a given goo polygon lasts
   this.goo_death_duration = 500
-  this.goo_color = [255, 255, 120]
   this.last_left = null
   this.last_right = null
   this.do_yield = false
   this.effective_heading = this.body.GetAngle()//the heading used to calculate the goo, does not turn instantaneously
-  
+  this.life_duration = this.life_time
 }
 
 Goo.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
+
+  if(this.life_duration < 0) {
+    this.start_death("kill")
+    return
+  }
+  this.life_duration -= dt
+
   if(this.goo_timer < 0) {
     this.goo_timer = this.goo_interval
     var cur_angle = this.body.GetAngle()
@@ -71,11 +66,11 @@ Goo.prototype.additional_processing = function(dt) {
     if(pointInPolygon(this.goo_polygons[i]['points'], player.body.GetPosition())) {
       this.trail_effect(player)
     }
-    for(var j = 0; j < enemies.length; j++) {
-      if(pointInPolygon(this.goo_polygons[i]['points'], enemies[j].body.GetPosition()))
+    for(var j = 0; j < level.enemies.length; j++) {
+      if(pointInPolygon(this.goo_polygons[i]['points'], level.enemies[j].body.GetPosition()))
       {
-        if(enemies[j]!==this)
-        this.trail_effect(enemies[j])
+        if(level.enemies[j]!==this)
+        this.trail_effect(level.enemies[j])
       }
     }
     this.goo_polygons[i]['duration'] -= dt
@@ -96,7 +91,7 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
   {
     context.beginPath()
     if(i == this.goo_polygons.length - 1 && this.status_duration[1] <=0)
-    {
+    {//progressively draw the first polygon
       context.moveTo(this.goo_polygons[i]['points'][0].x*draw_factor, this.goo_polygons[i]['points'][0].y * draw_factor)
       context.lineTo(this.goo_polygons[i]['points'][1].x*draw_factor, this.goo_polygons[i]['points'][1].y * draw_factor)
       var prog = (1 - Math.max(this.goo_timer/this.goo_interval,0))
@@ -125,6 +120,7 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
     }
 
     context.fill()
+    context.lineWidth = 2
   }
   context.globalAlpha = 1
 }

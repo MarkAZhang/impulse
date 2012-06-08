@@ -3,30 +3,19 @@ Tank.prototype = new Enemy()
 Tank.prototype.constructor = Tank
 
 function Tank(world, x, y, id) {
-  
+  this.type = "tank"
   vertices = []
-  var s_radius = 1  //temp var
+  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 0), s_radius*Math.sin(Math.PI*0)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1/2), s_radius*Math.sin(Math.PI * 1/2)))
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1), s_radius*Math.sin(Math.PI * 1)))  
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 3/2), s_radius*Math.sin(Math.PI * 3/2)))  
 //  this.shape = new b2CircleShape(.5)
 
-  this.effective_radius =  s_radius//an approximation of the radius of this shape
-
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
-  this.collision_polygon = getBoundaryPolygon(vertices, (player.r + 0.1))
-  this.color = "purple"
-  this.density = 2
-  //the dampening factor that determines how much "air resistance" unit has
-  this.lin_damp = 3
-
-  //how fast enemies move
-  this.force = 1
-
+  
   this.init(world, x, y, id)
-  //this.fast_lin_damp = 1.5
 
   this.special_mode = false
 
@@ -43,8 +32,6 @@ function Tank(world, x, y, id) {
 
   this.cause_of_death = null
   this.do_yield = false
-
-  this.score_value = 700
 
 }
 
@@ -124,13 +111,13 @@ Tank.prototype.explode = function() {
     player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), player.body.GetWorldCenter())
   }
 
-  for(var i = 0; i < enemies.length; i++)
+  for(var i = 0; i < level.enemies.length; i++)
   {
 
-    if(enemies[i] !== this && p_dist(this.body.GetPosition(), enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    if(level.enemies[i] !== this && p_dist(this.body.GetPosition(), level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
-      var _angle = _atan(this.body.GetPosition(), enemies[i].body.GetPosition())
-      enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), enemies[i].body.GetWorldCenter())
+      var _angle = _atan(this.body.GetPosition(), level.enemies[i].body.GetPosition())
+      level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), level.enemies[i].body.GetWorldCenter())
       console.log("EXPLODE ON ENEMY "+i+" "+_angle)
 
     }
