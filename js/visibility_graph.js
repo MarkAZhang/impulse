@@ -37,6 +37,7 @@ VisibilityGraph.prototype.init = function(polygons, level) {
         vertex.p_v = polygon.length
         vertex.p_i = j
         this.vertices.push(vertex)
+
       }
       this.poly_edges.push({p1: polygon[j], p2: polygon[m]})
       m = j
@@ -71,6 +72,11 @@ VisibilityGraph.prototype.init = function(polygons, level) {
     for(var i = 0; i < h; i++)
     {
        var path = dijkstra.extract_shortest_path_from_predecessor_list(predecessors, i);
+       if(path.length == 1) {
+         this.shortest_paths[h][i] = {path: null, dist: null}
+         this.shortest_paths[i][h] = {path: null, dist: null}
+         continue
+       }//nonexistent path
        var sum = 0
        var j = path[0]
        for( var k = 1; k < path.length; k++)
@@ -137,6 +143,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
       point2_adj.push(i)
     }
   }
+  console.log(point1_adj)
+  console.log(point2_adj)
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)
@@ -150,6 +158,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
       {
         v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
       }
+      if(v_dist == null) continue
       var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
         + p_dist(this.vertices[point2_adj[j]], point2);
       if(!min_distance || dist < min_distance)
@@ -158,13 +167,16 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
         if(point1_adj[i] == point2_adj[j])
         {
           min_path = [point1_adj[i]]
-          //console.log(min_path)
+          console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+          console.log("NEW MIN PATH with "+dist)
+          console.log(min_path)
         }
         else
         {
-
+          console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
           min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
-          //console.log(min_path)
+          console.log("NEW MIN PATH with "+dist)
+          console.log(min_path)
         }
       }
     }
@@ -180,8 +192,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
     ans.push(this.vertices[min_path[i]])
   }
   ans.push(point2)
-  //console.log("ANSWER ")
-  //console.log(ans)
+  console.log("ANSWER ")
+  console.log(ans)
   return ans
 
 

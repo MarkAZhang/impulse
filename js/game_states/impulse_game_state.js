@@ -58,50 +58,51 @@ ImpulseGameState.prototype.draw = function(ctx) {
   this.level.draw(ctx, this.draw_factor)
   this.player.draw(ctx)
   
-  /*
-  for(var i = 0; i < visibility_graph.vertices.length; i++)
+  
+  for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
-    	ctx.arc(visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor, 2, 0, 2*Math.PI, true)
-      //ctx.font = 'italic 10px sans-serif'
-      //ctx.fillText(i, visibility_graph.vertices[i].x*draw_factor, visibility_graph.vertices[i].y*draw_factor)
+    	ctx.arc(this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor, 2, 0, 2*Math.PI, true)
+      ctx.font = 'italic 10px sans-serif'
+      ctx.fillText(i, this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor)
     	ctx.fill()
   }
 
-  for(var i = 0; i < visibility_graph.poly_edges.length; i++)
+  for(var i = 0; i < this.visibility_graph.poly_edges.length; i++)
   {
       ctx.beginPath()
       ctx.lineWidth = 1
     	ctx.strokeStyle = 'green';
-      ctx.moveTo(visibility_graph.poly_edges[i].p1.x*draw_factor, visibility_graph.poly_edges[i].p1.y*draw_factor)
-      ctx.lineTo(visibility_graph.poly_edges[i].p2.x*draw_factor, visibility_graph.poly_edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
-  /*for(var i = 0; i < obstacle_edges.length; i++)
+  for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
       ctx.beginPath()
       ctx.lineWidth = 3
     	ctx.strokeStyle = 'brown';
-      ctx.moveTo(obstacle_edges[i].p1.x*draw_factor, obstacle_edges[i].p1.y*draw_factor)
-      ctx.lineTo(obstacle_edges[i].p2.x*draw_factor, obstacle_edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor, this.level.obstacle_edges[i].p1.y*this.draw_factor)
+      ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
-  /*for({
+  for(var i = 0; i < this.visibility_graph.edges.length; i++)
+  {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
-      ctx.moveTo(visibility_graph.edges[i].p1.x*draw_factor, visibility_graph.edges[i].p1.y*draw_factor)
-      ctx.lineTo(visibility_graph.edges[i].p2.x*draw_factor, visibility_graph.edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.visibility_graph.edges[i].p1.x*draw_factor, this.visibility_graph.edges[i].p1.y*draw_factor)
+      ctx.lineTo(this.visibility_graph.edges[i].p2.x*draw_factor, this.visibility_graph.edges[i].p2.y*draw_factor)
     	ctx.stroke()
       ctx.beginPath()
       ctx.fillStyle = 'red'
-      ctx.fillText(Math.round(p_dist(visibility_graph.edges[i].p1, visibility_graph.edges[i].p2)), (visibility_graph.edges[i].p1.x*draw_factor+visibility_graph.edges[i].p2.x*draw_factor)/2, (visibility_graph.edges[i].p1.y*draw_factor+visibility_graph.edges[i].p2.y*draw_factor)/2)
+      ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
-  }*/
+  }
  
-  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -121,7 +122,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
 
   this.draw_interface(ctx)
 }

@@ -35,21 +35,22 @@ impulse_level_data['SURVIVAL'] = {
 
 impulse_level_data['LEVEL 1-1'] = {
   enemies: {
-              stunner: [0, 3, 1, 2, 50],
-              spear: [30, 5, 1, .75, 20],
+              stunner: [0, 3, 1, 2, 50]
+              //spear: [30, 5, 1, .75, 20],
               
            },
-  obstacle_num: 20, 
+  obstacle_num: 2, 
   get_obstacle_vertices: function (index) {
-    var x = Math.random()*canvasWidth/draw_factor
-    var y = Math.random()*canvasHeight/draw_factor
-    var r1 = Math.random()*4+3
-    var r2 = Math.random()*4+3
-    var r3 = Math.random()*4+3
-    var r4 = Math.random()*2*Math.PI
-    return [new b2Vec2(r1*Math.cos(r4+Math.PI * 0)+x, r1*Math.sin(r4+Math.PI* 0)+y),
-          new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
-          new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
+    var ob_v = [[[100, 200], [150, 200], [300, 350], [500, 450], [100, 450]],
+    [[300, 200], [400, 150], [600, 150], [700, 200], [700, 400], [600, 450], [400, 400]]]
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
   },
   buffer_radius: 1
 
