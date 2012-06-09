@@ -1,11 +1,12 @@
 
-var VisibilityGraph = function(polygons) {
+var VisibilityGraph = function(polygons, level) {
   console.log("CREATING VISIBILITY GRAPH")
-  this.init(polygons)
+  this.init(polygons, level)
 }
 
-VisibilityGraph.prototype.init = function(polygons) {
+VisibilityGraph.prototype.init = function(polygons, level) {
 //polygons is an array of array of vertices
+  this.level = level
   this.poly_edges = []
   this.vertices = []
   this.edges = []
@@ -62,26 +63,21 @@ VisibilityGraph.prototype.init = function(polygons) {
       }
     }
   }
-  //console.log(this.edge_list)
   for(var h = 0; h < this.vertices.length; h++)
   {
 
     var predecessors = dijkstra.single_source_shortest_paths(this.edge_list, h)
-    //console.log("SHORTEST PATH "+h)
     this.shortest_paths[h] = {}
     for(var i = 0; i < h; i++)
     {
        var path = dijkstra.extract_shortest_path_from_predecessor_list(predecessors, i);
-       //console.log(path)
        var sum = 0
        var j = path[0]
        for( var k = 1; k < path.length; k++)
        {
         sum+=this.edge_list[j][path[k]]
-        //console.log(j+" "+path[k])
           j = path[k]
        }
-       //console.log(sum)
        this.shortest_paths[h][i] = {path: path, dist: sum}
        this.shortest_paths[i][h] = {path: path.slice(0).reverse(), dist: sum}
     }
@@ -95,7 +91,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
   
 
   //if it is possible to go from current location to player, always go there directly
-  if(isVisible(point1, point2, level.obstacle_edges))//if visible, go there directly
+  if(isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
   {
     return [point1, point2]
   }
@@ -136,13 +132,11 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
     {
       point1_adj.push(i)
     }
-    if(isVisible(point2, this.vertices[i], level.obstacle_edges))
+    if(isVisible(point2, this.vertices[i], this.level.obstacle_edges))
     {
       point2_adj.push(i)
     }
   }
-  console.log(point1_adj)
-  console.log(point2_adj)
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)

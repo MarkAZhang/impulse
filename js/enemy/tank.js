@@ -2,7 +2,7 @@ Tank.prototype = new Enemy()
 
 Tank.prototype.constructor = Tank
 
-function Tank(world, x, y, id) {
+function Tank(world, x, y, id, impulse_game_state) {
   this.type = "tank"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
@@ -15,7 +15,7 @@ function Tank(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
   
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
 
@@ -58,9 +58,9 @@ Tank.prototype.activated_processing = function(dt) {
 Tank.prototype.check_death = function()
 {
   //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       if(this.status_duration[1] <= 0) {
         this.activated = true
@@ -90,7 +90,7 @@ Tank.prototype.collide_with = function(other) {
   if(this.dying || this.activated)//ensures the collision effect only activates once
     return
 
-  if(other === player && this.check_player_intersection(player)) {
+  if(other === this.player && this.check_player_intersection(this.player)) {
    
     if(this.status_duration[1] <= 0) {
       this.activated = true
@@ -99,25 +99,25 @@ Tank.prototype.collide_with = function(other) {
     else {
       this.start_death("hit_player")
     }
-    reset_combo()
+    this.impulse_game_state.reset_combo()
   }
 }
 
 Tank.prototype.explode = function() {
   console.log("EXPLODE! " + this.id)
-  if(p_dist(this.body.GetPosition(), player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
   {
-    var tank_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
-    player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), player.body.GetWorldCenter())
+    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }
 
-  for(var i = 0; i < level.enemies.length; i++)
+  for(var i = 0; i < this.level.enemies.length; i++)
   {
 
-    if(level.enemies[i] !== this && p_dist(this.body.GetPosition(), level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    if(this.level.enemies[i] !== this && p_dist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
-      var _angle = _atan(this.body.GetPosition(), level.enemies[i].body.GetPosition())
-      level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), level.enemies[i].body.GetWorldCenter())
+      var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
+      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       console.log("EXPLODE ON ENEMY "+i+" "+_angle)
 
     }

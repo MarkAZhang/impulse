@@ -2,7 +2,7 @@ Slingshot.prototype = new Enemy()
 
 Slingshot.prototype.constructor = Slingshot
 
-function Slingshot(world, x, y, id) {
+function Slingshot(world, x, y, id, impulse_game_state) {
   this.type = "slingshot"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
@@ -13,7 +13,7 @@ function Slingshot(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
 
@@ -77,7 +77,7 @@ Slingshot.prototype.additional_processing = function(dt) {
 
 Slingshot.prototype.player_hit_proc = function() {
 
-  var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+  var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   var a = new b2Vec2(Math.cos(spear_angle), Math.sin(spear_angle))
   if(this.empowered_duration > 0)
   {
@@ -87,15 +87,15 @@ Slingshot.prototype.player_hit_proc = function() {
   {
     a.Multiply(this.slingshot_force)
   }
-  player.body.ApplyImpulse(a, player.body.GetWorldCenter())
+  this.player.body.ApplyImpulse(a, this.player.body.GetWorldCenter())
     
 }
 
 Slingshot.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
       this.body.SetLinearDamping(6)

@@ -2,7 +2,7 @@ Goo.prototype = new Enemy()
 
 Goo.prototype.constructor = Goo
 
-function Goo(world, x, y, id) {
+function Goo(world, x, y, id, impulse_game_state) {
   if(world == null) return  //allows others to use Goo as super-class
   this.type = "goo"
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
@@ -12,7 +12,7 @@ function Goo(world, x, y, id) {
   vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.death_radius = 2
   
@@ -38,11 +38,11 @@ Goo.prototype.trailing_enemy_init = function() {
 Goo.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
 
-  if(this.life_duration < 0) {
+  /*if(this.life_duration < 0) {
     this.start_death("kill")
     return
   }
-  this.life_duration -= dt
+  this.life_duration -= dt*/
 
   if(this.goo_timer < 0) {
     this.goo_timer = this.goo_interval
@@ -63,14 +63,14 @@ Goo.prototype.additional_processing = function(dt) {
   for(var i = 0; i < this.goo_polygons.length; i++)
   {
 
-    if(pointInPolygon(this.goo_polygons[i]['points'], player.body.GetPosition())) {
-      this.trail_effect(player)
+    if(pointInPolygon(this.goo_polygons[i]['points'], this.player.body.GetPosition())) {
+      this.trail_effect(this.player)
     }
-    for(var j = 0; j < level.enemies.length; j++) {
-      if(pointInPolygon(this.goo_polygons[i]['points'], level.enemies[j].body.GetPosition()))
+    for(var j = 0; j < this.level.enemies.length; j++) {
+      if(pointInPolygon(this.goo_polygons[i]['points'], this.level.enemies[j].body.GetPosition()))
       {
-        if(level.enemies[j]!==this)
-        this.trail_effect(level.enemies[j])
+        if(this.level.enemies[j]!==this)
+        this.trail_effect(this.level.enemies[j])
       }
     }
     this.goo_polygons[i]['duration'] -= dt
@@ -128,7 +128,7 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
 
 
 Goo.prototype.player_hit_proc = function() {
-  player.slow(2000)
+  this.player.slow(2000)
 }
 
 Goo.prototype.trail_effect = function(obj) {

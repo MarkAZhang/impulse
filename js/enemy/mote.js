@@ -2,7 +2,7 @@ Mote.prototype = new Enemy()
 
 Mote.prototype.constructor = Mote
 
-function Mote(world, x, y, id) {
+function Mote(world, x, y, id, impulse_game_state) {
   this.type = "mote"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
@@ -14,7 +14,7 @@ function Mote(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
 
@@ -23,7 +23,7 @@ function Mote(world, x, y, id) {
 }
 
 Mote.prototype.player_hit_proc = function() {
-  player.silence(2000)
+  this.player.silence(2000)
 }
 
 Mote.prototype.additional_processing = function(dt) {

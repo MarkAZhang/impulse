@@ -1,12 +1,15 @@
-var Enemy = function(world, x, y, id) {
+var Enemy = function(world, x, y, id, impulse_game_state) {
   //empty constructor since Enemy should not be constructed
 }
 
-Enemy.prototype.init = function(world, x, y, id) {
+Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set this.type before calling init
 
 //need to set effective_radius if do_yield = true
-
+  this.impulse_game_state = impulse_game_state
+  this.level = impulse_game_state.level
+  this.player = impulse_game_state.player
+  this.world = world
   for(i in impulse_enemy_stats[this.type]) {
     this[i] = impulse_enemy_stats[this.type][i]
   }
@@ -23,7 +26,7 @@ Enemy.prototype.init = function(world, x, y, id) {
 
   if(this.shape instanceof b2PolygonShape) {
     this.points = fixDef.shape.m_vertices
-    this.collision_polygon = getBoundaryPolygon(this.points, (player.r + 0.1))
+    this.collision_polygon = getBoundaryPolygon(this.points, (this.player.r + 0.1))
   }
   
   bodyDef.position.x = x;
@@ -36,7 +39,7 @@ Enemy.prototype.init = function(world, x, y, id) {
   this.shape = fixDef.shape
 
   this.path = null
-  this.pathfinding_counter = 0  //pathfinding_delay and yield are defined in enemy
+  
   this.yield_counter = 0    
 
   
@@ -60,6 +63,7 @@ Enemy.prototype.init = function(world, x, y, id) {
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
   this.pathfinding_delay = 100
+  this.pathfinding_counter =  Math.floor(Math.random()*this.pathfinding_delay)  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
   this.yield_delay = 10
@@ -75,9 +79,9 @@ Enemy.prototype.init = function(world, x, y, id) {
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
       
@@ -90,7 +94,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
   if(this.dying && this.dying_duration < 0)
   {//if expired, dispose of it
-    level.dead_enemies.push(enemy_index)
+    this.level.dead_enemies.push(enemy_index)
     return
   }
 
@@ -136,27 +140,27 @@ Enemy.prototype.activated_processing = function(dt) {
 }
 
 Enemy.prototype.get_target_point = function() {
-  console.log("ENEMY TARGET POINT")
-  return player.body.GetPosition()
+  return this.player.body.GetPosition()
 
 }
 
 Enemy.prototype.move = function() {
-  if(player.dying) return
+  if(this.player.dying) return
   var target_point = this.get_target_point()
-  if(!this.path || (this.path.length == 1 && target_point == player.body.GetPosition()) || this.pathfinding_counter == 2 * this.pathfinding_delay || !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], level.obstacle_edges))
+  this.pathfinding_counter+=1
+  if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= 2 * this.pathfinding_delay || (this.path && this.path.length > 1 && !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
-    var new_path = visibility_graph.query(this.body.GetPosition(), target_point, level.boundary_polygons)
+    var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons)
     if(new_path!=null)
       this.path = new_path
-    this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_counter)
+    this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_delay)
   }
   if(!this.path)
   {
     return
   }
-  this.pathfinding_counter+=1
+  
   var endPt = this.path[0]
   while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
   {
@@ -169,8 +173,8 @@ Enemy.prototype.move = function() {
     return
   }
 
-  if(isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges) && target_point == player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
-    this.path = [player.body.GetPosition()]
+  if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
+    this.path = [this.player.body.GetPosition()]
     endPt = this.path[0]
   }
   
@@ -178,7 +182,7 @@ Enemy.prototype.move = function() {
   if(this.do_yield) {
     if(this.yield_counter == this.yield_delay)
     {
-      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, level.enemies, function(enemy) {return enemy.body.GetPosition()})
+      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, this.level.enemies, function(enemy) {return enemy.body.GetPosition()})
       this.yield = false
       for(var i = 0; i < nearby_enemies.length; i++)
       {//move if the highest id enemy
@@ -218,9 +222,9 @@ Enemy.prototype.move_to = function(endPt) {
 Enemy.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
   var in_poly = false
-  for(var i = 0; i < level.obstacle_polygons.length; i++)
+  for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {
-    if(pointInPolygon(level.obstacle_polygons[i], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
     {
       in_poly = true
     }
@@ -246,12 +250,12 @@ Enemy.prototype.set_heading = function(endPt) {
 Enemy.prototype.start_death = function(death) {
   this.dying = death
   this.dying_duration = this.dying_length
-  if(this.dying == "kill" && !player.dying) {
+  if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
-    game_numbers.kills +=1
-    addScoreLabel(game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y)
-    game_numbers.score += game_numbers.combo * this.score_value
-    increment_combo()
+    this.impulse_game_state.game_numbers.kills +=1
+    this.impulse_game_state.addScoreLabel(this.impulse_game_state.game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y)
+    this.impulse_game_state.game_numbers.score += this.impulse_game_state.game_numbers.combo * this.score_value
+    this.impulse_game_state.increment_combo()
   }
   
 }
@@ -262,10 +266,10 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(other === player && this.check_player_intersection(player)) {
+  if(other === this.player && this.check_player_intersection(this.player)) {
    
     this.start_death("hit_player")
-    reset_combo()
+    this.impulse_game_state.reset_combo()
     if(this.status_duration[1] <= 0)//do not proc if silenced
       this.player_hit_proc()
   }
@@ -273,7 +277,7 @@ Enemy.prototype.collide_with = function(other) {
 
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
-  player.stun(500)
+  this.player.stun(500)
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {

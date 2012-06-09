@@ -31,3 +31,15 @@ Number of shapes (esp polygons) that canvas has to draw every frame
 Bosses
 Black Hole
 Red Swarmer (lots of stunners)
+
+
+Level Ideas:
+Boss Level is every 8th
+Each level should have some kind of design/art in its obstacles
+
+One level could be called "BEND" and should focus on a BEND in its obstacles, a strategy point for the player.
+
+TODO - MEDAL SCORES system
+Way of showing where the enemies spawn when off screen
+Way of saving game
+Pause menu!

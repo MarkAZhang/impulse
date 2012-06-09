@@ -2,7 +2,7 @@ Harpoon.prototype = new Enemy()
 
 Harpoon.prototype.constructor = Harpoon
 
-function Harpoon(world, x, y, id) {
+function Harpoon(world, x, y, id, impulse_game_state) {
   this.type = "harpoon"
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
      
@@ -25,7 +25,7 @@ function Harpoon(world, x, y, id) {
 
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.death_radius = 2
 
@@ -53,14 +53,13 @@ function Harpoon(world, x, y, id) {
 }
 
 Harpoon.prototype.get_target_point = function() {
-  console.log("HARPOON TARGET POINT")
   if(!this.safe) {
     this.goalPt = null
-    return get_safe_point(this)
+    return get_safe_point(this, this.player)
   }
   else {
 
-    if(this.goalPt != null && p_dist(player.body.GetPosition(), this.goalPt) < .9 * this.harpoon_length && !isVisible(player.body.GetPosition(), this.goalPt, level.obstacle_edges)) {
+    if(this.goalPt != null && p_dist(this.player.body.GetPosition(), this.goalPt) < .9 * this.harpoon_length && !isVisible(this.player.body.GetPosition(), this.goalPt, this.level.obstacle_edges)) {
       return this.goalPt 
     }
 
@@ -70,21 +69,21 @@ Harpoon.prototype.get_target_point = function() {
 
       var is_valid = true
 
-      var tempPt = new b2Vec2(player.body.GetPosition().x + Math.cos(random_angle) * this.harpoon_length * .75, player.body.GetPosition().y + Math.sin(random_angle) * this.harpoon_length * .75)
+      var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(random_angle) * this.harpoon_length * .75, this.player.body.GetPosition().y + Math.sin(random_angle) * this.harpoon_length * .75)
 
       if(tempPt.x >= canvasWidth/draw_factor || tempPt.x <= 0 || tempPt.y >= canvasHeight/draw_factor || tempPt.y <= 0) {
         is_valid = false
       }
 
-      for(var k = 0; k < level.boundary_polygons.length; k++)
+      for(var k = 0; k < this.level.boundary_polygons.length; k++)
       {
-        if(pointInPolygon(level.boundary_polygons[k], tempPt))
+        if(pointInPolygon(this.level.boundary_polygons[k], tempPt))
         {
           is_valid = false
         }
       }
 
-      if(isVisible(tempPt, player.body.GetPosition(), level.obstacle_edges)) {
+      if(isVisible(tempPt, this.player.body.GetPosition(), this.level.obstacle_edges)) {
         is_valid = false
       }
       if(is_valid) {
@@ -93,7 +92,7 @@ Harpoon.prototype.get_target_point = function() {
       }
     }
     this.goalPt = null
-    return player.body.GetPosition()
+    return this.player.body.GetPosition()
     
   }
 }
@@ -105,14 +104,14 @@ Harpoon.prototype.move = function() {
 
   if(this.harpooned) {
     
-    var dir = new b2Vec2(this.body.GetPosition().x - player.body.GetPosition().x, this.body.GetPosition().y - player.body.GetPosition().y)
+    var dir = new b2Vec2(this.body.GetPosition().x - this.player.body.GetPosition().x, this.body.GetPosition().y - this.player.body.GetPosition().y)
     dir.Normalize()
     dir.Multiply(this.harpooned_force)
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
-    this.body.SetAngle(_atan(player.body.GetPosition(), this.body.GetPosition()))
+    this.body.SetAngle(_atan(this.player.body.GetPosition(), this.body.GetPosition()))
     return
   }
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
+  if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
     this.path = null
   }
   else
@@ -126,17 +125,17 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpooning = false
   }
   
-  if(this.safe != (p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius || !isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)))
+  if(this.safe != (p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius || !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)))
   {
     this.safe = !this.safe
     this.path = null
   }
 
-  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), player.body.GetPosition(), level.obstacle_edges)) {
+  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.harpooning = true
     this.harpoon_loc = this.body.GetPosition().Copy()
     var temp = this.body.GetPosition().Copy()
-    temp.Subtract(player.body.GetPosition())
+    temp.Subtract(this.player.body.GetPosition())
     temp.Normalize()
     temp.Multiply(this.harpoon_velocity)
     this.harpoon_v = temp
@@ -147,11 +146,11 @@ Harpoon.prototype.additional_processing = function(dt) {
   }
   else if(this.harpooning) {
 
-    if(player.point_intersect(this.harpoon_loc)) {
+    if(this.player.point_intersect(this.harpoon_loc)) {
       this.harpooned = true
       this.harpooning = false
       this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
-      this.harpoon_joint.Initialize(this.body, player.body, this.body.GetWorldCenter(), player.body.GetWorldCenter())
+      this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
       this.harpoon_joint.collideConnected = true
       this.harpoon_joint = world.CreateJoint(this.harpoon_joint)
     }
@@ -161,10 +160,10 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpoon_loc.Subtract(temp_v)
 
   }
-  else if(this.harpooned && (player.body.GetPosition().x >= canvasWidth/draw_factor - 1|| player.body.GetPosition().x <= 1 || player.body.GetPosition().y >= canvasHeight/draw_factor - 1|| player.body.GetPosition().y <= 1)) {
+  else if(this.harpooned && (this.player.body.GetPosition().x >= canvasWidth/draw_factor - 1|| this.player.body.GetPosition().x <= 1 || this.player.body.GetPosition().y >= canvasHeight/draw_factor - 1|| this.player.body.GetPosition().y <= 1)) {
     this.disengage()
   }
-  else if(this.harpooned && player.dying) {
+  else if(this.harpooned && this.player.dying) {
     this.disengage()
   }
 }
@@ -201,7 +200,7 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
     context.strokeStyle = this.harpoon_color
     context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
-    context.lineTo(player.body.GetPosition().x * draw_factor, player.body.GetPosition().y * draw_factor)
+    context.lineTo(this.player.body.GetPosition().x * draw_factor, this.player.body.GetPosition().y * draw_factor)
     context.stroke()
   }
 }
@@ -212,7 +211,6 @@ Harpoon.prototype.process_impulse = function() {
 
 Harpoon.prototype.disengage = function() {
   if(this.harpooned) {
-    console.log("DISENGAGING "+this.harpoon_joint.m_bodyA+" "+this.harpoon_joint.m_bodyB)
     world.DestroyJoint(this.harpoon_joint)
     this.harpoon_joint = null
     this.harpooned = false

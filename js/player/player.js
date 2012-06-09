@@ -1,8 +1,8 @@
-var Player = function(world, x, y, draw_factor) {
-  this.init(world, x, y, draw_factor)
+var Player = function(world, x, y, impulse_game_state) {
+  this.init(world, x, y, impulse_game_state)
 }
 
-Player.prototype.lin_damp = 3.49 //old = 2.99
+Player.prototype.lin_damp = 3.5 //old = 3
 
 Player.prototype.force = 1 //old = .5
 
@@ -10,7 +10,8 @@ Player.prototype.impulse_force = 50
 
 Player.prototype.impulse_radius = 10
 
-Player.prototype.init = function(world, x, y, draw_factor) {
+Player.prototype.init = function(world, x, y, impulse_game_state) {
+  console.log(x+" "+y)
   var fixDef = new b2FixtureDef;
   fixDef.density = 1.0;
   fixDef.friction = 0;
@@ -21,6 +22,8 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = new b2CircleShape(.5);
   this.r = .5
+  this.level = impulse_game_state.level
+  this.impulse_game_state = impulse_game_state
   
   bodyDef.position.x = x;
   bodyDef.position.y = y;
@@ -37,8 +40,8 @@ Player.prototype.init = function(world, x, y, draw_factor) {
   this.enemies_hit = [] //stores ids of enemies hit
   this.attack_loc = {}
   this.attack_angle = 0
-  this.mouse_pos = {}//keeps track of last mouse position on player's part
-  this.draw_factor = draw_factor
+  this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
+  this.draw_factor = impulse_game_state.draw_factor
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
   this.attack_length = 250
@@ -117,14 +120,12 @@ Player.prototype.click = function(pos, enemies) {
     this.attack_angle = this.impulse_angle
     this.attack_duration = this.attack_length
   }
-
-  
 }
 
 Player.prototype.process = function(dt) {
  if(this.dying && this.dying_duration < 0)
   {
-    gameOver()
+    switch_game_state(new GameOverState(this.impulse_game_state.game_numbers, this.impulse_game_state.level))
     return
   }
 
@@ -145,9 +146,9 @@ Player.prototype.process = function(dt) {
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death()
       break
@@ -157,7 +158,6 @@ Player.prototype.process = function(dt) {
   if(this.attacking)
   {
 
-    
     if(this.attack_duration < 0)//attack lasts 500 ms
     {
       this.attacking = false
@@ -166,12 +166,12 @@ Player.prototype.process = function(dt) {
     else
     {
 
-      for(var i = 0; i < level.enemies.length; i++)
+      for(var i = 0; i < this.level.enemies.length; i++)
       {
-        if(level.enemies[i] instanceof Mote && level.enemies[i].status_duration[1] <= 0) continue
-        if(this.enemies_hit.indexOf(level.enemies[i].id)==-1 && !level.enemies[i].dying)//enemy has not been hit
+        if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
+        if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
-          var angle = _atan(this.attack_loc, level.enemies[i].body.GetPosition())
+          var angle = _atan(this.attack_loc, this.level.enemies[i].body.GetPosition())
           
           var struck;
 
@@ -189,16 +189,16 @@ Player.prototype.process = function(dt) {
           if(struck)
           {
             var dist = this.attack_loc.Copy()
-            dist.Subtract(level.enemies[i].body.GetPosition())
+            dist.Subtract(this.level.enemies[i].body.GetPosition())
             dist = dist.Normalize()
             if (dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2))
             {
-              level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), level.enemies[i].body.GetWorldCenter())
-              this.enemies_hit.push(level.enemies[i].id)
-              level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
+              this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), this.level.enemies[i].body.GetWorldCenter())
+              this.enemies_hit.push(this.level.enemies[i].id)
+              this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
             }
-            if(level.enemies[i] instanceof Harpoon && level.enemies[i].harpooned) {
-              level.enemies[i].disengage()
+            if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpooned) {
+              this.level.enemies[i].disengage()
             }
           }
         }
@@ -211,7 +211,6 @@ Player.prototype.process = function(dt) {
   {
     var f = this.status_duration[2] <= 0 ? this.force : this.force * this.slow_factor
     var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? f/Math.sqrt(2) : f;
-
     this.body.ApplyImpulse(new b2Vec2(force*this.f_x, force*this.f_y), this.body.GetWorldCenter())
   }
 }
@@ -223,7 +222,7 @@ Player.prototype.draw = function(context) {
     context.globalAlpha = (1 - prog)
     context.strokeStyle = this.color
     context.lineWidth = (1 - prog) * 2
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shape.GetRadius()*draw_factor) * (1 + 1 * prog), 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.shape.GetRadius()*this.draw_factor) * (1 + 1 * prog), 0, 2*Math.PI, true)
     context.stroke()
     context.fillStyle = this.color
     context.globalAlpha/=2
@@ -262,7 +261,7 @@ Player.prototype.draw = function(context) {
     context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
     context.closePath()
     context.fill()
-    if(player.attacking)
+    if(this.attacking)
     {
       var cur_time = (new Date()).getTime()
       context.beginPath();
@@ -290,5 +289,5 @@ Player.prototype.point_intersect = function(pt) {
 Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
-  level.obstacles_visible = true
+  this.level.obstacles_visible = true
 }

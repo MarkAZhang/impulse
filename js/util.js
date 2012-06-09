@@ -51,7 +51,7 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return false//lines are collinear. For the purposes of our visibility_graph, this does not count as an intersection
+      return false//lines are collinear. For the purposes of our cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -70,7 +70,7 @@ function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return null//lines are collinear. For the purposes of our visibility_graph, this does not count as an intersection
+      return null//lines are collinear. For the purposes of our cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -211,7 +211,7 @@ function check_bounds(buffer, pt) {
   return pt.x >= buffer && pt.y >= buffer && pt.x <= canvasWidth - buffer && pt.y <= canvasHeight - buffer
 }
 
-function get_safe_point(object) {
+function get_safe_point(object, player) {
   var safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
 
   var rayOut = new b2Vec2(object.body.GetPosition().x - player.body.GetPosition().x, object.body.GetPosition().y - player.body.GetPosition().y)
@@ -231,4 +231,87 @@ function get_safe_point(object) {
 
     j = i
   }  
+}
+
+//gets random point that is not inside a boundary polygon
+function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
+  var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*(canvasHeight/draw_factor-2*buffer_radius)+buffer_radius}
+  var inPoly = false
+  for(var k = 0; k < cur_game_state.level.boundary_polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(cur_game_state.level.boundary_polygons[k], r_point))
+    {
+      inPoly = true
+    }
+  }
+  if(inPoly)
+  {
+    return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
+  }
+  if(cur_game_state.visibility_graph.query(r_point, testPoint, cur_game_state.level.boundary_polygons)==null)
+  {
+    return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
+  }
+  return r_point
+}
+
+//gets random point that is not inside a boundary polygon
+function getRandomCentralValidLocation(testPoint) {
+  var r_point = {x:Math.random()*(canvasWidth/2/draw_factor)+canvasWidth/4/draw_factor, y: Math.random()*(canvasHeight/2/draw_factor)+canvasHeight/4/draw_factor}
+  var inPoly = false
+  for(var k = 0; k < cur_game_state.level.boundary_polygons.length; k++)
+  {
+    if(i != k && pointInPolygon(cur_game_state.level.boundary_polygons[k], r_point))
+    {
+      inPoly = true
+    }
+  }
+  if(inPoly)
+  {
+    return getRandomCentralValidLocation(testPoint)
+  }
+  if(cur_game_state.visibility_graph.query(r_point, testPoint, cur_game_state.level.boundary_polygons)==null)
+  {
+    return getRandomCentralValidLocation(testPoint)
+  }
+  return r_point
+}
+
+function getRandomOutsideLocation(buffer, range) {
+  var x_anchor, y_anchor
+  if(Math.random() < .5)
+  {
+    x_anchor = Math.random() < .5 ? -buffer-range : canvasWidth/draw_factor + buffer
+    y_anchor = Math.random() * (canvasHeight/draw_factor + 2 * buffer + range) - (buffer + range)
+  }
+  else
+  {
+    y_anchor = Math.random() < .5 ? -buffer-range : canvasHeight/draw_factor + buffer
+    x_anchor = Math.random() * (canvasWidth/draw_factor + 2 * buffer + range) - (buffer + range)
+  }
+
+  //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay
+  var r_point = {x: x_anchor + Math.random() * range, y: y_anchor + Math.random() * range }
+  return r_point
+
+}
+
+function getWindowDimensions() {
+  var winW = 800, winH = 600;
+  if (document.body && document.body.offsetWidth) {
+   winW = document.body.offsetWidth;
+   winH = document.body.offsetHeight;
+  }
+  if (document.compatMode=='CSS1Compat' &&
+      document.documentElement &&
+      document.documentElement.offsetWidth ) {
+   winW = document.documentElement.offsetWidth;
+   winH = document.documentElement.offsetHeight;
+  }
+  if (window.innerWidth && window.innerHeight) {
+   winW = window.innerWidth;
+   winH = window.innerHeight;
+  }
+
+  return {w: winW, h: winH}
 }

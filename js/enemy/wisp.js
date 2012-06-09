@@ -2,7 +2,7 @@ Wisp.prototype = new Enemy()
 
 Wisp.prototype.constructor = Wisp
 
-function Wisp(world, x, y, id) {
+function Wisp(world, x, y, id, impulse_game_state) {
   
   this.type = "wisp"
   vertices = []
@@ -15,7 +15,7 @@ function Wisp(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
   this.interior_color = "white"
 
   this.special_mode = false
@@ -35,7 +35,7 @@ Wisp.prototype.additional_processing = function(dt) {
 }
 
 Wisp.prototype.player_hit_proc = function() {
-  level.obstacles_visible = false
-  setTimeout("level.obstacles_visible = true", 5000)
+  this.level.obstacles_visible = false
+  setTimeout(function(_this){return function() {_this.level.obstacles_visible = true}}(this), 5000)
 }
 

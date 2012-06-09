@@ -2,7 +2,7 @@ FighterBullet.prototype = new Enemy()
 
 FighterBullet.prototype.constructor = FighterBullet
 
-function FighterBullet(world, x, y, id, vx, vy, parent_id) {
+function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
   this.type = "fighter_bullet"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]["effective_radius"]  //temp var
@@ -15,13 +15,11 @@ function FighterBullet(world, x, y, id, vx, vy, parent_id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
   
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
 
   this.death_radius = 5
-
-  this.score_value = 0
 
   this.v = new b2Vec2(vx, vy)
   this.v.Normalize()
@@ -45,13 +43,13 @@ FighterBullet.prototype.start_death = function(death) {
 FighterBullet.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
-  if(other === player && this.check_player_intersection(player)) {
+  if(other === this.player && this.check_player_intersection(this.player)) {
    
-    var bullet_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
-    player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), player.body.GetWorldCenter())
+    var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
     this.start_death("hit_player")
     
-    reset_combo()
+    this.impulse_game_state.reset_combo()
   }
   else if(other.is_enemy && (other.id != this.parent_id || this.reflected))
   {
@@ -65,7 +63,7 @@ FighterBullet.prototype.collide_with = function(other) {
 FighterBullet.prototype.process = function(enemy_index, dt) {
   if(this.dying && this.dying_duration < 0)
   {
-    level.dead_enemies.push(enemy_index)
+    this.level.dead_enemies.push(enemy_index)
     return
   }
 
@@ -94,9 +92,9 @@ FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force) {
 FighterBullet.prototype.check_death = function()
 {
   //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < level.obstacle_polygons.length; k++)
+  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(level.obstacle_polygons[k], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
       

@@ -2,7 +2,7 @@ Fighter.prototype = new Enemy()
 
 Fighter.prototype.constructor = Fighter
 
-function Fighter(world, x, y, id) {
+function Fighter(world, x, y, id, impulse_game_state) {
   this.type = "fighter"
 
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']
@@ -18,13 +18,11 @@ function Fighter(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
 
   this.death_radius = 5
-
-  this.score_value = 1000
 
   this.shoot_interval = 750
 
@@ -46,7 +44,7 @@ function Fighter(world, x, y, id) {
 
 Fighter.prototype.additional_processing = function(dt) {
 
-  if(this.safe != p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
+  if(this.safe != p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
   {
     this.safe = !this.safe
     this.path = null
@@ -58,33 +56,31 @@ Fighter.prototype.additional_processing = function(dt) {
       var other_angle = this.body.GetAngle() + Math.PI/2 * ((this.bullet_alternater % 2) * 2 - 1)
       var bullet_start_loc_x = this.body.GetPosition().x + this.effective_radius *  Math.cos(other_angle) + this.effective_radius * 3 * Math.cos(this.body.GetAngle())
       var bullet_start_loc_y = this.body.GetPosition().y + this.effective_radius *  Math.sin(other_angle) + this.effective_radius * 3 * Math.sin(this.body.GetAngle())
-      level.spawned_enemies.push(new FighterBullet(world, bullet_start_loc_x, bullet_start_loc_y, enemy_counter, (player.body.GetPosition().x - bullet_start_loc_x), (player.body.GetPosition().y - bullet_start_loc_y), this.id))
-      enemy_counter += 1
+      this.level.spawned_enemies.push(new FighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))
+      this.level.enemy_counter += 1
       this.bullet_alternater += 1
     }
   }
   this.shoot_duration -= dt
 
-  this.special_mode = isVisible(player.body.GetPosition(), this.body.GetPosition(), level.obstacle_edges) && this.status_duration[1] <= 0
+  this.special_mode = isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges) && this.status_duration[1] <= 0
 }
 
 Fighter.prototype.player_hit_proc = function() {
 }
 
 Fighter.prototype.get_target_point = function() {
-  console.log("FIGHTER TARGET POINT")
   if(!this.safe) {
-    var rayOut = new b2Vec2(this.body.GetPosition().x - player.body.GetPosition().x, this.body.GetPosition().y - player.body.GetPosition().y)
+    var rayOut = new b2Vec2(this.body.GetPosition().x - this.player.body.GetPosition().x, this.body.GetPosition().y - this.player.body.GetPosition().y)
     rayOut.Normalize()
     rayOut.Multiply(200)
     var j = this.safe_lines.length - 1
     for(var i = 0; i < this.safe_lines.length; i++)
     {
-      var temp = getSegIntersection(player.body.GetPosition(), {x: player.body.GetPosition().x + rayOut.x, y: player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
+      var temp = getSegIntersection(this.player.body.GetPosition(), {x: this.player.body.GetPosition().x + rayOut.x, y: this.player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
 
       if(temp!=null)
       {
-        console.log("RETURN " + temp.x +" " +temp.y)
         return temp
         
       }
@@ -93,14 +89,13 @@ Fighter.prototype.get_target_point = function() {
     }
   }
   else
-    console.log("RETURN " + player.body.GetPosition().x +" " +player.body.GetPosition().y)
-    return player.body.GetPosition()
+    return this.player.body.GetPosition()
 }
 
 Fighter.prototype.enemy_move = Enemy.prototype.move
 
 Fighter.prototype.move = function() {
-  if(p_dist(player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
+  if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
     this.path = null
   }
   else
@@ -110,6 +105,6 @@ Fighter.prototype.move = function() {
 }
 
 Fighter.prototype.set_heading = function(endPt) {
-  var heading = _atan(this.body.GetPosition(), player.body.GetPosition())
+  var heading = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.body.SetAngle(heading)
 }

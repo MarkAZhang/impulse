@@ -2,7 +2,7 @@ Crippler.prototype = new Goo()
 
 Crippler.prototype.constructor = Crippler
 
-function Crippler(world, x, y, id) {
+function Crippler(world, x, y, id, impulse_game_state) {
   this.type = "crippler"
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
   
@@ -14,7 +14,7 @@ function Crippler(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.death_radius = 2
   this.goo_color = [255, 105, 180]
@@ -26,7 +26,7 @@ function Crippler(world, x, y, id) {
 }
 
 Crippler.prototype.player_hit_proc = function() {
-  player.stun(2000)
+  this.player.stun(2000)
 }
 
 Crippler.prototype.trail_effect = function(obj) {

@@ -2,7 +2,7 @@ Spear.prototype = new Enemy()
 
 Spear.prototype.constructor = Spear
 
-function Spear(world, x, y, id) {
+function Spear(world, x, y, id, impulse_game_state) {
   this.type = "spear"
   vertices = []
   var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
@@ -13,7 +13,7 @@ function Spear(world, x, y, id) {
   this.shape = new b2PolygonShape
   this.shape.SetAsArray(vertices, vertices.length)
 
-  this.init(world, x, y, id)
+  this.init(world, x, y, id, impulse_game_state)
 
   this.spear_range = 30   //distance from which spear effects activate
 
@@ -31,9 +31,9 @@ function Spear(world, x, y, id) {
 Spear.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
   var in_poly = false
-  for(var i = 0; i < level.obstacle_polygons.length; i++)
+  for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {
-    if(pointInPolygon(level.obstacle_polygons[i], this.body.GetPosition()))
+    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
     {
       in_poly = true
     }
@@ -55,14 +55,14 @@ Spear.prototype.modify_movement_vector = function(dir) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && check_bounds(5, this.body.GetPosition())
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && check_bounds(5, this.body.GetPosition())
   
 }
 
 Spear.prototype.player_hit_proc = function() {
-  var spear_angle = _atan(this.body.GetPosition(), player.body.GetPosition())
+  var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-  player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), player.body.GetWorldCenter())
+  this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
 }
 
 Spear.prototype.process_impulse = function(attack_loc, impulse_force) {
