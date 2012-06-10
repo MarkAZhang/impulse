@@ -62,7 +62,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
   this.player.draw(ctx)
   
   
-  for(var i = 0; i < this.visibility_graph.vertices.length; i++)
+  /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -125,7 +125,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
         ctx.lineWidth = 1
       }
     }
-  }
+  }*/
 
   this.draw_interface(ctx)
 }

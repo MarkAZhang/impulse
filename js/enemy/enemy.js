@@ -7,9 +7,6 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 //need to set effective_radius if do_yield = true
 
-
-
-
   this.impulse_game_state = impulse_game_state
   this.level = impulse_game_state.level
   this.player = impulse_game_state.player
@@ -29,6 +26,18 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     this.shape = new b2PolygonShape
     this.shape.SetAsArray(vertices, vertices.length)
   }
+
+  this.pointer_vertices = []
+
+  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*0), Math.sin(Math.PI*0)))
+  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*5/6), Math.sin(Math.PI*5/6)))
+  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*7/6), Math.sin(Math.PI*7/6)))  
+  
+  this.pointer_max_radius = .7
+
+  this.pointer_fadein_duration = 1000
+
+  this.pointer_visibility = 0
 
 
   var fixDef = new b2FixtureDef;//make the shape
@@ -92,6 +101,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.slow_force = this.force / 3
 
   this.death_radius = 2
+
 }
 
 Enemy.prototype.check_death = function() {
@@ -135,6 +145,9 @@ Enemy.prototype.process = function(enemy_index, dt) {
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
   }
+  if(this.pointer_visibility < 1) {
+    this.pointer_visibility = Math.min(this.pointer_visibility + dt/this.pointer_fadein_duration, 1)
+  }
 
   this.special_mode_visibility_timer +=dt
   var leftover = this.special_mode_visibility_timer % 1000
@@ -162,6 +175,7 @@ Enemy.prototype.get_target_point = function() {
 }
 
 Enemy.prototype.move = function() {
+
   if(this.player.dying) return
   var target_point = this.get_target_point()
   this.pathfinding_counter+=1
@@ -299,6 +313,34 @@ Enemy.prototype.player_hit_proc = function() {
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
+  
+  if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
+
+    var pointer_point = get_pointer_point(this)
+    var pointer_angle = _atan(pointer_point, this.body.GetPosition())
+    context.save();
+    context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
+    context.rotate(pointer_angle);
+    context.translate(-(pointer_point.x) * draw_factor, -(pointer_point.y) * draw_factor);
+      
+    context.beginPath()
+    context.globalAlpha = this.pointer_visibility
+    context.strokeStyle = this.color
+    context.lineWidth = 2
+    var pointer_radius = this.pointer_max_radius * Math.max(Math.min(1, (15 - (p_dist(this.body.GetPosition(), pointer_point) - 3))/15), 0)
+    context.moveTo((pointer_point.x+this.pointer_vertices[0].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[0].y*pointer_radius)*draw_factor)
+    for(var i = 1; i < this.pointer_vertices.length; i++)
+    {
+      context.lineTo((pointer_point.x+this.pointer_vertices[i].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[i].y*pointer_radius)*draw_factor)
+    }
+    context.closePath()
+    context.stroke()
+    context.restore()
+    context.globalAlpha = 1
+    return
+  }
+
+
   if(this.dying) {
     var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)
     if(this.shape instanceof b2CircleShape)

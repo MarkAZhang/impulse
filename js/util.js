@@ -212,9 +212,11 @@ function getBoundaryPolygon(polygon, radius) {
   return ans 
 }
 
-function check_bounds(buffer, pt) {
-  return pt.x >= buffer && pt.y >= buffer && pt.x <= canvasWidth - buffer && pt.y <= canvasHeight - buffer
+function check_bounds(buffer, pt, draw_factor) {
+  var factor = draw_factor ? draw_factor : 1
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= canvasWidth/factor - buffer && pt.y <= canvasHeight/factor - buffer
 }
+
 
 function get_safe_point(object, player) {
   var safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
@@ -232,6 +234,24 @@ function get_safe_point(object, player) {
       console.log("RETURN " + temp.x +" " +temp.y)
       return temp
       
+    }
+
+    j = i
+  }  
+}
+
+
+function get_pointer_point(object) {
+  
+  var enemy_pointer_lines = [{x: 2, y: 2}, {x: 2, y: canvasHeight/draw_factor - 2}, {x: canvasWidth/draw_factor - 2, y: canvasHeight/draw_factor  - 2}, {x: canvasWidth/draw_factor - 2, y: 2}]
+  var j = enemy_pointer_lines.length - 1
+  for(var i = 0; i < enemy_pointer_lines.length; i++)
+  {
+    var temp = getSegIntersection({x: canvasHeight/draw_factor/2, y: canvasWidth/draw_factor/2}, object.body.GetPosition(), enemy_pointer_lines[i], enemy_pointer_lines[j])
+
+    if(temp!=null)
+    {
+      return temp
     }
 
     j = i
@@ -300,6 +320,8 @@ function getRandomOutsideLocation(buffer, range) {
   return r_point
 
 }
+
+
 
 function getWindowDimensions() {
   var winW = 800, winH = 600;

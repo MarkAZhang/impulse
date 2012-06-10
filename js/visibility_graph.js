@@ -143,8 +143,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
       point2_adj.push(i)
     }
   }
-  console.log(point1_adj)
-  console.log(point2_adj)
+  //console.log(point1_adj)
+  //console.log(point2_adj)
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)
@@ -167,16 +167,16 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
         if(point1_adj[i] == point2_adj[j])
         {
           min_path = [point1_adj[i]]
-          console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-          console.log("NEW MIN PATH with "+dist)
-          console.log(min_path)
+          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+          //console.log("NEW MIN PATH with "+dist)
+          //console.log(min_path)
         }
         else
         {
-          console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
           min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
-          console.log("NEW MIN PATH with "+dist)
-          console.log(min_path)
+          //console.log("NEW MIN PATH with "+dist)
+          //console.log(min_path)
         }
       }
     }
@@ -192,8 +192,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons)
     ans.push(this.vertices[min_path[i]])
   }
   ans.push(point2)
-  console.log("ANSWER ")
-  console.log(ans)
+  //console.log("ANSWER ")
+  //console.log(ans)
   return ans
 
 

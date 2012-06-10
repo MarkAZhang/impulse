@@ -29,7 +29,8 @@ impulse_level_data['SURVIVAL'] = {
           new b2Vec2(r2*Math.cos(r4+Math.PI*2/3)+x, r2*Math.sin(r4+Math.PI*2/3)+y),
           new b2Vec2(r3*Math.cos(r4+Math.PI*4/3)+x, r3*Math.sin(r4+Math.PI*4/3)+y)]
   },
-  buffer_radius: 1
+  buffer_radius: 1,
+  cutoff_scores: [100000, 300000, 1000000]
 
 }
 
@@ -53,7 +54,7 @@ impulse_level_data['LEVEL 1-1'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [100, 300, 1000]
+  cutoff_scores: [50000, 300000, 1000000]
 
 }
 

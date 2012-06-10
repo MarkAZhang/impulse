@@ -78,7 +78,6 @@ Level.prototype.process = function(dt) {
 
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
       this.enemies.splice(dead_i, 1)
-      console.log(this.enemies)
     }
     
     while(this.spawned_enemies.length > 0)
