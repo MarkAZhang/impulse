@@ -4,14 +4,6 @@ Spear.prototype.constructor = Spear
 
 function Spear(world, x, y, id, impulse_game_state) {
   this.type = "spear"
-  vertices = []
-  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))
-
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
 
   this.init(world, x, y, id, impulse_game_state)
 

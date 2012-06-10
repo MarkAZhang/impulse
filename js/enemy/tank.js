@@ -4,16 +4,6 @@ Tank.prototype.constructor = Tank
 
 function Tank(world, x, y, id, impulse_game_state) {
   this.type = "tank"
-  vertices = []
-  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 0), s_radius*Math.sin(Math.PI*0)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1/2), s_radius*Math.sin(Math.PI * 1/2)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1), s_radius*Math.sin(Math.PI * 1)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 3/2), s_radius*Math.sin(Math.PI * 3/2)))  
-//  this.shape = new b2CircleShape(.5)
-
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
   
   this.init(world, x, y, id, impulse_game_state)
 

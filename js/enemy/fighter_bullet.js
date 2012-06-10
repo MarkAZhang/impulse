@@ -4,16 +4,6 @@ FighterBullet.prototype.constructor = FighterBullet
 
 function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
   this.type = "fighter_bullet"
-  vertices = []
-  var s_radius = impulse_enemy_stats[this.type]["effective_radius"]  //temp var
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 0), s_radius*Math.sin(Math.PI*0)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1/4), s_radius*Math.sin(Math.PI * 1/4)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 3/4), s_radius*Math.sin(Math.PI * 3/4)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 5/4), s_radius*Math.sin(Math.PI * 5/4)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 7/4), s_radius*Math.sin(Math.PI * 7/4)))  
-
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
   
   this.init(world, x, y, id, impulse_game_state)
 

@@ -190,7 +190,12 @@ function getBoundaryPolygon(polygon, radius) {
     var cur_angle = first_angle - second_angle
     cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
     cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
-    if(cur_angle > Math.PI/2)
+    console.log(i+" "+j+" "+k+" "+cur_angle)
+    if (cur_angle > Math.PI) {
+      ans.push({x: polygon[i].x+j_to_i_normal.x*radius - j_to_i.x*1/Math.tan(cur_angle/2 - Math.PI/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius - j_to_i.y *1/Math.tan(cur_angle/2 - Math.PI/2)* radius})
+
+    }
+    else if(cur_angle > Math.PI/2)
     {
       ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
       ans.push({x: polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, y: polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})

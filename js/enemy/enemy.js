@@ -6,6 +6,10 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set this.type before calling init
 
 //need to set effective_radius if do_yield = true
+
+
+
+
   this.impulse_game_state = impulse_game_state
   this.level = impulse_game_state.level
   this.player = impulse_game_state.player
@@ -13,6 +17,19 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   for(i in impulse_enemy_stats[this.type]) {
     this[i] = impulse_enemy_stats[this.type][i]
   }
+
+  if(this.shape_type == "circle") {
+    this.shape = new b2CircleShape(this.effective_radius)
+  }
+  else if(this.shape_type == "polygon") {
+    var vertices = []
+    for(var i= 0; i < this.shape_vertices.length; i++) {
+      vertices.push(new b2Vec2(this.effective_radius * this.shape_vertices[i][0], this.effective_radius * this.shape_vertices[i][1]))
+    }
+    this.shape = new b2PolygonShape
+    this.shape.SetAsArray(vertices, vertices.length)
+  }
+
 
   var fixDef = new b2FixtureDef;//make the shape
   fixDef.density = this.density;
@@ -253,9 +270,10 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
-    this.impulse_game_state.addScoreLabel(this.impulse_game_state.game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y)
+    this.impulse_game_state.addScoreLabel(this.impulse_game_state.game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
     this.impulse_game_state.game_numbers.score += this.impulse_game_state.game_numbers.combo * this.score_value
     this.impulse_game_state.increment_combo()
+    this.impulse_game_state.check_cutoffs()
   }
   
 }

@@ -4,26 +4,15 @@ Harpoon.prototype.constructor = Harpoon
 
 function Harpoon(world, x, y, id, impulse_game_state) {
   this.type = "harpoon"
-  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
-     
-  var vertices = []
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*2/5), s_radius*Math.sin(Math.PI*2/5)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*4/5), s_radius*Math.sin(Math.PI*4/5)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*6/5), s_radius*Math.sin(Math.PI*6/5)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*8/5), s_radius*Math.sin(Math.PI*8/5)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/5), s_radius*Math.sin(Math.PI*0/5)))  
-  this.shape = new b2PolygonShape
 
   var h_vertices = []
 
-  s_radius = .3
+  var s_radius = .3
 
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0), s_radius*Math.sin(Math.PI*0)))
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))  
   this.harpoon_shape = h_vertices
-
-  this.shape.SetAsArray(vertices, vertices.length)
 
   this.init(world, x, y, id, impulse_game_state)
 

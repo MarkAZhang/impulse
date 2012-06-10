@@ -28,6 +28,11 @@ TitleState.prototype.draw = function(ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+
+  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 20, 15, "black")
+  ctx.textAlign = 'right'
+  ctx.fillStyle = 'black'
+  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 15)
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {

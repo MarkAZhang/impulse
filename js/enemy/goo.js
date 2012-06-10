@@ -5,13 +5,6 @@ Goo.prototype.constructor = Goo
 function Goo(world, x, y, id, impulse_game_state) {
   if(world == null) return  //allows others to use Goo as super-class
   this.type = "goo"
-  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
-  var vertices = []
-  vertices.push(new b2Vec2(s_radius * .25 * Math.cos(Math.PI * 0), s_radius * .5 * Math.sin(Math.PI*0)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 2/3), s_radius*Math.sin(Math.PI * 2/3)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
   this.init(world, x, y, id, impulse_game_state)
 
   this.death_radius = 2

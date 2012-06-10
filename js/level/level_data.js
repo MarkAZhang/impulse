@@ -52,10 +52,44 @@ impulse_level_data['LEVEL 1-1'] = {
 
     return ans_array
   },
-  buffer_radius: 1
+  buffer_radius: 1,
+  cutoff_scores: [100, 300, 1000]
+
+}
+
+impulse_level_data['LEVEL 1-2'] = {
+  enemies: {
+              stunner: [0, 3, 1, 2, 50],
+              spear: [3, 5, 1, .75, 20],
+              
+           },
+  obstacle_num: 2, 
+  get_obstacle_vertices: function (index) {
+    var ob_v = [[[100, 200], [150, 200], [300, 350], [500, 450], [100, 450]],
+    [[300, 200], [400, 150], [600, 150], [700, 200], [700, 400], [600, 450], [400, 400]]]
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [100000, 300000, 1000000]
 
 }
 
 for(i in impulse_level_data) {
   impulse_level_data[i].level_name = i
 }
+
+var impulse_level_cutoffs = {'LEVEL 1-1': 0, 'LEVEL 1-2': 1}
+
+for(i in impulse_level_cutoffs) {
+  impulse_level_data[i].star_cutoff = impulse_level_cutoffs[i]
+}
+
+var world_cutoffs = {'WORLD 1': 0, 'WORLD 2': 16, 'WORLD 3': 32, 'WORLD 4': 48, 
+  'WORLD 5': 64, 'WORLD 6': 80, 'WORLD 7': 96, 'WORLD 8': 112}

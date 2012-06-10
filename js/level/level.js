@@ -15,6 +15,7 @@ Level.prototype.init = function(data, impulse_game_state) {
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
     this.enemy_numbers[i] = 0
   }
+  this.cutoff_scores = data.cutoff_scores
   this.obstacle_num = data.obstacle_num
   this.get_obstacle_vertices = data.get_obstacle_vertices
 

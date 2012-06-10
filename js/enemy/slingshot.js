@@ -4,14 +4,6 @@ Slingshot.prototype.constructor = Slingshot
 
 function Slingshot(world, x, y, id, impulse_game_state) {
   this.type = "slingshot"
-  vertices = []
-  var s_radius = impulse_enemy_stats[this.type]['effective_radius']  //temp var
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*2/3), s_radius*Math.sin(Math.PI*2/3)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*4/3), s_radius*Math.sin(Math.PI*4/3)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0/6), s_radius*Math.sin(Math.PI*0/6)))  
-
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
 
   this.init(world, x, y, id, impulse_game_state)
 

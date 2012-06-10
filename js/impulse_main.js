@@ -7,6 +7,12 @@ var dt = 0
 var last_time = 0
 var step_id = 0
 var cur_game_state
+var save_name = "impulse_save_data"
+var impulse_colors = {}
+impulse_colors['bronze'] = "rgb(205, 127, 50)"
+impulse_colors['silver'] = "rgb(175, 175, 175)"
+impulse_colors['gold'] = "rgb(238, 201, 0)"
+var player_data = {}
 
 Event.observe(window, 'load', function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -63,6 +69,7 @@ Event.observe(window, 'load', function() {
     }
 
     cur_game_state = new TitleState(false)
+    load_game()
     step()
 
 });
@@ -106,4 +113,45 @@ function switch_game_state(game_state) {
 
 function switch_game_state_helper(game_state) {
   step()
+}
+
+function save_game() {
+  var save_obj = {}
+  save_obj['levels'] = {}
+  for(i in impulse_level_data) {
+    save_obj['levels'][i] = {}
+    save_obj['levels'][i].high_score = impulse_level_data[i].high_score
+    save_obj['levels'][i].stars = impulse_level_data[i].stars
+  }
+  localStorage[save_name] = JSON.stringify(save_obj)
+}
+
+function load_game() {
+  var load_obj = {}
+  if(localStorage[save_name]===undefined) {
+    load_obj['levels'] = {}
+    for(i in impulse_level_data) {
+      load_obj['levels'][i] = {}
+      load_obj['levels'][i].high_score = 0
+      load_obj['levels'][i].stars = 0
+    }
+  }
+  else {
+    load_obj = JSON.parse(localStorage[save_name])
+  }
+  for(i in load_obj['levels']) {
+    impulse_level_data[i].high_score = load_obj['levels'][i].high_score
+    impulse_level_data[i].stars = load_obj['levels'][i].stars
+  }
+
+  calculate_stars()
+  
+}
+
+function calculate_stars() {
+  var total_stars = 0
+  for(i in impulse_level_data) {
+    total_stars += impulse_level_data[i].stars
+  }
+  player_data.stars = total_stars
 }

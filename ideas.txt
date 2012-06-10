@@ -39,7 +39,6 @@ Each level should have some kind of design/art in its obstacles
 
 One level could be called "BEND" and should focus on a BEND in its obstacles, a strategy point for the player.
 
-TODO - MEDAL SCORES system
+TODO - 
 Way of showing where the enemies spawn when off screen
-Way of saving game
 Pause menu!

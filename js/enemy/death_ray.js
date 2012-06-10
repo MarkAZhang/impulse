@@ -5,18 +5,6 @@ DeathRay.prototype.constructor = DeathRay
 function DeathRay(world, x, y, id, impulse_game_state) {
   this.type = "deathray"
    
-  vertices = []
-  var s_radius = impulse_enemy_stats[this.type]["effective_radius"]  //temp var
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 0), s_radius*Math.sin(Math.PI*0)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1/3), s_radius*Math.sin(Math.PI * 1/3)))
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 2/3), s_radius*Math.sin(Math.PI * 2/3)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 1), s_radius*Math.sin(Math.PI * 1)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 4/3), s_radius*Math.sin(Math.PI * 4/3)))  
-  vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI * 5/3), s_radius*Math.sin(Math.PI * 5/3)))  
-
-  this.shape = new b2PolygonShape
-  this.shape.SetAsArray(vertices, vertices.length)
-
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
@@ -30,8 +18,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.interior_buffer = 5
   this.safe = true
   this.within_bounds = false
-
-  this.safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
 
   this.turret_mode = false
   this.turret_timer = 0 //1 indicates ready to fire, 0 indicates ready to move

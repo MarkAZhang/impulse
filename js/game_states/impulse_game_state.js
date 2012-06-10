@@ -14,8 +14,11 @@ function ImpulseGameState(ctx, level_name) {
   this.score_labels = []
   this.score_label_duration = 1000
   this.score_label_rise = 30
-  this.score_label_font = '20px Century Gothic'
   this.buffer_radius = 1 //primarily for starting player location
+
+  this.stars = 0
+  this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
+  this.star_colors =  ["bronze", "silver", "gold"]
 
   this.loading_screen()
   setTimeout(function(this_state, level_name){ return function(){this_state.setup_world_next(level_name)}}(this, level_name), 5)
@@ -165,10 +168,11 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   for(var i = 0; i < this.score_labels.length; i++)
   {
     ctx.beginPath()
-    ctx.font = this.score_label_font
+    ctx.font = this.score_labels[i].size+'px Century Gothic'
     var prog = this.score_labels[i].duration / this.score_label_duration
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color
+    ctx.textAlign = 'center'
     ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
     ctx.fill()
   }
@@ -263,9 +267,17 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
 }
 
-ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y) {
-  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this.score_label_duration}
+ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size) {
+  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this.score_label_duration, size: font_size}
   this.score_labels.push(temp_score_label)
+}
+
+ImpulseGameState.prototype.check_cutoffs = function() {
+  if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
+  {
+    this.stars+=1
+    this.addScoreLabel(this.cutoff_messages[this.stars-1], this.star_colors[this.stars-1], canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, 40)
+  }
 }
 
 ImpulseGameState.prototype.increment_combo = function() {
