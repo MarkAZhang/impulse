@@ -2,9 +2,10 @@ LevelButton.prototype = new WorldButton()
 
 LevelButton.prototype.constructor = LevelButton
 
-function LevelButton(level_name, size, x, y, w, h, color) {
+function LevelButton(level_name, size, x, y, w, h, color, world) {
   if(!level_name) return
   this.state = null
+  this.world = world
   if(impulse_level_data[level_name]) {
     
     if(player_data.stars < impulse_level_data[level_name].star_cutoff) {
@@ -14,7 +15,7 @@ function LevelButton(level_name, size, x, y, w, h, color) {
     }
     else {
       var this_action = function() {
-        switch_game_state(new ImpulseGameState(ctx, level_name))
+        switch_game_state(new ImpulseGameState(ctx, level_name, world))
       }
       this.init(level_name, size, x, y, w, h, color, this_action)
       this.state = "unlocked"

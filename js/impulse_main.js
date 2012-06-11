@@ -7,6 +7,7 @@ var dt = 0
 var last_time = 0
 var step_id = 0
 var cur_game_state
+var cur_dialog_box = null
 var save_name = "impulse_save_data"
 var impulse_colors = {}
 impulse_colors['bronze'] = "rgb(205, 127, 50)"
@@ -81,29 +82,66 @@ function step() {
   cur_game_state.process(dt)
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 	cur_game_state.draw(ctx);
+
+  if(cur_dialog_box!=null) {
+    ctx.beginPath()
+    ctx.globalAlpha = .5
+    ctx.fillStyle = "black"
+    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.fill()
+    ctx.globalAlpha = 1
+    cur_dialog_box.draw(ctx)
+  }
+
   last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   step_id = setTimeout('step()', Math.max(25 - temp_dt, 1))
 
 }
 
+function set_dialog_box(box) {
+  this.cur_dialog_box = box
+}
+
+function clear_dialog_box() {
+  this.cur_dialog_box = null
+}
+
 function on_mouse_move(event) {
+
   var mPos = getCursorPosition(event)
+
+  if(cur_dialog_box) {
+    cur_dialog_box.on_mouse_move(mPos.x, mPos.y)
+    return
+  }
   cur_game_state.on_mouse_move(mPos.x, mPos.y)
 }
 
 function on_click(event) {
   var mPos = getCursorPosition(event)
+  if(cur_dialog_box) {
+    cur_dialog_box.on_click(mPos.x, mPos.y)
+    return
+  }
   cur_game_state.on_click(mPos.x, mPos.y)
 }
 
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
+  if(cur_dialog_box) {
+    cur_dialog_box.on_key_down(keyCode)
+    return
+  }
   cur_game_state.on_key_down(keyCode)
 }
 
 function on_key_up(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
+  if(cur_dialog_box) {
+    cur_dialog_box.on_key_up(keyCode)
+    return
+  }
   cur_game_state.on_key_up(keyCode)
 }
 

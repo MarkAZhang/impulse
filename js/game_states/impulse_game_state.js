@@ -2,7 +2,7 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(ctx, level_name) {
+function ImpulseGameState(ctx, level_name, world) {
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -17,11 +17,12 @@ function ImpulseGameState(ctx, level_name) {
   this.buffer_radius = 1 //primarily for starting player location
 
   this.stars = 0
+  this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
   this.star_colors =  ["bronze", "silver", "gold"]
 
   this.loading_screen()
-  setTimeout(function(this_state, level_name){ return function(){this_state.setup_world_next(level_name)}}(this, level_name), 5)
+  setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 5)
 
 }
 
@@ -195,8 +196,12 @@ ImpulseGameState.prototype.on_click = function(x, y) {
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
-  if(keyCode == 32)
+  if(keyCode == 32) {
     this.pause = !this.pause
+    if(this.pause) {
+      set_dialog_box(new PauseMenu(this.level, this.game_numbers, this))
+    }
+  }
   else
     this.player.keyDown(keyCode)  //even if paused, must still process
 }

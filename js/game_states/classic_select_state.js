@@ -2,13 +2,20 @@ ClassicSelectState.prototype = new GameState
 
 ClassicSelectState.prototype.constructor = ClassicSelectState
 
-function ClassicSelectState() {
-  this.start_clicked = false
-  this.buttons = []
-  var _this = this
-  this.buttons.push(new ImpulseButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
-  this.level_buttons = []
-  this.set_world_buttons()
+function ClassicSelectState(world) {
+
+  if(!world) {
+    this.buttons = []
+    this.buttons.push(new ImpulseButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.level_buttons = []
+    this.set_world_buttons()
+  }
+  else {
+    this.buttons = []
+    this.buttons.push(new ImpulseButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.level_buttons = []
+    this.set_level_buttons(world)
+  }
   
 }
 
@@ -37,8 +44,9 @@ ClassicSelectState.prototype.set_level_buttons = function(world) {
   var level_button_w = (canvasWidth - 5 * gap)/4
   
   for(var i = 0; i < 8; i++) {
-    var temp_button = new LevelButton("LEVEL "+world+"-"+(i+1), 20, (gap + level_button_w) * (i%4) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/4) +gap + level_button_h/2, level_button_w, level_button_h, "black")
+    var temp_button = new LevelButton("LEVEL "+world+"-"+(i+1), 20, (gap + level_button_w) * (i%4) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/4) +gap + level_button_h/2, level_button_w, level_button_h, "black", world)
     temp_button.set_float_panel_loc(400, 535, 740, 70)
+
     this.level_buttons.push(temp_button)
   }
 

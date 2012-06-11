@@ -6,6 +6,7 @@ var ImpulseButton = function(text, size, x, y, w, h, action) {
 ImpulseButton.prototype.init = function(text, size, x, y, w, h, action) {
   this.text = text
   this.size = size
+  this.real_size = size
   this.x = x
   this.y = y
   this.w = w
@@ -31,12 +32,12 @@ ImpulseButton.prototype.onMouseMove = function(x, y) {
     if(x >= this.x - this.w/2 && x <= this.x + this.w/2 && y >= this.y - this.h/2 && y <= this.y + this.h/2)
     {
       this.color = 'blue'
-      this.size = 25
+      this.size = this.real_size * 1.25
     }
     else
     {
       this.color = 'black'
-      this.size = 20
+      this.size = this.real_size
     }
   }
 }
