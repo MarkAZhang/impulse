@@ -342,3 +342,30 @@ function getWindowDimensions() {
 
   return {w: winW, h: winH}
 }
+
+function getLines(ctx,phrase,maxPxLength,textStyle) {
+  
+  var wa=phrase.split(" "),
+      phraseArray=[],
+      lastPhrase=wa[0],
+      l=maxPxLength,
+      measure=0;
+  if(wa.length == 1) {return wa}
+  ctx.font = textStyle;
+  for (var i=1;i<wa.length;i++) {
+      var w=wa[i];
+      measure=ctx.measureText(lastPhrase+w).width;
+      if (measure<l) {
+          lastPhrase+=(" "+w);
+      }else {
+          phraseArray.push(lastPhrase);
+          lastPhrase=w;
+      }
+      if (i===wa.length-1) {
+          phraseArray.push(lastPhrase);
+          break;
+      }
+  }
+  return phraseArray;
+}
+

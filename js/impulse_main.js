@@ -161,6 +161,10 @@ function save_game() {
     save_obj['levels'][i].high_score = impulse_level_data[i].high_score
     save_obj['levels'][i].stars = impulse_level_data[i].stars
   }
+  save_obj['enemies_seen'] = {}
+  for(i in impulse_enemy_stats) {
+    save_obj['enemies_seen'][i] = impulse_enemy_stats[i].seen
+  }
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 
@@ -173,6 +177,10 @@ function load_game() {
       load_obj['levels'][i].high_score = 0
       load_obj['levels'][i].stars = 0
     }
+    load_obj['enemies_seen'] = {}
+    for(i in impulse_enemy_stats) {
+      load_obj['enemies_seen'][i] = false
+    }
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
@@ -180,6 +188,10 @@ function load_game() {
   for(i in load_obj['levels']) {
     impulse_level_data[i].high_score = load_obj['levels'][i].high_score
     impulse_level_data[i].stars = load_obj['levels'][i].stars
+  }
+
+  for(i in impulse_enemy_stats) {
+    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i]
   }
 
   calculate_stars()

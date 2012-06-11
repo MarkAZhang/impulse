@@ -339,7 +339,10 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.globalAlpha = 1
     return
   }
-
+  if(!impulse_enemy_stats[this.type].seen) {
+    impulse_enemy_stats[this.type].seen = true
+    save_game()
+  }
 
   if(this.dying) {
     var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)

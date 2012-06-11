@@ -2,12 +2,20 @@ GameOverState.prototype = new GameState
 
 GameOverState.prototype.constructor = GameOverState
 
-function GameOverState(final_game_numbers, level) {
+function GameOverState(final_game_numbers, level, world_num) {
   this.level = level
   this.level_name = this.level.level_name
   this.buttons = []
-  this.buttons.push(new ImpulseButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(ctx, _this.level.level_name))}}(this)))
-  this.buttons.push(new ImpulseButton("RETURN TO MAIN MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(){switch_game_state(new TitleState(true))}))
+  this.world_num = world_num
+  this.buttons.push(new SmallButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(ctx, _this.level.level_name))}}(this)))
+  this.buttons.push(new SmallButton("RETURN TO MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(_this){return function(){
+    if(_this.world_num) {
+      switch_game_state(new ClassicSelectState(_this.world_num))
+    }
+    else {
+      switch_game_state(new TitleState(true))
+    }
+  }}(this)))
   this.game_numbers = final_game_numbers
 
 
@@ -80,12 +88,12 @@ GameOverState.prototype.draw = function(ctx) {
 GameOverState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
   {
-    this.buttons[i].onMouseMove(x, y)
+    this.buttons[i].on_mouse_move(x, y)
   }
 }
 
 GameOverState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
-    this.buttons[i].onClick(x, y)
+    this.buttons[i].on_click(x, y)
   }
 }

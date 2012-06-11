@@ -6,13 +6,13 @@ function ClassicSelectState(world) {
 
   if(!world) {
     this.buttons = []
-    this.buttons.push(new ImpulseButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_world_buttons()
   }
   else {
     this.buttons = []
-    this.buttons.push(new ImpulseButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_level_buttons(world)
   }
@@ -37,7 +37,7 @@ ClassicSelectState.prototype.set_world_buttons = function() {
 }
 
 ClassicSelectState.prototype.set_level_buttons = function(world) {
-  this.buttons.push(new ImpulseButton("WORLD SELECT", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(_this){return function(){_this.set_world_buttons()}}(this)))
+  this.buttons.push(new SmallButton("WORLD SELECT", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(_this){return function(){_this.set_world_buttons()}}(this)))
   this.level_buttons = []
   var gap = 30
   var level_button_h = (canvasHeight/2 + 200 - 3 * gap)/2
@@ -74,21 +74,21 @@ ClassicSelectState.prototype.draw = function(ctx) {
 ClassicSelectState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
   {
-    this.buttons[i].onMouseMove(x, y)
+    this.buttons[i].on_mouse_move(x, y)
   }
   for(var i = 0; i < this.level_buttons.length; i++)
   {
-    this.level_buttons[i].onMouseMove(x, y)
+    this.level_buttons[i].on_mouse_move(x, y)
   }
 }
 
 ClassicSelectState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
-    this.buttons[i].onClick(x, y)
+    this.buttons[i].on_click(x, y)
   }
    for(var i = 0; i < this.level_buttons.length; i++)
   {
-    this.level_buttons[i].onClick(x, y)
+    this.level_buttons[i].on_click(x, y)
   }
 }
 

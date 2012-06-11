@@ -6,7 +6,7 @@ function CreditsState() {
   this.start_clicked = false
   this.buttons = []
   var _this = this
-  this.buttons.push(new ImpulseButton("RETURN", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("RETURN", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
 }
 
 CreditsState.prototype.process = function(dt) {
@@ -33,13 +33,13 @@ CreditsState.prototype.draw = function(ctx) {
 CreditsState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
   {
-    this.buttons[i].onMouseMove(x, y)
+    this.buttons[i].on_mouse_move(x, y)
   }
 }
 
 CreditsState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
-    this.buttons[i].onClick(x, y)
+    this.buttons[i].on_click(x, y)
   }
 }
 

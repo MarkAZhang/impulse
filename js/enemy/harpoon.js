@@ -141,7 +141,7 @@ Harpoon.prototype.additional_processing = function(dt) {
       this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
       this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
       this.harpoon_joint.collideConnected = true
-      this.harpoon_joint = world.CreateJoint(this.harpoon_joint)
+      this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)
     }
 
     var temp_v = this.harpoon_v.Copy()
@@ -200,7 +200,7 @@ Harpoon.prototype.process_impulse = function() {
 
 Harpoon.prototype.disengage = function() {
   if(this.harpooned) {
-    world.DestroyJoint(this.harpoon_joint)
+    this.world.DestroyJoint(this.harpoon_joint)
     this.harpoon_joint = null
     this.harpooned = false
   }
