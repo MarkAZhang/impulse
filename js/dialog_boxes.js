@@ -38,15 +38,17 @@ function PauseMenu(level, game_numbers, game_state) {
   this.init(400, 300)
 
 
-
-  this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    
+    this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
           switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num))
           clear_dialog_box()
             }}(this)))
-  this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
+    this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
           switch_game_state(new ImpulseGameState(ctx, _this.level_name, _this.game_state.world_num))
           clear_dialog_box()
             }}(this)))
+  }
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
@@ -55,31 +57,47 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.font = '20px Century Gothic'
   ctx.fillStyle = "black"
   ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 30)
-  var temp_colors = ['bronze', 'silver', 'gold']
 
-  var score_color = 0
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    var temp_colors = ['bronze', 'silver', 'gold']
 
-  while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
-    score_color+=1
+    var score_color = 0
+
+    while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+      score_color+=1
+    }
+
+
+
+    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
   }
-
-  ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
-    ctx.font = '30px Century Gothic'
-  ctx.fillText(this.level_name, this.x, this.y - this.h/2 + 75 )
-    ctx.font = '20px Century Gothic'
+  else
+    ctx.fillStyle = "black"
+  ctx.font = '30px Century Gothic'
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    ctx.fillText(this.level_name, this.x, this.y - this.h/2 + 75 )
+  }
+  else {
+    ctx.fillText("HOW TO PLAY", this.x, this.y - this.h/2 + 75 )
+  }
+  ctx.font = '20px Century Gothic'
   ctx.fillText("CURRENT SCORE: "+ this.game_numbers.score, this.x, this.y - this.h/2 + 125 )
-  for(var i = 0; i < 3; i++) {
-    ctx.fillStyle = impulse_colors[temp_colors[i]]
-    ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 160 + 25 * i)
-  }
-  score_color = 0
 
-  while(impulse_level_data[this.level_name].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
-    score_color+=1
-  }
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-  ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
-  ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.x, this.y - this.h/2 + 245)
+    for(var i = 0; i < 3; i++) {
+      ctx.fillStyle = impulse_colors[temp_colors[i]]
+      ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 160 + 25 * i)
+    }
+    score_color = 0
+
+    while(impulse_level_data[this.level_name].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+      score_color+=1
+    }
+
+    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
+    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.x, this.y - this.h/2 + 245)
+  }
   ctx.font = '25px Century Gothic'
   ctx.fillStyle = "white"
   ctx.fillText("SPACE TO UNPAUSE", this.x, this.y + this.h/2 + 50 )

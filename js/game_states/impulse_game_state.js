@@ -133,18 +133,21 @@ ImpulseGameState.prototype.draw = function(ctx) {
 
 ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.beginPath()
-  ctx.font = '25px Century Gothic'
+  ctx.font = '20px Century Gothic'
   ctx.textAlign = 'left'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
   ctx.fillStyle = 'black'
-  ctx.fillText(this.game_numbers.last_time, 5, canvasHeight - 5)
+  ctx.fillText(this.game_numbers.last_time, 10, 25)
+
   ctx.textAlign = 'right'
-  ctx.fillText(this.game_numbers.score, canvasWidth - 5, canvasHeight - 5)
+  ctx.fillText("SCORE: "+this.game_numbers.score, canvasWidth - 10, 25)
+  ctx.fillText("x"+this.game_numbers.combo, canvasWidth - 10, 50)
+
   ctx.textAlign = 'center'
-  ctx.fillText("x"+this.game_numbers.combo, canvasWidth/2, canvasHeight - 5)
+  ctx.fillText(this.level.level_name, canvasWidth/2, 25)
 
   ctx.textAlign = 'right'
   if(this.fps_counter == null)
@@ -163,7 +166,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   this.fps_counter+=1
   ctx.beginPath()
   ctx.font = '10px sans-serif'
-  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, 10)
+  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, canvasHeight - 5)
   ctx.fill()
 
   for(var i = 0; i < this.score_labels.length; i++)

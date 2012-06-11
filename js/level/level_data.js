@@ -34,6 +34,67 @@ impulse_level_data['SURVIVAL'] = {
 
 }
 
+impulse_level_data['HOW TO PLAY 1'] = {
+  enemies: {
+              stunner: [0, 3, 1, 0, 0]
+              
+           },
+  obstacle_num: 0, 
+  get_obstacle_vertices: function (index) {
+
+    return null
+  },
+  buffer_radius: 1,
+  cutoff_scores: [1000000, 3000000, 10000000]
+
+}
+
+impulse_level_data['HOW TO PLAY 2']  = {
+  enemies: {
+              stunner: [0, 3, 1, 0, 1]
+              
+           },
+  obstacle_num: 0, 
+  get_obstacle_vertices: function (index) {
+
+    return null
+  },
+  buffer_radius: 1,
+  cutoff_scores: [1000000, 3000000, 10000000]
+
+}
+
+impulse_level_data['HOW TO PLAY 3']  = {
+  enemies: {
+              stunner: [0, 3, 1, 0, 1]
+              
+           },
+  obstacle_num: 2, 
+  get_obstacle_vertices: function (index) {
+
+  var first_y = 125
+  var second_y = 375
+
+    var ob_v = [[[100, first_y], [700, first_y], [700, first_y + 50], [100, first_y + 50]], [[100, second_y], [700, second_y], [700, second_y + 50], [100, second_y + 50]]]
+    
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+
+  },
+  buffer_radius: 1,
+  cutoff_scores: [1000000, 3000000, 10000000]
+
+}
+
+impulse_level_data['HOW TO PLAY 4'] = impulse_level_data['HOW TO PLAY 3']
+impulse_level_data['HOW TO PLAY 5'] = impulse_level_data['HOW TO PLAY 3']
+
 impulse_level_data['LEVEL 1-1'] = {
   enemies: {
               stunner: [0, 3, 1, 2, 50]

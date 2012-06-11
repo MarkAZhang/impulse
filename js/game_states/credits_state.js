@@ -6,7 +6,7 @@ function CreditsState() {
   this.start_clicked = false
   this.buttons = []
   var _this = this
-  this.buttons.push(new SmallButton("RETURN", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("RETURN", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
 }
 
 CreditsState.prototype.process = function(dt) {
@@ -18,7 +18,7 @@ CreditsState.prototype.draw = function(ctx) {
   ctx.font = '30px Century Gothic'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
-  ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2)
+  ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2 - 100)
   ctx.font = '20px Century Gothic'
   ctx.fillStyle = 'blue'
   ctx.fillText("Impulse was conceived, designed, and coded by Mark Zhang", canvasWidth/2, canvasHeight/2 + 50)

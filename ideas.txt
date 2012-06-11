@@ -40,9 +40,8 @@ Each level should have some kind of design/art in its obstacles
 One level could be called "BEND" and should focus on a BEND in its obstacles, a strategy point for the player.
 
 TODO - 
-Enemies screen - small boxes
-How to play instructions
 
 Make a level editing system.
 Make levels.
 Then make graphics better.
+Get sounds and music.

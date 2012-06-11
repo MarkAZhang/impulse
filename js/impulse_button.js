@@ -102,7 +102,8 @@ function WorldButton(level_name, size, x, y, w, h, color, action) {
 WorldButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
-  context.fillStyle = this.color 
+  context.fillStyle = this.color
+  context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size)
   context.fill()
   if(this.state == "locked") {
@@ -165,6 +166,7 @@ LevelButton.prototype.set_float_panel_loc = function(fx, fy, fw, fh) {
 LevelButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
+  context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
   context.fillStyle = this.color 
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size)
   context.fill()

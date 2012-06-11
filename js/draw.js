@@ -4,14 +4,15 @@ function draw_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
-  context.strokeStyle = impulse_colors[color]
-  context.globalAlpha = 1
-  context.lineWidth = 2
-  context.stroke()
   context.globalAlpha /=2
   context.fillStyle = impulse_colors[color]
   context.fill()
   context.globalAlpha = 1
+  context.strokeStyle = "black"
+  context.globalAlpha = 1
+  context.lineWidth = Math.ceil(r/7.5)
+  context.stroke()
+ 
 }
 
 function draw_empty_star(context, x, y, r, color) {
@@ -21,7 +22,7 @@ function draw_empty_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
   context.strokeStyle = color ? color : "black"
-  context.lineWidth = 1
+  context.lineWidth = Math.ceil(r/7.5)
   context.stroke()
 }
 

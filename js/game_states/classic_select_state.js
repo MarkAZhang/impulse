@@ -56,10 +56,11 @@ ClassicSelectState.prototype.set_level_buttons = function(world) {
 ClassicSelectState.prototype.draw = function(ctx) {
   ctx.beginPath()
 
-  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 20, 15, "black")
+  ctx.font = '20px Century Gothic'
+  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 15)
+  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 10)
   
   for(var i = 0; i < this.buttons.length; i++)
   {

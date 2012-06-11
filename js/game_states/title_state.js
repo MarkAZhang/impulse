@@ -29,10 +29,11 @@ TitleState.prototype.draw = function(ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 20, 15, "black")
+  ctx.font = '20px Century Gothic'
+  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 15)
+  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 10)
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
@@ -49,11 +50,14 @@ TitleState.prototype.on_click = function(x, y) {
 }
 
 TitleState.prototype.setup_main_menu = function() {
+  if(player_data.first_time) {
+    switch_game_state(new HowToPlayState())
+  }
+
   this.buttons = []
   this.buttons.push(new SmallButton("CLASSIC", 20, canvasWidth/2, canvasHeight/2+20, 200, 50, function(){switch_game_state(new ClassicSelectState())}))
   this.buttons.push(new SmallButton("SURVIVAL", 20, canvasWidth/2, canvasHeight/2+70, 200, 50, function(){switch_game_state(new ImpulseGameState(ctx, "SURVIVAL"))}))
-  this.buttons.push(new SmallButton("HOW TO PLAY", 20, canvasWidth/2, canvasHeight/2+120, 200, 50, function(){}))
+  this.buttons.push(new SmallButton("HOW TO PLAY", 20, canvasWidth/2, canvasHeight/2+120, 200, 50, function(){switch_game_state(new HowToPlayState())}))
   this.buttons.push(new SmallButton("ENEMIES", 20, canvasWidth/2, canvasHeight/2+170, 200, 50, function(){switch_game_state(new EnemiesInfoState())}))
   this.buttons.push(new SmallButton("CREDITS", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(){switch_game_state(new CreditsState())}))
-  this.buttons[2].set_active(false)
 }

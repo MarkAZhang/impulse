@@ -157,9 +157,11 @@ function save_game() {
   var save_obj = {}
   save_obj['levels'] = {}
   for(i in impulse_level_data) {
-    save_obj['levels'][i] = {}
-    save_obj['levels'][i].high_score = impulse_level_data[i].high_score
-    save_obj['levels'][i].stars = impulse_level_data[i].stars
+    if(i.slice(0, 11) != "HOW TO PLAY") {
+      save_obj['levels'][i] = {}
+      save_obj['levels'][i].high_score = impulse_level_data[i].high_score
+      save_obj['levels'][i].stars = impulse_level_data[i].stars
+    }
   }
   save_obj['enemies_seen'] = {}
   for(i in impulse_enemy_stats) {
@@ -173,10 +175,13 @@ function load_game() {
   if(localStorage[save_name]===undefined) {
     load_obj['levels'] = {}
     for(i in impulse_level_data) {
-      load_obj['levels'][i] = {}
-      load_obj['levels'][i].high_score = 0
-      load_obj['levels'][i].stars = 0
+      if(i.slice(0, 11) != "HOW TO PLAY") {
+        load_obj['levels'][i] = {}
+        load_obj['levels'][i].high_score = 0
+        load_obj['levels'][i].stars = 0
+      }
     }
+    player_data.first_time = true
     load_obj['enemies_seen'] = {}
     for(i in impulse_enemy_stats) {
       load_obj['enemies_seen'][i] = false
@@ -184,13 +189,17 @@ function load_game() {
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
+    player_data.first_time = false
   }
   for(i in load_obj['levels']) {
-    impulse_level_data[i].high_score = load_obj['levels'][i].high_score
-    impulse_level_data[i].stars = load_obj['levels'][i].stars
+    if(i.slice(0, 11) != "HOW TO PLAY") {
+      impulse_level_data[i].high_score = load_obj['levels'][i].high_score
+      impulse_level_data[i].stars = load_obj['levels'][i].stars
+    }
   }
 
   for(i in impulse_enemy_stats) {
+
     impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i]
   }
 
@@ -201,7 +210,9 @@ function load_game() {
 function calculate_stars() {
   var total_stars = 0
   for(i in impulse_level_data) {
-    total_stars += impulse_level_data[i].stars
+    if(i.slice(0, 11) != "HOW TO PLAY") {
+      total_stars += impulse_level_data[i].stars
+    }
   }
   player_data.stars = total_stars
 }

@@ -125,8 +125,14 @@ Player.prototype.click = function(pos, enemies) {
 Player.prototype.process = function(dt) {
  if(this.dying && this.dying_duration < 0)
   {
-    switch_game_state(new GameOverState(this.impulse_game_state.game_numbers, this.impulse_game_state.level))
-    return
+    if(this.impulse_game_state instanceof ImpulseGameState) {
+      switch_game_state(new GameOverState(this.impulse_game_state.game_numbers, this.impulse_game_state.level))
+      return
+    }
+    else if(this.impulse_game_state instanceof HowToPlayState) {
+      this.impulse_game_state.reload_world()
+      return
+    }
   }
 
   if(this.dying )

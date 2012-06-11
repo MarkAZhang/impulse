@@ -101,7 +101,7 @@ Level.prototype.spawn_enemies = function(dt) {
     this.enemy_spawn_timers[k] += dt/1000
     if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
       this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
-      for(var j = 1; j < this.enemy_spawn_counters[k]; j++) {
+      for(var j = 1; j <= this.enemy_spawn_counters[k]; j++) {
         this.spawn_this_enemy(k)
 
       }
