@@ -26,9 +26,11 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
   context.closePath()
   context.fillStyle = 'black';
   //var vertices = 
+  context.globalAlpha = .8
   context.fill()
-  context.strokeStyle = 'cyan'
-  context.lineWidth = 2
+  context.globalAlpha = 1
+  context.strokeStyle = 'blue'
+  context.lineWidth = 3
   context.stroke()
 }
 

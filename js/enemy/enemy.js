@@ -253,9 +253,9 @@ Enemy.prototype.move_to = function(endPt) {
 Enemy.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
   var in_poly = false
-  for(var i = 0; i < this.level.obstacle_polygons.length; i++)
+  for(var i = 0; i < this.level.boundary_polygons.length; i++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
+    if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
     {
       in_poly = true
     }

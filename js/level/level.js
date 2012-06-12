@@ -17,6 +17,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   }
   this.cutoff_scores = data.cutoff_scores
   this.obstacle_num = data.obstacle_num
+  this.obstacle_v = data.obstacle_v
   this.get_obstacle_vertices = data.get_obstacle_vertices
 
   this.buffer_radius = data.buffer_radius
@@ -129,6 +130,11 @@ Level.prototype.generate_obstacles = function() {
   console.log("GENERATING POLYGONS")
   //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)], 
   //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
+  
+  if(!this.obstacle_num && this.obstacle_v.length) {
+    this.obstacle_num = this.obstacle_v.length
+  }
+  
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
@@ -144,6 +150,7 @@ Level.prototype.generate_obstacles = function() {
 }
 
 Level.prototype.generate_obstacle_edges = function() {
+
   for(var i = 0; i < this.obstacles.length; i++)
   {
     var obstacle = this.obstacles[i]

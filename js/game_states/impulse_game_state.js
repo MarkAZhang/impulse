@@ -63,7 +63,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
   this.player.draw(ctx)
   
   
-  /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
+  for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -83,7 +83,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
     	ctx.stroke()
   }
 
-  for(var i = 0; i < this.level.obstacle_edges.length; i++)
+  /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
       ctx.beginPath()
       ctx.lineWidth = 3
@@ -104,9 +104,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
-  }
+  }*/
  
-  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
