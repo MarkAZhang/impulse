@@ -17,8 +17,11 @@ ImpulseButton.prototype.init = function(x, y, w, h, action, border, color) {
 ImpulseButton.prototype.draw = function(context) {
   if(this.border) {
     context.beginPath()
-    context.strokeStyle = this.color
-    context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+    context.strokeStyle = this.active ? this.color : "gray"
+    if(this.hover) 
+      context.rect(this.x - this.w/2 * 1.1, this.y - this.h/2 * 1.1, this.w * 1.1, this.h * 1.1)
+    else
+      context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
     context.lineWidth = 2
     context.stroke()
   }
@@ -83,28 +86,68 @@ WorldButton.prototype = new ImpulseButton()
 
 WorldButton.prototype.constructor = WorldButton
 
-function WorldButton(level_name, size, x, y, w, h, color, action) {
-  if(!level_name) return
+function WorldButton(world, size, x, y, w, h, color, action) {
+  if(!world) return
 
-  this.level_name = level_name
+  this.level_name = "WORLD "+world
+  this.world = world
   this.size = size
   this.init(x, y, w, h, action, true, color)
-  if(player_data.stars <world_cutoffs[level_name]) {
-    this.set_active(false)
-    this.state = "locked"
-  }
-  else {
-    this.set_active(true)
-    this.state = "unlocked"
-  }
+  
+  var stars = 0
+    var max_stars = 0
+    var available = false
+    for(var i = 1; i <= 7; i++) {
+      if(impulse_level_data["LEVEL "+world+"-"+i]) {
+        available = true
+        stars += impulse_level_data["LEVEL "+world+"-"+i].stars
+        max_stars +=3
+      }
+    }
+    if(impulse_level_data["BOSS "+world]) {
+      available = true
+      stars += impulse_level_data["BOSS "+world].stars
+      max_stars +=3
+    }
+
+    if(available) {
+      if(player_data.stars <world_cutoffs[this.level_name]) {
+        this.set_active(false)
+        this.state = "locked"
+      }
+      else {
+        this.stars = stars
+        this.max_stars = max_stars
+        this.set_active(true)
+        this.state = "unlocked"
+      }
+    }
+    else {
+      this.set_active(false)
+      this.state = "unavailable"
+    }
+
+  
+  
 }
 
 WorldButton.prototype.additional_draw = function(context) {
   context.beginPath()
+  context.strokeStyle = this.color
+
+  if(this.hover) 
+      context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
+    else
+      context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)
+
+  context.lineWidth = 2
+  context.stroke()
+
+  context.beginPath()
   context.textAlign = 'center'
   context.fillStyle = this.color
   context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
-  context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size)
+  context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
   if(this.state == "locked") {
     context.beginPath()
@@ -116,7 +159,35 @@ WorldButton.prototype.additional_draw = function(context) {
     context.fillText("LOCKED", this.x, this.y)
     context.fillText(world_cutoffs[this.level_name], this.x - 20, this.y + 25)
     context.fill()
+  }
+  else if(this.state == "unavailable") {
+    context.beginPath()
+    context.textAlign = "center"
+    context.font = this.size +'px Century Gothic'
+    context.fillStyle = "gray"
+    context.fillText("UNAVAILABLE", this.x, this.y)
+    context.fill()
     return
+  }
+  else {
+    context.beginPath()
+    draw_empty_star(ctx, this.x + 30, this.y + 20, 15, "black")
+    context.beginPath()
+    context.textAlign = "center"
+    context.font = this.size +'px Century Gothic'
+    context.fillStyle = "black"
+    context.fillText(this.stars+"/"+this.max_stars, this.x - 20, this.y + 25)
+
+    context.fill()
+    context.beginPath()
+    context.rect(this.x - this.w * 1/3, this.y + this.h * 1/4, this.w * 2/3 * this.stars/this.max_stars, 10)
+    context.fillStyle = this.color
+    context.fill()
+    context.beginPath()
+    context.rect(this.x - this.w * 1/3, this.y + this.h * 1/4, this.w * 2/3, 10)
+    context.strokeStyle = "black"
+    context.stroke()
+
   }
 }
 
@@ -150,8 +221,8 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
     this.state = "unavailable"
   }
 
-  this.enemy_image_size = 20
-  this.buffer = 10
+  this.enemy_image_size = 25
+  this.buffer = 5
   this.star_colors = ["bronze", "silver", "gold"]
 
 }
@@ -164,11 +235,22 @@ LevelButton.prototype.set_float_panel_loc = function(fx, fy, fw, fh) {
 }
 
 LevelButton.prototype.additional_draw = function(context) {
+
+  context.beginPath()
+  context.strokeStyle = this.color
+
+  if(this.hover) 
+      context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
+    else
+      context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)
+  context.stroke()
+
   context.beginPath()
   context.textAlign = 'center'
   context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
-  context.fillStyle = this.color 
-  context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size)
+  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : this.color
+  
+  context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
 
   if(this.state == "unavailable") {
@@ -193,21 +275,59 @@ LevelButton.prototype.additional_draw = function(context) {
     return
   }
 
+  //draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h * .1, this.h * .4 * canvasWidth/canvasHeight, this.h * .4, "blue")
+
 
   if(impulse_level_data[this.level_name].stars > 0)
-    draw_star(ctx, this.x, this.y + 20, 15, this.star_colors[impulse_level_data[this.level_name].stars - 1])
+    draw_star(ctx, this.x, this.y , 30, this.star_colors[impulse_level_data[this.level_name].stars - 1])
   else
-    draw_empty_star(ctx, this.x, this.y + 20, 15)
+    draw_empty_star(ctx, this.x, this.y , 30)
 
-  var num_enemy_type = impulse_level_data[this.level_name].enemies.length
-  var num_row = Math.floor((this.w - this.buffer * 2) / this.enemy_image_size)
+  var num_row = Math.floor((this.w - this.buffer * 2) / (this.enemy_image_size))
   
+  var num_enemy_type = 0
+  for(var j in impulse_level_data[this.level_name].enemies) {
+    num_enemy_type += 1
+  }
+
   var i = 0
 
-  for(var j in impulse_level_data[this.level_name].enemies) {
-    var temp_r = impulse_enemy_stats[j].effective_radius/2 * this.enemy_image_size/2
-    var cur_x = this.x - this.w/2 + this.buffer + this.enemy_image_size/2 + this.enemy_image_size * (i % num_row)
-    var cur_y = this.y + this.h/2 - this.buffer - this.enemy_image_size * 1.5 + this.enemy_image_size * Math.floor(i / num_row)
+  var drawn_enemies = null
+
+  if(this.level_name.slice(0, 4) == "BOSS") {
+    drawn_enemies = {}
+    drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
+    num_enemy_type = 1
+  }
+  else {
+    drawn_enemies = impulse_level_data[this.level_name].enemies
+  }
+
+  for(var j in drawn_enemies) {
+    var temp_r = Math.min(impulse_enemy_stats[j].effective_radius, 1) * this.enemy_image_size/2
+    
+    if(this.level_name.slice(0, 4) == "BOSS") {
+      temp_r = 2 * this.enemy_image_size/2
+    }
+    var k = 0
+    var num_in_this_row = 0
+
+    while(k < i+1 && k < num_enemy_type) {
+      k+=num_row
+    }
+
+    if(k <= num_enemy_type) {
+      num_in_this_row = num_row
+    }
+    else {
+      num_in_this_row = num_enemy_type - (k - num_row)
+    }
+    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
+
+    var h_diff = Math.floor(i/num_row) - (Math.ceil(num_enemy_type/num_row) - 1)/2
+
+    var cur_x = this.x + (this.enemy_image_size) * diff
+    var cur_y = this.y + this.h * .28 + this.enemy_image_size * h_diff
     context.beginPath()
     if(impulse_enemy_stats[j].shape_type == "circle") {
       
@@ -256,6 +376,8 @@ LevelButton.prototype.additional_draw = function(context) {
     context.fill()
     context.beginPath()
     context.textAlign = "center"
+
+    //draw_level_obstacles_within_rect(ctx, this.level_name, this.fx - this.fw/2 + this.fh * .6 * canvasWidth/canvasHeight, this.fy + this.fh * .15, this.fh * .5 * canvasWidth/canvasHeight, this.fh * .5, "blue")
     
     context.fillStyle = "black" //impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[impulse_level_data[this.level_name].stars - 1]] : "black"
     context.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.fx, this.fy - this.fh/2 + this.size)

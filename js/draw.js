@@ -50,3 +50,23 @@ function draw_enemy(context, enemy_name, x, y, d) {
   context.fill()
   context.globalAlpha = 1
 }
+
+function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
+  
+  var polygons = impulse_level_data[level_name].obstacle_v
+  if(!polygons) return
+  for(var i = 0; i < polygons.length; i++) {
+    context.beginPath()
+    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/canvasHeight * h)
+    for(var j = 1; j < polygons[i].length; j++) {
+      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/canvasHeight * h)
+    }
+    context.closePath()
+    context.fillStyle = "black"
+    context.fill()
+    context.strokeStyle = border_color
+    context.lineWidth = 2
+    context.stroke()
+  }
+
+}

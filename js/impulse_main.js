@@ -1,3 +1,5 @@
+var version_num = "1.0"
+
 var canvasWidth, canvasHeight
 var ctx
 var canvas
@@ -15,7 +17,7 @@ impulse_colors['silver'] = "rgb(175, 175, 175)"
 impulse_colors['gold'] = "rgb(238, 201, 0)"
 var player_data = {}
 
-Event.observe(window, 'load', function() {
+window.onload =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2AABB = Box2D.Collision.b2AABB
     ,	b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -32,6 +34,22 @@ Event.observe(window, 'load', function() {
     
     canvasWidth = 800;
     canvasHeight = 600;
+
+    var gap_h = 75
+    var gap_w = 75
+
+    var ph = (canvasHeight - gap_h * 4)/3
+    var pw = (canvasWidth - gap_w * 3)/2
+
+    var polygons = []
+    for(var i = 0; i < 3; i++) {
+      for(var j = 0; j < 2; j++) {
+        var polygon = [[gap_w + (gap_w + pw) * j, gap_h + (gap_h + ph) * i], [gap_w + pw + (gap_w + pw) * j, gap_h + (gap_h + ph) * i], [gap_w + pw + (gap_w + pw) * j, gap_h + ph + (gap_h + ph) * i], [gap_w + (gap_w + pw) * j, gap_h + ph + (gap_h + ph) * i]]
+      polygons.push(polygon)
+      }
+    }
+    console.log(JSON.stringify(polygons))
+
     
     // screen setup
     canvas = document.getElementById("canvas");
@@ -73,7 +91,7 @@ Event.observe(window, 'load', function() {
     load_game()
     step()
 
-});
+}
 
 function step() {
   var cur_time = (new Date()).getTime()
@@ -191,11 +209,18 @@ function load_game() {
     load_obj = JSON.parse(localStorage[save_name])
     player_data.first_time = false
   }
-  for(i in load_obj['levels']) {
+  for(i in impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      impulse_level_data[i].high_score = load_obj['levels'][i].high_score
-      impulse_level_data[i].stars = load_obj['levels'][i].stars
+      if(load_obj['levels'][i]) {
+        impulse_level_data[i].high_score = load_obj['levels'][i].high_score
+        impulse_level_data[i].stars = load_obj['levels'][i].stars
+      }
+      else {
+        impulse_level_data[i].high_score = 0
+        impulse_level_data[i].stars = 0
+      }
     }
+
   }
 
   for(i in impulse_enemy_stats) {
@@ -211,7 +236,10 @@ function calculate_stars() {
   var total_stars = 0
   for(i in impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      total_stars += impulse_level_data[i].stars
+      if(impulse_level_data[i]) {
+        total_stars += impulse_level_data[i].stars
+      }
+      
     }
   }
   player_data.stars = total_stars

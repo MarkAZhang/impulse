@@ -19,6 +19,7 @@ function ImpulseGameState(ctx, level_name, world) {
   this.stars = 0
   this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
+  this.score_goal_messages = ["BRONZE: ", "SILVER: ", "GOLD: "]
   this.star_colors =  ["bronze", "silver", "gold"]
 
   this.loading_screen()
@@ -63,7 +64,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
   this.player.draw(ctx)
   
   
-  for(var i = 0; i < this.visibility_graph.vertices.length; i++)
+  /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
@@ -81,7 +82,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
   /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
@@ -91,9 +92,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor, this.level.obstacle_edges[i].p1.y*this.draw_factor)
       ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
-  for(var i = 0; i < this.visibility_graph.edges.length; i++)
+  /*for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
@@ -104,9 +105,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
-  }*/
+  }
  
-  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -139,14 +140,20 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-  ctx.fillStyle = 'black'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : 'black'
   ctx.fillText(this.game_numbers.last_time, 10, 25)
 
   ctx.textAlign = 'right'
   ctx.fillText("SCORE: "+this.game_numbers.score, canvasWidth - 10, 25)
   ctx.fillText("x"+this.game_numbers.combo, canvasWidth - 10, 50)
 
+  if(this.stars < 3) {
+    ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
+    ctx.fillText(this.score_goal_messages[this.stars]+this.level.cutoff_scores[this.stars], canvasWidth - 10, 75)
+  }
+
   ctx.textAlign = 'center'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : 'black'
   ctx.fillText(this.level.level_name, canvasWidth/2, 25)
 
   ctx.textAlign = 'right'
@@ -173,7 +180,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   {
     ctx.beginPath()
     ctx.font = this.score_labels[i].size+'px Century Gothic'
-    var prog = this.score_labels[i].duration / this.score_label_duration
+    var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color
     ctx.textAlign = 'center'
@@ -223,6 +230,7 @@ ImpulseGameState.prototype.setup_world_next = function(level_name) {
   this.addWalls()
 
   this.level = new Level(impulse_level_data[level_name], this)
+  this.level_name = this.level.level_name
     
   this.generate_level()
   var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
@@ -275,8 +283,10 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
 }
 
-ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size) {
-  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this.score_label_duration, size: font_size}
+ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size, duration) {
+  var this_duration = duration ? duration : this.score_label_duration
+  var max_duration = duration ? duration : this.score_label_duration
+  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this_duration, max_duration: max_duration, size: font_size}
   this.score_labels.push(temp_score_label)
 }
 
@@ -284,7 +294,8 @@ ImpulseGameState.prototype.check_cutoffs = function() {
   if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
   {
     this.stars+=1
-    this.addScoreLabel(this.cutoff_messages[this.stars-1], this.star_colors[this.stars-1], canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, 40)
+      console.log("ADDED SCORE LABEL")
+    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, 40, 3000)
   }
 }
 

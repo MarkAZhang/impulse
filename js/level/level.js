@@ -46,7 +46,8 @@ Level.prototype.init = function(data, impulse_game_state) {
     "fighter": Fighter,
     "harpoon": Harpoon,
     "slingshot": Slingshot,
-    "deathray": DeathRay
+    "deathray": DeathRay,
+    "first boss": BossOne
   }
 
   this.dead_enemies = []
@@ -116,8 +117,15 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) return
 
   var r_p = getRandomOutsideLocation(5, 2)
-  
-  var temp_enemy = new this.enemy_map[enemy_type](this.impulse_game_state.world, r_p.x, r_p.y, this.enemy_counter, this.impulse_game_state)
+
+  var this_enemy = this.enemy_map[enemy_type]
+
+  if(this_enemy.prototype.is_boss) {
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, canvasHeight/draw_factor/2, this.enemy_counter, this.impulse_game_state)
+  }
+  else {
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p.x, r_p.y, this.enemy_counter, this.impulse_game_state)
+  }
 
   this.enemies.push(temp_enemy)
 
@@ -131,7 +139,7 @@ Level.prototype.generate_obstacles = function() {
   //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)], 
   //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
   
-  if(!this.obstacle_num && this.obstacle_v.length) {
+  if(this.obstacle_num == null && this.obstacle_v.length) {
     this.obstacle_num = this.obstacle_v.length
   }
   

@@ -35,6 +35,7 @@ function GameOverState(final_game_numbers, level, world_num) {
   }
   else {
     this.high_score = false
+    var stars = 0
     while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[stars])
     {
       stars+=1

@@ -98,10 +98,10 @@ impulse_level_data['HOW TO PLAY 5'] = impulse_level_data['HOW TO PLAY 3']
 impulse_level_data['LEVEL 1-1'] = {
   enemies: {
               stunner: [0, 3, 1, 2, 50]
-              //spear: [30, 5, 1, .75, 20],
               
            },
-  obstacle_v: [[[111, 442.5], [147, 420.5], [200, 397.5], [158, 337.5], [151, 245.5], [173, 167.5], [216, 108.5], [277, 70.5], [374, 60.5], [460, 95.5], [516, 161.5], [548, 240.5], [568, 303.5], [630, 222.5], [623, 62.5], [636, 61.5], [654, 211.5], [673, 148.5], [689, 157.5], [675, 237.5], [705, 271.5], [715, 289.5], [718, 317.5], [692, 350.5], [680, 369.5], [655, 438.5], [609, 501.5], [539, 520.5], [452, 499.5], [359, 494.5], [267, 493.5], [220, 506.5], [167, 484.5], [136, 484.5], [115, 476.5]]],
+  dominant_enemy: "stunner",
+  obstacle_v: [[[103, 104.5], [343, 104.5], [343, 275.5], [104, 275.5]], [[437, 104.5], [682, 104.5], [682, 275.5], [437, 275.5]], [[437, 345.5], [682, 345.5], [682, 510.5], [436, 510.5]], [[103, 345.5], [343, 345.5], [343, 510.5], [103, 510.5]]],
   get_obstacle_vertices: function (index) {
     var ob_v = this.obstacle_v
 
@@ -120,14 +120,14 @@ impulse_level_data['LEVEL 1-1'] = {
 
 impulse_level_data['LEVEL 1-2'] = {
   enemies: {
-              stunner: [0, 3, 1, 2, 50],
-              spear: [3, 5, 1, .75, 20],
+              stunner: [20, 3, 1, 2, 50],
+              spear: [0, 5, 1, .75, 20],
               
            },
-  obstacle_num: 2, 
+  dominant_enemy: "spear",
+  obstacle_v: [[[103, 104.5], [343, 104.5], [343, 275.5], [104, 275.5]], [[437, 104.5], [682, 104.5], [682, 275.5], [437, 275.5]], [[437, 345.5], [682, 345.5], [682, 510.5], [436, 510.5]], [[103, 345.5], [343, 345.5], [343, 510.5], [103, 510.5]]], 
   get_obstacle_vertices: function (index) {
-    var ob_v = [[[100, 200], [150, 200], [300, 350], [500, 450], [100, 450]],
-    [[300, 200], [400, 150], [600, 150], [700, 200], [700, 400], [600, 450], [400, 400]]]
+    var ob_v = this.obstacle_v
 
     var ans = ob_v[index]
     var ans_array = []
@@ -138,7 +138,147 @@ impulse_level_data['LEVEL 1-2'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [100000, 300000, 1000000]
+  cutoff_scores: [50000, 200000, 700000]
+
+}
+
+impulse_level_data['LEVEL 1-3'] = {
+  enemies: {
+              stunner: [0, 3, 5, 5, 50],
+              spear: [60, 5, 1, 2, 20],
+              
+           },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[103, 104.5], [343, 104.5], [343, 275.5], [104, 275.5]], [[437, 104.5], [682, 104.5], [682, 275.5], [437, 275.5]], [[437, 345.5], [682, 345.5], [682, 510.5], [436, 510.5]], [[103, 345.5], [343, 345.5], [343, 510.5], [103, 510.5]]], 
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [200000, 500000, 2000000]
+
+}
+
+impulse_level_data['LEVEL 1-4'] = {
+  enemies: {
+              spear: [0, 3, 1, 2, 40],
+              
+           },
+  dominant_enemy: "spear",
+  obstacle_v: [[[103, 104.5], [343, 104.5], [343, 275.5], [104, 275.5]], [[437, 104.5], [682, 104.5], [682, 275.5], [437, 275.5]], [[437, 345.5], [682, 345.5], [682, 510.5], [436, 510.5]], [[103, 345.5], [343, 345.5], [343, 510.5], [103, 510.5]]], 
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [20000, 75000, 250000]
+
+}
+
+impulse_level_data['LEVEL 1-5'] = {
+  enemies: {
+              stunner: [0, 3, 1, 2, 40],
+              tank: [0, 5, 1, 2, 20]
+           },
+  dominant_enemy: "tank",
+  obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]], [[200, 200], [600, 200], [600, 400], [200, 400]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [100000, 400000, 1000000]
+
+}
+
+impulse_level_data['LEVEL 1-6'] = {
+  enemies: {
+              stunner: [0, 3, 1, 2, 40],
+              tank: [0, 5, 1, 3, 20]
+           },
+  dominant_enemy: "tank",
+  obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [500000, 2000000, 5000000]
+
+}
+
+impulse_level_data['LEVEL 1-7'] = {
+  enemies: {
+              stunner: [0, 3, 1, 2, 40],
+              spear: [0, 5, 1, 3, 20],
+              tank: [0, 10, 1, 3, 20]
+           },
+  dominant_enemy: "tank",
+  obstacle_v: [[[75, 75], [362.5, 75], [362.5, 175], [75, 175]], [[437.5, 75], [725, 75], [725, 175], [437.5, 175]], [[75, 250], [362.5, 250], [362.5, 350], [75, 350]], [[437.5, 250], [725, 250], [725, 350], [437.5, 350]], [[75, 425], [362.5, 425], [362.5, 525], [75, 525]], [[437.5, 425], [725, 425], [725, 525], [437.5, 525]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [200000, 500000, 2000000]
+
+}
+
+impulse_level_data['BOSS 1'] = {
+  enemies: {
+              stunner: [0, 3, 8, 2, 100],
+              "first boss": [0, 1, 1, 0, 1]
+           },
+  dominant_enemy: "first boss",
+  obstacle_v: [[[0, 0], [375, 0], [375, 50], [50, 50], [50, 275], [0, 275]], [[425, 0], [800, 0], [800, 275], [750, 275], [750, 50], [425, 50]], [[750, 325], [800, 325], [800, 600], [425, 600], [425, 550], [750, 550]], [[0, 325], [50, 325], [50, 550], [375, 550], [375, 600], [0, 600]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [200000, 500000, 2000000]
 
 }
 
@@ -146,7 +286,7 @@ for(i in impulse_level_data) {
   impulse_level_data[i].level_name = i
 }
 
-var impulse_level_cutoffs = {'LEVEL 1-1': 0, 'LEVEL 1-2': 1}
+var impulse_level_cutoffs = {'LEVEL 1-1': 0, 'LEVEL 1-2': 1, 'LEVEL 1-3': 3, 'LEVEL 1-4': 5, 'LEVEL 1-5': 7, 'LEVEL 1-6': 9, 'LEVEL 1-7': 11, 'BOSS 1': 15}
 
 for(i in impulse_level_cutoffs) {
   impulse_level_data[i].star_cutoff = impulse_level_cutoffs[i]
@@ -158,3 +298,5 @@ var world_cutoffs = {'WORLD 1': 0, 'WORLD 2': 16, 'WORLD 3': 32, 'WORLD 4': 48,
 
 
 var snail_polygons = [[[79, 456.5], [122, 430.5], [174, 410.5], [231, 429.5], [309, 398.5], [386, 393.5], [474, 385.5], [559, 315.5], [614, 232.5], [607, 74.5], [621, 69.5], [636, 218.5], [657, 161.5], [670, 167.5], [661, 243.5], [691, 277.5], [706, 324.5], [678, 362.5], [636, 457.5], [587, 513.5], [553, 528.5], [499, 530.5], [406, 507.5], [313, 511.5], [236, 508.5], [189, 518.5], [143, 495.5], [109, 496.5], [89, 491.5]], [[202, 97.5], [250, 67.5], [325, 67.5], [426, 96.5], [491, 164.5], [524, 231.5], [534, 269.5], [461, 325.5], [380, 345.5], [316, 341.5], [325, 266.5], [310, 193.5], [282, 138.5], [248, 108.5]], [[166, 153.5], [212, 155.5], [249, 194.5], [253, 257.5], [241, 323.5], [184, 366.5], [130, 337.5], [112, 300.5], [161, 323.5], [203, 300.5], [222, 252.5], [215, 201.5], [196, 168.5]], [[134, 201.5], [166, 187.5], [181, 214.5], [173, 247.5], [145, 265.5], [122, 239.5]]]
+
+var solid_snail_polygons = [[[111, 442.5], [147, 420.5], [200, 397.5], [158, 337.5], [151, 245.5], [173, 167.5], [216, 108.5], [277, 70.5], [374, 60.5], [460, 95.5], [516, 161.5], [548, 240.5], [568, 303.5], [630, 222.5], [623, 62.5], [636, 61.5], [654, 211.5], [673, 148.5], [689, 157.5], [675, 237.5], [705, 271.5], [715, 289.5], [718, 317.5], [692, 350.5], [680, 369.5], [655, 438.5], [609, 501.5], [539, 520.5], [452, 499.5], [359, 494.5], [267, 493.5], [220, 506.5], [167, 484.5], [136, 484.5], [115, 476.5]]]

@@ -145,7 +145,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
   }
 
   if(keyCode == 68) { //D = delete
-    if(this.selected_p) {
+    if(this.selected_p != null) {
       this.polygons.splice(this.selected_p, 1)
       this.selected_p = null
     }

@@ -7,6 +7,9 @@ function CreditsState() {
   this.buttons = []
   var _this = this
   this.buttons.push(new SmallButton("RETURN", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.image = new Image()
+
+  this.image.src = 'impulse_logo.png'
 }
 
 CreditsState.prototype.process = function(dt) {
@@ -14,9 +17,12 @@ CreditsState.prototype.process = function(dt) {
 }
 
 CreditsState.prototype.draw = function(ctx) {
+  ctx.globalAlpha = .3
+  ctx.drawImage(this.image, canvasWidth/2 - this.image.width/2, canvasHeight/2 - 100 - this.image.height/2 - 15)
+  ctx.globalAlpha = 1
   ctx.beginPath()
-  ctx.font = '30px Century Gothic'
-  ctx.fillStyle = 'black'
+  ctx.font = '40px Century Gothic'
+  ctx.fillStyle = 'blue'
   ctx.textAlign = 'center'
   ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2 - 100)
   ctx.font = '20px Century Gothic'

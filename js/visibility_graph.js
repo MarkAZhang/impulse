@@ -33,9 +33,9 @@ VisibilityGraph.prototype.init = function(polygons, level) {
 
       if(!inPoly)
       {
-        vertex.p_n = i
+        vertex.p_n = i  //number of polygon
         vertex.p_v = polygon.length
-        vertex.p_i = j
+        vertex.p_i = j  //index of vertex in polygon
         this.vertices.push(vertex)
 
       }
@@ -55,6 +55,16 @@ VisibilityGraph.prototype.init = function(polygons, level) {
       if(v_i.p_n!=v_j.p_n || (v_i.p_n==v_j.p_n && (Math.max(v_i.p_i, v_j.p_i) - Math.min(v_i.p_i, v_j.p_i) == 1 || Math.min(v_i.p_i, v_j.p_i) == 0 && Math.max(v_i.p_i, v_j.p_i) == v_i.p_v - 1)))
       {
         if(isVisible(v_i, v_j, this.poly_edges))
+        {
+          this.edges.push({p1: v_i, p2: v_j})
+          var dist =  p_dist(v_j, v_i)
+          this.edge_list[i][j] = dist
+          this.edge_list[j][i] = dist
+        }
+      }
+      else if(v_i.p_n==v_j.p_n && !pointInPolygon(this.polygons[v_i.p_n], {x: (v_i.x + v_j.x)/2, y: (v_i.y + v_j.y)/2}))
+      {
+        if(isVisible(v_i, v_j, level.obstacle_edges) && isVisible(v_i, v_j, this.poly_edges))
         {
           this.edges.push({p1: v_i, p2: v_j})
           var dist =  p_dist(v_j, v_i)

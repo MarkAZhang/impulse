@@ -14,6 +14,7 @@ DialogBox.prototype.draw = function(ctx) {
   ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
   ctx.fillStyle = "white"
   ctx.fill()
+  ctx.lineWidth = 2
   ctx.strokeStyle = "black"
   ctx.stroke()
   this.additional_draw(ctx)

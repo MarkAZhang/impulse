@@ -202,3 +202,24 @@ impulse_enemy_stats["deathray"] = {
   description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray."
 
 }
+
+impulse_enemy_stats["first boss"] = {
+  color: "rgb(208, 32, 144)",
+  density: 1,
+  lin_damp: 3,
+  effective_radius: 3,
+  force: 0,
+  score_value: 100000,
+  shape_type: "polygon",
+  shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
+
+  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+
+}
