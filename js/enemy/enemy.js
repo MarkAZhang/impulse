@@ -74,6 +74,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.yield = false
   this.id = id
   this.dying = false
+  this.died = false
   this.dying_length = 500
   this.dying_duration = 0
   
@@ -106,6 +107,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
+  
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
@@ -117,19 +119,31 @@ Enemy.prototype.check_death = function() {
   }
 }
 
-Enemy.prototype.process = function(enemy_index, dt) {
+Enemy.prototype.process_death = function(enemy_index, dt) {
+  if(this.died && this.dying_duration < this.dying_length - 50) {//the moment the enemy starts to die, give a couple steps to resolve collisions, then remove the body from play
+    this.died = false
+
+    this.level.dead_enemies.push(enemy_index)
+  }
 
   if(this.dying && this.dying_duration < 0)
   {//if expired, dispose of it
-    this.level.dead_enemies.push(enemy_index)
-    return
+    this.level.expired_enemies.push(enemy_index)
+    return true
   }
 
   if(this.dying )
   {//if dying, expire
     this.dying_duration -= dt
-    return
+    return true
   }
+
+  return false
+}
+
+Enemy.prototype.process = function(enemy_index, dt) {
+
+  if(this.process_death(enemy_index, dt)) return
 
   if(this.activated) {
     this.activated_processing(dt)
@@ -144,6 +158,10 @@ Enemy.prototype.process = function(enemy_index, dt) {
   }
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
+    this.body.SetLinearDamping(this.lin_damp * 3)
+  }
+  else {
+    this.body.SetLinearDamping(this.lin_damp)
   }
   if(this.pointer_visibility < 1) {
     this.pointer_visibility = Math.min(this.pointer_visibility + dt/this.pointer_fadein_duration, 1)
@@ -266,9 +284,6 @@ Enemy.prototype.modify_movement_vector = function(dir) {
   }
   else
   {
-    if(this.status_duration[2] > 0) {
-      dir.Multiply(this.slow_factor)
-    }
     dir.Multiply(this.force)
   }
 }
@@ -281,6 +296,7 @@ Enemy.prototype.set_heading = function(endPt) {
 Enemy.prototype.start_death = function(death) {
   this.dying = death
   this.dying_duration = this.dying_length
+  this.died = true
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
@@ -518,7 +534,7 @@ Enemy.prototype.lock = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0])
 }
 
-Enemy.prototype.slow = function(dur) {
+Enemy.prototype.goo = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 

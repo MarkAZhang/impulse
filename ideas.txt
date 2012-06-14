@@ -8,8 +8,11 @@ NEXT:
 More enemies!!
 
 Enemy Ideas:
-Really light enemy that you can't hit. (gets knocked about by other enemies)
-Enemies that fire at you (you can reflect the bullets)
+
+Impulser - a non-moving turret that you can push around.
+Paintball - something that changes which enemies you can hit and what colors the polygons are.
+Spinner - angular momentum
+
 Teleport enemies (you can see an indicatior before they appear)
 
 Collecting things. Health? Gold?

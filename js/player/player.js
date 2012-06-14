@@ -43,7 +43,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.draw_factor = impulse_game_state.draw_factor
   this.status = "normal"  //currently unused
-  this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
+  this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
   this.slow_factor = .3
@@ -107,7 +107,7 @@ Player.prototype.lock = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0])
 }
 
-Player.prototype.slow = function(dur) {
+Player.prototype.goo = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
@@ -149,6 +149,10 @@ Player.prototype.process = function(dt) {
   }
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
+    this.body.SetLinearDamping(3 * this.lin_damp)
+  }
+  else {
+    this.body.SetLinearDamping(this.lin_damp)
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
@@ -215,7 +219,7 @@ Player.prototype.process = function(dt) {
   
   if(this.status_duration[0] <= 0)
   {
-    var f = this.status_duration[2] <= 0 ? this.force : this.force * this.slow_factor
+    var f = this.force
     var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? f/Math.sqrt(2) : f;
     this.body.ApplyImpulse(new b2Vec2(force*this.f_x, force*this.f_y), this.body.GetWorldCenter())
   }

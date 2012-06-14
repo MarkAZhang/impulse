@@ -18,6 +18,9 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.stun_length = 5000 //after being hit by player, becomes stunned
 
   this.do_yield = false
+
+  this.entered_arena = false
+  this.entered_arena_delay = 2000
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
@@ -47,7 +50,17 @@ Spear.prototype.modify_movement_vector = function(dir) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && check_bounds(5, this.body.GetPosition())
+
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.entered_arena_timer = this.entered_arena_delay
+    this.entered_arena = true
+  }
+
+  if(this.entered_arena_timer > 0) {
+    this.entered_arena_timer -= dt
+  }
+  
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && (this.entered_arena && this.entered_arena_timer <= 0)
   
 }
 

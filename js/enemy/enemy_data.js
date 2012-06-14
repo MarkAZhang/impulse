@@ -52,7 +52,7 @@ impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]],
-  description: "Cannot be impulsed. The only way to kill it is to push another enemy into it. Upon impact, silences your impulse for a long duration."
+  description: "Cannot be impulsed. Can only be killed by pushing other enemies into it. Upon impact, silences your impulse for a long duration."
 
 }
 
@@ -67,7 +67,7 @@ impulse_enemy_stats["goo"] = {
   shape_vertices: [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]],
-  description: "Leaves a sticky trail behind it, slowing all entities that enter the trail. Upon impact, slows you for a long duration."
+  description: "Leaves a sticky trail behind it. Enemies that move through the trail will get stuck to the ground, slowing them down significantly. Upon impact, slows you for a long duration."
 
 }
 

@@ -51,6 +51,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   }
 
   this.dead_enemies = []
+  this.expired_enemies = []
   this.spawned_enemies = []
 
 }
@@ -68,6 +69,7 @@ Level.prototype.process = function(dt) {
 
     this.dead_enemies = []
     this.spawned_enemies = []
+    this.expired_enemies = []
 
     for(var i = 0; i < this.enemies.length; i++) {
       this.enemies[i].process(i, dt)
@@ -76,9 +78,14 @@ Level.prototype.process = function(dt) {
     {
       var dead_i = this.dead_enemies.pop()
       
+      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
+    }
+    while(this.expired_enemies.length > 0)
+    {
+      var dead_i = this.expired_enemies.pop()
+      
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
 
-      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
       this.enemies.splice(dead_i, 1)
     }
     

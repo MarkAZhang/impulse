@@ -308,7 +308,7 @@ impulse_level_data['LEVEL 2-1'] = {
 impulse_level_data['LEVEL 2-2'] = {
   enemies: {
               stunner: [2, 3, 2, 3, 40],
-              spear: [61, 3, 1, 3, 20],
+              spear: [61, 3, 1, 1, 20],
               mote: [0, 5, 1, 2, 20]
            },
   dominant_enemy: "mote",
@@ -331,11 +331,11 @@ impulse_level_data['LEVEL 2-2'] = {
 
 impulse_level_data['LEVEL 2-3'] = {
   enemies: {
-              stunner: [5, 3, 1, 3, 50],
-              spear: [60, 5, 1, 3, 30],
+              stunner: [5, 3, 1, 2, 50],
+              spear: [60, 5, 1, 1, 30],
               goo: [0, 5, 1, 2, 8],
            },
-  dominant_enemy: "mote",
+  dominant_enemy: "goo",
   obstacle_v: [[[103,105],[268,105],[320,260],[103,219]],[[697,219],[480,260],[532,105],[697,105]],[[103,382],[320,341],[268,496],[103,496]],[[697,496],[532,496],[480,341],[697,382]]] ,
   get_obstacle_vertices: function (index) {
     var ob_v = this.obstacle_v
@@ -349,7 +349,31 @@ impulse_level_data['LEVEL 2-3'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [300000, 600000, 1000000]
+  cutoff_scores: [200000, 400000, 800000]
+
+}
+
+impulse_level_data['LEVEL 2-4'] = {
+  enemies: {
+              spear: [5, 3, 1, 1, 40],
+              tank: [2, 5, 3, 1, 30],
+              goo: [0, 5, 2, 2, 8],
+           },
+  dominant_enemy: "goo",
+  obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]]] ,
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [200000, 400000, 800000]
 
 }
 
