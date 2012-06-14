@@ -58,10 +58,10 @@ impulse_enemy_stats["mote"] = {
 
 impulse_enemy_stats["goo"] = {
   color: "yellow",
-  density: .5,
+  density: .4,
   lin_damp: 3,
   effective_radius: 2,
-  force: .7,
+  force: .4,
   score_value: 500,
   shape_type: "polygon",
   shape_vertices: [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],

@@ -92,9 +92,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor, this.level.obstacle_edges[i].p1.y*this.draw_factor)
       ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
-  /*for(var i = 0; i < this.visibility_graph.edges.length; i++)
+  for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';

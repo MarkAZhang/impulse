@@ -123,7 +123,51 @@ LevelEditorState.prototype.on_click = function(x, y) {
   this.accumulated_vertices.push({x: x, y: y})
 }
 
+LevelEditorState.prototype.get_closest_coords = function(x, y) {
+  var ans_x = 0
+  var ans_y = 0
+  for(var i= 0; i < this.polygons.length; i++) {
+    for(var j = 0; j < this.polygons[i].length; j++) {
+      if(Math.abs(this.polygons[i][j].x - x) != 0 && Math.abs(this.polygons[i][j].x - x) < Math.abs(x - ans_x)) {
+        ans_x = this.polygons[i][j].x
+      }
+      if(Math.abs(this.polygons[i][j].y - y) != 0 && Math.abs(this.polygons[i][j].y - y) < Math.abs(y - ans_y)) {
+        ans_y = this.polygons[i][j].y
+      }
+    }
+  }
+
+  for(var i = 0; i < this.accumulated_vertices.length; i++) {
+    if(Math.abs(this.accumulated_vertices[i].x - x) != 0 && Math.abs(this.accumulated_vertices[i].x - x) < Math.abs(x - ans_x)) {
+      ans_x = this.accumulated_vertices[i].x
+    }
+    if(Math.abs(this.accumulated_vertices[i].y - y) != 0 && Math.abs(this.accumulated_vertices[i].y - y) < Math.abs(y - ans_y)) {
+      ans_y = this.accumulated_vertices[i].y
+    }
+  }
+
+  return {x: ans_x, y: ans_y}
+
+}
+
 LevelEditorState.prototype.on_key_down = function(keyCode) {
+
+  if(keyCode == 65) { //A = align
+    if(this.selected_v != null) {
+      var selected = this.polygons[this.selected_v[0]][this.selected_v[1]]
+      var ans = this.get_closest_coords(selected.x, selected.y)
+      selected.x = ans.x
+      selected.y = ans.y
+
+    }
+    if(this.selected_av != null) {
+      var selected = this.accumulated_vertices[this.selected_av]
+      var ans = this.get_closest_coords(selected.x, selected.y)
+      selected.x = ans.x
+      selected.y = ans.y
+    }
+
+  }
 
   if(keyCode == 67) { //C = crop
     this.crop_coordinates = [Math.min(this.accumulated_vertices[0].x, this.accumulated_vertices[1].x), Math.min(this.accumulated_vertices[0].y, this.accumulated_vertices[1].y), Math.max(this.accumulated_vertices[0].x, this.accumulated_vertices[1].x), Math.max(this.accumulated_vertices[0].y, this.accumulated_vertices[1].y)]
@@ -162,6 +206,29 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   }
 
+  if(keyCode == 88) { //X = reflect horizontally
+    var k = this.polygons.length
+    for(var i = 0; i < k; i++) {
+      var poly = []
+      for(var j = this.polygons[i].length - 1; j >= 0; j--) {
+        poly.push({x: canvasWidth - this.polygons[i][j].x, y: this.polygons[i][j].y})
+      }
+      this.polygons.push(poly)
+    }
+  }
+
+  if(keyCode == 90) { //Z = reflect vertically
+    var k = this.polygons.length
+    for(var i = 0; i < k; i++) {
+      var poly = []
+      for(var j = this.polygons[i].length - 1; j >= 0; j--) {
+        poly.push({x: this.polygons[i][j].x, y: canvasHeight - this.polygons[i][j].y})
+      }
+      this.polygons.push(poly)
+    }
+  }
+  console.log(keyCode)
+
   if(keyCode == 78) { //N = add polygon
     this.polygons.push(this.accumulated_vertices)
     this.accumulated_vertices = []
@@ -180,7 +247,7 @@ LevelEditorState.prototype.print_polygon = function() {
   for(var i = 0; i < this.polygons.length; i++) {
     var temp_p = []
     for(var j = 0; j < this.polygons[i].length; j++) {
-      temp_p.push([this.polygons[i][j].x, this.polygons[i][j].y])
+      temp_p.push([Math.round(this.polygons[i][j].x), Math.round(this.polygons[i][j].y)])
     }
     polygon_ans.push(temp_p)
   }

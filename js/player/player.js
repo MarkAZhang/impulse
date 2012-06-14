@@ -126,7 +126,7 @@ Player.prototype.process = function(dt) {
  if(this.dying && this.dying_duration < 0)
   {
     if(this.impulse_game_state instanceof ImpulseGameState) {
-      switch_game_state(new GameOverState(this.impulse_game_state.game_numbers, this.impulse_game_state.level))
+      switch_game_state(new GameOverState(this.impulse_game_state.game_numbers, this.impulse_game_state.level, this.impulse_game_state.world_num))
       return
     }
     else if(this.impulse_game_state instanceof HowToPlayState) {

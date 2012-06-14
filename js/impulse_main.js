@@ -15,6 +15,8 @@ var impulse_colors = {}
 impulse_colors['bronze'] = "rgb(205, 127, 50)"
 impulse_colors['silver'] = "rgb(175, 175, 175)"
 impulse_colors['gold'] = "rgb(238, 201, 0)"
+impulse_colors['world 1'] = "rgb(50, 205, 50)"
+impulse_colors['world 2'] = "rgb(255, 204, 0)"
 var player_data = {}
 
 window.onload =  function() {
@@ -38,18 +40,35 @@ window.onload =  function() {
     var gap_h = 75
     var gap_w = 75
 
-    var ph = (canvasHeight - gap_h * 4)/3
-    var pw = (canvasWidth - gap_w * 3)/2
+    var num_x = 3
+    var num_y = 4
+
+    var ph = (canvasHeight - gap_h * (num_x + 1))/num_x
+    var pw = (canvasWidth - gap_w * (num_y + 1))/num_y
 
     var polygons = []
-    for(var i = 0; i < 3; i++) {
-      for(var j = 0; j < 2; j++) {
-        var polygon = [[gap_w + (gap_w + pw) * j, gap_h + (gap_h + ph) * i], [gap_w + pw + (gap_w + pw) * j, gap_h + (gap_h + ph) * i], [gap_w + pw + (gap_w + pw) * j, gap_h + ph + (gap_h + ph) * i], [gap_w + (gap_w + pw) * j, gap_h + ph + (gap_h + ph) * i]]
+    for(var i = 0; i < (num_x); i++) {
+      for(var j = 0; j < (num_y); j++) {
+        if(!(i == 1 && (j == 1 || j == 2))) {
+        var polygon = [[Math.floor(gap_w + (gap_w + pw) * j), Math.floor(gap_h + (gap_h + ph) * i)], [Math.floor(gap_w + pw + (gap_w + pw) * j), Math.floor(gap_h + (gap_h + ph) * i)], [Math.floor(gap_w + pw + (gap_w + pw) * j), Math.floor(gap_h + ph + (gap_h + ph) * i)], [Math.floor(gap_w + (gap_w + pw) * j), Math.floor(gap_h + ph + (gap_h + ph) * i)]]
       polygons.push(polygon)
+        }
       }
     }
     console.log(JSON.stringify(polygons))
 
+    var polyg = [[[94,91.5],[186,91.5],[187,420.5],[383,420.5],[383,512.5],[94,512.5]],[[269,91.5],[382,92.5],[382,338.5],[269,338.5]]]
+
+    
+    for(var i = 0; i < 2; i++) {
+      var poly = []
+      for(var j = polyg[i].length - 1; j >= 0; j--) {
+          poly.push([canvasWidth - polyg[i][j][0], polyg[i][j][1]])
+        
+      }
+      polyg.push(poly)
+    }
+    console.log(JSON.stringify(polyg))
     
     // screen setup
     canvas = document.getElementById("canvas");

@@ -35,7 +35,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shooter_change_counter = this.shooter_change_interval
 
-  this.shooter_force = [50, 20, 250]
+  this.shooter_force = [50, 20, 150]
 
   this.shooter_color_change_prog = 0//if 1, need to push to 0
 
@@ -67,12 +67,19 @@ BossOne.prototype.additional_processing = function(dt) {
       this.level.enemy_counter += 1
     }
     
-    this.shooter_change_interval -= 1
+    this.shooter_change_counter -= 1
 
-    if(this.shooter_change_interval <=0) {
+    if(this.shooter_change_counter <=0) {
       this.shooter_old_types = this.shooter_types
-      this.shooter_types = [Math.floor(Math.random() * 2.99), Math.floor(Math.random() * 2.99)]
+      if(this.impulse_game_state.game_numbers.score > impulse_level_data[this.level.level_name].cutoff_scores[2] * .75) {
+        this.shooter_types = [2, 2]
+      }
+      else {
+        this.shooter_types = [Math.floor(Math.random() * 2.99), Math.floor(Math.random() * 2.99)]
+      }
+      
       this.shooter_color_change_prog = 1
+      this.shooter_change_counter = this.shooter_change_interval
     }
 
   }

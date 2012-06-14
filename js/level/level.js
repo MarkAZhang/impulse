@@ -146,7 +146,7 @@ Level.prototype.generate_obstacles = function() {
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
-    this.obstacles.push(new BasicObstacle(temp_v))
+    this.obstacles.push(new BasicObstacle(temp_v, impulse_colors["world "+this.impulse_game_state.world_num]))
     this.obstacle_polygons.push(temp_v)
     for(var j = 0; j < temp_v.length; j++) {
       this.obstacle_vertices.push(temp_v[j])

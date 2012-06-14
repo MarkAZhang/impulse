@@ -7,7 +7,7 @@ function GameOverState(final_game_numbers, level, world_num) {
   this.level_name = this.level.level_name
   this.buttons = []
   this.world_num = world_num
-  this.buttons.push(new SmallButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(ctx, _this.level.level_name))}}(this)))
+  this.buttons.push(new SmallButton("CLICK TO PLAY AGAIN", 20, canvasWidth/2, canvasHeight/2+160, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(ctx, _this.level.level_name, _this.world_num))}}(this)))
   this.buttons.push(new SmallButton("RETURN TO MENU", 20, canvasWidth/2, canvasHeight/2+210, 200, 50, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))

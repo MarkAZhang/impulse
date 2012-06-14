@@ -48,3 +48,13 @@ Glitch where if not high score, MEDAL won't show.
 Make levels.
 Then make graphics better.
 Get sounds and music.
+
+WASD
+
+Triangles - what are they. should it be there??
+
+Multiplier - what is it, what does it mean to increase permanently
+
+
+
+Need a level intro to levels, to show you new enemies.
