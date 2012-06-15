@@ -34,6 +34,10 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   
   this.f_x = 0 //horizontal movement force
   this.f_y = 0 //vertical movement force
+  this.left = false
+  this.right = false
+  this.down = false
+  this.up = false
   this.impulse_angle = 0
   this.attacking = false
   this.attack_start = 0
@@ -58,15 +62,19 @@ Player.prototype.keyDown = function(keyCode) {
   switch(keyCode)
   {
     case 65:
+      this.left = true
       this.f_x = -1;
       break;
     case 68:
+      this.right = true
       this.f_x = 1;
       break;
     case 83:
+      this.down = true
       this.f_y = 1;
       break;
     case 87:
+      this.up = true
       this.f_y = -1;
       break;
   }
@@ -76,15 +84,19 @@ Player.prototype.keyUp = function(keyCode) {
   switch(keyCode)
   {
     case 65:
+      this.left = false
       this.f_x = 0;
       break;
     case 68:
+      this.right = false
       this.f_x = 0;
       break;
     case 83:
+      this.down = false
       this.f_y = 0;
       break;
     case 87:
+      this.up = false
       this.f_y = 0;
       break;
   }
@@ -220,8 +232,16 @@ Player.prototype.process = function(dt) {
   if(this.status_duration[0] <= 0)
   {
     var f = this.force
-    var force = Math.abs(this.f_x)+Math.abs(this.f_y)==2 ? f/Math.sqrt(2) : f;
-    this.body.ApplyImpulse(new b2Vec2(force*this.f_x, force*this.f_y), this.body.GetWorldCenter())
+    var f_x = 0
+    var f_y = 0
+    if(this.left) f_x -= 1
+    if(this.right) f_x += 1
+    if(this.up) f_y -= 1
+    if(this.down) f_y += 1
+    
+
+    var force = Math.abs(f_x)+Math.abs(f_y)==2 ? f/Math.sqrt(2) : f;
+    this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
   }
 }
 

@@ -207,6 +207,15 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
   }
 
   if(keyCode == 88) { //X = reflect horizontally
+    if(this.selected_p != null) {
+      var poly = []
+      for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
+        poly.push({x: canvasWidth - this.polygons[this.selected_p][j].x, y: this.polygons[this.selected_p][j].y})
+      }
+      this.polygons.push(poly)
+      return
+    }
+
     var k = this.polygons.length
     for(var i = 0; i < k; i++) {
       var poly = []
@@ -218,6 +227,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
   }
 
   if(keyCode == 90) { //Z = reflect vertically
+    if(this.selected_p != null) {
+      var poly = []
+      for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
+        poly.push({x: this.polygons[this.selected_p][j].x, y: canvasHeight - this.polygons[this.selected_p][j].y})
+      }
+      this.polygons.push(poly)
+      return
+    }
     var k = this.polygons.length
     for(var i = 0; i < k; i++) {
       var poly = []

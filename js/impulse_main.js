@@ -57,16 +57,19 @@ window.onload =  function() {
     }
     console.log(JSON.stringify(polygons))
 
-    var polyg = [[[94,91.5],[186,91.5],[187,420.5],[383,420.5],[383,512.5],[94,512.5]],[[269,91.5],[382,92.5],[382,338.5],[269,338.5]]]
+    var polyg = [[[29,44],[56,44],[56,260],[29,260]],[[29,340],[56,340],[56,557],[29,557]]] 
 
     
-    for(var i = 0; i < 2; i++) {
+      var m = polyg.length
+    for(var i = 1; i < 8; i++) {
+      for(var k = 0; k < m; k++) {
       var poly = []
-      for(var j = polyg[i].length - 1; j >= 0; j--) {
-          poly.push([canvasWidth - polyg[i][j][0], polyg[i][j][1]])
-        
-      }
+        for(var j = 0; j < polyg[k].length; j++) {
+            poly.push([polyg[k][j][0] + i * 103, polyg[k][j][1]])
+          
+        }
       polyg.push(poly)
+      }
     }
     console.log(JSON.stringify(polyg))
     
@@ -117,6 +120,7 @@ function step() {
 
   dt = cur_time - last_time
   cur_game_state.process(dt)
+  if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 	cur_game_state.draw(ctx);
 

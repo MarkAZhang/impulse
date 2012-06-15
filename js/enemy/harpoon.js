@@ -103,8 +103,52 @@ Harpoon.prototype.move = function() {
   if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
     this.path = null
   }
-  else
+  else {
+    if(this.path == null) {
+      this.pathfinding_counter = 2 * this.pathfinding_delay
+    }
     this.enemy_move()
+  }
+}
+
+Harpoon.prototype.get_harpoon_target_pt = function() {
+
+  return this.player.body.GetPosition().Copy()
+
+  //attempts to predict where the player will go
+  //code doesn't work. Maybe try to do it work later. 
+  /*var cur_player_loc = this.player.body.GetPosition().Copy()
+  var cur_player_v = this.player.body.GetLinearVelocity().Copy()
+  var low = 0
+  var t = 2
+  var high = 4
+  for(var i = 0; i < 10; i++) {
+    
+    var predicted_point = {x: cur_player_loc.x + cur_player_v.x * t, y: cur_player_loc.y + cur_player_v.y * t}
+    
+    var dist = p_dist(predicted_point, this.body.GetPosition())
+      
+    var time_taken = dist/this.harpoon_velocity
+    
+    if(dist > this.harpoon_length || time_taken < t) {
+      high = t
+      t = (t + low)/2
+
+    }
+    if(dist > this.harpoon_length || time_taken > t) {
+      low = t
+      t = (t + high)/2
+    }
+    else if(time_taken < t) {
+     
+    }
+    else {
+      break
+    }
+  }
+  console.log("RETURNED "+t)
+  return new b2Vec2( cur_player_loc.x + cur_player_v.x * t, cur_player_loc.y + cur_player_v * t)*/
+
 }
 
 Harpoon.prototype.additional_processing = function(dt) {
@@ -123,10 +167,15 @@ Harpoon.prototype.additional_processing = function(dt) {
   if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.harpooning = true
     this.harpoon_loc = this.body.GetPosition().Copy()
-    var temp = this.body.GetPosition().Copy()
-    temp.Subtract(this.player.body.GetPosition())
+    
+  
+
+    var temp = this.get_harpoon_target_pt()
+    
+    temp.Subtract(this.body.GetPosition().Copy())
     temp.Normalize()
     temp.Multiply(this.harpoon_velocity)
+    console.log("HARPOON V "+temp.x+" "+temp.y)
     this.harpoon_v = temp
     
   }
@@ -146,7 +195,7 @@ Harpoon.prototype.additional_processing = function(dt) {
 
     var temp_v = this.harpoon_v.Copy()
     temp_v.Multiply(dt/1000)
-    this.harpoon_loc.Subtract(temp_v)
+    this.harpoon_loc.Add(temp_v)
 
   }
   else if(this.harpooned && (this.player.body.GetPosition().x >= canvasWidth/draw_factor - 1|| this.player.body.GetPosition().x <= 1 || this.player.body.GetPosition().y >= canvasHeight/draw_factor - 1|| this.player.body.GetPosition().y <= 1)) {

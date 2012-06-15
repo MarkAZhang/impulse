@@ -23,7 +23,7 @@ function ImpulseGameState(ctx, level_name, world) {
   this.star_colors =  ["bronze", "silver", "gold"]
 
   this.loading_screen()
-  setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 5)
+  setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 50)
 
 }
 
@@ -82,7 +82,7 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
   /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {

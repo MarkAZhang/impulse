@@ -190,7 +190,6 @@ function getBoundaryPolygon(polygon, radius) {
     var cur_angle = first_angle - second_angle
     cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
     cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
-    console.log(i+" "+j+" "+k+" "+cur_angle)
     if (cur_angle > Math.PI) {
       ans.push({x: polygon[i].x+j_to_i_normal.x*radius - j_to_i.x*1/Math.tan(cur_angle/2 - Math.PI/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius - j_to_i.y *1/Math.tan(cur_angle/2 - Math.PI/2)* radius})
 
@@ -231,7 +230,6 @@ function get_safe_point(object, player) {
 
     if(temp!=null)
     {
-      console.log("RETURN " + temp.x +" " +temp.y)
       return temp
       
     }
