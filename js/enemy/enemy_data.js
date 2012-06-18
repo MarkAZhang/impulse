@@ -109,7 +109,7 @@ impulse_enemy_stats["wisp"] = {
   lin_damp: 3,
   effective_radius: .5,
   force: .2,
-  score_value: 400,
+  score_value: 600,
   shape_type: "polygon",
   shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -221,5 +221,43 @@ impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
 
   description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+
+}
+
+impulse_enemy_stats["second boss"] = {
+  color: "gray",//"rgb(244, 164, 96)",
+  density: 1,
+  lin_damp: 3,
+  effective_radius: 3,
+  force: 0,
+  score_value: 200000,
+  shape_type: "polygon",
+  shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
+
+  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+
+}
+
+impulse_enemy_stats["fixed_harpoon"] = {
+  color: "orange",
+  density: 3,
+  lin_damp: 3,
+  effective_radius: .7,
+  force: .5,
+  score_value: 1000,
+  shape_type: "polygon",
+  shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]],
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death."
 
 }

@@ -24,6 +24,10 @@ function ImpulseGameState(ctx, level_name, world) {
 
   this.loading_screen()
   setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 50)
+  
+  this.world_visible = true
+
+  this.world_visibility = 1
 
 }
 
@@ -42,6 +46,14 @@ ImpulseGameState.prototype.process = function(dt) {
   if(!this.ready) return
   if(!this.pause)
   {
+    if(this.world_visible && this.world_visibility < 1)
+    {
+      this.world_visibility = Math.min(1, this.world_visibility + dt/1000)
+    }
+    else if(!this.world_visible && this.world_visibility > 0)
+    {
+      this.world_visibility = Math.max(0, this.world_visibility - dt/1000)
+    }
     this.player.process(dt)
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
     
@@ -61,6 +73,14 @@ ImpulseGameState.prototype.process = function(dt) {
 ImpulseGameState.prototype.draw = function(ctx) {
   if(!this.ready) return
   this.level.draw(ctx, this.draw_factor)
+  
+  if(this.world_visibility < 1) {
+    ctx.globalAlpha = 1 - this.world_visibility
+    ctx.fillStyle = "white"
+    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.fill()
+  }
+
   this.player.draw(ctx)
   
   
@@ -105,9 +125,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
-  }
+  }*/
  
-  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -233,8 +253,13 @@ ImpulseGameState.prototype.setup_world_next = function(level_name) {
   this.level_name = this.level.level_name
     
   this.generate_level()
-  var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
-  this.player = new Player(this.world, r_p.x, r_p.y, this)
+  if(this.level.player_loc) {
+    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
+  }
+  else {
+    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
+    this.player = new Player(this.world, r_p.x, r_p.y, this)
+  }
   var contactListener = new b2ContactListener;
   contactListener.PreSolve = this.handle_collisions
   this.world.SetContactListener(contactListener);

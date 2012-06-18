@@ -2,12 +2,12 @@ function isVisible(v_i, v_j, edges)
 {
   for(var k = 0; k < edges.length; k++)
   {
-    var sum1 = v_i.x+v_i.y
-    var sum2 = v_j.x+v_j.y
-    var sum3 = edges[k].p1.x+edges[k].p1.y
-    var sum4 = edges[k].p2.x+edges[k].p2.y
-    if(sum1==sum3 || sum1==sum4 || sum2==sum3 || sum2==sum4)//having the same point in two edges can lead to problems
+    var eq = function(a, b) {
+      return a.x == b.x && a.y == b.y
+    }
+    if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
       continue
+    }
     if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
     {
       return false

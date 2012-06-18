@@ -9,6 +9,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.enemy_spawn_counters = {}
   this.enemy_numbers = {}
   this.level_name = data.level_name
+  this.player_loc = data.player_loc
 
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
@@ -47,7 +48,8 @@ Level.prototype.init = function(data, impulse_game_state) {
     "harpoon": Harpoon,
     "slingshot": Slingshot,
     "deathray": DeathRay,
-    "first boss": BossOne
+    "first boss": BossOne,
+    "second boss": BossTwo
   }
 
   this.dead_enemies = []

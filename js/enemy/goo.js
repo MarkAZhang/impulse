@@ -84,7 +84,7 @@ Goo.prototype.additional_processing = function(dt) {
 }
 
 Goo.prototype.process_death = function(enemy_index, dt) {
-  if(this.died) {//the moment the enemy starts to die, remove the body from play
+  if(this.died && this.dying_duration < this.dying_length - 50) {//the moment the enemy starts to die, remove the body from play
     this.died = false
     this.set_heading(this.player.body.GetPosition())
     this.level.dead_enemies.push(enemy_index)

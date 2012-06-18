@@ -7,6 +7,8 @@ BossOne.prototype.is_boss = true
 function BossOne(world, x, y, id, impulse_game_state) {
   this.type = "first boss"
 
+  this.world = world
+
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
@@ -25,7 +27,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 5000
 
-  this.shoot_duration = this.shoot_interval/2
+  this.shoot_duration = 4999
 
   this.shooter_types = [Math.floor(Math.random() * 2.99), Math.floor(Math.random() * 2.99)]//0 = stunner, 1 = spear, 2 = tank
 
@@ -43,10 +45,28 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shooter_old_types = null
 
+  this.spawn_interval = 5000
+  this.spawn_duration = this.spawn_interval
+
+  this.spawned = false
+
+  this.body.SetAngle(Math.PI/2)
+
 
 }
 
 BossOne.prototype.additional_processing = function(dt) {
+
+  if(this.spawn_duration > 0) {
+    this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
+    this.visibility = 1 - this.spawn_duration / this.spawn_interval
+    return
+  }
+  else if(this.spawned == false){
+    this.spawned = true
+    this.visibility = 1
+  }
+
   if(this.shooter_color_change_prog > 0) {
     this.shooter_color_change_prog = Math.max(this.shooter_color_change_prog - dt/this.shooter_color_change_interval, 0)
   }
@@ -87,6 +107,8 @@ BossOne.prototype.additional_processing = function(dt) {
 }
 
 BossOne.prototype.additional_drawing = function(context, draw_factor) {
+
+  
   var shooter_locs = this.get_two_shooter_locs()
 
   for(var j = 0; j < 2; j++) {
@@ -122,6 +144,10 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
         context.fill() 
       }
       else {
+        if(this.spawned == false) {
+          context.globalAlpha = 1 - this.spawn_duration / this.spawn_interval
+        }
+
         context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_types[j]]].color
         context.stroke()
         context.globalAlpha /=2
@@ -129,7 +155,9 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
         context.fill() 
         context.globalAlpha = 1
       }
-
+      if(this.spawned == false) {
+        context.globalAlpha = 1 - this.spawn_duration / this.spawn_interval
+      }
       context.beginPath()
       context.arc(tp.x*draw_factor, tp.y*draw_factor, (this.effective_radius*draw_factor) * .75, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.shoot_duration / this.shoot_interval), true)
       context.lineWidth = 2
@@ -137,6 +165,7 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       context.stroke()
       
       context.restore()
+      context.globalAlpha = 1
   }
 }
 
@@ -155,4 +184,12 @@ BossOne.prototype.move = function() {
 BossOne.prototype.collide_with = function() {
 
 }
-
+BossOne.prototype.get_impulse_sensitive_pts = function() {
+  var ans = []
+  for(var i = 0; i < this.points.length; i++) {
+    var temp = this.body.GetPosition().Copy()
+    temp.Add(this.points[i])
+    ans.push(temp)
+  }
+  return ans
+}

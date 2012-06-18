@@ -68,9 +68,6 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   
   this.yield_counter = 0    
 
-  
-  
-
   this.yield = false
   this.id = id
   this.dying = false
@@ -144,7 +141,10 @@ Enemy.prototype.process_death = function(enemy_index, dt) {
 Enemy.prototype.process = function(enemy_index, dt) {
 
   if(this.process_death(enemy_index, dt)) return
-
+  if(this.spawned == false) {
+    this.additional_processing(dt)
+    return
+  }
   if(this.activated) {
     this.activated_processing(dt)
     return 
@@ -197,10 +197,10 @@ Enemy.prototype.move = function() {
   if(this.player.dying) return
   var target_point = this.get_target_point()
   this.pathfinding_counter+=1
-  if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= 2 * this.pathfinding_delay || (this.path && this.path.length > 1 && !isVisible(this.path[this.path.length-1], this.path[this.path.length-2], this.level.obstacle_edges)))
+  if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= 2 * this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
   {
-    var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons)
+    var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
     if(new_path!=null)
       this.path = new_path
     this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_delay)
@@ -217,7 +217,7 @@ Enemy.prototype.move = function() {
     endPt = this.path[0]
   }
 
-  if(!endPt)
+  if(!endPt || !isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
   {
     return
   }
@@ -329,7 +329,7 @@ Enemy.prototype.player_hit_proc = function() {
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
-  
+
   if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
@@ -488,7 +488,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
       }
       if(this.special_mode) {
         context.globalAlpha = this.sp_visibility
-         context.beginPath()
+        context.beginPath()
       
         context.moveTo((tp.x+this.points[0].x * 2)*draw_factor, (tp.y+this.points[0].y * 2)*draw_factor)
         for(var i = 1; i < this.points.length; i++)
@@ -552,4 +552,8 @@ Enemy.prototype.check_player_intersection = function(other) {
   {
     return (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
   }
+}
+
+Enemy.prototype.get_impulse_sensitive_pts = function() {
+  return [this.body.GetPosition()]
 }

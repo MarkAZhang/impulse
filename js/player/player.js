@@ -193,34 +193,23 @@ Player.prototype.process = function(dt) {
         if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
-          var angle = _atan(this.attack_loc, this.level.enemies[i].body.GetPosition())
-          
-          var struck;
+          var impulse_sensitive_points = this.level.enemies[i].get_impulse_sensitive_pts()
 
-          if(this.attack_angle < -Math.PI/6)
-          {
-            struck = angle <= this.attack_angle + Math.PI/3 || angle >= this.attack_angle + 5*Math.PI/3
-          }
-          else if(this.attack_angle > 7*Math.PI/6)
-          {
-            struck = angle <= this.attack_angle - 5*Math.PI/3 || angle >= this.attack_angle - Math.PI/3
-          }
-          else
-            struck = angle>=this.attack_angle - Math.PI/3 && angle <= this.attack_angle + Math.PI/3
-          
-          if(struck)
-          {
-            var dist = this.attack_loc.Copy()
-            dist.Subtract(this.level.enemies[i].body.GetPosition())
-            dist = dist.Normalize()
-            if (dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2))
+          for(var j = 0; j < impulse_sensitive_points.length; j++) {
+
+            if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
             {
-              this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), this.level.enemies[i].body.GetWorldCenter())
-              this.enemies_hit.push(this.level.enemies[i].id)
-              this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
-            }
-            if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpooned) {
-              this.level.enemies[i].disengage()
+              
+              if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
+              {
+                var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), this.level.enemies[i].body.GetWorldCenter())
+                this.enemies_hit.push(this.level.enemies[i].id)
+                this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
+              }
+              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpooned) {
+                this.level.enemies[i].disengage()
+              }
             }
           }
         }
@@ -243,6 +232,32 @@ Player.prototype.process = function(dt) {
     var force = Math.abs(f_x)+Math.abs(f_y)==2 ? f/Math.sqrt(2) : f;
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
   }
+}
+
+Player.prototype.point_in_impulse_angle = function(pt) {
+  var angle = _atan(this.attack_loc, pt)
+  
+  var struck;
+
+  if(this.attack_angle < -Math.PI/6)
+  {
+    struck = angle <= this.attack_angle + Math.PI/3 || angle >= this.attack_angle + 5*Math.PI/3
+  }
+  else if(this.attack_angle > 7*Math.PI/6)
+  {
+    struck = angle <= this.attack_angle - 5*Math.PI/3 || angle >= this.attack_angle - Math.PI/3
+  }
+  else
+    struck = angle>=this.attack_angle - Math.PI/3 && angle <= this.attack_angle + Math.PI/3
+  
+  return struck
+}
+
+Player.prototype.point_in_impulse_dist = function(pt) {
+  var dist = this.attack_loc.Copy()
+  dist.Subtract(pt)
+  dist = dist.Normalize()
+  return dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)
 }
 
 Player.prototype.draw = function(context) {
