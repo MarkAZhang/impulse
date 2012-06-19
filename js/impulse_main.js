@@ -121,6 +121,7 @@ function step() {
 
   dt = cur_time - last_time
   cur_game_state.process(dt)
+  process_music(dt)
   if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 	cur_game_state.draw(ctx);
@@ -171,6 +172,12 @@ function on_click(event) {
 
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
+  if(keyCode == 77) { //M = mute/unmute
+    
+    mute = !mute
+  }
+
+
   if(cur_dialog_box) {
     cur_dialog_box.on_key_down(keyCode)
     return
@@ -267,4 +274,104 @@ function calculate_stars() {
     }
   }
   player_data.stars = total_stars
+}
+
+
+///MUSIC
+
+var audio_tag_map = {}
+
+var cur_song = null
+
+var world_music_map = {}
+
+world_music_map[1] = "speedway"
+world_music_map[2] = "droid_march"
+world_music_map[3] = "tunneled"
+world_music_map[4] = "strangled"
+world_music_map[5] = "emergence"
+world_music_map[6] = "machine_one"
+world_music_map[7] = "trial_by_fire"
+world_music_map[8] = "hard_noise"
+
+var music_switch = "none"
+
+var music_switchtime = 1000
+
+var music_volume = 1.0
+
+var mute = false
+
+function play_song(song_name, force_restart) {
+  if(cur_song == song_name && !force_restart) return
+
+  if(song_name == null) {
+    audio_tag_map[cur_song].pause()
+    cur_song = null
+    return
+  }
+
+  if(!audio_tag_map[song_name]) {
+    add_song(song_name)
+    return
+  }
+  
+  if(cur_song != null) {
+    next_song = song_name
+    music_switch = "down"
+    setTimeout(function() {
+      start_song(next_song)
+      audio_tag_map[cur_song].volume = music_volume
+      music_switch = "none"
+    }, 1000)
+  }
+  else {
+    setTimeout(function() {
+    start_song(song_name)
+    audio_tag_map[cur_song].volume = music_volume
+    }, 1000)
+  }
+
+}
+
+function start_song(song_name) {
+  if(cur_song != null)
+    audio_tag_map[cur_song].pause()
+  audio_tag_map[song_name].currentTime = 0
+  audio_tag_map[song_name].play()
+  cur_song = song_name
+}
+
+function add_song(song_name) {
+  var audio = document.createElement("audio")
+  audio.src = "audio/"+song_name+".ogg"
+  audio.addEventListener('canplaythrough', function() {
+    play_song(song_name)
+  }, false)
+  audio.loop = true
+  audio_tag_map[song_name] = audio
+}
+
+function process_music(dt) {
+  if(!cur_song || !audio_tag_map[cur_song]) return
+
+  if(music_switch == "down") {
+    audio_tag_map[cur_song].volume *= Math.pow(0.5, dt/(music_switchtime/8))
+  }
+
+  if(mute && music_volume > 0) {
+    if(music_volume <= Math.pow(0.5, 8))
+      music_volume = 0
+    else
+      music_volume *= Math.pow(0.5, dt/(music_switchtime/8))
+  }
+  else if(!mute && music_volume < 1) {
+    if(music_volume == 0) {
+      music_volume = Math.pow(0.5, 8)
+    }
+    music_volume = Math.min(music_volume * Math.pow(2, dt/(music_switchtime/8)), 1)
+
+  }
+  if(music_switch == "none")
+    audio_tag_map[cur_song].volume = music_volume
 }

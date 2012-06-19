@@ -16,7 +16,8 @@ function ClassicSelectState(world) {
     this.level_buttons = []
     this.set_level_buttons(world)
   }
-  
+
+  play_song("right")
 }
 
 ClassicSelectState.prototype.process = function(dt) {

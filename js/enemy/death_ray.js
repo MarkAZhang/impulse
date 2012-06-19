@@ -57,6 +57,10 @@ DeathRay.prototype.additional_processing = function(dt) {
   this.within_bounds = this.body.GetPosition().x >= this.interior_buffer && this.body.GetPosition().x <= canvasWidth/draw_factor - this.interior_buffer && this.body.GetPosition().y >= this.interior_buffer && this.body.GetPosition().y <= canvasHeight/draw_factor - this.interior_buffer
   this.special_mode = this.safe && this.within_bounds && this.status_duration[1] <= 0
 
+  if(this.status_duration[1] > 0) {
+    return
+  }
+
   this.turret_mode = this.safe && this.within_bounds
 
   if(!this.turret_mode) {

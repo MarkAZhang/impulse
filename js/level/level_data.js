@@ -113,7 +113,7 @@ impulse_level_data['LEVEL 1-1'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [50000, 300000, 1000000]
+  cutoff_scores: [50000, 400000, 2000000]
 
 }
 
@@ -376,7 +376,7 @@ impulse_level_data['LEVEL 2-4'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [150000, 400000, 1250000]
+  cutoff_scores: [500000, 2000000, 5000000]
 
 }
 
@@ -552,6 +552,150 @@ impulse_level_data['LEVEL 3-3'] = {
   },
   buffer_radius: 1,
   cutoff_scores: [400000, 1000000, 2500000]
+
+}
+
+impulse_level_data['LEVEL 3-4'] = {
+  enemies: {
+              tank: [5, 5, 3, 1, 30],
+              wisp: [10, 10, 2, 1, 20],
+              disabler: [0, 5, 2, 1, 10]
+           },
+  dominant_enemy: "disabler",
+  obstacle_v: [[[-10, -10],[810, -10],[810, 207],[-10,207]],[[-10,394],[810, 394],[810, 610],[-10, 610]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [500000, 2000000, 4000000],
+  colored_interface: true
+
+}
+
+impulse_level_data['LEVEL 3-5'] = {
+  enemies: {
+              mote: [10, 5, 2, 2, 30],
+              goo: [10, 10, 2, 1, 10],
+              harpoon: [10, 10, 1, 1, 20],
+              fighter: [0, 8, 1, 1, 20]
+                
+           },
+  dominant_enemy: "fighter",
+  obstacle_v: [[[0,0],[314,1],[314,51],[50,50],[50,244],[0,244]],[[800,244],[750,244],[750,50],[486,51],[486,1],[800,0]],[[0,357],[50,357],[50,550],[314,550],[314,600],[0,600]],[[800,600],[486,600],[486,550],[750,550],[750,357],[800,357]],[[254,138],[545,137],[397,237]],[[145,194],[286,302],[146,407]],[[654,407],[514,302],[655,194]],[[397,364],[545,464],[254,463]]]  ,
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [250000, 750000, 1500000],
+  colored_interface: true
+
+}
+
+impulse_level_data['LEVEL 3-6'] = {
+  enemies: {
+
+              stunner: [10, 5, 3, 2, 30],
+              tank: [5, 8, 2, 2, 30],
+              goo: [10, 6, 2, 2, 10],
+              fighter: [0, 8, 1, 1, 20]
+                
+           },
+  dominant_enemy: "fighter",
+  obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [250000, 750000, 1500000],
+  colored_interface: true
+
+}
+
+impulse_level_data['LEVEL 3-7'] = {
+  enemies: {
+
+              stunner: [0, 3, 2, 2, 15],
+              spear: [1, 8, 1, 1, 10],
+              tank: [2, 10, 1, 1, 10],
+              mote: [3, 6, 1, 2, 10],
+              goo: [4, 10, 1, 1, 5],
+              harpoon: [2, 10, 1, 1, 6],
+              wisp: [4, 6, 1, 1, 10],
+              disabler: [8, 10, 1, 1, 5],
+              fighter: [3, 15, 1, 1, 6]
+                
+           },
+  dominant_enemy: "fighter",
+  obstacle_v: [[[71,62],[281,62],[281,109],[120,109],[120,222],[282,222],[282,269],[71,269]],[[71,332],[120,332],[120,492],[227,492],[227,332],[282,332],[282,539],[71,539]],[[518,330],[729,332],[729,539],[518,539],[518,494],[680,492],[680,379],[518,379]],[[519,268],[518,62],[729,62],[729,269],[680,269],[680,109],[569,109],[569,269]],[[344,109],[457,109],[457,220],[344,220]],[[344,376],[457,376],[457,494],[344,494]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [150000, 500000, 1000000],
+  colored_interface: true
+
+}
+
+impulse_level_data['BOSS 3'] = {
+  enemies: {
+              stunner: [0, 3, 2, 1, 15],
+              spear: [1, 8, 1, 1, 10],
+              tank: [2, 10, 1, 1, 10],
+              mote: [3, 6, 1, 1, 10],
+              goo: [4, 10, 1, 1, 5],
+              wisp: [4, 6, 1, 1, 10],
+              disabler: [8, 10, 1, 1, 5],
+              "third boss": [0, 1, 1, 0, 1]
+           },
+  dominant_enemy: "third boss",
+  //obstacle_v: [[[21,25],[375,25],[375,50],[50,50],[50,275],[21,275]],[[779,275],[750,275],[750,50],[425,50],[425,25],[779,25]],[[21,325],[50,325],[50,550],[375,550],[375,576],[21,576]],[[779,576],[425,576],[425,550],[750,550],[750,325],[779,325]]],
+  obstacle_v: [[[0, 0], [375, 0], [375, 50], [50, 50], [50, 275], [0, 275]], [[425, 0], [800, 0], [800, 275], [750, 275], [750, 50], [425, 50]], [[750, 325], [800, 325], [800, 600], [425, 600], [425, 550], [750, 550]], [[0, 325], [50, 325], [50, 550], [375, 550], [375, 600], [0, 600]]],
+  get_obstacle_vertices: function (index) {
+    var ob_v = this.obstacle_v
+
+    var ans = ob_v[index]
+    var ans_array = []
+    for(var i = 0; i < ans.length; i++) {
+      ans_array.push(new b2Vec2(ans[i][0]/draw_factor, ans[i][1]/draw_factor))
+    }
+
+    return ans_array
+  },
+  buffer_radius: 1,
+  cutoff_scores: [500000, 2000000, 8000000],
+  player_loc: {x: 400, y: 400}
 
 }
 

@@ -6,6 +6,8 @@ function LevelEditorState() {
   
   this.polygons = []
 
+  this.outline_polygons = []
+
   this.accumulated_vertices = []
   
   this.selected_v = null
@@ -70,6 +72,31 @@ LevelEditorState.prototype.draw = function(context) {
     context.fillStyle = (this.selected_av != null && this.selected_av == i) ? "red" : "black"
     context.arc(this.accumulated_vertices[i].x, this.accumulated_vertices[i].y, 5, 0, 2*Math.PI, true)
     context.fill()
+  }
+
+  for(var i = 0; i < this.outline_polygons.length; i++) {
+    context.beginPath()
+    context.moveTo(this.outline_polygons[i][0].x, this.outline_polygons[i][0].y)
+    for(var j = 1; j < this.outline_polygons[i].length; j++)
+    {
+      context.lineTo(this.outline_polygons[i][j].x, this.outline_polygons[i][j].y)
+    }
+    context.closePath()
+    context.strokeStyle = "cyan"
+    context.stroke()
+    context.fillStyle = "cyan"
+    context.globalAlpha = .2
+    context.fill()
+
+    for(var j = 0; j < this.outline_polygons[i].length; j++)
+    {
+      context.beginPath()
+      context.arc(this.outline_polygons[i][j].x, this.outline_polygons[i][j].y, 5, 0, 2*Math.PI, true)
+      context.fillStyle = "cyan"
+      context.fill()
+    }
+     
+    context.globalAlpha = 1
   }
   
 }
@@ -136,6 +163,16 @@ LevelEditorState.prototype.get_closest_coords = function(x, y) {
       }
     }
   }
+  for(var i= 0; i < this.outline_polygons.length; i++) {
+    for(var j = 0; j < this.outline_polygons[i].length; j++) {
+      if(Math.abs(this.outline_polygons[i][j].x - x) != 0 && Math.abs(this.outline_polygons[i][j].x - x) < Math.abs(x - ans_x)) {
+        ans_x = this.outline_polygons[i][j].x
+      }
+      if(Math.abs(this.outline_polygons[i][j].y - y) != 0 && Math.abs(this.outline_polygons[i][j].y - y) < Math.abs(y - ans_y)) {
+        ans_y = this.outline_polygons[i][j].y
+      }
+    }
+  }
 
   for(var i = 0; i < this.accumulated_vertices.length; i++) {
     if(Math.abs(this.accumulated_vertices[i].x - x) != 0 && Math.abs(this.accumulated_vertices[i].x - x) < Math.abs(x - ans_x)) {
@@ -176,6 +213,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 70) { //F = full image
     this.crop_coordinates = null
+  }
+
+  if(keyCode == 79) {
+    if(this.selected_p != null) {
+      this.outline_polygons.push(this.polygons[this.selected_p])
+      this.polygons.splice(this.selected_p, 1)
+      this.selected_p = null
+    }
   }
 
   if(keyCode == 81) { //Q = cancel selected

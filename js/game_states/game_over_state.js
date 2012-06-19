@@ -44,6 +44,7 @@ function GameOverState(final_game_numbers, level, world_num) {
   }
   this.star_colors = ["bronze", "silver", "gold"]
 
+  play_song(null)
 }
 
 GameOverState.prototype.process = function(dt) {

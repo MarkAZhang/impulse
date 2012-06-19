@@ -40,6 +40,8 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.safe = true
   this.harpoon_joint = null
 
+  this.do_yield = false
+
 }
 
 Harpoon.prototype.get_target_point = function() {

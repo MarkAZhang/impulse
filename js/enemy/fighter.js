@@ -84,10 +84,14 @@ Fighter.prototype.enemy_move = Enemy.prototype.move
 Fighter.prototype.move = function() {
   if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
     this.path = null
+    this.set_heading()
   }
-  else
+  else {
+    if(this.path == null) {
+      this.pathfinding_counter = 2 * this.pathfinding_delay
+    }
     this.enemy_move()
-
+  }
   
 }
 

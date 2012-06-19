@@ -13,13 +13,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-  this.shoot_interval = 750
-
-  this.shoot_duration = this.shoot_interval
-
   this.do_yield = false
-
-  this.bullet_alternater = 0
 
   this.safe = true
 
@@ -31,7 +25,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.arm_full_rotation = 15000
 
-  this.spawn_interval = 5000
+  this.spawn_interval = 7600
   this.spawn_duration = this.spawn_interval
 
   this.spawned = false
@@ -40,7 +34,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
-  this.explode_interval = 10000
+  this.explode_interval = 13400
   this.explode_timer = this.explode_interval - 1
   this.explode_duration = 500
   this.explode_factor = 7

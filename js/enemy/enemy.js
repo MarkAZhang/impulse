@@ -235,7 +235,7 @@ Enemy.prototype.move = function() {
       this.yield = false
       for(var i = 0; i < nearby_enemies.length; i++)
       {//move if the highest id enemy
-        if(nearby_enemies[i].id > this.id)
+        if(nearby_enemies[i].id > this.id && nearby_enemies[i].type!="fighter_bullet")
         {
           this.yield = true
           break
@@ -317,9 +317,10 @@ Enemy.prototype.collide_with = function(other) {
   if(other === this.player && this.check_player_intersection(this.player)) {
    
     this.start_death("hit_player")
-    this.impulse_game_state.reset_combo()
-    if(this.status_duration[1] <= 0)//do not proc if silenced
+    if(this.status_duration[1] <= 0) {//do not proc if silenced
       this.player_hit_proc()
+      this.impulse_game_state.reset_combo()
+    }
   }
 }
 
@@ -329,6 +330,8 @@ Enemy.prototype.player_hit_proc = function() {
 }
 
 Enemy.prototype.draw = function(context, draw_factor) {
+
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
 
   if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
@@ -353,6 +356,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.stroke()
     context.restore()
     context.globalAlpha = 1
+    this.additional_drawing(context, draw_factor)
     return
   }
   if(!impulse_enemy_stats[this.type].seen) {

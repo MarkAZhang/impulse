@@ -29,6 +29,11 @@ function ImpulseGameState(ctx, level_name, world) {
 
   this.world_visibility = 1
 
+  if(level_name.slice(0, 4) == "BOSS") 
+    play_song("driven", true)
+  else
+    play_song(world_music_map[this.world_num], true)
+
 }
 
 
@@ -160,7 +165,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : 'black'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
   ctx.fillText(this.game_numbers.last_time, 10, 25)
 
   ctx.textAlign = 'right'
@@ -173,7 +178,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   }
 
   ctx.textAlign = 'center'
-  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : 'black'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
   ctx.fillText(this.level.level_name, canvasWidth/2, 25)
 
   ctx.textAlign = 'right'

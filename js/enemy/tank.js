@@ -85,11 +85,11 @@ Tank.prototype.collide_with = function(other) {
     if(this.status_duration[1] <= 0) {
       this.activated = true
       this.cause_of_death = "hit_player"
+      this.impulse_game_state.reset_combo()
     }
     else {
       this.start_death("hit_player")
     }
-    this.impulse_game_state.reset_combo()
   }
 }
 

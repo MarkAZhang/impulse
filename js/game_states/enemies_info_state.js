@@ -9,6 +9,8 @@ function EnemiesInfoState() {
     this.enemy_buttons = []
     this.set_enemy_buttons()
 
+    play_song("right")
+
 }
 
 EnemiesInfoState.prototype.process = function(dt) {

@@ -16,55 +16,49 @@ function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
   this.v.Multiply(this.force)
 
   this.do_yield = false
-  this.bullet_force = 40
-  this.bullet_enemy_factor = 2
+  this.bullet_force = 60
+  this.bullet_enemy_factor = 1.5
 
   this.parent_id = parent_id
 
   this.reflected = false
+
 }
 
 FighterBullet.prototype.start_death = function(death) {
   this.dying = death
   this.dying_duration = this.dying_length
-  
+  this.died = true
 }
 
 FighterBullet.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
   if(other === this.player && this.check_player_intersection(this.player)) {
-   
-    var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-    this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
     this.start_death("hit_player")
-    
-    this.impulse_game_state.reset_combo()
+    if(this.status_duration[1] <= 0) {
+      var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
+      
+      this.impulse_game_state.reset_combo()
+    }
   }
-  else if(other.is_enemy && (other.id != this.parent_id || this.reflected))
+  else if(other.is_enemy) 
   {
     
-    var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-    other.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_enemy_factor * Math.cos(bullet_angle), this.bullet_force * this.bullet_enemy_factor * Math.sin(bullet_angle)), other.body.GetWorldCenter())
     this.start_death("hit_enemy")
+    if(other.id != this.parent_id || this.reflected) {
+      if(this.status_duration[1] <= 0) {
+        var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+        other.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_enemy_factor * Math.cos(bullet_angle), this.bullet_force * this.bullet_enemy_factor * Math.sin(bullet_angle)), other.body.GetWorldCenter())
+      }
+    }
   }
+  
 }
 
-FighterBullet.prototype.process = function(enemy_index, dt) {
-  if(this.dying && this.dying_duration < 0)
-  {
-    this.level.dead_enemies.push(enemy_index)
-    return
-  }
-
-  if(this.dying )
-  {
-    this.dying_duration -= dt
-    return
-  }
-
-  this.check_death()
-
+FighterBullet.prototype.move = function() {
+  
   this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
 
   this.body.SetAngle(_atan({x: 0, y: 0}, this.v))

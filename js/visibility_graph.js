@@ -115,10 +115,10 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     return [point1, point2]
   }
 
-  var cur_time = (new Date()).getTime()
+  /*var cur_time = (new Date()).getTime()
   console.log("QUERY "+(cur_time - this.last_time) +" "+temp.id)
   console.log(temp)
-  this.last_time = cur_time
+  this.last_time = cur_time*/
   
   /*//if start point is inside a bad polygon (but we aren't dead...)  
   //get out of there ASAP

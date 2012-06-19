@@ -14,6 +14,7 @@ function TitleState(start_clicked) {
   }
   else
     this.buttons.push(new SmallButton("CLICK TO BEGIN", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){setTimeout(function(){_this.setup_main_menu()}, 20)}))
+  play_song("right")
 }
 
 TitleState.prototype.process = function(dt) {

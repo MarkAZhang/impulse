@@ -28,7 +28,9 @@ function HowToPlayState(ctx) {
 
   this.loading_screen()
   this.level_name = "HOW TO PLAY 1"
-  this.reload_world() 
+  this.reload_world()
+
+  play_song("dirty_drums")
 
 }
 

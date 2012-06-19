@@ -61,3 +61,19 @@ Multiplier - what is it, what does it mean to increase permanently
 
 
 Need a level intro to levels, to show you new enemies.
+
+
+MUSIC
+dirty_drums - HOW TO PLAY
+driven - BOSS MUSIC
+droid_music - LEVELS
+emergence - LEVELS
+hard_noise - WORLD 8?
+machine_one - LEVELS
+right - TITLE
+speedway - EASY LEVELS
+strangled - LEVELS
+trial_by_fire - LEVELS
+tunneled - LEVELS
+
+

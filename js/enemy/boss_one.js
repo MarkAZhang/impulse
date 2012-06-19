@@ -27,7 +27,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 5000
 
-  this.shoot_duration = 4999
+  this.shoot_duration = this.shoot_interval - 1
 
   this.shooter_types = [Math.floor(Math.random() * 2.99), Math.floor(Math.random() * 2.99)]//0 = stunner, 1 = spear, 2 = tank
 
@@ -45,12 +45,14 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shooter_old_types = null
 
-  this.spawn_interval = 5000
+  this.spawn_interval = 7600
   this.spawn_duration = this.spawn_interval
 
   this.spawned = false
 
   this.body.SetAngle(Math.PI/2)
+
+  this.visibility = 0
 
 
 }
