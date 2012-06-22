@@ -98,6 +98,12 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.slow_force = this.force / 3
 
+  this.in_poly = false
+
+  this.in_poly_slow_interval = 2000
+
+  this.in_poly_slow_duration = this.in_poly_slow_interval
+
   this.death_radius = 2
 
 }
@@ -171,6 +177,13 @@ Enemy.prototype.process = function(enemy_index, dt) {
   var leftover = this.special_mode_visibility_timer % 1000
   if(leftover > 500) leftover = 1000 - leftover
   this.sp_visibility = leftover/500
+
+  if(this.in_poly) {
+    this.in_poly_slow_duration -= dt
+  }
+  else {
+    this.in_poly_slow_duration = this.in_poly_slow_interval
+  }
   
   this.check_death()
 
@@ -278,7 +291,10 @@ Enemy.prototype.modify_movement_vector = function(dir) {
       in_poly = true
     }
   }
-  if(in_poly)//move cautiously...isn't very effective in preventing accidental deaths
+  
+  this.in_poly = in_poly
+
+  if(this.in_poly && this.in_poly_slow_duration > 0)//move cautiously...isn't very effective in preventing accidental deaths
   {
     dir.Multiply(this.slow_force)
   }

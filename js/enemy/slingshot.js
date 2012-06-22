@@ -13,7 +13,9 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-  this.do_yield = true
+  this.do_yield = false
+
+  this.real_color = this.color
 
   this.slingshot_mode = false
   this.slingshot_point = null
@@ -21,8 +23,9 @@ function Slingshot(world, x, y, id, impulse_game_state) {
   this.slingshot_interval = 100
   this.slingshot_multiplier = 1
   this.empowered_duration = 0
-  this.empowered_interval = 500
+  this.empowered_interval = 700
   this.empowered_force = 100
+
 }
 
 Slingshot.prototype.enemy_move = Enemy.prototype.move
@@ -54,7 +57,7 @@ Slingshot.prototype.additional_processing = function(dt) {
     
   this.special_mode = this.empowered_duration > 0
 
-  this.color = this.slingshot_mode ? "red" : this.color
+  this.color = this.empowered_duration > 0 ? "red" : this.real_color
 
   if(this.slingshot_duration > 0)
   {

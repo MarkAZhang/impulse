@@ -88,11 +88,11 @@ impulse_enemy_stats["disabler"] = {
 
 impulse_enemy_stats["crippler"] = {
   color: "rgb(255, 20, 147)",
-  density: 1.2,
-  lin_damp: 3,
-  effective_radius: 2,
-  force: .8,
-  score_value: 1000,
+  density: 0.9,
+  lin_damp: 4,
+  effective_radius: 2.5,
+  force: 1.7,
+  score_value: 2000,
   shape_type: "polygon",
   shape_vertices: [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],

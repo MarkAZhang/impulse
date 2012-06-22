@@ -18,6 +18,7 @@ impulse_colors['gold'] = "rgb(238, 201, 0)"
 impulse_colors['world 1'] = "rgb(50, 205, 50)"
 impulse_colors['world 2'] = "rgb(255, 204, 0)"
 impulse_colors['world 3'] = "rgb(186, 85, 211)"
+impulse_colors['world 4'] = "rgb(0, 206, 209)"
 var player_data = {}
 
 window.onload =  function() {
@@ -83,10 +84,12 @@ window.onload =  function() {
     canvas_container.style.height = canvasHeight + 'px'
 
     ctx = canvas.getContext('2d');
-    canvas.addEventListener('keydown', on_key_down);
-    canvas.addEventListener('keyup', on_key_up);
-    canvas.addEventListener('click', on_click);
-    canvas.addEventListener('mousemove', on_mouse_move)
+    canvas.addEventListener('keydown', on_key_down, false);
+    canvas.addEventListener('keyup', on_key_up, false);
+    canvas.addEventListener('click', on_click, false);
+    canvas.addEventListener('mousedown', on_mouse_down, false);
+    canvas.addEventListener('mouseup', on_mouse_up, false);
+    canvas.addEventListener('mousemove', on_mouse_move, false)
 
     var dim = getWindowDimensions()
 
@@ -161,6 +164,28 @@ function on_mouse_move(event) {
   cur_game_state.on_mouse_move(mPos.x, mPos.y)
 }
 
+function on_mouse_down(event) {
+
+  var mPos = getCursorPosition(event)
+
+  if(cur_dialog_box) {
+    cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
+    return
+  }
+  cur_game_state.on_mouse_down(mPos.x, mPos.y)
+}
+
+function on_mouse_up(event) {
+
+  var mPos = getCursorPosition(event)
+
+  if(cur_dialog_box) {
+    cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
+    return
+  }
+  cur_game_state.on_mouse_up(mPos.x, mPos.y)
+}
+
 function on_click(event) {
   var mPos = getCursorPosition(event)
   if(cur_dialog_box) {
@@ -221,7 +246,7 @@ function save_game() {
 
 function load_game() {
   var load_obj = {}
-  if(localStorage[save_name]===undefined) {
+  if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
     load_obj['levels'] = {}
     for(i in impulse_level_data) {
       if(i.slice(0, 11) != "HOW TO PLAY") {
@@ -302,8 +327,11 @@ var music_volume = 1.0
 
 var mute = false
 
+var next_song = null
+
 function play_song(song_name, force_restart) {
-  if(cur_song == song_name && !force_restart) return
+  console.log(song_name+" "+song_name+" "+cur_song+" "+next_song)
+  if((cur_song == song_name && !force_restart) || next_song != null && song_name == next_song) return
 
   if(song_name == null) {
     audio_tag_map[cur_song].pause()
@@ -323,20 +351,26 @@ function play_song(song_name, force_restart) {
       start_song(next_song)
       audio_tag_map[cur_song].volume = music_volume
       music_switch = "none"
+      next_song = null
     }, 1000)
   }
   else {
+    next_song = song_name
     setTimeout(function() {
-    start_song(song_name)
+    start_song(next_song)
     audio_tag_map[cur_song].volume = music_volume
+    next_song = null
     }, 1000)
   }
 
 }
 
 function start_song(song_name) {
+  if(song_name==null) return  //sometimes if songs are switched really fast next_song can be changed, then nulled, then called again
+
   if(cur_song != null)
     audio_tag_map[cur_song].pause()
+  console.log(song_name)
   audio_tag_map[song_name].currentTime = 0
   audio_tag_map[song_name].play()
   cur_song = song_name

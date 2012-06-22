@@ -24,6 +24,9 @@ function LevelEditorState() {
 
   this.draw_factor = 15
 
+  this.drag_loc = null
+  this.dragging = false
+
 }
 
 LevelEditorState.prototype.process = function(dt) {
@@ -102,7 +105,33 @@ LevelEditorState.prototype.draw = function(context) {
 }
 
 LevelEditorState.prototype.on_mouse_move = function(x, y) {
+  if(this.dragging) {
+    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+      this.polygons[this.selected_p][i].x += (x - this.drag_loc.x)
+      this.polygons[this.selected_p][i].y += (y - this.drag_loc.y)
+    }
+    this.drag_loc = {x: x, y: y}
+    console.log("CHANGE LOC")
+  }
+  
 }
+
+LevelEditorState.prototype.on_mouse_up = function(x, y) {
+  console.log("UP")
+  this.dragging = false
+  this.drag_loc = null
+}
+
+LevelEditorState.prototype.on_mouse_down = function(x, y) {
+  console.log("DOWN")
+  console.log(x+" "+y)
+  if(this.selected_p != null && pointInPolygon(this.polygons[this.selected_p], {x: x, y: y})) {
+    this.drag_loc = {x: x, y: y}
+    this.dragging = true
+    console.log("DRAGGING")
+  }
+}
+
 
 LevelEditorState.prototype.on_click = function(x, y) {
 

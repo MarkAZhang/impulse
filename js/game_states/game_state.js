@@ -18,6 +18,14 @@ GameState.prototype.on_mouse_move = function(x, y) {
 
 }
 
+GameState.prototype.on_mouse_down = function(x, y) {
+
+}
+
+GameState.prototype.on_mouse_up = function(x, y) {
+
+}
+
 GameState.prototype.on_key_down = function(keyCode) {
 
 }

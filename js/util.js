@@ -1,10 +1,12 @@
+var eq = function(a, b) {
+  return a.x == b.x && a.y == b.y
+}
+
 function isVisible(v_i, v_j, edges)
 {
   for(var k = 0; k < edges.length; k++)
   {
-    var eq = function(a, b) {
-      return a.x == b.x && a.y == b.y
-    }
+    
     if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
       continue
     }
