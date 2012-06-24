@@ -187,10 +187,10 @@ impulse_enemy_stats["slingshot"] = {
 
 impulse_enemy_stats["deathray"] = {
   color: "rgb(0, 229, 238)",
-  density: 1,
-  lin_damp: 3,
+  density: 1.5,
+  lin_damp: 4,
   effective_radius: 1,
-  force: .8,
+  force: 1.5,
   score_value: 2500,
   shape_type: "polygon",
   shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],

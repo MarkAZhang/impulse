@@ -124,4 +124,13 @@ Tank.prototype.additional_drawing = function(context, draw_factor) {
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
   }
+  
+  context.beginPath()
+  context.strokeStyle = this.color
+  context.lineWidth = 2
+  context.globalAlpha = .2
+  context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
+  context.stroke()
+  context.globalAlpha = 1
+  
 }

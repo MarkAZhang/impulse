@@ -108,7 +108,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     }
     else {
       this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
-      if(this.shoot_duration <= this.shoot_interval/2 && !this.aimed) {//if it hasn't been aimed, aim it now
+      if(this.shoot_duration <= this.shoot_interval* .75 && !this.aimed) {//if it hasn't been aimed, aim it now
         this.ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
         this.ray_polygon = []
         this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})

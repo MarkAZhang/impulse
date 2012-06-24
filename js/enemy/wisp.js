@@ -26,7 +26,7 @@ Wisp.prototype.additional_processing = function(dt) {
 }
 
 Wisp.prototype.player_hit_proc = function() {
-  this.impulse_game_state.world_visible = false
-  setTimeout(function(_this){return function() {_this.impulse_game_state.world_visible = true}}(this), 4000)
+  this.level.obstacles_visible = false
+  setTimeout(function(_this){return function() {_this.level.obstacles_visible = true}}(this), 4000)
 }
 

@@ -1,4 +1,5 @@
 var version_num = "1.0"
+var debug = true
 
 var canvasWidth, canvasHeight
 var ctx
@@ -381,6 +382,7 @@ function add_song(song_name) {
   audio.src = "audio/"+song_name+".ogg"
   audio.addEventListener('canplaythrough', function() {
     play_song(song_name)
+    audio_tag_map[song_name].playable = true
   }, false)
   audio.loop = true
   audio_tag_map[song_name] = audio
