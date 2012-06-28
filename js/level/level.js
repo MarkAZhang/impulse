@@ -50,7 +50,8 @@ Level.prototype.init = function(data, impulse_game_state) {
     "deathray": DeathRay,
     "first boss": BossOne,
     "second boss": BossTwo,
-    "third boss": BossThree
+    "third boss": BossThree,
+    "fourth boss": BossFour
   }
 
   this.dead_enemies = []

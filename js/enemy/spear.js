@@ -83,5 +83,6 @@ Spear.prototype.additional_drawing = function(context, draw_factor) {
     context.stroke()
 
   }
+  
 }
 

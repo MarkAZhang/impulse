@@ -167,7 +167,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.path = null
   }
 
-  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
+  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && check_bounds(0, this.body.GetPosition(), draw_factor) && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.harpooning = true
     this.harpoon_loc = this.body.GetPosition().Copy()
     

@@ -369,3 +369,24 @@ function getLines(ctx,phrase,maxPxLength,textStyle) {
   return phraseArray;
 }
 
+function is_angle_between(small, large, angle) {
+//assumes large - small < Math.Pi * 2
+  var t_small = small
+  var t_large = large
+  while(t_small < angle) {
+    t_small += Math.PI * 2
+
+  }
+  while(t_small > angle) {
+    t_small -= Math.PI * 2
+  }
+
+  while(t_large > angle) {
+    t_large -= Math.PI * 2    
+  }
+  while(t_large < angle) {
+    t_large += Math.PI * 2
+  }
+  return t_large - t_small < Math.PI * 2
+}
+

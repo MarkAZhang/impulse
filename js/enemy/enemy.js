@@ -15,18 +15,6 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     this[i] = impulse_enemy_stats[this.type][i]
   }
 
-  if(this.shape_type == "circle") {
-    this.shape = new b2CircleShape(this.effective_radius)
-  }
-  else if(this.shape_type == "polygon") {
-    var vertices = []
-    for(var i= 0; i < this.shape_vertices.length; i++) {
-      vertices.push(new b2Vec2(this.effective_radius * this.shape_vertices[i][0], this.effective_radius * this.shape_vertices[i][1]))
-    }
-    this.shape = new b2PolygonShape
-    this.shape.SetAsArray(vertices, vertices.length)
-  }
-
   this.pointer_vertices = []
 
   this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*0), Math.sin(Math.PI*0)))
@@ -39,6 +27,18 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_visibility = 0
 
+  if(this.shape_type == "circle") {
+    this.shape = new b2CircleShape(this.effective_radius)
+
+  }
+  else if(this.shape_type == "polygon") {
+    var vertices = []
+    for(var i= 0; i < this.shape_vertices.length; i++) {
+      vertices.push(new b2Vec2(this.effective_radius * this.shape_vertices[i][0], this.effective_radius * this.shape_vertices[i][1]))
+    }
+    this.shape = new b2PolygonShape
+    this.shape.SetAsArray(vertices, vertices.length)
+  }
 
   var fixDef = new b2FixtureDef;//make the shape
   fixDef.density = this.density;
@@ -46,13 +46,28 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   fixDef.restitution = 1.0;
   fixDef.filter.categoryBits = 0x0011
   fixDef.filter.maskBits = 0x0012
+  fixDef.shape = this.shape
+
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
-  fixDef.shape = this.shape
+  this.body = world.CreateBody(bodyDef)
+  this.body.CreateFixture(fixDef).SetUserData(this)
 
   if(this.shape instanceof b2PolygonShape) {
     this.points = fixDef.shape.m_vertices
+    this.points_polar_form = []
+    for(var i = 0; i < this.points.length; i++) {
+      var temp_r = p_dist({x: 0, y: 0}, this.points[i])
+      var temp_ang = _atan({x: 0, y: 0}, this.points[i])
+      this.points_polar_form.push({r: temp_r, ang: temp_ang})
+    }
     this.collision_polygon = getBoundaryPolygon(this.points, (this.player.r + 0.1))
+  }
+  else if(this.shape instanceof b2CircleShape) {
+    this.points_polar_form = []
+    for(var i = 0; i < 4; i++) {
+      this.points_polar_form.push({r: this.effective_radius, ang: i * Math.PI/2})
+    }
   }
   
   bodyDef.position.x = x;
@@ -60,9 +75,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   bodyDef.linearDamping = this.lin_damp
   bodyDef.fixedRotation = true  //polygonShapes do not rotate
 
-  this.body = world.CreateBody(bodyDef)
-  this.body.CreateFixture(fixDef).SetUserData(this)
-  this.shape = fixDef.shape
+  
 
   this.path = null
   
@@ -386,14 +399,16 @@ Enemy.prototype.draw = function(context, draw_factor) {
     {
       context.beginPath()
       context.globalAlpha = (1 - prog)
-      context.strokeStyle = this.color
-      context.lineWidth = (1 - prog) * 2
+      
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
-      context.stroke()
       context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.globalAlpha/=2
       context.fill()
       context.globalAlpha = 1
+
+      context.strokeStyle = this.color
+      context.lineWidth = (1 - prog) * 2
+      context.stroke()
     }
     else if(this.shape instanceof b2PolygonShape)
     {
@@ -405,18 +420,21 @@ Enemy.prototype.draw = function(context, draw_factor) {
       
       context.beginPath()
       context.globalAlpha = (1 - prog)
-      context.strokeStyle = this.color
-      context.lineWidth = (1 - prog) * 2
+      
       context.moveTo((tp.x+this.points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+this.points[0].y*(1 + this.death_radius * prog))*draw_factor)
       for(var i = 1; i < this.points.length; i++)
       {
         context.lineTo((tp.x+this.points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+this.points[i].y*(1 + this.death_radius * prog))*draw_factor)
       }
       context.closePath()
-      context.stroke()
+      
       context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.globalAlpha/=2
       context.fill()
+
+      context.strokeStyle = this.color
+      context.lineWidth = (1 - prog) * 2
+      context.stroke()
       context.restore()
     }
   }
@@ -426,16 +444,12 @@ Enemy.prototype.draw = function(context, draw_factor) {
     if(this.shape instanceof b2CircleShape)
     {
       context.beginPath()
-      context.strokeStyle = this.status_duration[0] <= 0 ? this.color : 'red';
-      context.strokeStyle = this.status_duration[2] <= 0 ? context.strokeStyle : 'yellow'
-      context.lineWidth = 2
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
-      context.stroke()
-      context.globalAlpha = this.visibility ? this.visibility/2 : .5
-
-      context.fillStyle = this.interior_color ? this.interior_color : this.color
       
-      context.fill()
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
+      
+      context.globalAlpha = this.visibility ? this.visibility/2 : this.interior_color ? 1 : .5
+      context.fillStyle = this.interior_color ? this.interior_color : this.color
+      context.fill() 
       if(this.status_duration[0] > 0)
       {
         context.fillStyle = 'red'
@@ -454,6 +468,12 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.globalAlpha = .5
         context.fill()
       }
+
+      context.strokeStyle = this.status_duration[2] <= 0 ? this.color : 'yellow'
+      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
+      context.lineWidth = 2
+      context.stroke()
+
       if(this.special_mode) {
         context.beginPath()
         context.strokeStyle = this.color
@@ -473,21 +493,17 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
       
       context.beginPath()
-      
       context.moveTo((tp.x+this.points[0].x)*draw_factor, (tp.y+this.points[0].y)*draw_factor)
       for(var i = 1; i < this.points.length; i++)
       {
         context.lineTo((tp.x+this.points[i].x)*draw_factor, (tp.y+this.points[i].y)*draw_factor)
       }
       context.closePath()
-      context.lineWidth = 2
-
       
-      context.strokeStyle = this.color
-      context.stroke()
-      context.globalAlpha = this.visibility ? this.visibility/2 : .5
+      context.globalAlpha = this.visibility ? this.visibility/2 : this.interior_color ? 1 : .5
       context.fillStyle = this.interior_color ? this.interior_color : this.color
       context.fill() 
+      
       if(this.status_duration[0] > 0)
       {
         context.fillStyle = 'red'
@@ -506,6 +522,10 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.globalAlpha = 1
         context.fill()
       }
+      context.strokeStyle = this.status_duration[2] <= 0 ? this.color : 'yellow'
+      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
+      context.lineWidth = 2
+      context.stroke()
       if(this.special_mode) {
         context.globalAlpha = this.sp_visibility
         context.beginPath()
@@ -517,7 +537,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
         }
         context.closePath()
         context.strokeStyle = this.color
-        //var vertices = 
         context.lineWidth = 1
         context.stroke()
       }
@@ -572,6 +591,35 @@ Enemy.prototype.check_player_intersection = function(other) {
   {
     return (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
   }
+}
+
+Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
+  //checks if the segment intersects this enemy
+  //returns the closest intersection to seg_s
+  var j = this.points_polar_form.length - 1
+  var ans = null
+  var ans_d = null
+
+  var cur_ang = this.shape_type == "polygon" ? this.body.GetAngle() : 0
+
+  for(var i = 0; i < this.points_polar_form.length; i++)
+  {
+    var loc_i = {x: this.body.GetPosition().x + this.points_polar_form[i].r * Math.cos(this.points_polar_form[i].ang + cur_ang),
+     y: this.body.GetPosition().y + this.points_polar_form[i].r * Math.sin(this.points_polar_form[i].ang + cur_ang)}
+    var loc_j = {x: this.body.GetPosition().x + this.points_polar_form[j].r * Math.cos(this.points_polar_form[j].ang + cur_ang),
+     y: this.body.GetPosition().y + this.points_polar_form[j].r * Math.sin(this.points_polar_form[j].ang + cur_ang)}
+    var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
+    if(temp_point == null) continue
+    var temp_d = p_dist(temp_point, seg_s)
+    if(ans_d == null || temp_d < ans_d)
+    {
+      ans = temp_point
+      ans_d = temp_d
+    }
+    j = i
+  }
+  return {point: ans, dist: ans_d}
+
 }
 
 Enemy.prototype.get_impulse_sensitive_pts = function() {

@@ -31,6 +31,11 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.body = world.CreateBody(bodyDef)
   this.body.CreateFixture(fixDef).SetUserData(this);
   this.shape = fixDef.shape
+
+  this.points_polar_form = []
+  for(var i = 0; i < 4; i++) {
+    this.points_polar_form.push({r: .5, ang: i * Math.PI/2})
+  }
   
   this.f_x = 0 //horizontal movement force
   this.f_y = 0 //vertical movement force
@@ -335,4 +340,33 @@ Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
+}
+
+Player.prototype.get_segment_intersection = function(seg_s, seg_f) {
+  //checks if the segment intersects this enemy
+  //returns the closest intersection to seg_s
+  var j = this.points_polar_form.length - 1
+  var ans = null
+  var ans_d = null
+
+  var cur_ang = 0
+
+  for(var i = 0; i < this.points_polar_form.length; i++)
+  {
+    var loc_i = {x: this.body.GetPosition().x + this.points_polar_form[i].r * Math.cos(this.points_polar_form[i].ang + cur_ang),
+     y: this.body.GetPosition().y + this.points_polar_form[i].r * Math.sin(this.points_polar_form[i].ang + cur_ang)}
+    var loc_j = {x: this.body.GetPosition().x + this.points_polar_form[j].r * Math.cos(this.points_polar_form[j].ang + cur_ang),
+     y: this.body.GetPosition().y + this.points_polar_form[j].r * Math.sin(this.points_polar_form[j].ang + cur_ang)}
+    var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
+    if(temp_point == null) continue
+    var temp_d = p_dist(temp_point, seg_s)
+    if(ans_d == null || temp_d < ans_d)
+    {
+      ans = temp_point
+      ans_d = temp_d
+    }
+    j = i
+  }
+  return {point: ans, dist: ans_d}
+
 }

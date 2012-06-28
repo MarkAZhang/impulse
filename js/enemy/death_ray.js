@@ -142,6 +142,9 @@ DeathRay.prototype.enemy_move = Enemy.prototype.move
 
 DeathRay.prototype.move = function() {
   if(!this.safe && this.turret_timer == 0) {
+    if(this.path == null) {
+      this.pathfinding_counter = 2 * this.pathfinding_delay
+    }
     this.goalPt = null
     this.enemy_move()
   }
@@ -154,6 +157,9 @@ DeathRay.prototype.move = function() {
     }
     else if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius + this.safe_radius_buffer)
     {
+      if(this.path == null) {
+        this.pathfinding_counter = 2 * this.pathfinding_delay
+      }
       this.enemy_move()
     }
     else

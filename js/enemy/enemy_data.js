@@ -188,9 +188,9 @@ impulse_enemy_stats["slingshot"] = {
 impulse_enemy_stats["deathray"] = {
   color: "rgb(0, 229, 238)",
   density: 1.5,
-  lin_damp: 4,
+  lin_damp: 6,
   effective_radius: 1,
-  force: 1.5,
+  force: 2,
   score_value: 2500,
   shape_type: "polygon",
   shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -230,7 +230,7 @@ impulse_enemy_stats["second boss"] = {
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 200000,
+  score_value: 100000,
   shape_type: "polygon",
   shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -241,7 +241,7 @@ impulse_enemy_stats["second boss"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
 
-  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+  description: "Has four blades that silence the player. Also periodically explodes in a wide radius."
 
 }
 
@@ -268,7 +268,7 @@ impulse_enemy_stats["third boss"] = {
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 200000,
+  score_value: 100000,
   shape_type: "polygon",
   shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -279,6 +279,49 @@ impulse_enemy_stats["third boss"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
 
-  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+  description: "Has six turrets which shoot at the player. Turrets are disabled when they enter a Shape of Death. Boss occasionally enters Frenzy Mode, silencing everything on the field and acquiring increased firing speed."
+
+}
+
+impulse_enemy_stats["fourth boss"] = {
+  color: "rgb(0, 255, 0)",
+  interior_color: "#79ff78",
+  density: 1,
+  lin_damp: 3,
+  effective_radius: 3,
+  force: 0,
+  score_value: 100000,
+  shape_type: "polygon",
+  shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
+
+  description: "Has a Spawn Laser which sweeps around the boss. More info coming"
+
+}
+
+impulse_enemy_stats["boss four spawner"] = {
+  color: "rgb(0, 255, 0)",
+  density: 3,
+  lin_damp: 5,
+  effective_radius: 1,
+  force: 0,
+  score_value: 2000,
+  shape_type: "polygon",
+  shape_vertices: [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]],
+
+  description: "Has a Spawn Laser which sweeps around the boss. More info coming"
 
 }
