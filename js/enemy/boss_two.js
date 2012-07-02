@@ -114,10 +114,10 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
       context.beginPath()
       context.globalAlpha = this.red_visibility
       
-      context.moveTo((tp.x+this.points[0].x)*draw_factor, (tp.y+this.points[0].y)*draw_factor)
-      for(var i = 1; i < this.points.length; i++)
+      context.moveTo((tp.x+this.shape_points[0][0].x)*draw_factor, (tp.y+this.shape_points[0][0].y)*draw_factor)
+      for(var i = 1; i < this.shape_points[0].length; i++)
       {
-        context.lineTo((tp.x+this.points[i].x)*draw_factor, (tp.y+this.points[i].y)*draw_factor)
+        context.lineTo((tp.x+this.shape_points[0][i].x)*draw_factor, (tp.y+this.shape_points[0][i].y)*draw_factor)
       }
       context.closePath()
       context.fillStyle = "red"
@@ -195,9 +195,9 @@ BossTwo.prototype.collide_with = function() {
 
 BossTwo.prototype.get_impulse_sensitive_pts = function() {
   var ans = []
-  for(var i = 0; i < this.points.length; i++) {
+  for(var i = 0; i < this.shape_points[0].length; i++) {
     var temp = this.body.GetPosition().Copy()
-    temp.Add(this.points[i])
+    temp.Add(this.shape_points[0][i])
     ans.push(temp)
   }
   return ans

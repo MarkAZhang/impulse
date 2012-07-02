@@ -23,6 +23,8 @@ DialogBox.prototype.draw = function(ctx) {
 DialogBox.prototype.additional_draw = function(ctx) {}
 
 DialogBox.prototype.on_mouse_move = function(x, y) {}
+DialogBox.prototype.on_mouse_down = function(x, y) {}
+DialogBox.prototype.on_mouse_up = function(x, y) {}
 DialogBox.prototype.on_click = function(x, y) {}
 DialogBox.prototype.on_key_down = function(x, y) {}
 DialogBox.prototype.on_key_up = function(x, y) {}

@@ -304,11 +304,7 @@ LevelButton.prototype.additional_draw = function(context) {
   }
 
   for(var j in drawn_enemies) {
-    var temp_r = Math.min(impulse_enemy_stats[j].effective_radius, 1) * this.enemy_image_size/2
     
-    if(this.level_name.slice(0, 4) == "BOSS") {
-      temp_r = 2 * this.enemy_image_size/2
-    }
     var k = 0
     var num_in_this_row = 0
 
@@ -328,27 +324,40 @@ LevelButton.prototype.additional_draw = function(context) {
 
     var cur_x = this.x + (this.enemy_image_size) * diff
     var cur_y = this.y + this.h * .28 + this.enemy_image_size * h_diff
-    context.beginPath()
-    if(impulse_enemy_stats[j].shape_type == "circle") {
-      
-      context.arc(cur_x, cur_y, temp_r, 0, 2 * Math.PI, true)
-     
-    }
-    else if(impulse_enemy_stats[j].shape_type == "polygon") {
-      context.moveTo(cur_x+impulse_enemy_stats[j].shape_vertices[0][0]*temp_r, cur_y+impulse_enemy_stats[j].shape_vertices[0][1]*temp_r)
-      for(var k = 1; k < impulse_enemy_stats[j].shape_vertices.length; k++)
-      {
-        context.lineTo(cur_x+impulse_enemy_stats[j].shape_vertices[k][0]*temp_r, cur_y+impulse_enemy_stats[j].shape_vertices[k][1]*temp_r)
+    for(var m = 0; m < impulse_enemy_stats[j].shape_polygons.length; m++) {
+      var this_shape = impulse_enemy_stats[j].shape_polygons[m]
+
+      var draw_scale = Math.min(1/impulse_enemy_stats[j].effective_radius, 1) * this.enemy_image_size/2
+    
+      if(this.level_name.slice(0, 4) == "BOSS") {
+        draw_scale = 2/impulse_enemy_stats[j].effective_radius * this.enemy_image_size/2
       }
-      context.closePath()
+      context.beginPath()
+      
+      if(this_shape.type == "circle") {
+        
+        context.arc(cur_x + this_shape.x, cur_y + this_shape.y, draw_scale * this_shape.r, 0, 2 * Math.PI, true)
+       
+      }
+      else if(this_shape.type == "polygon") {
+        context.moveTo(cur_x + (this_shape.x + this_shape.vertices[0][0] * this_shape.r) * draw_scale, 
+          cur_y + (this_shape.y + this_shape.vertices[0][1]  * this_shape.r) * draw_scale)
+        for(var n = 1; n < this_shape.vertices.length; n++)
+        {
+          context.lineTo(cur_x + (this_shape.x + this_shape.vertices[n][0] * this_shape.r) * draw_scale, 
+            cur_y + (this_shape.y + this_shape.vertices[n][1]  * this_shape.r) * draw_scale)
+        }
+        context.closePath()
+      }
+
+      context.fillStyle = impulse_enemy_stats[j].color
+      context.strokeStyle = impulse_enemy_stats[j].color
+      context.lineWidth = 2
+      context.stroke()
+      context.globalAlpha /=2
+      context.fill()
+      context.globalAlpha = 1
     }
-    context.fillStyle = impulse_enemy_stats[j].color
-    context.strokeStyle = impulse_enemy_stats[j].color
-    context.lineWidth = 2
-    context.stroke()
-    context.globalAlpha /=2
-    context.fill()
-    context.globalAlpha = 1
     i+=1
   }
   

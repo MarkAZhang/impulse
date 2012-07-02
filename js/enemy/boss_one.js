@@ -79,11 +79,12 @@ BossOne.prototype.additional_processing = function(dt) {
     var shooter_locs = this.get_two_shooter_locs()
 
     for(var j = 0; j < 2; j++) {
-      var new_enemy = new this.level.enemy_map[this.shooter_enemies[this.shooter_types[j]]](this.world, shooter_locs[j].x, shooter_locs[j].y, this.level.enemy_counter, this.impulse_game_state)
-      this.level.spawned_enemies.push(new_enemy)
       var dir = new b2Vec2(this.player.body.GetPosition().x - shooter_locs[j].x, this.player.body.GetPosition().y - shooter_locs[j].y)
       dir.Normalize()
+      var spawn_loc = {x: shooter_locs[j].x + dir.x * 2, y: shooter_locs[j].y + dir.y * 2}
       dir.Multiply(this.shooter_force[this.shooter_types[j]])
+      var new_enemy = new this.level.enemy_map[this.shooter_enemies[this.shooter_types[j]]](this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
+      this.level.spawned_enemies.push(new_enemy)
       new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
       new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
       this.level.enemy_counter += 1
@@ -110,7 +111,6 @@ BossOne.prototype.additional_processing = function(dt) {
 
 BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
-  
   var shooter_locs = this.get_two_shooter_locs()
 
   for(var j = 0; j < 2; j++) {
@@ -123,10 +123,10 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       
       context.beginPath()
       
-      context.moveTo((tp.x+this.points[0].x * .5)*draw_factor, (tp.y+this.points[0].y * .5)*draw_factor)
-      for(var i = 1; i < this.points.length; i++)
+      context.moveTo((tp.x+this.shape_points[0][0].x * .5)*draw_factor, (tp.y+this.shape_points[0][0].y * .5)*draw_factor)
+      for(var i = 1; i < this.shape_points[0].length; i++)
       {
-        context.lineTo((tp.x+this.points[i].x * .5)*draw_factor, (tp.y+this.points[i].y * .5)*draw_factor)
+        context.lineTo((tp.x+this.shape_points[0][i].x * .5)*draw_factor, (tp.y+this.shape_points[0][i].y * .5)*draw_factor)
       }
       context.closePath()
       context.lineWidth = 2
@@ -188,9 +188,9 @@ BossOne.prototype.collide_with = function() {
 }
 BossOne.prototype.get_impulse_sensitive_pts = function() {
   var ans = []
-  for(var i = 0; i < this.points.length; i++) {
+  for(var i = 0; i < this.shape_points[0].length; i++) {
     var temp = this.body.GetPosition().Copy()
-    temp.Add(this.points[i])
+    temp.Add(this.shape_points[0][i])
     ans.push(temp)
   }
   return ans

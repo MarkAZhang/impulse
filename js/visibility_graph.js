@@ -112,7 +112,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   //if it is possible to go from current location to player, always go there directly
   if(isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
   {
-    return [point1, point2]
+    return [point2]
   }
 
   /*var cur_time = (new Date()).getTime()

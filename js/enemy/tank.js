@@ -23,10 +23,19 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.cause_of_death = null
   this.do_yield = false
 
+  this.hot_color = "orange"
+  this.hot_interval = 1000
+  this.hot_timer = 0
+
 }
 
 Tank.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
+  if(this.hot_timer > 0) {
+    this.hot_timer -= dt
+  }
+
+  this.color = this.hot_timer > 0 ? this.hot_color : impulse_enemy_stats['tank'].color
 }
 
 Tank.prototype.activated_processing = function(dt) {
@@ -43,6 +52,12 @@ Tank.prototype.activated_processing = function(dt) {
       this.detonate_timer -= dt
     }
   }
+  
+}
+
+Tank.prototype.process_impulse = function(attack_loc, impulse_force) {
+  this.hot_timer = this.hot_interval
+  console.log("TANK HIT")
 }
 
 Tank.prototype.check_death = function()
@@ -65,7 +80,7 @@ Tank.prototype.check_death = function()
 }
 
 Tank.prototype.collide_with = function(other) {
-  if((other instanceof Tank || other instanceof FighterBullet) && !this.dying && !this.activated)
+  if(other instanceof Tank && this.hot_timer > 0 && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {

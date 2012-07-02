@@ -23,9 +23,11 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.turret_timer = 0 //1 indicates ready to fire, 0 indicates ready to move
   this.turret_duration = 1000
 
-  this.shoot_interval = 2000  //first 50% is nothing, second 50% is aiming
+  this.shoot_interval = 2000
 
   this.shoot_duration = this.shoot_interval
+
+  this.aim_proportion = .75
 
   this.fire_interval = 200
 
@@ -80,8 +82,11 @@ DeathRay.prototype.additional_processing = function(dt) {
   }
 
   if(this.turret_timer == 1) {
+    //ready to shoot
     if(this.shoot_duration <= 0) {
+
       if(this.fire_duration <= 0) {
+        //reset everything
         this.shoot_duration = this.shoot_interval
         this.fire_duration = this.fire_interval
         this.aimed = false
@@ -90,6 +95,7 @@ DeathRay.prototype.additional_processing = function(dt) {
       }
       else {
         this.fire_duration = Math.max(this.fire_duration - dt, 0)
+        //fire the ray
         if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
           this.fired = true
           console.log("FIRED")
@@ -99,7 +105,7 @@ DeathRay.prototype.additional_processing = function(dt) {
           }
           for(var i = 0; i < this.level.enemies.length; i++) {
             if(pointInPolygon(this.ray_polygon, this.level.enemies[i].body.GetPosition())) {
-              this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter()) 
+              this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter()) 
             }
           }
         }
@@ -107,8 +113,9 @@ DeathRay.prototype.additional_processing = function(dt) {
 
     }
     else {
+
       this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
-      if(this.shoot_duration <= this.shoot_interval* .75 && !this.aimed) {//if it hasn't been aimed, aim it now
+      if(this.shoot_duration <= this.shoot_interval* this.aim_proportion && !this.aimed) {//if it hasn't been aimed, aim it now
         this.ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
         this.ray_polygon = []
         this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
@@ -188,6 +195,7 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
 
   if(!this.aimed && this.turret_timer > 0)
   {
+    //this part takes care of the "aimer"
     context.beginPath()
     var ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
     context.moveTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle + Math.PI/2))*draw_factor, (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle + Math.PI/2))*draw_factor)
@@ -205,11 +213,11 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
     context.stroke()
   }
 
-  if(this.shoot_duration <= this.shoot_interval/2 && this.ray_angle!= null) {
-    var prog = 1 - this.shoot_duration / (this.shoot_interval/2)
+  if(this.shoot_duration <= this.shoot_interval * this.aim_proportion && this.ray_angle!= null) {
+    var prog = 1 - this.shoot_duration / (this.shoot_interval * this.aim_proportion)
 
     context.beginPath()
-    context.globalAlpha = prog
+    context.globalAlpha = Math.max(prog, .2)
     context.moveTo(this.ray_polygon[1].x * draw_factor, this.ray_polygon[1].y * draw_factor)
     context.lineTo(this.ray_polygon[2].x * draw_factor, this.ray_polygon[2].y * draw_factor)
     context.moveTo(this.ray_polygon[3].x * draw_factor, this.ray_polygon[3].y * draw_factor)

@@ -27,55 +27,78 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_visibility = 0
 
-  if(this.shape_type == "circle") {
-    this.shape = new b2CircleShape(this.effective_radius)
-
-  }
-  else if(this.shape_type == "polygon") {
-    var vertices = []
-    for(var i= 0; i < this.shape_vertices.length; i++) {
-      vertices.push(new b2Vec2(this.effective_radius * this.shape_vertices[i][0], this.effective_radius * this.shape_vertices[i][1]))
-    }
-    this.shape = new b2PolygonShape
-    this.shape.SetAsArray(vertices, vertices.length)
-  }
-
-  var fixDef = new b2FixtureDef;//make the shape
-  fixDef.density = this.density;
-  fixDef.friction = 0;
-  fixDef.restitution = 1.0;
-  fixDef.filter.categoryBits = 0x0011
-  fixDef.filter.maskBits = 0x0012
-  fixDef.shape = this.shape
-
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
-  this.body = world.CreateBody(bodyDef)
-  this.body.CreateFixture(fixDef).SetUserData(this)
-
-  if(this.shape instanceof b2PolygonShape) {
-    this.points = fixDef.shape.m_vertices
-    this.points_polar_form = []
-    for(var i = 0; i < this.points.length; i++) {
-      var temp_r = p_dist({x: 0, y: 0}, this.points[i])
-      var temp_ang = _atan({x: 0, y: 0}, this.points[i])
-      this.points_polar_form.push({r: temp_r, ang: temp_ang})
-    }
-    this.collision_polygon = getBoundaryPolygon(this.points, (this.player.r + 0.1))
-  }
-  else if(this.shape instanceof b2CircleShape) {
-    this.points_polar_form = []
-    for(var i = 0; i < 4; i++) {
-      this.points_polar_form.push({r: this.effective_radius, ang: i * Math.PI/2})
-    }
-  }
-  
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
   bodyDef.fixedRotation = true  //polygonShapes do not rotate
+  this.body = world.CreateBody(bodyDef)
 
-  
+  this.shapes = []
+  this.shape_points = []
+
+  for(var i = 0; i < this.shape_polygons.length; i++) {
+    var polygon = this.shape_polygons[i]
+    var this_shape = null
+    if(polygon.type == "circle") {
+      this_shape = new b2CircleShape(polygon.r)
+      this_shape.SetLocalPosition(new b2Vec2(polygon.x, polygon.y))
+    }
+    if(polygon.type == "polygon") {
+      var vertices = []
+      for(var j= 0; j < polygon.vertices.length; j++) {
+        vertices.push(new b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
+      }
+      this_shape = new b2PolygonShape
+      this_shape.SetAsArray(vertices, vertices.length)
+    }
+
+    var fixDef = new b2FixtureDef;//make the shape
+    fixDef.density = this.density;
+    fixDef.friction = 0;
+    fixDef.restitution = 1.0;
+    fixDef.filter.categoryBits = 0x0011
+    fixDef.filter.maskBits = 0x0012
+    fixDef.shape = this_shape
+    this.body.CreateFixture(fixDef).SetUserData(this)
+    this.shapes.push(this_shape)
+    if(this_shape instanceof b2PolygonShape)
+      this.shape_points.push(this_shape.m_vertices)
+    else
+      this.shape_points.push(null)
+  }
+
+  this.shape_polar_points = []
+  this.collision_polygons = []
+
+  for(var j = 0; j < this.shape_points.length; j++) {
+    var these_polar_points = []
+    if(this.shapes[j] instanceof b2PolygonShape) {
+      var these_points = this.shape_points[j]
+      for(var i = 0; i < these_points.length; i++) {
+        var temp_r = p_dist({x: 0, y: 0}, these_points[i])
+        var temp_ang = _atan({x: 0, y: 0}, these_points[i])
+        these_polar_points.push({r: temp_r, ang: temp_ang})
+      }
+      this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
+    }
+    else if(this.shapes[j] instanceof b2CircleShape) {
+      var this_polygon = this.shape_polygons[j]
+      var these_points = [{x: this_polygon.x + Math.cos()}]
+      for(var i = 0; i < 4; i++) {
+        var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * this_polygon.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * this_polygon.r}
+        var temp_r = p_dist({x: 0, y: 0}, point)
+        var temp_ang = _atan({x: 0, y: 0}, point)
+        these_polar_points.push({r: temp_r, ang: temp_ang})
+      }
+      this.collision_polygons.push(null)
+    }
+    this.shape_polar_points.push(these_polar_points)
+
+  }
+
+ 
 
   this.path = null
   
@@ -99,8 +122,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
-  this.pathfinding_delay = 100
-  this.pathfinding_counter =  Math.floor(Math.random()*this.pathfinding_delay)  //pathfinding_delay and yield are defined in enemy
+  this.pathfinding_delay = 200
+  this.pathfinding_counter =  Math.floor(Math.random()*.5 * this.pathfinding_delay)  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
   this.yield_delay = 10
@@ -220,37 +243,49 @@ Enemy.prototype.get_target_point = function() {
 
 Enemy.prototype.move = function() {
 
-  if(this.player.dying) return
-  var target_point = this.get_target_point()
+  if(this.player.dying) return //stop moving once player dies
+
+  if(this.status_duration[0] > 0) return //locked
+
   this.pathfinding_counter+=1
-  if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= 2 * this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
+  if (this.pathfinding_counter % 4 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
+    //only update path every four frames. Pretty expensive operation
+    var target_point = this.get_target_point()
+    if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
-  {
-    var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
-    if(new_path!=null)
-      this.path = new_path
-    this.pathfinding_counter = Math.floor(Math.random()*this.pathfinding_delay)
+    {
+      var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
+      if(new_path!=null)
+        this.path = new_path
+      this.pathfinding_counter = Math.floor(Math.random()*.5 * this.pathfinding_delay)
+    }
+    
   }
+
   if(!this.path)
   {
     return
   }
   
   var endPt = this.path[0]
-  while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
-  {
-    this.path = this.path.slice(1)
-    endPt = this.path[0]
-  }
+  if ( this.pathfinding_counter % 4 == 0) {
+    while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
+    //get rid of points that are too close
+    {
+      this.path = this.path.slice(1)
+      endPt = this.path[0]
+    }
 
-  if(!endPt || !isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
-  {
-    return
-  }
+    if(!endPt || !isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
+    //if it's not possible to reach the point
+    {
+      return
+    }
 
-  if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
-    this.path = [this.player.body.GetPosition()]
-    endPt = this.path[0]
+    if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
+      this.path = [this.player.body.GetPosition()]
+      endPt = this.path[0]
+    }
   }
   
   //check if yielding
@@ -280,7 +315,7 @@ Enemy.prototype.move = function() {
 
 Enemy.prototype.move_to = function(endPt) {
 
-  if(this.status_duration[0] > 0) return //locked
+  
 
   var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
@@ -388,164 +423,129 @@ Enemy.prototype.draw = function(context, draw_factor) {
     this.additional_drawing(context, draw_factor)
     return
   }
+
   if(!impulse_enemy_stats[this.type].seen) {
     impulse_enemy_stats[this.type].seen = true
     save_game()
   }
 
-  if(this.dying) {
-    var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)
-    if(this.shape instanceof b2CircleShape)
-    {
-      context.beginPath()
+  var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+
+  //if(this.shape instanceof b2PolygonShape) {
+    //if polygon shape, need to rotate
+    var tp = this.body.GetPosition()
+    context.save();
+    context.translate(tp.x * draw_factor, tp.y * draw_factor);
+    context.rotate(this.body.GetAngle());
+    context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
+  //}
+  for(var k = 0; k < this.shapes.length; k++) {
+
+    if(this.shape_polygons[k].visible === false) continue
+
+    if (this.dying) 
       context.globalAlpha = (1 - prog)
-      
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
-      context.fillStyle = this.interior_color ? this.interior_color : this.color
-      context.globalAlpha/=2
-      context.fill()
-      context.globalAlpha = 1
+    else
+      context.globalAlpha = this.visibility ? this.visibility : 1
 
-      context.strokeStyle = this.color
-      context.lineWidth = (1 - prog) * 2
-      context.stroke()
+    var cur_shape = this.shapes[k]
+    var cur_shape_points = this.shape_points[k]
+    var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
+
+    context.beginPath()
+    if(cur_shape instanceof b2CircleShape) {
+      //draw circle shape
+      if(this.dying)
+        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
+      else
+        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, cur_shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
+      
     }
-    else if(this.shape instanceof b2PolygonShape)
-    {
-      var tp = this.body.GetPosition()
-      context.save();
-      context.translate(tp.x * draw_factor, tp.y * draw_factor);
-      context.rotate(this.body.GetAngle());
-      context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
-      context.beginPath()
-      context.globalAlpha = (1 - prog)
-      
-      context.moveTo((tp.x+this.points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+this.points[0].y*(1 + this.death_radius * prog))*draw_factor)
-      for(var i = 1; i < this.points.length; i++)
-      {
-        context.lineTo((tp.x+this.points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+this.points[i].y*(1 + this.death_radius * prog))*draw_factor)
-      }
-      context.closePath()
-      
-      context.fillStyle = this.interior_color ? this.interior_color : this.color
-      context.globalAlpha/=2
-      context.fill()
-
-      context.strokeStyle = this.color
-      context.lineWidth = (1 - prog) * 2
-      context.stroke()
-      context.restore()
-    }
-  }
-  else {
-
-    context.globalAlpha = this.visibility ? this.visibility : 1
-    if(this.shape instanceof b2CircleShape)
-    {
-      context.beginPath()
-      
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
-      
-      context.globalAlpha = this.visibility ? this.visibility/2 : this.interior_color ? 1 : .5
-      context.fillStyle = this.interior_color ? this.interior_color : this.color
-      context.fill() 
-      if(this.status_duration[0] > 0)
-      {
-        context.fillStyle = 'red'
-        context.globalAlpha = .5
-        context.fill()
-      }
-      else if(this.status_duration[2] > 0)
-      {
-        context.fillStyle = 'yellow'
-        context.globalAlpha = .5
-        context.fill()
-      }
-      else if(this.status_duration[1] > 0)
-      {
-        context.fillStyle = 'gray'
-        context.globalAlpha = .5
-        context.fill()
-      }
-
-      context.strokeStyle = this.status_duration[2] <= 0 ? this.color : 'yellow'
-      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
-      context.lineWidth = 2
-      context.stroke()
-
-      if(this.special_mode) {
-        context.beginPath()
-        context.strokeStyle = this.color
-        context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.shape.GetRadius()*draw_factor * 2, 0, 2*Math.PI, true)
-        context.lineWidth = 1
-        context.stroke()
-      }
-      context.globalAlpha = 1
-
-    }
-    else if(this.shape instanceof b2PolygonShape)
-    {
-      var tp = this.body.GetPosition()
-      context.save();
-      context.translate(tp.x * draw_factor, tp.y * draw_factor);
-      context.rotate(this.body.GetAngle());
-      context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
-      context.beginPath()
-      context.moveTo((tp.x+this.points[0].x)*draw_factor, (tp.y+this.points[0].y)*draw_factor)
-      for(var i = 1; i < this.points.length; i++)
-      {
-        context.lineTo((tp.x+this.points[i].x)*draw_factor, (tp.y+this.points[i].y)*draw_factor)
-      }
-      context.closePath()
-      
-      context.globalAlpha = this.visibility ? this.visibility/2 : this.interior_color ? 1 : .5
-      context.fillStyle = this.interior_color ? this.interior_color : this.color
-      context.fill() 
-      
-      if(this.status_duration[0] > 0)
-      {
-        context.fillStyle = 'red'
-        context.globalAlpha = .5
-        context.fill()
-      }
-      else if(this.status_duration[2] > 0)
-      {
-        context.fillStyle = 'yellow'
-        context.globalAlpha = .5
-        context.fill()
-      }
-      else if(this.status_duration[1] > 0)
-      {
-        context.fillStyle = 'gray'
-        context.globalAlpha = 1
-        context.fill()
-      }
-      context.strokeStyle = this.status_duration[2] <= 0 ? this.color : 'yellow'
-      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
-      context.lineWidth = 2
-      context.stroke()
-      if(this.special_mode) {
-        context.globalAlpha = this.sp_visibility
-        context.beginPath()
-      
-        context.moveTo((tp.x+this.points[0].x * 2)*draw_factor, (tp.y+this.points[0].y * 2)*draw_factor)
-        for(var i = 1; i < this.points.length; i++)
+    if(cur_shape instanceof b2PolygonShape) {
+      //draw polygon shape
+      if(this.dying) {
+        context.moveTo((tp.x+cur_shape_points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[0].y*(1 + this.death_radius * prog))*draw_factor)
+        for(var i = 1; i < cur_shape_points.length; i++)
         {
-          context.lineTo((tp.x+this.points[i].x * 2)*draw_factor, (tp.y+this.points[i].y * 2)*draw_factor)
+          context.lineTo((tp.x+cur_shape_points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[i].y*(1 + this.death_radius * prog))*draw_factor)
+        }
+      }
+      else {
+        context.moveTo((tp.x+cur_shape_points[0].x)*draw_factor, (tp.y+cur_shape_points[0].y)*draw_factor)
+        for(var i = 1; i < cur_shape_points.length; i++)
+        {
+          context.lineTo((tp.x+cur_shape_points[i].x)*draw_factor, (tp.y+cur_shape_points[i].y)*draw_factor)
+        }
+      }
+      context.closePath()
+    }
+
+    if (!this.interior_color ) {
+      context.globalAlpha /= 2
+    }
+    context.fillStyle = this.interior_color ? this.interior_color : cur_color
+    context.fill()
+
+    if(!this.dying) {
+      //no debuffs if enemy dying
+        if(this.status_duration[0] > 0)
+      {
+        context.fillStyle = 'red'
+        context.fill()
+      }
+      else if(this.status_duration[1] > 0)
+      {
+        context.fillStyle = 'gray'
+        context.fill()
+      }
+      else if(this.status_duration[2] > 0)
+      {
+        context.fillStyle = 'yellow'
+        context.fill()
+      }
+    }
+
+    if (this.dying) 
+      context.globalAlpha = (1 - prog)
+    else
+      context.globalAlpha = this.visibility ? this.visibility : 1
+
+    if(!this.dying) {
+      //no debuffs if enemy dying
+      context.strokeStyle = this.status_duration[2] <= 0 ? cur_color : 'yellow'
+      context.strokeStyle = this.status_duration[1] <= 0 ? context.strokeStyle: 'gray'
+      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
+    }
+    else
+      context.strokeStyle = cur_color
+    context.lineWidth = this.dying ? (1 - prog) * 2 : 2
+    //console.log(context.lineWidth)
+    context.stroke()
+
+
+    if(this.special_mode && !this.dying) {
+      context.globalAlpha = this.sp_visibility
+      context.beginPath()
+      if(this.shape instanceof b2CircleShape) {
+        context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
+      }
+
+      if(this.shape instanceof b2PolygonShape) {
+        context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
+        for(var i = 1; i < cur_shape_points.length; i++) {
+          context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
         }
         context.closePath()
-        context.strokeStyle = this.color
-        context.lineWidth = 1
-        context.stroke()
       }
-
-      context.restore()
-      context.globalAlpha = 1
+      context.lineWidth = 1
+      context.strokeStyle = cur_color
+      context.stroke()
     }
-    this.additional_drawing(context, draw_factor)
+    context.globalAlpha = 1
   }
+  context.restore()
+
+  this.additional_drawing(context, draw_factor)
 }
 
 Enemy.prototype.additional_drawing = function(context, draw_factor) {
@@ -561,62 +561,71 @@ Enemy.prototype.process_impulse = function() {
 }
 
 Enemy.prototype.stun = function(dur) {
-  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-  this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
+this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
+this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
 }
 
 Enemy.prototype.silence = function(dur) {
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
 Enemy.prototype.lock = function(dur) {
-  this.status_duration[0] = Math.max(dur, this.status_duration[0])
+this.status_duration[0] = Math.max(dur, this.status_duration[0])
 }
 
 Enemy.prototype.goo = function(dur) {
-  this.status_duration[2] = Math.max(dur, this.status_duration[2])
+this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
 Enemy.prototype.check_player_intersection = function(other) {
-
+  for(var i = 0; i < this.collision_polygons.length; i++) {
+    var collision_polygon = this.collision_polygons[i]
+    if(collision_polygon) {
+      var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
+      var temp_ang = _atan({x:0, y:0}, temp_vec)
+      var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
+      var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
+      if(pointInPolygon(collision_polygon, rotated_vec))
+        return true
+    }
+    else
+    {
+      if (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
+        return true
+    }
+  } 
+  return false
   
-  if(this.collision_polygon) {
-    var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
-    var temp_ang = _atan({x:0, y:0}, temp_vec)
-    var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
-    var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
-    return pointInPolygon(this.collision_polygon, rotated_vec)
-  }
-  else
-  {
-    return (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
-  }
 }
 
 Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
   //checks if the segment intersects this enemy
   //returns the closest intersection to seg_s
-  var j = this.points_polar_form.length - 1
   var ans = null
   var ans_d = null
 
   var cur_ang = this.shape_type == "polygon" ? this.body.GetAngle() : 0
 
-  for(var i = 0; i < this.points_polar_form.length; i++)
-  {
-    var loc_i = {x: this.body.GetPosition().x + this.points_polar_form[i].r * Math.cos(this.points_polar_form[i].ang + cur_ang),
-     y: this.body.GetPosition().y + this.points_polar_form[i].r * Math.sin(this.points_polar_form[i].ang + cur_ang)}
-    var loc_j = {x: this.body.GetPosition().x + this.points_polar_form[j].r * Math.cos(this.points_polar_form[j].ang + cur_ang),
-     y: this.body.GetPosition().y + this.points_polar_form[j].r * Math.sin(this.points_polar_form[j].ang + cur_ang)}
-    var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
-    if(temp_point == null) continue
-    var temp_d = p_dist(temp_point, seg_s)
-    if(ans_d == null || temp_d < ans_d)
+  for(var k = 0; k < this.shape_polar_points.length; k++) {
+    var these_polar_points = this.shape_polar_points[k]
+
+    var j = these_polar_points.length - 1
+    for(var i = 0; i < these_polar_points.length; i++)
     {
-      ans = temp_point
-      ans_d = temp_d
+      var loc_i = {x: this.body.GetPosition().x + these_polar_points[i].r * Math.cos(these_polar_points[i].ang + cur_ang),
+       y: this.body.GetPosition().y + these_polar_points[i].r * Math.sin(these_polar_points[i].ang + cur_ang)}
+      var loc_j = {x: this.body.GetPosition().x + these_polar_points[j].r * Math.cos(these_polar_points[j].ang + cur_ang),
+       y: this.body.GetPosition().y + these_polar_points[j].r * Math.sin(these_polar_points[j].ang + cur_ang)}
+      var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
+      if(temp_point == null) continue
+      var temp_d = p_dist(temp_point, seg_s)
+      if(ans_d == null || temp_d < ans_d)
+      {
+        ans = temp_point
+        ans_d = temp_d
+      }
+      j = i
     }
-    j = i
   }
   return {point: ans, dist: ans_d}
 
