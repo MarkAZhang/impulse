@@ -39,7 +39,7 @@ Fighter.prototype.additional_processing = function(dt) {
 
   if(this.shoot_duration < 0 && this.status_duration[1] <= 0) {
     this.shoot_duration = this.shoot_interval
-    if(this.special_mode) {
+    if(this.special_mode && check_bounds(0, this.body.GetPosition(), draw_factor)) {
       var other_angle = this.body.GetAngle() + Math.PI/2 * ((this.bullet_alternater % 2) * 2 - 1)
       var bullet_start_loc_x = this.body.GetPosition().x + this.effective_radius *  Math.cos(other_angle) + this.effective_radius * 3 * Math.cos(this.body.GetAngle())
       var bullet_start_loc_y = this.body.GetPosition().y + this.effective_radius *  Math.sin(other_angle) + this.effective_radius * 3 * Math.sin(this.body.GetAngle())

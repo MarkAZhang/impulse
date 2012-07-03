@@ -33,24 +33,22 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
 	if(this.spawn) {
 
-
-
 		var ray_angle = _atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
     var exit_points = Math.max(this.spawn_number, 4)
     for(var i = 0; i < this.spawn_number; i++) {
       while(!isVisible(this.body.GetPosition(), 
-        {x: this.body.GetPosition().x + 10 * Math.cos(ray_angle + Math.PI * 2 * j/this.spawn_number),
-          y: this.body.GetPosition().y + 10 * Math.sin(ray_angle + Math.PI * 2 * j/this.spawn_number)},
+        {x: this.body.GetPosition().x + 10 * Math.cos(ray_angle + Math.PI * 2 * j/exit_points),
+          y: this.body.GetPosition().y + 10 * Math.sin(ray_angle + Math.PI * 2 * j/exit_points)},
           this.level.obstacle_edges
         )) {j += 1}
 
-  		var loc = [this.body.GetPosition().x + this.effective_radius * Math.cos(ray_angle + Math.PI * 2 * j/this.spawn_number), 
-  		this.body.GetPosition().y + this.effective_radius * Math.sin(ray_angle + Math.PI * 2 * j/this.spawn_number)]
+  		var loc = [this.body.GetPosition().x + this.effective_radius * Math.cos(ray_angle + Math.PI * 2 * j/exit_points), 
+  		this.body.GetPosition().y + this.effective_radius * Math.sin(ray_angle + Math.PI * 2 * j/exit_points)]
       
       var temp_enemy = new this.level.enemy_map[this.enemy_type](this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
       
-      var force = new b2Vec2(Math.cos(ray_angle + Math.PI * 2 * j/this.spawn_number), Math.sin(ray_angle + Math.PI * 2 * j/this.spawn_number))
+      var force = new b2Vec2(Math.cos(ray_angle + Math.PI * 2 * j/exit_points), Math.sin(ray_angle + Math.PI * 2 * j/exit_points))
       force.Multiply(this.push_force)
       temp_enemy.body.ApplyImpulse(force, temp_enemy.body.GetWorldCenter())
       temp_enemy.pathfinding_counter = temp_enemy.pathfinding_delay
@@ -74,4 +72,8 @@ BossFourSpawner.prototype.spawn_enemy = function() {
   	this.spawn = true	
   }
   
+}
+
+BossFourSpawner.prototype.move = function() {
+  this.set_heading(this.player.body.GetPosition())
 }

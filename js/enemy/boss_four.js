@@ -342,7 +342,6 @@ BossFour.prototype.additional_processing = function(dt) {
 }
 
 BossFour.prototype.get_spawner_set = function() {
-
   if (this.spawn_count == 1) {
     return ["stunner", "spear", "mote", "slingshot"]
   }
@@ -361,11 +360,12 @@ BossFour.prototype.get_object_hit = function() {
     this.laser_check_counter = this.laser_check_timer
     for(var i = 0; i < this.level.enemies.length; i++)
     {
+      if(this.level.enemies[i].id == this.id) continue
       if(!(this.level.enemies[i] instanceof BossFourSpawner)) continue
+
       if(!is_angle_between(this.spawn_laser_angle - this.laser_check_diff, this.spawn_laser_angle + this.laser_check_diff, 
         _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()))) continue
 
-      if(this.level.enemies[i].id == this.id) continue
       var temp_dist = this.level.enemies[i].get_segment_intersection(this.body.GetPosition(), ray_end).dist
       if(dist == null || (temp_dist != null && temp_dist < dist))
       {
