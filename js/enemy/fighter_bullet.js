@@ -46,6 +46,8 @@ FighterBullet.prototype.collide_with = function(other) {
   else if(other.is_enemy) 
   {
     
+    if(other instanceof FighterBullet) return
+
     this.start_death("hit_enemy")
     if(other.id != this.parent_id || this.reflected) {
       if(this.status_duration[1] <= 0) {

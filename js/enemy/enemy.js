@@ -123,7 +123,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
   this.pathfinding_delay = 200
-  this.pathfinding_counter =  Math.floor(Math.random()*.5 * this.pathfinding_delay)  //pathfinding_delay and yield are defined in enemy
+  this.pathfinding_counter =  this.pathfinding_delay  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
   this.yield_delay = 10
@@ -401,7 +401,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
   if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
-    /*var pointer_point = get_pointer_point(this)
+    var pointer_point = get_pointer_point(this)
     var pointer_angle = _atan(pointer_point, this.body.GetPosition())
     context.save();
     context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
@@ -422,7 +422,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.stroke()
     context.restore()
     context.globalAlpha = 1
-    this.additional_drawing(context, draw_factor)*/
+    this.additional_drawing(context, draw_factor)
     return
   }
 

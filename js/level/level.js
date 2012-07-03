@@ -11,6 +11,8 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.level_name = data.level_name
   this.player_loc = data.player_loc
 
+  this.spawn_points = data.spawn_points
+
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
@@ -58,6 +60,11 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.dead_enemies = []
   this.expired_enemies = []
   this.spawned_enemies = []
+
+  this.spawn_queue = [] //enemies that need to be spawned
+
+  this.spawn_interval = 100
+  this.spawn_timer = this.spawn_interval
 
   this.boss_delay_interval = 10000
   this.boss_delay_timer = 0
@@ -125,10 +132,25 @@ Level.prototype.process = function(dt) {
       this.enemies.push(new_enemy)
       
     }
-    this.spawn_enemies(dt)
+
+
+    this.check_enemy_spawn_timers(dt)
+
+    if(this.spawn_timer >= 0) {
+      this.spawn_timer -= dt
+    }
+    else {
+      if(this.spawn_queue.length > 0) {
+        var enemy_type_to_spawn = this.spawn_queue[0]
+        this.spawn_queue = this.spawn_queue.slice(1)
+        this.spawn_this_enemy(enemy_type_to_spawn)
+        this.spawn_timer = this.spawn_interval
+      }
+    }
+
 }
 
-Level.prototype.spawn_enemies = function(dt) {
+Level.prototype.check_enemy_spawn_timers = function(dt) {
   for(var k in this.enemy_spawn_timers) {
       //if we haven't reached the initial spawn time
     if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
@@ -139,7 +161,7 @@ Level.prototype.spawn_enemies = function(dt) {
     if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
       this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
       for(var j = 1; j <= this.enemy_spawn_counters[k]; j++) {
-        this.spawn_this_enemy(k)
+        this.spawn_queue.push(k)
 
       }
     }
@@ -156,12 +178,16 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
   //if at the cap, don't spawn more
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) return
 
-  var r_p = getRandomOutsideLocation(5, 2)
 
   if(this_enemy.prototype.is_boss) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, canvasHeight/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
+  else if(this.spawn_points) {
+    var r_p = this.spawn_points[this.enemy_counter % this.spawn_points.length]
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/draw_factor, r_p[1]/draw_factor, this.enemy_counter, this.impulse_game_state)
+  }
   else {
+    var r_p = getRandomOutsideLocation(5, 2)
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p.x, r_p.y, this.enemy_counter, this.impulse_game_state)
   }
 
