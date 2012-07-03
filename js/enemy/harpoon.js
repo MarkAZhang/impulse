@@ -108,7 +108,7 @@ Harpoon.prototype.move = function() {
   }
   else {
     if(this.path == null) {
-      this.pathfinding_counter = 2 * this.pathfinding_delay
+      this.pathfinding_counter = this.pathfinding_delay
     }
     this.enemy_move()
   }
@@ -154,6 +154,13 @@ Harpoon.prototype.get_harpoon_target_pt = function() {
 
 }
 
+Harpoon.prototype.can_harpoon = function() {
+  return (this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && check_bounds(0, this.body.GetPosition(), draw_factor)
+   && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && 
+   !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges))
+    
+}
+
 Harpoon.prototype.additional_processing = function(dt) {
 
   if(this.status_duration[1] > 0 && (this.harpooning || this.harpooned)) {
@@ -167,7 +174,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.path = null
   }
 
-  if(this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && check_bounds(0, this.body.GetPosition(), draw_factor) && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length && !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
+  if(this.can_harpoon()) {
     this.harpooning = true
     this.harpoon_loc = this.body.GetPosition().Copy()
     
@@ -247,6 +254,8 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
 }
 
 Harpoon.prototype.process_impulse = function() {
+  if(this.harpooning)
+    this.silence(1000)
   this.harpooning = false
 }
 

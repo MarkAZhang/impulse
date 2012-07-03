@@ -34,6 +34,8 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
+  this.dying_length = 2000
+
   this.explode_interval = 13400
   this.explode_timer = this.explode_interval - 1
   this.explode_duration = 500
@@ -51,13 +53,11 @@ BossTwo.prototype.additional_processing = function(dt) {
 
   if(!this.spawned_harpoons) {
     this.spawned_harpoons = true
-    if(this.impulse_game_state.game_numbers.seconds < 5) {
-      var locs = [[1, 1], [canvasWidth/draw_factor-1, 1], [canvasWidth/draw_factor-1, canvasHeight/draw_factor-1], [1, canvasHeight/draw_factor-1]]
+    var locs = [[1, 1], [canvasWidth/draw_factor-1, 1], [canvasWidth/draw_factor-1, canvasHeight/draw_factor-1], [1, canvasHeight/draw_factor-1]]
       for(var i = 0; i < locs.length; i++) {
         this.level.spawned_enemies.push(new FixedHarpoon(this.world, locs[i][0], locs[i][1], this.level.enemy_counter, this.impulse_game_state))
         this.level.enemy_counter +=1
       }
-    }
 
   }
   if(this.spawn_duration > 0) {

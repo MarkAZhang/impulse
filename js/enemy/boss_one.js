@@ -54,6 +54,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
+  this.dying_length = 2000
 
 }
 

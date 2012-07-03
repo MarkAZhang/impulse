@@ -7,9 +7,14 @@ function EnemiesInfoState() {
     this.buttons = []
     this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.enemy_buttons = []
+    this.enemies_with_info = [
+      "stunner", "spear", "tank", "mote", "goo", "harpoon", "wisp", "disabler", 
+      "fighter", "slingshot", "crippler", "deathray", "first boss", "second boss", "third boss", "fourth boss"
+    ]
     this.set_enemy_buttons()
 
     play_song("right")
+
 
 }
 
@@ -25,8 +30,8 @@ EnemiesInfoState.prototype.set_enemy_buttons = function() {
   var level_button_h = level_button_w
 
   var i = 0
-  for(enemy_name in impulse_enemy_stats) {
-    if(enemy_name == "fighter_bullet") continue
+  for(e in this.enemies_with_info) {
+    var enemy_name = this.enemies_with_info[e]
     var temp_button = new EnemyButton(enemy_name, 15, (gap + level_button_w) * (i%num_per_row) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/num_per_row) +gap + level_button_h/2, level_button_w, level_button_h, "black")
 
     this.enemy_buttons.push(temp_button)

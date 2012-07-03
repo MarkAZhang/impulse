@@ -251,7 +251,9 @@ Enemy.prototype.move = function() {
   if (this.pathfinding_counter % 4 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
     //only update path every four frames. Pretty expensive operation
     var target_point = this.get_target_point()
-    if((this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
+
+    if(!target_point) return
+    if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
       var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
@@ -269,7 +271,7 @@ Enemy.prototype.move = function() {
   
   var endPt = this.path[0]
   if ( this.pathfinding_counter % 4 == 0) {
-    while(this.path.length > 1 && p_dist(endPt, this.body.GetPosition())<1)
+    while(this.path.length > 0 && p_dist(endPt, this.body.GetPosition())<1)
     //get rid of points that are too close
     {
       this.path = this.path.slice(1)
@@ -307,7 +309,7 @@ Enemy.prototype.move = function() {
     this.yield_counter++
   }
 
-  if(!this.do_yield || !this.yield)
+  if((!this.do_yield || !this.yield) && endPt)
   {//move if not yielding
     this.move_to(endPt)
   }

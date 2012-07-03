@@ -32,6 +32,8 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.body.SetAngle(Math.PI/2)
 
+  this.dying_length = 2000
+
   this.visibility = 0
 
   this.gun_polygon = [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],

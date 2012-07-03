@@ -8,7 +8,8 @@ impulse_enemy_stats["stunner"] = {
   force: .5,
   score_value: 100,
   shape_polygons: [{type: "circle", x: 0, y: 0, r: .5}],
-  description: "Basic enemy. No special abilities. Stuns you for a short duration on impact."
+  description: "Basic enemy. No special abilities. Stuns you for a short duration on impact.",
+  className: Stunner
 }
 
 impulse_enemy_stats["spear"] = {
@@ -22,7 +23,8 @@ impulse_enemy_stats["spear"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 5/6), Math.sin(Math.PI * 5/6)],
     [Math.cos(Math.PI * 7/6), Math.sin(Math.PI * 7/6)]]}],
-  description: "Charges at you when it has sight of you and exerts significant impulse on impact. Very light."
+  description: "Charges at you when it has sight of you and exerts significant impulse on impact. Very light.",
+  className: Spear
 }
 
 impulse_enemy_stats["tank"] = {
@@ -37,7 +39,8 @@ impulse_enemy_stats["tank"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
-  description: "Heavy, slow-moving enemy. When it dies or impacts you, it will explode, exerting massive impulse on all entities within range. There are other ways of making it explode as well..."
+  description: "Heavy, slow-moving enemy. When it dies or impacts you, it will explode, exerting massive impulse on all entities within range. There are other ways of making it explode as well...",
+  className: Tank
 }
 
 impulse_enemy_stats["mote"] = {
@@ -52,7 +55,8 @@ impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
-  description: "Cannot be impulsed. Can only be killed by pushing other enemies into it. Upon impact, silences your impulse for a long duration."
+  description: "Cannot be impulsed. Can only be killed by pushing other enemies into it. Upon impact, silences your impulse for a long duration.",
+  className: Mote
 
 }
 
@@ -67,7 +71,8 @@ impulse_enemy_stats["goo"] = {
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}], 
-  description: "Leaves a sticky trail behind it. Enemies that move through the trail will get stuck to the ground, slowing them down significantly. Upon impact, slows you for a long duration."
+  description: "Leaves a sticky trail behind it. Enemies that move through the trail will get stuck to the ground, slowing them down significantly. Upon impact, slows you for a long duration.",
+  className: Goo
 
 }
 
@@ -83,7 +88,8 @@ impulse_enemy_stats["disabler"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
-  description: "Leaves a staticky trail behind it, silencing the special abilties of all entities that enter the trail. Upon impact, silences your impulse for a long duration."
+  description: "Leaves a staticky trail behind it, silencing the special abilties of all entities that enter the trail. Upon impact, silences your impulse for a long duration.",
+  className: Disabler
 }
 
 impulse_enemy_stats["crippler"] = {
@@ -98,7 +104,8 @@ impulse_enemy_stats["crippler"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
-  description: "Leaves a paralytic trail behind it, causing all entities that enter the trail to be completely stunned (cannot move and no special abilities) until the trail fades. Upon impact, stuns you for a long duration."
+  description: "Leaves a paralytic trail behind it, causing all entities that enter the trail to be completely stunned (cannot move and no special abilities) until the trail fades. Upon impact, stuns you for a long duration.",
+  className: Crippler
 
 }
 
@@ -115,9 +122,28 @@ impulse_enemy_stats["wisp"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
-  description: "Fades in and out of visibility. Keep your eyes open! Upon impact, blinds you to the level's Shapes of Death for a long duration."
+  description: "Fades in and out of visibility. Keep your eyes open! Upon impact, blinds you to the level's Shapes of Death for a long duration.",
+  className: Wisp
 
 }
+
+impulse_enemy_stats["wispdire"] = {
+  color: "rgb(152, 251, 152)",
+  density: 1,
+  lin_damp: 3,
+  effective_radius: .5,
+  force: .5,
+  score_value: 600,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices: 
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
+  description: "Fades in and out of visibility. Keep your eyes open! Upon impact, blinds you to the level's Shapes of Death for a long duration.",
+  className: WispDire
+
+}
+
 
 
 impulse_enemy_stats["fighter"] = {
@@ -133,9 +159,27 @@ impulse_enemy_stats["fighter"] = {
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}], 
-  description: "Shoots bullets, which exert a significant impulse upon any entities hit. You can reflect the bullets with your impulse."
-
+  description: "Shoots bullets, which exert a significant impulse upon any entities hit. You can reflect the bullets with your impulse.",
+  className: Fighter
 }
+
+impulse_enemy_stats["fighterdire"] = {
+  color: "rgb(30, 144, 255)",
+  density: 3,
+  lin_damp: 3,
+  effective_radius: 1,
+  force: 3,
+  score_value: 1000,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices: 
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}], 
+  description: "Shoots bullets, which exert a significant impulse upon any entities hit. You can reflect the bullets with your impulse.",
+  className: FighterDire
+}
+
 
 impulse_enemy_stats["fighter_bullet"] = {
   color: "rgb(30, 144, 255)",
@@ -150,6 +194,7 @@ impulse_enemy_stats["fighter_bullet"] = {
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  className: FighterBullet
 }
 
 impulse_enemy_stats["harpoon"] = {
@@ -165,9 +210,29 @@ impulse_enemy_stats["harpoon"] = {
   [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death."
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  className: Harpoon
 
 }
+
+impulse_enemy_stats["harpoondire"] = {
+  color: "orange",
+  density: 3,
+  lin_damp: 3,
+  effective_radius: .7,
+  force: 1.5,
+  score_value: 1000,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices: 
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  className: HarpoonDire
+
+}
+
 
 impulse_enemy_stats["slingshot"] = {
   color: "rgb(160, 82, 45)",
@@ -180,7 +245,8 @@ impulse_enemy_stats["slingshot"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
-  description: "When you impulse it, it will hook onto the ground and slingshot back at you. Try to kill it in one shot."
+  description: "When you impulse it, it will hook onto the ground and slingshot back at you. Try to kill it in one shot.",
+  className: Slingshot
 
 }
 
@@ -198,7 +264,27 @@ impulse_enemy_stats["deathray"] = {
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
   [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}],
-  description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray."
+  description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray.",
+  className: DeathRay
+
+}
+
+impulse_enemy_stats["deathraydire"] = {
+  color: "rgb(0, 229, 238)",
+  density: 1.5,
+  lin_damp: 6,
+  effective_radius: 1,
+  force: 4,
+  score_value: 2500,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices: 
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
+  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}],
+  description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray.",
+  className: DeathRayDire
 
 }
 
@@ -219,7 +305,9 @@ impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
   ],
-  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
+  description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player.",
+  className: BossOne
+
 
 }
 
@@ -240,7 +328,8 @@ impulse_enemy_stats["second boss"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
 
-  description: "Has four blades that silence the player. Also periodically explodes in a wide radius."
+  description: "Has four blades that silence the player. Also periodically explodes in a wide radius.",
+  className: BossTwo
 
 }
 
@@ -257,7 +346,8 @@ impulse_enemy_stats["fixed_harpoon"] = {
   [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death."
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  className: FixedHarpoon
 
 }
 
@@ -277,7 +367,8 @@ impulse_enemy_stats["third boss"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  description: "Has six turrets which shoot at the player. Turrets are disabled when they enter a Shape of Death. Boss occasionally enters Frenzy Mode, silencing everything on the field and acquiring increased firing speed."
+  description: "Has six turrets which shoot at the player. Turrets are disabled when they enter a Shape of Death. Boss occasionally enters Frenzy Mode, silencing everything on the field and acquiring increased firing speed.",
+  className: BossThree
 
 }
 
@@ -300,7 +391,8 @@ impulse_enemy_stats["fourth boss"] = {
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
   
   ],
-  description: "Has a Spawn Laser which sweeps around the boss. More info coming"
+  description: "Has a Spawn Laser which sweeps around the boss. More info coming",
+  className: BossFour
 
 }
 
@@ -320,6 +412,7 @@ impulse_enemy_stats["boss four spawner"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  description: "Has a Spawn Laser which sweeps around the boss. More info coming"
+  description: "Has a Spawn Laser which sweeps around the boss. More info coming",
+  className: BossFourSpawner
 
 }

@@ -37,6 +37,13 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
     var j = 0
     var exit_points = Math.max(this.spawn_number, 4)
     for(var i = 0; i < this.spawn_number; i++) {
+
+      if(this.level.enemy_numbers[this.enemy_type] + i >= this.level.enemies_data[this.enemy_type][4]) {
+        //prevents over_spawn
+        this.silence(100)
+        this.spawn = false
+        return
+      }
       while(!isVisible(this.body.GetPosition(), 
         {x: this.body.GetPosition().x + 10 * Math.cos(ray_angle + Math.PI * 2 * j/exit_points),
           y: this.body.GetPosition().y + 10 * Math.sin(ray_angle + Math.PI * 2 * j/exit_points)},
@@ -46,7 +53,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
   		var loc = [this.body.GetPosition().x + this.effective_radius * Math.cos(ray_angle + Math.PI * 2 * j/exit_points), 
   		this.body.GetPosition().y + this.effective_radius * Math.sin(ray_angle + Math.PI * 2 * j/exit_points)]
       
-      var temp_enemy = new this.level.enemy_map[this.enemy_type](this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
+      var temp_enemy = new (impulse_enemy_stats[this.enemy_type].className)(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
       
       var force = new b2Vec2(Math.cos(ray_angle + Math.PI * 2 * j/exit_points), Math.sin(ray_angle + Math.PI * 2 * j/exit_points))
       force.Multiply(this.push_force)

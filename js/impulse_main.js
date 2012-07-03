@@ -337,6 +337,7 @@ var mute = false
 var next_song = null
 
 function play_song(song_name, force_restart) {
+  return
   console.log(song_name+" "+song_name+" "+cur_song+" "+next_song)
   if((cur_song == song_name && !force_restart) || next_song != null && song_name == next_song) return
 

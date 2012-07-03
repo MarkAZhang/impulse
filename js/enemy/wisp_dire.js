@@ -1,12 +1,10 @@
-Wisp.prototype = new Enemy()
+WispDire.prototype = new Wisp()
 
-Wisp.prototype.constructor = Wisp
+WispDire.prototype.constructor = WispDire
 
-function Wisp(world, x, y, id, impulse_game_state) {
-
-  if(!world) return
+function WispDire(world, x, y, id, impulse_game_state) {
   
-  this.type = "wisp"
+  this.type = "wispdire"
 
   this.init(world, x, y, id, impulse_game_state)
   this.interior_color = "white"
@@ -19,7 +17,7 @@ function Wisp(world, x, y, id, impulse_game_state) {
 
 }
 
-Wisp.prototype.additional_processing = function(dt) {
+WispDire.prototype.additional_processing = function(dt) {
   this.visibility_timer +=dt
   var leftover = this.visibility_timer % 2000
   if(leftover > 1000) leftover = 2000 - leftover
@@ -27,8 +25,14 @@ Wisp.prototype.additional_processing = function(dt) {
   
 }
 
-Wisp.prototype.player_hit_proc = function() {
+WispDire.prototype.player_hit_proc = function() {
   this.level.obstacles_visible = false
   setTimeout(function(_this){return function() {_this.level.obstacles_visible = true}}(this), 4000)
+
+  //for boss four
+  if(this.level.boss != null) {
+    this.level.boss.laser_target_visible = false
+    setTimeout(function(_this){return function() {_this.level.boss.laser_target_visible = true}}(this), 4000)    
+  }
 }
 

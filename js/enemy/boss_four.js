@@ -21,6 +21,8 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
+  this.dying_length = 2000
+
   this.red_visibility = 0
 
   this.spawn_interval = 2000
@@ -40,13 +42,13 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "tank" : 4,
    "mote" : 4,
    "goo" : 2,
-   "harpoon" : 0,
-   "wisp" : 0,
+   "harpoondire" : 3,
+   "wispdire" : 5,
    "disabler" : 2,
-   "fighter" : 3,
+   "fighterdire" : 3,
    "slingshot" : 4,
    "crippler" : 1,
-   "deathray" : 2
+   "deathraydire" : 2
  }
 
  this.spawner_spawn_force = {
@@ -55,23 +57,25 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "tank" : 75,
    "mote" : 10,
    "goo" : 20,
-   "harpoon" : 0,
-   "wisp" : 0,
+   "harpoon" : 20,
+   "wispdire" : 10,
    "disabler" : 20,
-   "fighter" : 30,
+   "fighterdire" : 30,
    "slingshot" : 10,
    "crippler" : 50,
-   "deathray" : 50
+   "deathraydire" : 50
  }
  
 
  this.possible_spawn_sets = [
   
-  ["fighter", "spear"],
+  ["fighterdire", "spear"],
   ["goo", "crippler"],
   ["tank", "disabler"],
-  ["stunner", "deathray"],
-  ["mote", "slingshot"]
+  ["stunner", "deathraydire"],
+  ["mote", "slingshot"],
+  ["wispdire", "spear"],
+  ["harpoondire", "goo"]
  ]
 
   this.spawner_push_force = 500
@@ -124,6 +128,9 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.lin_damp = 10
   this.body.SetLinearDamping(10)
+
+  this.laser_target_visible = true
+  this.laser_target_visibility = 1
 
 }
 BossFour.prototype.additional_drawing = function(context, draw_factor) {
@@ -186,17 +193,20 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
       context.stroke()
       context.restore()
 
-      var prog = 1 - this.shoot_durations[m] / (this.shoot_interval * this.aim_proportion)
+      if(this.laser_target_visibility > 0) {
 
-      context.beginPath()
-      context.globalAlpha = Math.max(prog, .2)
-      context.moveTo(this.ray_polygons[m][1].x * draw_factor, this.ray_polygons[m][1].y * draw_factor)
-      context.lineTo(this.ray_polygons[m][2].x * draw_factor, this.ray_polygons[m][2].y * draw_factor)
-      context.moveTo(this.ray_polygons[m][3].x * draw_factor, this.ray_polygons[m][3].y * draw_factor)
-      context.lineTo(this.ray_polygons[m][0].x * draw_factor, this.ray_polygons[m][0].y * draw_factor)
-      context.lineWidth = 1
-      context.strokeStyle = this.laser_colors[m]
-      context.stroke()
+        var prog = (1 - this.shoot_durations[m] / (this.shoot_interval * this.aim_proportion)) * this.laser_target_visibility
+
+        context.beginPath()
+        context.globalAlpha = Math.max(prog, .2)
+        context.moveTo(this.ray_polygons[m][1].x * draw_factor, this.ray_polygons[m][1].y * draw_factor)
+        context.lineTo(this.ray_polygons[m][2].x * draw_factor, this.ray_polygons[m][2].y * draw_factor)
+        context.moveTo(this.ray_polygons[m][3].x * draw_factor, this.ray_polygons[m][3].y * draw_factor)
+        context.lineTo(this.ray_polygons[m][0].x * draw_factor, this.ray_polygons[m][0].y * draw_factor)
+        context.lineWidth = 1
+        context.strokeStyle = this.laser_colors[m]
+        context.stroke()
+      }
 
       if(this.fire_durations[m] < this.fire_interval) {
 
@@ -233,6 +243,15 @@ BossFour.prototype.additional_processing = function(dt) {
     this.spawned = true
     this.visibility = 1
   }
+
+  if(this.laser_target_visible && this.laser_target_visibility < 1)
+    {
+      this.laser_target_visibility = Math.min(1, this.laser_target_visibility + dt/1000)
+    }
+    else if(!this.laser_target_visible && this.laser_target_visibility > 0)
+    {
+      this.laser_target_visibility = Math.max(0, this.laser_target_visibility - dt/1000)
+    }
 
   if(this.spawner_timer <= this.spawner_interval - 500) {
 
@@ -342,6 +361,7 @@ BossFour.prototype.additional_processing = function(dt) {
 }
 
 BossFour.prototype.get_spawner_set = function() {
+
   if (this.spawn_count == 1) {
     return ["stunner", "spear", "mote", "slingshot"]
   }

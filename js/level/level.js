@@ -51,16 +51,26 @@ Level.prototype.init = function(data, impulse_game_state) {
     "first boss": BossOne,
     "second boss": BossTwo,
     "third boss": BossThree,
-    "fourth boss": BossFour
+    "fourth boss": BossFour,
+    "boss four spawner": BossFourSpawner,
   }
 
   this.dead_enemies = []
   this.expired_enemies = []
   this.spawned_enemies = []
 
+  this.boss_delay_interval = 10000
+  this.boss_delay_timer = 0
+  this.boss_radius = 3
+  this.boss = null 
+
 }
 
 Level.prototype.process = function(dt) {
+
+    if(this.boss_delay_timer > 0) {
+      this.boss_delay_timer -= dt
+    }
   //handle obstacle visibility
     if(this.obstacles_visible && this.obstacle_visibility < 1)
     {
@@ -81,6 +91,14 @@ Level.prototype.process = function(dt) {
     while(this.dead_enemies.length > 0)
     {
       var dead_i = this.dead_enemies.pop()
+
+      if(this.enemies[dead_i] instanceof BossTwo) {
+        for(var i = 0; i < this.enemies.length; i++) {
+          if (this.enemies[i] instanceof FixedHarpoon) {
+            this.enemies[i].start_death("self_destruct")
+          }
+        }
+      }
       
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
     }
@@ -89,8 +107,14 @@ Level.prototype.process = function(dt) {
       var dead_i = this.expired_enemies.pop()
       
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
+      if((impulse_enemy_stats[this.enemies[dead_i].type].className).prototype.is_boss) {
+        this.boss_delay_timer = this.boss_delay_interval
+        this.boss_radius = impulse_enemy_stats[this.enemies[dead_i].type].effective_radius
+        this.boss = null
+      }
 
       this.enemies.splice(dead_i, 1)
+
     }
     
     while(this.spawned_enemies.length > 0)
@@ -124,12 +148,15 @@ Level.prototype.spawn_enemies = function(dt) {
 }
 
 Level.prototype.spawn_this_enemy = function(enemy_type) {
+
+  var this_enemy = impulse_enemy_stats[enemy_type].className
+
+  if(this_enemy.prototype.is_boss && this.boss_delay_timer > 0) return
+
   //if at the cap, don't spawn more
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) return
 
   var r_p = getRandomOutsideLocation(5, 2)
-
-  var this_enemy = this.enemy_map[enemy_type]
 
   if(this_enemy.prototype.is_boss) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, canvasHeight/draw_factor/2, this.enemy_counter, this.impulse_game_state)
@@ -143,6 +170,8 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
   this.enemy_counter+=1
 
   this.enemy_numbers[enemy_type] += 1
+
+  if(this_enemy.prototype.is_boss) this.boss = temp_enemy
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -194,5 +223,18 @@ Level.prototype.draw = function(context, draw_factor) {
 
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].draw(ctx, draw_factor)
+  }
+
+  if(this.boss_delay_timer >= 0) {
+
+    context.beginPath() 
+    context.arc(canvasWidth/draw_factor/2 * draw_factor, canvasHeight/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    
+    context.lineWidth = 2
+    context.strokeStyle = "gray"
+    context.stroke()
+      
+    context.restore()
+    context.globalAlpha = 1 
   }
 }

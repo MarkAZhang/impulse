@@ -3,6 +3,9 @@ Fighter.prototype = new Enemy()
 Fighter.prototype.constructor = Fighter
 
 function Fighter(world, x, y, id, impulse_game_state) {
+
+  if(!world) return
+
   this.type = "fighter"
 
   this.init(world, x, y, id, impulse_game_state)
@@ -58,22 +61,7 @@ Fighter.prototype.player_hit_proc = function() {
 
 Fighter.prototype.get_target_point = function() {
   if(!this.safe) {
-    var rayOut = new b2Vec2(this.body.GetPosition().x - this.player.body.GetPosition().x, this.body.GetPosition().y - this.player.body.GetPosition().y)
-    rayOut.Normalize()
-    rayOut.Multiply(200)
-    var j = this.safe_lines.length - 1
-    for(var i = 0; i < this.safe_lines.length; i++)
-    {
-      var temp = getSegIntersection(this.player.body.GetPosition(), {x: this.player.body.GetPosition().x + rayOut.x, y: this.player.body.GetPosition().y + rayOut.y}, this.safe_lines[i], this.safe_lines[j])
-
-      if(temp!=null)
-      {
-        return temp
-        
-      }
-
-      j = i
-    }
+    return get_safe_point(this, this.player)
   }
   else
     return this.player.body.GetPosition()
