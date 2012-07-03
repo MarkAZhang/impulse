@@ -29,11 +29,11 @@ ClassicSelectState.prototype.set_world_buttons = function() {
   this.level_buttons = []
   var gap = 30
   var level_button_h = (canvasHeight/2 + 200 - 3 * gap)/2
-  var level_button_w = (canvasWidth - 5 * gap)/4
+  var level_button_w = (canvasWidth - 5 * gap)/2
   
-  for(var i = 0; i < 8; i++) {
+  for(var i = 0; i < 4; i++) {
 
-    this.level_buttons.push(new WorldButton((i+1), 20, (gap + level_button_w) * (i%4) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/4) +gap + level_button_h/2, level_button_w, level_button_h, impulse_colors['world '+(i+1)], function(_this, i){return function(){setTimeout(function(){_this.set_level_buttons(i+1)}, 20)}}(this, i)))
+    this.level_buttons.push(new WorldButton((i+1), 20, (gap + level_button_w) * (i%2) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/2) +gap + level_button_h/2, level_button_w, level_button_h, impulse_colors['world '+(i+1)], function(_this, i){return function(){setTimeout(function(){_this.set_level_buttons(i+1)}, 20)}}(this, i)))
   }
 
 }

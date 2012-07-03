@@ -218,24 +218,6 @@ impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
-  {type: "polygon", x: 4.5 * Math.cos(Math.PI/4), y: 4.5 * Math.sin(Math.PI/4), r: 1.5, visible: false, vertices: 
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
-  {type: "polygon", x: 4.5 * Math.cos(-Math.PI/4), y: 4.5 * Math.sin(-Math.PI/4), r: 1.5, visible: false, vertices: 
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}
   ],
   description: "Lives within a swarm of Stunners. Shoots Stunners, Spears, and Tanks at the player."
 

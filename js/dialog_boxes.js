@@ -138,7 +138,7 @@ EnemyBox.prototype.constructor = EnemyBox
 
 function EnemyBox(enemy_name) {
   this.enemy_name = enemy_name
-  this.max_enemy_d = 80
+  this.max_enemy_d = 50
   this.phrase_list = null
 
   this.seen = impulse_enemy_stats[this.enemy_name].seen

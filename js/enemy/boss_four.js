@@ -105,8 +105,8 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.ray_aimer_polygons = [[], []]
 
-  this.ray_force = 100
-
+  this.ray_force = 500
+  
   this.aimed = [false, false]
   this.fired = [false, false]
 
@@ -290,7 +290,7 @@ BossFour.prototype.additional_processing = function(dt) {
         this.fire_durations[m] = Math.max(this.fire_durations[m] - dt, 0)
         //fire the ray
         if(this.fire_durations[m] <= this.fire_interval/2 && !this.fired[m]) {
-          this.fired = true
+          this.fired[m] = true
 
           if(pointInPolygon(this.ray_polygons[m], this.player.body.GetPosition())) {
             if(m == 1) {

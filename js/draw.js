@@ -27,28 +27,39 @@ function draw_empty_star(context, x, y, r, color) {
 }
 
 function draw_enemy(context, enemy_name, x, y, d) {
-  var r = impulse_enemy_stats[enemy_name].effective_radius/2 * d/2
-  context.beginPath()
-  if(impulse_enemy_stats[enemy_name].shape_type == "circle") {
-    
-    context.arc(x, y, r, 0, 2 * Math.PI, true)
-   
-  }
-  else if(impulse_enemy_stats[enemy_name].shape_type == "polygon") {
-    context.moveTo(x+impulse_enemy_stats[enemy_name].shape_vertices[0][0]*r, y+impulse_enemy_stats[enemy_name].shape_vertices[0][1]*r)
-    for(var k = 1; k < impulse_enemy_stats[enemy_name].shape_vertices.length; k++)
-    {
-      context.lineTo(x+impulse_enemy_stats[enemy_name].shape_vertices[k][0]*r, y+impulse_enemy_stats[enemy_name].shape_vertices[k][1]*r)
+  var draw_scale = Math.min(1/impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
+   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
+      draw_scale = 2/impulse_enemy_stats[enemy_name].effective_radius * d/2
+   }
+   for(var m = 0; m < impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
+      var this_shape = impulse_enemy_stats[enemy_name].shape_polygons[m]
+      
+      context.beginPath()
+      
+      if(this_shape.type == "circle") {
+        
+        context.arc(x + this_shape.x, y + this_shape.y, draw_scale * this_shape.r, 0, 2 * Math.PI, true)
+       
+      }
+      else if(this_shape.type == "polygon") {
+        context.moveTo(x + (this_shape.x + this_shape.vertices[0][0] * this_shape.r) * draw_scale, 
+          y + (this_shape.y + this_shape.vertices[0][1]  * this_shape.r) * draw_scale)
+        for(var n = 1; n < this_shape.vertices.length; n++)
+        {
+          context.lineTo(x + (this_shape.x + this_shape.vertices[n][0] * this_shape.r) * draw_scale, 
+            y + (this_shape.y + this_shape.vertices[n][1]  * this_shape.r) * draw_scale)
+        }
+        context.closePath()
+      }
+
+      context.fillStyle = impulse_enemy_stats[enemy_name].color
+      context.strokeStyle = impulse_enemy_stats[enemy_name].color
+      context.lineWidth = 2
+      context.stroke()
+      context.globalAlpha /=2
+      context.fill()
+      context.globalAlpha = 1
     }
-    context.closePath()
-  }
-  context.fillStyle = impulse_enemy_stats[enemy_name].color
-  context.strokeStyle = impulse_enemy_stats[enemy_name].color
-  context.lineWidth = 2
-  context.stroke()
-  context.globalAlpha /=2
-  context.fill()
-  context.globalAlpha = 1
 }
 
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
