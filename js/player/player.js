@@ -37,8 +37,6 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
     this.points_polar_form.push({r: .5, ang: i * Math.PI/2})
   }
   
-  this.f_x = 0 //horizontal movement force
-  this.f_y = 0 //vertical movement force
   this.left = false
   this.right = false
   this.down = false
@@ -68,20 +66,23 @@ Player.prototype.keyDown = function(keyCode) {
   {
     case 65:
       this.left = true
-      this.f_x = -1;
       break;
     case 68:
       this.right = true
-      this.f_x = 1;
       break;
     case 83:
       this.down = true
-      this.f_y = 1;
       break;
     case 87:
       this.up = true
-      this.f_y = -1;
       break;
+    case 81:
+      this.up = false
+      this.down = false
+      this.left = false
+      this.right = false
+      break
+
   }
 }
 
@@ -90,20 +91,22 @@ Player.prototype.keyUp = function(keyCode) {
   {
     case 65:
       this.left = false
-      this.f_x = 0;
       break;
     case 68:
       this.right = false
-      this.f_x = 0;
       break;
     case 83:
       this.down = false
-      this.f_y = 0;
       break;
     case 87:
       this.up = false
-      this.f_y = 0;
       break;
+    case 81:
+      this.up = false
+      this.down = false
+      this.left = false
+      this.right = false
+      break
   }
 }
 

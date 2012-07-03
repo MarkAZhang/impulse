@@ -40,7 +40,13 @@ window.onload =  function() {
     canvasWidth = 800;
     canvasHeight = 600;
 
-    var gap_h = 75
+    /*gameWidth = 800
+    gameHeight = 660 //extra 60 for interface
+
+    arenaWidth = 800
+    arenaHeight = 600
+
+    /*var gap_h = 75
     var gap_w = 75
 
     var num_x = 3
@@ -74,7 +80,7 @@ window.onload =  function() {
       polyg.push(poly)
       }
     }
-    console.log(JSON.stringify(polyg))
+    console.log(JSON.stringify(polyg))*/
     
     // screen setup
     canvas = document.getElementById("canvas");
@@ -85,12 +91,12 @@ window.onload =  function() {
     canvas_container.style.height = canvasHeight + 'px'
 
     ctx = canvas.getContext('2d');
-    canvas.addEventListener('keydown', on_key_down, false);
-    canvas.addEventListener('keyup', on_key_up, false);
-    canvas.addEventListener('click', on_click, false);
-    canvas.addEventListener('mousedown', on_mouse_down, false);
-    canvas.addEventListener('mouseup', on_mouse_up, false);
-    canvas.addEventListener('mousemove', on_mouse_move, false)
+    window.addEventListener('keydown', on_key_down, false);
+    window.addEventListener('keyup', on_key_up, false);
+    window.addEventListener('click', on_click, false);
+    window.addEventListener('mousedown', on_mouse_down, false);
+    window.addEventListener('mouseup', on_mouse_up, false);
+    window.addEventListener('mousemove', on_mouse_move, false)
 
     var dim = getWindowDimensions()
 
@@ -215,7 +221,7 @@ function on_key_up(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
   if(cur_dialog_box) {
     cur_dialog_box.on_key_up(keyCode)
-    return
+    //do not return immediately. Allows player to disengage movement
   }
   cur_game_state.on_key_up(keyCode)
 }

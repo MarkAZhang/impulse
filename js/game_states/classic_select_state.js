@@ -28,8 +28,8 @@ ClassicSelectState.prototype.set_world_buttons = function() {
   this.buttons = [this.buttons[0]]
   this.level_buttons = []
   var gap = 30
-  var level_button_h = (canvasHeight/2 + 200 - 3 * gap)/2
-  var level_button_w = (canvasWidth - 5 * gap)/2
+  var level_button_h = (canvasHeight/2 + 140 - gap)/2
+  var level_button_w = (canvasWidth - 3 * gap)/2
   
   for(var i = 0; i < 4; i++) {
 

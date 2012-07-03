@@ -6,7 +6,7 @@ function ImpulseGameState(ctx, level_name, world) {
   this.pause = true
   this.ready = false
   this.buttons = []
-  this.draw_factor = 15
+  this.draw_factor = draw_factor
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   this.last_fps_time = 0
   this.fps_counter = null

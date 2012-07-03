@@ -280,7 +280,8 @@ impulse_level_data['BOSS 1'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [400000, 2000000, 10000000]
+  cutoff_scores: [400000, 2000000, 10000000],
+  player_loc: {x: 400, y: 400} 
 
 }
 
