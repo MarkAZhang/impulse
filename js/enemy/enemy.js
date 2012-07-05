@@ -159,7 +159,7 @@ Enemy.prototype.check_death = function() {
 }
 
 Enemy.prototype.process_death = function(enemy_index, dt) {
-  if(this.died && this.dying_duration < this.dying_length - 50) {//the moment the enemy starts to die, give a couple steps to resolve collisions, then remove the body from play
+  if(this.died && (this.dying != "hit_player" || this.dying_duration < this.dying_length - 50)) {//the moment the enemy starts to die, give a couple steps to resolve collisions, then remove the body from play
     this.died = false
 
     this.level.dead_enemies.push(enemy_index)
@@ -366,6 +366,10 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
+    if(impulse_enemy_stats[this.type].proxy)
+      impulse_enemy_stats[impulse_enemy_stats[this.type].proxy].kills += 1
+    else
+      impulse_enemy_stats[this.type].kills += 1
     this.impulse_game_state.addScoreLabel(this.impulse_game_state.game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
     this.impulse_game_state.game_numbers.score += this.impulse_game_state.game_numbers.combo * this.score_value
     this.impulse_game_state.increment_combo()

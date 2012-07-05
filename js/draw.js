@@ -4,7 +4,7 @@ function draw_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
-  context.globalAlpha /=2
+  context.globalAlpha = 1
   context.fillStyle = impulse_colors[color]
   context.fill()
   context.globalAlpha = 1
@@ -52,14 +52,28 @@ function draw_enemy(context, enemy_name, x, y, d) {
         context.closePath()
       }
 
-      context.fillStyle = impulse_enemy_stats[enemy_name].color
+      context.fillStyle = "white" //hack to clear below
+      context.fill()
       context.strokeStyle = impulse_enemy_stats[enemy_name].color
       context.lineWidth = 2
       context.stroke()
+      context.fillStyle = impulse_enemy_stats[enemy_name].color
       context.globalAlpha /=2
       context.fill()
       context.globalAlpha = 1
     }
+}
+
+function draw_progress_bar(context, x, y, w, h, prop, color) {
+  context.beginPath()
+  context.rect(x - w * .5, y - h * .5, w* prop, h)
+  context.fillStyle = color
+  context.fill()
+  context.beginPath()
+  context.rect(x - w * .5, y - h * .5, w , h)
+  context.strokeStyle = "black"
+  context.lineWidth = 2
+  context.stroke()
 }
 
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {

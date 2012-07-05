@@ -245,33 +245,42 @@ function save_game() {
     }
   }
   save_obj['enemies_seen'] = {}
+  save_obj['enemies_killed'] = {}
   for(i in impulse_enemy_stats) {
     save_obj['enemies_seen'][i] = impulse_enemy_stats[i].seen
+    save_obj['enemies_killed'][i] = impulse_enemy_stats[i].kills
   }
+  save_obj['total_kills'] = player_data.total_kills
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 
 function load_game() {
   var load_obj = {}
   if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
-    load_obj['levels'] = {}
-    for(i in impulse_level_data) {
-      if(i.slice(0, 11) != "HOW TO PLAY") {
-        load_obj['levels'][i] = {}
-        load_obj['levels'][i].high_score = 0
-        load_obj['levels'][i].stars = 0
-      }
-    }
+    
     player_data.first_time = true
-    load_obj['enemies_seen'] = {}
-    for(i in impulse_enemy_stats) {
-      load_obj['enemies_seen'][i] = false
-    }
+    
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
     player_data.first_time = false
   }
+
+  if(!load_obj['levels']) {
+    load_obj['levels'] = {}
+  }
+
+
+  if(!load_obj['enemies_seen']) {
+    load_obj['enemies_seen'] = {}
+  }
+
+  if(!load_obj['enemies_killed']) {
+    load_obj['enemies_killed'] = {}
+  }
+    
+  player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
+
   for(i in impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
       if(load_obj['levels'][i]) {
@@ -287,8 +296,9 @@ function load_game() {
   }
 
   for(i in impulse_enemy_stats) {
-
-    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i]
+    //load if enemies are seen
+    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] ? true: false
+    impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
   }
 
   calculate_stars()
@@ -302,10 +312,18 @@ function calculate_stars() {
       if(impulse_level_data[i]) {
         total_stars += impulse_level_data[i].stars
       }
-      
     }
   }
-  player_data.stars = total_stars
+  player_data.kill_stars = 0
+  for(i in impulse_enemy_kills_star_cutoffs)
+  {
+    if(impulse_enemy_stats[i].kills >= impulse_enemy_kills_star_cutoffs[i]) {
+      player_data.kill_stars += 1
+    }
+
+  }
+
+  player_data.stars = total_stars + player_data.kill_stars
 }
 
 
@@ -318,13 +336,13 @@ var cur_song = null
 var world_music_map = {}
 
 world_music_map[1] = "speedway"
-world_music_map[2] = "droid_march"
-world_music_map[3] = "tunneled"
-world_music_map[4] = "strangled"
-world_music_map[5] = "emergence"
+world_music_map[2] = "strangled"
+world_music_map[3] = "droid_march"
+world_music_map[4] = "tunneled"
+/*world_music_map[5] = "emergence"
 world_music_map[6] = "machine_one"
 world_music_map[7] = "trial_by_fire"
-world_music_map[8] = "hard_noise"
+world_music_map[8] = "hard_noise"*/
 
 var music_switch = "none"
 

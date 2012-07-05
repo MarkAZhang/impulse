@@ -147,7 +147,6 @@ Level.prototype.process = function(dt) {
         this.spawn_timer = this.spawn_interval
       }
     }
-
 }
 
 Level.prototype.check_enemy_spawn_timers = function(dt) {
@@ -183,7 +182,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, canvasHeight/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
   else if(this.spawn_points) {
-    var r_p = this.spawn_points[this.enemy_counter % this.spawn_points.length]
+    var r_p = this.spawn_points[Math.floor(Math.random() * this.spawn_points.length)]
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/draw_factor, r_p[1]/draw_factor, this.enemy_counter, this.impulse_game_state)
   }
   else {

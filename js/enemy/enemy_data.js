@@ -140,7 +140,8 @@ impulse_enemy_stats["wispdire"] = {
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
   description: "Fades in and out of visibility. Keep your eyes open! Upon impact, blinds you to the level's Shapes of Death for a long duration.",
-  className: WispDire
+  className: WispDire,
+  proxy: "wisp"
 
 }
 
@@ -177,7 +178,8 @@ impulse_enemy_stats["fighterdire"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}], 
   description: "Shoots bullets, which exert a significant impulse upon any entities hit. You can reflect the bullets with your impulse.",
-  className: FighterDire
+  className: FighterDire,
+  proxy: "fighter"
 }
 
 
@@ -229,7 +231,8 @@ impulse_enemy_stats["harpoondire"] = {
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
   description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: HarpoonDire
+  className: HarpoonDire,
+  proxy: "harpoon"
 
 }
 
@@ -284,7 +287,8 @@ impulse_enemy_stats["deathraydire"] = {
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
   [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}],
   description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray.",
-  className: DeathRayDire
+  className: DeathRayDire,
+  proxy: "deathray"
 
 }
 
@@ -347,7 +351,8 @@ impulse_enemy_stats["fixed_harpoon"] = {
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
   description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: FixedHarpoon
+  className: FixedHarpoon,
+  proxy: "harpoon"
 
 }
 
@@ -414,5 +419,19 @@ impulse_enemy_stats["boss four spawner"] = {
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
   description: "Has a Spawn Laser which sweeps around the boss. More info coming",
   className: BossFourSpawner
+}
 
+impulse_enemy_kills_star_cutoffs = {
+  "stunner": 5,
+  "spear": 5,
+  "tank": 5,
+  "mote": 5,
+  "goo": 5,
+  "harpoon": 5,
+  "wisp": 5,
+  "disabler": 5,
+  "fighter": 5,
+  "slingshot": 5,
+  "crippler": 5,
+  "deathray": 5,
 }

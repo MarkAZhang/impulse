@@ -59,6 +59,9 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying_duration = 0
   this.color = "black"
 
+  this.last_mouse_down = 0
+  this.mouse_pressed = false
+
 }
 
 Player.prototype.keyDown = function(keyCode) {
@@ -131,15 +134,17 @@ Player.prototype.goo = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
-Player.prototype.click = function(pos, enemies) {
+Player.prototype.mouse_down= function(pos, enemies) {
 
-  if(!this.attacking && this.status_duration[1] <= 0)
-  {
-    this.attacking = true
-    this.attack_loc = this.body.GetPosition().Copy()
-    this.attack_angle = this.impulse_angle
-    this.attack_duration = this.attack_length
-  }
+  this.last_mouse_down = (new Date()).getTime()
+  this.mouse_pressed = true
+
+  
+}
+
+Player.prototype.mouse_up= function(pos, enemies) {
+  console.log("MOUSEUP")
+  this.mouse_pressed = false
 }
 
 Player.prototype.process = function(dt) {
@@ -173,6 +178,16 @@ Player.prototype.process = function(dt) {
   }
   else {
     this.body.SetLinearDamping(this.lin_damp)
+  }
+
+  cur_time = (new Date()).getTime()
+
+  if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
+  {
+    this.attacking = true
+    this.attack_loc = this.body.GetPosition().Copy()
+    this.attack_angle = this.impulse_angle
+    this.attack_duration = this.attack_length
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)

@@ -179,14 +179,8 @@ WorldButton.prototype.additional_draw = function(context) {
     context.fillText(this.stars+"/"+this.max_stars, this.x - 20, this.y + 25)
 
     context.fill()
-    context.beginPath()
-    context.rect(this.x - this.w * 1/3, this.y + this.h * 1/4, this.w * 2/3 * this.stars/this.max_stars, 10)
-    context.fillStyle = this.color
-    context.fill()
-    context.beginPath()
-    context.rect(this.x - this.w * 1/3, this.y + this.h * 1/4, this.w * 2/3, 10)
-    context.strokeStyle = "black"
-    context.stroke()
+
+    draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, this.color)
 
   }
 }
