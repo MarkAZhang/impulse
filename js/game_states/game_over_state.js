@@ -133,7 +133,7 @@ GameOverState.prototype.draw = function(ctx) {
   else
     draw_empty_star(ctx, canvasWidth/2, first_rect_y + 50, 30)
 
-  draw_progress_bar(ctx, canvasWidth/2, first_rect_y + 90, 200, 10, this.game_numbers.score/this.bar_top_score, (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
+  draw_progress_bar(ctx, canvasWidth/2, first_rect_y + 90, 200, 10, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
 
   draw_star(ctx, canvasWidth/2 - 100, first_rect_y + 93, 15, this.star_colors[this.stars < 3 ? this.stars : 2])
 

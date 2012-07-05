@@ -65,6 +65,6 @@ DeathRayDire.prototype.get_target_point = function() {
   }
   else {
     //go towards center
-    return {x: canvasWidth/draw_factor/2, y: canvasHeight/draw_factor/2}
+    return {x: canvasWidth/draw_factor/2, y: (canvasHeight - topbarHeight)/draw_factor/2}
   }
 }

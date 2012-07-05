@@ -26,6 +26,8 @@ function LevelEditorState() {
 
   this.drag_loc = null
   this.dragging = false
+  this.canvasWidth = 800
+  this.canvasHeight = 600
 
 }
 
@@ -34,6 +36,11 @@ LevelEditorState.prototype.process = function(dt) {
 }
 
 LevelEditorState.prototype.draw = function(context) {
+  context.beginPath()
+  context.rect(0, 0, 800, 600)
+  context.strokeStyle = "gray"
+  context.stroke()
+
   if(this.image_vis) {
     if(!this.crop_coordinates)
       context.drawImage(this.image, 0, 0, canvasWidth, canvasHeight)
@@ -307,14 +314,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 90) { //Z = reflect vertically
     if(this.selected_av != null) {
-      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: canvasHeight - this.accumulated_vertices[this.selected_av].y})
+      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: this.canvasHeight - this.accumulated_vertices[this.selected_av].y})
       return
     }
 
     if(this.selected_p != null) {
       var poly = []
       for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
-        poly.push({x: this.polygons[this.selected_p][j].x, y: canvasHeight - this.polygons[this.selected_p][j].y})
+        poly.push({x: this.polygons[this.selected_p][j].x, y: this.canvasHeight - this.polygons[this.selected_p][j].y})
       }
       this.polygons.push(poly)
       return
@@ -323,7 +330,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     for(var i = 0; i < k; i++) {
       var poly = []
       for(var j = this.polygons[i].length - 1; j >= 0; j--) {
-        poly.push({x: this.polygons[i][j].x, y: canvasHeight - this.polygons[i][j].y})
+        poly.push({x: this.polygons[i][j].x, y: this.canvasHeight - this.polygons[i][j].y})
       }
       this.polygons.push(poly)
     }

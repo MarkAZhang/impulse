@@ -405,7 +405,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
   if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
-    var pointer_point = get_pointer_point(this)
+    /*var pointer_point = get_pointer_point(this)
     var pointer_angle = _atan(pointer_point, this.body.GetPosition())
     context.save();
     context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
@@ -426,7 +426,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.stroke()
     context.restore()
     context.globalAlpha = 1
-    this.additional_drawing(context, draw_factor)
+    this.additional_drawing(context, draw_factor)*/
     return
   }
 

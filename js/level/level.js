@@ -179,7 +179,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
 
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, canvasHeight/draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, (canvasHeight - topbarHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
   else if(this.spawn_points) {
     var r_p = this.spawn_points[Math.floor(Math.random() * this.spawn_points.length)]
@@ -253,7 +253,7 @@ Level.prototype.draw = function(context, draw_factor) {
   if(this.boss_delay_timer >= 0) {
 
     context.beginPath() 
-    context.arc(canvasWidth/draw_factor/2 * draw_factor, canvasHeight/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    context.arc(canvasWidth/draw_factor/2 * draw_factor, (canvasHeight - topbarHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
     
     context.lineWidth = 2
     context.strokeStyle = "gray"

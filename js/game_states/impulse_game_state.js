@@ -22,6 +22,9 @@ function ImpulseGameState(ctx, level_name, world) {
   this.score_goal_messages = ["BRONZE: ", "SILVER: ", "GOLD: "]
   this.star_colors =  ["bronze", "silver", "gold"]
 
+  this.progress_bar_prop = 0
+  this.progress_bar_adjust = 3000
+
   this.loading_screen()
   setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 50)
   
@@ -43,7 +46,7 @@ ImpulseGameState.prototype.loading_screen = function() {
   ctx.font = '30px Century Gothic'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
-  ctx.fillText("LOADING", canvasWidth/2, canvasHeight/2)
+  ctx.fillText("LOADING", canvasWidth/2, (canvasHeight - topbarHeight)/2)
   ctx.fill()
 }
 
@@ -51,6 +54,17 @@ ImpulseGameState.prototype.process = function(dt) {
   if(!this.ready) return
   if(!this.pause)
   {
+    var temp_stars = this.stars < 3 ? this.stars : 2
+    var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
+    if(this.progress_bar_prop > prop) {
+      this.progress_bar_prop  = Math.max(this.progress_bar_prop - dt/this.progress_bar_adjust, prop)
+
+    }
+    else if(this.progress_bar_prop < prop) {
+      this.progress_bar_prop  = Math.min(this.progress_bar_prop + dt/this.progress_bar_adjust, prop)
+    }
+
+
     if(this.world_visible && this.world_visibility < 1)
     {
       this.world_visibility = Math.min(1, this.world_visibility + dt/1000)
@@ -77,6 +91,10 @@ ImpulseGameState.prototype.process = function(dt) {
 
 ImpulseGameState.prototype.draw = function(ctx) {
   if(!this.ready) return
+
+
+  ctx.translate(0, topbarHeight)//allows us to have a topbar
+
   this.level.draw(ctx, this.draw_factor)
   
   if(this.world_visibility < 1) {
@@ -87,7 +105,9 @@ ImpulseGameState.prototype.draw = function(ctx) {
   }
 
   this.player.draw(ctx)
-  
+
+  ctx.translate(0, -topbarHeight)
+  this.draw_interface(ctx) 
   
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
@@ -154,40 +174,82 @@ ImpulseGameState.prototype.draw = function(ctx) {
     }
   }*/
 
-  this.draw_interface(ctx)
+ 
 }
 
 ImpulseGameState.prototype.draw_interface = function(ctx) {
+
+
   ctx.beginPath()
+
+  ctx.rect(0, 0, 800, topbarHeight)
+  ctx.fillStyle = "white"
+  ctx.fill()
+  ctx.strokeStyle = "black"
+  ctx.lineWidth = 2
+  ctx.stroke()
+  /*ctx.fillStyle = impulse_colors["world "+this.world_num]
+  ctx.globalAlpha = .3
+  ctx.fill()*/
+  ctx.globalAlpha = 1
+
+  ctx.beginPath()
+  ctx.moveTo(0, topbarHeight)
+  ctx.lineTo(800, topbarHeight)
+  ctx.strokeStyle = "black"
+  ctx.lineWidth = 2
+  ctx.stroke()
+
   ctx.font = '20px Century Gothic'
-  
+  ctx.globalAlpha = 1
 
   ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
   
   ctx.textAlign = 'left'
-  ctx.fillText("SCORE: "+this.game_numbers.score, 10, 25)
-  ctx.font = '30px Century Gothic'
-  ctx.fillText("x"+this.game_numbers.combo, 20, 60)
+  ctx.fillText(this.game_numbers.score, 10, 25)
+  
 
-  ctx.font = '20px Century Gothic'
+  
   ctx.textAlign = 'right'
 
   if(this.stars < 3) {
+    ctx.font = '20px Century Gothic'
     ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
-    ctx.fillText(this.score_goal_messages[this.stars]+this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
+    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
+  }
+  else {
+    ctx.font = '20px Century Gothic'
+    ctx.fillStyle = impulse_colors[this.star_colors[2]]
+    ctx.fillText("WIN", canvasWidth - 10, 25)
   }
 
-  draw_progress_bar(ctx, 400, 10, 500, 10, .5, "blue")
+  var temp_stars = this.stars < 3 ? this.stars : 2
 
+  draw_progress_bar(ctx, 400, 20, 500, 10, this.progress_bar_prop, impulse_colors[this.star_colors[temp_stars]])
+  draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])
+
+  ctx.beginPath()
+
+  ctx.rect(350, 2, 100, topbarHeight-4)
+  ctx.fillStyle = "white"
+  ctx.globalAlpha = .6
+  ctx.fill()
+  ctx.globalAlpha = 1
+
+  ctx.textAlign = 'center'
+  ctx.font = '30px Century Gothic'
+  ctx.fillStyle = "black"
+  ctx.fillText("x"+this.game_numbers.combo, canvasWidth/2, 30)
 
   ctx.font = '10px sans-serif'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
   ctx.textAlign = 'left'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
   
-  ctx.fillText(this.game_numbers.last_time, 10, canvasHeight - 5)
+  ctx.fillText(this.game_numbers.last_time, 10, (canvasHeight) - 5)
 
   ctx.textAlign = 'right'
   if(this.fps_counter == null)
@@ -206,7 +268,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   this.fps_counter+=1
   ctx.beginPath()
   ctx.font = '10px sans-serif'
-  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, canvasHeight - 5)
+  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, (canvasHeight) - 5)
   ctx.fill()
 
   for(var i = 0; i < this.score_labels.length; i++)
@@ -227,17 +289,17 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
 ImpulseGameState.prototype.on_mouse_move = function(x, y) {
   if(!this.ready) return
   if(!this.pause)
-    this.player.mouseMove({x: x, y: y})
+    this.player.mouseMove({x: x, y: y - topbarHeight})
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause)
-    this.player.mouse_down({x: x, y: y}, this.level.enemies)
+    this.player.mouse_down({x: x, y: y - topbarHeight})
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(!this.pause)
-    this.player.mouse_up({x: x, y: y}, this.level.enemies)
+    this.player.mouse_up({x: x, y: y - topbarHeight})
 }
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
@@ -286,13 +348,13 @@ ImpulseGameState.prototype.setup_world_next = function(level_name) {
 ImpulseGameState.prototype.addWalls = function() {
   var wall_dim = [{x: canvasWidth/this.draw_factor/2, y: 2},
       {x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: 2, y: canvasHeight/draw_factor/2},
-      {x: 2, y: canvasHeight/draw_factor/2}]
+      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2},
+      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2}]
   
   var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
-      {x: canvasWidth/this.draw_factor/2, y: canvasHeight/this.draw_factor+2},
-      {x: -2, y: canvasHeight/this.draw_factor/2},
-      {x: canvasWidth/this.draw_factor+2, y: canvasHeight/this.draw_factor/2}]
+      {x: canvasWidth/this.draw_factor/2, y: (canvasHeight - topbarHeight)/this.draw_factor+2},
+      {x: -2, y: (canvasHeight - topbarHeight)/this.draw_factor/2},
+      {x: canvasWidth/this.draw_factor+2, y: (canvasHeight - topbarHeight)/this.draw_factor/2}]
   
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
@@ -338,7 +400,7 @@ ImpulseGameState.prototype.check_cutoffs = function() {
     if(debug) {
       console.log(this.cutoff_messages[this.stars-1]+" "+this.game_numbers.last_time)
     }
-    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, 40, 3000)
+    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], canvasWidth/this.draw_factor/2, (canvasHeight - topbarHeight)/this.draw_factor/2, 40, 3000)
   }
 }
 

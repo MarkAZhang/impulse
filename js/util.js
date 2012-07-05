@@ -215,12 +215,12 @@ function getBoundaryPolygon(polygon, radius) {
 
 function check_bounds(buffer, pt, draw_factor) {
   var factor = draw_factor ? draw_factor : 1
-  return pt.x >= buffer && pt.y >= buffer && pt.x <= canvasWidth/factor - buffer && pt.y <= canvasHeight/factor - buffer
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= canvasWidth/factor - buffer && pt.y <= (canvasHeight - topbarHeight)/factor - buffer
 }
 
 
 function get_safe_point(object, player) {
-  var safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
+  var safe_lines = [{x: -5, y: -5}, {x: -5, y: (canvasHeight - topbarHeight)/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: (canvasHeight - topbarHeight)/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
 
   var rayOut = new b2Vec2(object.body.GetPosition().x - player.body.GetPosition().x, object.body.GetPosition().y - player.body.GetPosition().y)
   rayOut.Normalize()
@@ -243,11 +243,11 @@ function get_safe_point(object, player) {
 
 function get_pointer_point(object) {
   
-  var enemy_pointer_lines = [{x: 2, y: 2}, {x: 2, y: canvasHeight/draw_factor - 2}, {x: canvasWidth/draw_factor - 2, y: canvasHeight/draw_factor  - 2}, {x: canvasWidth/draw_factor - 2, y: 2}]
+  var enemy_pointer_lines = [{x: 2, y: 2}, {x: 2, y: (canvasHeight - topbarHeight)/draw_factor - 2}, {x: canvasWidth/draw_factor - 2, y: (canvasHeight - topbarHeight)/draw_factor  - 2}, {x: canvasWidth/draw_factor - 2, y: 2}]
   var j = enemy_pointer_lines.length - 1
   for(var i = 0; i < enemy_pointer_lines.length; i++)
   {
-    var temp = getSegIntersection({x: canvasHeight/draw_factor/2, y: canvasWidth/draw_factor/2}, object.body.GetPosition(), enemy_pointer_lines[i], enemy_pointer_lines[j])
+    var temp = getSegIntersection({x: (canvasHeight - topbarHeight)/draw_factor/2, y: canvasWidth/draw_factor/2}, object.body.GetPosition(), enemy_pointer_lines[i], enemy_pointer_lines[j])
 
     if(temp!=null)
     {
@@ -260,7 +260,7 @@ function get_pointer_point(object) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
-  var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*(canvasHeight/draw_factor-2*buffer_radius)+buffer_radius}
+  var r_point = {x:Math.random()*(canvasWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((canvasHeight - topbarHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
   for(var k = 0; k < cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -282,7 +282,7 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomCentralValidLocation(testPoint) {
-  var r_point = {x:Math.random()*(canvasWidth/2/draw_factor)+canvasWidth/4/draw_factor, y: Math.random()*(canvasHeight/2/draw_factor)+canvasHeight/4/draw_factor}
+  var r_point = {x:Math.random()*(canvasWidth/2/draw_factor)+canvasWidth/4/draw_factor, y: Math.random()*((canvasHeight - topbarHeight)/2/draw_factor)+(canvasHeight - topbarHeight)/4/draw_factor}
   var inPoly = false
   for(var k = 0; k < cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -307,11 +307,11 @@ function getRandomOutsideLocation(buffer, range) {
   if(Math.random() < .5)
   {
     x_anchor = Math.random() < .5 ? -buffer-range : canvasWidth/draw_factor + buffer
-    y_anchor = Math.random() * (canvasHeight/draw_factor + 2 * buffer + range) - (buffer + range)
+    y_anchor = Math.random() * ((canvasHeight - topbarHeight)/draw_factor + 2 * buffer + range) - (buffer + range)
   }
   else
   {
-    y_anchor = Math.random() < .5 ? -buffer-range : canvasHeight/draw_factor + buffer
+    y_anchor = Math.random() < .5 ? -buffer-range : (canvasHeight - topbarHeight)/draw_factor + buffer
     x_anchor = Math.random() * (canvasWidth/draw_factor + 2 * buffer + range) - (buffer + range)
   }
 

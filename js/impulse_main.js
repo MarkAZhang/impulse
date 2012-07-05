@@ -38,7 +38,9 @@ window.onload =  function() {
     , b2ContactListener = Box2D.Dynamics.b2ContactListener
     
     canvasWidth = 800;
-    canvasHeight = 600;
+    canvasHeight = 635;
+
+    topbarHeight = 35
 
     /*gameWidth = 800
     gameHeight = 660 //extra 60 for interface

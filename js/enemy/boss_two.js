@@ -53,7 +53,7 @@ BossTwo.prototype.additional_processing = function(dt) {
 
   if(!this.spawned_harpoons) {
     this.spawned_harpoons = true
-    var locs = [[1, 1], [canvasWidth/draw_factor-1, 1], [canvasWidth/draw_factor-1, canvasHeight/draw_factor-1], [1, canvasHeight/draw_factor-1]]
+    var locs = [[1, 1], [canvasWidth/draw_factor-1, 1], [canvasWidth/draw_factor-1, (canvasHeight - topbarHeight)/draw_factor-1], [1, (canvasHeight - topbarHeight)/draw_factor-1]]
       for(var i = 0; i < locs.length; i++) {
         this.level.spawned_enemies.push(new FixedHarpoon(this.world, locs[i][0], locs[i][1], this.level.enemy_counter, this.impulse_game_state))
         this.level.enemy_counter +=1

@@ -24,8 +24,6 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.safe_radius_buffer = 2
 
-  this.safe_lines = [{x: -5, y: -5}, {x: -5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: canvasHeight/draw_factor + 5}, {x: canvasWidth/draw_factor + 5, y: -5}]
-
   this.bullet_alternater = 0
 
   this.safe = true

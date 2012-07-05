@@ -134,16 +134,12 @@ Player.prototype.goo = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
-Player.prototype.mouse_down= function(pos, enemies) {
-
+Player.prototype.mouse_down= function(pos) {
   this.last_mouse_down = (new Date()).getTime()
   this.mouse_pressed = true
-
-  
 }
 
-Player.prototype.mouse_up= function(pos, enemies) {
-  console.log("MOUSEUP")
+Player.prototype.mouse_up= function(pos) {
   this.mouse_pressed = false
 }
 

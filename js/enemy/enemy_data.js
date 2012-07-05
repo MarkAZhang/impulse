@@ -422,16 +422,16 @@ impulse_enemy_stats["boss four spawner"] = {
 }
 
 impulse_enemy_kills_star_cutoffs = {
-  "stunner": 5,
-  "spear": 5,
-  "tank": 5,
-  "mote": 5,
-  "goo": 5,
-  "harpoon": 5,
-  "wisp": 5,
-  "disabler": 5,
-  "fighter": 5,
-  "slingshot": 5,
-  "crippler": 5,
-  "deathray": 5,
+  "stunner": 500,
+  "spear": 250,
+  "tank": 150,
+  "mote": 150,
+  "goo": 50,
+  "harpoon": 50,
+  "wisp": 150,
+  "disabler": 50,
+  "fighter": 50,
+  "slingshot": 50,
+  "crippler": 15,
+  "deathray": 15,
 }

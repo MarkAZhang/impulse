@@ -63,7 +63,7 @@ Harpoon.prototype.get_target_point = function() {
 
       var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(random_angle) * this.harpoon_length * .75, this.player.body.GetPosition().y + Math.sin(random_angle) * this.harpoon_length * .75)
 
-      if(tempPt.x >= canvasWidth/draw_factor || tempPt.x <= 0 || tempPt.y >= canvasHeight/draw_factor || tempPt.y <= 0) {
+      if(check_bounds(0, tempPt, draw_factor)) {
         is_valid = false
       }
 
@@ -208,7 +208,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpoon_loc.Add(temp_v)
 
   }
-  else if(this.harpooned && (this.player.body.GetPosition().x >= canvasWidth/draw_factor - 1|| this.player.body.GetPosition().x <= 1 || this.player.body.GetPosition().y >= canvasHeight/draw_factor - 1|| this.player.body.GetPosition().y <= 1)) {
+  else if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
     this.disengage()
   }
   else if(this.harpooned && this.player.dying) {
