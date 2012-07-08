@@ -38,6 +38,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.shapes = []
   this.shape_points = []
 
+  this.is_lightened = false
+
   for(var i = 0; i < this.shape_polygons.length; i++) {
     var polygon = this.shape_polygons[i]
     var this_shape = null
@@ -71,6 +73,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.shape_polar_points = []
   this.collision_polygons = []
+
+
 
   for(var j = 0; j < this.shape_points.length; j++) {
     var these_polar_points = []
@@ -111,7 +115,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.dying_length = 500
   this.dying_duration = 0
   
-  this.status_duration = [0, 0, 0] //[locked, silenced, slowed], time left for each status
+  this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed, lightened], time left for each status
   
   this.is_enemy = true
 
@@ -202,7 +206,36 @@ Enemy.prototype.process = function(enemy_index, dt) {
     this.status_duration[2] -= dt
     this.body.SetLinearDamping(this.lin_damp * 3)
   }
+  else if (this.status_duration[3] > 0){
+    this.status_duration[3] -= dt
+
+    if(!this.is_lightened) {
+      this.is_lightened = true
+      var fixtures = this.body.GetFixtureList()
+      if (fixtures.length === undefined) {
+        fixtures = [fixtures]
+      }
+      for(var i = 0; i < fixtures.length; i++) {
+        fixtures[i].SetDensity(this.density/5)
+      }
+      this.body.ResetMassData()
+      this.force = impulse_enemy_stats[this.type].force/5
+    }
+  }
   else {
+    if(this.is_lightened) {
+      this.is_lightened = false
+      var fixtures = this.body.GetFixtureList()
+      if (fixtures.length === undefined) {
+        fixtures = [fixtures]
+      }
+      for(var i = 0; i < fixtures.length; i++) {
+        fixtures[i].SetDensity(this.density)
+      }
+      this.body.ResetMassData()
+      this.force = impulse_enemy_stats[this.type].force
+
+    }
     this.body.SetLinearDamping(this.lin_damp)
   }
   if(this.pointer_visibility < 1) {
@@ -370,8 +403,14 @@ Enemy.prototype.start_death = function(death) {
       impulse_enemy_stats[impulse_enemy_stats[this.type].proxy].kills += 1
     else
       impulse_enemy_stats[this.type].kills += 1
-    this.impulse_game_state.addScoreLabel(this.impulse_game_state.game_numbers.combo * this.score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
-    this.impulse_game_state.game_numbers.score += this.impulse_game_state.game_numbers.combo * this.score_value
+    if(this.is_boss) {
+      var score_value = this.impulse_game_state.level.boss_kills >= this.score_value.length ? this.score_value[this.score_value.length - 1] : this.score_value[this.impulse_game_state.level.boss_kills]
+    }
+    else {
+      var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
+    }
+    this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
+    this.impulse_game_state.game_numbers.score += score_value
     this.impulse_game_state.increment_combo()
     this.impulse_game_state.check_cutoffs()
   }
@@ -509,6 +548,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.fillStyle = 'yellow'
         context.fill()
       }
+      else if(this.status_duration[3] > 0)
+      {
+        context.fillStyle = 'cyan'
+        context.fill()
+      }
     }
 
     if (this.dying) 
@@ -581,6 +625,10 @@ this.status_duration[0] = Math.max(dur, this.status_duration[0])
 
 Enemy.prototype.goo = function(dur) {
 this.status_duration[2] = Math.max(dur, this.status_duration[2])
+}
+
+Enemy.prototype.lighten = function(dur) {
+this.status_duration[3] = Math.max(dur, this.status_duration[3])
 }
 
 Enemy.prototype.check_player_intersection = function(other) {

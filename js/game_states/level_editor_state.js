@@ -393,3 +393,16 @@ LevelEditorState.prototype.load_level = function(string) {
   }
 }
 
+LevelEditorState.prototype.add_level = function(string) {
+  var polygon_ans = impulse_level_data[string].obstacle_v
+  for(var i = 0; i < polygon_ans.length; i++) {
+    var temp_p = []
+    for(var j = 0; j < polygon_ans[i].length; j++) {
+
+      temp_p.push({x: polygon_ans[i][j][0], y: polygon_ans[i][j][1]})
+    }
+    this.polygons.push(temp_p)
+  }
+}
+
+

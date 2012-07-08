@@ -70,6 +70,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.boss_delay_timer = 0
   this.boss_radius = 3
   this.boss = null 
+  this.boss_kills = 0
 
 }
 
@@ -118,6 +119,7 @@ Level.prototype.process = function(dt) {
         this.boss_delay_timer = this.boss_delay_interval
         this.boss_radius = impulse_enemy_stats[this.enemies[dead_i].type].effective_radius
         this.boss = null
+        this.boss_kills += 1
       }
 
       this.enemies.splice(dead_i, 1)

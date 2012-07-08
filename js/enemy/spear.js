@@ -21,6 +21,7 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.entered_arena = false
   this.entered_arena_delay = 2000
+  this.entered_arena_timer = 2000
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
@@ -58,6 +59,10 @@ Spear.prototype.additional_processing = function(dt) {
 
   if(this.entered_arena_timer > 0) {
     this.entered_arena_timer -= dt
+  }
+
+  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.entered_arena = false
   }
   
   this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && (this.entered_arena && this.entered_arena_timer <= 0)

@@ -4,16 +4,18 @@ var Player = function(world, x, y, impulse_game_state) {
 
 Player.prototype.lin_damp = 3.5 //old = 3
 
-Player.prototype.force = 1 //old = .5
+Player.prototype.true_force = 1 //old = .5
 
 Player.prototype.impulse_force = 50
 
 Player.prototype.impulse_radius = 10
 
+Player.prototype.density = 1
+
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   console.log(x+" "+y)
   var fixDef = new b2FixtureDef;
-  fixDef.density = 1.0;
+  fixDef.density = this.density;
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
   fixDef.filter.categoryBits = 0x0003
@@ -58,6 +60,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying_length = 1000
   this.dying_duration = 0
   this.color = "black"
+  this.force = this.true_force
 
   this.last_mouse_down = 0
   this.mouse_pressed = false
@@ -134,6 +137,10 @@ Player.prototype.goo = function(dur) {
   this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
+Player.prototype.lighten = function(dur) {
+  this.status_duration[3] = Math.max(dur, this.status_duration[3])
+}
+
 Player.prototype.mouse_down= function(pos) {
   this.last_mouse_down = (new Date()).getTime()
   this.mouse_pressed = true
@@ -170,9 +177,37 @@ Player.prototype.process = function(dt) {
   }
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
-    this.body.SetLinearDamping(3 * this.lin_damp)
+    this.body.SetLinearDamping(this.lin_damp * 3)
+  }
+  else if (this.status_duration[3] > 0){
+    this.status_duration[3] -= dt
+    if(!this.is_lightened) {
+      this.is_lightened = true
+      var fixtures = this.body.GetFixtureList()
+      if (fixtures.length === undefined) {
+        fixtures = [fixtures]
+      }
+      for(var i = 0; i < fixtures.length; i++) {
+        fixtures[i].SetDensity(this.density/3)
+      }
+      this.body.ResetMassData()
+      this.force = this.true_force/3
+    }
   }
   else {
+    if(this.is_lightened) {
+      this.is_lightened = false
+      var fixtures = this.body.GetFixtureList()
+      if (fixtures.length === undefined) {
+        fixtures = [fixtures]
+      }
+      for(var i = 0; i < fixtures.length; i++) {
+        fixtures[i].SetDensity(this.density)
+      }
+      this.body.ResetMassData()
+      this.force = this.true_force
+
+    }
     this.body.SetLinearDamping(this.lin_damp)
   }
 
@@ -313,6 +348,11 @@ Player.prototype.draw = function(context) {
     {
       context.fillStyle = 'yellow'
       context.globalAlpha = .5
+      context.fill()
+    }
+    else if(this.status_duration[3] > 0)
+    {
+      context.fillStyle = 'cyan'
       context.fill()
     }
     context.globalAlpha = 1

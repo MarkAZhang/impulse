@@ -396,9 +396,8 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
 ImpulseGameState.prototype.check_cutoffs = function() {
   if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
   {
-    this.stars+=1
-    if(debug) {
-      console.log(this.cutoff_messages[this.stars-1]+" "+this.game_numbers.last_time)
+    while(this.game_numbers.score >= this.level.cutoff_scores[this.stars]) {
+      this.stars+=1
     }
     this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], canvasWidth/this.draw_factor/2, (canvasHeight - topbarHeight)/this.draw_factor/2, 40, 3000)
   }

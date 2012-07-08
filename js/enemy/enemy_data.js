@@ -298,7 +298,7 @@ impulse_enemy_stats["first boss"] = {
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 100000,
+  score_value: [1000000, 5000000, 15000000],
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices: 
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
