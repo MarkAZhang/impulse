@@ -42,6 +42,19 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
+  this.check_harpoon_interval = 5//so that we don't check for harpooning every frame
+  this.check_harpoon_timer = this.check_harpoon_interval
+
+  this.state = "seek" //seek or flee
+
+  this.check_for_good_target_point_interval = 15
+
+  this.check_for_good_target_point_timer = this.check_for_good_target_point_interval
+
+  this.check_safety_interval = 8
+
+  this.check_safety_timer = this.check_safety_interval
+
 }
 
 Harpoon.prototype.get_target_point = function() {
@@ -55,13 +68,20 @@ Harpoon.prototype.get_target_point = function() {
       return this.goalPt 
     }
 
+    if (this.check_for_good_target_point_timer > 0) {
+      this.check_for_good_target_point_timer -= 1
+      return this.player.body.GetPosition()
+    }
+
+    this.check_for_good_target_point_timer = this.check_for_good_target_point_interval
+
     for(var i = 0; i < 5; i++) {
 
       var random_angle = Math.random() * Math.PI * 2
 
       var is_valid = true
 
-      var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(random_angle) * this.harpoon_length * .75, this.player.body.GetPosition().y + Math.sin(random_angle) * this.harpoon_length * .75)
+      var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(random_angle) * this.harpoon_length * .9, this.player.body.GetPosition().y + Math.sin(random_angle) * this.harpoon_length * .9)
 
       if(check_bounds(0, tempPt, draw_factor)) {
         is_valid = false
@@ -103,15 +123,12 @@ Harpoon.prototype.move = function() {
     this.body.SetAngle(_atan(this.player.body.GetPosition(), this.body.GetPosition()))
     return
   }
-  if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
-    this.path = null
-  }
-  else {
+
     if(this.path == null) {
       this.pathfinding_counter = this.pathfinding_delay
     }
     this.enemy_move()
-  }
+  
 }
 
 Harpoon.prototype.get_harpoon_target_pt = function() {
@@ -167,53 +184,75 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.disengage()
     this.harpooning = false
   }
-  
-  if(this.safe != (p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius || !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)))
-  {
-    this.safe = !this.safe
-    this.path = null
-  }
 
-  if(this.can_harpoon()) {
-    this.harpooning = true
-    this.harpoon_loc = this.body.GetPosition().Copy()
-    
-  
+  if(this.check_safety_timer <= 0) {
+    var cur_dist = p_dist(this.player.body.GetPosition(), this.body.GetPosition())
+    var cur_vis = isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)
 
-    var temp = this.get_harpoon_target_pt()
-    
-    temp.Subtract(this.body.GetPosition().Copy())
-    temp.Normalize()
-    temp.Multiply(this.harpoon_velocity)
-    console.log("HARPOON V "+temp.x+" "+temp.y)
-    this.harpoon_v = temp
-    
-  }
-  else if(this.harpooning && p_dist(this.body.GetPosition(), this.harpoon_loc) >= this.harpoon_length) {
-    this.harpooning = false
-  }
-  else if(this.harpooning) {
-
-    if(this.player.point_intersect(this.harpoon_loc)) {
-      this.harpooned = true
-      this.harpooning = false
-      this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
-      this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
-      this.harpoon_joint.collideConnected = true
-      this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)
+    if((cur_dist > this.safe_radius + this.safe_radius_buffer || !cur_vis) && !this.safe) {
+      this.safe = true
+      this.path = null
+    }
+    else if ((cur_dist < this.safe_radius && cur_vis) && this.safe) {
+      this.safe = false
+      this.path = null
     }
 
-    var temp_v = this.harpoon_v.Copy()
-    temp_v.Multiply(dt/1000)
-    this.harpoon_loc.Add(temp_v)
+    this.check_safety_timer = this.check_safety_interval
+  }
+  this.check_safety_timer -= 1
 
-  }
-  else if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
-    this.disengage()
-  }
-  else if(this.harpooned && this.player.dying) {
-    this.disengage()
-  }
+  if(this.check_harpoon_timer > 0) 
+    this.check_harpoon_timer -= 1
+
+  if(this.harpooning) {
+
+      if(this.player.point_intersect(this.harpoon_loc)) {
+        this.harpooned = true
+        this.harpooning = false
+        this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
+        this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
+        this.harpoon_joint.collideConnected = true
+        this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)
+      }
+
+      var temp_v = this.harpoon_v.Copy()
+      temp_v.Multiply(dt/1000)
+      this.harpoon_loc.Add(temp_v)
+
+    }
+
+  if(this.check_harpoon_timer <= 0) {
+    if(this.can_harpoon()) {
+
+      this.harpooning = true
+      this.harpoon_loc = this.body.GetPosition().Copy()
+      
+    
+
+      var temp = this.get_harpoon_target_pt()
+      
+      temp.Subtract(this.body.GetPosition().Copy())
+      temp.Normalize()
+      temp.Multiply(this.harpoon_velocity)
+      this.harpoon_v = temp
+      
+    }
+    else if(this.harpooning && p_dist(this.body.GetPosition(), this.harpoon_loc) >= this.harpoon_length) {
+      this.harpooning = false
+    }
+    else if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
+      this.disengage()
+    }
+    else if(this.harpooned && !check_bounds(0, this.body.GetPosition(), draw_factor)) {
+      this.disengage()
+    }
+    else if(this.harpooned && this.player.dying) {
+      this.disengage()
+    }
+    this.check_harpoon_timer = this.check_harpoon_interval
+  } 
+
 }
 
 Harpoon.prototype.additional_drawing = function(context, draw_factor) {

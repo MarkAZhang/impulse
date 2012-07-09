@@ -281,7 +281,7 @@ Enemy.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
   this.pathfinding_counter+=1
-  if (this.pathfinding_counter % 4 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
+  if (this.pathfinding_counter % 8 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
     //only update path every four frames. Pretty expensive operation
     var target_point = this.get_target_point()
 
@@ -535,23 +535,31 @@ Enemy.prototype.draw = function(context, draw_factor) {
       //no debuffs if enemy dying
         if(this.status_duration[0] > 0)
       {
+        context.globalAlpha = .25
         context.fillStyle = 'red'
         context.fill()
+        context.globalAlpha = 1
       }
       else if(this.status_duration[1] > 0)
       {
+        context.globalAlpha = .25
         context.fillStyle = 'gray'
         context.fill()
+        context.globalAlpha = 1
       }
       else if(this.status_duration[2] > 0)
       {
-        context.fillStyle = 'yellow'
+        context.globalAlpha = .25
+        context.fillStyle = 'brown'
         context.fill()
+        context.globalAlpha = 1
       }
       else if(this.status_duration[3] > 0)
       {
+        context.globalAlpha = .25
         context.fillStyle = 'cyan'
         context.fill()
+        context.globalAlpha = 1
       }
     }
 
@@ -562,7 +570,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
     if(!this.dying) {
       //no debuffs if enemy dying
-      context.strokeStyle = this.status_duration[2] <= 0 ? cur_color : 'yellow'
+      context.strokeStyle = this.status_duration[2] <= 0 ? cur_color : Goo.prototype.goo_color_rgb
       context.strokeStyle = this.status_duration[1] <= 0 ? context.strokeStyle: 'gray'
       context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
     }
@@ -632,9 +640,10 @@ this.status_duration[3] = Math.max(dur, this.status_duration[3])
 }
 
 Enemy.prototype.check_player_intersection = function(other) {
-  for(var i = 0; i < this.collision_polygons.length; i++) {
-    var collision_polygon = this.collision_polygons[i]
-    if(collision_polygon) {
+  for(var i = 0; i < this.shapes.length; i++) {
+    
+    if(this.shapes[i] instanceof b2PolygonShape) {
+      var collision_polygon = this.collision_polygons[i]
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
       var temp_ang = _atan({x:0, y:0}, temp_vec)
       var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
@@ -642,9 +651,14 @@ Enemy.prototype.check_player_intersection = function(other) {
       if(pointInPolygon(collision_polygon, rotated_vec))
         return true
     }
-    else
+    else if(this.shapes[i] instanceof b2CircleShape)
     {
-      if (p_dist(other.body.GetPosition(), this.body.GetPosition()) <= other.shape.GetRadius() + this.effective_radius + 0.1)
+      var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
+      var temp_ang = _atan({x:0, y:0}, temp_vec)
+      var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
+      var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
+      
+      if (p_dist(rotated_vec, {x: this.shape_polygons[i].x, y: this.shape_polygons[i].y}) <= other.shape.GetRadius() + this.shape_polygons[i].r + 0.1)
         return true
     }
   } 

@@ -172,6 +172,8 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
 Level.prototype.spawn_this_enemy = function(enemy_type) {
 
+  console.log("SPAWNING")
+
   var this_enemy = impulse_enemy_stats[enemy_type].className
 
   if(this_enemy.prototype.is_boss && this.boss_delay_timer > 0) return
@@ -181,6 +183,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
 
 
   if(this_enemy.prototype.is_boss) {
+    console.log("SPAWNING BOSS")
     var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, (canvasHeight - topbarHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
   else if(this.spawn_points) {

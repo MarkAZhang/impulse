@@ -61,16 +61,21 @@ impulse_enemy_stats["mote"] = {
 }
 
 impulse_enemy_stats["goo"] = {
-  color: "yellow",
-  density: .4,
-  lin_damp: 3,
-  effective_radius: 2,
-  force: .4,
+  color: "brown",
+  density: 8,
+  lin_damp: 9,
+  effective_radius: 3,
+  force: 1,
   score_value: 500,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices: 
+  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices: 
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}], 
+  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],*/
+  shape_polygons: [{type: "circle", x: 0, y: 0, r: .2},
+  /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
+  {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
+  {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
+  ],
   description: "Leaves a sticky trail behind it. Enemies that move through the trail will get stuck to the ground, slowing them down significantly. Upon impact, slows you for a long duration.",
   className: Goo
 
@@ -321,7 +326,7 @@ impulse_enemy_stats["second boss"] = {
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 100000,
+  score_value: [1000000, 5000000, 15000000],
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices: 
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],

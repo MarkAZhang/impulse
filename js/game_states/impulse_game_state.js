@@ -163,10 +163,10 @@ ImpulseGameState.prototype.draw = function(ctx) {
         ctx.beginPath()
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 3
-        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*this.draw_factor, this.level.enemies[j].body.GetPosition().y*this.draw_factor)
+        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*this.draw_factor, this.level.enemies[j].body.GetPosition().y*this.draw_factor + topbarHeight)
         for(var i = 0; i < this_path.length; i++)
         {
-            ctx.lineTo(this_path[i].x*this.draw_factor, this_path[i].y*this.draw_factor)
+            ctx.lineTo(this_path[i].x*this.draw_factor, this_path[i].y*this.draw_factor + topbarHeight)
         }
         ctx.stroke()
         ctx.lineWidth = 1

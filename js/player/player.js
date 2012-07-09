@@ -346,13 +346,14 @@ Player.prototype.draw = function(context) {
     }
     else if(this.status_duration[2] > 0)
     {
-      context.fillStyle = 'yellow'
+      context.fillStyle = Goo.prototype.goo_color_rgb
       context.globalAlpha = .5
       context.fill()
     }
     else if(this.status_duration[3] > 0)
     {
       context.fillStyle = 'cyan'
+      context.globalAlpha = .5
       context.fill()
     }
     context.globalAlpha = 1

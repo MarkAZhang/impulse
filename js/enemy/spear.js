@@ -17,11 +17,13 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.stun_length = 5000 //after being hit by player, becomes stunned
 
+
   this.do_yield = false
 
   this.entered_arena = false
   this.entered_arena_delay = 2000
   this.entered_arena_timer = 2000
+  this.last_stun = this.entered_arena_delay
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
@@ -53,7 +55,8 @@ Spear.prototype.modify_movement_vector = function(dir) {
 Spear.prototype.additional_processing = function(dt) {
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
-    this.entered_arena_timer = this.entered_arena_delay
+    this.silence(this.entered_arena_delay)
+    this.last_stun = this.entered_arena_delay
     this.entered_arena = true
   }
 
@@ -65,7 +68,7 @@ Spear.prototype.additional_processing = function(dt) {
     this.entered_arena = false
   }
   
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && (this.entered_arena && this.entered_arena_timer <= 0)
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && this.entered_arena
   
 }
 
@@ -77,12 +80,13 @@ Spear.prototype.player_hit_proc = function() {
 
 Spear.prototype.process_impulse = function(attack_loc, impulse_force) {
   this.silence(this.stun_length)
+  this.last_stun = this.stun_length
 }
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
   if(this.status_duration[1] > 0) {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.stun_length), true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
     context.strokeStyle = "gray"
     context.stroke()

@@ -47,6 +47,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.spawned_harpoons = false
 
+  this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 2)
 }
 
 BossTwo.prototype.additional_processing = function(dt) {
@@ -68,6 +69,8 @@ BossTwo.prototype.additional_processing = function(dt) {
   else if(this.spawned == false){
     this.spawned = true
     this.visibility = 1
+    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+
   }
 
   this.arm_core_angle += Math.PI * 2 * dt / this.arm_full_rotation
