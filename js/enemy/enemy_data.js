@@ -83,16 +83,19 @@ impulse_enemy_stats["goo"] = {
 
 impulse_enemy_stats["disabler"] = {
   color: "rgb(205, 201, 201)",
-  density: 1,
+  density: 8,
   lin_damp: 3,
-  effective_radius: 2,
+  effective_radius: 3,
   force: .7,
   score_value: 800,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices: 
+  shape_polygons: [{type: "circle", x: 0, y: 1, r: .2},
+    {type: "circle", x: 0, y: -1, r: .2}
+    ],
+  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices: 
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
   description: "Leaves a staticky trail behind it, silencing the special abilties of all entities that enter the trail. Upon impact, silences your impulse for a long duration.",
   className: Disabler
 }
@@ -117,10 +120,10 @@ impulse_enemy_stats["crippler"] = {
 
 impulse_enemy_stats["wisp"] = {
   color: "rgb(152, 251, 152)",
-  density: 1,
+  density: 2,
   lin_damp: 3,
   effective_radius: .5,
-  force: .2,
+  force: .4,
   score_value: 600,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices: 
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -322,7 +325,7 @@ impulse_enemy_stats["first boss"] = {
 
 impulse_enemy_stats["second boss"] = {
   color: "gray",//"rgb(244, 164, 96)",
-  density: 1,
+  density: 1.6,
   lin_damp: 3,
   effective_radius: 3,
   force: 0,

@@ -41,7 +41,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_duration = this.shoot_interval - 1
 
-  this.shooter_types = [0, 0]//0 = stunner, 1 = spear, 2 = tank
+  this.shooter_types = [0, 0]//0 = stunner, 1 = spear, 2 = boss
 
   this.shooter_enemies = ["stunner", "spear", "tank"]
 
@@ -73,6 +73,8 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.red_visibility = 0
 
   this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 2)
+
+  this.boss_force = 100
 
 }
 
@@ -286,7 +288,15 @@ BossOne.prototype.move = function() {
   this.set_heading(this.player.body.GetPosition())
 }
 
-BossOne.prototype.collide_with = function() {
+BossOne.prototype.collide_with = function(other) {
+  if(this.dying || !this.spawned)//ensures the collision effect only activates once
+    return
+
+  if(other === this.player && this.check_player_intersection(this.player)) {
+   
+    this.player_hit_proc()
+    this.impulse_game_state.reset_combo()
+  }
 
 }
 BossOne.prototype.get_impulse_sensitive_pts = function() {
@@ -305,4 +315,9 @@ BossOne.prototype.global_lighten = function() {
     if(this.level.enemies[i].id != this.id)
       this.level.enemies[i].lighten(Math.round(this.lighten_duration))
   }
+}
+
+BossOne.prototype.player_hit_proc = function() {
+  var boss_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 }

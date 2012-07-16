@@ -17,6 +17,8 @@ function Wisp(world, x, y, id, impulse_game_state) {
 
   this.visibility_timer = 0
 
+  this.blind_interval = 4000
+
 }
 
 Wisp.prototype.additional_processing = function(dt) {
@@ -28,7 +30,6 @@ Wisp.prototype.additional_processing = function(dt) {
 }
 
 Wisp.prototype.player_hit_proc = function() {
-  this.level.obstacles_visible = false
-  setTimeout(function(_this){return function() {_this.level.obstacles_visible = true}}(this), 4000)
+  this.level.obstacles_visible_timer = this.blind_interval
 }
 

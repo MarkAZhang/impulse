@@ -41,6 +41,19 @@ function FixedHarpoon(world, x, y, id, impulse_game_state) {
   this.safe = true
   this.harpoon_joint = null
 
+  this.do_yield = false
+
+  this.check_harpoon_interval = 5//so that we don't check for harpooning every frame
+  this.check_harpoon_timer = this.check_harpoon_interval
+
+  this.check_for_good_target_point_interval = 15
+
+  this.check_for_good_target_point_timer = this.check_for_good_target_point_interval
+
+  this.check_safety_interval = 8
+
+  this.check_safety_timer = this.check_safety_interval
+
 }
 
 FixedHarpoon.prototype.get_target_point = function() {
@@ -70,5 +83,14 @@ FixedHarpoon.prototype.move = function() {
       this.pathfinding_counter = 2 * this.pathfinding_delay
     }
     this.enemy_move()
+  }
+}
+
+FixedHarpoon.prototype.check_cancel_harpoon = function() {
+  if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
+    this.disengage()
+  }
+  else if(this.harpooned && this.player.dying) {
+    this.disengage()
   }
 }

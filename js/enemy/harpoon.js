@@ -241,18 +241,24 @@ Harpoon.prototype.additional_processing = function(dt) {
     else if(this.harpooning && p_dist(this.body.GetPosition(), this.harpoon_loc) >= this.harpoon_length) {
       this.harpooning = false
     }
-    else if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
-      this.disengage()
-    }
-    else if(this.harpooned && !check_bounds(0, this.body.GetPosition(), draw_factor)) {
-      this.disengage()
-    }
-    else if(this.harpooned && this.player.dying) {
-      this.disengage()
-    }
+
+    this.check_cancel_harpoon()
+    
     this.check_harpoon_timer = this.check_harpoon_interval
   } 
 
+}
+
+Harpoon.prototype.check_cancel_harpoon = function() {
+  if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
+    this.disengage()
+  }
+  else if(this.harpooned && !check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.disengage()
+  }
+  else if(this.harpooned && this.player.dying) {
+    this.disengage()
+  }
 }
 
 Harpoon.prototype.additional_drawing = function(context, draw_factor) {

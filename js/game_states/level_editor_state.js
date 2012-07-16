@@ -142,6 +142,8 @@ LevelEditorState.prototype.on_mouse_down = function(x, y) {
 
 LevelEditorState.prototype.on_click = function(x, y) {
 
+  if(!check_bounds(0, {x:x, y:y}, 1)) return
+
   if(this.selected_v != null) {
     this.polygons[this.selected_v[0]][this.selected_v[1]].x = x
     this.polygons[this.selected_v[0]][this.selected_v[1]].y = y

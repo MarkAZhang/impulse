@@ -31,7 +31,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.obstacle_edges = []
 
   this.obstacle_visibility = 1 //for Wisp
-  this.obstacles_visible = true
+  this.obstacles_visible_timer = 0
   this.obstacle_vertices = []
 
   this.enemies = []
@@ -80,14 +80,16 @@ Level.prototype.process = function(dt) {
       this.boss_delay_timer -= dt
     }
   //handle obstacle visibility
-    if(this.obstacles_visible && this.obstacle_visibility < 1)
+    if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
     {
       this.obstacle_visibility = Math.min(1, this.obstacle_visibility + dt/1000)
     }
-    else if(!this.obstacles_visible && this.obstacle_visibility > 0)
+    else if(this.obstacles_visible_timer > 0 && this.obstacle_visibility > 0)
     {
       this.obstacle_visibility = Math.max(0, this.obstacle_visibility - dt/1000)
     }
+    if (this.obstacles_visible_timer > 0)
+      this.obstacles_visible_timer -= dt
 
     this.dead_enemies = []
     this.spawned_enemies = []
