@@ -78,7 +78,9 @@ Spear.prototype.player_hit_proc = function() {
   this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
 }
 
-Spear.prototype.process_impulse = function(attack_loc, impulse_force) {
+Spear.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+    this.body.GetWorldCenter()) 
   this.silence(this.stun_length)
   this.last_stun = this.stun_length
 }

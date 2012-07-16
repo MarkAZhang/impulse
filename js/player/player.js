@@ -257,9 +257,8 @@ Player.prototype.process = function(dt) {
               if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
               {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
-                this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.impulse_force*Math.cos(angle), this.impulse_force*Math.sin(angle)), this.level.enemies[i].body.GetWorldCenter())
                 this.enemies_hit.push(this.level.enemies[i].id)
-                this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force/5)
+                this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
               }
               if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpooned) {
                 this.level.enemies[i].disengage()

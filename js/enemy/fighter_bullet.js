@@ -3,6 +3,8 @@ FighterBullet.prototype = new Enemy()
 FighterBullet.prototype.constructor = FighterBullet
 
 function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
+
+  if(!world) return
   this.type = "fighter_bullet"
   
   this.init(world, x, y, id, impulse_game_state)
@@ -66,7 +68,7 @@ FighterBullet.prototype.move = function() {
   this.body.SetAngle(_atan({x: 0, y: 0}, this.v))
 }
 
-FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force) {
+FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   var temp_dir = new b2Vec2(this.body.GetPosition().x - attack_loc.x, this.body.GetPosition().y - attack_loc.y)
   temp_dir.Normalize()
   temp_dir.Multiply(impulse_force)

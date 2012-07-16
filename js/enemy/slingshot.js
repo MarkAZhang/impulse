@@ -101,7 +101,9 @@ Slingshot.prototype.check_death = function() {
   
 }
 
-Slingshot.prototype.process_impulse = function(attack_loc, impulse_force) {
+Slingshot.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+    this.body.GetWorldCenter())
   if(this.status_duration[1] <= 0) {
     this.slingshot_point = this.body.GetPosition().Copy()
     this.slingshot_mode = true

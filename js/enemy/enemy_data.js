@@ -207,6 +207,22 @@ impulse_enemy_stats["fighter_bullet"] = {
   className: FighterBullet
 }
 
+impulse_enemy_stats["piercing_fighter_bullet"] = {
+  color: "rgb(255, 0, 0)",
+  density: 5,
+  lin_damp: 3,
+  effective_radius: .3,
+  force: 1,
+  score_value: 0,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices: 
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  className: PiercingFighterBullet
+}
+
 impulse_enemy_stats["harpoon"] = {
   color: "orange",
   density: 3,

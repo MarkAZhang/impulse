@@ -614,8 +614,9 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 
 }
 
-Enemy.prototype.process_impulse = function() {
-
+Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+    this.body.GetWorldCenter())
 }
 
 Enemy.prototype.stun = function(dur) {

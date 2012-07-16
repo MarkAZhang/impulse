@@ -55,9 +55,10 @@ Tank.prototype.activated_processing = function(dt) {
   
 }
 
-Tank.prototype.process_impulse = function(attack_loc, impulse_force) {
+Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+    this.body.GetWorldCenter())
   this.hot_timer = this.hot_interval
-  console.log("TANK HIT")
 }
 
 Tank.prototype.check_death = function()

@@ -611,7 +611,6 @@ impulse_level_data['LEVEL 3-3'] = {
 impulse_level_data['LEVEL 3-4'] = {
   enemies: {
               tank: [0, 5, 2, 1, 30],
-              wisp: [0, 10, 2, 1, 20],
               harpoon: [0, 6, 1, 1, 10],
               disabler: [0, 5, 1, 1, 2]
            },
@@ -639,10 +638,11 @@ impulse_level_data['LEVEL 3-4'] = {
 
 impulse_level_data['LEVEL 3-5'] = {
   enemies: {
-              mote: [10, 5, 2, 2, 30],
-              goo: [10, 10, 2, 1, 10],
-              harpoon: [10, 10, 1, 1, 20],
-              fighter: [0, 8, 1, 1, 20]
+              spear: [0, 8, 1, 1, 15],
+              tank: [0, 5, 1, 1, 15],
+              mote: [0, 5, 1, 2, 20],
+              disabler: [0, 10, 1, 1, 2],
+              fighter: [0, 8, 1, 1, 8]
                 
            },
   dominant_enemy: "fighter",
@@ -661,17 +661,19 @@ impulse_level_data['LEVEL 3-5'] = {
   },
   buffer_radius: 1,
   cutoff_scores: [250000, 750000, 1500000],
-  colored_interface: true
+  colored_interface: true,
+  player_loc: {x: 400, y: 300}
 
 }
 
 impulse_level_data['LEVEL 3-6'] = {
   enemies: {
 
-              stunner: [10, 5, 3, 2, 30],
-              tank: [5, 8, 2, 2, 30],
-              goo: [10, 6, 2, 2, 10],
-              fighter: [0, 8, 1, 1, 20]
+              stunner: [0, 3, 1, 1, 20],
+              goo: [0, 10, 1, 0, 2],
+              wisp: [0, 5, 1, 2, 20],
+              harpoon: [0, 6, 1, 1, 15],
+              fighter: [0, 6, 1, 1, 15]
                 
            },
   dominant_enemy: "fighter",
@@ -689,7 +691,8 @@ impulse_level_data['LEVEL 3-6'] = {
   },
   buffer_radius: 1,
   cutoff_scores: [250000, 750000, 1500000],
-  colored_interface: true
+  colored_interface: true,
+  player_loc: {x: 400, y: 50}
 
 }
 

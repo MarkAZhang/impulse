@@ -55,6 +55,8 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.check_safety_timer = this.check_safety_interval
 
+  this.silence_on_impulse_length = 1000
+
 }
 
 Harpoon.prototype.get_target_point = function() {
@@ -298,7 +300,9 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
   }
 }
 
-Harpoon.prototype.process_impulse = function() {
+Harpoon.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+    this.body.GetWorldCenter())
   if(this.harpooning)
     this.silence(1000)
   this.harpooning = false

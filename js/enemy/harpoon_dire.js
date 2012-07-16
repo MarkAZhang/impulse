@@ -41,6 +41,21 @@ function HarpoonDire(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
+  this.check_harpoon_interval = 5//so that we don't check for harpooning every frame
+  this.check_harpoon_timer = this.check_harpoon_interval
+
+  this.state = "seek" //seek or flee
+
+  this.check_for_good_target_point_interval = 15
+
+  this.check_for_good_target_point_timer = this.check_for_good_target_point_interval
+
+  this.check_safety_interval = 8
+
+  this.check_safety_timer = this.check_safety_interval
+
+  this.silence_on_impulse_length = 2000
+
 }
 
 HarpoonDire.prototype.get_target_point = function() {
@@ -88,10 +103,4 @@ HarpoonDire.prototype.move = function() {
 HarpoonDire.prototype.can_harpoon = function() {
   return (this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && check_bounds(0, this.body.GetPosition(), draw_factor)
    && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length)
-}
-
-HarpoonDire.prototype.process_impulse = function() {
-  if(this.harpooning)
-    this.silence(2000)
-  this.harpooning = false
 }
