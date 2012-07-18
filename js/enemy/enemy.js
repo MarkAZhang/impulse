@@ -423,7 +423,7 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
    
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced
@@ -640,7 +640,7 @@ Enemy.prototype.lighten = function(dur) {
 this.status_duration[3] = Math.max(dur, this.status_duration[3])
 }
 
-Enemy.prototype.check_player_intersection = function(other) {
+/*Enemy.prototype.check_player_intersection = function(other) {
   for(var i = 0; i < this.shapes.length; i++) {
     
     if(this.shapes[i] instanceof b2PolygonShape) {
@@ -665,7 +665,7 @@ Enemy.prototype.check_player_intersection = function(other) {
   } 
   return false
   
-}
+}*/
 
 Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
   //checks if the segment intersects this enemy

@@ -306,7 +306,7 @@ BossTwo.prototype.collide_with = function(other) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
     this.impulse_game_state.reset_combo()
     if (!this.small_exploding) {
       this.small_exploding = true

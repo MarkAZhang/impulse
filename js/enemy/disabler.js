@@ -27,7 +27,7 @@ Disabler.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
    
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced

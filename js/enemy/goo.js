@@ -81,23 +81,23 @@ Goo.prototype.additional_processing = function(dt) {
       for(var j = 0; j < this.level.enemies.length; j++) {
         if(pointInPolygon(this.goo_polygons[i]['points'], this.level.enemies[j].body.GetPosition()))
         {
-          if(!(this.level.enemies[j] instanceof Goo))
-          this.trail_effect(this.level.enemies[j])
+          if(this.level.enemies[j].className != this.className)
+            this.trail_effect(this.level.enemies[j])
         }
       }
     }
     this.goo_polygons[i]['duration'] -= dt
   }
 
-  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.effective_radius) {
+  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.effective_radius) {
     this.trail_effect(this.player)
   }
 
   if(this.goo_check_intersections_timer <= 0) {
     for(var j = 0; j < this.level.enemies.length; j++) {
-      if(p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.effective_radius)
+      if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.effective_radius)
       {
-        if(!(this.level.enemies[j] instanceof Goo))
+        if(this.level.enemies[j].className != this.className)
           this.trail_effect(this.level.enemies[j])
       }
     }
@@ -212,7 +212,7 @@ Goo.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
    
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced

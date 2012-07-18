@@ -44,6 +44,15 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.gun_radius = 1.5
 
+  this.guns_inside = []
+  for (var i = 0; i < this.num_guns; i++) {
+    this.guns_inside.push(true)
+  }
+
+  this.guns_check_inside_interval = 5
+
+  this.guns_check_inside_timer = this.guns_check_inside_interval
+
   this.silence_interval = 13400
 
   this.silence_timer = this.silence_interval - 1
@@ -74,14 +83,24 @@ BossThree.prototype.additional_processing = function(dt) {
 
     for(var j = 0; j < gun_locs.length; j++) {
 
-      if(!check_bounds(50/draw_factor, gun_locs[j], draw_factor)) continue
-      var new_enemy = new FighterBullet(this.world, gun_locs[j].x, gun_locs[j].y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - gun_locs[j].x), (this.player.body.GetPosition().y - gun_locs[j].y), this.id)
-      new_enemy.color = this.silence_timer < 0 ? "red" : this.color
+      if(this.guns_check_inside_timer <= 0) {
+        this.guns_inside[j] = isVisible(this.player.body.GetPosition(), gun_locs[j], this.level.obstacle_edges)
+      }
+
+      if(!this.guns_inside[j]) continue
+      if (this.silence_timer < 0)
+        var new_enemy = new PiercingFighterBullet(this.world, gun_locs[j].x, gun_locs[j].y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - gun_locs[j].x), (this.player.body.GetPosition().y - gun_locs[j].y), this.id)
+      else
+        var new_enemy = new FighterBullet(this.world, gun_locs[j].x, gun_locs[j].y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - gun_locs[j].x), (this.player.body.GetPosition().y - gun_locs[j].y), this.id)
       new_enemy.bullet_force = 100
       if(this.silence_timer < 0) new_enemy.v.Multiply(2)
       this.level.spawned_enemies.push(new_enemy)
       this.level.enemy_counter += 1
     }
+    if(this.guns_check_inside_timer <= 0) {
+      this.guns_check_inside_timer = this.guns_check_inside_interval
+    }
+    this.guns_check_inside_timer -= 1
 
   }
   if(this.silence_timer < 0 && !this.silenced) {
@@ -166,13 +185,11 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
     }
     context.closePath()
 
-    var inside = check_bounds(50/draw_factor, gun_locs[j], draw_factor)
-
-    context.strokeStyle = inside ? (this.silence_timer < 0 ? "red" : this.color): "gray"
+    context.strokeStyle = this.guns_inside[j] ? (this.silence_timer < 0 ? "red" : this.color): "gray"
     context.lineWidth = 2
     context.stroke()
     context.globalAlpha /= 2
-    context.fillStyle = inside ?  (this.silence_timer < 0 ? "red" : this.color): "gray"
+    context.fillStyle = this.guns_inside[j] ?  (this.silence_timer < 0 ? "red" : this.color): "gray"
     context.fill()
     context.restore()
 

@@ -24,6 +24,7 @@ function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
   this.parent_id = parent_id
 
   this.reflected = false
+  this.body.SetBullet(true)
 
 }
 
@@ -36,7 +37,7 @@ FighterBullet.prototype.start_death = function(death) {
 FighterBullet.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {
       var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())

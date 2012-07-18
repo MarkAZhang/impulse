@@ -339,7 +339,7 @@ ImpulseGameState.prototype.setup_world_next = function(level_name) {
     this.player = new Player(this.world, r_p.x, r_p.y, this)
   }
   var contactListener = new b2ContactListener;
-  contactListener.PreSolve = this.handle_collisions
+  contactListener.BeginContact = this.handle_collisions
   this.world.SetContactListener(contactListener);
   this.pause = false
   this.ready = true

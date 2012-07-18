@@ -96,7 +96,7 @@ Tank.prototype.collide_with = function(other) {
   if(this.dying || this.activated)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
    
     if(this.status_duration[1] <= 0) {
       this.activated = true

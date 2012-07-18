@@ -119,8 +119,6 @@ Fighter.prototype.additional_drawing = function(context) {
     context.strokeStyle = "gray"
     context.stroke()
   }
-
-  
 }
 
 /*Fighter.prototype.get_target_point = function() {
@@ -151,3 +149,8 @@ Fighter.prototype.set_heading = function(endPt) {
   var heading = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.body.SetAngle(heading)
 }*/
+
+Fighter.prototype.collide_with = function(other) {
+//function for colliding with the player
+
+}

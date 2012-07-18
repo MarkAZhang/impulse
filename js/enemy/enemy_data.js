@@ -157,7 +157,7 @@ impulse_enemy_stats["wispdire"] = {
 
 impulse_enemy_stats["fighter"] = {
   color: "rgb(30, 144, 255)",
-  density: 3,
+  density: 2.5,
   lin_damp: 3,
   effective_radius: 1,
   force: 1.3,
@@ -382,11 +382,11 @@ impulse_enemy_stats["fixed_harpoon"] = {
 
 impulse_enemy_stats["third boss"] = {
   color: "rgb(0, 0, 205)",//"rgb(244, 164, 96)",
-  density: 1,
+  density: 1.5,
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 100000,
+  score_value: [1000000, 5000000, 15000000],
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices: 
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],

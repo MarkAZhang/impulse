@@ -292,7 +292,7 @@ BossOne.prototype.collide_with = function(other) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
 
-  if(other === this.player && this.check_player_intersection(this.player)) {
+  if(other === this.player) {
    
     this.player_hit_proc()
     this.impulse_game_state.reset_combo()
