@@ -52,7 +52,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.draw_factor = impulse_game_state.draw_factor
   this.status = "normal"  //currently unused
-  this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed], time left for each status
+  this.status_duration = [0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
   this.slow_factor = .3
@@ -141,6 +141,10 @@ Player.prototype.lighten = function(dur) {
   this.status_duration[3] = Math.max(dur, this.status_duration[3])
 }
 
+Player.prototype.confuse= function(dur) {
+  this.status_duration[4] = Math.max(dur, this.status_duration[4])
+}
+
 Player.prototype.mouse_down= function(pos) {
   this.last_mouse_down = (new Date()).getTime()
   this.mouse_pressed = true
@@ -211,6 +215,10 @@ Player.prototype.process = function(dt) {
     this.body.SetLinearDamping(this.lin_damp)
   }
 
+  if(this.status_duration[4] > 0) {
+    this.status_duration[4] -= dt
+  }
+
   cur_time = (new Date()).getTime()
 
   if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
@@ -222,6 +230,10 @@ Player.prototype.process = function(dt) {
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
+
+  if (this.status_duration[4] > 0) {
+    this.impulse_angle += Math.PI
+  }
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
@@ -283,6 +295,11 @@ Player.prototype.process = function(dt) {
     
 
     var force = Math.abs(f_x)+Math.abs(f_y)==2 ? f/Math.sqrt(2) : f;
+
+    if(this.status_duration[4] > 0) {
+      f_x *= -1
+      f_y *= -1
+    }
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
   }
 }
@@ -352,7 +369,13 @@ Player.prototype.draw = function(context) {
     else if(this.status_duration[3] > 0)
     {
       context.fillStyle = 'cyan'
-      context.globalAlpha = .5
+      context.globalAlpha = .8
+      context.fill()
+    }
+    else if(this.status_duration[4] > 0)
+    {
+      context.fillStyle = 'green'
+      context.globalAlpha = .8
       context.fill()
     }
     context.globalAlpha = 1

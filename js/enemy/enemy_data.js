@@ -100,7 +100,7 @@ impulse_enemy_stats["disabler"] = {
   className: Disabler
 }
 
-impulse_enemy_stats["crippler"] = {
+/*impulse_enemy_stats["crippler"] = {
   color: "rgb(255, 20, 147)",
   density: 0.9,
   lin_damp: 4,
@@ -114,6 +114,19 @@ impulse_enemy_stats["crippler"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], 
   description: "Leaves a paralytic trail behind it, causing all entities that enter the trail to be completely stunned (cannot move and no special abilities) until the trail fades. Upon impact, stuns you for a long duration.",
   className: Crippler
+
+}*/
+
+impulse_enemy_stats["troll"] = {
+  color: "rgb(255, 20, 147)",
+  density: .3,
+  lin_damp: 3,
+  effective_radius: .7,
+  force: 0.2,
+  score_value: 2000,
+  shape_polygons: [{type: "circle", x: 0, y: 0, r: .7}],
+  description: "Hitting him at the wrong time will cause him to zoom towards you. Upon impact, reverses both your movement and your shooting controls.",
+  className: Troll
 
 }
 
@@ -408,7 +421,7 @@ impulse_enemy_stats["fourth boss"] = {
   lin_damp: 3,
   effective_radius: 3,
   force: 0,
-  score_value: 200000,
+  score_value: [1000000, 5000000, 15000000],
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices: 
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -420,7 +433,7 @@ impulse_enemy_stats["fourth boss"] = {
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
   
   ],
-  description: "Has a Spawn Laser which sweeps around the boss. More info coming",
+  description: "Has a Spawn Laser which sweeps around the boss. Fires a stun laser and a death laser continuously",
   className: BossFour
 
 }
@@ -456,6 +469,6 @@ impulse_enemy_kills_star_cutoffs = {
   "disabler": 50,
   "fighter": 50,
   "slingshot": 50,
-  "crippler": 15,
-  "deathray": 15,
+  "troll": 50,
+  "deathray": 25,
 }

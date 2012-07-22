@@ -47,7 +47,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "disabler" : 2,
    "fighterdire" : 3,
    "slingshot" : 4,
-   "crippler" : 1,
+   "troll" : 4,
    "deathraydire" : 2
  }
 
@@ -62,7 +62,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "disabler" : 20,
    "fighterdire" : 30,
    "slingshot" : 10,
-   "crippler" : 50,
+   "troll" : 10,
    "deathraydire" : 50
  }
  
@@ -70,7 +70,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
  this.possible_spawn_sets = [
   
   ["fighterdire", "spear"],
-  ["goo", "crippler"],
+  ["goo", "troll"],
   ["tank", "disabler"],
   ["stunner", "deathraydire"],
   ["mote", "slingshot"],
@@ -276,7 +276,7 @@ BossFour.prototype.additional_processing = function(dt) {
       var loc = [this.body.GetPosition().x + (5 * Math.floor(j/4) + this.effective_radius) * Math.cos((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI),
        this.body.GetPosition().y + (5 * Math.floor(j/4) + this.effective_radius) * Math.sin((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI)]
       var new_enemy = new BossFourSpawner(this.world, loc[0], loc[1], this.level.enemy_counter,
-      this.impulse_game_state, spawner_set[i], this.spawner_spawn_count[spawner_set[i]], this.spawner_spawn_force[spawner_set[i]], this)
+      this.impulse_game_state, spawner_set[i], this.spawner_spawn_count[spawner_set[i]] * this.get_time_factor(), this.spawner_spawn_force[spawner_set[i]], this)
       this.level.spawned_enemies.push(new_enemy)
       var dir = new b2Vec2(Math.cos((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI), Math.sin((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI))
       dir.Multiply(this.spawner_push_force)
@@ -474,4 +474,9 @@ BossFour.prototype.get_impulse_sensitive_pts = function() {
 
 BossFour.prototype.explode = function() {
   
+}
+
+BossFour.prototype.get_time_factor = function() {
+  //spawn increases by 30% for every minute
+  return 1 + (this.impulse_game_state.game_numbers.seconds/60) * .2
 }

@@ -28,13 +28,13 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.safe = true
 
-  this.shoot_loc_forward_length = this.effective_radius * 3
+  this.shoot_loc_forward_length = this.effective_radius * 2
 
   this.shoot_loc_side_length = this.effective_radius
 
   this.piercing_bullets = 0
 
-  this.piercing_bullet_reload_interval = 3000
+  this.piercing_bullet_reload_interval = 2000
 
   this.piercing_bullet_reload_timer = this.piercing_bullet_reload_interval
 

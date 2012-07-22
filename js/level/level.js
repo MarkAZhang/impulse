@@ -44,7 +44,7 @@ Level.prototype.init = function(data, impulse_game_state) {
     "mote": Mote,
     "goo": Goo,
     "disabler": Disabler,
-    "crippler": Crippler,
+    "troll": Troll,
     "wisp": Wisp,
     "fighter": Fighter,
     "harpoon": Harpoon,
