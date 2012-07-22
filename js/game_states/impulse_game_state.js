@@ -2,7 +2,7 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(level_name, world) {
+function ImpulseGameState(world, level, visibility_graph) {
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -24,15 +24,37 @@ function ImpulseGameState(level_name, world) {
 
   this.progress_bar_prop = 0
   this.progress_bar_adjust = 3000
+  this.level = level
+  this.level.reset() //we re-use the level
+  this.level_name = this.level.level_name
+  this.level.impulse_game_state = this
+  this.visibility_graph = visibility_graph
 
-  this.loading_screen()
-  setTimeout(function(this_state, level_name){return function(){this_state.setup_world_next(level_name)}}(this, level_name), 50)
-  
+  var gravity = new b2Vec2(000, 000);
+  var doSleep = false; //objects in our world will rarely go to sleep
+  this.world = new b2World(gravity, doSleep); 
+    
+  //add walls
+  this.addWalls()
+
+  if(this.level.player_loc) {
+    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
+  }
+  else {
+    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
+    this.player = new Player(this.world, r_p.x, r_p.y, this)
+  }
+  var contactListener = new b2ContactListener;
+  contactListener.BeginContact = this.handle_collisions
+  this.world.SetContactListener(contactListener);
+  this.pause = false
+  this.ready = true
+
   this.world_visible = true
 
   this.world_visibility = 1
 
-  if(level_name.slice(0, 4) == "BOSS") 
+  if(this.level_name.slice(0, 4) == "BOSS") 
     play_song("driven", true)
   else
     play_song(world_music_map[this.world_num], true)
@@ -307,7 +329,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(keyCode == 32) {
     this.pause = !this.pause
     if(this.pause) {
-      set_dialog_box(new PauseMenu(this.level, this.game_numbers, this))
+      set_dialog_box(new PauseMenu(this.level, this.game_numbers, this, this.visibility_graph))
     }
   }
   else
@@ -317,32 +339,6 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
 ImpulseGameState.prototype.on_key_up = function(keyCode) {
   if(!this.ready) return
   this.player.keyUp(keyCode)
-}
-
-ImpulseGameState.prototype.setup_world_next = function(level_name) {
-  var gravity = new b2Vec2(000, 000);
-  var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep); 
-    
-  //add walls
-  this.addWalls()
-
-  this.level = new Level(impulse_level_data[level_name], this)
-  this.level_name = this.level.level_name
-    
-  this.generate_level()
-  if(this.level.player_loc) {
-    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
-  }
-  else {
-    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
-    this.player = new Player(this.world, r_p.x, r_p.y, this)
-  }
-  var contactListener = new b2ContactListener;
-  contactListener.BeginContact = this.handle_collisions
-  this.world.SetContactListener(contactListener);
-  this.pause = false
-  this.ready = true
 }
 
 ImpulseGameState.prototype.addWalls = function() {
@@ -367,12 +363,6 @@ ImpulseGameState.prototype.addWalls = function() {
     bodyDef.position.Set(wall_pos[i].x, wall_pos[i].y)
     this.world.CreateBody(bodyDef).CreateFixture(fixDef);
   }
-}
-
-ImpulseGameState.prototype.generate_level = function() {
-  this.level.generate_obstacles()
-  this.visibility_graph = new VisibilityGraph(this.level.boundary_polygons, this.level)
-
 }
 
 ImpulseGameState.prototype.handle_collisions = function(contact) {
@@ -411,4 +401,8 @@ ImpulseGameState.prototype.increment_combo = function() {
 ImpulseGameState.prototype.reset_combo = function() {
   this.game_numbers.base_combo = 1
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+}
+
+ImpulseGameState.prototype.game_over = function() {
+  switch_game_state(new GameOverState(this.game_numbers, this.level, this.world_num, this.visibility_graph))
 }

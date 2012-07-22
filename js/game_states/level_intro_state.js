@@ -8,7 +8,6 @@ function LevelIntroState(level_name, world) {
   this.level_name = level_name
   this.buttons = []
   this.world_num = world
-  this.buttons.push(new SmallButton("START LEVEL", 20, canvasWidth - 150, canvasHeight - 30, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(_this.level_name, _this.world_num))}}(this)))
   this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, canvasHeight - 30, 200, 50, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
@@ -35,7 +34,31 @@ function LevelIntroState(level_name, world) {
       this.num_enemy_type += 1
     }
   }
-  this.enemy_image_size =40
+  this.enemy_image_size = 40
+
+  this.level = new Level(impulse_level_data[this.level_name], this)
+
+  this.level.generate_obstacles()
+
+  var visibility_graph_worker = new Worker("js/visibility_graph_worker.js")
+
+  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, obstacle_edges: this.level.obstacle_edges})
+
+  visibility_graph_worker.onmessage = function(_this) {
+    return function(event) {
+      console.log("Worker has generated visibility graph")
+      if (event.data.percentage) {
+        _this.load_percentage = event.data.percentage
+
+      }
+      else if(event.data.poly_edges)
+        _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
+        _this.load_percentage = 1
+        _this.load_complete()
+    }
+
+  }(this)
+
   
 }
 
@@ -67,6 +90,13 @@ LevelIntroState.prototype.draw = function(ctx) {
   ctx.strokeStyle = "rgba(0, 0, 0, .3)"
   ctx.stroke()
 
+  if (this.load_percentage < 1) {
+    ctx.textAlign = 'center'
+    draw_progress_bar(ctx, canvasWidth - 150, canvasHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
+    ctx.font = '20px Century Gothic'
+    ctx.fillStyle = 'black'
+    ctx.fillText("LOADING", canvasWidth - 150, canvasHeight - 33)
+  }
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
@@ -143,4 +173,10 @@ LevelIntroState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
+}
+
+
+
+LevelIntroState.prototype.load_complete = function() {
+  this.buttons.push(new SmallButton("START LEVEL", 20, canvasWidth - 150, canvasHeight - 30, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph))}}(this)))
 }

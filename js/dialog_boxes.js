@@ -33,22 +33,23 @@ PauseMenu.prototype = new DialogBox()
 
 PauseMenu.prototype.constructor = PauseMenu
 
-function PauseMenu(level, game_numbers, game_state) {
+function PauseMenu(level, game_numbers, game_state, visibility_graph) {
   this.level = level
   this.game_numbers = game_numbers
   this.game_state = game_state
   this.level_name = this.level.level_name
+  this.visibility_graph = visibility_graph
   this.init(400, 300)
 
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
     
     this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
-          switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num))
+          switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
     this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
-          switch_game_state(new ImpulseGameState(ctx, _this.level_name, _this.game_state.world_num))
+          switch_game_state(new ImpulseGameState(_this.game_state.world_num, _this.level, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
   }

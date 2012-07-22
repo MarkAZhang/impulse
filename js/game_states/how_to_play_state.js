@@ -42,7 +42,7 @@ HowToPlayState.prototype.increment_state = function() {
   }
   if(this.state == 6) {
     if(player_data.first_time) {
-      switch_game_state(new ImpulseGameState(ctx, "LEVEL 1-1", 1))
+      switch_game_state(new LevelIntroState("LEVEL 1-1", 1))
       player_data.first_time = false
       save_game()
     }
@@ -93,6 +93,26 @@ HowToPlayState.prototype.process = function(dt) {
 HowToPlayState.prototype.draw = function(ctx) {
   if(!this.ready) return
 
+  /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
+  {
+      ctx.beginPath()
+      ctx.fillStyle = 'green';
+      ctx.arc(this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor, 2, 0, 2*Math.PI, true)
+      ctx.font = 'italic 10px sans-serif'
+      ctx.fillText(i, this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor)
+      ctx.fill()
+  }
+
+  for(var i = 0; i < this.visibility_graph.poly_edges.length; i++)
+  {
+      ctx.beginPath()
+      ctx.lineWidth = 1
+      ctx.strokeStyle = 'green';
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
+      ctx.stroke()
+  }*/
+
   if(this.state > 4) {
     for(var i = 0; i < this.buttons.length; i++)
     {
@@ -131,8 +151,15 @@ HowToPlayState.prototype.draw = function(ctx) {
     return
   }
 
+
+
+  ctx.translate(0, topbarHeight)//allows us to have a topbar
+
   this.level.draw(ctx, this.draw_factor)
+  
   this.player.draw(ctx)
+
+  ctx.translate(0, -topbarHeight)
 
   this.draw_interface(ctx)
   
@@ -165,41 +192,75 @@ HowToPlayState.prototype.draw = function(ctx) {
 
 HowToPlayState.prototype.draw_interface = function(ctx) {
   ctx.beginPath()
+
+  ctx.rect(0, 0, 800, topbarHeight)
+  ctx.fillStyle = "white"
+  ctx.fill()
+  ctx.strokeStyle = "black"
+  ctx.lineWidth = 2
+  ctx.stroke()
+  /*ctx.fillStyle = impulse_colors["world "+this.world_num]
+  ctx.globalAlpha = .3
+  ctx.fill()*/
+  ctx.globalAlpha = 1
+
+  ctx.beginPath()
+  ctx.moveTo(0, topbarHeight)
+  ctx.lineTo(800, topbarHeight)
+  ctx.strokeStyle = "black"
+  ctx.lineWidth = 2
+  ctx.stroke()
+
   ctx.font = '20px Century Gothic'
+  ctx.globalAlpha = 1
+
+  ctx.fillStyle = "black"
+
+  ctx.textAlign = 'left'
+  ctx.fillText(this.game_numbers.score, 10, 25)
+  
+
+  
+  ctx.textAlign = 'right'
+
+  if(this.stars < 3) {
+    ctx.font = '20px Century Gothic'
+    ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
+    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
+  }
+  else {
+    ctx.font = '20px Century Gothic'
+    ctx.fillStyle = impulse_colors[this.star_colors[2]]
+    ctx.fillText("WIN", canvasWidth - 10, 25)
+  }
+
+  var temp_stars = this.stars < 3 ? this.stars : 2
+
+  draw_progress_bar(ctx, 400, 20, 500, 10, this.progress_bar_prop, impulse_colors[this.star_colors[temp_stars]])
+  draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])
+
+  ctx.beginPath()
+
+  ctx.rect(350, 2, 100, topbarHeight-4)
+  ctx.fillStyle = "white"
+  ctx.globalAlpha = .6
+  ctx.fill()
+  ctx.globalAlpha = 1
+
+  ctx.textAlign = 'center'
+  ctx.font = '30px Century Gothic'
+  ctx.fillStyle = "black"
+  ctx.fillText("x"+this.game_numbers.combo, canvasWidth/2, 30)
+
+  ctx.font = '10px sans-serif'
+  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
   ctx.textAlign = 'left'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-  ctx.fillStyle = 'black'
-  if(this.state == 4) {
-    ctx.fillStyle = 'blue'
-    ctx.font = '25px Century Gothic'
-  }
-  ctx.fillText(this.game_numbers.last_time, 10, 25)
-  ctx.font = '20px Century Gothic'
-  ctx.fillStyle = 'black'
-  ctx.textAlign = 'right'
-  if(this.state == 3) {
-    ctx.fillStyle = 'blue'
-    ctx.font = '25px Century Gothic'
-  }
-
-  ctx.fillText("SCORE: "+this.game_numbers.score, canvasWidth - 10, 25)
   
-  ctx.font = '20px Century Gothic'
-  ctx.fillStyle = 'black'
-
-  if(this.state == 4) {
-    ctx.fillStyle = 'blue'
-    ctx.font = '25px Century Gothic'
-  }
-  ctx.fillText("x"+this.game_numbers.combo, canvasWidth - 10, 50)
-
-  ctx.font = '20px Century Gothic'
-  ctx.fillStyle = 'black'
-  ctx.textAlign = 'center'
-  ctx.fillText("HOW TO PLAY", canvasWidth/2, 25)
+  ctx.fillText(this.game_numbers.last_time, 10, (canvasHeight) - 5)
 
   ctx.textAlign = 'right'
   if(this.fps_counter == null)
@@ -218,14 +279,14 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   this.fps_counter+=1
   ctx.beginPath()
   ctx.font = '10px sans-serif'
-  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, canvasHeight - 5)
+  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, (canvasHeight) - 5)
   ctx.fill()
 
   for(var i = 0; i < this.score_labels.length; i++)
   {
     ctx.beginPath()
     ctx.font = this.score_labels[i].size+'px Century Gothic'
-    var prog = this.score_labels[i].duration / this.score_label_duration
+    var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color
     ctx.textAlign = 'center'
@@ -254,9 +315,16 @@ HowToPlayState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
+}
+
+HowToPlayState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause)
-    this.player.click({x: x, y: y}, this.level.enemies)
-  
+    this.player.mouse_down({x: x, y: y - topbarHeight})
+}
+
+HowToPlayState.prototype.on_mouse_up = function(x, y) {
+  if(!this.pause)
+    this.player.mouse_up({x: x, y: y - topbarHeight})
 }
 
 HowToPlayState.prototype.on_key_down = function(keyCode) {
@@ -289,23 +357,26 @@ HowToPlayState.prototype.setup_world_next = function(level_name) {
     
   this.generate_level()
   this.player = new Player(this.world, canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, this)
+
+
+  this.ready = true
+
   var contactListener = new b2ContactListener;
-  contactListener.PreSolve = this.handle_collisions
+  contactListener.BeginContact = this.handle_collisions
   this.world.SetContactListener(contactListener);
   this.pause = false
-  this.ready = true
 }
 
 HowToPlayState.prototype.addWalls = function() {
   var wall_dim = [{x: canvasWidth/this.draw_factor/2, y: 2},
       {x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: 2, y: canvasHeight/draw_factor/2},
-      {x: 2, y: canvasHeight/draw_factor/2}]
+      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2},
+      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2}]
   
   var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
-      {x: canvasWidth/this.draw_factor/2, y: canvasHeight/this.draw_factor+2},
-      {x: -2, y: canvasHeight/this.draw_factor/2},
-      {x: canvasWidth/this.draw_factor+2, y: canvasHeight/this.draw_factor/2}]
+      {x: canvasWidth/this.draw_factor/2, y: (canvasHeight - topbarHeight)/this.draw_factor+2},
+      {x: -2, y: (canvasHeight - topbarHeight)/this.draw_factor/2},
+      {x: canvasWidth/this.draw_factor+2, y: (canvasHeight - topbarHeight)/this.draw_factor/2}]
   
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;

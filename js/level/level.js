@@ -74,6 +74,30 @@ Level.prototype.init = function(data, impulse_game_state) {
 
 }
 
+Level.prototype.reset = function() {
+  this.enemies = []
+  this.enemy_counter = 0
+  this.spawn_interval = 100
+  this.spawn_timer = this.spawn_interval
+  this.obstacle_visibility = 1 //for Wisp
+  this.obstacles_visible_timer = 0
+  this.boss_delay_interval = 10000
+  this.boss_delay_timer = 0
+  this.boss_radius = 3
+  this.boss = null 
+  this.boss_kills = 0
+  for(i in this.enemies_data) {
+    this.enemy_spawn_timers[i] = this.enemies_data[i][1]
+    this.enemy_spawn_counters[i] = this.enemies_data[i][2]
+    this.enemy_numbers[i] = 0
+  }
+
+  this.dead_enemies = []
+  this.expired_enemies = []
+  this.spawned_enemies = []
+  this.spawn_queue = []
+}
+
 Level.prototype.process = function(dt) {
 
     if(this.boss_delay_timer > 0) {
