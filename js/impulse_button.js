@@ -196,7 +196,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
   this.size = size
 
   var action = function() {
-    switch_game_state(new ImpulseGameState(ctx, level_name, world))
+    switch_game_state(new LevelIntroState(level_name, world))
   }
   this.init(x, y, w, h, action, true, color)
   if(impulse_level_data[level_name]) {

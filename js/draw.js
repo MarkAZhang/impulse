@@ -82,9 +82,9 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
-    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/canvasHeight * h)
+    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/(canvasHeight-topbarHeight) * h)
     for(var j = 1; j < polygons[i].length; j++) {
-      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/canvasHeight * h)
+      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/(canvasHeight-topbarHeight) * h)
     }
     context.closePath()
     context.fillStyle = "black"

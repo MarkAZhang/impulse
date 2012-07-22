@@ -2,7 +2,7 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(ctx, level_name, world) {
+function ImpulseGameState(level_name, world) {
   this.pause = true
   this.ready = false
   this.buttons = []
