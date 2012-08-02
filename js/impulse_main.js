@@ -1,5 +1,5 @@
 var version_num = "1.0"
-var debug = true
+var debug = false
 
 var canvasWidth, canvasHeight
 var ctx
@@ -272,7 +272,6 @@ function load_game() {
     load_obj['levels'] = {}
   }
 
-
   if(!load_obj['enemies_seen']) {
     load_obj['enemies_seen'] = {}
   }
@@ -357,11 +356,10 @@ var mute = false
 var next_song = null
 
 function play_song(song_name, force_restart) {
-  return
   console.log(song_name+" "+song_name+" "+cur_song+" "+next_song)
   if((cur_song == song_name && !force_restart) || next_song != null && song_name == next_song) return
 
-  if(song_name == null) {
+  if(song_name == null && cur_song) {
     audio_tag_map[cur_song].pause()
     cur_song = null
     return

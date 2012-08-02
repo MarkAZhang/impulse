@@ -9,7 +9,7 @@ function EnemiesInfoState() {
     this.enemy_buttons = []
     this.enemies_with_info = [
       "stunner", "spear", "tank", "mote", "goo", "harpoon", "wisp", "disabler", 
-      "fighter", "slingshot", "crippler", "deathray", "first boss", "second boss", "third boss", "fourth boss"
+      "fighter", "slingshot", "troll", "deathray", "first boss", "second boss", "third boss", "fourth boss"
     ]
     this.set_enemy_buttons()
 
@@ -49,6 +49,11 @@ EnemiesInfoState.prototype.draw = function(ctx) {
   {
     this.enemy_buttons[i].draw(ctx)
   }
+  ctx.fillStyle = "black"
+  ctx.font = "20px Century Gothic"
+  ctx.fillText("BONUS SLAYER STARS: "+player_data.kill_stars+"/12", 400, 440)
+  draw_progress_bar(ctx ,400, 470, 400, 15, player_data.kill_stars/12, impulse_colors["gold"])
+
 }
 
 EnemiesInfoState.prototype.on_mouse_move = function(x, y) {

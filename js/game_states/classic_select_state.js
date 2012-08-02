@@ -33,7 +33,7 @@ ClassicSelectState.prototype.set_world_buttons = function() {
   
   for(var i = 0; i < 4; i++) {
 
-    this.level_buttons.push(new WorldButton((i+1), 20, (gap + level_button_w) * (i%2) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/2) +gap + level_button_h/2, level_button_w, level_button_h, impulse_colors['world '+(i+1)], function(_this, i){return function(){setTimeout(function(){_this.set_level_buttons(i+1)}, 20)}}(this, i)))
+    this.level_buttons.push(new WorldButton((i+1), 20, (gap + level_button_w) * (i%2) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/2) +gap + level_button_h/2, level_button_w, level_button_h, "black", function(_this, i){return function(){setTimeout(function(){_this.set_level_buttons(i+1)}, 20)}}(this, i)))
   }
 
 }
@@ -48,7 +48,7 @@ ClassicSelectState.prototype.set_level_buttons = function(world) {
   for(var i = 0; i < 8; i++) {
     var title = i == 7 ? "BOSS "+(world) : "LEVEL "+world+"-"+(i+1)
     
-    var temp_button = new LevelButton(title, 20, (gap + level_button_w) * (i%4) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/4) +gap + level_button_h/2, level_button_w, level_button_h, impulse_colors["world "+(world)], world)
+    var temp_button = new LevelButton(title, 20, (gap + level_button_w) * (i%4) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/4) +gap + level_button_h/2, level_button_w, level_button_h, "black", world)
     temp_button.set_float_panel_loc(400, 535, 740, 70)
 
     this.level_buttons.push(temp_button)

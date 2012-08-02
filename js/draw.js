@@ -4,12 +4,9 @@ function draw_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
-  context.globalAlpha = 1
   context.fillStyle = impulse_colors[color]
   context.fill()
-  context.globalAlpha = 1
   context.strokeStyle = "black"
-  context.globalAlpha = 1
   context.lineWidth = Math.ceil(r/7.5)
   context.stroke()
  
@@ -66,9 +63,10 @@ function draw_enemy(context, enemy_name, x, y, d) {
 
 function draw_progress_bar(context, x, y, w, h, prop, color) {
   context.beginPath()
-  context.rect(x - w * .5, y - h * .5, w* prop, h)
+  context.rect(x - w * .5, y - h * .5, w * prop, h)
   context.fillStyle = color
   context.fill()
+
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w , h)
   context.strokeStyle = "black"

@@ -140,19 +140,45 @@ EnemyBox.prototype.constructor = EnemyBox
 function EnemyBox(enemy_name) {
   this.enemy_name = enemy_name
   this.max_enemy_d = 50
-  this.phrase_list = null
+  this.special_ability = null
+  this.other_notes = null
 
   this.seen = impulse_enemy_stats[this.enemy_name].seen
 
-  this.init(400, 300)
+  this.w = 600
+  var gravity = new b2Vec2(000, 000);
+  var doSleep = false; //objects in our world will rarely go to sleep
+  var world = new b2World(gravity, doSleep); 
+
+  var temp_enemy = new (impulse_enemy_stats[this.enemy_name].className)(world, 0, 0, 0, 0)
+
+  this.def_value = Math.min(temp_enemy.body.m_mass/5.5, 1)
+
+  this.atk_value = impulse_enemy_stats[this.enemy_name].attack_rating/10
+
+  this.spd_value = ((impulse_enemy_stats[this.enemy_name].force/temp_enemy.body.m_mass)/impulse_enemy_stats[this.enemy_name].lin_damp)/.35
+
+  if(this.enemy_name == "spear") this.spd_value = 1
 
 }
 
 EnemyBox.prototype.additional_draw = function(ctx) {
 
-  if(this.phrase_list == null) {
-    this.phrase_list = getLines(ctx, impulse_enemy_stats[this.enemy_name].description, this.w - 20, '20px Century Gothic')
+  if(this.special_ability == null) {
+    this.special_ability = getLines(ctx, impulse_enemy_stats[this.enemy_name].special_ability, this.w - 20, '20px Century Gothic')
   }
+  if(this.other_notes == null && impulse_enemy_stats[this.enemy_name].other_notes != "") {
+    this.other_notes = getLines(ctx, impulse_enemy_stats[this.enemy_name].other_notes, this.w - 20, '20px Century Gothic')
+  }
+
+  if(this.special_ability != null && !this.h) {
+    this.w = 600
+    this.h = 340 + 25 * this.special_ability.length + this.other_notes.length * 25
+    this.x = canvasWidth/2
+    this.y = 50 + this.h/2
+    this.buttons = []
+  }
+
 
   ctx.beginPath()
   ctx.textAlign = "center"
@@ -160,15 +186,60 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.fillStyle = "black"
   ctx.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + 30)
 
-  draw_enemy(ctx, this.enemy_name, this.x, this.y - this.h/2 + 100, this.max_enemy_d)
+  draw_enemy(ctx, this.enemy_name, this.x, this.y - this.h/2 + 90, this.max_enemy_d)
+
+  ctx.fillStyle = "black"
+
+  ctx.textAlign = 'left'
+
+  ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
+
+  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, impulse_enemy_stats[this.enemy_name].color)
+
+  ctx.fillStyle = "black"
+
+  ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
+
+
+  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, impulse_enemy_stats[this.enemy_name].color)
+ 
+  ctx.fillStyle = "black"
+
+  ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
+
+
+  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, impulse_enemy_stats[this.enemy_name].color)
+
+
+  ctx.fillStyle = "black"
+
+  ctx.fillText("DIES UPON PLAYER COLLISION", this.x - this.w * .30, this.y - this.h/2 + 245)
+
+  ctx.textAlign = 'center'
+
+  ctx.fillText("SPECIAL ABILITY", this.x, this.y - this.h/2 + 280)
+
+  if (this.other_notes != null)
+    ctx.fillText("OTHER NOTES", this.x, this.y - this.h/2 + 315 + 25 * this.special_ability.length)
+
+  ctx.textAlign = 'right'
+
+  ctx.fillText(impulse_enemy_stats[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
+  
 
   ctx.beginPath()
+  ctx.textAlign = 'center'
   ctx.font = '20px Century Gothic'
 
   ctx.fillStyle = "black"
-  for(var i = 0; i < this.phrase_list.length; i++) {
-    var j = (i - this.phrase_list.length/2)
-    ctx.fillText(this.phrase_list[i], this.x, this.y + 75 + 25 * j)
+  for(var i = 0; i < this.special_ability.length; i++) {
+    ctx.fillText(this.special_ability[i], this.x, this.y - this.h/2 + 305 + 25 * i)
+  }
+
+  if (this.other_notes != null) {
+    for(var i = 0; i < this.other_notes.length; i++) {
+      ctx.fillText(this.other_notes[i], this.x, this.y - this.h/2 + 340 + 25 * this.special_ability.length + 25 * i)
+    }
   }
   
   

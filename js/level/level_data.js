@@ -113,7 +113,7 @@ impulse_level_data['LEVEL 1-1'] = {
     return ans_array
   },
   buffer_radius: 1,
-  cutoff_scores: [50000, 300000, 1000000],
+  cutoff_scores: [30000, 250000, 1500000],
   player_loc: {x: 400, y: 300}
 
 }

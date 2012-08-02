@@ -21,7 +21,7 @@ Goo.prototype.trailing_enemy_init = function() {
   this.goo_polygons = []
   this.goo_interval = 500
   this.goo_timer = this.goo_interval
-  this.goo_radius = this.effective_radius //radius of goo trail
+  this.goo_radius = 3 //radius of goo trail
   this.goo_duration = 5000 //amount of time a given goo polygon lasts
   this.goo_death_duration = 500
   this.goo_long_duration = 5000
@@ -89,13 +89,13 @@ Goo.prototype.additional_processing = function(dt) {
     this.goo_polygons[i]['duration'] -= dt
   }
 
-  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.effective_radius) {
+  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
     this.trail_effect(this.player)
   }
 
   if(this.goo_check_intersections_timer <= 0) {
     for(var j = 0; j < this.level.enemies.length; j++) {
-      if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.effective_radius)
+      if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
       {
         if(this.level.enemies[j].className != this.className)
           this.trail_effect(this.level.enemies[j])
@@ -200,7 +200,7 @@ Goo.prototype.pre_draw = function(context, draw_factor) {
     context.fill()
 
     context.beginPath()
-    context.arc((this.body.GetPosition().x)*draw_factor, (this.body.GetPosition().y)*draw_factor, this.effective_radius*draw_factor, 0, 2*Math.PI, true)
+    context.arc((this.body.GetPosition().x)*draw_factor, (this.body.GetPosition().y)*draw_factor, this.goo_radius*draw_factor, 0, 2*Math.PI, true)
     context.fill()
   }
 

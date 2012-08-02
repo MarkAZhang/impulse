@@ -95,39 +95,48 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   this.init(x, y, w, h, action, true, color)
   
   var stars = 0
-    var max_stars = 0
-    var available = false
-    for(var i = 1; i <= 7; i++) {
-      if(impulse_level_data["LEVEL "+world+"-"+i]) {
-        available = true
-        stars += impulse_level_data["LEVEL "+world+"-"+i].stars
-        max_stars +=3
-      }
-    }
-    if(impulse_level_data["BOSS "+world]) {
+  var max_stars = 0
+  var available = false
+  for(var i = 1; i <= 7; i++) {
+    if(impulse_level_data["LEVEL "+world+"-"+i]) {
       available = true
-      stars += impulse_level_data["BOSS "+world].stars
+      stars += impulse_level_data["LEVEL "+world+"-"+i].stars
       max_stars +=3
     }
+  }
+  if(impulse_level_data["BOSS "+world]) {
+    available = true
+    stars += impulse_level_data["BOSS "+world].stars
+    max_stars +=3
+  }
 
-    if(available) {
-      if(player_data.stars <world_cutoffs[this.level_name]) {
-        this.set_active(false)
-        this.state = "locked"
-      }
-      else {
-        this.stars = stars
-        this.max_stars = max_stars
-        this.set_active(true)
-        this.state = "unlocked"
-      }
+  if(available) {
+    if(player_data.stars <world_cutoffs[this.level_name]) {
+      this.set_active(false)
+      this.state = "locked"
     }
     else {
-      this.set_active(false)
-      this.state = "unavailable"
+      this.stars = stars
+      this.max_stars = max_stars
+      this.set_active(true)
+      this.state = "unlocked"
     }
+  }
+  else {
+    this.set_active(false)
+    this.state = "unavailable"
+  }
 
-  
+  this.new_world = true
+  for(var i = 1; i <= 7; i++) {
+    if(impulse_level_data["LEVEL "+world+"-"+i].high_score > 0) {
+      this.new_world = false
+    }
+  }
+  if(impulse_level_data["BOSS "+world].high_score > 0) {
+    this.new_world = false
+  }
+    
   
 }
 
@@ -135,18 +144,18 @@ WorldButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.strokeStyle = this.color
 
-  if(this.hover) 
+  /*if(this.hover) 
       context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
     else
-      context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)
+      context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)*/
 
   context.lineWidth = 2
   context.stroke()
 
   context.beginPath()
   context.textAlign = 'center'
-  context.fillStyle = this.color
-  context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
+  context.fillStyle = impulse_colors["world "+this.world]
+  context.font = this.hover ? (1.56 * this.size) +'px Century Gothic' : 1.25*this.size +'px Century Gothic'
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
   if(this.state == "locked") {
@@ -180,7 +189,14 @@ WorldButton.prototype.additional_draw = function(context) {
 
     context.fill()
 
-    draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, this.color)
+    draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, impulse_colors["world "+this.world])
+
+    if(this.new_world) {
+      context.font = "25px Century Gothic"
+      context.textAlign = "right"
+      context.fillStyle = impulse_colors["world "+(this.world)]
+      context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
+    }
 
   }
 }
@@ -233,16 +249,16 @@ LevelButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.strokeStyle = this.color
 
-  if(this.hover) 
+  /*if(this.hover) 
       context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
     else
       context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)
-  context.stroke()
+  context.stroke()*/
 
   context.beginPath()
   context.textAlign = 'center'
   context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
-  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : this.color
+  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)]
   
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
@@ -366,6 +382,14 @@ LevelButton.prototype.additional_draw = function(context) {
 
     }
   }
+
+  if(impulse_level_data[this.level_name].high_score == 0) {
+    context.font = "25px Century Gothic"
+    context.textAlign = "right"
+    context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)]
+    context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
+
+  }
 }
 
 EnemyButton.prototype = new ImpulseButton()
@@ -383,6 +407,9 @@ function EnemyButton(enemy_name, size, x, y, w, h, color) {
   
   this.enemy_image_size = 30
 
+  if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {
+    this.kill_prop = Math.min(impulse_enemy_stats[this.enemy_name].kills/impulse_enemy_kills_star_cutoffs[this.enemy_name],1)  
+  }
 }
 
 EnemyButton.prototype.additional_draw = function(context) {
@@ -392,11 +419,28 @@ EnemyButton.prototype.additional_draw = function(context) {
   context.font = this.size +'px Century Gothic'
   if(this.seen) {
     context.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + this.size + 5)
+    if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
+      (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
+      context.font = "25px Century Gothic"
+      context.textAlign = "left"
+      context.fillStyle = impulse_enemy_stats[this.enemy_name].color
+      context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
+    }
+    if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {
+      if (this.kill_prop < 1) {
+        draw_progress_bar(context, this.x, this.y + this.h * .4, this.w * 2/3, 10, this.kill_prop, impulse_enemy_stats[this.enemy_name].color)
+      }
+      else {
+        context.globalAlpha = .3
+        draw_star(context, this.x, this.y + this.h * .4, 10, impulse_enemy_stats[this.enemy_name].color)
+        context.globalAlpha = 1
+      }
+    }
+
   }
   else {
     context.fillText("???", this.x, this.y - this.h/2 + this.size + 5)
   } 
-  context.fill()
 
   var cur_x = this.x
   var cur_y = this.y + this.h * 3/32
@@ -407,7 +451,47 @@ EnemyButton.prototype.additional_draw = function(context) {
     context.fillText("NOT SEEN", cur_x, this.y + this.h/2 - 5)
     context.font = (3 * this.size) +'px Century Gothic'
     context.fillText("?", cur_x, cur_y + 10)
-  } 
+  }
+
+  
+  
+  
   
 }
 
+SmallEnemyButton.prototype = new ImpulseButton()
+
+SmallEnemyButton.prototype.constructor = SmallEnemyButton
+
+function SmallEnemyButton(enemy_name, size, x, y, w, h, color) {
+  this.state = null
+  this.enemy_name = enemy_name
+  this.size = size
+  var action = function() {set_dialog_box(new EnemyBox(this.enemy_name))}
+  this.init(x, y, w, h, action, true, color)
+  
+  this.enemy_image_size = 30
+
+}
+
+SmallEnemyButton.prototype.additional_draw = function(context) {
+  context.beginPath()
+  context.textAlign = 'center'
+  context.fillStyle = this.color
+  context.font = this.size +'px Century Gothic'
+  context.fill()
+
+  var cur_x = this.x
+  var cur_y = this.y 
+  draw_enemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
+
+  if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
+    (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
+    context.font = "15px Century Gothic"
+    context.textAlign = "left"
+    context.fillStyle = "black"
+    context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
+
+  }
+  
+}

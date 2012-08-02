@@ -172,7 +172,7 @@ GameOverState.prototype.draw = function(ctx) {
   }
   else {
     ctx.fillStyle = "green"
-    ctx.fillText("YOU'VE EARNED ALL BONUS KILL STARS" , canvasWidth/2, second_rest_y + 60)
+    ctx.fillText("EARNED ALL BONUS SLAYER STARS" , canvasWidth/2, second_rest_y + 60)
     ctx.fillText("FOR ENEMIES IN THIS LEVEL" , canvasWidth/2, second_rest_y + 90)
     
   

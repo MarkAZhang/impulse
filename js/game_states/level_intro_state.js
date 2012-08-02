@@ -59,6 +59,36 @@ function LevelIntroState(level_name, world) {
 
   }(this)
 
+  var num_row = 12
+
+  var i = 0
+
+  for(var j in this.drawn_enemies) {
+  
+    var k = 0
+    var num_in_this_row = 0
+
+    while(k < i+1 && k < this.num_enemy_type) {
+      k+=num_row
+    }
+
+    if(k <= this.num_enemy_type) {
+      num_in_this_row = num_row
+    }
+    else {
+      num_in_this_row = this.num_enemy_type - (k - num_row)
+    }
+    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
+
+    var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
+
+    var cur_x = 400 + (this.enemy_image_size+10) * diff
+    var cur_y = 525 + this.enemy_image_size * h_diff
+    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, "rgba(0, 0, 0, 0.3)"))
+    
+    i+=1
+  }
+
   
 }
 
@@ -126,36 +156,7 @@ LevelIntroState.prototype.draw = function(ctx) {
     ctx.font = '20px Century Gothic'
     ctx.fillText("ENEMIES", 400, 470)
 
-    var num_row = 12
 
-    var i = 0
-
-    for(var j in this.drawn_enemies) {
-    
-      var k = 0
-      var num_in_this_row = 0
-
-      while(k < i+1 && k < this.num_enemy_type) {
-        k+=num_row
-      }
-
-      if(k <= this.num_enemy_type) {
-        num_in_this_row = num_row
-      }
-      else {
-        num_in_this_row = this.num_enemy_type - (k - num_row)
-      }
-      var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
-
-      var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
-
-      var cur_x = 400 + (this.enemy_image_size) * diff
-      var cur_y = 525 + this.enemy_image_size * h_diff
-      
-      draw_enemy(ctx, j, cur_x, cur_y, this.enemy_image_size)
-
-      i+=1
-    }
 
   }
 }

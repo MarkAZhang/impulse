@@ -75,31 +75,32 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.collision_polygons = []
 
 
-
-  for(var j = 0; j < this.shape_points.length; j++) {
-    var these_polar_points = []
-    if(this.shapes[j] instanceof b2PolygonShape) {
-      var these_points = this.shape_points[j]
-      for(var i = 0; i < these_points.length; i++) {
-        var temp_r = p_dist({x: 0, y: 0}, these_points[i])
-        var temp_ang = _atan({x: 0, y: 0}, these_points[i])
-        these_polar_points.push({r: temp_r, ang: temp_ang})
+  if (this.player) {
+    for(var j = 0; j < this.shape_points.length; j++) {
+      var these_polar_points = []
+      if(this.shapes[j] instanceof b2PolygonShape) {
+        var these_points = this.shape_points[j]
+        for(var i = 0; i < these_points.length; i++) {
+          var temp_r = p_dist({x: 0, y: 0}, these_points[i])
+          var temp_ang = _atan({x: 0, y: 0}, these_points[i])
+          these_polar_points.push({r: temp_r, ang: temp_ang})
+        }
+        this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
       }
-      this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
-    }
-    else if(this.shapes[j] instanceof b2CircleShape) {
-      var this_polygon = this.shape_polygons[j]
-      var these_points = [{x: this_polygon.x + Math.cos()}]
-      for(var i = 0; i < 4; i++) {
-        var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * this_polygon.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * this_polygon.r}
-        var temp_r = p_dist({x: 0, y: 0}, point)
-        var temp_ang = _atan({x: 0, y: 0}, point)
-        these_polar_points.push({r: temp_r, ang: temp_ang})
+      else if(this.shapes[j] instanceof b2CircleShape) {
+        var this_polygon = this.shape_polygons[j]
+        var these_points = [{x: this_polygon.x + Math.cos()}]
+        for(var i = 0; i < 4; i++) {
+          var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * this_polygon.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * this_polygon.r}
+          var temp_r = p_dist({x: 0, y: 0}, point)
+          var temp_ang = _atan({x: 0, y: 0}, point)
+          these_polar_points.push({r: temp_r, ang: temp_ang})
+        }
+        this.collision_polygons.push(null)
       }
-      this.collision_polygons.push(null)
-    }
-    this.shape_polar_points.push(these_polar_points)
+      this.shape_polar_points.push(these_polar_points)
 
+    }
   }
 
  
