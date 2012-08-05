@@ -92,7 +92,15 @@ window.onload =  function() {
     canvas_container.style.width = canvasWidth + 'px'
     canvas_container.style.height = canvasHeight + 'px'
 
+    bg_canvas = document.getElementById("bg_canvas");
+    bg_canvas_container = document.getElementById("bg_canvas_container");
+    bg_canvas.width = canvasWidth;
+    bg_canvas.height =  canvasHeight;
+    bg_canvas_container.style.width = canvasWidth + 'px'
+    bg_canvas_container.style.height = canvasHeight + 'px'
+
     ctx = canvas.getContext('2d');
+    bg_ctx = bg_canvas.getContext('2d');
     window.addEventListener('keydown', on_key_down, false);
     window.addEventListener('keyup', on_key_up, false);
     window.addEventListener('click', on_click, false);
@@ -102,11 +110,12 @@ window.onload =  function() {
 
     var dim = getWindowDimensions()
 
-    canvas_container.style.position = 'absolute'
+
     if(canvasWidth < dim.w)
     {
       offset_left = (dim.w-canvasWidth)/2
       canvas_container.style.left =  Math.round(offset_left) + 'px'
+      bg_canvas_container.style.left =  Math.round(offset_left) + 'px'
     }
     else
     {
@@ -116,6 +125,7 @@ window.onload =  function() {
     {
       offset_top = (dim.h-canvasHeight)/2
       canvas_container.style.top = Math.round(offset_top) + 'px'
+      bg_canvas_container.style.top =  Math.round(offset_top) + 'px'
     }
     else
     {
@@ -135,8 +145,9 @@ function step() {
   cur_game_state.process(dt)
   process_music(dt)
   if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-	cur_game_state.draw(ctx);
+	cur_game_state.draw(ctx, bg_ctx);
 
   if(cur_dialog_box!=null) {
     ctx.beginPath()

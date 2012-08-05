@@ -3,6 +3,7 @@ CreditsState.prototype = new GameState
 CreditsState.prototype.constructor = CreditsState
 
 function CreditsState() {
+  this.bg_drawn = false
   this.start_clicked = false
   this.buttons = []
   var _this = this
@@ -16,7 +17,13 @@ CreditsState.prototype.process = function(dt) {
 
 }
 
-CreditsState.prototype.draw = function(ctx) {
+CreditsState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
   ctx.globalAlpha = .3
   ctx.drawImage(this.image, canvasWidth/2 - this.image.width/2, canvasHeight/2 - 100 - this.image.height/2 - 15)
   ctx.globalAlpha = 1

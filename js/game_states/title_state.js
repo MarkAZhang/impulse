@@ -7,6 +7,7 @@ function TitleState(start_clicked) {
   this.buttons = []
   var _this = this
   this.image = new Image()
+  this.bg_drawn = false
 
   this.image.src = 'impulse_logo.png'
   if(start_clicked) {
@@ -21,7 +22,13 @@ TitleState.prototype.process = function(dt) {
 
 }
 
-TitleState.prototype.draw = function(ctx) {
+TitleState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
   ctx.globalAlpha = .3
   ctx.drawImage(this.image, canvasWidth/2 - this.image.width/2, canvasHeight/2 - 100 - this.image.height/2 - 15)
   ctx.globalAlpha = 1

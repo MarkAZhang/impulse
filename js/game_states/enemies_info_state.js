@@ -3,17 +3,18 @@ EnemiesInfoState.prototype = new GameState
 EnemiesInfoState.prototype.constructor = EnemiesInfoState
 
 function EnemiesInfoState() {
+  this.bg_drawn = false
 
-    this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
-    this.enemy_buttons = []
-    this.enemies_with_info = [
-      "stunner", "spear", "tank", "mote", "goo", "harpoon", "wisp", "disabler", 
-      "fighter", "slingshot", "troll", "deathray", "first boss", "second boss", "third boss", "fourth boss"
-    ]
-    this.set_enemy_buttons()
+  this.buttons = []
+  this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.enemy_buttons = []
+  this.enemies_with_info = [
+    "stunner", "spear", "tank", "mote", "goo", "harpoon", "wisp", "disabler", 
+    "fighter", "slingshot", "troll", "deathray", "first boss", "second boss", "third boss", "fourth boss"
+  ]
+  this.set_enemy_buttons()
 
-    play_song("right")
+  play_song("right")
 
 
 }
@@ -40,7 +41,13 @@ EnemiesInfoState.prototype.set_enemy_buttons = function() {
   
 }
 
-EnemiesInfoState.prototype.draw = function(ctx) {
+EnemiesInfoState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  } 
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)

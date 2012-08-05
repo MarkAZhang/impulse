@@ -15,6 +15,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.score_label_duration = 1000
   this.score_label_rise = 30
   this.buffer_radius = 1 //primarily for starting player location
+  this.bg_drawn = false
 
   this.stars = 0
   this.world_num = world
@@ -111,8 +112,20 @@ ImpulseGameState.prototype.process = function(dt) {
   }
 }
 
-ImpulseGameState.prototype.draw = function(ctx) {
+ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
+
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var imageObj = new Image();
+
+        imageObj.onload = function() {
+          bg_ctx.drawImage(imageObj, 0, topbarHeight, canvas.width, canvas.height - topbarHeight);
+        };
+        imageObj.src = "art/bg_temp.jpg";
+      
+    this.bg_drawn = true
+  }
 
 
   ctx.translate(0, topbarHeight)//allows us to have a topbar

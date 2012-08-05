@@ -3,9 +3,11 @@ HowToPlayState.prototype = new GameState
 HowToPlayState.prototype.constructor = HowToPlayState
 
 function HowToPlayState(ctx) {
+
   this.pause = true
   this.ready = false
   this.buttons = []
+  this.bg_drawn = false
 
   if(!player_data.first_time)
     this.buttons.push(new SmallButton("MAIN MENU", 15, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
@@ -90,7 +92,13 @@ HowToPlayState.prototype.process = function(dt) {
   }
 }
 
-HowToPlayState.prototype.draw = function(ctx) {
+HowToPlayState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
   if(!this.ready) return
 
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)

@@ -8,6 +8,7 @@ function LevelIntroState(level_name, world) {
   this.level_name = level_name
   this.buttons = []
   this.world_num = world
+  this.bg_drawn = false
   this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, canvasHeight - 30, 200, 50, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
@@ -96,7 +97,14 @@ LevelIntroState.prototype.process = function(dt) {
 
 }
 
-LevelIntroState.prototype.draw = function(ctx) {
+LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
+
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
 
   ctx.beginPath()
   ctx.fillStyle = impulse_colors['world '+ this.world_num]

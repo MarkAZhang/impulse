@@ -28,6 +28,7 @@ function LevelEditorState() {
   this.dragging = false
   this.canvasWidth = 800
   this.canvasHeight = 600
+  this.bg_drawn = false
 
 }
 
@@ -35,7 +36,13 @@ LevelEditorState.prototype.process = function(dt) {
   
 }
 
-LevelEditorState.prototype.draw = function(context) {
+LevelEditorState.prototype.draw = function(context, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
   context.beginPath()
   context.rect(0, 0, 800, 600)
   context.strokeStyle = "gray"

@@ -10,7 +10,12 @@
            padding: 0px;
          }
          #canvas_container {
-            background:#fff
+            position: absolute;
+            z-index: 2;
+         }
+         #bg_canvas_container {
+            position: absolute;  
+            z-index: 1;
          }
 
     </style>
@@ -76,6 +81,9 @@
 <body>
     <div id ="canvas_container">
         <canvas id="canvas" tabindex='1'></canvas>
+    </div>
+    <div id ="bg_canvas_container">
+        <canvas id="bg_canvas"></canvas>
     </div>
 </body>
 </html>

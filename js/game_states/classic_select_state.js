@@ -3,7 +3,7 @@ ClassicSelectState.prototype = new GameState
 ClassicSelectState.prototype.constructor = ClassicSelectState
 
 function ClassicSelectState(world) {
-
+  this.bg_drawn = false
   if(!world) {
     this.buttons = []
     this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
@@ -20,7 +20,7 @@ function ClassicSelectState(world) {
   play_song("right")
 }
 
-ClassicSelectState.prototype.process = function(dt) {
+ClassicSelectState.prototype.process = function(  at) {
 
 }
 
@@ -57,7 +57,14 @@ ClassicSelectState.prototype.set_level_buttons = function(world) {
   
 }
 
-ClassicSelectState.prototype.draw = function(ctx) {
+ClassicSelectState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
+
   ctx.beginPath()
 
   ctx.font = '20px Century Gothic'
