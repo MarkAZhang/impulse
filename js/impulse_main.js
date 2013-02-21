@@ -1,5 +1,5 @@
 var version_num = "1.0"
-var debug = false
+var unlockall = true
 
 var canvasWidth, canvasHeight
 var ctx
@@ -36,7 +36,7 @@ window.onload =  function() {
     ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
     , b2ContactListener = Box2D.Dynamics.b2ContactListener
-    
+
     canvasWidth = 800;
     canvasHeight = 635;
 
@@ -68,22 +68,22 @@ window.onload =  function() {
     }
     console.log(JSON.stringify(polygons))
 
-    var polyg = [[[29,44],[56,44],[56,260],[29,260]],[[29,340],[56,340],[56,557],[29,557]]] 
+    var polyg = [[[29,44],[56,44],[56,260],[29,260]],[[29,340],[56,340],[56,557],[29,557]]]
 
-    
+
       var m = polyg.length
     for(var i = 1; i < 8; i++) {
       for(var k = 0; k < m; k++) {
       var poly = []
         for(var j = 0; j < polyg[k].length; j++) {
             poly.push([polyg[k][j][0] + i * 103, polyg[k][j][1]])
-          
+
         }
       polyg.push(poly)
       }
     }
     console.log(JSON.stringify(polyg))*/
-    
+
     // screen setup
     canvas = document.getElementById("canvas");
     canvas_container = document.getElementById("canvas_container");
@@ -218,7 +218,7 @@ function on_click(event) {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
   if(keyCode == 77) { //M = mute/unmute
-    
+
     mute = !mute
   }
 
@@ -270,9 +270,9 @@ function save_game() {
 function load_game() {
   var load_obj = {}
   if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
-    
+
     player_data.first_time = true
-    
+
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
@@ -290,7 +290,7 @@ function load_game() {
   if(!load_obj['enemies_killed']) {
     load_obj['enemies_killed'] = {}
   }
-    
+
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
 
   for(i in impulse_level_data) {
@@ -309,12 +309,13 @@ function load_game() {
 
   for(i in impulse_enemy_stats) {
     //load if enemies are seen
-    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] ? true: false
+
+    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] || unlockall? true : false
     impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
   }
 
   calculate_stars()
-  
+
 }
 
 function calculate_stars() {
@@ -380,7 +381,7 @@ function play_song(song_name, force_restart) {
     add_song(song_name)
     return
   }
-  
+
   if(cur_song != null) {
     next_song = song_name
     music_switch = "down"

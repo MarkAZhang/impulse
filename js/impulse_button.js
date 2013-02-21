@@ -18,7 +18,7 @@ ImpulseButton.prototype.draw = function(context) {
   if(this.border) {
     context.beginPath()
     context.strokeStyle = this.active ? this.color : "gray"
-    if(this.hover) 
+    if(this.hover)
       context.rect(this.x - this.w/2 * 1.1, this.y - this.h/2 * 1.1, this.w * 1.1, this.h * 1.1)
     else
       context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
@@ -93,7 +93,7 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   this.world = world
   this.size = size
   this.init(x, y, w, h, action, true, color)
-  
+
   var stars = 0
   var max_stars = 0
   var available = false
@@ -136,15 +136,15 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   if(impulse_level_data["BOSS "+world].high_score > 0) {
     this.new_world = false
   }
-    
-  
+
+
 }
 
 WorldButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.strokeStyle = this.color
 
-  /*if(this.hover) 
+  /*if(this.hover)
       context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
     else
       context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)*/
@@ -216,7 +216,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
   }
   this.init(x, y, w, h, action, true, color)
   if(impulse_level_data[level_name]) {
-    
+
     if(player_data.stars < impulse_level_data[level_name].star_cutoff) {
       this.set_active(false)
       this.state = "locked"
@@ -224,7 +224,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
     else {
       this.state = "unlocked"
     }
-    
+
   }
   else {
     this.set_active(false)
@@ -249,7 +249,7 @@ LevelButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.strokeStyle = this.color
 
-  /*if(this.hover) 
+  /*if(this.hover)
       context.rect((this.x - this.w/2 * 1.1) + 2, (this.y - this.h/2 * 1.1) + 2, this.w * 1.1 - 4, this.h * 1.1 - 4)
     else
       context.rect(this.x - this.w/2 + 2, this.y - this.h/2 + 2, this.w - 4, this.h - 4)
@@ -259,7 +259,7 @@ LevelButton.prototype.additional_draw = function(context) {
   context.textAlign = 'center'
   context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
   context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)]
-  
+
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
 
@@ -294,7 +294,7 @@ LevelButton.prototype.additional_draw = function(context) {
     draw_empty_star(ctx, this.x, this.y , 30)
 
   var num_row = Math.floor((this.w - this.buffer * 2) / (this.enemy_image_size))
-  
+
   var num_enemy_type = 0
   for(var j in impulse_level_data[this.level_name].enemies) {
     num_enemy_type += 1
@@ -314,7 +314,7 @@ LevelButton.prototype.additional_draw = function(context) {
   }
 
   for(var j in drawn_enemies) {
-    
+
     var k = 0
     var num_in_this_row = 0
 
@@ -334,13 +334,13 @@ LevelButton.prototype.additional_draw = function(context) {
 
     var cur_x = this.x + (this.enemy_image_size) * diff
     var cur_y = this.y + this.h * .28 + this.enemy_image_size * h_diff
-    
+
     draw_enemy(context, j, cur_x, cur_y, this.enemy_image_size)
 
-   
+
     i+=1
   }
-  
+
   if(this.hover) {
     context.beginPath()
     context.rect(this.fx - this.fw/2, this.fy - this.fh/2, this.fw, this.fh)
@@ -357,7 +357,7 @@ LevelButton.prototype.additional_draw = function(context) {
     context.fill()
     context.beginPath()
     context.textAlign = "right"
-    
+
     for(var i = 0; i < 3; i++) {
       context.fillStyle = impulse_colors[this.star_colors[i]]
       context.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
@@ -367,12 +367,12 @@ LevelButton.prototype.additional_draw = function(context) {
     context.textAlign = "center"
 
     //draw_level_obstacles_within_rect(ctx, this.level_name, this.fx - this.fw/2 + this.fh * .6 * canvasWidth/canvasHeight, this.fy + this.fh * .15, this.fh * .5 * canvasWidth/canvasHeight, this.fh * .5, "blue")
-    
+
     context.fillStyle = "black" //impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[impulse_level_data[this.level_name].stars - 1]] : "black"
     context.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.fx, this.fy - this.fh/2 + this.size)
-  
+
     var star_size = 30
-    
+
     for(var i = 0; i < 3; i++) {
       if(impulse_level_data[this.level_name].stars > i) {
         draw_star(context, this.fx - 50 + 50 * i, this.fy + 14, 20, this.star_colors[i])
@@ -404,11 +404,11 @@ function EnemyButton(enemy_name, size, x, y, w, h, color) {
   this.seen = impulse_enemy_stats[this.enemy_name].seen
   this.init(x, y, w, h, action, true, color)
   this.set_active(this.seen)
-  
+
   this.enemy_image_size = 30
 
   if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {
-    this.kill_prop = Math.min(impulse_enemy_stats[this.enemy_name].kills/impulse_enemy_kills_star_cutoffs[this.enemy_name],1)  
+    this.kill_prop = Math.min(impulse_enemy_stats[this.enemy_name].kills/impulse_enemy_kills_star_cutoffs[this.enemy_name],1)
   }
 }
 
@@ -440,7 +440,7 @@ EnemyButton.prototype.additional_draw = function(context) {
   }
   else {
     context.fillText("???", this.x, this.y - this.h/2 + this.size + 5)
-  } 
+  }
 
   var cur_x = this.x
   var cur_y = this.y + this.h * 3/32
@@ -453,10 +453,10 @@ EnemyButton.prototype.additional_draw = function(context) {
     context.fillText("?", cur_x, cur_y + 10)
   }
 
-  
-  
-  
-  
+
+
+
+
 }
 
 SmallEnemyButton.prototype = new ImpulseButton()
@@ -469,7 +469,7 @@ function SmallEnemyButton(enemy_name, size, x, y, w, h, color) {
   this.size = size
   var action = function() {set_dialog_box(new EnemyBox(this.enemy_name))}
   this.init(x, y, w, h, action, true, color)
-  
+
   this.enemy_image_size = 30
 
 }
@@ -482,7 +482,7 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   context.fill()
 
   var cur_x = this.x
-  var cur_y = this.y 
+  var cur_y = this.y
   draw_enemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
 
   if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
@@ -493,5 +493,5 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
     context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
 
   }
-  
+
 }
