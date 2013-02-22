@@ -37,6 +37,8 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.enemies = []
   this.enemy_counter = 0
 
+  this.fragments = []
+
   this.enemy_map = {
     "stunner": Stunner,
     "spear": Spear,
@@ -69,7 +71,7 @@ Level.prototype.init = function(data, impulse_game_state) {
   this.boss_delay_interval = 10000
   this.boss_delay_timer = 0
   this.boss_radius = 3
-  this.boss = null 
+  this.boss = null
   this.boss_kills = 0
 
 }
@@ -84,7 +86,7 @@ Level.prototype.reset = function() {
   this.boss_delay_interval = 10000
   this.boss_delay_timer = 0
   this.boss_radius = 3
-  this.boss = null 
+  this.boss = null
   this.boss_kills = 0
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
@@ -133,13 +135,36 @@ Level.prototype.process = function(dt) {
           }
         }
       }
-      
+
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
     }
+
+    for(var i = this.fragments.length - 1; i >= 0; i--) {
+      this.fragments[i].process(dt);
+      if(this.fragments[i].isDone()) {
+        this.fragments.splice(i, 1);
+      }
+    }
+
+    while(this.dead_enemies.length > 0)
+    {
+      var dead_i = this.dead_enemies.pop()
+
+      if(this.enemies[dead_i] instanceof BossTwo) {
+        for(var i = 0; i < this.enemies.length; i++) {
+          if (this.enemies[i] instanceof FixedHarpoon) {
+            this.enemies[i].start_death("self_destruct")
+          }
+        }
+      }
+
+      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
+    }
+
     while(this.expired_enemies.length > 0)
     {
       var dead_i = this.expired_enemies.pop()
-      
+
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
       if((impulse_enemy_stats[this.enemies[dead_i].type].className).prototype.is_boss) {
         this.boss_delay_timer = this.boss_delay_interval
@@ -151,14 +176,14 @@ Level.prototype.process = function(dt) {
       this.enemies.splice(dead_i, 1)
 
     }
-    
+
     while(this.spawned_enemies.length > 0)
     {
       var new_enemy = this.spawned_enemies.pop()
 
       this.enemy_numbers[new_enemy.type] += 1
       this.enemies.push(new_enemy)
-      
+
     }
 
 
@@ -193,6 +218,11 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
       }
     }
   }
+}
+
+//v = {x: 0, y: 0}
+Level.prototype.add_fragments = function(enemy_type, loc, v) {
+  this.fragments.push(new FragmentGroup(enemy_type, loc, v))
 
 }
 
@@ -232,13 +262,13 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
 
 Level.prototype.generate_obstacles = function() {
   console.log("GENERATING POLYGONS")
-  //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)], 
+  //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)],
   //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
-  
+
   if(this.obstacle_num == null && this.obstacle_v.length) {
     this.obstacle_num = this.obstacle_v.length
   }
-  
+
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
@@ -250,7 +280,7 @@ Level.prototype.generate_obstacles = function() {
     this.boundary_polygons.push(getBoundaryPolygon(temp_v, this.buffer_radius))
   }
   this.generate_obstacle_edges()
-  
+
 }
 
 Level.prototype.generate_obstacle_edges = function() {
@@ -275,6 +305,11 @@ Level.prototype.draw = function(context, draw_factor) {
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(context, draw_factor)
   }
+
+  for(var i = 0; i < this.fragments.length; i++) {
+    this.fragments[i].draw(ctx, draw_factor)
+  }
+
   context.globalAlpha = 1
 
   for(var i = 0; i < this.enemies.length; i++) {
@@ -283,14 +318,14 @@ Level.prototype.draw = function(context, draw_factor) {
 
   if(this.boss_delay_timer >= 0) {
 
-    context.beginPath() 
+    context.beginPath()
     context.arc(canvasWidth/draw_factor/2 * draw_factor, (canvasHeight - topbarHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
-    
+
     context.lineWidth = 2
     context.strokeStyle = "gray"
     context.stroke()
-      
+
     context.restore()
-    context.globalAlpha = 1 
+    context.globalAlpha = 1
   }
 }

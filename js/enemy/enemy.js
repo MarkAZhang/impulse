@@ -19,8 +19,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*0), Math.sin(Math.PI*0)))
   this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*5/6), Math.sin(Math.PI*5/6)))
-  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*7/6), Math.sin(Math.PI*7/6)))  
-  
+  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*7/6), Math.sin(Math.PI*7/6)))
+
   this.pointer_max_radius = .7
 
   this.pointer_fadein_duration = 1000
@@ -103,11 +103,11 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     }
   }
 
- 
+
 
   this.path = null
-  
-  this.yield_counter = 0    
+
+  this.yield_counter = 0
 
   this.yield = false
   this.id = id
@@ -115,14 +115,14 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.died = false
   this.dying_length = 500
   this.dying_duration = 0
-  
+
   this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed, lightened], time left for each status
-  
+
   this.is_enemy = true
 
   this.special_mode = false
   this.special_mode_visibility_timer = 0  //helps with the flashing special_mode appearance
-  this.sp_visibility = 0  
+  this.sp_visibility = 0
 
 
   //DEFAULTS, CAN BE OVERRIDDEN
@@ -151,13 +151,13 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
-  
+
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
-      
+
       return
     }
   }
@@ -194,7 +194,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
   }
   if(this.activated) {
     this.activated_processing(dt)
-    return 
+    return
   }//for tank, and potentially other enemies
 
   if(this.status_duration[0] > 0) {
@@ -254,11 +254,11 @@ Enemy.prototype.process = function(enemy_index, dt) {
   else {
     this.in_poly_slow_duration = this.in_poly_slow_interval
   }
-  
+
   this.check_death()
 
   this.move()
-  
+
   this.additional_processing(dt)
 }
 
@@ -295,14 +295,14 @@ Enemy.prototype.move = function() {
         this.path = new_path
       this.pathfinding_counter = Math.floor(Math.random()*.5 * this.pathfinding_delay)
     }
-    
+
   }
 
   if(!this.path)
   {
     return
   }
-  
+
   var endPt = this.path[0]
   if ( this.pathfinding_counter % 4 == 0) {
     while(this.path.length > 0 && p_dist(endPt, this.body.GetPosition())<1)
@@ -323,7 +323,7 @@ Enemy.prototype.move = function() {
       endPt = this.path[0]
     }
   }
-  
+
   //check if yielding
   if(this.do_yield) {
     if(this.yield_counter == this.yield_delay)
@@ -351,13 +351,13 @@ Enemy.prototype.move = function() {
 
 Enemy.prototype.move_to = function(endPt) {
 
-  
+
 
   var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
 
   this.modify_movement_vector(dir)  //primarily for Spear
-  
+
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
   //if(this.shape instanceof b2PolygonShape) {
@@ -375,7 +375,7 @@ Enemy.prototype.modify_movement_vector = function(dir) {
       in_poly = true
     }
   }
-  
+
   this.in_poly = in_poly
 
   if(this.in_poly && this.in_poly_slow_duration > 0)//move cautiously...isn't very effective in preventing accidental deaths
@@ -415,7 +415,9 @@ Enemy.prototype.start_death = function(death) {
     this.impulse_game_state.increment_combo()
     this.impulse_game_state.check_cutoffs()
   }
-  
+
+  this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+
 }
 
 Enemy.prototype.collide_with = function(other) {
@@ -425,7 +427,7 @@ Enemy.prototype.collide_with = function(other) {
     return
 
   if(other === this.player) {
-   
+
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced
       this.player_hit_proc()
@@ -451,13 +453,15 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
     context.rotate(pointer_angle);
     context.translate(-(pointer_point.x) * draw_factor, -(pointer_point.y) * draw_factor);
-      
+
     context.beginPath()
     context.globalAlpha = this.pointer_visibility
     context.strokeStyle = this.color
     context.lineWidth = 2
     var pointer_radius = this.pointer_max_radius * Math.max(Math.min(1, (15 - (p_dist(this.body.GetPosition(), pointer_point) - 3))/15), 0)
     context.moveTo((pointer_point.x+this.pointer_vertices[0].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[0].y*pointer_radius)*draw_factor)
+
+
     for(var i = 1; i < this.pointer_vertices.length; i++)
     {
       context.lineTo((pointer_point.x+this.pointer_vertices[i].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[i].y*pointer_radius)*draw_factor)
@@ -489,7 +493,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
     if(this.shape_polygons[k].visible === false) continue
 
-    if (this.dying) 
+    if (this.dying)
       context.globalAlpha = (1 - prog)
     else
       context.globalAlpha = this.visibility ? this.visibility : 1
@@ -505,7 +509,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
       else
         context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, cur_shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
-      
+
     }
     if(cur_shape instanceof b2PolygonShape) {
       //draw polygon shape
@@ -564,7 +568,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
       }
     }
 
-    if (this.dying) 
+    if (this.dying)
       context.globalAlpha = (1 - prog)
     else
       context.globalAlpha = this.visibility ? this.visibility : 1
@@ -616,13 +620,13 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 }
 
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
 }
 
 Enemy.prototype.stun = function(dur) {
 this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
+this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
 Enemy.prototype.silence = function(dur) {
@@ -643,7 +647,7 @@ this.status_duration[3] = Math.max(dur, this.status_duration[3])
 
 /*Enemy.prototype.check_player_intersection = function(other) {
   for(var i = 0; i < this.shapes.length; i++) {
-    
+
     if(this.shapes[i] instanceof b2PolygonShape) {
       var collision_polygon = this.collision_polygons[i]
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
@@ -659,13 +663,13 @@ this.status_duration[3] = Math.max(dur, this.status_duration[3])
       var temp_ang = _atan({x:0, y:0}, temp_vec)
       var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
       var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
-      
+
       if (p_dist(rotated_vec, {x: this.shape_polygons[i].x, y: this.shape_polygons[i].y}) <= other.shape.GetRadius() + this.shape_polygons[i].r + 0.1)
         return true
     }
-  } 
+  }
   return false
-  
+
 }*/
 
 Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {

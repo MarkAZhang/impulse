@@ -12,14 +12,7 @@ var step_id = 0
 var cur_game_state
 var cur_dialog_box = null
 var save_name = "impulse_save_data"
-var impulse_colors = {}
-impulse_colors['bronze'] = "rgb(205, 127, 50)"
-impulse_colors['silver'] = "rgb(175, 175, 175)"
-impulse_colors['gold'] = "rgb(238, 201, 0)"
-impulse_colors['world 1'] = "rgb(50, 205, 50)"
-impulse_colors['world 2'] = "rgb(0, 206, 209)"
-impulse_colors['world 3'] = "rgb(186, 85, 211)"
-impulse_colors['world 4'] = "rgb(255, 0, 0)"
+
 var player_data = {}
 
 window.onload =  function() {

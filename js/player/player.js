@@ -1,3 +1,5 @@
+//currently 15 by 15px
+
 var Player = function(world, x, y, impulse_game_state) {
   this.init(world, x, y, impulse_game_state)
 }
@@ -10,7 +12,14 @@ Player.prototype.impulse_force = 50
 
 Player.prototype.impulse_radius = 10
 
-Player.prototype.density = 1
+Player.prototype.impulse_width = 1/32
+
+Player.prototype.impulse_target_color = impulse_colors["impulse_target_blue"]
+Player.prototype.impulse_color = impulse_colors["impulse_blue"]
+
+Player.prototype.density = 9/16
+
+Player.prototype.radius = .66
 
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   console.log(x+" "+y)
@@ -22,11 +31,10 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   fixDef.filter.maskBits = 0x0003
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
-  fixDef.shape = new b2CircleShape(.5);
-  this.r = .5
+  fixDef.shape = new b2CircleShape(Player.prototype.radius);
+  this.r = Player.prototype.radius;
   this.level = impulse_game_state.level
   this.impulse_game_state = impulse_game_state
-  
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
@@ -38,7 +46,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   for(var i = 0; i < 4; i++) {
     this.points_polar_form.push({r: .5, ang: i * Math.PI/2})
   }
-  
+
   this.left = false
   this.right = false
   this.down = false
@@ -59,7 +67,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying = false
   this.dying_length = 1000
   this.dying_duration = 0
-  this.color = "black"
+  this.color = impulse_colors["player_color"]
   this.force = this.true_force
 
   this.last_mouse_down = 0
@@ -122,7 +130,7 @@ Player.prototype.mouseMove = function(pos) {
 
 Player.prototype.stun = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-  this.status_duration[1] = Math.max(dur, this.status_duration[1]) 
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
 Player.prototype.silence = function(dur) {
@@ -171,7 +179,8 @@ Player.prototype.process = function(dt) {
   {
     this.dying_duration -= dt
     return
-  } 
+  }
+
 
   if(this.status_duration[0] > 0) {
     this.status_duration[0] -= dt
@@ -231,6 +240,8 @@ Player.prototype.process = function(dt) {
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
 
+  this.body.SetAngle(this.impulse_angle)
+
   if (this.status_duration[4] > 0) {
     this.impulse_angle += Math.PI
   }
@@ -265,7 +276,7 @@ Player.prototype.process = function(dt) {
 
             if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
             {
-              
+
               if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
               {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
@@ -282,7 +293,7 @@ Player.prototype.process = function(dt) {
       this.attack_duration -= dt
     }
   }
-  
+
   if(this.status_duration[0] <= 0)
   {
     var f = this.force
@@ -292,7 +303,7 @@ Player.prototype.process = function(dt) {
     if(this.right) f_x += 1
     if(this.up) f_y -= 1
     if(this.down) f_y += 1
-    
+
 
     var force = Math.abs(f_x)+Math.abs(f_y)==2 ? f/Math.sqrt(2) : f;
 
@@ -306,7 +317,7 @@ Player.prototype.process = function(dt) {
 
 Player.prototype.point_in_impulse_angle = function(pt) {
   var angle = _atan(this.attack_loc, pt)
-  
+
   var struck;
 
   if(this.attack_angle < -Math.PI/6)
@@ -319,7 +330,7 @@ Player.prototype.point_in_impulse_angle = function(pt) {
   }
   else
     struck = angle>=this.attack_angle - Math.PI/3 && angle <= this.attack_angle + Math.PI/3
-  
+
   return struck
 }
 
@@ -327,82 +338,89 @@ Player.prototype.point_in_impulse_dist = function(pt) {
   var dist = this.attack_loc.Copy()
   dist.Subtract(pt)
   dist = dist.Normalize()
-  return dist >= this.impulse_radius * (this.attack_length - this.attack_duration)/(this.attack_length + this.attack_length * .2) && dist <= this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)
+
+  return dist >= this.impulse_radius * (((this.attack_length - this.attack_duration)/this.attack_length) - this.impulse_width * 2) && dist <= this.impulse_radius * (((this.attack_length - this.attack_duration)/this.attack_length) + this.impulse_width * 2)
 }
 
 Player.prototype.draw = function(context) {
   if(this.dying) {
-    var prog = Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1)
-    context.beginPath()
-    context.globalAlpha = (1 - prog)
-    context.strokeStyle = this.color
-    context.lineWidth = (1 - prog) * 2
-    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.shape.GetRadius()*this.draw_factor) * (1 + 1 * prog), 0, 2*Math.PI, true)
-    context.stroke()
-    context.fillStyle = this.color
-    context.globalAlpha/=2
-    context.fill()
-    context.globalAlpha = 1
+
   }
   else {
-    context.beginPath()
-    
+
+    /*context.beginPath()
+
     context.strokeStyle = this.color
     context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.shape.GetRadius()*this.draw_factor, 0, 2*Math.PI, true)
     context.lineWidth = 2
     context.stroke()
     context.globalAlpha = .5
     context.fillStyle = this.color
-    context.fill()
+    context.fill()*/
     if(this.status_duration[0] > 0)
     {
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      context.fillStyle = 'red'
+      context.globalAlpha = .5
+      context.fill()
+    } else if(this.status_duration[1] > 0)
+    {
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
       context.fillStyle = 'red'
       context.globalAlpha = .5
       context.fill()
     }
     else if(this.status_duration[2] > 0)
     {
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
       context.fillStyle = Goo.prototype.goo_color_rgb
       context.globalAlpha = .5
       context.fill()
     }
     else if(this.status_duration[3] > 0)
     {
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
       context.fillStyle = 'cyan'
       context.globalAlpha = .8
       context.fill()
     }
     else if(this.status_duration[4] > 0)
     {
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
       context.fillStyle = 'green'
       context.globalAlpha = .8
       context.fill()
+    } else {
+      //normal
+      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_normal")
+
     }
     context.globalAlpha = 1
     context.beginPath()
-    context.fillStyle = this.status_duration[1] <= 0 ? "rgba(0, 255, 255, 0.2)" : "rgba(122, 122, 122, 0.5)"
 
-    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-    context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
-    context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
-    context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
-    context.closePath()
-    context.fill()
+    if (this.status_duration[1] <= 0) {
+      context.fillStyle = this.impulse_target_color
+
+      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+      context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
+      context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
+      context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
+      context.closePath()
+      context.fill()
+    }
     if(this.attacking)
     {
       var cur_time = (new Date()).getTime()
       context.beginPath();
-      context.lineWidth = this.impulse_radius * 1/6 * this.draw_factor
-      context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, (this.impulse_radius * (this.attack_length - this.attack_duration + this.attack_length * .2)/(this.attack_length + this.attack_length * .2)) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
-      context.lineWidth = 15;
+      context.lineWidth = this.impulse_radius * this.impulse_width * this.draw_factor
+      context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, this.impulse_radius * ((this.attack_length - this.attack_duration)/this.attack_length) * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+      //context.lineWidth = 15;
       // line color
-      context.strokeStyle = "rgba(0,255,255, 1)";
+      context.strokeStyle = this.impulse_color
       context.stroke();
-      
+
     }
   }
-  
-
 }
 
 Player.prototype.collide_with = function(other) {
@@ -417,6 +435,7 @@ Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
+  this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity())
 }
 
 Player.prototype.get_segment_intersection = function(seg_s, seg_f) {
