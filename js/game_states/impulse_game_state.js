@@ -33,8 +33,8 @@ function ImpulseGameState(world, level, visibility_graph) {
 
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep); 
-    
+  this.world = new b2World(gravity, doSleep);
+
   //add walls
   this.addWalls()
 
@@ -55,7 +55,7 @@ function ImpulseGameState(world, level, visibility_graph) {
 
   this.world_visibility = 1
 
-  if(this.level_name.slice(0, 4) == "BOSS") 
+  if(this.level_name.slice(0, 4) == "BOSS")
     play_song("driven", true)
   else
     play_song(world_music_map[this.world_num], true)
@@ -98,7 +98,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     this.player.process(dt)
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
-    
+
     this.game_numbers.game_length += dt
     this.level.process(dt)
     for(var i = 0; i < this.score_labels.length; i++) {
@@ -119,11 +119,11 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
     var imageObj = new Image();
 
-        imageObj.onload = function() {
+        /*imageObj.onload = function() {
           bg_ctx.drawImage(imageObj, 0, topbarHeight, canvas.width, canvas.height - topbarHeight);
         };
-        imageObj.src = "art/bg_temp.jpg";
-      
+        imageObj.src = "art/bg_temp.jpg";*/
+
     this.bg_drawn = true
   }
 
@@ -131,7 +131,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.translate(0, topbarHeight)//allows us to have a topbar
 
   this.level.draw(ctx, this.draw_factor)
-  
+
   if(this.world_visibility < 1) {
     ctx.globalAlpha = 1 - this.world_visibility
     ctx.fillStyle = "white"
@@ -142,8 +142,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   this.player.draw(ctx)
 
   ctx.translate(0, -topbarHeight)
-  this.draw_interface(ctx) 
-  
+  this.draw_interface(ctx)
+
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
       ctx.beginPath()
@@ -186,7 +186,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
   }*/
- 
+
   /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
@@ -209,7 +209,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     }
   }*/
 
- 
+
 }
 
 ImpulseGameState.prototype.draw_interface = function(ctx) {
@@ -239,12 +239,12 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.globalAlpha = 1
 
   ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
-  
+
   ctx.textAlign = 'left'
   ctx.fillText(this.game_numbers.score, 10, 25)
-  
 
-  
+
+
   ctx.textAlign = 'right'
 
   if(this.stars < 3) {
@@ -283,7 +283,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-  
+
   ctx.fillText(this.game_numbers.last_time, 10, (canvasHeight) - 5)
 
   ctx.textAlign = 'right'
@@ -359,12 +359,12 @@ ImpulseGameState.prototype.addWalls = function() {
       {x: canvasWidth/this.draw_factor/2, y: 2},
       {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2},
       {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2}]
-  
+
   var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
       {x: canvasWidth/this.draw_factor/2, y: (canvasHeight - topbarHeight)/this.draw_factor+2},
       {x: -2, y: (canvasHeight - topbarHeight)/this.draw_factor/2},
       {x: canvasWidth/this.draw_factor+2, y: (canvasHeight - topbarHeight)/this.draw_factor/2}]
-  
+
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
     fixDef.filter.categoryBits = 0x0001

@@ -49,11 +49,18 @@ function draw_enemy(context, enemy_name, x, y, d) {
 
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
-function draw_shape(context, x, y, shape, scale, color, alpha) {
+function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
 
   alpha = typeof alpha !== 'undefined' ? alpha: 1;
+  rotate = typeof rotate !== 'undefined' ? rotate: 0;
 
   context.beginPath()
+  context.save()
+  if (rotate != 0) {
+    context.translate(x, y);
+    context.rotate(rotate);
+    context.translate(-x, -y);
+  }
   if(shape.type == "circle") {
     context.arc(x + shape.x, y + shape.y, scale * shape.r, 0, 2 * Math.PI, true)
   }
@@ -76,6 +83,7 @@ function draw_shape(context, x, y, shape, scale, color, alpha) {
   context.globalAlpha /=2
   context.fill()
   context.globalAlpha = 1
+  context.restore()
 }
 
 function draw_progress_bar(context, x, y, w, h, prop, color) {

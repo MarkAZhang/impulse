@@ -5,7 +5,13 @@ var FragmentGroup = function(enemy_type, loc, velocity) {
 FragmentGroup.prototype.init = function(enemy_type, loc, velocity) {
 
   this.fragments = []
-  this.burst_force = 3
+  velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
+
+  this.burst_force = Math.max(3, Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
+
+
+  //decrease the velocity some so that the explosion looks good
+  velocity = {x: velocity.x * velocity_adjustment_factor, y: velocity.y * velocity_adjustment_factor}
   this.lifespan = 1000
   this.life_left = this.lifespan
   this.color = "black"
@@ -62,8 +68,6 @@ FragmentGroup.prototype.process = function(dt) {
 
 FragmentGroup.prototype.draw = function(context) {
 
-
-
   var prog = this.life_left/this.lifespan
 
   for(var i = 0; i < this.fragments.length; i++) {
@@ -96,5 +100,6 @@ Fragment.prototype.process = function(dt) {
 }
 
 Fragment.prototype.draw = function(context, prog) {
-  draw_shape(context, this.loc.x, this.loc.y, this.shape, this.size, this.color, prog)
+  var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
+  draw_shape(context, this.loc.x, this.loc.y, this.shape, this.size, this.color, prog, pointer_angle)
 }

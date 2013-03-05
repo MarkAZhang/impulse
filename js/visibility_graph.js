@@ -117,18 +117,18 @@ VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices,
     this.edge_list = edge_list
     this.shortest_paths = shortest_paths
   }
-  
+
 
   this.last_time = (new Date()).getTime()
 
-  
+
 }
 
 VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
 //start point, end point, list of bad polygons
 //returns the shortest path from point1 to VISIBILITY_GRAPH to point2
 {
-  
+
   //if it is possible to go from current location to player, always go there directly
   if(isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
   {
@@ -139,8 +139,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   console.log("QUERY "+(cur_time - this.last_time) +" "+temp.id)
   console.log(temp)
   this.last_time = cur_time*/
-  
-  /*//if start point is inside a bad polygon (but we aren't dead...)  
+
+  /*//if start point is inside a bad polygon (but we aren't dead...)
   //get out of there ASAP
   for(var k = 0; k < bad_polygons.length; k++)
   {
@@ -166,8 +166,8 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   var min_path = null
   var point1_adj = []
   var point2_adj = []
- 
-  
+
+
   var inPoly = false
 
   for(var i = 0; i < this.vertices.length; i++)
