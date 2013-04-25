@@ -341,14 +341,16 @@ var cur_song = null
 
 var world_music_map = {}
 
-world_music_map[1] = "speedway"
-world_music_map[2] = "strangled"
-world_music_map[3] = "droid_march"
-world_music_map[4] = "tunneled"
+world_music_map[1] = "kickit"
+world_music_map[2] = "tunneled"
+world_music_map[3] = "emergence"
+world_music_map[4] = "hard_noise"
 /*world_music_map[5] = "emergence"
 world_music_map[6] = "machine_one"
 world_music_map[7] = "trial_by_fire"
 world_music_map[8] = "hard_noise"*/
+
+//kickit
 
 var music_switch = "none"
 
