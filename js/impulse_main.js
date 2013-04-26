@@ -352,6 +352,8 @@ world_music_map[8] = "hard_noise"*/
 
 //kickit
 
+var impulse_bg_music = new MusicPlayer()
+
 var music_switch = "none"
 
 var music_switchtime = 1000
@@ -363,6 +365,7 @@ var mute = false
 var next_song = null
 
 function play_song(song_name, force_restart) {
+  return
   console.log(song_name+" "+song_name+" "+cur_song+" "+next_song)
   if((cur_song == song_name && !force_restart) || (next_song != null && song_name == next_song)) return
 

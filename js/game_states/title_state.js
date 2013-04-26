@@ -80,4 +80,5 @@ TitleState.prototype.setup_main_menu = function() {
   this.buttons.push(new SmallButton("ENEMIES", 20, canvasWidth/2, canvasHeight/2+120, 200, 50, function(){switch_game_state(new EnemiesInfoState())}))
   this.buttons.push(new SmallButton("CREDITS", 20, canvasWidth/2, canvasHeight/2+170, 200, 50, function(){switch_game_state(new CreditsState())}))
   this.buttons.push(new SmallButton("LEVEL EDITOR", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(){switch_game_state(new LevelEditorState())}))
+  this.buttons.push(new SmallButton("JUKEBOX", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){switch_game_state(new MusicPlayerState())}))
 }
