@@ -41,7 +41,7 @@ function LevelIntroState(level_name, world) {
 
   this.level.generate_obstacles()
 
-  var visibility_graph_worker = new Worker("js/visibility_graph_worker.js")
+  var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
 
   visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, obstacle_edges: this.level.obstacle_edges})
 
@@ -65,7 +65,7 @@ function LevelIntroState(level_name, world) {
   var i = 0
 
   for(var j in this.drawn_enemies) {
-  
+
     var k = 0
     var num_in_this_row = 0
 
@@ -86,11 +86,11 @@ function LevelIntroState(level_name, world) {
     var cur_x = 400 + (this.enemy_image_size+10) * diff
     var cur_y = 525 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, "rgba(0, 0, 0, 0.3)"))
-    
+
     i+=1
   }
 
-  
+
 }
 
 LevelIntroState.prototype.process = function(dt) {

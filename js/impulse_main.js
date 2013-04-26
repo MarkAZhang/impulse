@@ -342,9 +342,9 @@ var cur_song = null
 var world_music_map = {}
 
 world_music_map[1] = "kickit"
-world_music_map[2] = "tunneled"
+world_music_map[2] = "breakthru"
 world_music_map[3] = "emergence"
-world_music_map[4] = "hard_noise"
+world_music_map[4] = "wicked"
 /*world_music_map[5] = "emergence"
 world_music_map[6] = "machine_one"
 world_music_map[7] = "trial_by_fire"
@@ -364,7 +364,7 @@ var next_song = null
 
 function play_song(song_name, force_restart) {
   console.log(song_name+" "+song_name+" "+cur_song+" "+next_song)
-  if((cur_song == song_name && !force_restart) || next_song != null && song_name == next_song) return
+  if((cur_song == song_name && !force_restart) || (next_song != null && song_name == next_song)) return
 
   if(song_name == null && cur_song) {
     audio_tag_map[cur_song].pause()
