@@ -7,7 +7,7 @@ function SmallButton(text, size, x, y, w, h, action) {
   this.text = text
   this.size = size
   this.real_size = size
-  this.init(x, y, w, h, action, true, "black")
+  this.init(x, y, w, h, action, false, "black")
 }
 
 SmallButton.prototype.additional_draw = function(context) {

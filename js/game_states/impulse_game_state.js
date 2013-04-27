@@ -55,10 +55,13 @@ function ImpulseGameState(world, level, visibility_graph) {
 
   this.world_visibility = 1
 
-  if(this.level_name.slice(0, 4) == "BOSS")
-    play_song("driven", true)
+  if(this.level_name == "BOSS 4") {
+    impulse_bg_music.play(imp_var.songs["Final Tessellation"])
+  }
+  else if(this.level_name.slice(0, 4) == "BOSS")
+    impulse_bg_music.play(imp_var.songs["Tessellation"])
   else
-    play_song(world_music_map[this.world_num], true)
+    impulse_bg_music.play(imp_var.songs["Hive "+this.world_num])
 
 }
 

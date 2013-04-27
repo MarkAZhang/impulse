@@ -17,7 +17,7 @@ function ClassicSelectState(world) {
     this.set_level_buttons(world)
   }
 
-  play_song("right")
+  impulse_bg_music.play(imp_var.songs["Menu"])
 }
 
 ClassicSelectState.prototype.process = function(  at) {

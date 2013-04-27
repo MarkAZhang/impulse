@@ -7,6 +7,7 @@ var Slider = function(x, y, w, h, color) {
   this.active = true
   this.value = 0
   this.thumb_width = 20
+  this.dragged = false
 }
 
 Slider.prototype.draw = function(context) {
@@ -31,11 +32,11 @@ Slider.prototype.draw = function(context) {
 }
 
 Slider.prototype.on_mouse_down = function(x, y) {
-  console.log("HERE")
   if(x > this.x - this.w/2 - this.thumb_width/2 && x < this.x + this.w/2 + this.thumb_width/2 && y > this.y - this.h/2 - this.thumb_width/2 && y < this.y + this.h/2 + this.thumb_width/2) {
     this.set_value((x - (this.x - this.w/2)) / this.w)
+    this.drag = true
   }
-  this.drag = true
+
 }
 
 Slider.prototype.set_value = function(value) {
@@ -46,8 +47,8 @@ Slider.prototype.set_value = function(value) {
 
 
 Slider.prototype.on_mouse_up = function(x,y) {
-  this.drag = false
   this.onselect(this.value)
+  this.drag = false
 }
 
 Slider.prototype.onselect = function(value) {
