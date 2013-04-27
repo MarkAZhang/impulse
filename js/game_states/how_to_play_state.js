@@ -32,8 +32,6 @@ function HowToPlayState(ctx) {
   this.level_name = "HOW TO PLAY 1"
   this.reload_world()
 
-  play_song("dirty_drums")
-
 }
 
 HowToPlayState.prototype.increment_state = function() {

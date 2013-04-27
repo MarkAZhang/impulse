@@ -92,7 +92,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
 
   this.star_colors = ["bronze", "silver", "gold"]
 
-  impulse_bg_music.stop_bg()
+  impulse_music.stop_bg()
 }
 
 GameOverState.prototype.process = function(dt) {

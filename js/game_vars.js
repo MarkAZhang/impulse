@@ -1,4 +1,4 @@
-var imp_var = {
+var imp_vars = {
   songs : {
     "Menu": "kreepor",
     "Interlude": "hall",
@@ -8,6 +8,13 @@ var imp_var = {
     "Hive 4": "fire",
     "Tessellation": "driven",
     "Final Tessellation": "wicked"
+  },
+  song_repeats: {
+    "driven": 27.460,
+    "wicked": 2.922
+  },
+  sounds: {
+    "impulse": "effects/impulse"
   }
 
 

@@ -14,6 +14,7 @@ var cur_dialog_box = null
 var save_name = "impulse_save_data"
 
 var player_data = {}
+var impulse_music = new MusicPlayer()
 
 window.onload =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -136,7 +137,6 @@ function step() {
 
   dt = cur_time - last_time
   cur_game_state.process(dt)
-  process_music(dt)
   if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
