@@ -79,7 +79,7 @@ BossTwo.prototype.additional_processing = function(dt) {
 
   if(!this.spawned_harpoons) {
     this.spawned_harpoons = true
-    var locs = [[1, 1], [canvasWidth/draw_factor-1, 1], [canvasWidth/draw_factor-1, (canvasHeight - topbarHeight)/draw_factor-1], [1, (canvasHeight - topbarHeight)/draw_factor-1]]
+    var locs = [[1, 1], [levelWidth/draw_factor-1, 1], [levelWidth/draw_factor-1, (levelHeight)/draw_factor-1], [1, (levelHeight)/draw_factor-1]]
       for(var i = 0; i < locs.length; i++) {
         this.level.spawned_enemies.push(new FixedHarpoon(this.world, locs[i][0], locs[i][1], this.level.enemy_counter, this.impulse_game_state))
         this.level.enemy_counter +=1
@@ -100,7 +100,7 @@ BossTwo.prototype.additional_processing = function(dt) {
 
   if(this.small_exploding) {
     if(this.small_exploding_duration < 0) {
-         
+
       this.small_exploding = false
 
     }
@@ -135,11 +135,11 @@ BossTwo.prototype.additional_processing = function(dt) {
       else if (boss_dist <= this.effective_radius * this.low_gravity_factor) {
         gravity_force = this.boss_low_gravity_force
       }
-      
+
       if(inside) {
         if(gravity_force > 0)
           gravity_force *= 2
-        else 
+        else
           gravity_force = .3
       }
       if(this.explode_timer < .175 * this.explode_interval)
@@ -164,11 +164,11 @@ BossTwo.prototype.additional_processing = function(dt) {
       else if (boss_dist <= this.effective_radius * this.low_gravity_factor) {
         gravity_force = this.boss_low_gravity_force
       }
-      
+
       if(inside) {
         if(gravity_force > 0)
           gravity_force *= 2
-        else 
+        else
           gravity_force = .3
       }
     if(this.explode_timer < .175 * this.explode_interval)
@@ -195,7 +195,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.red_visibility = 1
   }
 
-  
+
 }
 
 BossTwo.prototype.additional_drawing = function(context, draw_factor) {
@@ -207,10 +207,10 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
       context.rotate(this.body.GetAngle());
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
+
       context.beginPath()
       context.globalAlpha = this.red_visibility
-      
+
       context.moveTo((tp.x+this.shape_points[0][0].x)*draw_factor, (tp.y+this.shape_points[0][0].y)*draw_factor)
       for(var i = 1; i < this.shape_points[0].length; i++)
       {
@@ -225,7 +225,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
   for(var j = 0; j < polygons.length; j++) {
     context.beginPath()
-      
+
     context.moveTo(polygons[j][0].x*draw_factor, polygons[j][0].y*draw_factor)
     for(var i = 1; i < polygons[j].length; i++)
     {
@@ -310,7 +310,7 @@ BossTwo.prototype.collide_with = function(other) {
     this.impulse_game_state.reset_combo()
     if (!this.small_exploding) {
       this.small_exploding = true
-      
+
       this.small_explode()
       this.small_exploding_duration = this.small_exploding_interval
     }
@@ -322,7 +322,7 @@ BossTwo.prototype.collide_with = function(other) {
       this.med_gravity_factor += this.med_f_incr
       this.high_gravity_factor += this.high_f_incr
     }
-    
+
   }
 
 

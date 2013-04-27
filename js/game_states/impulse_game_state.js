@@ -72,7 +72,7 @@ ImpulseGameState.prototype.loading_screen = function() {
   ctx.font = '30px Century Gothic'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
-  ctx.fillText("LOADING", canvasWidth/2, (canvasHeight - topbarHeight)/2)
+  ctx.fillText("LOADING", levelWidth/2, (levelHeight)/2)
   ctx.fill()
 }
 
@@ -119,14 +119,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
 
   if(!this.bg_drawn) {
-    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var imageObj = new Image();
-
-        /*imageObj.onload = function() {
-          bg_ctx.drawImage(imageObj, 0, topbarHeight, canvas.width, canvas.height - topbarHeight);
-        };
-        imageObj.src = "art/bg_temp.jpg";*/
-
+    bg_canvas.setAttribute("style","");//make background visible
     this.bg_drawn = true
   }
 
@@ -358,15 +351,15 @@ ImpulseGameState.prototype.on_key_up = function(keyCode) {
 }
 
 ImpulseGameState.prototype.addWalls = function() {
-  var wall_dim = [{x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2},
-      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2}]
+  var wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
+      {x: levelWidth/this.draw_factor/2, y: 2},
+      {x: 2, y: (levelHeight)/draw_factor/2},
+      {x: 2, y: (levelHeight)/draw_factor/2}]
 
   var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
-      {x: canvasWidth/this.draw_factor/2, y: (canvasHeight - topbarHeight)/this.draw_factor+2},
-      {x: -2, y: (canvasHeight - topbarHeight)/this.draw_factor/2},
-      {x: canvasWidth/this.draw_factor+2, y: (canvasHeight - topbarHeight)/this.draw_factor/2}]
+      {x: canvasWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
+      {x: -2, y: (levelHeight)/this.draw_factor/2},
+      {x: canvasWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
 
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;

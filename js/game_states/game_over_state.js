@@ -24,7 +24,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   if(this.game_numbers.score > impulse_level_data[this.level_name].high_score) {
     this.high_score = true
     impulse_level_data[this.level_name].high_score = this.game_numbers.score
-    
+
     var stars = 0
     while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[stars])
     {
@@ -32,7 +32,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
     }
     impulse_level_data[this.level_name].stars = stars
     this.stars = stars
-    
+
   }
   else {
     this.high_score = false
@@ -42,12 +42,12 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
       stars+=1
     }
     this.stars = stars
-    
+
   }
 
   if (this.stars < 3)
       this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[this.stars]
-    else 
+    else
       this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[2]
 
   this.stars_gained = 0
@@ -101,11 +101,13 @@ GameOverState.prototype.process = function(dt) {
 
 GameOverState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "white"
-    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    bg_canvas.setAttribute("style", "display:none" )
     this.bg_drawn = true
   }
+
+
+  ctx.fillStyle = "white"
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
   ctx.beginPath()
   ctx.fillStyle = 'red'
@@ -126,10 +128,10 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   var first_rect_y = 160
 
-  
+
 
   ctx.rect(200, first_rect_y, 400, 180)
- 
+
 
   ctx.lineWidth = 2
 
@@ -180,11 +182,11 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "green"
     ctx.fillText("EARNED ALL BONUS SLAYER STARS" , canvasWidth/2, second_rest_y + 60)
     ctx.fillText("FOR ENEMIES IN THIS LEVEL" , canvasWidth/2, second_rest_y + 90)
-    
-  
+
+
   }
 
-  
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)

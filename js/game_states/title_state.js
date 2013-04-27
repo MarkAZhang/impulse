@@ -24,6 +24,7 @@ TitleState.prototype.process = function(dt) {
 
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
+    bg_canvas.setAttribute("style", "")
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
     bg_ctx.fillStyle = "white"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -37,7 +38,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = 'blue'
   ctx.textAlign = 'center'
   ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2 - 100)
-  
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)

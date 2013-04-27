@@ -36,6 +36,9 @@ window.onload =  function() {
 
     topbarHeight = 35
 
+    levelWidth = 800;
+    levelHeight = canvasHeight - topbarHeight
+
     /*gameWidth = 800
     gameHeight = 660 //extra 60 for interface
 

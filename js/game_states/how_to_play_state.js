@@ -66,7 +66,7 @@ HowToPlayState.prototype.loading_screen = function() {
 }
 
 HowToPlayState.prototype.process = function(dt) {
-  
+
   if(this.state > 4) {
     return
   }
@@ -76,7 +76,7 @@ HowToPlayState.prototype.process = function(dt) {
   {
     this.player.process(dt)
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
-    
+
     this.game_numbers.game_length += dt
     this.level.process(dt)
     for(var i = 0; i < this.score_labels.length; i++) {
@@ -162,13 +162,13 @@ HowToPlayState.prototype.draw = function(ctx, bg_ctx) {
   ctx.translate(0, topbarHeight)//allows us to have a topbar
 
   this.level.draw(ctx, this.draw_factor)
-  
+
   this.player.draw(ctx)
 
   ctx.translate(0, -topbarHeight)
 
   this.draw_interface(ctx)
-  
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
@@ -193,7 +193,7 @@ HowToPlayState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.fill()
 
-  
+
 }
 
 HowToPlayState.prototype.draw_interface = function(ctx) {
@@ -224,9 +224,9 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
 
   ctx.textAlign = 'left'
   ctx.fillText(this.game_numbers.score, 10, 25)
-  
 
-  
+
+
   ctx.textAlign = 'right'
 
   if(this.stars < 3) {
@@ -265,7 +265,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-  
+
   ctx.fillText(this.game_numbers.last_time, 10, (canvasHeight) - 5)
 
   ctx.textAlign = 'right'
@@ -305,7 +305,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
 
 HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.ready) return
-  
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].on_mouse_move(x, y)
@@ -354,13 +354,13 @@ HowToPlayState.prototype.setup_world_next = function(level_name) {
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep); 
-    
+  this.world = new b2World(gravity, doSleep);
+
   //add walls
   this.addWalls()
 
   this.level = new Level(impulse_level_data[level_name], this)
-    
+
   this.generate_level()
   this.player = new Player(this.world, canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, this)
 
@@ -374,16 +374,16 @@ HowToPlayState.prototype.setup_world_next = function(level_name) {
 }
 
 HowToPlayState.prototype.addWalls = function() {
-  var wall_dim = [{x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: canvasWidth/this.draw_factor/2, y: 2},
-      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2},
-      {x: 2, y: (canvasHeight - topbarHeight)/draw_factor/2}]
-  
+  var wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
+      {x: levelWidth/this.draw_factor/2, y: 2},
+      {x: 2, y: (levelHeight)/draw_factor/2},
+      {x: 2, y: (levelHeight)/draw_factor/2}]
+
   var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
-      {x: canvasWidth/this.draw_factor/2, y: (canvasHeight - topbarHeight)/this.draw_factor+2},
-      {x: -2, y: (canvasHeight - topbarHeight)/this.draw_factor/2},
-      {x: canvasWidth/this.draw_factor+2, y: (canvasHeight - topbarHeight)/this.draw_factor/2}]
-  
+      {x: canvasWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
+      {x: -2, y: (levelHeight)/this.draw_factor/2},
+      {x: canvasWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
+
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
     fixDef.filter.categoryBits = 0x0001

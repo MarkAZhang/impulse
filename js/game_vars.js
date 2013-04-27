@@ -23,6 +23,13 @@ var imp_vars = {
       file: "effects/sdeath",
       maxnum: 4
     }
+  },
+  bg: {
+    "Hive 1": "bg/hive1",
+    "Hive 2": "bg/hive1",
+    "Hive 3": "bg/hive1",
+    "Hive 4": "bg/hive1"
+
   }
 }
 

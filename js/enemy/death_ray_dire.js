@@ -4,7 +4,7 @@ DeathRayDire.prototype.constructor = DeathRayDire
 
 function DeathRayDire(world, x, y, id, impulse_game_state) {
   this.type = "deathraydire"
-   
+
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
@@ -65,6 +65,6 @@ DeathRayDire.prototype.get_target_point = function() {
   }
   else {
     //go towards center
-    return {x: canvasWidth/draw_factor/2, y: (canvasHeight - topbarHeight)/draw_factor/2}
+    return {x: levelWidth/draw_factor/2, y: (levelHeight)/draw_factor/2}
   }
 }

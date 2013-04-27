@@ -2,8 +2,9 @@ var Level = function(data, impulse_game_state) {
   this.init(data, impulse_game_state)
 }
 
-Level.prototype.init = function(data, impulse_game_state) {
-  this.impulse_game_state = impulse_game_state
+Level.prototype.init = function(data, level_intro_state) {
+  this.level_intro_state = level_intro_state
+  this.impulse_game_state = null
   this.enemies_data = data.enemies
   this.enemy_spawn_timers = {}
   this.enemy_spawn_counters = {}
@@ -237,7 +238,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
 
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, canvasWidth/draw_factor/2, (canvasHeight - topbarHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, levelWidth/draw_factor/2, (levelHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
   else if(this.spawn_points) {
     var r_p = this.spawn_points[Math.floor(Math.random() * this.spawn_points.length)]
@@ -269,7 +270,7 @@ Level.prototype.generate_obstacles = function() {
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
-    this.obstacles.push(new BasicObstacle(temp_v, impulse_colors["world "+this.impulse_game_state.world_num]))
+    this.obstacles.push(new BasicObstacle(temp_v, impulse_colors["world "+this.level_intro_state.world_num]))
     this.obstacle_polygons.push(temp_v)
     for(var j = 0; j < temp_v.length; j++) {
       this.obstacle_vertices.push(temp_v[j])
@@ -316,7 +317,7 @@ Level.prototype.draw = function(context, draw_factor) {
   if(this.boss_delay_timer >= 0) {
 
     context.beginPath()
-    context.arc(canvasWidth/draw_factor/2 * draw_factor, (canvasHeight - topbarHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    context.arc(levelWidth/draw_factor/2 * draw_factor, (levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
 
     context.lineWidth = 2
     context.strokeStyle = "gray"
@@ -325,4 +326,8 @@ Level.prototype.draw = function(context, draw_factor) {
     context.restore()
     context.globalAlpha = 1
   }
+}
+Level.prototype.draw_bg = function(bg_ctx) {
+  draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
+  console.log("BG DRAWN")
 }

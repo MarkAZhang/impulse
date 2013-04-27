@@ -37,6 +37,7 @@ function LevelIntroState(level_name, world) {
   }
   this.enemy_image_size = 40
 
+  // create the level beforehand
   this.level = new Level(impulse_level_data[this.level_name], this)
 
   this.level.generate_obstacles()
@@ -89,8 +90,6 @@ function LevelIntroState(level_name, world) {
 
     i+=1
   }
-
-
 }
 
 LevelIntroState.prototype.process = function(dt) {
@@ -100,11 +99,14 @@ LevelIntroState.prototype.process = function(dt) {
 LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
-    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "white"
-    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.translate(0, topbarHeight)//allows us to have a topbar
+    this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
+    bg_ctx.translate(0, -topbarHeight)
+    bg_canvas.setAttribute("style", "display:none")
   }
+  ctx.fillStyle = "white"
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
   ctx.beginPath()
   ctx.fillStyle = impulse_colors['world '+ this.world_num]

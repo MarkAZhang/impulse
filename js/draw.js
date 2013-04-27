@@ -105,9 +105,9 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
-    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/(canvasHeight-topbarHeight) * h)
+    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/(levelHeight) * h)
     for(var j = 1; j < polygons[i].length; j++) {
-      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/(canvasHeight-topbarHeight) * h)
+      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/(levelHeight) * h)
     }
     context.closePath()
     context.fillStyle = "black"
@@ -138,6 +138,12 @@ spriteSheetData = {
 
 }
 
+var impulse_bg_images = {}
+
+for(var bg in imp_vars.bg) {
+  impulse_bg_images[bg] = loadSprite("art/"+imp_vars.bg[bg]+".png");
+}
+
 function drawSprite(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, imageObject)
 {
 
@@ -160,4 +166,19 @@ function drawSprite(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, 
     ctx.drawImage(imageObject, spriteSheetData[spriteName][0], spriteSheetData[spriteName][1], spriteSheetData[spriteName][2], spriteSheetData[spriteName][3], -actualWidth/2, -actualHeight/2, actualWidth, actualHeight);
     // restore state
     ctx.restore();
+}
+
+function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
+  var bg = impulse_bg_images[spriteName]
+  var w = bg.width;
+  var h = bg.height;
+
+  ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
+  ctx.clip()
+  for(var x = xLow; x < xHigh; x+=w) {
+    for(var y = yLow; y < yHigh; y+=h) {
+      ctx.drawImage(bg, 0, 0, 200, 200, x, y, 200, 200)
+    }
+  }
+
 }
