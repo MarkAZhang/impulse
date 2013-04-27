@@ -416,6 +416,8 @@ Enemy.prototype.start_death = function(death) {
     this.impulse_game_state.check_cutoffs()
   }
 
+  impulse_music.play_sound("sdeath")
+
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
 
 }

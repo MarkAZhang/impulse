@@ -1,15 +1,62 @@
 var MusicPlayer = function() {
 
   this.sounds = {}
+  this.multisounds = {}
   this.cur_song = null
+  this.initialize_multisounds();
+}
+
+MusicPlayer.prototype.initialize_multisounds = function() {
+  for(var multisound in imp_vars.multisounds) {
+    this.initialize_sound_set(imp_vars.multisounds[multisound].file, imp_vars.multisounds[multisound].maxnum);
+  }
+}
+
+MusicPlayer.prototype.play_sound = function(sound) {
+  this.play(imp_vars.sounds[sound])
 }
 
 MusicPlayer.prototype.play = function(file) {
+  if(file in this.multisounds) {
+    this.play_multisound(file);
+    return;
+  }
+
   if(!(file in this.sounds)) {
     this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
   }
   this.sounds[file].setVolume(50);
   this.sounds[file].play();
+}
+
+MusicPlayer.prototype.play_multisound = function(file) {
+  
+  for(var i = 0; i < this.multisounds[file].length; i++) {
+    if(!this.multisounds[file][i]) {
+      this.sounds[file+i].play();
+      this.multisounds[file][i] = true;
+      return;
+    }
+  }
+
+}
+
+MusicPlayer.prototype.initialize_sound_set = function(file, maxnum) {
+  this.multisounds[file] = []
+  for(var i = 0; i < maxnum; i++) {
+    this.multisounds[file].push(false);
+    this.sounds[file+i] = new buzz.sound("audio/"+file+".ogg");
+    var _this = this;
+    this.sounds[file+i].bind("ended", (function(index, file) {
+            return function(e) {
+              // unset play flag after done
+              _this.multisounds[file][index] = false;
+            }
+          })(i, file))
+
+  }
+
+
 }
 
 MusicPlayer.prototype.switch_bg = function(file) {

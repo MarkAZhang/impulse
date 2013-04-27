@@ -14,9 +14,18 @@ var imp_vars = {
     "wicked": 2.922
   },
   sounds: {
-    "impulse": "effects/impulse"
+    "impulse": "effects/impulse",
+    "pdeath": "effects/pdeath"
+
+  },
+  multisounds: {
+    "sdeath": {
+      file: "effects/sdeath",
+      maxnum: 4
+    }
   }
+}
 
-
-
+for(var multisounds in imp_vars.multisounds) {
+  imp_vars.sounds[multisounds] = imp_vars.multisounds[multisounds].file
 }

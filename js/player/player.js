@@ -236,7 +236,7 @@ Player.prototype.process = function(dt) {
     this.attack_loc = this.body.GetPosition().Copy()
     this.attack_angle = this.impulse_angle
     this.attack_duration = this.attack_length
-    impulse_music.play(imp_vars.sounds["impulse"])
+    impulse_music.play_sound("impulse")
   }
 
   this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
@@ -436,6 +436,7 @@ Player.prototype.start_death = function() {
   this.dying = true
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
+  impulse_music.play_sound("pdeath")
   this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity())
 }
 
