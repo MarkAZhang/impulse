@@ -6,7 +6,7 @@ function EnemiesInfoState() {
   this.bg_drawn = false
 
   this.buttons = []
-  this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
   this.enemy_buttons = []
   this.enemies_with_info = [
     "stunner", "spear", "tank", "mote", "goo", "harpoon", "wisp", "disabler",

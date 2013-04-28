@@ -75,10 +75,17 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
 }
 
 function draw_vprogress_bar(context, x, y, w, h, prop, color, bcolor) {
-  context.beginPath()
 
   context.shadowBlur = 20;
   context.shadowColor = color
+
+  context.beginPath()
+
+  context.shadowColor = color
+  context.rect(x - w * .5, y - h * .5, w, h * prop)
+  context.fillStyle = color
+  context.fill()
+
   context.rect(x - w * .5, y - h * .5, w , h)
   context.strokeStyle = bcolor
   context.lineWidth = 2
@@ -184,7 +191,7 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   ctx.clip()
   for(var x = xLow; x < xHigh; x+=w) {
     for(var y = yLow; y < yHigh; y+=h) {
-      ctx.drawImage(bg, 0, 0, 200, 200, x, y, 200, 200)
+      ctx.drawImage(bg, 0, 0, w, h, x, y, w, h)
     }
   }
 

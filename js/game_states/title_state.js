@@ -14,7 +14,7 @@ function TitleState(start_clicked) {
     this.setup_main_menu()
   }
   else
-    this.buttons.push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, function(){setTimeout(function(){_this.setup_main_menu()}, 20)}))
+    this.buttons.push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, "black", "blue", function(){setTimeout(function(){_this.setup_main_menu()}, 20)}))
   impulse_music.play_bg(imp_vars.songs["Menu"])
 }
 
@@ -73,13 +73,13 @@ TitleState.prototype.setup_main_menu = function() {
   }
 
   this.buttons = []
-  this.buttons.push(new SmallButton("CLASSIC", 20, levelWidth/2, levelHeight/2+20, 200, 50, function(){switch_game_state(new ClassicSelectState())}))
+  this.buttons.push(new SmallButton("CLASSIC", 20, levelWidth/2, levelHeight/2+20, 200, 50, "black", "blue",function(){switch_game_state(new ClassicSelectState())}))
   //this.buttons.push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
   //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
   //        ImpulseGameState(ctx, "SURVIVAL"))}))
   //this.buttons.push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
-  this.buttons.push(new SmallButton("ENEMIES", 20, levelWidth/2, levelHeight/2+120, 200, 50, function(){switch_game_state(new EnemiesInfoState())}))
-  this.buttons.push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, function(){switch_game_state(new CreditsState())}))
-  this.buttons.push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+220, 200, 50, function(){switch_game_state(new LevelEditorState())}))
-  this.buttons.push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){switch_game_state(new MusicPlayerState())}))
+  this.buttons.push(new SmallButton("ENEMIES", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){switch_game_state(new EnemiesInfoState())}))
+  this.buttons.push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, "black", "blue",function(){switch_game_state(new CreditsState())}))
+  this.buttons.push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+220, 200, 50, "black", "blue",function(){switch_game_state(new LevelEditorState())}))
+  this.buttons.push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue",function(){switch_game_state(new MusicPlayerState())}))
 }

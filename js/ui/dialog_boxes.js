@@ -1,5 +1,5 @@
 var DialogBox = function() {
-  
+
 }
 
 DialogBox.prototype.init = function(w, h) {
@@ -8,15 +8,18 @@ DialogBox.prototype.init = function(w, h) {
   this.x = canvasWidth/2
   this.y = canvasHeight/2
   this.buttons = []
+  this.solid = true;
 }
 DialogBox.prototype.draw = function(ctx) {
-  ctx.beginPath()
-  ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-  ctx.fillStyle = "white"
-  ctx.fill()
-  ctx.lineWidth = 2
-  ctx.strokeStyle = "black"
-  ctx.stroke()
+  if(this.solid) {
+    ctx.beginPath()
+    ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+    ctx.fillStyle = "white"
+    ctx.fill()
+    ctx.lineWidth = 2
+    ctx.strokeStyle = "black"
+    ctx.stroke()
+  }
   this.additional_draw(ctx)
 }
 
@@ -40,15 +43,15 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
   this.level_name = this.level.level_name
   this.visibility_graph = visibility_graph
   this.init(400, 300)
-
+  this.solid = false;
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
-    
-    this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
+
+    this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
           switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
-    this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y + this.h/2 - 20, 200, 50, function(_this) { return function() {
+    this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
           switch_game_state(new ImpulseGameState(_this.game_state.world_num, _this.level, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
@@ -57,55 +60,39 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
 
 PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.beginPath()
-  ctx.textAlign = "center"
-  ctx.font = '20px Century Gothic'
-  ctx.fillStyle = "black"
-  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 30)
+  ctx.textAlign = "center";
+  ctx.font = '32px Century Gothic';
+  ctx.shadowColor = "gray";
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = "gray";
+  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 60)
 
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY")
     var temp_colors = ['bronze', 'silver', 'gold']
-
-    var score_color = 0
-
-    while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
-      score_color+=1
-    }
-
-
-
-    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
-  }
-  else
-    ctx.fillStyle = "black"
-  ctx.font = '30px Century Gothic'
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
-    ctx.fillText(this.level_name, this.x, this.y - this.h/2 + 75 )
-  }
-  else {
-    ctx.fillText("HOW TO PLAY", this.x, this.y - this.h/2 + 75 )
-  }
-  ctx.font = '20px Century Gothic'
-  ctx.fillText("CURRENT SCORE: "+ this.game_numbers.score, this.x, this.y - this.h/2 + 125 )
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
     for(var i = 0; i < 3; i++) {
+      ctx.font = '24px Century Gothic';
       ctx.fillStyle = impulse_colors[temp_colors[i]]
-      ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 160 + 25 * i)
+      ctx.shadowColor = ctx.fillStyle
+      ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 110 + 32 * i)
     }
-    score_color = 0
+    var score_color = 0
 
     while(impulse_level_data[this.level_name].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
       score_color+=1
     }
 
-    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "black"
-    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.x, this.y - this.h/2 + 245)
+    ctx.font = '20px Century Gothic';
+    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
+    ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.x, this.y - this.h/2 + 225)
   }
-  ctx.font = '25px Century Gothic'
-  ctx.fillStyle = "white"
-  ctx.fillText("SPACE TO UNPAUSE", this.x, this.y + this.h/2 + 50 )
-  
+  ctx.font = '16px Century Gothic'
+  ctx.fillStyle = "gray"
+  ctx.fillText("SPACE TO UNPAUSE", this.x, this.y + this.h/2 + 25)
+
   ctx.fill()
 
 
@@ -148,7 +135,7 @@ function EnemyBox(enemy_name) {
   this.w = 600
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  var world = new b2World(gravity, doSleep); 
+  var world = new b2World(gravity, doSleep);
 
   var temp_enemy = new (impulse_enemy_stats[this.enemy_name].className)(world, 0, 0, 0, 0)
 
@@ -202,7 +189,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
 
   draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, impulse_enemy_stats[this.enemy_name].color)
- 
+
   ctx.fillStyle = "black"
 
   ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
@@ -225,7 +212,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.textAlign = 'right'
 
   ctx.fillText(impulse_enemy_stats[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
-  
+
 
   ctx.beginPath()
   ctx.textAlign = 'center'
@@ -241,12 +228,12 @@ EnemyBox.prototype.additional_draw = function(ctx) {
       ctx.fillText(this.other_notes[i], this.x, this.y - this.h/2 + 340 + 25 * this.special_ability.length + 25 * i)
     }
   }
-  
-  
+
+
   ctx.font = '25px Century Gothic'
   ctx.fillStyle = "white"
   ctx.fillText("CLICK TO CONTINUE", this.x, this.y + this.h/2 + 50 )
-  
+
   ctx.fill()
 
 }
@@ -259,5 +246,5 @@ EnemyBox.prototype.on_click = function(x, y) {
 }
 
 EnemyBox.prototype.on_key_down = function(keyCode) {
-  
+
 }

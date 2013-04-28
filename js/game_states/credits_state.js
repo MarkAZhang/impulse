@@ -7,7 +7,7 @@ function CreditsState() {
   this.start_clicked = false
   this.buttons = []
   var _this = this
-  this.buttons.push(new SmallButton("RETURN", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("RETURN", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
   this.image = new Image()
 
   this.image.src = 'impulse_logo.png'

@@ -589,12 +589,12 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.stroke()
 
     // give enemies a tiny of the level color
-    context.strokeStyle = this.level.color;
+    /*context.strokeStyle = this.level.color;
     context.fillStyle = this.level.color;
     context.globalAlpha = .3;
     context.stroke();
     context.fill();
-    context.globalAlpha = 1;
+    context.globalAlpha = 1;*/
 
     if(this.special_mode && !this.dying) {
       context.globalAlpha = this.sp_visibility

@@ -49,20 +49,20 @@ MusicPlayerState.prototype.setup_ui = function() {
   this.slider.active = false
 
 
-  this.buttons.push(new SmallButton("PLAY", 20, levelWidth/2 - 50, 250, 100, 50,
+  this.buttons.push(new SmallButton("PLAY", 20, levelWidth/2 - 50, 250, 100, 50, "black", "blue",
 
         function() {
           impulse_music.resume_bg();
         }))
 
-  this.buttons.push(new SmallButton("PAUSE", 20, levelWidth/2 + 50, 250, 100, 50,
+  this.buttons.push(new SmallButton("PAUSE", 20, levelWidth/2 + 50, 250, 100, 50, "black", "blue",
 
         function() {
           impulse_music.pause_bg();
         }))
   this.setup_music_buttons()
 
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
 }
 
 MusicPlayerState.prototype.setup_music_buttons = function() {
@@ -71,7 +71,7 @@ MusicPlayerState.prototype.setup_music_buttons = function() {
   for(song in imp_vars.songs) {
     var x = (index%2 == 0) ? this.first_column : this.second_column;
     var _this = this;
-    this.buttons.push(new SmallButton(song, 20, x, this.column_top + Math.floor(index/2) * this.column_space, 200, 50,
+    this.buttons.push(new SmallButton(song, 20, x, this.column_top + Math.floor(index/2) * this.column_space, 200, 50, "black", "blue",
           (function(this_song) {
           return function() {
             _this.cur_song = this_song;

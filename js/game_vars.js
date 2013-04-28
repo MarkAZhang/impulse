@@ -26,10 +26,9 @@ var imp_vars = {
   },
   bg: {
     "Hive 1": "bg/hive1",
-    "Hive 2": "bg/hive1",
-    "Hive 3": "bg/hive1",
-    "Hive 4": "bg/hive1"
-
+    "Hive 2": "bg/hive2",
+    "Hive 3": "bg/hive3",
+    "Hive 4": "bg/hive4"
   }
 }
 
@@ -44,11 +43,14 @@ impulse_colors['silver'] = "rgb(175, 175, 175)"
 impulse_colors['impulse_target_blue'] = "rgba(0, 128, 255, 0.2)"
 impulse_colors['impulse_blue'] = "rgb(0, 128, 255)"
 impulse_colors['gold'] = "rgb(238, 201, 0)"
-impulse_colors['world 1'] = "#196519"
-impulse_colors['world 1 dark'] = "#010601"
-impulse_colors['world 2'] = "rgb(0, 206, 209)"
-impulse_colors['world 3'] = "rgb(186, 85, 211)"
-impulse_colors['world 4'] = "rgb(255, 0, 0)"
+impulse_colors['world 1'] = "#034903"
+impulse_colors['world 1 dark'] = "#001100"
+impulse_colors['world 2'] = "#0e1c5b"//"rgb(0, 206, 209)"
+impulse_colors['world 2 dark'] = "#010310"//"rgb(0, 206, 209)"
+impulse_colors['world 3'] = "#450555"
+impulse_colors['world 3 dark'] = "#0f0013"
+impulse_colors['world 4'] = "600"
+impulse_colors['world 4 dark'] = "#200"
 impulse_colors["player_color"] = "rgb(32, 140, 231)"
 impulse_colors["boss"] = "red"
 impulse_colors["boss dark"] = "#900"

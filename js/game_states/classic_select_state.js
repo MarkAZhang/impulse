@@ -6,13 +6,13 @@ function ClassicSelectState(world) {
   this.bg_drawn = false
   if(!world) {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_world_buttons()
   }
   else {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_level_buttons(world)
   }
@@ -39,7 +39,7 @@ ClassicSelectState.prototype.set_world_buttons = function() {
 }
 
 ClassicSelectState.prototype.set_level_buttons = function(world) {
-  this.buttons.push(new SmallButton("WORLD SELECT", 20, levelWidth/2, levelHeight/2+220, 200, 50, function(_this){return function(){_this.set_world_buttons()}}(this)))
+  this.buttons.push(new SmallButton("WORLD SELECT", 20, levelWidth/2, levelHeight/2+220, 200, 50, "black", "blue", function(_this){return function(){_this.set_world_buttons()}}(this)))
   this.level_buttons = []
   var gap = 30
   var level_button_h = (levelHeight/2 + 200 - 3 * gap)/2

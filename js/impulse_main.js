@@ -1,5 +1,5 @@
 var version_num = "1.0"
-var unlockall = false
+var unlockall = true
 
 var canvasWidth, canvasHeight
 var ctx
@@ -160,9 +160,9 @@ function step() {
 
   if(cur_dialog_box!=null) {
     ctx.beginPath()
-    ctx.globalAlpha = .5
+    ctx.globalAlpha = 1
     ctx.fillStyle = "black"
-    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.rect(sidebarWidth, 0, levelWidth, levelHeight)
     ctx.fill()
     ctx.globalAlpha = 1
     cur_dialog_box.draw(ctx)
