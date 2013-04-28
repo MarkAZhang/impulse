@@ -386,10 +386,10 @@ ImpulseGameState.prototype.addWalls = function() {
       {x: 2, y: (levelHeight)/draw_factor/2},
       {x: 2, y: (levelHeight)/draw_factor/2}]
 
-  var wall_pos = [{x: canvasWidth/this.draw_factor/2, y: -2},
-      {x: canvasWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
+  var wall_pos = [{x: levelWidth/this.draw_factor/2, y: -2},
+      {x: levelWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
       {x: -2, y: (levelHeight)/this.draw_factor/2},
-      {x: canvasWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
+      {x: levelWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
 
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
