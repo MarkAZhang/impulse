@@ -31,13 +31,15 @@ window.onload =  function() {
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
     , b2ContactListener = Box2D.Dynamics.b2ContactListener
 
-    canvasWidth = 800;
-    canvasHeight = 635;
+    canvasWidth = 1200;
+    canvasHeight = 600;
 
-    topbarHeight = 35
+    //topbarHeight = 35
+    sidebarWidth = 200;
 
-    levelWidth = 800;
-    levelHeight = canvasHeight - topbarHeight
+    levelWidth = canvasWidth - 2 * sidebarWidth;
+
+    levelHeight = canvasHeight
 
     /*gameWidth = 800
     gameHeight = 660 //extra 60 for interface
@@ -141,9 +143,20 @@ function step() {
   dt = cur_time - last_time
   cur_game_state.process(dt)
   if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-	cur_game_state.draw(ctx, bg_ctx);
+  if(!(cur_game_state instanceof ImpulseGameState)) {
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, sidebarWidth, canvasHeight);
+    ctx.fillRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
+    ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+    cur_game_state.draw(ctx, bg_ctx);
+    ctx.translate(-sidebarWidth, 0)//allows us to have a topbar
+  } else {
+    cur_game_state.draw(ctx, bg_ctx);
+  }
+
+
 
   if(cur_dialog_box!=null) {
     ctx.beginPath()
@@ -177,7 +190,11 @@ function on_mouse_move(event) {
     cur_dialog_box.on_mouse_move(mPos.x, mPos.y)
     return
   }
-  cur_game_state.on_mouse_move(mPos.x, mPos.y)
+  if(!(cur_game_state instanceof ImpulseGameState)) {
+    cur_game_state.on_mouse_move(mPos.x - sidebarWidth, mPos.y)
+  } else {
+    cur_game_state.on_mouse_move(mPos.x, mPos.y)
+  }
 }
 
 function on_mouse_down(event) {
@@ -188,7 +205,11 @@ function on_mouse_down(event) {
     cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
     return
   }
-  cur_game_state.on_mouse_down(mPos.x, mPos.y)
+  if(!(cur_game_state instanceof ImpulseGameState)) {
+    cur_game_state.on_mouse_down(mPos.x - sidebarWidth, mPos.y)
+  } else {
+    cur_game_state.on_mouse_down(mPos.x, mPos.y)
+  }
 }
 
 function on_mouse_up(event) {
@@ -199,7 +220,11 @@ function on_mouse_up(event) {
     cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
     return
   }
-  cur_game_state.on_mouse_up(mPos.x, mPos.y)
+  if(!(cur_game_state instanceof ImpulseGameState)) {
+    cur_game_state.on_mouse_up(mPos.x - sidebarWidth, mPos.y)
+  } else {
+    cur_game_state.on_mouse_up(mPos.x, mPos.y)
+  }
 }
 
 function on_click(event) {
@@ -208,7 +233,12 @@ function on_click(event) {
     cur_dialog_box.on_click(mPos.x, mPos.y)
     return
   }
-  cur_game_state.on_click(mPos.x, mPos.y)
+  if(!(cur_game_state instanceof ImpulseGameState)) {
+    cur_game_state.on_click(mPos.x - sidebarWidth, mPos.y)
+  } else {
+    cur_game_state.on_click(mPos.x, mPos.y)
+  }
+
 }
 
 function on_key_down(event) {

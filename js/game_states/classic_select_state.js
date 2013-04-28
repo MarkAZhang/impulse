@@ -6,13 +6,13 @@ function ClassicSelectState(world) {
   this.bg_drawn = false
   if(!world) {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_world_buttons()
   }
   else {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_level_buttons(world)
   }
@@ -28,8 +28,8 @@ ClassicSelectState.prototype.set_world_buttons = function() {
   this.buttons = [this.buttons[0]]
   this.level_buttons = []
   var gap = 30
-  var level_button_h = (canvasHeight/2 + 140 - gap)/2
-  var level_button_w = (canvasWidth - 3 * gap)/2
+  var level_button_h = (levelHeight/2 + 140 - gap)/2
+  var level_button_w = (levelWidth - 3 * gap)/2
 
   for(var i = 0; i < 4; i++) {
 
@@ -39,11 +39,11 @@ ClassicSelectState.prototype.set_world_buttons = function() {
 }
 
 ClassicSelectState.prototype.set_level_buttons = function(world) {
-  this.buttons.push(new SmallButton("WORLD SELECT", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(_this){return function(){_this.set_world_buttons()}}(this)))
+  this.buttons.push(new SmallButton("WORLD SELECT", 20, levelWidth/2, levelHeight/2+220, 200, 50, function(_this){return function(){_this.set_world_buttons()}}(this)))
   this.level_buttons = []
   var gap = 30
-  var level_button_h = (canvasHeight/2 + 200 - 3 * gap)/2
-  var level_button_w = (canvasWidth - 5 * gap)/4
+  var level_button_h = (levelHeight/2 + 200 - 3 * gap)/2
+  var level_button_w = (levelWidth - 5 * gap)/4
 
   for(var i = 0; i < 8; i++) {
     var title = i == 7 ? "BOSS "+(world) : "LEVEL "+world+"-"+(i+1)
@@ -67,10 +67,10 @@ ClassicSelectState.prototype.draw = function(ctx, bg_ctx) {
   ctx.beginPath()
 
   ctx.font = '20px Century Gothic'
-  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 15, 15, "black")
+  draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 10)
+  ctx.fillText(player_data.stars, levelWidth - 40, levelHeight - 10)
 
   for(var i = 0; i < this.buttons.length; i++)
   {

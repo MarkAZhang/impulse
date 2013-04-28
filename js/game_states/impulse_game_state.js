@@ -30,6 +30,8 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.level_name = this.level.level_name
   this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
+  this.color = this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss"] : impulse_colors["world "+this.world_num]
+  this.dark_color =this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss dark"] : impulse_colors["world "+this.world_num +" dark"];
 
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
@@ -115,16 +117,21 @@ ImpulseGameState.prototype.process = function(dt) {
   }
 }
 
+ImpulseGameState.prototype.bg_transition = function() {
+  bg_canvas.setAttribute("style","");//make background visible
+
+
+}
+
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
 
   if(!this.bg_drawn) {
-    bg_canvas.setAttribute("style","");//make background visible
+    this.bg_transition()
     this.bg_drawn = true
   }
 
-
-  ctx.translate(0, topbarHeight)//allows us to have a topbar
+  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
 
   this.level.draw(ctx, this.draw_factor)
 
@@ -137,7 +144,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   this.player.draw(ctx)
 
-  ctx.translate(0, -topbarHeight)
+  ctx.translate(-sidebarWidth, 0)
   this.draw_interface(ctx)
 
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
@@ -211,78 +218,85 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 ImpulseGameState.prototype.draw_interface = function(ctx) {
 
 
-  ctx.beginPath()
-
-  ctx.rect(0, 0, 800, topbarHeight)
-  ctx.fillStyle = "white"
-  ctx.fill()
-  ctx.strokeStyle = "black"
-  ctx.lineWidth = 2
-  ctx.stroke()
-  /*ctx.fillStyle = impulse_colors["world "+this.world_num]
-  ctx.globalAlpha = .3
-  ctx.fill()*/
-  ctx.globalAlpha = 1
-
-  ctx.beginPath()
-  ctx.moveTo(0, topbarHeight)
-  ctx.lineTo(800, topbarHeight)
-  ctx.strokeStyle = "black"
-  ctx.lineWidth = 2
-  ctx.stroke()
-
-  ctx.font = '20px Century Gothic'
-  ctx.globalAlpha = 1
-
-  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
-
-  ctx.textAlign = 'left'
-  ctx.fillText(this.game_numbers.score, 10, 25)
-
-
-
-  ctx.textAlign = 'right'
-
-  if(this.stars < 3) {
-    ctx.font = '20px Century Gothic'
-    ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
-    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
-  }
-  else {
-    ctx.font = '20px Century Gothic'
-    ctx.fillStyle = impulse_colors[this.star_colors[2]]
-    ctx.fillText("WIN", canvasWidth - 10, 25)
-  }
-
-  var temp_stars = this.stars < 3 ? this.stars : 2
-
-  draw_progress_bar(ctx, 400, 20, 500, 10, this.progress_bar_prop, impulse_colors[this.star_colors[temp_stars]])
-  draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])
-
-  ctx.beginPath()
-
-  ctx.rect(350, 2, 100, topbarHeight-4)
-  ctx.fillStyle = "white"
-  ctx.globalAlpha = .6
-  ctx.fill()
-  ctx.globalAlpha = 1
-
-  ctx.textAlign = 'center'
-  ctx.font = '30px Century Gothic'
   ctx.fillStyle = "black"
-  ctx.fillText("x"+this.game_numbers.combo, canvasWidth/2, 30)
+  ctx.fillRect(0, 0, sidebarWidth, canvasHeight);
+  ctx.fillRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
 
-  ctx.font = '10px sans-serif'
-  ctx.fillStyle = this.level_name.slice(0,4) == "BOSS" ? 'red' : impulse_colors["world "+this.world_num]
-  ctx.textAlign = 'left'
+
+  // draw the level name
+  ctx.globalAlpha = 1
+
+  ctx.fillStyle = this.color;
+  ctx.textAlign = 'center'
+
+  ctx.font = '64px Century Gothic'
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = ctx.fillStyle;
+  type = this.level_name.slice(0,4) == "BOSS" ? "BOSS" : "HIVE"
+  ctx.fillText(type, sidebarWidth/2, 70)
+
+  ctx.font = '80px Century Gothic'
+  if(this.level_name.slice(0,4) == "BOSS") {
+    ctx.fillText(this.world_num, sidebarWidth/2, 140)
+  } else {
+    ctx.fillText(this.level_name.slice(6, this.level_name.length), sidebarWidth/2, 140)
+  }
+
+  // draw the game time
+  ctx.fillStyle = this.color;
+  ctx.font = '40px Century Gothic'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
 
-  ctx.fillText(this.game_numbers.last_time, 10, (canvasHeight) - 5)
+  ctx.fillText(this.game_numbers.last_time, sidebarWidth/2, canvasHeight/2)
 
-  ctx.textAlign = 'right'
+
+  // draw score
+  ctx.font = '40px Century Gothic'
+  ctx.fillText(this.game_numbers.score, canvasWidth - sidebarWidth/2, 46)
+
+  ctx.textAlign = 'center'
+
+  if(this.stars < 3) {
+    ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.font = '20px Century Gothic'
+    ctx.fillText("GOAL",canvasWidth - sidebarWidth/2, canvasHeight - 15)
+    ctx.font = '40px Century Gothic'
+    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
+  }
+  else {
+    ctx.fillStyle = impulse_colors[this.star_colors[2]]
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.font = '60px Century Gothic'
+    ctx.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
+  }
+
+  var temp_stars = this.stars < 3 ? this.stars : 2
+
+  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color, this.dark_color)
+  /*draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
+
+  /*ctx.beginPath()
+
+  ctx.rect(350, 2, 100, topbarHeight-4)
+  ctx.fillStyle = "white"
+  ctx.globalAlpha = .6
+  ctx.fill()
+  ctx.globalAlpha = 1*/
+
+  ctx.textAlign = 'center'
+  ctx.font = '72px Century Gothic'
+  ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
+  ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
+  ctx.shadowBlur = 40;
+  ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
+
+
+
+
   if(this.fps_counter == null)
   {
     this.last_fps_time = (new Date()).getTime()
@@ -298,8 +312,8 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   }
   this.fps_counter+=1
   ctx.beginPath()
-  ctx.font = '10px sans-serif'
-  ctx.fillText("FPS: "+this.fps, canvasWidth - 5, (canvasHeight) - 5)
+  ctx.font = '20px Century Gothic'
+  ctx.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
   ctx.fill()
 
   for(var i = 0; i < this.score_labels.length; i++)
@@ -310,27 +324,43 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color
     ctx.textAlign = 'center'
-    ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
+    ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor + sidebarWidth, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
     ctx.fill()
   }
   ctx.globalAlpha = 1
 
+  ctx.shadowBlur = 0;
+}
+
+ImpulseGameState.prototype.get_combo_color = function(combo) {
+  var tcombo = 100;
+  var hperiod = 400;
+  if(combo < tcombo) {
+    var prog = combo/tcombo;
+    var red = Math.round(190*(1-prog) + 0*prog);
+    var green = Math.round(190*(1-prog) + 128*prog);
+    var blue= Math.round(190*(1-prog) + 255*prog);
+
+    return "rgb("+red+","+green+","+blue+")";
+  }
+
+  return this.get_combo_color((tcombo-0.01)*(Math.abs(hperiod - this.game_numbers.game_length%(2*hperiod))/hperiod))
 }
 
 ImpulseGameState.prototype.on_mouse_move = function(x, y) {
   if(!this.ready) return
   if(!this.pause)
-    this.player.mouseMove({x: x, y: y - topbarHeight})
+    this.player.mouseMove({x: x - sidebarWidth, y: y})
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause)
-    this.player.mouse_down({x: x, y: y - topbarHeight})
+    this.player.mouse_down({x: x - sidebarWidth, y: y})
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(!this.pause)
-    this.player.mouse_up({x: x, y: y - topbarHeight})
+    this.player.mouse_up({x: x - sidebarWidth, y: y})
 }
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
@@ -398,7 +428,7 @@ ImpulseGameState.prototype.check_cutoffs = function() {
     while(this.game_numbers.score >= this.level.cutoff_scores[this.stars]) {
       this.stars+=1
     }
-    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], canvasWidth/this.draw_factor/2, (canvasHeight - topbarHeight)/this.draw_factor/2, 40, 3000)
+    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], levelWidth/this.draw_factor/2, (levelHeight)/this.draw_factor/2, 40, 3000)
   }
 }
 

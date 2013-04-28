@@ -9,8 +9,8 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   this.world_num = world_num
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
-  this.buttons.push(new SmallButton("ONCE AGAIN", 20, canvasWidth - 150, canvasHeight - 30, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph))}}(this)))
-  this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, canvasHeight - 30, 200, 50, function(_this){return function(){
+  this.buttons.push(new SmallButton("ONCE AGAIN", 20, levelWidth - 150, levelHeight - 30, 300, 50, function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph))}}(this)))
+  this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, levelHeight - 30, 200, 50, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
     }
@@ -107,22 +107,22 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
   ctx.fillStyle = "white"
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+  ctx.fillRect(0, 0, levelWidth, levelHeight)
 
   ctx.beginPath()
   ctx.fillStyle = 'red'
   ctx.font = '30px Century Gothic'
   ctx.textAlign = 'center'
 
-  ctx.fillText("GAME OVER", canvasWidth/2, 80)
+  ctx.fillText("GAME OVER", levelWidth/2, 80)
   ctx.fill()
   ctx.beginPath()
   ctx.font = '20px Century Gothic'
   ctx.fillStyle = 'black'
-  ctx.fillText(this.level.level_name, canvasWidth/2, 110)
+  ctx.fillText(this.level.level_name, levelWidth/2, 110)
 
 
-  ctx.fillText("GAME TIME "+this.game_numbers.last_time, canvasWidth/2, 140)
+  ctx.fillText("GAME TIME "+this.game_numbers.last_time, levelWidth/2, 140)
 
   ctx.strokeStyle = "black"
 
@@ -130,7 +130,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
 
-  ctx.rect(200, first_rect_y, 400, 180)
+  ctx.rect(levelWidth/2 - 200, first_rect_y, 400, 180)
 
 
   ctx.lineWidth = 2
@@ -139,49 +139,49 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
   if(this.stars > 0)
-    draw_star(ctx, canvasWidth/2, first_rect_y + 50, 30, this.star_colors[this.stars - 1])
+    draw_star(ctx, levelWidth/2, first_rect_y + 50, 30, this.star_colors[this.stars - 1])
   else
-    draw_empty_star(ctx, canvasWidth/2, first_rect_y + 50, 30)
+    draw_empty_star(ctx, levelWidth/2, first_rect_y + 50, 30)
 
-  draw_progress_bar(ctx, canvasWidth/2, first_rect_y + 90, 200, 10, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
+  draw_progress_bar(ctx, levelWidth/2, first_rect_y + 90, 200, 10, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
 
-  draw_star(ctx, canvasWidth/2 - 100, first_rect_y + 93, 15, this.star_colors[this.stars < 3 ? this.stars : 2])
+  draw_star(ctx, levelWidth/2 - 100, first_rect_y + 93, 15, this.star_colors[this.stars < 3 ? this.stars : 2])
 
   ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : "black"
 
-  ctx.fillText("SCORE: "+this.game_numbers.score, canvasWidth/2, first_rect_y + 130)
+  ctx.fillText("SCORE: "+this.game_numbers.score, levelWidth/2, first_rect_y + 130)
   ctx.fillStyle = impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[impulse_level_data[this.level_name]['stars'] - 1]] : "black"
   if(this.high_score)
-    ctx.fillText("NEW HIGH SCORE", canvasWidth/2, first_rect_y + 160)
+    ctx.fillText("NEW HIGH SCORE", levelWidth/2, first_rect_y + 160)
   else
-    ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].high_score, canvasWidth/2, first_rect_y + 160)
+    ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].high_score, levelWidth/2, first_rect_y + 160)
 
   var second_rest_y = 370
 
   ctx.strokeStyle = 'black'
-  ctx.rect(200, second_rest_y, 400, 110)
+  ctx.rect(levelWidth/2 - 200, second_rest_y, 400, 110)
   ctx.stroke()
 
   ctx.fillStyle = 'black'
 
-  ctx.fillText("KILLS: "+this.game_numbers.kills, canvasWidth/2, second_rest_y + 30)
+  ctx.fillText("KILLS: "+this.game_numbers.kills, levelWidth/2, second_rest_y + 30)
 
   if (this.closest_enemy_type != null) {
     var kills_text = (impulse_enemy_kills_star_cutoffs[this.closest_enemy_type] - impulse_enemy_stats[this.closest_enemy_type].kills) == 1 ? "" : "S"
 
-    draw_progress_bar(ctx, canvasWidth/2, second_rest_y + 50, 200, 10,  impulse_enemy_stats[this.closest_enemy_type].kills/impulse_enemy_kills_star_cutoffs[this.closest_enemy_type], impulse_enemy_stats[this.closest_enemy_type].color)
+    draw_progress_bar(ctx, levelWidth/2, second_rest_y + 50, 200, 10,  impulse_enemy_stats[this.closest_enemy_type].kills/impulse_enemy_kills_star_cutoffs[this.closest_enemy_type], impulse_enemy_stats[this.closest_enemy_type].color)
 
 
-    draw_enemy(ctx, this.closest_enemy_type, canvasWidth/2 - 100, second_rest_y + 50, 35)
+    draw_enemy(ctx, this.closest_enemy_type, levelWidth/2 - 100, second_rest_y + 50, 35)
 
     ctx.fillStyle = "black"
-    ctx.fillText("KILL "+(impulse_enemy_kills_star_cutoffs[this.closest_enemy_type] - impulse_enemy_stats[this.closest_enemy_type].kills)+" MORE TO EARN A STAR", canvasWidth/2, second_rest_y + 90)
+    ctx.fillText("KILL "+(impulse_enemy_kills_star_cutoffs[this.closest_enemy_type] - impulse_enemy_stats[this.closest_enemy_type].kills)+" MORE TO EARN A STAR", levelWidth/2, second_rest_y + 90)
 
   }
   else {
     ctx.fillStyle = "green"
-    ctx.fillText("EARNED ALL BONUS SLAYER STARS" , canvasWidth/2, second_rest_y + 60)
-    ctx.fillText("FOR ENEMIES IN THIS LEVEL" , canvasWidth/2, second_rest_y + 90)
+    ctx.fillText("EARNED ALL BONUS SLAYER STARS" , levelWidth/2, second_rest_y + 60)
+    ctx.fillText("FOR ENEMIES IN THIS LEVEL" , levelWidth/2, second_rest_y + 90)
 
 
   }

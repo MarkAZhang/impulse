@@ -14,7 +14,7 @@ function TitleState(start_clicked) {
     this.setup_main_menu()
   }
   else
-    this.buttons.push(new SmallButton("CLICK TO BEGIN", 20, canvasWidth/2, canvasHeight/2+150, 200, 50, function(){setTimeout(function(){_this.setup_main_menu()}, 20)}))
+    this.buttons.push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, function(){setTimeout(function(){_this.setup_main_menu()}, 20)}))
   impulse_music.play_bg(imp_vars.songs["Menu"])
 }
 
@@ -31,13 +31,13 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
   ctx.globalAlpha = .3
-  ctx.drawImage(this.image, canvasWidth/2 - this.image.width/2, canvasHeight/2 - 100 - this.image.height/2 - 15)
+  ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)
   ctx.globalAlpha = 1
   ctx.beginPath()
   ctx.font = '40px Century Gothic'
   ctx.fillStyle = 'blue'
   ctx.textAlign = 'center'
-  ctx.fillText("IMPULSE", canvasWidth/2, canvasHeight/2 - 100)
+  ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)
 
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -45,13 +45,13 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   ctx.font = '20px Century Gothic'
-  draw_empty_star(ctx, canvasWidth - 20, canvasHeight - 15, 15, "black")
+  draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, canvasWidth - 40, canvasHeight - 10)
+  ctx.fillText(player_data.stars, levelWidth - 40, levelHeight - 10)
 
   ctx.textAlign = 'left'
-  ctx.fillText("ver "+version_num, 10, canvasHeight - 10)
+  ctx.fillText("ver "+version_num, 10, levelHeight - 10)
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
@@ -73,13 +73,13 @@ TitleState.prototype.setup_main_menu = function() {
   }
 
   this.buttons = []
-  this.buttons.push(new SmallButton("CLASSIC", 20, canvasWidth/2, canvasHeight/2+20, 200, 50, function(){switch_game_state(new ClassicSelectState())}))
-  //this.buttons.push(new SmallButton("FIFTEEN SECOND GAME", 20, canvasWidth/2,
-  //      canvasHeight/2+70, 200, 50, function(){switch_game_state(new
+  this.buttons.push(new SmallButton("CLASSIC", 20, levelWidth/2, levelHeight/2+20, 200, 50, function(){switch_game_state(new ClassicSelectState())}))
+  //this.buttons.push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
+  //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
   //        ImpulseGameState(ctx, "SURVIVAL"))}))
-  this.buttons.push(new SmallButton("HOW TO PLAY", 20, canvasWidth/2, canvasHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
-  this.buttons.push(new SmallButton("ENEMIES", 20, canvasWidth/2, canvasHeight/2+120, 200, 50, function(){switch_game_state(new EnemiesInfoState())}))
-  this.buttons.push(new SmallButton("CREDITS", 20, canvasWidth/2, canvasHeight/2+170, 200, 50, function(){switch_game_state(new CreditsState())}))
-  this.buttons.push(new SmallButton("LEVEL EDITOR", 20, canvasWidth/2, canvasHeight/2+220, 200, 50, function(){switch_game_state(new LevelEditorState())}))
-  this.buttons.push(new SmallButton("JUKEBOX", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){switch_game_state(new MusicPlayerState())}))
+  //this.buttons.push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
+  this.buttons.push(new SmallButton("ENEMIES", 20, levelWidth/2, levelHeight/2+120, 200, 50, function(){switch_game_state(new EnemiesInfoState())}))
+  this.buttons.push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, function(){switch_game_state(new CreditsState())}))
+  this.buttons.push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+220, 200, 50, function(){switch_game_state(new LevelEditorState())}))
+  this.buttons.push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){switch_game_state(new MusicPlayerState())}))
 }

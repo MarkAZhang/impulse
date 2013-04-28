@@ -5,8 +5,8 @@ MusicPlayerState.prototype.constructor = MusicPlayerState
 function MusicPlayerState() {
   this.buttons = []
 
-  this.first_column = canvasWidth*3/8;
-  this.second_column = canvasWidth*5/8;
+  this.first_column = levelWidth*3/8;
+  this.second_column = levelWidth*5/8;
   this.column_top = 300;
   this.column_space = 50;
   this.setup_ui()
@@ -28,7 +28,7 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
     context.textAlign = "center"
     context.font = "12px Century Gothic"
     context.fillStyle = "gray"
-    ctx.fillText("Currently Playing: " + this.cur_song, canvasWidth/2, 175)
+    ctx.fillText("Currently Playing: " + this.cur_song, levelWidth/2, 175)
     var duration = Math.round(impulse_music.getCurrentSong().sound.getDuration())
     var curTime = Math.round(impulse_music.getCurrentSong().sound.getTime())
     var durSecondsString = Math.floor(duration%60)
@@ -36,33 +36,33 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
     var curSecondsString = Math.floor(curTime%60)
     if(curSecondsString < 10) curSecondsString = "0"+curSecondsString
 
-    ctx.fillText(Math.floor(curTime/60)+":"+curSecondsString, canvasWidth*1/4, 220)
-    ctx.fillText(Math.floor(duration/60)+":"+durSecondsString, canvasWidth*3/4, 220)
+    ctx.fillText(Math.floor(curTime/60)+":"+curSecondsString, levelWidth*1/4, 220)
+    ctx.fillText(Math.floor(duration/60)+":"+durSecondsString, levelWidth*3/4, 220)
 
   }
 }
 
 MusicPlayerState.prototype.setup_ui = function() {
 
-  this.slider = new Slider(canvasWidth/2, 200, canvasWidth/2, 5, "gray") 
+  this.slider = new Slider(levelWidth/2, 200, levelWidth/2, 5, "gray")
   this.slider.value = 0
   this.slider.active = false
 
 
-  this.buttons.push(new SmallButton("PLAY", 20, canvasWidth/2 - 50, 250, 100, 50,
-        
+  this.buttons.push(new SmallButton("PLAY", 20, levelWidth/2 - 50, 250, 100, 50,
+
         function() {
           impulse_music.resume_bg();
         }))
 
-  this.buttons.push(new SmallButton("PAUSE", 20, canvasWidth/2 + 50, 250, 100, 50,
-        
+  this.buttons.push(new SmallButton("PAUSE", 20, levelWidth/2 + 50, 250, 100, 50,
+
         function() {
           impulse_music.pause_bg();
         }))
   this.setup_music_buttons()
 
-    this.buttons.push(new SmallButton("MAIN MENU", 20, canvasWidth/2, canvasHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
 }
 
 MusicPlayerState.prototype.setup_music_buttons = function() {
@@ -77,7 +77,7 @@ MusicPlayerState.prototype.setup_music_buttons = function() {
             _this.cur_song = this_song;
             impulse_music.play_bg(imp_vars.songs[_this.cur_song])
           }})(song)
-          
+
           ))
 
     index++

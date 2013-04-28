@@ -1,15 +1,3 @@
-impulse_colors = {}
-impulse_colors['bronze'] = "rgb(205, 127, 50)"
-impulse_colors['silver'] = "rgb(175, 175, 175)"
-//impulse_colors['impulse_silver'] = "rgba(175, 175, 175, 0.4)"
-impulse_colors['impulse_target_blue'] = "rgba(0, 128, 255, 0.2)"
-impulse_colors['impulse_blue'] = "rgb(0, 128, 255)"
-impulse_colors['gold'] = "rgb(238, 201, 0)"
-impulse_colors['world 1'] = "rgb(50, 205, 50)"
-impulse_colors['world 2'] = "rgb(0, 206, 209)"
-impulse_colors['world 3'] = "rgb(186, 85, 211)"
-impulse_colors['world 4'] = "rgb(255, 0, 0)"
-impulse_colors["player_color"] = "rgb(32, 140, 231)"
 
 function draw_star(context, x, y, r, color) {
   context.beginPath()
@@ -86,6 +74,25 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
   context.restore()
 }
 
+function draw_vprogress_bar(context, x, y, w, h, prop, color, bcolor) {
+  context.beginPath()
+
+  context.shadowBlur = 20;
+  context.shadowColor = color
+  context.rect(x - w * .5, y - h * .5, w , h)
+  context.strokeStyle = bcolor
+  context.lineWidth = 2
+  context.stroke()
+  context.beginPath()
+
+  context.shadowColor = color
+  context.rect(x - w * .5, y - h * .5, w, h * prop)
+  context.fillStyle = color
+  context.fill()
+
+  context.shadowBlur = 0;
+}
+
 function draw_progress_bar(context, x, y, w, h, prop, color) {
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w * prop, h)
@@ -105,9 +112,9 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
-    context.moveTo(x - w/2 + polygons[i][0][0]/canvasWidth * w, y - h/2 + polygons[i][0][1]/(levelHeight) * h)
+    context.moveTo(x - w/2 + polygons[i][0][0]/levelWidth * w, y - h/2 + polygons[i][0][1]/(levelHeight) * h)
     for(var j = 1; j < polygons[i].length; j++) {
-      context.lineTo(x - w/2 + polygons[i][j][0]/canvasWidth * w, y -h/2 +  polygons[i][j][1]/(levelHeight) * h)
+      context.lineTo(x - w/2 + polygons[i][j][0]/levelWidth * w, y -h/2 +  polygons[i][j][1]/(levelHeight) * h)
     }
     context.closePath()
     context.fillStyle = "black"
