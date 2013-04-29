@@ -32,6 +32,11 @@ function Tank(world, x, y, id, impulse_game_state) {
 Tank.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
   this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+  if(this.durations["open"] > 0) {
+    this.color = "red";
+  } else {
+    this.color = impulse_enemy_stats[this.type].color;
+  }
 }
 
 Tank.prototype.activated_processing = function(dt) {
@@ -48,6 +53,8 @@ Tank.prototype.activated_processing = function(dt) {
       this.detonate_timer -= dt
     }
   }
+
+
 
 }
 

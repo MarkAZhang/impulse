@@ -29,6 +29,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.open_period = 1500
 
+  this.require_open = true
+
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
@@ -161,7 +163,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
 
-  if (this.durations["open"] <= 0) {
+  if (this.durations["open"] <= 0 && this.require_open) {
     return
   }
 
@@ -563,9 +565,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.fillStyle = this.interior_color ? this.interior_color : cur_color
 
     if(!this.dying) {
-      if (this.durations["open"] > 0) {
+      /*if (this.durations["open"] > 0) {
         context.fillStyle = impulse_colors["impulse_blue"]
-      } else if(this.status_duration[0] > 0) {
+      } else*/ if(this.status_duration[0] > 0) {
         context.fillStyle = 'gray';
       } else if(this.status_duration[2] > 0) {
         context.fillStyle = 'brown'

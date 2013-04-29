@@ -24,6 +24,8 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.entered_arena_delay = 1000
   this.entered_arena_timer = 1000
   this.last_stun = this.entered_arena_delay
+
+  this.require_open = false
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
