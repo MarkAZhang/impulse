@@ -326,6 +326,28 @@ impulse_enemy_stats["slingshot"] = {
 
 }
 
+impulse_enemy_stats["orbiter"] = {
+  color: "red",
+  density: .3,
+  lin_damp: 10,
+  effective_radius: 0.5,
+  force: .3,
+  score_value: 1500,
+  attack_rating: 10,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+  [0, 0]]}, {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+    [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI*4/3)],
+  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [0, 0]]}],
+  dies_on_impact: "YES",
+  special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
+  other_notes: "Intelligent and dangerous.",
+  className: Orbiter
+
+}
+
 impulse_enemy_stats["deathray"] = {
   color: "rgb(0, 229, 238)",
   density: 1.5,

@@ -224,8 +224,8 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 }
 
 //v = {x: 0, y: 0}
-Level.prototype.add_fragments = function(enemy_type, loc, v) {
-  this.fragments.push(new FragmentGroup(enemy_type, loc, v))
+Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
+  this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
 
 }
 

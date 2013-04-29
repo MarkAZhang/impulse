@@ -360,42 +360,48 @@ Player.prototype.draw = function(context) {
     context.fill()*/
     if(this.status_duration[0] > 0)
     {
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      this.draw_player_sprite(context, "player_red");
       context.fillStyle = 'red'
       context.globalAlpha = .5
       context.fill()
     } else if(this.status_duration[1] > 0)
     {
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      this.draw_player_sprite(context, "player_red");
       context.fillStyle = 'red'
       context.globalAlpha = .5
       context.fill()
     }
     else if(this.status_duration[2] > 0)
     {
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      this.draw_player_sprite(context, "player_red");
       context.fillStyle = Goo.prototype.goo_color_rgb
       context.globalAlpha = .5
       context.fill()
     }
     else if(this.status_duration[3] > 0)
     {
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      this.draw_player_sprite(context, "player_red");
       context.fillStyle = 'cyan'
       context.globalAlpha = .8
       context.fill()
     }
     else if(this.status_duration[4] > 0)
     {
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_red")
+      this.draw_player_sprite(context, "player_red");
       context.fillStyle = 'green'
       context.globalAlpha = .8
       context.fill()
     } else {
       //normal
-      drawSprite(context, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 2, this.shape.GetRadius() * this.draw_factor * 2, "player_normal")
-
-    }
+      /*context.beginPath()
+      context.shadowBlur = 10;
+      context.shadowColor = impulse_colors["impulse_blue"];
+      context.fillStyle = impulse_colors["impulse_blue"];
+      context.arc(this.body.GetPosition().x * this.draw_factor, this.body.GetPosition().y * this.draw_factor, this.shape.GetRadius() * this.draw_factor, 0, 2*Math.PI, true)
+      context.fill()
+      context.shadowBlur = 0;*/
+        this.draw_player_sprite(context, "player_normal");
+      }
     context.globalAlpha = 1
     context.beginPath()
 
@@ -436,6 +442,11 @@ Player.prototype.draw = function(context) {
   }
 }
 
+Player.prototype.draw_player_sprite = function(ctx, name) {
+  drawSprite(ctx, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 6, this.shape.GetRadius() * this.draw_factor * 6, name)
+
+}
+
 Player.prototype.collide_with = function(other) {
 
 }
@@ -449,7 +460,7 @@ Player.prototype.start_death = function() {
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
   impulse_music.play_sound("pdeath")
-  this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity())
+  this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity(), true)
 }
 
 Player.prototype.get_segment_intersection = function(seg_s, seg_f) {

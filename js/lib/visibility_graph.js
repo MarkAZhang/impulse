@@ -232,5 +232,5 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   ans.push(point2)
   //console.log("ANSWER ")
   //console.log(ans)
-  return ans
+  return {path: ans, dist: min_distance}
 }

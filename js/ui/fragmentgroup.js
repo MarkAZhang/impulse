@@ -1,9 +1,9 @@
-var FragmentGroup = function(enemy_type, loc, velocity) {
-  this.init(enemy_type, loc, velocity)
+var FragmentGroup = function(enemy_type, loc, velocity, shadowed) {
+  this.init(enemy_type, loc, velocity, shadowed)
 }
 
-FragmentGroup.prototype.init = function(enemy_type, loc, velocity) {
-
+FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
+  this.shadowed = shadowed ? true : false;
   this.fragments = []
   velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
 
@@ -69,10 +69,16 @@ FragmentGroup.prototype.process = function(dt) {
 FragmentGroup.prototype.draw = function(context) {
 
   var prog = this.life_left/this.lifespan
-
-  for(var i = 0; i < this.fragments.length; i++) {
-    this.fragments[i].draw(context, this.life_left/this.lifespan)
+  if(this.shadowed) {
+    context.shadowColor = this.color;
+    context.shadowBlur = 15;
   }
+  for(var i = 0; i < this.fragments.length; i++) {
+
+    this.fragments[i].draw(context, this.life_left/this.lifespan)
+
+  }
+  context.shadowBlur = 0;
 }
 
 FragmentGroup.prototype.isDone = function() {

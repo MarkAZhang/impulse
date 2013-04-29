@@ -106,6 +106,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 
   this.path = null
+  this.path_dist = null
 
   this.yield_counter = 0
 
@@ -291,8 +292,12 @@ Enemy.prototype.move = function() {
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
       var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
-      if(new_path!=null)
-        this.path = new_path
+
+
+      if(new_path.path!=null) {
+        this.path = new_path.path
+        this.path_dist = new_path.dist
+      }
       this.pathfinding_counter = Math.floor(Math.random()*.5 * this.pathfinding_delay)
     }
 

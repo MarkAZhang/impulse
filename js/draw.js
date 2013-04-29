@@ -147,8 +147,8 @@ mainSprite = loadSprite("art/sprites.png")
 
 spriteSheetData = {
   //x, y, w, h
-  "player_normal": [31, 0, 20, 20],
-  "player_red": [0, 0, 20, 20]
+  "player_normal": [60, 0, 60, 60],
+  "player_red": [0, 0, 60, 60]
 
 }
 
