@@ -15,14 +15,14 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-  this.stun_length = 5000 //after being hit by player, becomes stunned
+  this.stun_length = 3000 //after being hit by player, becomes stunned
 
 
   this.do_yield = false
 
   this.entered_arena = false
-  this.entered_arena_delay = 2000
-  this.entered_arena_timer = 2000
+  this.entered_arena_delay = 1000
+  this.entered_arena_timer = 1000
   this.last_stun = this.entered_arena_delay
 }
 
@@ -56,7 +56,7 @@ Spear.prototype.additional_processing = function(dt) {
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
     this.silence(this.entered_arena_delay)
-    this.last_stun = this.entered_arena_delay
+    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
     this.entered_arena = true
   }
 
@@ -78,9 +78,7 @@ Spear.prototype.player_hit_proc = function() {
   this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
 }
 
-Spear.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
-    this.body.GetWorldCenter())
+Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
   this.silence(this.stun_length)
   this.last_stun = this.stun_length
 }
@@ -92,6 +90,8 @@ Spear.prototype.additional_drawing = function(context, draw_factor) {
     context.lineWidth = 2
     context.strokeStyle = "gray"
     context.stroke()
+  }
+  if(this.special_mode) {
 
   }
 

@@ -1,7 +1,7 @@
 impulse_enemy_stats = {}
 
 impulse_enemy_stats["stunner"] = {
-  color: "rgb(175, 175, 175)",
+  color: "#5480a2",
   density: 1,
   lin_damp: 3,
   effective_radius: .5,
@@ -16,7 +16,7 @@ impulse_enemy_stats["stunner"] = {
 }
 
 impulse_enemy_stats["spear"] = {
-  color: "red",
+  color: "#f86003",
   density: 0.7,
   lin_damp: 4,
   effective_radius: .7,
@@ -34,7 +34,7 @@ impulse_enemy_stats["spear"] = {
 }
 
 impulse_enemy_stats["tank"] = {
-  color: "purple",
+  color: "#6f27cf",
   density: 2,
   lin_damp: 3,
   effective_radius: 1,
@@ -549,4 +549,5 @@ impulse_enemy_kills_star_cutoffs = {
   "slingshot": 50,
   "troll": 50,
   "deathray": 25,
+  "orbiter": 50
 }

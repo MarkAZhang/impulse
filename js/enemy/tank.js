@@ -4,7 +4,7 @@ Tank.prototype.constructor = Tank
 
 function Tank(world, x, y, id, impulse_game_state) {
   this.type = "tank"
-  
+
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
@@ -13,7 +13,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-  this.detonate_timer = 200 
+  this.detonate_timer = 200
   this.detonate_duration = 200
   this.death_delay = 200
   this.bomb_factor = 6
@@ -23,19 +23,10 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.cause_of_death = null
   this.do_yield = false
 
-  this.hot_color = "orange"
-  this.hot_interval = 1000
-  this.hot_timer = 0
-
 }
 
 Tank.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
-  if(this.hot_timer > 0) {
-    this.hot_timer -= dt
-  }
-
-  this.color = this.hot_timer > 0 ? this.hot_color : impulse_enemy_stats['tank'].color
 }
 
 Tank.prototype.activated_processing = function(dt) {
@@ -52,17 +43,15 @@ Tank.prototype.activated_processing = function(dt) {
       this.detonate_timer -= dt
     }
   }
-  
-}
 
-Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
-    this.body.GetWorldCenter())
-  this.hot_timer = this.hot_interval
 }
 
 Tank.prototype.check_death = function()
 {
+  if (this.durations["open"] <= 0) {
+    return
+  }
+
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
@@ -81,7 +70,7 @@ Tank.prototype.check_death = function()
 }
 
 Tank.prototype.collide_with = function(other) {
-  if(other instanceof Tank && this.hot_timer > 0 && !this.dying && !this.activated)
+  if(other instanceof Tank && this.durations["open"] > 0 && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {
@@ -97,7 +86,7 @@ Tank.prototype.collide_with = function(other) {
     return
 
   if(other === this.player) {
-   
+
     if(this.status_duration[1] <= 0) {
       this.activated = true
       this.cause_of_death = "hit_player"
@@ -124,7 +113,6 @@ Tank.prototype.explode = function() {
     {
       var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
-      console.log("EXPLODE ON ENEMY "+i+" "+_angle)
 
     }
   }
@@ -140,13 +128,13 @@ Tank.prototype.additional_drawing = function(context, draw_factor) {
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
   }
-  
+
   context.beginPath()
   context.strokeStyle = this.color
   context.lineWidth = 2
-  context.globalAlpha = .2
+  context.globalAlpha = .7
   context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
   context.stroke()
   context.globalAlpha = 1
-  
+
 }

@@ -351,7 +351,6 @@ impulse_level_data['LEVEL 3-1'] = {
   enemies: {
               spear: [0, 8, 1, 1, 15],
               tank: [0, 5, 1, 1, 15],
-              mote: [0, 5, 1, 2, 20],
               disabler: [0, 10, 1, 1, 2],
               fighter: [0, 10, 1, 1, 8]
 
@@ -371,7 +370,7 @@ impulse_level_data['LEVEL 3-2'] = {
 
               stunner: [0, 3, 1, 1, 20],
               goo: [0, 10, 1, 0, 2],
-              wisp: [0, 5, 1, 2, 15],
+              mote: [0, 5, 1, 2, 15],
               harpoon: [0, 8, 1, 1, 10],
               fighter: [0, 8, 1, 1, 10]
 
@@ -463,7 +462,7 @@ impulse_level_data['LEVEL 3-7'] = {
               troll: [0, 10, 1, .5, 10],
               goo: [0, 14, 1, .5, 2],
               harpoon: [0, 12, 1, .5, 6],
-              wisp: [0, 10, 1, .5, 10],
+              mote: [0, 10, 1, .5, 10],
               disabler: [0, 12, 1, .5, 2],
               fighter: [0, 15, 1, .5, 6],
 
@@ -486,7 +485,7 @@ impulse_level_data['BOSS 3'] = {
               tank: [0, 12, 1, 1, 10],
               troll: [0, 8, 1, 1, 10],
               goo: [0, 12, 1, 1, 2],
-              wisp: [0, 8, 1, 1, 10],
+              mote: [0, 8, 1, 1, 10],
               disabler: [0, 10, 1, 1, 2],
               harpoondire: [0, 15, 1, 0, 10],
 
@@ -505,7 +504,7 @@ impulse_level_data['LEVEL 4-1'] = {
   enemies: {
 
              goo: [2, 10, 1, 1, 1],
-             troll: [0, 15, 1, 1, 5],
+             mote: [0, 15, 1, 1, 5],
              disabler: [7, 10, 1, 1, 1],
              harpoon: [0, 8, 1, 1, 10],
              fighter: [0, 10, 1, 1, 12],
@@ -526,7 +525,7 @@ impulse_level_data['LEVEL 4-2'] = {
   enemies: {
              spear: [5, 8, 1, 1, 10],
              tank: [8, 8, 1, 1, 10],
-             wisp: [11, 8, 1, 1, 10],
+             troll: [11, 8, 1, 1, 10],
              slingshot: [0, 5, 1, 1, 20]
 
            },
@@ -580,6 +579,7 @@ impulse_level_data['LEVEL 4-5'] = {
              spear: [3, 10, 1, 1, 20],
              tank: [3, 5, 1, 1, 20],
              goo: [5, 8, 1, .5, 3],
+             slingshot: [4, 8, 1, 1, 10],
              fighter: [3, 12, 1, 1, 10],
              deathray: [0, 30, 1, .4, 2]
            },
@@ -600,7 +600,7 @@ impulse_level_data['LEVEL 4-6'] = {
              mote: [0, 10, 1, 1, 10],
              harpoon: [4, 8, 1, .5, 10],
              disabler: [6, 12, 1, 1, 2],
-             slingshot: [4, 8, 1, 1, 10],
+             orbiter: [4, 8, 1, 1, 10],
              troll: [0, 8, 1, 0, 1],
              deathray: [0, 20, 1, .3, 3],
 
@@ -623,7 +623,7 @@ impulse_level_data['LEVEL 4-7'] = {
              mote: [0, 12, 1, 1, 10],
              goo: [0, 14, 1, 1, 2],
              harpoon: [0, 12, 1, 1, 6],
-             wisp: [0, 10, 1, 1, 5],
+             orbiter: [0, 10, 1, 1, 5],
              disabler: [0, 12, 1, 1, 2],
              fighter: [0, 12, 1, 1, 4],
              slingshot: [0, 12, 1, 1, 4],
@@ -650,7 +650,7 @@ impulse_level_data['BOSS 4'] = {
               goo: [0, 0, 0, 0, 2],
               disabler: [0, 0, 0, 0, 2],
               troll: [0, 0, 0, 0, 12],
-              wispdire: [0, 0, 0, 0, 10],
+              orbiter: [0, 0, 0, 0, 10],
               fighterdire: [0, 0, 0, 0, 8],
               harpoondire: [0, 0, 0, 0, 12],
               slingshot: [0, 0, 0, 0, 12],

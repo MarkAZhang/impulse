@@ -43,7 +43,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "mote" : 4,
    "goo" : 2,
    "harpoondire" : 3,
-   "wispdire" : 5,
+   "orbiter" : 5,
    "disabler" : 2,
    "fighterdire" : 3,
    "slingshot" : 4,
@@ -58,23 +58,23 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "mote" : 10,
    "goo" : 20,
    "harpoon" : 20,
-   "wispdire" : 10,
+   "orbiter" : 8,
    "disabler" : 20,
    "fighterdire" : 30,
    "slingshot" : 10,
    "troll" : 10,
    "deathraydire" : 50
  }
- 
+
 
  this.possible_spawn_sets = [
-  
+
   ["fighterdire", "spear"],
   ["goo", "troll"],
   ["tank", "disabler"],
   ["stunner", "deathraydire"],
   ["mote", "slingshot"],
-  ["wispdire", "spear"],
+  ["orbiter", "spear"],
   ["harpoondire", "goo"]
  ]
 
@@ -110,7 +110,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.ray_aimer_polygons = [[], []]
 
   this.ray_force = 500
-  
+
   this.aimed = [false, false]
   this.fired = [false, false]
 
@@ -118,7 +118,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.laser_colors = ["rgb(0, 229, 238)", "rgb(255, 20, 147)"]//first is crippler, second is deathray
 
-  this.laser_polygon = 
+  this.laser_polygon =
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
@@ -141,7 +141,7 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
     context.lineWidth = 2
     context.strokeStyle = "gray"
     context.stroke()
-    
+
     context.restore()
     context.globalAlpha = 1
   }
@@ -155,9 +155,9 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
       context.rotate(this.body.GetAngle());
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
+
       context.beginPath()
-      
+
       context.moveTo((tp.x+this.laser_polygon[0][0] * 1.5)*draw_factor, (tp.y+this.laser_polygon[0][1] * 1.5)*draw_factor)
       for(var i = 1; i < this.laser_polygon.length; i++)
       {
@@ -266,7 +266,7 @@ BossFour.prototype.additional_processing = function(dt) {
     var exit_points = Math.max(spawner_set.length, 4)
     for(var i = 0; i < spawner_set.length; i++) {
 
-      while(!isVisible(this.body.GetPosition(), 
+      while(!isVisible(this.body.GetPosition(),
         {x: this.body.GetPosition().x + 15 * Math.cos((.25 * (this.spawn_count % 2)+ 2* (j + this.spawn_count) /(exit_points)) * Math.PI),
           y: this.body.GetPosition().y + 15 * Math.sin((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI)},
           this.level.obstacle_edges
@@ -317,7 +317,7 @@ BossFour.prototype.additional_processing = function(dt) {
               this.impulse_game_state.reset_combo()
             }
             if(m == 0) {
-              this.player.body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angles[m]), this.ray_force * Math.sin(this.ray_angles[m])), this.player.body.GetWorldCenter()) 
+              this.player.body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angles[m]), this.ray_force * Math.sin(this.ray_angles[m])), this.player.body.GetWorldCenter())
               this.impulse_game_state.reset_combo()
             }
           }
@@ -328,9 +328,9 @@ BossFour.prototype.additional_processing = function(dt) {
               }
               if(m == 0) {
                 this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angles[m]),
-                this.ray_force * Math.sin(this.ray_angles[m])), this.level.enemies[i].body.GetWorldCenter()) 
+                this.ray_force * Math.sin(this.ray_angles[m])), this.level.enemies[i].body.GetWorldCenter())
               }
-              
+
             }
           }
 
@@ -344,11 +344,11 @@ BossFour.prototype.additional_processing = function(dt) {
         this.ray_angles[m] = _atan(laser_loc, this.player.body.GetPosition())
         this.fire_angles[m] = this.body.GetAngle()
         this.ray_polygons[m] = []
-        this.ray_polygons[m].push({x: laser_loc.x + this.ray_buffer_radius * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] + Math.PI/2), 
+        this.ray_polygons[m].push({x: laser_loc.x + this.ray_buffer_radius * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] + Math.PI/2),
           y: laser_loc.y + this.ray_buffer_radius * Math.sin(this.ray_angles[m]) + this.ray_radius * Math.sin(this.ray_angles[m] + Math.PI/2)})
-        this.ray_polygons[m].push({x: laser_loc.x + this.ray_buffer_radius * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] - Math.PI/2), 
+        this.ray_polygons[m].push({x: laser_loc.x + this.ray_buffer_radius * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] - Math.PI/2),
           y: laser_loc.y + this.ray_buffer_radius * Math.sin(this.ray_angles[m]) + this.ray_radius * Math.sin(this.ray_angles[m] - Math.PI/2)})
-        this.ray_polygons[m].push({x: laser_loc.x + 100 * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] - Math.PI/2), 
+        this.ray_polygons[m].push({x: laser_loc.x + 100 * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] - Math.PI/2),
           y: laser_loc.y + 100 * Math.sin(this.ray_angles[m]) + this.ray_radius * Math.sin(this.ray_angles[m] - Math.PI/2)})
         this.ray_polygons[m].push({x: laser_loc.x + 100 * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] + Math.PI/2),
          y: laser_loc.y + 100 * Math.sin(this.ray_angles[m]) + this.ray_radius * Math.sin(this.ray_angles[m] + Math.PI/2)})
@@ -363,7 +363,7 @@ BossFour.prototype.additional_processing = function(dt) {
 BossFour.prototype.get_spawner_set = function() {
 
   if (this.spawn_count == 1) {
-    return ["stunner", "spear", "mote", "slingshot"]
+    return ["stunner", "spear", "mote", "orbiter"]
   }
   else {
     return this.possible_spawn_sets[Math.floor(Math.random() * this.possible_spawn_sets.length)]
@@ -374,7 +374,7 @@ BossFour.prototype.get_spawner_set = function() {
 BossFour.prototype.get_object_hit = function() {
   var dist = null
   var object = null
-  var ray_end = {x: this.body.GetPosition().x + 100 * Math.cos(this.spawn_laser_angle), 
+  var ray_end = {x: this.body.GetPosition().x + 100 * Math.cos(this.spawn_laser_angle),
     y: this.body.GetPosition().y + 100 * Math.sin(this.spawn_laser_angle)}
   if(this.laser_check_counter <= 0) {
     this.laser_check_counter = this.laser_check_timer
@@ -383,13 +383,13 @@ BossFour.prototype.get_object_hit = function() {
       if(this.level.enemies[i].id == this.id) continue
       if(!(this.level.enemies[i] instanceof BossFourSpawner)) continue
 
-      if(!is_angle_between(this.spawn_laser_angle - this.laser_check_diff, this.spawn_laser_angle + this.laser_check_diff, 
+      if(!is_angle_between(this.spawn_laser_angle - this.laser_check_diff, this.spawn_laser_angle + this.laser_check_diff,
         _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()))) continue
 
       var temp_dist = this.level.enemies[i].get_segment_intersection(this.body.GetPosition(), ray_end).dist
       if(dist == null || (temp_dist != null && temp_dist < dist))
       {
-        dist = temp_dist      
+        dist = temp_dist
         object = this.level.enemies[i]
       }
     }
@@ -399,12 +399,12 @@ BossFour.prototype.get_object_hit = function() {
     object = this.cur_object
 
   }
-  this.laser_check_counter -=1 
+  this.laser_check_counter -=1
 
   var temp_dist = this.player.get_segment_intersection(this.body.GetPosition(), ray_end).dist
     if(dist == null || (temp_dist != null && temp_dist < dist))
     {
-      dist = temp_dist      
+      dist = temp_dist
       object = this.player
     }
 
@@ -415,21 +415,21 @@ BossFour.prototype.get_object_hit = function() {
 
   this.cur_object = object
   this.cur_dist = dist
-  
+
 }
 
 BossFour.prototype.get_two_laser_locs = function() {
   var locs = []
-  locs.push({x: this.body.GetPosition().x + Math.cos(this.body.GetAngle() - Math.PI/2) * this.effective_radius * 1.5, 
+  locs.push({x: this.body.GetPosition().x + Math.cos(this.body.GetAngle() - Math.PI/2) * this.effective_radius * 1.5,
     y: this.body.GetPosition().y +Math.sin(this.body.GetAngle() - Math.PI/2) * this.effective_radius * 1.5})
-  locs.push({x: this.body.GetPosition().x +Math.cos(this.body.GetAngle() + Math.PI/2) * this.effective_radius * 1.5, 
+  locs.push({x: this.body.GetPosition().x +Math.cos(this.body.GetAngle() + Math.PI/2) * this.effective_radius * 1.5,
     y: this.body.GetPosition().y +Math.sin(this.body.GetAngle() + Math.PI/2) * this.effective_radius * 1.5})
   return locs
 
 }
 
 BossFour.prototype.pre_draw = function(context, draw_factor) {
-    
+
     if(!this.spawned) return
     context.beginPath()
     var laser_dist = this.cur_dist != null ? this.cur_dist : 100
@@ -437,9 +437,9 @@ BossFour.prototype.pre_draw = function(context, draw_factor) {
      (this.body.GetPosition().y + this.spawn_laser_radius * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
     context.lineTo((this.body.GetPosition().x + this.spawn_laser_radius * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
      (this.body.GetPosition().y + this.spawn_laser_radius * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
-    context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor, 
+    context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
       (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.spawn_laser_radius * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
-    context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor, 
+    context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor,
       (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.spawn_laser_radius * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
     context.closePath()
     context.globalAlpha/=2
@@ -450,7 +450,7 @@ BossFour.prototype.pre_draw = function(context, draw_factor) {
 }
 
 BossFour.prototype.get_arm_polygons = function() {
-  
+
 
 }
 
@@ -473,7 +473,7 @@ BossFour.prototype.get_impulse_sensitive_pts = function() {
 }
 
 BossFour.prototype.explode = function() {
-  
+
 }
 
 BossFour.prototype.get_time_factor = function() {

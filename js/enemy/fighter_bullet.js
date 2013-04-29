@@ -6,7 +6,7 @@ function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
 
   if(!world) return
   this.type = "fighter_bullet"
-  
+
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
@@ -42,13 +42,13 @@ FighterBullet.prototype.collide_with = function(other) {
     if(this.status_duration[1] <= 0) {
       var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
-      
+
       this.impulse_game_state.reset_combo()
     }
   }
-  else if(other.is_enemy) 
+  else if(other.is_enemy)
   {
-    
+
     if(other instanceof FighterBullet) return
 
     this.start_death("hit_enemy")
@@ -59,11 +59,11 @@ FighterBullet.prototype.collide_with = function(other) {
       }
     }
   }
-  
+
 }
 
 FighterBullet.prototype.move = function() {
-  
+
   this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
 
   this.body.SetAngle(_atan({x: 0, y: 0}, this.v))
@@ -75,6 +75,7 @@ FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hi
   temp_dir.Multiply(impulse_force)
   this.v.Add(temp_dir)
   this.reflected = true
+  this.open(this.open_period)
 
 }
 
@@ -86,7 +87,7 @@ FighterBullet.prototype.check_death = function()
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
-      
+
       return
     }
   }

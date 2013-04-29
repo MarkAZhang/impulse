@@ -53,6 +53,7 @@ Level.prototype.init = function(data, level_intro_state) {
     "wisp": Wisp,
     "fighter": Fighter,
     "harpoon": Harpoon,
+    "orbiter": Orbiter,
     "slingshot": Slingshot,
     "deathray": DeathRay,
     "first boss": BossOne,

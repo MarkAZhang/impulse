@@ -63,11 +63,6 @@ Orbiter.prototype.additional_processing = function(dt) {
   this.charging = this.attack_mode && !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
 }
 
-Orbiter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-    this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
-    this.body.GetWorldCenter())
-}
-
 Orbiter.prototype.get_target_path = function() {
 
   if(!this.attack_mode) {

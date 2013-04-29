@@ -50,12 +50,12 @@ Slingshot.prototype.move = function() {
 }
 
 Slingshot.prototype.additional_processing = function(dt) {
-  
+
   if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.status_duration[1] > 0) {
     this.slingshot_mode = false
     this.body.SetLinearDamping(6)
   }
-    
+
   this.special_mode = this.empowered_duration > 0
 
   this.color = this.empowered_duration > 0 ? "red" : this.real_color
@@ -84,10 +84,14 @@ Slingshot.prototype.player_hit_proc = function() {
     a.Multiply(this.slingshot_force)
   }
   this.player.body.ApplyImpulse(a, this.player.body.GetWorldCenter())
-    
+
 }
 
 Slingshot.prototype.check_death = function() {
+
+  if (this.durations["open"] <= 0) {
+    return
+  }
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
@@ -98,12 +102,11 @@ Slingshot.prototype.check_death = function() {
       return
     }
   }
-  
+
 }
 
-Slingshot.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
-    this.body.GetWorldCenter())
+Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+
   if(this.status_duration[1] <= 0) {
     this.slingshot_point = this.body.GetPosition().Copy()
     this.slingshot_mode = true

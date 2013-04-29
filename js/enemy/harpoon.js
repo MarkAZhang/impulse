@@ -300,9 +300,7 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
   }
 }
 
-Harpoon.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
-    this.body.GetWorldCenter())
+Harpoon.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
   if(this.harpooning)
     this.silence(1000)
   this.harpooning = false

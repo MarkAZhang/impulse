@@ -27,6 +27,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_visibility = 0
 
+  this.open_period = 1000
+
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
@@ -119,6 +121,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed, lightened], time left for each status
 
+  this.durations = {}
+  this.durations["open"] = 0
+
   this.is_enemy = true
 
   this.special_mode = false
@@ -153,6 +158,10 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
+
+  if (this.durations["open"] <= 0) {
+    return
+  }
 
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
@@ -204,6 +213,10 @@ Enemy.prototype.process = function(enemy_index, dt) {
   }
   if(this.status_duration[1] > 0) {
     this.status_duration[1] -= dt
+  }
+
+  if(this.durations["open"] > 0) {
+    this.durations["open"] -= dt;
   }
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
@@ -441,6 +454,10 @@ Enemy.prototype.collide_with = function(other) {
       this.player_hit_proc()
       this.impulse_game_state.reset_combo()
     }
+  } else if(other instanceof Enemy) {
+      if(other.durations["open"] > 0) {
+        this.open(other.durations["open"])
+      }
   }
 }
 
@@ -453,7 +470,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
 
-  if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
+  /*if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
     var pointer_angle = _atan(pointer_point, this.body.GetPosition())
@@ -480,7 +497,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.globalAlpha = 1
     this.additional_drawing(context, draw_factor)
     return
-  }
+  }*/
 
   if(!impulse_enemy_stats[this.type].seen) {
     impulse_enemy_stats[this.type].seen = true
@@ -488,6 +505,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
   }
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+
+
+  //rotate enemy
 
   //if(this.shape instanceof b2PolygonShape) {
     //if polygon shape, need to rotate
@@ -497,101 +517,74 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.rotate(this.body.GetAngle());
     context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
   //}
+
+
   for(var k = 0; k < this.shapes.length; k++) {
 
     if(this.shape_polygons[k].visible === false) continue
 
+    // fade out if dying
     if (this.dying)
       context.globalAlpha = (1 - prog)
     else
       context.globalAlpha = this.visibility ? this.visibility : 1
+
 
     var cur_shape = this.shapes[k]
     var cur_shape_points = this.shape_points[k]
     var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
 
+
+    // draw the shape
     context.beginPath()
+
+    var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
     if(cur_shape instanceof b2CircleShape) {
       //draw circle shape
-      if(this.dying)
-        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (1 + this.death_radius * prog), 0, 2*Math.PI, true)
-      else
-        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, cur_shape.GetRadius()*draw_factor, 0, 2*Math.PI, true)
-
+        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (radius_factor), 0, 2*Math.PI, true)
     }
     if(cur_shape instanceof b2PolygonShape) {
       //draw polygon shape
-      if(this.dying) {
-        context.moveTo((tp.x+cur_shape_points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[0].y*(1 + this.death_radius * prog))*draw_factor)
-        for(var i = 1; i < cur_shape_points.length; i++)
-        {
-          context.lineTo((tp.x+cur_shape_points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[i].y*(1 + this.death_radius * prog))*draw_factor)
-        }
+      context.moveTo((tp.x+cur_shape_points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor))*draw_factor)
+      for(var i = 1; i < cur_shape_points.length; i++)
+      {
+        context.lineTo((tp.x+cur_shape_points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor))*draw_factor)
       }
-      else {
-        context.moveTo((tp.x+cur_shape_points[0].x)*draw_factor, (tp.y+cur_shape_points[0].y)*draw_factor)
-        for(var i = 1; i < cur_shape_points.length; i++)
-        {
-          context.lineTo((tp.x+cur_shape_points[i].x)*draw_factor, (tp.y+cur_shape_points[i].y)*draw_factor)
-        }
-      }
-      context.closePath()
     }
+    context.closePath()
 
     if (!this.interior_color ) {
-      context.globalAlpha /= 2
+      context.globalAlpha *= 0.7;
     }
     context.fillStyle = this.interior_color ? this.interior_color : cur_color
+
+    if(!this.dying) {
+      if (this.durations["open"] > 0) {
+        context.fillStyle = impulse_colors["impulse_blue"]
+      } else if(this.status_duration[0] > 0) {
+        context.fillStyle = 'gray';
+      } else if(this.status_duration[2] > 0) {
+        context.fillStyle = 'brown'
+      } else if(this.status_duration[3] > 0) {
+        context.fillStyle = 'cyan'
+      }
+
+    }
+
     context.fill()
 
-    if(!this.dying) {
-      //no debuffs if enemy dying
-        if(this.status_duration[0] > 0)
-      {
-        context.globalAlpha = .25
-        context.fillStyle = 'red'
-        context.fill()
-        context.globalAlpha = 1
-      }
-      else if(this.status_duration[1] > 0)
-      {
-        context.globalAlpha = .25
-        context.fillStyle = 'gray'
-        context.fill()
-        context.globalAlpha = 1
-      }
-      else if(this.status_duration[2] > 0)
-      {
-        context.globalAlpha = .25
-        context.fillStyle = 'brown'
-        context.fill()
-        context.globalAlpha = 1
-      }
-      else if(this.status_duration[3] > 0)
-      {
-        context.globalAlpha = .25
-        context.fillStyle = 'cyan'
-        context.fill()
-        context.globalAlpha = 1
-      }
-
+    // revert transparency
+    if (!this.interior_color ) {
+      context.globalAlpha /= 0.7;
     }
 
-    if (this.dying)
-      context.globalAlpha = (1 - prog)
-    else
-      context.globalAlpha = this.visibility ? this.visibility : 1
 
-    if(!this.dying) {
-      //no debuffs if enemy dying
-      context.strokeStyle = this.status_duration[2] <= 0 ? cur_color : Goo.prototype.goo_color_rgb
-      context.strokeStyle = this.status_duration[1] <= 0 ? context.strokeStyle: 'gray'
-      context.strokeStyle = this.status_duration[0] <= 0 ? context.strokeStyle : 'red';
-    }
-    else
+    if(this.interior_color && context.fillStyle == this.interior_color)
       context.strokeStyle = cur_color
+    else
+      context.strokeStyle = context.fillStyle
+
     context.lineWidth = this.dying ? (1 - prog) * 2 : 2
-    //console.log(context.lineWidth)
     context.stroke()
 
     // give enemies a tiny of the level color
@@ -638,7 +631,15 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
+  this.open(this.open_period)
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+
 }
+
+Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+
+}
+
 
 Enemy.prototype.stun = function(dur) {
 this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
@@ -659,6 +660,10 @@ this.status_duration[2] = Math.max(dur, this.status_duration[2])
 
 Enemy.prototype.lighten = function(dur) {
 this.status_duration[3] = Math.max(dur, this.status_duration[3])
+}
+
+Enemy.prototype.open = function(dur) {
+this.durations["open"] = Math.max(dur, this.durations["open"])
 }
 
 /*Enemy.prototype.check_player_intersection = function(other) {
