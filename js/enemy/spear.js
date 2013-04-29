@@ -44,7 +44,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
     if(this.special_mode)
     {
       dir.Multiply(this.fast_factor)
-    }  
+    }
     if(this.status_duration[2] > 0) {
       dir.Multiply(this.slow_factor)
     }
@@ -67,9 +67,9 @@ Spear.prototype.additional_processing = function(dt) {
   if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
     this.entered_arena = false
   }
-  
+
   this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && this.entered_arena
-  
+
 }
 
 Spear.prototype.player_hit_proc = function() {
@@ -79,8 +79,8 @@ Spear.prototype.player_hit_proc = function() {
 }
 
 Spear.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), 
-    this.body.GetWorldCenter()) 
+  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
+    this.body.GetWorldCenter())
   this.silence(this.stun_length)
   this.last_stun = this.stun_length
 }
@@ -94,6 +94,6 @@ Spear.prototype.additional_drawing = function(context, draw_factor) {
     context.stroke()
 
   }
-  
+
 }
 

@@ -21,6 +21,14 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.pathfinding_delay_near = 6;
 
   this.cautious = false;
+  this.fast_factor = 2;
+
+  this.attack_mode = false;
+
+  this.entered_arena = false;
+  this.entered_arena_delay = 1000;
+
+  this.orbiter_force = 30;
 
 }
 
@@ -35,6 +43,24 @@ Orbiter.prototype.additional_processing = function(dt) {
   } else {
     this.pathfinding_delay = this.pathfinding_delay_far;
   }
+
+  this.set_heading(this.player.body.GetPosition())
+
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.silence(this.entered_arena_delay)
+    this.entered_arena = true
+  }
+
+  if(this.entered_arena_timer > 0) {
+    this.entered_arena_timer -= dt
+  }
+
+  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.entered_arena = false
+  }
+
+  this.attack_mode = (this.player.attacking && !this.player.point_in_impulse_angle(this.body.GetPosition())) || this.player.status_duration[0]  > 0 || this.player.status_duration[1] > 0
+  this.charging = this.attack_mode && !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
 }
 
 Orbiter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
@@ -44,58 +70,63 @@ Orbiter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angl
 
 Orbiter.prototype.get_target_path = function() {
 
-  var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
-  var divisions = 64;
-  var offsets = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
-  var offset = 0;
-  this.offset_multiplier *= -1;
+  if(!this.attack_mode) {
+    var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
+    var divisions = 64;
+    var offsets = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
+    var offset = 0;
+    this.offset_multiplier *= -1;
 
-  var is_valid = false;
-  var this_path = null;
-  while(!is_valid && offset< offsets.length) {
-
-
-    var guess_angle = orig_angle + (Math.PI * 2) / divisions * offsets[offset] * this.offset_multiplier;
-    if(isNaN(guess_angle)) {
-    }
-
-    is_valid = true;
+    var is_valid = false;
+    var this_path = null;
+    while(!is_valid && offset< offsets.length) {
 
 
-    var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
-                            this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)
-    for(var k = 0; k < this.level.boundary_polygons.length; k++)
-    {
-      if(pointInPolygon(this.level.boundary_polygons[k], tempPt))
+      var guess_angle = orig_angle + (Math.PI * 2) / divisions * offsets[offset] * this.offset_multiplier;
+      if(isNaN(guess_angle)) {
+      }
+
+      is_valid = true;
+
+
+      var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
+                              this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)
+      for(var k = 0; k < this.level.boundary_polygons.length; k++)
       {
-        is_valid = false
-        break;
+        if(pointInPolygon(this.level.boundary_polygons[k], tempPt))
+        {
+          is_valid = false
+          break;
+        }
       }
-    }
 
-    if(is_valid) {
-      this_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), tempPt, this.level.boundary_polygons, this)
+      if(is_valid) {
+        this_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), tempPt, this.level.boundary_polygons, this)
 
-      if(!this_path.path) {
-        is_valid = false;
-      } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.player.impulse_radius * 1.1)) {
-        is_valid = false
+        if(!this_path.path) {
+          is_valid = false;
+        } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.player.impulse_radius * 1.1)) {
+          is_valid = false
+        }
       }
+
+      if(is_valid) {
+        return this_path;
+      }
+      offset += 1;
     }
 
-    if(is_valid) {
-      return this_path;
-    }
-    offset += 1;
+
+
+    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safe_point(this, this.player), this.level.boundary_polygons, this)
+  } else {
+
+
+    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)
   }
-
-
-
-  return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safe_point(this, this.player), this.level.boundary_polygons, this)
-
 }
 
-Enemy.prototype.move = function() {
+Orbiter.prototype.move = function() {
 
   if(this.player.dying) return //stop moving once player dies
 
@@ -149,4 +180,30 @@ Enemy.prototype.move = function() {
   }
   if(endPt)
     this.move_to(endPt)
+}
+
+Orbiter.prototype.modify_movement_vector = function(dir) {
+
+  dir.Multiply(this.force)
+
+  if(this.charging) {
+    dir.Multiply(this.fast_factor)
+  }
+}
+
+Orbiter.prototype.move_to = function(endPt) {
+
+  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  dir.Normalize()
+
+  this.modify_movement_vector(dir)
+
+  this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+
+}
+
+Orbiter.prototype.player_hit_proc = function() {
+  var orbiter_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  var a = new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle))
+  this.player.body.ApplyImpulse(new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle)), this.player.body.GetWorldCenter())
 }
