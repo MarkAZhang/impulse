@@ -61,7 +61,7 @@ Fighter.prototype.additional_processing = function(dt) {
         bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.body.GetAngle())
         if(!isVisible({x:bullet_start_loc_x, y: bullet_start_loc_y}, this.player.body.GetPosition(), this.level.obstacle_edges)) {
           spawned_bullet = false
-        } 
+        }
       }
       if (spawned_bullet) {
         if(this.piercing_bullets > 0) {
@@ -69,10 +69,10 @@ Fighter.prototype.additional_processing = function(dt) {
           this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))
         }
         else {
-          this.level.spawned_enemies.push(new FighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))  
+          this.level.spawned_enemies.push(new FighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))
         }
         this.level.enemy_counter += 1
-        
+
       }
       this.bullet_alternater += 1
     }
@@ -80,10 +80,10 @@ Fighter.prototype.additional_processing = function(dt) {
   this.shoot_duration -= dt
 
   if(this.check_special_mode_timer <= 0) {
-    this.special_mode = isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges) && this.status_duration[1] <= 0  
+    this.special_mode = isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges) && this.status_duration[1] <= 0
     this.check_special_mode_timer = this.check_special_mode_interval
   }
-  this.check_special_mode_timer -= 1  
+  this.check_special_mode_timer -= 1
 
   if (!this.special_mode && this.status_duration[1] <= 0 && this.piercing_bullets < this.piercing_bullet_max && check_bounds(0, this.body.GetPosition(), draw_factor)) {
     this.piercing_bullet_reload_timer -= dt
@@ -142,7 +142,7 @@ Fighter.prototype.move = function() {
     }
     this.enemy_move()
   }
-  
+
 }
 
 Fighter.prototype.set_heading = function(endPt) {

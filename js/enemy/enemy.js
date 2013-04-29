@@ -128,7 +128,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
-  this.pathfinding_delay = 200
+  this.pathfinding_delay = 12
   this.pathfinding_counter =  this.pathfinding_delay  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
@@ -136,7 +136,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.slow_factor = .3
 
-  this.do_yield = true
+  this.do_yield = false
+  this.cautious = true
 
   this.slow_force = this.force / 3
 
@@ -383,7 +384,7 @@ Enemy.prototype.modify_movement_vector = function(dir) {
 
   this.in_poly = in_poly
 
-  if(this.in_poly && this.in_poly_slow_duration > 0)//move cautiously...isn't very effective in preventing accidental deaths
+  if(this.in_poly && this.cautious && this.in_poly_slow_duration > 0)//move cautiously...isn't very effective in preventing accidental deaths
   {
     dir.Multiply(this.slow_force)
   }

@@ -190,7 +190,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fill()
   }*/
 
-  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -201,16 +201,16 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.beginPath()
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 3
-        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*this.draw_factor, this.level.enemies[j].body.GetPosition().y*this.draw_factor + topbarHeight)
+        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*this.draw_factor + sidebarWidth, this.level.enemies[j].body.GetPosition().y*this.draw_factor)
         for(var i = 0; i < this_path.length; i++)
         {
-            ctx.lineTo(this_path[i].x*this.draw_factor, this_path[i].y*this.draw_factor + topbarHeight)
+            ctx.lineTo(this_path[i].x*this.draw_factor + sidebarWidth, this_path[i].y*this.draw_factor)
         }
         ctx.stroke()
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
 
 
 }

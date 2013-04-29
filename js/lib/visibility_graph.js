@@ -132,7 +132,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   //if it is possible to go from current location to player, always go there directly
   if(isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
   {
-    return [point2]
+    return {path: [point2], dist: p_dist(point1, point2)}
   }
 
   /*var cur_time = (new Date()).getTime()
@@ -220,7 +220,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     }
   }
 
-  if(!min_path) return null//it's possible that player is inside an open-space that is surrouded by triangle edges.
+  if(!min_path) return {path: null, dist: null}//it's possible that player is inside an open-space that is surrouded by triangle edges.
     //thus, no visible vertices
     //this is only if the player "tunnels" (cheats)
   var ans = []

@@ -86,6 +86,19 @@ function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
     return null
 }
 
+function seg_dist_from_pt(seg1s, seg1f, pt) {
+  return Math.abs((seg1f.x - seg1s.x) * (seg1s.y - pt.y) - (seg1s.x - pt.x) * (seg1f.y -seg1s.y)) /
+         Math.sqrt((seg1f.x - seg1s.x) * (seg1f.x - seg1s.x)  + (seg1f.y -seg1s.y) * (seg1f.y -seg1s.y));
+}
+
+function path_safe_from_pt(path, pt, dist) {
+  for(var i = 0; i < path.length-1; i++) {
+    if(seg_dist_from_pt(path[i], path[i+1], pt) < dist)
+      return false;
+  }
+  return true;
+}
+
 
 function crossProduct(v1, v2)
 {
@@ -220,6 +233,8 @@ function check_bounds(buffer, pt, draw_factor) {
 
 
 function get_safe_point(object, player) {
+
+
   var safe_lines = [{x: -5, y: -5}, {x: -5, y: (levelHeight)/draw_factor + 5}, {x: levelWidth/draw_factor + 5, y: (levelHeight)/draw_factor + 5}, {x: levelWidth/draw_factor + 5, y: -5}]
 
   var rayOut = new b2Vec2(object.body.GetPosition().x - player.body.GetPosition().x, object.body.GetPosition().y - player.body.GetPosition().y)
@@ -233,7 +248,6 @@ function get_safe_point(object, player) {
     if(temp!=null)
     {
       return temp
-
     }
 
     j = i
