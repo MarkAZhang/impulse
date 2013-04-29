@@ -10,6 +10,9 @@ function Mote(world, x, y, id, impulse_game_state) {
   this.special_mode = false
 
   this.death_radius = 5
+  this.default_heading = false
+
+  this.spin_rate = 2000
 
 }
 
@@ -18,6 +21,7 @@ Mote.prototype.player_hit_proc = function() {
 }
 
 Mote.prototype.additional_processing = function(dt) {
+  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 }
 
 Mote.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {

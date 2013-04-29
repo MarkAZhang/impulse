@@ -23,10 +23,15 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.cause_of_death = null
   this.do_yield = false
 
+  this.default_heading = false
+
+  this.spin_rate = 4000
+
 }
 
 Tank.prototype.additional_processing = function(dt) {
   this.special_mode = this.status_duration[1] <= 0
+  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 }
 
 Tank.prototype.activated_processing = function(dt) {
@@ -113,6 +118,7 @@ Tank.prototype.explode = function() {
     {
       var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].open(1500)
 
     }
   }
@@ -132,7 +138,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor) {
   context.beginPath()
   context.strokeStyle = this.color
   context.lineWidth = 2
-  context.globalAlpha = .7
+  context.globalAlpha = .5
   context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
   context.stroke()
   context.globalAlpha = 1

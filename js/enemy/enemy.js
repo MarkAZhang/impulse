@@ -27,7 +27,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_visibility = 0
 
-  this.open_period = 1000
+  this.open_period = 1500
 
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
@@ -71,6 +71,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
       this.shape_points.push(this_shape.m_vertices)
     else
       this.shape_points.push(null)
+
+    this.default_heading = true
   }
 
   this.shape_polar_points = []
@@ -380,7 +382,9 @@ Enemy.prototype.move_to = function(endPt) {
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
   //if(this.shape instanceof b2PolygonShape) {
-  this.set_heading(endPt)
+  if (this.default_heading) {
+    this.set_heading(endPt)
+  }
   //}
 }
 
