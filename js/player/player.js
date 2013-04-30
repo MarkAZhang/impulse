@@ -4,9 +4,9 @@ var Player = function(world, x, y, impulse_game_state) {
   this.init(world, x, y, impulse_game_state)
 }
 
-Player.prototype.lin_damp = 3.5 //old = 3
+Player.prototype.lin_damp = 3.5//old = 3
 
-Player.prototype.true_force = 1 //old = .5
+Player.prototype.true_force = 1//old = .5
 
 Player.prototype.impulse_force = 50
 
@@ -22,7 +22,10 @@ Player.prototype.density = 9/16
 Player.prototype.radius = .66
 
 Player.prototype.init = function(world, x, y, impulse_game_state) {
-  console.log(x+" "+y)
+  if(player_data.difficulty_mode == "easy") {
+    this.density *= 3;
+    this.true_force *= 3;
+  }
   var fixDef = new b2FixtureDef;
   fixDef.density = this.density;
   fixDef.friction = 0;
@@ -41,6 +44,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.body = world.CreateBody(bodyDef)
   this.body.CreateFixture(fixDef).SetUserData(this);
   this.shape = fixDef.shape
+
 
   this.points_polar_form = []
   for(var i = 0; i < 4; i++) {

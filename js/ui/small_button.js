@@ -9,6 +9,7 @@ function SmallButton(text, size, x, y, w, h, color, hcolor, action) {
   this.real_size = size
   this.init(x, y, w, h, action, false, color)
   this.hover_color = hcolor
+  this.underline = false
 }
 
 SmallButton.prototype.additional_draw = function(context) {
@@ -23,7 +24,7 @@ SmallButton.prototype.additional_draw = function(context) {
   context.shadowColor = context.fillStyle
   context.fillText(this.text, this.x, this.y)
   context.fill()
-  if(this.hover) {
+  if(this.hover || this.underline) {
     context.beginPath();
     var textWidth = context.measureText(this.text).width;
     context.moveTo(this.x - textWidth/2, this.y + this.size/4);

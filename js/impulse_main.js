@@ -131,8 +131,8 @@ window.onload =  function() {
       offset_top = 0
     }
 
-    cur_game_state = new TitleState(false)
     load_game()
+    cur_game_state = new TitleState(false)
     step()
 
 }
@@ -290,6 +290,7 @@ function save_game() {
     save_obj['enemies_killed'][i] = impulse_enemy_stats[i].kills
   }
   save_obj['total_kills'] = player_data.total_kills
+  save_obj['difficulty_mode'] = player_data.difficulty_mode
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 
@@ -298,6 +299,7 @@ function load_game() {
   if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
 
     player_data.first_time = true
+    load_obj.difficulty_mode = "normal"
 
   }
   else {
@@ -317,6 +319,7 @@ function load_game() {
     load_obj['enemies_killed'] = {}
   }
 
+  player_data.difficulty_mode = load_obj['difficulty_mode'];
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
 
   for(i in impulse_level_data) {

@@ -56,8 +56,10 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = 'black'
   ctx.fillText(player_data.stars, levelWidth - 40, levelHeight - 10)
 
-  ctx.textAlign = 'left'
-  ctx.fillText("ver "+version_num, 10, levelHeight - 10)
+  if(player_data.difficulty_mode == "easy") {
+    ctx.textAlign = 'left'
+    ctx.fillText("EASY MODE", 10, levelHeight - 10)
+  }
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
@@ -85,16 +87,34 @@ TitleState.prototype.setup_main_menu = function() {
   //        ImpulseGameState(ctx, "SURVIVAL"))}))
   //this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
   this.buttons["menu"].push(new SmallButton("ENEMIES", 20, levelWidth/2, levelHeight/2+70, 200, 50, "black", "blue",function(){switch_game_state(new EnemiesInfoState())}))
-  this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){_this.state="options"}))
+  this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
   this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, "black", "blue",function(){switch_game_state(new CreditsState())}))
   this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+220, 200, 50, "black", "blue",function(){switch_game_state(new LevelEditorState())}))
   this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue",function(){switch_game_state(new MusicPlayerState())}))
 
   this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, "black", "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
-  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+20, 200, 50, "black", "blue",function(){_this.clear_data()})
-  this.buttons["options"].push(this.clear_data_button)
-  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+70, 200, 50, "black", "blue",function(){_this.state="menu"}))
 
+  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, "black", "blue",function(){_this.change_mode("easy")})
+  this.buttons["options"].push(this.easy_mode_button)
+  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+20, 200, 50, "black", "blue",function(){_this.change_mode("normal")})
+  this.buttons["options"].push(this.normal_mode_button)
+  this.set_difficulty_button_underline();
+  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+70, 200, 50, "black", "blue",function(){_this.clear_data()})
+  this.buttons["options"].push(this.clear_data_button)
+  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
+
+}
+
+TitleState.prototype.change_mode = function(type) {
+  player_data.difficulty_mode = type;
+
+  save_game();
+  this.set_difficulty_button_underline();
+}
+
+TitleState.prototype.set_difficulty_button_underline = function() {
+  this.easy_mode_button.underline = (player_data.difficulty_mode == "easy");
+  this.normal_mode_button.underline = (player_data.difficulty_mode == "normal");
 }
 
 TitleState.prototype.clear_data = function() {
