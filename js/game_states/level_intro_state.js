@@ -19,7 +19,7 @@ function LevelIntroState(level_name, world) {
   }}(this)))
 
   this.star_colors = ['bronze', 'silver', 'gold']
-  this.stars = impulse_level_data[this.level_name].stars
+  this.stars = impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score.stars
 
   this.drawn_enemies = null
 
@@ -149,7 +149,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     }
     score_color = 0
 
-    while(impulse_level_data[this.level_name].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+    while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
       score_color+=1
     }
 
@@ -160,7 +160,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       draw_star(ctx, 400, 420, 30, this.star_colors[this.stars - 1])
     else
     draw_empty_star(ctx, 400, 420, 30)*/
-    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score,  levelWidth/2, 420)
+    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score,  levelWidth/2, 420)
 
     ctx.fillStyle = "black"
     ctx.font = '20px Century Gothic'

@@ -70,7 +70,7 @@ ClassicSelectState.prototype.draw = function(ctx, bg_ctx) {
   draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, levelWidth - 40, levelHeight - 10)
+  ctx.fillText(player_data.stars[player_data.difficulty_mode], levelWidth - 40, levelHeight - 10)
 
   for(var i = 0; i < this.buttons.length; i++)
   {

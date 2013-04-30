@@ -54,7 +54,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars, levelWidth - 40, levelHeight - 10)
+  ctx.fillText(player_data.stars[player_data.difficulty_mode], levelWidth - 40, levelHeight - 10)
 
   if(player_data.difficulty_mode == "easy") {
     ctx.textAlign = 'left'
@@ -110,6 +110,7 @@ TitleState.prototype.change_mode = function(type) {
 
   save_game();
   this.set_difficulty_button_underline();
+  calculate_stars(player_data.difficulty_mode)
 }
 
 TitleState.prototype.set_difficulty_button_underline = function() {

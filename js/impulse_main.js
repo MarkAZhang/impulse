@@ -273,28 +273,9 @@ function switch_game_state_helper(game_state) {
   step()
 }
 
-function save_game() {
-  var save_obj = {}
-  save_obj['levels'] = {}
-  for(i in impulse_level_data) {
-    if(i.slice(0, 11) != "HOW TO PLAY") {
-      save_obj['levels'][i] = {}
-      save_obj['levels'][i].high_score = impulse_level_data[i].high_score
-      save_obj['levels'][i].stars = impulse_level_data[i].stars
-    }
-  }
-  save_obj['enemies_seen'] = {}
-  save_obj['enemies_killed'] = {}
-  for(i in impulse_enemy_stats) {
-    save_obj['enemies_seen'][i] = impulse_enemy_stats[i].seen
-    save_obj['enemies_killed'][i] = impulse_enemy_stats[i].kills
-  }
-  save_obj['total_kills'] = player_data.total_kills
-  save_obj['difficulty_mode'] = player_data.difficulty_mode
-  localStorage[save_name] = JSON.stringify(save_obj)
-}
 
 function load_game() {
+
   var load_obj = {}
   if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
 
@@ -321,20 +302,8 @@ function load_game() {
 
   player_data.difficulty_mode = load_obj['difficulty_mode'];
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
-
-  for(i in impulse_level_data) {
-    if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(load_obj['levels'][i]) {
-        impulse_level_data[i].high_score = load_obj['levels'][i].high_score
-        impulse_level_data[i].stars = load_obj['levels'][i].stars
-      }
-      else {
-        impulse_level_data[i].high_score = 0
-        impulse_level_data[i].stars = 0
-      }
-    }
-
-  }
+  load_level_data("easy", load_obj)
+  load_level_data("normal", load_obj)
 
   for(i in impulse_enemy_stats) {
     //load if enemies are seen
@@ -343,16 +312,66 @@ function load_game() {
     impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
   }
 
-  calculate_stars()
+  calculate_stars('easy')
+  calculate_stars('normal')
 
 }
 
-function calculate_stars() {
+function load_level_data(difficulty_level, load_obj) {
+  for(i in impulse_level_data) {
+    if(i.slice(0, 11) != "HOW TO PLAY") {
+      if(!(impulse_level_data[i].hasOwnProperty("save_state"))) {
+        impulse_level_data[i].save_state = {}
+      }
+      impulse_level_data[i].save_state[difficulty_level] = {}
+      if(load_obj['levels'].hasOwnProperty(i)) {
+        impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i].save_state[difficulty_level].high_score
+        impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i].save_state[difficulty_level].stars
+      }
+      else {
+        impulse_level_data[i].save_state[difficulty_level].high_score = 0
+        impulse_level_data[i].save_state[difficulty_level].stars = 0
+      }
+    }
+  }
+}
+
+function save_game() {
+  var save_obj = {}
+  save_obj['levels'] = {}
+  save_level_data('easy', save_obj)
+  save_level_data('normal', save_obj)
+  save_obj['enemies_seen'] = {}
+  save_obj['enemies_killed'] = {}
+  for(i in impulse_enemy_stats) {
+    save_obj['enemies_seen'][i] = impulse_enemy_stats[i].seen
+    save_obj['enemies_killed'][i] = impulse_enemy_stats[i].kills
+  }
+  save_obj['total_kills'] = player_data.total_kills
+  save_obj['difficulty_mode'] = player_data.difficulty_mode
+  localStorage[save_name] = JSON.stringify(save_obj)
+}
+
+
+function save_level_data(difficulty_level, save_obj) {
+  for(i in impulse_level_data) {
+    if(i.slice(0, 11) != "HOW TO PLAY") {
+      if(!(save_obj['levels'].hasOwnProperty(i)))
+        save_obj['levels'][i] = {save_state: {}}
+
+      save_obj['levels'][i].save_state[difficulty_level] = {}
+      save_obj['levels'][i].save_state[difficulty_level].high_score = impulse_level_data[i].save_state[difficulty_level].high_score
+      save_obj['levels'][i].save_state[difficulty_level].stars = impulse_level_data[i].save_state[difficulty_level].stars
+    }
+  }
+}
+
+function calculate_stars(difficulty_mode) {
   var total_stars = 0
   for(i in impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
       if(impulse_level_data[i]) {
-        total_stars += impulse_level_data[i].stars
+        total_stars += impulse_level_data[i].save_state[difficulty_mode].stars
       }
     }
   }
@@ -364,6 +383,7 @@ function calculate_stars() {
     }
 
   }
-
-  player_data.stars = total_stars + player_data.kill_stars
+  if(!player_data.hasOwnProperty('stars'))
+    player_data.stars = {}
+  player_data.stars[difficulty_mode] = total_stars + player_data.kill_stars
 }

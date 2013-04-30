@@ -21,16 +21,16 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   this.game_numbers = final_game_numbers
 
 
-  if(this.game_numbers.score > impulse_level_data[this.level_name].high_score) {
+  if(this.game_numbers.score > impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score) {
     this.high_score = true
-    impulse_level_data[this.level_name].high_score = this.game_numbers.score
+    impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
 
     var stars = 0
     while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[stars])
     {
       stars+=1
     }
-    impulse_level_data[this.level_name].stars = stars
+    impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars = stars
     this.stars = stars
 
   }
@@ -55,7 +55,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   player_data.total_kills += this.game_numbers.kills
 
   save_game()
-  calculate_stars()
+  calculate_stars(player_data.difficulty_mode)
 
   var closest_enemy_type = null
   var closest_prop = -1
