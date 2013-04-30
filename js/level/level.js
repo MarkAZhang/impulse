@@ -6,6 +6,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.level_intro_state = level_intro_state
   this.impulse_game_state = null
   this.enemies_data = data.enemies
+  this.initial_spawn_data = data.initial_spawn_data;
   this.enemy_spawn_timers = {}
   this.enemy_spawn_counters = {}
   this.enemy_numbers = {}
@@ -80,6 +81,10 @@ Level.prototype.init = function(data, level_intro_state) {
   this.boss = null
   this.boss_kills = 0
 
+  this.initial_spawn_done = false
+
+  this.spawn_point_counter = 0;
+
 }
 
 Level.prototype.reset = function() {
@@ -111,6 +116,7 @@ Level.prototype.process = function(dt) {
     if(this.boss_delay_timer > 0) {
       this.boss_delay_timer -= dt
     }
+
   //handle obstacle visibility
     if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
     {
@@ -182,20 +188,39 @@ Level.prototype.process = function(dt) {
 
     }
 
+    if(!this.initial_spawn_done) {
+      this.initial_spawn()
+      this.initial_spawn_done = true;
+    } else {
+      this.check_enemy_spawn_timers(dt)
 
-    this.check_enemy_spawn_timers(dt)
-
-    if(this.spawn_timer >= 0) {
-      this.spawn_timer -= dt
-    }
-    else {
-      if(this.spawn_queue.length > 0) {
-        var enemy_type_to_spawn = this.spawn_queue[0]
-        this.spawn_queue = this.spawn_queue.slice(1)
-        this.spawn_this_enemy(enemy_type_to_spawn)
-        this.spawn_timer = this.spawn_interval
+      if(this.spawn_timer >= 0) {
+        this.spawn_timer -= dt
+      }
+      else {
+        if(this.spawn_queue.length > 0) {
+          var enemy_type_to_spawn = this.spawn_queue[0].type;
+          var spawn_point_index = this.spawn_queue[0].spawn_point;
+          this.spawn_queue = this.spawn_queue.slice(1)
+          this.spawn_this_enemy(enemy_type_to_spawn, spawn_point_index)
+          this.spawn_timer = this.spawn_interval
+        }
       }
     }
+
+}
+
+Level.prototype.initial_spawn = function() {
+  if(this.initial_spawn_data) {
+    for(var enemy in this.initial_spawn_data) {
+      // re-seed for each type of enemy
+      var spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
+      for(var i = 0; i < this.initial_spawn_data[enemy]; i++) {
+        this.spawn_this_enemy(enemy, spawn_point_index);
+        spawn_point_index+=1;
+      }
+    }
+  }
 }
 
 Level.prototype.check_enemy_spawn_timers = function(dt) {
@@ -208,8 +233,13 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
     this.enemy_spawn_timers[k] += dt/1000
     if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
       this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
+
+      // re-seed for each type of enemy
+      var spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
+
       for(var j = 1; j <= this.enemy_spawn_counters[k]; j++) {
-        this.spawn_queue.push(k)
+        this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
+        spawn_point_index+=1;
 
       }
     }
@@ -225,7 +255,7 @@ Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
 
 }
 
-Level.prototype.spawn_this_enemy = function(enemy_type) {
+Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
 
   var this_enemy = impulse_enemy_stats[enemy_type].className
 
@@ -239,7 +269,8 @@ Level.prototype.spawn_this_enemy = function(enemy_type) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, levelWidth/draw_factor/2, (levelHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
   }
   else if(this.spawn_points) {
-    var r_p = this.spawn_points[Math.floor(Math.random() * this.spawn_points.length)]
+
+    var r_p = this.spawn_points[spawn_point % this.spawn_points.length]
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/draw_factor, r_p[1]/draw_factor, this.enemy_counter, this.impulse_game_state)
   }
   else {
