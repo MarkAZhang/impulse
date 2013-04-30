@@ -32,10 +32,14 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.slow_factor = 0.4
 
+  this.default_heading = false
+
+  this.spin_rate = 6000
 }
 
 Goo.prototype.additional_processing = function(dt) {
 
+  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
   if(this.goo_state_timer > 0) {
     this.goo_state_timer -= dt;
   }

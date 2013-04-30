@@ -213,8 +213,11 @@ Level.prototype.process = function(dt) {
 Level.prototype.initial_spawn = function() {
   if(this.initial_spawn_data) {
     for(var enemy in this.initial_spawn_data) {
+
       // re-seed for each type of enemy
-      var spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
+      var spawn_point_index = 0;
+      if(this.spawn_points)
+        spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
       for(var i = 0; i < this.initial_spawn_data[enemy]; i++) {
         this.spawn_this_enemy(enemy, spawn_point_index);
         spawn_point_index+=1;
@@ -235,7 +238,9 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
       this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
 
       // re-seed for each type of enemy
-      var spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
+      var spawn_point_index = 0;
+      if(this.spawn_points)
+        spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
 
       for(var j = 1; j <= this.enemy_spawn_counters[k]; j++) {
         this.spawn_queue.push({type: k, spawn_point: spawn_point_index})

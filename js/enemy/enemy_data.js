@@ -53,7 +53,7 @@ impulse_enemy_stats["tank"] = {
 }
 
 impulse_enemy_stats["mote"] = {
-  color: "pink",
+  color: "#ee42ae",
   density: .5,
   lin_damp: 3,
   effective_radius: .5,
@@ -93,6 +93,7 @@ impulse_enemy_stats["goo"] = {
   /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 2}],
   dies_on_impact: "YES",
   special_ability: "Leaves behind a trail of sticky goo. Everything that passes through the goo is slowed and harder to push around. Upon impact, goos the player for 2 seconds.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Getting gooed can also keep you alive in a tough spot.",
@@ -140,7 +141,7 @@ impulse_enemy_stats["disabler"] = {
 }*/
 
 impulse_enemy_stats["troll"] = {
-  color: "rgb(255, 20, 147)",
+  color: "#159d31",
   density: .3,
   lin_damp: 3,
   effective_radius: .7,
@@ -199,7 +200,7 @@ impulse_enemy_stats["wispdire"] = {
 
 
 impulse_enemy_stats["fighter"] = {
-  color: "rgb(30, 144, 255)",
+  color: "rgb(0, 0, 205)",
   density: 2.5,
   lin_damp: 3,
   effective_radius: 1,
@@ -270,7 +271,7 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 }
 
 impulse_enemy_stats["harpoon"] = {
-  color: "orange",
+  color: "#00aa00",
   density: 3,
   lin_damp: 3,
   effective_radius: .7,
@@ -296,7 +297,7 @@ impulse_enemy_stats["harpoon"] = {
 }
 
 impulse_enemy_stats["harpoonhead"] = {
-  color: "orange",
+  color: "#00dd00",
   density: 6,
   lin_damp: 6,
   effective_radius: impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
