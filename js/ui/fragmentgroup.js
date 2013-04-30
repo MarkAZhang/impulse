@@ -24,6 +24,12 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.original_v_damping = 0.5
     this.num_fragments = 10
 
+  } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
+    this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.color = impulse_enemy_stats[enemy_type].color
+    this.original_v_damping = 0.3
+    this.num_fragments = 2
+
   } else {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = impulse_enemy_stats[enemy_type].color

@@ -86,15 +86,12 @@ Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, h
 }
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.status_duration[1] > 0) {
+  if(this.status_duration[1] > 0 && !this.dying) {
     context.beginPath()
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
-    context.strokeStyle = "gray"
+    context.strokeStyle = this.color;
     context.stroke()
-  }
-  if(this.special_mode) {
-
   }
 
 }

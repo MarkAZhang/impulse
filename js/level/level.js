@@ -41,6 +41,8 @@ Level.prototype.init = function(data, level_intro_state) {
   this.enemy_counter = 0
 
   this.fragments = []
+  this.total_fragments = 0
+  this.max_fragments = 54
 
   this.enemy_map = {
     "stunner": Stunner,
@@ -140,29 +142,19 @@ Level.prototype.process = function(dt) {
         }
       }
 
+
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
+      if(this.enemies[dead_i] instanceof Harpoon) {
+        this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].harpoon_head.body)
+      }
     }
 
     for(var i = this.fragments.length - 1; i >= 0; i--) {
       this.fragments[i].process(dt);
       if(this.fragments[i].isDone()) {
         this.fragments.splice(i, 1);
+        this.total_fragments -= 6;
       }
-    }
-
-    while(this.dead_enemies.length > 0)
-    {
-      var dead_i = this.dead_enemies.pop()
-
-      if(this.enemies[dead_i] instanceof BossTwo) {
-        for(var i = 0; i < this.enemies.length; i++) {
-          if (this.enemies[i] instanceof FixedHarpoon) {
-            this.enemies[i].start_death("self_destruct")
-          }
-        }
-      }
-
-      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
     }
 
     while(this.expired_enemies.length > 0)
@@ -226,7 +218,10 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-  this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
+  if(this.total_fragments < this.max_fragments) {
+    this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
+    this.total_fragments += 6;
+  }
 
 }
 

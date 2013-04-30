@@ -269,6 +269,7 @@ Player.prototype.process = function(dt) {
       for(var i = 0; i < this.level.enemies.length; i++)
       {
         if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
+
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
           var impulse_sensitive_points = this.level.enemies[i].get_impulse_sensitive_pts()
@@ -284,8 +285,29 @@ Player.prototype.process = function(dt) {
                 this.enemies_hit.push(this.level.enemies[i].id)
                 this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
               }
-              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpooned) {
-                this.level.enemies[i].disengage()
+              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
+                this.level.enemies[i].disengage_harpoon()
+                var angle = _atan(this.attack_loc,  this.level.enemies[i].harpoon_head.get_impulse_sensitive_pts()[0])//not sure if it should be this point
+                this.level.enemies[i].harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
+              }
+            }
+          }
+        }
+
+        // if Harpoon, also check the Head
+        if(this.level.enemies[i] instanceof Harpoon) {
+          var this_harpoon_head = this.level.enemies[i].harpoon_head;
+          var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
+
+          for(var j = 0; j < impulse_sensitive_points.length; j++) {
+
+            if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
+            {
+
+              if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
+              {
+                var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
               }
             }
           }

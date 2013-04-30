@@ -23,17 +23,21 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.goalPt = null
 
-  this.harpooning = false //whether the Harpoon is currently shooting
   this.harpoon_loc = null
   this.harpoon_v = null
   this.harpoon_velocity = 15
 
+
   this.harpoon_color = "orange"
 
-  this.harpooned = false
+  this.harpoon_state = "inactive"
+
   this.harpooned_force = 15
 
-  this.safe_radius = 10
+  this.harpoonhead_force = 400
+  this.harpoonhead_retract_force = 6
+
+  this.safe_radius = this.player.impulse_radius
   this.safe_radius_buffer = 2
 
 
@@ -56,6 +60,37 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.check_safety_timer = this.check_safety_interval
 
   this.silence_on_impulse_length = 1000
+
+  this.default_heading = false
+
+  this.harpoon_shape = {x: 0, y: 0, r: .7, vertices:
+  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
+  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]};
+
+  this.harpoon_head_defaut_dist = Math.sqrt(2)/2+Math.sqrt(6)/6
+
+  this.add_harpoon_head()
+
+  this.require_open = false
+
+  this.entered_arena = false
+  this.entered_arena_delay = 1000
+  this.entered_arena_timer = 1000
+  this.last_stun = this.entered_arena_delay
+
+  this.delay_between_shots = 1000
+
+}
+
+Harpoon.prototype.add_harpoon_head = function() {
+  var vloc = this.get_virtual_harpoon_loc();
+  this.harpoon_head = new HarpoonHead(this.world, vloc.x, vloc.y, 0, this.impulse_game_state, this)
+}
+
+Harpoon.prototype.draw_harpoon_head = function(context, draw_factor) {
+
+  this.harpoon_head.draw(context, draw_factor)
 
 }
 
@@ -114,10 +149,9 @@ Harpoon.prototype.get_target_point = function() {
 Harpoon.prototype.enemy_move = Enemy.prototype.move
 
 Harpoon.prototype.move = function() {
-  if(this.harpooning) {return}//do not move if harpooning
+  if(this.harpoon_state != "inactive" && this.harpoon_state != "engaged") {return}//do not move if harpooning
 
-  if(this.harpooned) {
-
+  if(this.harpoon_state == "engaged") {
     var dir = new b2Vec2(this.body.GetPosition().x - this.player.body.GetPosition().x, this.body.GetPosition().y - this.player.body.GetPosition().y)
     dir.Normalize()
     dir.Multiply(this.harpooned_force)
@@ -174,17 +208,72 @@ Harpoon.prototype.get_harpoon_target_pt = function() {
 }
 
 Harpoon.prototype.can_harpoon = function() {
-  return (this.status_duration[1] <= 0 && !this.harpooning && !this.harpooned && check_bounds(0, this.body.GetPosition(), draw_factor)
+  return (this.status_duration[1] <= 0 && this.entered_arena && !this.dying && this.harpoon_state == "inactive" && check_bounds(0, this.body.GetPosition(), draw_factor)
    && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length &&
    !isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges))
 
 }
 
+Harpoon.prototype.get_virtual_harpoon_loc = function() {
+  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(impulse_enemy_stats[this.type].effective_radius) * Math.cos(this.body.GetAngle()),
+    this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(impulse_enemy_stats[this.type].effective_radius) * Math.sin(this.body.GetAngle()))
+}
+
 Harpoon.prototype.additional_processing = function(dt) {
 
-  if(this.status_duration[1] > 0 && (this.harpooning || this.harpooned)) {
-    this.disengage()
-    this.harpooning = false
+  if(this.harpoon_state == "inactive" || this.harpoon_state == "engaged") {
+    this.set_heading(this.player.body.GetPosition())
+  } else {
+    this.set_heading(this.harpoon_head.body.GetPosition())
+  }
+
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.silence(this.entered_arena_delay)
+    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
+    this.entered_arena = true
+  }
+
+  if(this.entered_arena_timer > 0) {
+    this.entered_arena_timer -= dt
+  }
+
+  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.entered_arena = false
+  }
+
+  if(this.harpoon_state != "inactive") {
+  }
+
+  if(this.harpoon_state == "inactive") {
+    this.harpoon_head.body.SetPosition(this.get_virtual_harpoon_loc())
+    this.harpoon_head.body.SetAngle(this.body.GetAngle())
+  } else if(this.harpoon_state == "fire") {
+    this.harpoon_head.body.SetAngle(this.harpoon_dir)
+    if(this.body.m_linearVelocity.Length() < 1) {
+      this.harpoon_state = "retract"
+    }
+    /*if(this.harpooning && p_dist(this.body.GetPosition(), this.harpoon_head.body.GetPosition()) >= this.harpoon_length) {
+      this.harpooning = false
+    }*/
+  } else if(this.harpoon_state == "retract") {
+    var dir = _atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
+    this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
+    this.harpoon_head.body.SetAngle(Math.PI + dir)
+    if(p_dist(this.harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.harpoon_head_defaut_dist * 1.1) {
+      this.silence(this.delay_between_shots)
+      this.last_stun = Math.max(this.delay_between_shots, this.last_stun)
+      this.harpoon_state = "inactive"
+    }
+
+  } else if(this.harpoon_state == "engaged") {
+
+
+    this.harpoon_head.body.SetPosition(this.player.body.GetPosition());
+    this.harpoon_head.body.SetAngle(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
+  }
+
+  if(this.status_duration[1] > 0 && (this.harpoon_state != "inactive")) {
+    this.disengage_harpoon()
   }
 
   if(this.check_safety_timer <= 0) {
@@ -207,113 +296,162 @@ Harpoon.prototype.additional_processing = function(dt) {
   if(this.check_harpoon_timer > 0)
     this.check_harpoon_timer -= 1
 
-  if(this.harpooning) {
-
-      if(this.player.point_intersect(this.harpoon_loc)) {
-        this.harpooned = true
-        this.harpooning = false
-        this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
-        this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
-        this.harpoon_joint.collideConnected = true
-        this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)
-      }
-
-      var temp_v = this.harpoon_v.Copy()
-      temp_v.Multiply(dt/1000)
-      this.harpoon_loc.Add(temp_v)
-
-    }
-
   if(this.check_harpoon_timer <= 0) {
     if(this.can_harpoon()) {
 
-      this.harpooning = true
-      this.harpoon_loc = this.body.GetPosition().Copy()
-
-
-
-      var temp = this.get_harpoon_target_pt()
-
-      temp.Subtract(this.body.GetPosition().Copy())
-      temp.Normalize()
-      temp.Multiply(this.harpoon_velocity)
-      this.harpoon_v = temp
-
+      this.harpoon_state = "fire"
+      this.harpoon_dir = _atan(this.harpoon_head.body.GetPosition(), this.get_harpoon_target_pt())
+      this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
+      this.harpoon_head.body.SetAngle(this.harpoon_dir)
     }
-    else if(this.harpooning && p_dist(this.body.GetPosition(), this.harpoon_loc) >= this.harpoon_length) {
-      this.harpooning = false
-    }
+    else
 
     this.check_cancel_harpoon()
 
     this.check_harpoon_timer = this.check_harpoon_interval
+
+
   }
+
+  //harpoonhead stuff
+  if(this.harpoon_head.durations["open"] > 0) {
+    this.harpoon_head.durations["open"] -= dt;
+  }
+
 
 }
 
+Harpoon.prototype.process_death = function(enemy_index, dt) {
+  if(this.died && (this.dying != "hit_player" || this.dying_duration < this.dying_length - 50)) {//the moment the enemy starts to die, give a couple steps to resolve collisions, then remove the body from play
+    this.died = false
+
+    this.level.dead_enemies.push(enemy_index)
+  }
+
+  if(this.dying && this.dying_duration < 0)
+  {//if expired, dispose of it
+    this.level.expired_enemies.push(enemy_index)
+    return true
+  }
+
+  if(this.dying )
+  {//if dying, expire
+    if(this.harpoon_joint != null) {
+      this.world.DestroyJoint(this.harpoon_joint)
+      this.harpoin_joint = null;
+    }
+
+    this.dying_duration -= dt
+    this.harpoon_head.dying_duration -= dt
+    return true
+  }
+
+  return false
+}
+
+Harpoon.prototype.start_death = function(death) {
+
+  this.disengage_harpoon();
+
+  this.dying = death
+  this.dying_duration = this.dying_length
+  this.died = true
+  if(this.dying == "kill" && !this.player.dying) {
+    //if the player hasn't died and this was a kill, increase score
+    this.impulse_game_state.game_numbers.kills +=1
+    if(impulse_enemy_stats[this.type].proxy)
+      impulse_enemy_stats[impulse_enemy_stats[this.type].proxy].kills += 1
+    else
+      impulse_enemy_stats[this.type].kills += 1
+    if(this.is_boss) {
+      var score_value = this.impulse_game_state.level.boss_kills >= this.score_value.length ? this.score_value[this.score_value.length - 1] : this.score_value[this.impulse_game_state.level.boss_kills]
+    }
+    else {
+      var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
+    }
+    this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
+    this.impulse_game_state.game_numbers.score += score_value
+    this.impulse_game_state.increment_combo()
+    this.impulse_game_state.check_cutoffs()
+  }
+
+  impulse_music.play_sound("sdeath")
+
+  this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+
+  this.harpoon_head.start_death("normal")
+
+}
+
+
 Harpoon.prototype.check_cancel_harpoon = function() {
-  if(this.harpooned && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
-    this.disengage()
+  if(this.harpoon_state == "engaged" && !check_bounds(1, this.player.body.GetPosition(), draw_factor)) {
+    this.disengage_harpoon()
   }
-  else if(this.harpooned && !check_bounds(0, this.body.GetPosition(), draw_factor)) {
-    this.disengage()
+  else if(this.harpoon_state == "engaged" && !check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.disengage_harpoon()
   }
-  else if(this.harpooned && this.player.dying) {
-    this.disengage()
+  else if(this.harpoon_state == "engaged" && this.player.dying) {
+    this.disengage_harpoon()
   }
 }
 
 Harpoon.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.harpooning) {
+
+
+  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
+  if(this.dying) {
+    context.globalAlpha = prog;
+  }
+  if(this.harpoon_state != "engaged") {
     context.beginPath()
     context.strokeStyle = this.color
     context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
-    context.lineTo(this.harpoon_loc.x * draw_factor, this.harpoon_loc.y * draw_factor)
+    context.lineTo(this.harpoon_head.body.GetPosition().x * draw_factor, this.harpoon_head.body.GetPosition().y * draw_factor)
     context.stroke()
-
-    context.save()
-    context.translate(this.harpoon_loc.x * draw_factor, this.harpoon_loc.y * draw_factor);
-    context.rotate(_atan(this.body.GetPosition(), this.harpoon_loc));
-    context.translate(-(this.harpoon_loc.x) * draw_factor, -(this.harpoon_loc.y) * draw_factor);
-
-    var tp = this.harpoon_loc
-
-    context.moveTo((tp.x+this.harpoon_shape[0].x)*draw_factor, (tp.y+this.harpoon_shape[0].y)*draw_factor)
-      for(var i = 1; i < this.harpoon_shape.length; i++)
-      {
-        context.lineTo((tp.x+this.harpoon_shape[i].x)*draw_factor, (tp.y+this.harpoon_shape[i].y)*draw_factor)
-      }
-      context.closePath()
-      context.lineWidth = 2
-      context.strokeStyle = this.color
-      context.stroke()
-      context.restore()
-  }
-  if(this.harpooned) {
+  } else {
     context.beginPath()
     context.strokeStyle = this.harpoon_color
     context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
-    context.lineTo(this.player.body.GetPosition().x * draw_factor, this.player.body.GetPosition().y * draw_factor)
+    context.lineTo(this.harpoon_head.body.GetPosition().x * draw_factor, this.harpoon_head.body.GetPosition().y * draw_factor)
     context.stroke()
   }
+  context.globalAlpha = 1;
+
+  if(!this.dying && this.status_duration[1] > 0) {
+    context.beginPath()
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.last_stun), true)
+    context.lineWidth = 2
+    context.strokeStyle = this.color;
+    context.stroke()
+  }
+
+  this.draw_harpoon_head(context, draw_factor)
 }
 
 Harpoon.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-  if(this.harpooning)
-    this.silence(1000)
-  this.harpooning = false
 }
 
-Harpoon.prototype.disengage = function() {
-  if(this.harpooned) {
+Harpoon.prototype.disengage_harpoon = function() {
+  if(this.harpoon_state == "engaged") {
+
+    console.log("DISENGAGE HARPOON "+this.id)
     this.world.DestroyJoint(this.harpoon_joint)
     this.harpoon_joint = null
-    this.harpooned = false
+    this.harpoon_state = "retract"
   }
 }
 
-Harpoon.prototype.collide_with = function() {
-
+Harpoon.prototype.engage_harpoon = function() {
+  if(this.harpoon_state != "engaged" && !this.dying) {
+    console.log("ENGAGE HARPOON "+this.id)
+    this.harpoon_state = "engaged"
+    this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
+    this.harpoon_joint.Initialize(this.body, this.player.body, this.body.GetWorldCenter(), this.player.body.GetWorldCenter())
+    this.harpoon_joint.collideConnected = true
+    this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)
+  }
 }
+

@@ -42,7 +42,6 @@ Tank.prototype.additional_processing = function(dt) {
 Tank.prototype.activated_processing = function(dt) {
   if(this.activated)
   {
-    console.log(this.detonate_timer + " " + this.id)
     if(this.detonate_timer <= 0 && !this.dying)
     {
       this.start_death(this.cause_of_death)
@@ -53,8 +52,6 @@ Tank.prototype.activated_processing = function(dt) {
       this.detonate_timer -= dt
     }
   }
-
-
 
 }
 
@@ -111,7 +108,6 @@ Tank.prototype.collide_with = function(other) {
 }
 
 Tank.prototype.explode = function() {
-  console.log("EXPLODE! " + this.id)
   if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
   {
     var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())

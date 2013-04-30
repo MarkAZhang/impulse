@@ -73,22 +73,26 @@ impulse_enemy_stats["mote"] = {
 }
 
 impulse_enemy_stats["goo"] = {
-  color: "brown",
-  density: 8,
+  color: "#e6c43c",
+  density: 5,
   lin_damp: 9,
-  effective_radius: .2,
-  force: 1,
+  effective_radius: .5,
+  force: 3,
   score_value: 500,
   attack_rating: .25,
   /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],*/
-  shape_polygons: [{type: "circle", x: 0, y: 0, r: .2},
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
   /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
-  ],
   dies_on_impact: "YES",
   special_ability: "Leaves behind a trail of sticky goo. Everything that passes through the goo is slowed and harder to push around. Upon impact, goos the player for 2 seconds.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Getting gooed can also keep you alive in a tough spot.",
@@ -270,15 +274,41 @@ impulse_enemy_stats["harpoon"] = {
   density: 3,
   lin_damp: 3,
   effective_radius: .7,
-  force: 1.5,
+  force: 2,
   score_value: 1000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
-  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
-  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
-  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
+  [[Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 7/8), Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 9/8), Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
+  ]}/*,
+  {type: "polygon", x: 0, y: 0, r: .7, vertices:
+  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
+  [((Math.sqrt(2)+Math.sqrt(6))/2)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]}*/],
+  dies_on_impact: "NO",
+  special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
+  other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  className: Harpoon
+
+}
+
+impulse_enemy_stats["harpoonhead"] = {
+  color: "orange",
+  density: 6,
+  lin_damp: 6,
+  effective_radius: impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
+  force: 1.5,
+  score_value: 1000,
+  attack_rating: 6,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3, vertices:
+  [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]]
+  }],
+
   dies_on_impact: "NO",
   special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
   other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
