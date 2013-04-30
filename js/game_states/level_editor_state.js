@@ -1,3 +1,15 @@
+  //A = align
+  //C = crop
+  //F = full image
+  //O = turn into outline
+  //Q = cancel selected
+  //H = hide bg
+  //D = delete
+  //X = reflect horizontally
+  //Z = reflect vertically
+  //N = add polygon
+  //P = print polygons
+
 LevelEditorState.prototype = new GameState
 
 LevelEditorState.prototype.constructor = LevelEditorState

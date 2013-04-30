@@ -80,14 +80,14 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     }
     var score_color = 0
 
-    while(impulse_level_data[this.level_name].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+    while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
       score_color+=1
     }
 
     ctx.font = '20px Century Gothic';
     ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].high_score, this.x, this.y - this.h/2 + 225)
+    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 225)
   }
   ctx.font = '16px Century Gothic'
   ctx.fillStyle = "gray"

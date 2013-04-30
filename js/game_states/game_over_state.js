@@ -154,7 +154,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
   if(this.high_score)
     ctx.fillText("NEW HIGH SCORE", levelWidth/2, first_rect_y + 160)
   else
-    ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].high_score, levelWidth/2, first_rect_y + 160)
+    ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, levelWidth/2, first_rect_y + 160)
 
   var second_rest_y = 370
 

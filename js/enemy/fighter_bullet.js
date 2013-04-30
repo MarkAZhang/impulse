@@ -2,7 +2,7 @@ FighterBullet.prototype = new Enemy()
 
 FighterBullet.prototype.constructor = FighterBullet
 
-function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
+function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
 
   if(!world) return
   this.type = "fighter_bullet"
@@ -13,18 +13,23 @@ function FighterBullet(world, x, y, id, impulse_game_state, vx, vy, parent_id) {
 
   this.death_radius = 5
 
-  this.v = new b2Vec2(vx, vy)
+  this.v = new b2Vec2(Math.cos(dir), Math.sin(dir))
   this.v.Normalize()
   this.v.Multiply(this.force)
 
   this.do_yield = false
-  this.bullet_force = 60
-  this.bullet_enemy_factor = 1.5
+  this.bullet_force = 100
+  this.bullet_self_factor = 3;
+
+  this.bullet_enemy_factor = 1.5;
+  this.bullet_low_enemy_factor= 0.3;
 
   this.parent_id = parent_id
 
   this.reflected = false
   this.body.SetBullet(true)
+
+  this.bullet_goo_factor = 0.33
 
 }
 
@@ -41,8 +46,12 @@ FighterBullet.prototype.collide_with = function(other) {
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {
       var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
-
+      if(this.player.status_duration[2] > 0) {
+        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_goo_factor * Math.cos(bullet_angle),
+        this.bullet_force * this.bullet_goo_factor* Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
+      } else {
+        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
+      }
       this.impulse_game_state.reset_combo()
     }
   }
@@ -53,9 +62,28 @@ FighterBullet.prototype.collide_with = function(other) {
 
     this.start_death("hit_enemy")
     if(other.id != this.parent_id || this.reflected) {
+
+      if(other instanceof Fighter) {
+        other.process_hit();
+      }
       if(this.status_duration[1] <= 0) {
         var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-        other.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_enemy_factor * Math.cos(bullet_angle), this.bullet_force * this.bullet_enemy_factor * Math.sin(bullet_angle)), other.body.GetWorldCenter())
+        other.open(1500)
+
+        var factor = 1;
+        if(other.id == this.parent_id) {
+          factor = this.bullet_self_factor;
+
+        } else if(this.reflected) {
+          factor = this.bullet_enemy_factor;
+
+        } else {
+          factor = this.bullet_low_enemy_factor;
+        }
+        var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
+        console.log("THIS_FORCE"+force.x+" "+force.y+" "+factor)
+
+        other.body.ApplyImpulse(force, other.body.GetWorldCenter())
       }
     }
   }

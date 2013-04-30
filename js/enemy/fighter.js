@@ -10,11 +10,10 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.init(world, x, y, id, impulse_game_state)
 
-  this.special_mode = false
-
   this.death_radius = 5
 
-  this.shoot_interval = 750
+  this.shoot_interval = 2000
+  this.frenzy_shoot_interval = 1000
 
   this.shoot_duration = this.shoot_interval
 
@@ -26,50 +25,75 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.bullet_alternater = 0
 
+  this.fast_factor = 5
+
   this.safe = true
 
-  this.shoot_loc_forward_length = this.effective_radius * 2
+  this.shoot_loc_forward_length = this.effective_radius
 
-  this.shoot_loc_side_length = this.effective_radius
+  this.shoot_loc_side_length = this.effective_radius * 2
 
-  this.piercing_bullets = 0
+  this.frenzy_charge = 0
 
-  this.piercing_bullet_reload_interval = 2000
+  this.frenzy_charge_interval = 2000
 
-  this.piercing_bullet_reload_timer = this.piercing_bullet_reload_interval
+  this.frenzy_charge_timer = this.frenzy_charge_interval;
 
-  this.piercing_bullet_max = 5
+  this.frenzy_charge_bars = 5;
 
-  this.check_special_mode_interval = 5
+  this.fighter_status = "normal"
 
-  this.check_special_mode_timer = this.check_special_mode_interval
+  this.detonate_timer = 50
+  this.detonate_duration = 50
+  this.death_delay = 200
+  this.bomb_factor = 3
+
+  this.activated = false
+
+  this.tank_force = 100 //force that the fighter impulses the player
+
+}
+
+Fighter.prototype.get_bullet_locations = function(side) {
+  var other_angle = this.body.GetAngle() + Math.PI/2 * ((side % 2) * 2 - 1)
+  var bullet_start_loc_x = this.body.GetPosition().x + this.shoot_loc_side_length *  Math.cos(other_angle) + this.shoot_loc_forward_length * Math.cos(this.body.GetAngle())
+  var bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.body.GetAngle())
+  return {x: bullet_start_loc_x, y: bullet_start_loc_y};
 
 }
 
 Fighter.prototype.additional_processing = function(dt) {
 
-  if(this.shoot_duration < 0 && this.status_duration[1] <= 0) {
-    this.shoot_duration = this.shoot_interval
-    if(this.special_mode && check_bounds(0, this.body.GetPosition(), draw_factor)) {
-      var other_angle = this.body.GetAngle() + Math.PI/2 * ((this.bullet_alternater % 2) * 2 - 1)
-      var bullet_start_loc_x = this.body.GetPosition().x + this.shoot_loc_side_length *  Math.cos(other_angle) + this.shoot_loc_forward_length * Math.cos(this.body.GetAngle())
-      var bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.body.GetAngle())
-      var spawned_bullet = true
-      if(!isVisible({x:bullet_start_loc_x, y: bullet_start_loc_y}, this.player.body.GetPosition(), this.level.obstacle_edges)) {
-        other_angle = this.body.GetAngle() + Math.PI/2 * (((this.bullet_alternater + 1) % 2) * 2 - 1)
-        bullet_start_loc_x = this.body.GetPosition().x + this.shoot_loc_side_length *  Math.cos(other_angle) + this.shoot_loc_forward_length * Math.cos(this.body.GetAngle())
-        bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.body.GetAngle())
-        if(!isVisible({x:bullet_start_loc_x, y: bullet_start_loc_y}, this.player.body.GetPosition(), this.level.obstacle_edges)) {
-          spawned_bullet = false
-        }
-      }
+  if(this.fighter_status == "normal" && this.frenzy_charge == this.frenzy_charge_bars) {
+    this.fighter_status = "frenzy"
+    this.shoot_duration = this.frenzy_shoot_interval;
+    this.color = "red";
+  }
+
+  if(this.fighter_status == "frenzy" && this.frenzy_charge == 0) {
+    this.fighter_status = "normal"
+    this.shoot_duration = this.shoot_interval;
+    this.color = impulse_enemy_stats[this.type].color;
+  }
+
+  if(this.shoot_duration <= 0 && this.status_duration[1] <= 0) {
+    this.shoot_duration = this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval
+
+    if(check_bounds(0, this.body.GetPosition(), draw_factor)) {
+      var cur_bullet_loc = this.get_bullet_locations(this.bullet_alternater);
+
+      var spawned_bullet = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
+      var target_angle = _atan(cur_bullet_loc, this.player.body.GetPosition())
       if (spawned_bullet) {
-        if(this.piercing_bullets > 0) {
-          this.piercing_bullets -= 1
-          this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))
+        if(this.fighter_status == "frenzy") {
+          this.frenzy_charge -= 1
+          var alt_bullet_loc = this.get_bullet_locations(this.bullet_alternater + 1);
+          var alt_angle = _atan(alt_bullet_loc, this.player.body.GetPosition())
+          this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle + (Math.random()/6 - 1/12) * Math.PI, this.id ))
+          this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, alt_bullet_loc.x, alt_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, alt_angle  + (Math.random()/6 - 1/12) * Math.PI, this.id ))
         }
         else {
-          this.level.spawned_enemies.push(new FighterBullet(this.world, bullet_start_loc_x, bullet_start_loc_y, this.level.enemy_counter, this.impulse_game_state, (this.player.body.GetPosition().x - bullet_start_loc_x), (this.player.body.GetPosition().y - bullet_start_loc_y), this.id ))
+          this.level.spawned_enemies.push(new FighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id ))
         }
         this.level.enemy_counter += 1
 
@@ -79,21 +103,15 @@ Fighter.prototype.additional_processing = function(dt) {
   }
   this.shoot_duration -= dt
 
-  if(this.check_special_mode_timer <= 0) {
-    this.special_mode = isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges) && this.status_duration[1] <= 0
-    this.check_special_mode_timer = this.check_special_mode_interval
-  }
-  this.check_special_mode_timer -= 1
-
-  if (!this.special_mode && this.status_duration[1] <= 0 && this.piercing_bullets < this.piercing_bullet_max && check_bounds(0, this.body.GetPosition(), draw_factor)) {
-    this.piercing_bullet_reload_timer -= dt
-    if (this.piercing_bullet_reload_timer < 0) {
-      this.piercing_bullet_reload_timer = this.piercing_bullet_reload_interval
-      this.piercing_bullets += 1
+  if (this.fighter_status == "normal" && this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.frenzy_charge_timer -= dt
+    if (this.frenzy_charge_timer < 0) {
+      this.frenzy_charge_timer = this.frenzy_charge_interval
+      this.frenzy_charge += 1
     }
   }
   else {
-    this.piercing_bullet_reload_timer = this.piercing_bullet_reload_interval
+    this.frenzy_charge_timer = this.frenzy_charge_interval
   }
 }
 
@@ -101,56 +119,150 @@ Fighter.prototype.player_hit_proc = function() {
 }
 
 Fighter.prototype.additional_drawing = function(context) {
-  if(this.piercing_bullets > 0) {
-    context.beginPath()
-    for(var i = 0; i < this.piercing_bullets; i++) {
-      context.arc((this.body.GetPosition().x + this.effective_radius * 2 * Math.cos(Math.PI * 2 * i / this.piercing_bullet_max)) * draw_factor, (this.body.GetPosition().y + this.effective_radius * 2 * Math.sin(Math.PI * 2 * i / this.piercing_bullet_max))*draw_factor,
-     4, 0, 2 * Math.PI, true)
+  if(!this.dying) {
+    context.globalAlpha = 0.7
+    if(this.frenzy_charge > 0) {
+      for(var i = 0; i < this.frenzy_charge; i++) {
+        context.beginPath()
+        context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
+         this.effective_radius * 2 * draw_factor,
+          Math.PI * 2 * (i+1) / this.frenzy_charge_bars - Math.PI/24, Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
+        /*context.arc((this.body.GetPosition().x + this.effective_radius * 2 * Math.cos(Math.PI * 2 * i / this.frenzy_charge_bars)) * draw_factor,
+         (this.body.GetPosition().y + this.effective_radius * 2 * Math.sin(Math.PI * 2 * i / this.frenzy_charge_bars))*draw_factor,
+       4, 0, 2 * Math.PI, true)*/
+        context.strokeStyle = "red"
+        context.lineWidth = 5;
+        context.stroke()
+      }
     }
-    context.fillStyle = "red"
-    context.fill()
+
+    if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
+      context.beginPath()
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,
+       (this.effective_radius*draw_factor) * 1.8, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (1 - this.frenzy_charge_timer/this.frenzy_charge_interval), true)
+      context.lineWidth = 2
+      context.strokeStyle = "red"
+      context.stroke()
+    }
+    context.globalAlpha = 1;
+
+
+    var cur_bullet_loc = this.get_bullet_locations(this.bullet_alternater);
+    var cur_interval = (this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval)
+    var loaded_prop = Math.max((cur_interval - this.shoot_duration)/(cur_interval), 0)
+
+    draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
+      impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+
+    if(this.fighter_status == "frenzy") {
+      var alt_bullet_loc = this.get_bullet_locations(this.bullet_alternater + 1);
+      draw_shape(context, alt_bullet_loc.x * draw_factor, alt_bullet_loc.y * draw_factor,
+      impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+    }
+
+
   }
 
-  if(!this.special_mode && this.status_duration[1] <= 0 && this.piercing_bullets < this.piercing_bullet_max) {
+  if(this.activated && this.detonate_timer > 0)
+  {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,
-     (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (1 - this.piercing_bullet_reload_timer/this.piercing_bullet_reload_interval), true)
+    context.strokeStyle = this.color;
     context.lineWidth = 2
-    context.strokeStyle = "gray"
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
   }
+
 }
 
-/*Fighter.prototype.get_target_point = function() {
-  if(!this.safe) {
-    return get_safe_point(this, this.player)
-  }
-  else
-    return this.player.body.GetPosition()
-}
 
-/*Fighter.prototype.enemy_move = Enemy.prototype.move
-
-Fighter.prototype.move = function() {
-  if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius && p_dist(this.player.body.GetPosition(), this.body.GetPosition()) < this.safe_radius + this.safe_radius_buffer) {
-    this.path = null
-    this.set_heading()
-  }
-  else {
-    if(this.path == null) {
-      this.pathfinding_counter = 2 * this.pathfinding_delay
+Fighter.prototype.activated_processing = function(dt) {
+  if(this.activated)
+  {
+    if(this.detonate_timer <= 0 && !this.dying)
+    {
+      this.start_death(this.cause_of_death)
+      this.explode()
     }
-    this.enemy_move()
+    if(this.detonate_timer > 0)
+    {
+      this.detonate_timer -= dt
+    }
   }
 
 }
-
-Fighter.prototype.set_heading = function(endPt) {
-  var heading = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-  this.body.SetAngle(heading)
-}*/
 
 Fighter.prototype.collide_with = function(other) {
 //function for colliding with the player
 
+  if(this.dying || this.activated)//ensures the collision effect only activates once
+    return
+
+  if(other === this.player) {
+
+    if(this.status_duration[1] <= 0) {
+      this.activated = true
+      this.cause_of_death = "hit_player"
+      this.impulse_game_state.reset_combo()
+    }
+    else {
+      this.start_death("hit_player")
+    }
+  }
+}
+
+Fighter.prototype.modify_movement_vector = function(dir) {
+  //apply impulse to move enemy
+  var in_poly = false
+  for(var i = 0; i < this.level.obstacle_polygons.length; i++)
+  {
+    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
+    {
+      in_poly = true
+    }
+  }
+  if(in_poly)
+  {
+    dir.Multiply(this.slow_force)
+  }
+  else {
+    if(this.fighter_status == "frenzy") {
+      dir.Multiply(this.fast_factor)
+    }
+
+    if(this.status_duration[2] > 0) {
+      dir.Multiply(this.slow_factor)
+    }
+    dir.Multiply(this.force)
+  }
+}
+
+Fighter.prototype.explode = function() {
+  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+  {
+    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+  }
+
+  for(var i = 0; i < this.level.enemies.length; i++)
+  {
+
+    if(this.level.enemies[i] !== this && p_dist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    {
+      var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
+      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].open(1500)
+
+    }
+  }
+}
+
+Fighter.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+  this.process_hit();
+}
+
+Fighter.prototype.process_hit = function() {
+  if(this.frenzy_charge > 0) {
+    this.frenzy_charge -= 1;
+  }
+  this.frenzy_charge_timer = this.frenzy_charge_interval
 }

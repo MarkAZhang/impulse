@@ -200,19 +200,29 @@ impulse_enemy_stats["wispdire"] = {
 
 
 impulse_enemy_stats["fighter"] = {
-  color: "rgb(0, 0, 205)",
-  density: 2.5,
+  color: "#0000ec",
+  density: 4,
   lin_damp: 3,
   effective_radius: 1,
-  force: 1.3,
+  force: 2,
   score_value: 1000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [[Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  [[Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4, Math.sqrt(2)]]},
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4, -Math.sqrt(2)]]}
+  ],
+
+
   dies_on_impact: "NO",
   special_ability: "Fires bullets at you upon sight. Bullets fling you backwards on impact. For every 2 seconds that the Fighter is idle, it loads up a piercing bullet, which cannot be Impulsed.",
   other_notes: "Normal bullets can be reflected to hit other enemies and even the Fighter itself.",
@@ -239,11 +249,11 @@ impulse_enemy_stats["fighterdire"] = {
 
 
 impulse_enemy_stats["fighter_bullet"] = {
-  color: "rgb(30, 144, 255)",
+  color: "#0000ec",
   density: 5,
   lin_damp: 3,
   effective_radius: .3,
-  force: 1,
+  force: 2,
   score_value: 0,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -255,11 +265,11 @@ impulse_enemy_stats["fighter_bullet"] = {
 }
 
 impulse_enemy_stats["piercing_fighter_bullet"] = {
-  color: "rgb(255, 0, 0)",
+  color: "#ff0000",
   density: 5,
   lin_damp: 3,
   effective_radius: .3,
-  force: 1,
+  force: 5,
   score_value: 0,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
