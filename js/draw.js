@@ -33,6 +33,13 @@ function draw_enemy(context, enemy_name, x, y, d) {
       var this_shape = impulse_enemy_stats[enemy_name].shape_polygons[m]
       draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
     }
+    if(impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+      for(var m = 0; m < impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
+        var this_shape = impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
+        draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
+      }
+    }
+
 }
 
 

@@ -282,11 +282,11 @@ impulse_enemy_stats["harpoon"] = {
   [Math.cos(Math.PI * 7/8), Math.sin(Math.PI * 7/8)],
   [Math.cos(Math.PI * 9/8), Math.sin(Math.PI * 9/8)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
-  ]}/*,
-  {type: "polygon", x: 0, y: 0, r: .7, vertices:
+  ]}],
+  extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
   [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
   [((Math.sqrt(2)+Math.sqrt(6))/2)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]}*/],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]}] ,
   dies_on_impact: "NO",
   special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
   other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",

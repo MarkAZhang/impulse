@@ -565,9 +565,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.fillStyle = this.interior_color ? this.interior_color : cur_color
 
     if(!this.dying) {
-      if (this.durations["open"] > 0) {
+      /*if (this.durations["open"] > 0) {
         context.fillStyle = impulse_colors["impulse_blue"]
-      } else if(this.status_duration[0] > 0) {
+      } else */if(this.status_duration[0] > 0) {
         context.fillStyle = 'gray';
       } else if(this.status_duration[2] > 0) {
         context.fillStyle = 'brown'

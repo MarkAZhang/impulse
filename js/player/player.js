@@ -287,15 +287,13 @@ Player.prototype.process = function(dt) {
               }
               if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
                 this.level.enemies[i].disengage_harpoon()
-                var angle = _atan(this.attack_loc,  this.level.enemies[i].harpoon_head.get_impulse_sensitive_pts()[0])//not sure if it should be this point
-                this.level.enemies[i].harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
               }
             }
           }
         }
 
         // if Harpoon, also check the Head
-        if(this.level.enemies[i] instanceof Harpoon) {
+        if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state != "inactive") {
           var this_harpoon_head = this.level.enemies[i].harpoon_head;
           var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
 
