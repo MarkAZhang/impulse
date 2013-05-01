@@ -118,13 +118,23 @@ Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_forc
   }
 }
 
+Slingshot.prototype.get_slingshot_hooks = function(hook) {
+
+  var angle = this.body.GetAngle() + Math.PI * 2/3 * hook;
+  return {x: this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 3/4,  y: this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 3/4}
+}
+
 Slingshot.prototype.additional_drawing = function(context, draw_factor) {
   if(this.slingshot_mode) {
     context.beginPath()
     context.strokeStyle = this.color
     context.lineWidth = 2
     context.moveTo(this.slingshot_point.x * draw_factor, this.slingshot_point.y * draw_factor)
-    context.lineTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
+    var point_one = this.get_slingshot_hooks(1)
+    context.lineTo(point_one.x * draw_factor, point_one.y * draw_factor)
+    var point_two = this.get_slingshot_hooks(2)
+    context.moveTo(this.slingshot_point.x * draw_factor, this.slingshot_point.y * draw_factor)
+    context.lineTo(point_two.x * draw_factor, point_two.y * draw_factor)
     context.stroke()
   }
 }

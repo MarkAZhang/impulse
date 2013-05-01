@@ -379,9 +379,19 @@ impulse_enemy_stats["slingshot"] = {
   score_value: 1500,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
+    [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4],
+  [Math.cos(Math.PI * 2/3)  * 1/4, Math.sin(Math.PI * 2/3) * 1/4],
+  [Math.cos(Math.PI * 4/3) * 1/4, Math.sin(Math.PI * 4/3) * 1/4]]},
+    {type: "polygon", x: 0, y: 0, r: 1, vertices:
+    [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1],
+  [Math.cos(Math.PI * 2/3)  * 1, Math.sin(Math.PI * 2/3) * 1],
+  [Math.cos(Math.PI * 2/3)  * 1, Math.sin(Math.PI * 2/3) * 1/2],
+  [Math.cos(Math.PI * 0)  * 1/4, Math.sin(Math.PI * 0) * 1/4]]},
+    {type: "polygon", x: 0, y: 0, r: 1, vertices:
+    [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1],
+  [Math.cos(Math.PI * 0)  * 1/4, Math.sin(Math.PI * 0) * 1/4],
+  [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1/2],
+  [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1]]}],
   dies_on_impact: "YES",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
   other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
@@ -394,38 +404,56 @@ impulse_enemy_stats["orbiter"] = {
   density: .3,
   lin_damp: 10,
   effective_radius: 0.5,
-  force: .3,
+  force: .6,
   score_value: 1500,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [0, 0]]}, {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+  [0, 0]]},
+   {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI*4/3)],
   [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [0, 0]]}],
+  [0, 0]]},
+  {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+    [[0, 0],
+    [-1, 0.3],
+    [-2, 0],
+    [-1, -0.3]]}
+
+  /* {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+    [[Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2],
+  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2 - Math.sqrt(3)/2]]},
+  {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
+    [[Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2],
+    [Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2 + Math.sqrt(3)/2],
+    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]*/
+  ],
+
   dies_on_impact: "YES",
   special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
   other_notes: "Intelligent and dangerous.",
   className: Orbiter
-
 }
 
 impulse_enemy_stats["deathray"] = {
-  color: "rgb(0, 229, 238)",
+  color: "#1cccbf",
   density: 1.5,
   lin_damp: 6,
-  effective_radius: 1,
-  force: 2,
+  effective_radius: 1.5,
+  force: 3,
   score_value: 2500,
   attack_rating: 10,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}],
+  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
   dies_on_impact: "NO",
   special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
   other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",
