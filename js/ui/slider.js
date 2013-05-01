@@ -12,23 +12,23 @@ var Slider = function(x, y, w, h, color) {
 
 Slider.prototype.draw = function(context) {
   context.beginPath()
-  context.strokeStyle = "gray"
+  context.strokeStyle = this.color
   context.fillStyle  = this.color
   context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
   context.lineWidth = 1
+  context.globalAlpha = 0.75
   context.fill()
+  context.globalAlpha = 1
   context.stroke()
 
   context.beginPath()
 
   context.rect(this.x - this.w/2 + this.w * this.value - this.thumb_width/2, this.y - this.thumb_width/2, this.thumb_width, this.thumb_width)
 
-  context.fillStyle = "white"
-  context.strokeStyle = "blue"
-
+context.globalAlpha = 0.75
   context.fill()
+  context.globalAlpha = 1
   context.stroke()
-
 }
 
 Slider.prototype.on_mouse_down = function(x, y) {

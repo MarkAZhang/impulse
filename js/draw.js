@@ -5,9 +5,13 @@ function draw_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
+  context.globalAlpha = 0.5;
   context.fillStyle = impulse_colors[color]
+
   context.fill()
-  context.strokeStyle = "black"
+  context.globalAlpha = 1;
+  context.strokeStyle = impulse_colors[color]
+
   context.lineWidth = Math.ceil(r/7.5)
   context.stroke()
 
@@ -19,7 +23,7 @@ function draw_empty_star(context, x, y, r, color) {
   context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
   context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
   context.closePath()
-  context.strokeStyle = color ? color : "black"
+  context.strokeStyle = color ? color : impulse_colors["impulse_blue"]
   context.lineWidth = Math.ceil(r/7.5)
   context.stroke()
 }
@@ -107,7 +111,7 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, bcolor) {
   context.shadowBlur = 0;
 }
 
-function draw_progress_bar(context, x, y, w, h, prop, color) {
+function draw_progress_bar(context, x, y, w, h, prop, color, bcolor) {
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w * prop, h)
   context.fillStyle = color
@@ -115,7 +119,7 @@ function draw_progress_bar(context, x, y, w, h, prop, color) {
 
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w , h)
-  context.strokeStyle = "black"
+  context.strokeStyle = bcolor ? bcolor : "black"
   context.lineWidth = 2
   context.stroke()
 }
@@ -155,7 +159,10 @@ mainSprite = loadSprite("art/sprites.png")
 spriteSheetData = {
   //x, y, w, h
   "player_normal": [60, 0, 60, 60],
-  "player_red": [0, 0, 60, 60]
+  "player_red": [0, 0, 60, 60],
+  "player_yellow": [120, 0, 60, 60],
+  "player_gray": [180, 0, 60, 60],
+  "player_green": [240, 0, 60, 60]
 
 }
 

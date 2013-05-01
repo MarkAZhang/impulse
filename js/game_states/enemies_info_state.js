@@ -6,14 +6,16 @@ function EnemiesInfoState() {
   this.bg_drawn = false
 
   this.buttons = []
-  this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, impulse_colors["impulse_blue"], "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
   this.enemy_buttons = []
   this.enemies_with_info = [
     "stunner", "spear", "tank", "mote", "goo", "harpoon", "fighter", "disabler",
     "troll", "slingshot", "orbiter", "deathray", "first boss", "second boss", "third boss", "fourth boss"
   ]
-  this.set_enemy_buttons()
+  this.color = impulse_colors["impulse_blue"]
 
+
+  this.set_enemy_buttons()
 
 
 }
@@ -32,7 +34,7 @@ EnemiesInfoState.prototype.set_enemy_buttons = function() {
   var i = 0
   for(e in this.enemies_with_info) {
     var enemy_name = this.enemies_with_info[e]
-    var temp_button = new EnemyButton(enemy_name, 15, (gap + level_button_w) * (i%num_per_row) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/num_per_row) +gap + level_button_h/2, level_button_w, level_button_h, "black")
+    var temp_button = new EnemyButton(enemy_name, 15, (gap + level_button_w) * (i%num_per_row) + gap + level_button_w/2, (gap + level_button_h) * Math.floor(i/num_per_row) +gap + level_button_h/2, level_button_w, level_button_h, this.color)
 
     this.enemy_buttons.push(temp_button)
     i+=1
@@ -43,7 +45,7 @@ EnemiesInfoState.prototype.set_enemy_buttons = function() {
 EnemiesInfoState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "white"
+    bg_ctx.fillStyle = "black"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
@@ -55,7 +57,7 @@ EnemiesInfoState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.enemy_buttons[i].draw(ctx)
   }
-  ctx.fillStyle = "black"
+  ctx.fillStyle = this.color
   ctx.font = "20px Century Gothic"
   ctx.textAlign = "center"
   ctx.fillText("BONUS SLAYER STARS: "+player_data.kill_stars+"/12", levelWidth/2, 440)

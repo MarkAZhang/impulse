@@ -55,7 +55,7 @@ LevelButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
-  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)]
+  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
 
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
@@ -183,7 +183,7 @@ LevelButton.prototype.additional_draw = function(context) {
   if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score == 0) {
     context.font = "25px Century Gothic"
     context.textAlign = "right"
-    context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)]
+    context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
     context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
 
   }

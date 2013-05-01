@@ -30,7 +30,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.level_name = this.level.level_name
   this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
-  this.color = this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss"] : impulse_colors["world "+this.world_num]
+  this.color = this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss"] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color =this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss dark"] : impulse_colors["world "+this.world_num +" dark"];
 
   var gravity = new b2Vec2(000, 000);

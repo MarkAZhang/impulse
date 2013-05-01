@@ -70,7 +70,7 @@ WorldButton.prototype.additional_draw = function(context) {
 
   context.beginPath()
   context.textAlign = 'center'
-  context.fillStyle = impulse_colors["world "+this.world]
+  context.fillStyle = impulse_colors["world "+this.world+" lite"]
   context.font = this.hover ? (1.56 * this.size) +'px Century Gothic' : 1.25*this.size +'px Century Gothic'
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
@@ -96,21 +96,21 @@ WorldButton.prototype.additional_draw = function(context) {
   }
   else {
     context.beginPath()
-    draw_empty_star(ctx, this.x + 30, this.y + 20, 15, "black")
+    draw_empty_star(ctx, this.x + 30, this.y + 20, 15, impulse_colors["world "+this.world] + " lite")
     context.beginPath()
     context.textAlign = "center"
     context.font = this.size +'px Century Gothic'
-    context.fillStyle = "black"
+    context.fillStyle = impulse_colors["world "+this.world + ""]
     context.fillText(this.stars+"/"+this.max_stars, this.x - 20, this.y + 25)
 
     context.fill()
 
-    draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, impulse_colors["world "+this.world])
+    draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, impulse_colors["world "+this.world], impulse_colors["world "+this.world+" lite"])
 
     if(this.new_world) {
       context.font = "25px Century Gothic"
       context.textAlign = "right"
-      context.fillStyle = impulse_colors["world "+(this.world)]
+      context.fillStyle = impulse_colors["world "+(this.world)+ " lite"]
       context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
     }
 

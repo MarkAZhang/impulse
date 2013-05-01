@@ -109,19 +109,23 @@ Goo.prototype.player_hit_proc = function() {
 }
 
 Goo.prototype.area_effect = function(obj) {
-  obj.goo(500)
+  obj.goo(100)
 }
 
 Goo.prototype.additional_drawing = function(context, draw_factor) {
-  context.beginPath()
-  context.strokeStyle = this.color
-  context.fillStyle = this.color
-  context.lineWidth = 2
-  context.globalAlpha = .3
-  context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.goo_radius * draw_factor, 0, 2*Math.PI, true)
-  context.stroke()
-  context.fill()
-  context.globalAlpha = 1
+
+  if(!this.dying) {
+
+    context.beginPath()
+    context.strokeStyle = this.color
+    context.fillStyle = this.color
+    context.lineWidth = 2
+    context.globalAlpha = .3
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.goo_radius * draw_factor, 0, 2*Math.PI, true)
+    context.stroke()
+    context.fill()
+    context.globalAlpha = 1
+  }
   if(this.goo_state == "big") {
     context.beginPath()
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.goo_state_timer / this.goo_expand_period), true)

@@ -154,6 +154,7 @@ Player.prototype.lighten = function(dur) {
 }
 
 Player.prototype.confuse= function(dur) {
+  this.confuse_duration = dur;
   this.status_duration[4] = Math.max(dur, this.status_duration[4])
 }
 
@@ -382,39 +383,34 @@ Player.prototype.draw = function(context) {
     context.globalAlpha = .5
     context.fillStyle = this.color
     context.fill()*/
+    if(this.status_duration[4] > 0)
+    {
+      context.beginPath()
+      var prop = Math.max(((this.confuse_duration-this.status_duration[4]) / this.confuse_duration), 0)
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * prop, true)
+      context.lineWidth = 2
+      context.strokeStyle = "#24ac40"
+      context.stroke()
+    }
     if(this.status_duration[0] > 0)
     {
       this.draw_player_sprite(context, "player_red");
-      context.fillStyle = 'red'
-      context.globalAlpha = .5
-      context.fill()
-    } else if(this.status_duration[1] > 0)
+    }
+    else if(this.status_duration[1] > 0)
     {
-      this.draw_player_sprite(context, "player_red");
-      context.fillStyle = 'red'
-      context.globalAlpha = .5
-      context.fill()
+      this.draw_player_sprite(context, "player_gray");
     }
     else if(this.status_duration[2] > 0)
     {
-      this.draw_player_sprite(context, "player_red");
-      context.fillStyle = Goo.prototype.goo_color_rgb
-      context.globalAlpha = .5
-      context.fill()
+      this.draw_player_sprite(context, "player_yellow");
     }
     else if(this.status_duration[3] > 0)
     {
-      this.draw_player_sprite(context, "player_red");
-      context.fillStyle = 'cyan'
-      context.globalAlpha = .8
-      context.fill()
+      this.draw_player_sprite(context, "player_gray");
     }
     else if(this.status_duration[4] > 0)
     {
-      this.draw_player_sprite(context, "player_red");
-      context.fillStyle = 'green'
-      context.globalAlpha = .8
-      context.fill()
+      this.draw_player_sprite(context, "player_green");
     } else {
       //normal
       /*context.beginPath()

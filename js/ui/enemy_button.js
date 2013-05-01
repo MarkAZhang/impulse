@@ -22,7 +22,7 @@ function EnemyButton(enemy_name, size, x, y, w, h, color) {
 EnemyButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
-  context.fillStyle = this.color
+  context.fillStyle = impulse_enemy_stats[this.enemy_name].color
   context.font = this.size +'px Century Gothic'
   if(this.seen) {
     context.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + this.size + 5)
@@ -35,7 +35,7 @@ EnemyButton.prototype.additional_draw = function(context) {
     }
     if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {
       if (this.kill_prop < 1) {
-        draw_progress_bar(context, this.x, this.y + this.h * .4, this.w * 2/3, 10, this.kill_prop, impulse_enemy_stats[this.enemy_name].color)
+        draw_progress_bar(context, this.x, this.y + this.h * .4, this.w * 2/3, 10, this.kill_prop, impulse_enemy_stats[this.enemy_name].color, impulse_enemy_stats[this.enemy_name].color)
       }
       else {
         context.globalAlpha = .3

@@ -60,12 +60,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.default_heading = false
 
-  this.harpoon_shape = {x: 0, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
-  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]};
-
-  this.harpoon_head_defaut_dist = Math.sqrt(2)/2+Math.sqrt(6)/6
+  this.harpoon_head_defaut_dist = Math.sqrt(2)/2+Math.sqrt(6)/6 - 0.4
 
   this.add_harpoon_head()
 
@@ -85,8 +80,8 @@ Harpoon.prototype.add_harpoon_head = function() {
   this.harpoon_head = new HarpoonHead(this.world, vloc.x, vloc.y, 0, this.impulse_game_state, this)
 }
 
-Harpoon.prototype.draw_harpoon_head = function(context, draw_factor) {
-
+Harpoon.prototype.draw_harpoon_head = function(context, draw_factor, latest_color) {
+  this.harpoon_head.color = latest_color
   this.harpoon_head.draw(context, draw_factor)
 
 }
@@ -407,7 +402,7 @@ Harpoon.prototype.check_cancel_harpoon = function() {
   }
 }
 
-Harpoon.prototype.additional_drawing = function(context, draw_factor) {
+Harpoon.prototype.additional_drawing = function(context, draw_factor, latest_color) {
 
 
   var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
@@ -416,16 +411,16 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
   }
   if(this.harpoon_state != "engaged") {
     context.beginPath()
-    context.strokeStyle = this.color
+    context.strokeStyle = latest_color
     context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(this.harpoon_head.body.GetPosition().x * draw_factor, this.harpoon_head.body.GetPosition().y * draw_factor)
     context.stroke()
 
-    this.draw_harpoon_head(context, draw_factor)
+    this.draw_harpoon_head(context, draw_factor, latest_color)
   } else {
     context.beginPath()
-    context.strokeStyle = this.harpoon_color
+    context.strokeStyle =  latest_color
     context.lineWidth = 3
     context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(this.player.body.GetPosition().x * draw_factor, this.player.body.GetPosition().y * draw_factor)

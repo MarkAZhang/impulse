@@ -104,14 +104,20 @@ impulse_enemy_stats["goo"] = {
 impulse_enemy_stats["disabler"] = {
   color: "rgb(205, 201, 201)",
   density: 8,
-  lin_damp: 3,
-  effective_radius: .2,
-  force: .7,
+  lin_damp: 9,
+  effective_radius: .5,
+  force: 3,
   score_value: 800,
   attack_rating: .25,
-  shape_polygons: [{type: "circle", x: 0, y: 1, r: .2},
-    {type: "circle", x: 0, y: -1, r: .2}
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+  [Math.cos(Math.PI * 3/3), Math.sin(Math.PI * 3/3)],
+  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}
     ],
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 2}],
   /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -142,13 +148,29 @@ impulse_enemy_stats["disabler"] = {
 
 impulse_enemy_stats["troll"] = {
   color: "#159d31",
-  density: .3,
+  density: .2,
   lin_damp: 3,
-  effective_radius: .7,
+  effective_radius: 1,
   force: 0.2,
   score_value: 2000,
   attack_rating: 2,
-  shape_polygons: [{type: "circle", x: 0, y: 0, r: .7}],
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408), Math.sqrt(52)/8 * Math.sin(-0.408)],
+  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)]]},
+  {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*2/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*2/3)],
+  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)]]},
+    {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3)],
+  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)]]},
+
+  ],
   dies_on_impact: "YES",
   special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
   other_notes: "The troll alternates between active and inactive every second.",
@@ -208,18 +230,18 @@ impulse_enemy_stats["fighter"] = {
   score_value: 1000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
+  [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/4) + 0.3, Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 5/4) + 0.3, Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 7/4) + 0.3, Math.sin(Math.PI * 7/4)]]},
   {type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4, Math.sqrt(2)]]},
+  [[Math.cos(Math.PI * 3/4)  + 0.3, Math.sin(Math.PI * 3/4)],
+  [Math.cos(Math.PI * 1/4)  + 0.3, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, Math.sqrt(2)]]},
   {type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4, -Math.sqrt(2)]]}
+  [[Math.cos(Math.PI * 7/4)  + 0.3, Math.sin(Math.PI * 7/4)],
+  [Math.cos(Math.PI * 5/4)  + 0.3, Math.sin(Math.PI * 5/4)],
+  [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, -Math.sqrt(2)]]}
   ],
 
 
@@ -285,19 +307,19 @@ impulse_enemy_stats["harpoon"] = {
   density: 3,
   lin_damp: 3,
   effective_radius: .7,
-  force: 2,
+  force: 2.5,
   score_value: 1000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 7/8), Math.sin(Math.PI * 7/8)],
-  [Math.cos(Math.PI * 9/8), Math.sin(Math.PI * 9/8)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
+  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   ]}],
   extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)],
-  [((Math.sqrt(2)+Math.sqrt(6))/2)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)]]}] ,
+  [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
+  [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
   dies_on_impact: "NO",
   special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
   other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",

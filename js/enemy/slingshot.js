@@ -27,6 +27,8 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.empowered_force = 100
 
+  this.cautious = false
+
 }
 
 Slingshot.prototype.enemy_move = Enemy.prototype.move

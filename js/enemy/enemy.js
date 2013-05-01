@@ -217,6 +217,10 @@ Enemy.prototype.process = function(enemy_index, dt) {
   }
   if(this.status_duration[1] > 0) {
     this.status_duration[1] -= dt
+  } else {
+    if(this.color_silenced) {
+      this.color_silenced = false;
+    }
   }
 
   if(this.durations["open"] > 0) {
@@ -523,7 +527,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.rotate(this.body.GetAngle());
     context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
   //}
-
+  var latest_color = null;
 
   for(var k = 0; k < this.shapes.length; k++) {
 
@@ -569,13 +573,16 @@ Enemy.prototype.draw = function(context, draw_factor) {
         context.fillStyle = impulse_colors["impulse_blue"]
       } else */if(this.status_duration[0] > 0) {
         context.fillStyle = 'gray';
+      } if(this.color_silenced) {
+        context.fillStyle = 'gray';
       } else if(this.status_duration[2] > 0) {
-        context.fillStyle = 'brown'
+        context.fillStyle = "#e6c43c"
       } else if(this.status_duration[3] > 0) {
         context.fillStyle = 'cyan'
       }
 
     }
+    latest_color = context.fillStyle
 
     context.fill()
 
@@ -623,7 +630,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   }
   context.restore()
 
-  this.additional_drawing(context, draw_factor)
+  this.additional_drawing(context, draw_factor, latest_color)
 }
 
 Enemy.prototype.additional_drawing = function(context, draw_factor) {
@@ -652,8 +659,10 @@ this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a sho
 this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
-Enemy.prototype.silence = function(dur) {
-this.status_duration[1] = Math.max(dur, this.status_duration[1])
+Enemy.prototype.silence = function(dur, color_silence) {
+  if(color_silence)
+    this.color_silenced = color_silence
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
 Enemy.prototype.lock = function(dur) {

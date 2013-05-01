@@ -9,6 +9,7 @@ function MusicPlayerState() {
   this.second_column = levelWidth*5/8;
   this.column_top = 300;
   this.column_space = 50;
+  this.button_color = impulse_colors["impulse_blue"]
   this.setup_ui()
 
   this.cur_song = null
@@ -16,6 +17,13 @@ function MusicPlayerState() {
 }
 
 MusicPlayerState.prototype.draw = function(context, bg_ctx) {
+  if(!this.bg_drawn) {
+    bg_canvas.setAttribute("style", "")
+    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    bg_ctx.fillStyle = "black"
+    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.bg_drawn = true
+  }
 
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -27,7 +35,7 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
     context.beginPath()
     context.textAlign = "center"
     context.font = "12px Century Gothic"
-    context.fillStyle = "gray"
+    context.fillStyle = impulse_colors["impulse_blue"]
     ctx.fillText("Currently Playing: " + this.cur_song, levelWidth/2, 175)
     var duration = Math.round(impulse_music.getCurrentSong().sound.getDuration())
     var curTime = Math.round(impulse_music.getCurrentSong().sound.getTime())
@@ -44,25 +52,25 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
 
 MusicPlayerState.prototype.setup_ui = function() {
 
-  this.slider = new Slider(levelWidth/2, 200, levelWidth/2, 5, "gray")
+  this.slider = new Slider(levelWidth/2, 200, levelWidth/2, 5, this.button_color)
   this.slider.value = 0
   this.slider.active = false
 
 
-  this.buttons.push(new SmallButton("PLAY", 20, levelWidth/2 - 50, 250, 100, 50, "black", "blue",
+  this.buttons.push(new SmallButton("PLAY", 20, levelWidth/2 - 50, 250, 100, 50, this.button_color, "blue",
 
         function() {
           impulse_music.resume_bg();
         }))
 
-  this.buttons.push(new SmallButton("PAUSE", 20, levelWidth/2 + 50, 250, 100, 50, "black", "blue",
+  this.buttons.push(new SmallButton("PAUSE", 20, levelWidth/2 + 50, 250, 100, 50, this.button_color, "blue",
 
         function() {
           impulse_music.pause_bg();
         }))
   this.setup_music_buttons()
 
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, this.button_color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
 }
 
 MusicPlayerState.prototype.setup_music_buttons = function() {
@@ -71,7 +79,7 @@ MusicPlayerState.prototype.setup_music_buttons = function() {
   for(song in imp_vars.songs) {
     var x = (index%2 == 0) ? this.first_column : this.second_column;
     var _this = this;
-    this.buttons.push(new SmallButton(song, 20, x, this.column_top + Math.floor(index/2) * this.column_space, 200, 50, "black", "blue",
+    this.buttons.push(new SmallButton(song, 20, x, this.column_top + Math.floor(index/2) * this.column_space, 200, 50, this.button_color, "blue",
           (function(this_song) {
           return function() {
             _this.cur_song = this_song;

@@ -3,7 +3,7 @@ TitleState.prototype = new GameState
 TitleState.prototype.constructor = TitleState
 
 function TitleState(start_clicked) {
-  this.start_clicked = start_clicked
+  this.start_clicked = true
   this.buttons = {
     "menu" : [],
     "enter" : [],
@@ -14,7 +14,7 @@ function TitleState(start_clicked) {
   this.bg_drawn = false
   this.state = "enter"
 
-  if(start_clicked) {
+  if(this.start_clicked) {
     this.state = "menu"
   }
 
@@ -32,16 +32,18 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "white"
+    bg_ctx.fillStyle = "black"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
   ctx.globalAlpha = .3
-  ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)
+  /*ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)*/
   ctx.globalAlpha = 1
   ctx.beginPath()
-  ctx.font = '40px Century Gothic'
-  ctx.fillStyle = 'blue'
+  ctx.font = '72px Century Gothic'
+  ctx.shadowColor = impulse_colors["impulse_blue"]
+  ctx.shadowBlur = 20
+  ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = 'center'
   ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)
 
@@ -81,27 +83,29 @@ TitleState.prototype.setup_main_menu = function() {
   }*/
   _this = this;
   this.buttons["menu"] = []
-  this.buttons["menu"].push(new SmallButton("CLASSIC", 20, levelWidth/2, levelHeight/2+20, 200, 50, "black", "blue",function(){switch_game_state(new ClassicSelectState())}))
+  var button_color = impulse_colors["impulse_blue"]
+  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, "gray", "gray",function(){}))
+  this.buttons["menu"].push(new SmallButton("PRACTICE", 20, levelWidth/2, levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
   //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
   //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
   //        ImpulseGameState(ctx, "SURVIVAL"))}))
   //this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
-  this.buttons["menu"].push(new SmallButton("ENEMIES", 20, levelWidth/2, levelHeight/2+70, 200, 50, "black", "blue",function(){switch_game_state(new EnemiesInfoState())}))
-  this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
-  this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, "black", "blue",function(){switch_game_state(new CreditsState())}))
-  this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+220, 200, 50, "black", "blue",function(){switch_game_state(new LevelEditorState())}))
-  this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue",function(){switch_game_state(new MusicPlayerState())}))
+  this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
+  this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+  this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
+  this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+  /*this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+270, 200, 50, "black", "blue",function(){switch_game_state(new iLevelEditorState())}))*/
 
-  this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, "black", "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
-
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, "black", "blue",function(){_this.change_mode("easy")})
+  this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
+"blue",
+  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, button_color, function(){_this.change_mode("easy")})
   this.buttons["options"].push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+20, 200, 50, "black", "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+20, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
   this.buttons["options"].push(this.normal_mode_button)
   this.set_difficulty_button_underline();
-  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+70, 200, 50, "black", "blue",function(){_this.clear_data()})
+  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){_this.clear_data()})
   this.buttons["options"].push(this.clear_data_button)
-  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+120, 200, 50, "black", "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
+  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
 
 }
 
