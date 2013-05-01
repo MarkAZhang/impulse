@@ -572,22 +572,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
     if (!this.interior_color ) {
       context.globalAlpha *= 0.7;
     }
-    context.fillStyle = this.interior_color ? this.interior_color : cur_color
 
-    if(!this.dying) {
-      /*if (this.durations["open"] > 0) {
-        context.fillStyle = impulse_colors["impulse_blue"]
-      } else */if(this.status_duration[0] > 0) {
-        context.fillStyle = 'gray';
-      } if(this.color_silenced) {
-        context.fillStyle = 'gray';
-      } else if(this.status_duration[2] > 0) {
-        context.fillStyle = "#e6c43c"
-      } else if(this.status_duration[3] > 0) {
-        context.fillStyle = 'cyan'
-      }
 
-    }
+    context.fillStyle = this.get_color_with_status(this.interior_color)
+
+
     latest_color = context.fillStyle
 
     context.fill()
@@ -637,6 +626,26 @@ Enemy.prototype.draw = function(context, draw_factor) {
   context.restore()
 
   this.additional_drawing(context, draw_factor, latest_color)
+}
+
+Enemy.prototype.get_color_with_status = function(orig_color) {
+  /*if (this.durations["open"] > 0) {
+        context.fillStyle = impulse_colors["impulse_blue"]
+      } else */
+    if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'gray';
+      } else if(this.color_silenced) {
+        return 'gray'
+      } else if(this.status_duration[2] > 0) {
+        return "#e6c43c"
+      } else if(this.status_duration[3] > 0) {
+        return 'cyan'
+      }
+    }
+    if(orig_color)
+      return orig_color
+    return this.color;
 }
 
 Enemy.prototype.additional_drawing = function(context, draw_factor) {

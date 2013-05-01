@@ -69,7 +69,7 @@ impulse_enemy_stats["mote"] = {
   lin_damp: 3,
   effective_radius: .5,
   force: .15,
-  score_value: 600,
+  score_value: 1000,
   attack_rating: .5,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -89,7 +89,7 @@ impulse_enemy_stats["goo"] = {
   lin_damp: 9,
   effective_radius: .5,
   force: 3,
-  score_value: 500,
+  score_value: 3000,
   attack_rating: .25,
   /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
@@ -118,7 +118,7 @@ impulse_enemy_stats["disabler"] = {
   lin_damp: 9,
   effective_radius: .5,
   force: 3,
-  score_value: 800,
+  score_value: 5000,
   attack_rating: .25,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -238,7 +238,7 @@ impulse_enemy_stats["fighter"] = {
   lin_damp: 3,
   effective_radius: 1,
   force: 2,
-  score_value: 1000,
+  score_value: 4000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
@@ -319,7 +319,7 @@ impulse_enemy_stats["harpoon"] = {
   lin_damp: 3,
   effective_radius: .7,
   force: 2.5,
-  score_value: 1000,
+  score_value: 3000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
   [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
@@ -387,7 +387,7 @@ impulse_enemy_stats["slingshot"] = {
   lin_damp: 6,
   effective_radius: 1,
   force: .4,
-  score_value: 1500,
+  score_value: 3000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4],
@@ -416,7 +416,7 @@ impulse_enemy_stats["orbiter"] = {
   lin_damp: 10,
   effective_radius: 0.5,
   force: .6,
-  score_value: 1500,
+  score_value: 5000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -454,7 +454,7 @@ impulse_enemy_stats["deathray"] = {
   lin_damp: 6,
   effective_radius: 1.5,
   force: 3,
-  score_value: 2500,
+  score_value: 5000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],

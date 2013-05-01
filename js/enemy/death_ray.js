@@ -42,14 +42,29 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.ray_force = 100
 
+  this.turret_arm_angle = 0
+
   this.aimed = false
   this.fired = false
 
   this.goalPt = null
 
+
+  this.default_heading = false
+
+  this.spin_rate = 4000
+
 }
 
 DeathRay.prototype.additional_processing = function(dt) {
+
+  if(!this.turret_mode && this.turret_timer <= 0) {
+    this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+  } else if(this.turret_mode && this.turret_timer >= 1) {
+    this.body.SetAngle(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
+  } else if(this.turret_mode){
+    this.turret_arm_angle = this.body.GetAngle();
+  }
 
   if(this.safe != p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
   {
@@ -185,10 +200,12 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
   if(this.turret_timer > 0) {
     var tp = this.body.GetPosition()
     var prog = this.turret_timer
-    context.fillStyle= this.color
+    context.fillStyle= this.get_color_with_status()
+
+    // draw the arms
 
     for(var i = 0; i < 8; i++) {
-      var angle = this.body.GetAngle() + Math.PI * i / 4;
+      var angle = this.turret_arm_angle + Math.PI * i / 4;
       context.beginPath()
 
       var turret_arm_radius = 0.5;
@@ -204,7 +221,7 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
       context.closePath()
       context.globalAlpha = 0.7;
       context.fill()
-      context.strokeStyle = this.color
+      context.strokeStyle = context.fillStyle
       context.globalAlpha = 1;
       context.stroke()
     }
