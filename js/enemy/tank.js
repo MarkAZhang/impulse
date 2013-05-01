@@ -30,6 +30,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 }
 
 Tank.prototype.additional_processing = function(dt) {
+
   this.special_mode = this.status_duration[1] <= 0
   this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
   if(this.durations["open"] > 0) {
@@ -39,9 +40,14 @@ Tank.prototype.additional_processing = function(dt) {
   }
 }
 
+Tank.prototype.additional_death_prep = function(death) {
+  this.color = "red"
+}
+
 Tank.prototype.activated_processing = function(dt) {
   if(this.activated)
   {
+    this.color = "red"
     if(this.detonate_timer <= 0 && !this.dying)
     {
       this.start_death(this.cause_of_death)
@@ -127,16 +133,38 @@ Tank.prototype.explode = function() {
   }
 }
 
-Tank.prototype.additional_drawing = function(context, draw_factor) {
+Tank.prototype.additional_drawing = function(context, draw_factor, latest_color) {
+
+  var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0;
+
+  context.globalAlpha = 1 - prog
+  var this_angle = this.body.GetAngle() + Math.PI/4;
+  context.strokeStyle = latest_color;
+  context.lineWidth = 4;
+  context.beginPath()
+  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor,
+  (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor,
+  (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.stroke()
+
+  context.beginPath()
+  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
+   (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
+   (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.stroke()
 
   if(this.activated && this.detonate_timer > 0)
   {
     context.beginPath()
     context.strokeStyle = this.color;
-    context.lineWidth = 2
+    context.lineWidth = 5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
   }
+
+
 
   if(this.status_duration[1] <=0) {
     context.beginPath()

@@ -33,6 +33,9 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   } else {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = impulse_enemy_stats[enemy_type].color
+    if(enemy_type=="tank") {
+      this.color = "red"
+    }
     this.original_v_damping = 0.3
     this.num_fragments = 3
   }

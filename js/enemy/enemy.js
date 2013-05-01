@@ -449,6 +449,12 @@ Enemy.prototype.start_death = function(death) {
 
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
 
+  this.additional_death_prep(death)
+
+}
+
+Enemy.prototype.additional_death_prep = function(death) {
+
 }
 
 Enemy.prototype.collide_with = function(other) {
