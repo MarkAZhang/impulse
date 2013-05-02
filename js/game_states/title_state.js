@@ -98,7 +98,7 @@ TitleState.prototype.setup_main_menu = function() {
 
   this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
 "blue",
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, button_color, function(){_this.change_mode("easy")})
+  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
   this.buttons["options"].push(this.easy_mode_button)
   this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+20, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
   this.buttons["options"].push(this.normal_mode_button)

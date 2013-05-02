@@ -53,7 +53,7 @@ Goo.prototype.additional_processing = function(dt) {
     } else {
       var t = (this.goo_change_transition - this.goo_state_timer)/this.goo_change_transition;
 
-      var bezier_p = (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*0.15+ 3*(1-t)*Math.pow(t,2)*0.85+ Math.pow(t,3)*1);
+      var bezier_p = bezier_interpolate(0.15, 0.85, t);
 
       this.goo_radius = this.goo_radius_small * (1-bezier_p) +  (bezier_p) * this.goo_radius_big
 
@@ -70,7 +70,7 @@ Goo.prototype.additional_processing = function(dt) {
       this.goo_state_timer = this.goo_expand_period;
     } else {
       var t = (this.goo_change_transition - this.goo_state_timer)/this.goo_change_transition;
-      var bezier_p = (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*0.15+ 3*(1-t)*Math.pow(t,2)*0.85+ Math.pow(t,3)*1);
+      var bezier_p = bezier_interpolate(0.15, 0.85, t)
       this.goo_radius = this.goo_radius_small * (bezier_p) +  (1-bezier_p) * this.goo_radius_big
     }
   }
@@ -120,11 +120,12 @@ Goo.prototype.additional_drawing = function(context, draw_factor) {
     context.strokeStyle = this.color
     context.fillStyle = this.color
     context.lineWidth = 2
-    context.globalAlpha = .3
+    context.save();
+    context.globalAlpha *= .3
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.goo_radius * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
     context.fill()
-    context.globalAlpha = 1
+    context.restore();
   }
   if(this.goo_state == "big") {
     context.beginPath()

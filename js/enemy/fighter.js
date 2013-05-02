@@ -120,7 +120,8 @@ Fighter.prototype.player_hit_proc = function() {
 
 Fighter.prototype.additional_drawing = function(context) {
   if(!this.dying) {
-    context.globalAlpha = 0.7
+    context.save();
+    context.globalAlpha *= 0.7
     if(this.frenzy_charge > 0) {
       for(var i = 0; i < this.frenzy_charge; i++) {
         context.beginPath()
@@ -144,7 +145,7 @@ Fighter.prototype.additional_drawing = function(context) {
       context.strokeStyle = "red"
       context.stroke()
     }
-    context.globalAlpha = 1;
+    context.restore();
 
 
     var cur_bullet_loc = this.get_bullet_locations(this.bullet_alternater);

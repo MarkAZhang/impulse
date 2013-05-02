@@ -404,3 +404,7 @@ function is_angle_between(small, large, angle) {
   return t_large - t_small < Math.PI * 2
 }
 
+function bezier_interpolate(mid1, mid2, t) {
+
+ return (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*mid1+ 3*(1-t)*Math.pow(t,2)*mid2+ Math.pow(t,3)*1);
+}

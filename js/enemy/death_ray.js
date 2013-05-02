@@ -138,10 +138,14 @@ DeathRay.prototype.additional_processing = function(dt) {
       if(this.shoot_duration <= this.shoot_interval* this.aim_proportion && !this.aimed) {//if it hasn't been aimed, aim it now
         this.ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
         this.ray_polygon = []
-        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
-        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2), y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
-        this.ray_polygon.push({x: this.body.GetPosition().x + 100 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2), y: this.body.GetPosition().y + 100 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
-        this.ray_polygon.push({x: this.body.GetPosition().x + 100 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2), y: this.body.GetPosition().y + 100 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2),
+         y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
+          y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + 50 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
+         y: this.body.GetPosition().y + 50 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + 50 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2),
+         y: this.body.GetPosition().y + 50 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
         this.aimed = true
       }
     }
@@ -219,11 +223,12 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
       context.lineTo((tp.x + this.effective_radius * (1 + prog) * Math.cos(angle) + 0.5 * turret_arm_radius * Math.cos(angle + Math.PI/2))*draw_factor,
         (tp.y + this.effective_radius * (1 + prog) * Math.sin(angle)  + 0.5 * turret_arm_radius * Math.sin(angle + Math.PI/2))*draw_factor)
       context.closePath()
-      context.globalAlpha = 0.7;
+      context.save();
+      context.globalAlpha *= 0.7;
       context.fill()
       context.strokeStyle = context.fillStyle
-      context.globalAlpha = 1;
-      context.stroke()
+      context.restore();
+      context.stroke();
     }
   }
 }
@@ -255,7 +260,7 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
 
     if(this.shoot_duration <= this.shoot_interval * this.aim_proportion && this.ray_angle!= null) {
       var prog = 1 - this.shoot_duration / (this.shoot_interval * this.aim_proportion)
-
+      context.save();
       context.beginPath()
       context.globalAlpha = Math.max(prog, .2)
       context.moveTo(this.ray_polygon[1].x * draw_factor, this.ray_polygon[1].y * draw_factor)
@@ -283,8 +288,8 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
         context.closePath()
         context.fillStyle = this.color
         context.fill()
-        context.globalAlpha = 1
       }
+      context.restore();
     }
 
   }

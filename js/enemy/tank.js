@@ -136,8 +136,8 @@ Tank.prototype.explode = function() {
 Tank.prototype.additional_drawing = function(context, draw_factor, latest_color) {
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0;
-
-  context.globalAlpha = 1 - prog
+  context.save();
+  context.globalAlpha *= 1 - prog
   var this_angle = this.body.GetAngle() + Math.PI/4;
   context.strokeStyle = latest_color;
   context.lineWidth = 4;
@@ -173,7 +173,8 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.globalAlpha = .5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
-    context.globalAlpha = 1
+
   }
+  context.restore();
 
 }

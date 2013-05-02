@@ -167,9 +167,9 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   var point1_adj = []
   var point2_adj = []
 
-
   var inPoly = false
 
+  // slow
   for(var i = 0; i < this.vertices.length; i++)
   {
     if(isVisible(point1, this.vertices[i], this.poly_edges) && isVisible(point1, this.vertices[i], this.level.obstacle_edges))

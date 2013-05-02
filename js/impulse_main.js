@@ -139,11 +139,20 @@ window.onload =  function() {
 
 function step() {
   var cur_time = (new Date()).getTime()
-
+  ctx.globalAlpha = 1;
   dt = cur_time - last_time
   cur_game_state.process(dt)
-  if(!(cur_game_state instanceof ImpulseGameState) || cur_game_state.ready)
+  if(!(cur_game_state instanceof ImpulseGameState)) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  } else if(cur_game_state instanceof ImpulseGameState &&  cur_game_state.ready) {
+    if(cur_game_state.zoom != 1) {
+      ctx.fillStyle= cur_game_state.dark_color;
+      ctx.fillRect(sidebarWidth, 0, levelWidth, levelHeight);
+    } else {
+      ctx.clearRect(sidebarWidth, 0, levelWidth, levelHeight);
+    }
+
+  }
 
   if(!(cur_game_state instanceof ImpulseGameState)) {
     ctx.fillStyle = "black"

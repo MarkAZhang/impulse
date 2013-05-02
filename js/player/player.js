@@ -170,14 +170,14 @@ Player.prototype.mouse_up= function(pos) {
 Player.prototype.process = function(dt) {
  if(this.dying && this.dying_duration < 0)
   {
-    if(this.impulse_game_state instanceof ImpulseGameState) {
+    /*if(this.impulse_game_state instanceof ImpulseGameState) {
       this.impulse_game_state.game_over()
       return
     }
     else if(this.impulse_game_state instanceof HowToPlayState) {
       this.impulse_game_state.reload_world()
       return
-    }
+    }*/
   }
 
   if(this.dying )
@@ -422,7 +422,6 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 0;*/
         this.draw_player_sprite(context, "player_normal");
       }
-    context.globalAlpha = 1
     context.beginPath()
 
     if (this.status_duration[1] <= 0) {
@@ -445,10 +444,10 @@ Player.prototype.draw = function(context) {
       context.shadowColor = this.impulse_color;
       context.lineWidth = this.impulse_radius * this.impulse_width * this.draw_factor
       var prop = ((this.attack_length - this.attack_duration)/this.attack_length);
-
+      context.save();
       if(prop > 0.5) {
 
-        context.globalAlpha = (1 - prop)/(0.5) < 0 ? 0 : (1-prop)/(0.5);
+        context.globalAlpha *= (1 - prop)/(0.5) < 0 ? 0 : (1-prop)/(0.5);
       }
 
       context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, this.impulse_radius * prop * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
@@ -457,7 +456,7 @@ Player.prototype.draw = function(context) {
       context.strokeStyle = this.impulse_color
       context.stroke();
       context.shadowBlur = 0;
-      context.globalAlpha = 1;
+      context.restore();
     }
   }
 }

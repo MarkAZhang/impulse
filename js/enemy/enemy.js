@@ -137,7 +137,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
-  this.pathfinding_delay = 12
+  this.pathfinding_delay = 15
   this.pathfinding_counter =  this.pathfinding_delay  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
@@ -305,7 +305,7 @@ Enemy.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
   this.pathfinding_counter+=1
-  if (this.pathfinding_counter % 8 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
+  if (this.pathfinding_counter >= this.pathfinding_delay) {
     //only update path every four frames. Pretty expensive operation
     var target_point = this.get_target_point()
 
@@ -320,7 +320,7 @@ Enemy.prototype.move = function() {
         this.path = new_path.path
         this.path_dist = new_path.dist
       }
-      this.pathfinding_counter = Math.floor(Math.random()*.5 * this.pathfinding_delay)
+      this.pathfinding_counter = Math.floor(Math.random()*.25 * this.pathfinding_delay)
     }
 
   }
@@ -482,11 +482,8 @@ Enemy.prototype.player_hit_proc = function() {
   this.player.stun(500)
 }
 
-Enemy.prototype.draw = function(context, draw_factor) {
-
-  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
-
-  /*if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
+Enemy.prototype.draw_arrow = function(context, draw_factor) {
+  if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
     var pointer_angle = _atan(pointer_point, this.body.GetPosition())
@@ -512,8 +509,15 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.restore()
     context.globalAlpha = 1
     this.additional_drawing(context, draw_factor)
-    return
-  }*/
+    return true
+  }
+  return false;
+}
+
+Enemy.prototype.draw = function(context, draw_factor) {
+
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
+
 
   if(!impulse_enemy_stats[this.type].seen) {
     impulse_enemy_stats[this.type].seen = true
@@ -521,7 +525,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
   }
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
-
 
   //rotate enemy
 
@@ -541,10 +544,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
     // fade out if dying
     if (this.dying)
-      context.globalAlpha = (1 - prog)
+      context.globalAlpha *= (1 - prog)
     else
-      context.globalAlpha = this.visibility ? this.visibility : 1
-
+      context.globalAlpha *= this.visibility ? this.visibility : 1
 
     var cur_shape = this.shapes[k]
     var cur_shape_points = this.shape_points[k]
@@ -576,7 +578,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
     context.fillStyle = this.get_color_with_status(this.interior_color)
 
-
     latest_color = context.fillStyle
 
     context.fill()
@@ -603,7 +604,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.fill();
     context.globalAlpha = 1;*/
 
-    if(this.special_mode && !this.dying) {
+    /*if(this.special_mode && !this.dying) {
       context.globalAlpha = this.sp_visibility
       context.beginPath()
       if(this.shape instanceof b2CircleShape) {
@@ -620,8 +621,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.lineWidth = 1
       context.strokeStyle = cur_color
       context.stroke()
-    }
-    context.globalAlpha = 1
+    }*/
   }
   context.restore()
 

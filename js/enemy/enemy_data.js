@@ -449,7 +449,7 @@ impulse_enemy_stats["orbiter"] = {
 }
 
 impulse_enemy_stats["deathray"] = {
-  color: "#1cccbf",
+  color: "#169f95",
   density: 1.5,
   lin_damp: 6,
   effective_radius: 1.5,

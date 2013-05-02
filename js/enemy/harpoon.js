@@ -406,8 +406,9 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor, latest_col
 
 
   var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
+  context.save();
   if(this.dying) {
-    context.globalAlpha = prog;
+    context.globalAlpha *= prog;
   }
   if(this.harpoon_state != "engaged") {
     context.beginPath()
@@ -430,7 +431,7 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor, latest_col
       impulse_enemy_stats["harpoonhead"].shape_polygons[0], draw_factor*1.3, this.color, 1, _atan(this.body.GetPosition(), this.player.body.GetPosition()))
 
   }
-  context.globalAlpha = 1;
+  context.restore();
 
   if(!this.dying && this.status_duration[1] > 0) {
     context.beginPath()

@@ -65,8 +65,37 @@ function ImpulseGameState(world, level, visibility_graph) {
   else
     impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
 
+  this.camera_center = {x: levelWidth/2, y: levelHeight/2}
+  //this.zoom = 0.1
+
+  this.zoom_transition_period = 1500;
+  this.zoom_transition_timer = 0;
+  this.zoom_state = "none";
+  this.zoom_start_pt = {x:levelWidth, y:levelHeight}
+  this.zoom_target_pt = {x:levelWidth, y:levelHeight}
+  this.zoom_start_scale = 0.1
+  this.zoom_target_scale = 1
+  this.zoom = 0.1
+  this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1)
 }
 
+ImpulseGameState.prototype.zoom_in = function(center, target) {
+  this.zoom_state = "in"
+  this.zoom_transition_timer = this.zoom_transition_period;
+  this.zoom_target_pt = center;
+  this.zoom_target_scale = target;
+  this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
+  this.zoom_start_scale = this.zoom;
+}
+
+ImpulseGameState.prototype.zoom_out = function(center, target) {
+  this.zoom_state = "out"
+  this.zoom_transition_timer = this.zoom_transition_period;
+  this.zoom_target_pt = center;
+  this.zoom_target_scale = target;
+  this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
+  this.zoom_start_scale = this.zoom;
+}
 
 ImpulseGameState.prototype.loading_screen = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,6 +111,38 @@ ImpulseGameState.prototype.process = function(dt) {
   if(!this.ready) return
   if(!this.pause)
   {
+
+
+    if(this.zoom_state != "none") {
+      if(this.zoom_transition_timer <= 0) {
+        this.zoom_state = "none"
+        this.zoom = this.zoom_target_scale;
+        this.camera_center = this.zoom_target_pt;
+      } else {
+        var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
+        //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
+        console.log((this.zoom_transition_timer) / (this.zoom_transition_period)+" "+ prop)
+        this.zoom = 1/(1/(this.zoom_start_scale) * prop + 1/(this.zoom_target_scale) * (1-prop))
+        this.camera_center.x = this.zoom_start_pt.x * prop + this.zoom_target_pt.x * (1-prop)
+        this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
+        this.zoom_transition_timer -= dt;
+      }
+    }
+
+    if(this.player.dying && this.player.dying_duration < 0)
+    {
+      if(this.zoom_state == "none" && this.zoom == 1) {
+        this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1)
+      } else if(this.zoom_state == "none"){
+        this.game_over();
+        this.ready = false
+      }
+      return;
+
+    }
+
+
+
     var temp_stars = this.stars < 3 ? this.stars : 2
     var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
     if(this.progress_bar_prop > prop) {
@@ -114,26 +175,62 @@ ImpulseGameState.prototype.process = function(dt) {
       this.score_labels = this.score_labels.slice(1)
     }
     this.world.Step(1.0/60, 1, 10, 10);
+  } else {
+
   }
 }
 
 ImpulseGameState.prototype.bg_transition = function() {
-  bg_canvas.setAttribute("style","");//make background visible
+  if(this.zoom == 1) {
+    bg_canvas.setAttribute("style","");//make background visible*/
+  } else {
+    bg_canvas.setAttribute("style","display: none");//make background visible*/
+  }
 
 
+}
+
+ImpulseGameState.prototype.set_zoom_transparency = function() {
+  if(this.zoom_state == "in") {
+      var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
+      ctx.globalAlpha = Math.max(1-prop,0)
+  } else if(this.zoom_state == "out"){
+    var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
+    ctx.globalAlpha = Math.min(prop,1)
+  }
 }
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
 
-  if(!this.bg_drawn) {
-    this.bg_transition()
-    this.bg_drawn = true
-  }
+  this.bg_transition()
+  /*context.save();*/
 
+  /*ctx.scale(this.zoom, this.zoom)
+  ctx.translate((canvasWidth/2 - (this.camera_center.x)*this.zoom)/this.zoom, (canvasHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  ctx.drawImage(bg_canvas, sidebarWidth*this.zoom, 0)
+  ctx.setTransform(1, 0, 0, 1, 0, 0);*/
+  ctx.save();
   ctx.translate(sidebarWidth, 0)//allows us to have a topbar
 
-  this.level.draw(ctx, this.draw_factor)
+  ctx.scale(this.zoom, this.zoom)
+  ctx.translate((levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  /*ctx.translate(this.camera_center.x * (1-this.zoom) * 2, this.camera_center.y * (1-this.zoom) * 2);*/
+  /*ctx.translate(this.camera_center.x * this.zoom, this.camera_center.y * this.zoom)*/
+  ctx.beginPath();
+  if(this.zoom_state == "in")
+    ctx.rect(2, 2, levelWidth-4, levelHeight-4);
+  else {
+    ctx.rect(0, 0, levelWidth, levelHeight);
+  }
+  ctx.clip();
+
+  this.set_zoom_transparency();
+  if(this.zoom != 1) {
+    ctx.drawImage(bg_canvas, sidebarWidth, 0, levelWidth, levelHeight, 0, 0, levelWidth, levelHeight)
+  }
+
+  this.level.draw(ctx, this.draw_factor, ctx.globalAlpha)
 
   if(this.world_visibility < 1) {
     ctx.globalAlpha = 1 - this.world_visibility
@@ -142,9 +239,30 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fill()
   }
 
+  for(var i = 0; i < this.score_labels.length; i++)
+  {
+    ctx.beginPath()
+    ctx.font = this.score_labels[i].size+'px Century Gothic'
+    var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
+    ctx.globalAlpha = prog
+    ctx.fillStyle = this.score_labels[i].color
+    ctx.textAlign = 'center'
+    ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
+    ctx.fill()
+  }
+  ctx.globalAlpha = 1
+
+  if(this.zoom_state == "in")
+    ctx.globalAlpha = 1-(this.zoom_transition_timer) / (this.zoom_transition_period)
   this.player.draw(ctx)
 
-  ctx.translate(-sidebarWidth, 0)
+  ctx.restore();
+  /*ctx.translate(-(levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  /*ctx.translate(-this.camera_center.x * (1-this.zoom) * 2, -this.camera_center.y * (1-this.zoom) * 2);*/
+  /*ctx.scale(1/this.zoom, 1/this.zoom)*/
+
+  /*ctx.translate(-sidebarWidth, 0)*/
+
   this.draw_interface(ctx)
 
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
@@ -217,14 +335,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
 ImpulseGameState.prototype.draw_interface = function(ctx) {
 
-
+  ctx.globalAlpha = 1;
   ctx.fillStyle = "black"
   ctx.fillRect(0, 0, sidebarWidth, canvasHeight);
   ctx.fillRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
 
-
+  this.set_zoom_transparency();
   // draw the level name
-  ctx.globalAlpha = 1
 
   ctx.fillStyle = this.color;
   ctx.textAlign = 'center'
@@ -316,18 +433,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
   ctx.fill()
 
-  for(var i = 0; i < this.score_labels.length; i++)
-  {
-    ctx.beginPath()
-    ctx.font = this.score_labels[i].size+'px Century Gothic'
-    var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
-    ctx.globalAlpha = prog
-    ctx.fillStyle = this.score_labels[i].color
-    ctx.textAlign = 'center'
-    ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor + sidebarWidth, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
-    ctx.fill()
-  }
-  ctx.globalAlpha = 1
+
 
   ctx.shadowBlur = 0;
 }

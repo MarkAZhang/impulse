@@ -15,11 +15,6 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.spawn_points = data.spawn_points
 
-  for(i in this.enemies_data) {
-    this.enemy_spawn_timers[i] = this.enemies_data[i][1]
-    this.enemy_spawn_counters[i] = this.enemies_data[i][2]
-    this.enemy_numbers[i] = 0
-  }
   this.cutoff_scores = data.cutoff_scores
   this.obstacle_num = data.obstacle_num
   this.obstacle_v = data.obstacle_v
@@ -34,16 +29,11 @@ Level.prototype.init = function(data, level_intro_state) {
   this.obstacles = []
   this.obstacle_edges = []
 
-  this.obstacle_visibility = 1 //for Wisp
-  this.obstacles_visible_timer = 0
   this.obstacle_vertices = []
-
-  this.enemies = []
-  this.enemy_counter = 0
 
   this.fragments = []
   this.total_fragments = 0
-  this.max_fragments = 54
+  this.max_fragments = 42
 
   this.enemy_map = {
     "stunner": Stunner,
@@ -66,31 +56,16 @@ Level.prototype.init = function(data, level_intro_state) {
     "boss four spawner": BossFourSpawner,
   }
 
-  this.dead_enemies = []
-  this.expired_enemies = []
-  this.spawned_enemies = []
-
-  this.spawn_queue = [] //enemies that need to be spawned
-
-  this.spawn_interval = 100
-  this.spawn_timer = this.spawn_interval
-
-  this.boss_delay_interval = 10000
-  this.boss_delay_timer = 0
-  this.boss_radius = 3
-  this.boss = null
-  this.boss_kills = 0
-
-  this.initial_spawn_done = false
 
   this.spawn_point_counter = 0;
+  this.reset();
 
 }
 
 Level.prototype.reset = function() {
   this.enemies = []
   this.enemy_counter = 0
-  this.spawn_interval = 100
+  this.spawn_interval = 200
   this.spawn_timer = this.spawn_interval
   this.obstacle_visibility = 1 //for Wisp
   this.obstacles_visible_timer = 0
@@ -108,7 +83,8 @@ Level.prototype.reset = function() {
   this.dead_enemies = []
   this.expired_enemies = []
   this.spawned_enemies = []
-  this.spawn_queue = []
+  this.spawn_queue = [] //enemies that need to be spawned
+  this.initial_spawn_done = false
 }
 
 Level.prototype.process = function(dt) {
@@ -329,7 +305,7 @@ Level.prototype.generate_obstacle_edges = function() {
   }
 }
 
-Level.prototype.draw = function(context, draw_factor) {
+Level.prototype.draw = function(context, draw_factor, alpha) {
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].pre_draw(context, draw_factor)
   }
@@ -339,7 +315,7 @@ Level.prototype.draw = function(context, draw_factor) {
     this.fragments[i].draw(ctx, draw_factor)
   }
 
-  context.globalAlpha = 1
+  context.globalAlpha = alpha;
 
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].draw(ctx, draw_factor)
@@ -354,7 +330,6 @@ Level.prototype.draw = function(context, draw_factor) {
     context.strokeStyle = "gray"
     context.stroke()
 
-    context.restore()
     context.globalAlpha = 1
   }
 }
