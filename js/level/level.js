@@ -21,6 +21,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.get_obstacle_vertices = data.get_obstacle_vertices
   this.color = impulse_colors["world "+this.level_intro_state.world_num]
   this.dark_color = impulse_colors["world "+this.level_intro_state.world_num+" dark"]
+  this.lite_color = impulse_colors["world "+this.level_intro_state.world_num+" lite"]
 
   this.buffer_radius = data.buffer_radius
 
@@ -269,7 +270,6 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
 }
 
 Level.prototype.generate_obstacles = function() {
-  console.log("GENERATING POLYGONS")
   //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)],
   //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
 
@@ -280,7 +280,7 @@ Level.prototype.generate_obstacles = function() {
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
-    this.obstacles.push(new BasicObstacle(temp_v, this.color, this.dark_color))
+    this.obstacles.push(new BasicObstacle(temp_v, this.lite_color, this.dark_color))
     this.obstacle_polygons.push(temp_v)
     for(var j = 0; j < temp_v.length; j++) {
       this.obstacle_vertices.push(temp_v[j])
@@ -335,7 +335,22 @@ Level.prototype.draw = function(context, draw_factor, alpha) {
 }
 Level.prototype.draw_bg = function(bg_ctx) {
   draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
-  console.log("BG DRAWN")
+
+  /*bg_ctx.beginPath()
+
+  bg_ctx.shadowOffsetX = 0;
+  bg_ctx.shadowOffsetY = 0;
+  bg_ctx.shadowBlur = 20;
+  bg_ctx.shadowColor = this.lite_color;
+
+
+  bg_ctx.rect(0, -10, levelWidth, 10)
+  bg_ctx.rect(0, levelHeight, levelWidth, 10)
+  bg_ctx.rect(-10, 0, 10, levelHeight)
+  bg_ctx.rect(levelWidth, 0, 10, levelHeight)
+  bg_ctx.fillStyle = this.lite_color;
+  bg_ctx.fill()*/
+
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(bg_ctx, draw_factor)
   }

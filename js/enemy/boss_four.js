@@ -135,6 +135,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 }
 BossFour.prototype.additional_drawing = function(context, draw_factor) {
   if(this.spawner_timer >= 0) {
+
     context.beginPath()
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI,
      -.5 * Math.PI + 2*Math.PI * (this.spawner_timer / this.spawner_interval), true)
@@ -142,16 +143,15 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
     context.strokeStyle = "gray"
     context.stroke()
 
-    context.restore()
     context.globalAlpha = 1
   }
 
   var laser_locs = this.get_two_laser_locs()
 
   for(var j = 0; j < 2; j++) {
+      context.save();
       context.globalAlpha = this.visibility
       var tp = laser_locs[j]
-      context.save();
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
       context.rotate(this.body.GetAngle());
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
@@ -230,6 +230,7 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
     }
 
   }
+  context.globalAlpha =1
 }
 
 BossFour.prototype.additional_processing = function(dt) {

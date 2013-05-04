@@ -106,8 +106,17 @@ window.onload =  function() {
     window.addEventListener('mousedown', on_mouse_down, false);
     window.addEventListener('mouseup', on_mouse_up, false);
     window.addEventListener('mousemove', on_mouse_move, false)
+    window.addEventListener('resize', centerCanvas, false)
 
-    var dim = getWindowDimensions()
+    centerCanvas()
+    load_game()
+    cur_game_state = new TitleState(false)
+    step()
+
+}
+
+function centerCanvas() {
+  var dim = getWindowDimensions()
 
 
     if(canvasWidth < dim.w)
@@ -130,11 +139,6 @@ window.onload =  function() {
     {
       offset_top = 0
     }
-
-    load_game()
-    cur_game_state = new TitleState(false)
-    step()
-
 }
 
 function step() {
@@ -237,6 +241,8 @@ function on_mouse_up(event) {
 }
 
 function on_click(event) {
+
+
   var mPos = getCursorPosition(event)
   if(cur_dialog_box) {
     cur_dialog_box.on_click(mPos.x, mPos.y)
@@ -248,6 +254,30 @@ function on_click(event) {
     cur_game_state.on_click(mPos.x, mPos.y)
   }
 
+  DoFullScreen();
+
+
+}
+
+function DoFullScreen() {
+  return
+
+    var isInFullScreen = (document.fullScreenElement && document.fullScreenElement !==     null) ||    // alternative standard method
+            (document.mozFullScreen || document.webkitIsFullScreen);
+
+    var docElm = document.documentElement;
+    if (!isInFullScreen) {
+
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        }
+        else if (docElm.mozRequestFullscreen) {
+            docElm.mozRequestFullscreen();
+        }
+        else if (docElm.webkitRequestFullscreen) {
+            docElm.webkitRequestFullscreen ();
+        }
+    }
 }
 
 function on_key_down(event) {

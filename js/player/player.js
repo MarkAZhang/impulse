@@ -31,7 +31,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
   fixDef.filter.categoryBits = 0x0003
-  fixDef.filter.maskBits = 0x0003
+  fixDef.filter.maskBits = 0x0103
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   fixDef.shape = new b2CircleShape(Player.prototype.radius);
@@ -42,7 +42,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
   this.body = world.CreateBody(bodyDef)
-  this.body.CreateFixture(fixDef).SetUserData(this);
+  this.body.CreateFixture(fixDef).SetUserData({"owner": this});
   this.shape = fixDef.shape
 
 
@@ -428,10 +428,8 @@ Player.prototype.draw = function(context) {
       context.fillStyle = this.impulse_target_color
 
       context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-      context.moveTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle - Math.PI/3) * this.impulse_radius * this.draw_factor)
       context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
       context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
-      context.closePath()
       context.fill()
     }
     if(this.attacking)

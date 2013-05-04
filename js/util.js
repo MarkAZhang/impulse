@@ -401,10 +401,61 @@ function is_angle_between(small, large, angle) {
   while(t_large < angle) {
     t_large += Math.PI * 2
   }
-  return t_large - t_small < Math.PI * 2
+
+  return t_large - t_small <= Math.PI * 2
+}
+
+function small_angle_between(angle1, angle2) {
+  var ans = angle1 - angle2;
+
+  var ans = ans % Math.PI * 2;
+  if(ans < 0) ans += Math.PI * 2;
+
+  if(ans > Math.PI)
+    ans = Math.PI * 2 - ans
+  return ans
 }
 
 function bezier_interpolate(mid1, mid2, t) {
 
  return (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*mid1+ 3*(1-t)*Math.pow(t,2)*mid2+ Math.pow(t,3)*1);
+}
+
+function create_body(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, owner) {
+  var bodyDef = new b2BodyDef;
+  bodyDef.type = b2Body.b2_dynamicBody;
+  bodyDef.position.x = x;
+  bodyDef.position.y = y;
+  bodyDef.linearDamping = lin_damp;
+  var body = world.CreateBody(bodyDef)
+
+  for(var i = 0; i < polygons.length; i++) {
+    var polygon = polygons[i]
+    var this_shape = null
+    if(polygon.type == "circle") {
+      this_shape = new b2CircleShape(polygon.r)
+      this_shape.SetLocalPosition(new b2Vec2(polygon.x, polygon.y))
+    }
+    if(polygon.type == "polygon") {
+      var vertices = []
+      for(var j= 0; j < polygon.vertices.length; j++) {
+        vertices.push(new b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
+      }
+      this_shape = new b2PolygonShape
+      this_shape.SetAsArray(vertices, vertices.length)
+    }
+
+    var fixDef = new b2FixtureDef;//make the shape
+    fixDef.density = density;
+    fixDef.friction = 0;
+    fixDef.restitution = 1.0;
+    fixDef.filter.categoryBits = categoryBits
+    fixDef.filter.maskBits = maskBits
+    fixDef.shape = this_shape
+    body.CreateFixture(fixDef).SetUserData({"body": body, "owner": owner})
+
+  }
+
+  return body;
+
 }

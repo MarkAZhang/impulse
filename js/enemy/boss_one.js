@@ -59,10 +59,12 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shooter_types_list = [[0, 0], [2, 2], [1, 1], [0, 2], [0, 1], [1, 2], [1, 0], [2, 0], [2, 1]]
 
-  this.spawn_interval = 7600
+  this.spawn_interval = 1000//7600
   this.spawn_duration = this.spawn_interval
 
   this.spawned = false
+
+  this.default_heading = false
 
   this.body.SetAngle(Math.PI/2)
 
@@ -76,9 +78,118 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.boss_force = 100
 
+  this.joint_inside_width = 1
+
+  this.punch_force = 200
+
+  this.action_interval = 1000
+
+  this.action_timer = this.action_interval
+
+  this.state = "none"
+
+  this.add_arms()
+
+
+
+}
+
+//
+BossOne.prototype.add_arms = function() {
+
+  var upper_arm_r = impulse_enemy_stats[this.type].upper_arm_polygon[0].r;
+  var lower_arm_r = impulse_enemy_stats[this.type].lower_arm_polygon[0].r
+  var hand_r = impulse_enemy_stats[this.type].hand_polygon[0].r;
+
+  this.left_upperarm = this.create_upper_arm_piece(this.body.GetPosition().x+this.effective_radius + upper_arm_r - 2 * this.joint_inside_width, this.body.GetPosition().y)
+  left_upperarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x+this.effective_radius - this.joint_inside_width, this.body.GetPosition().y)
+  left_upperarm_joint.Initialize(this.body, this.left_upperarm, joint_loc)
+  left_upperarm_joint.enableLimit = true;
+  left_upperarm_joint.lowerAngle = -Math.PI/2
+  left_upperarm_joint.upperAngle = Math.PI/2
+  left_upperarm_joint.collideConnected = false
+  this.left_upperarm_joint  = this.world.CreateJoint(left_upperarm_joint)
+
+  this.left_lowerarm = this.create_lower_arm_piece(this.body.GetPosition().x+this.effective_radius + 2 * upper_arm_r +lower_arm_r - 4 * this.joint_inside_width, this.body.GetPosition().y)
+  left_lowerarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x+ this.effective_radius +2*upper_arm_r - 3*this.joint_inside_width, this.body.GetPosition().y)
+  left_lowerarm_joint.Initialize(this.left_upperarm, this.left_lowerarm, joint_loc)
+  left_lowerarm_joint.enableLimit = true;
+  left_lowerarm_joint.lowerAngle = -Math.PI/2
+  left_lowerarm_joint.upperAngle = Math.PI/2
+  left_lowerarm_joint.collideConnected = false
+  this.left_lowerarm_joint  = this.world.CreateJoint(left_lowerarm_joint)
+
+  this.left_hand = this.create_hand(this.body.GetPosition().x+this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4 * this.joint_inside_width + 0.25 * hand_r, this.body.GetPosition().y)
+  this.left_hand.SetAngle(Math.PI/4)
+  left_hand_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x+ this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4*this.joint_inside_width + 0.25 * hand_r, this.body.GetPosition().y)
+  left_hand_joint.Initialize(this.left_lowerarm, this.left_hand, joint_loc)
+  left_hand_joint.enableLimit = true;
+  left_hand_joint.lowerAngle = -Math.PI/2
+  left_hand_joint.upperAngle = Math.PI/2
+  left_hand_joint.collideConnected = false
+  this.left_hand_joint  = this.world.CreateJoint(left_hand_joint)
+
+  this.right_upperarm = this.create_upper_arm_piece(this.body.GetPosition().x - (this.effective_radius + upper_arm_r - 2 * this.joint_inside_width), this.body.GetPosition().y)
+  right_upperarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius - this.joint_inside_width), this.body.GetPosition().y)
+  right_upperarm_joint.Initialize(this.body, this.right_upperarm, joint_loc)
+  right_upperarm_joint.enableLimit = true;
+  right_upperarm_joint.lowerAngle = -Math.PI/2
+  right_upperarm_joint.upperAngle = Math.PI/2
+  right_upperarm_joint.collideConnected = false
+  this.right_upperarm_joint  = this.world.CreateJoint(right_upperarm_joint)
+
+  this.right_lowerarm = this.create_lower_arm_piece(this.body.GetPosition().x - (this.effective_radius +  2 * upper_arm_r +lower_arm_r - 4 * this.joint_inside_width), this.body.GetPosition().y)
+  right_lowerarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius +2*upper_arm_r - 3*this.joint_inside_width), this.body.GetPosition().y)
+  right_lowerarm_joint.Initialize(this.right_upperarm, this.right_lowerarm, joint_loc)
+  right_lowerarm_joint.enableLimit = true;
+  right_lowerarm_joint.lowerAngle = -Math.PI/2
+  right_lowerarm_joint.upperAngle = Math.PI/2
+  right_lowerarm_joint.collideConnected = false
+  this.right_lowerarm_joint  = this.world.CreateJoint(right_lowerarm_joint)
+
+  this.right_hand = this.create_hand(this.body.GetPosition().x - (this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4 * this.joint_inside_width + 0.25 * hand_r), this.body.GetPosition().y)
+  this.right_hand.SetAngle(Math.PI/4)
+  right_hand_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4*this.joint_inside_width + 0.25 * hand_r), this.body.GetPosition().y)
+  right_hand_joint.Initialize(this.right_lowerarm, this.right_hand, joint_loc)
+  right_hand_joint.enableLimit = true;
+  right_hand_joint.lowerAngle = -Math.PI/2
+  right_hand_joint.upperAngle = Math.PI/2
+  right_hand_joint.collideConnected = false
+  this.right_hand_joint  = this.world.CreateJoint(right_hand_joint)
+
+}
+
+BossOne.prototype.punch_at = function(pt, hand) {
+  return
+  if(hand == "left") {
+    var angle = _atan(this.right_hand.GetPosition(), {x: pt.x, y: pt.y})
+    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    dir.Multiply(this.punch_force);
+    this.right_hand.ApplyImpulse(dir, this.right_hand.GetWorldCenter())
+  }
+}
+
+BossOne.prototype.create_lower_arm_piece = function(x, y) {
+  return create_body(this.world, impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.1, 0x0100, 0x0012, this)
+}
+BossOne.prototype.create_upper_arm_piece = function(x, y) {
+  return create_body(this.world, impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.1, 0x0100, 0x0012, this)
+}
+BossOne.prototype.create_hand = function(x, y) {
+  return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.1, 0x0100, 0x0012, this)
 }
 
 BossOne.prototype.additional_processing = function(dt) {
+
+  var cur_angle = this.body.GetAngle();
+  var player_angle =  _atan(this.body.GetPosition(), this.player.body.GetPosition());
+  var angle_between = small_angle_between(cur_angle, player_angle )
 
   if(this.spawn_duration > 0) {
     this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
@@ -91,6 +202,39 @@ BossOne.prototype.additional_processing = function(dt) {
     this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
 
   }
+
+  // turn the boss around
+  if(this.state == "none") {
+    if(is_angle_between(cur_angle - Math.PI, cur_angle, player_angle)) {
+      if(angle_between < Math.PI * 2 * dt/2000)
+        this.body.SetAngle(this.body.GetAngle() - angle_between)
+      else
+        this.body.SetAngle(this.body.GetAngle() - Math.PI * 2 * dt/2000)
+    } else {
+      if(angle_between < Math.PI * 2 * dt/2000)
+        this.body.SetAngle(this.body.GetAngle() + angle_between)
+      else
+      this.body.SetAngle(this.body.GetAngle() + Math.PI * 2 * dt/2000)
+    }
+  }
+
+  if(this.state == "punching_left") {
+    if(this.left_hand.m_linearVelocity.Length() < 1) {
+      this.state = "none"
+      this.action_timer = this.action_interval
+    }
+  }
+
+  if(this.action_timer < 0) {
+    if(this.state == "none") {
+      this.state = "punching_left"
+      this.punch_at(this.player.body.GetPosition(), "left")
+    }
+
+  } else {
+    this.action_timer -= dt;
+  }
+
 
   if(this.shooter_color_change_prog > 0) {
     this.shooter_color_change_prog = Math.max(this.shooter_color_change_prog - dt/this.shooter_color_change_interval, 0)
@@ -116,7 +260,7 @@ BossOne.prototype.additional_processing = function(dt) {
 
     var shooter_locs = this.get_two_shooter_locs()
 
-    for(var j = 0; j < 2; j++) {
+    /*for(var j = 0; j < 2; j++) {
       var dir = new b2Vec2(this.player.body.GetPosition().x - shooter_locs[j].x, this.player.body.GetPosition().y - shooter_locs[j].y)
       dir.Normalize()
       var spawn_loc = {x: shooter_locs[j].x + dir.x * 2, y: shooter_locs[j].y + dir.y * 2}
@@ -129,8 +273,8 @@ BossOne.prototype.additional_processing = function(dt) {
         new_enemy.lighten((this.lighten_timer + this.lighten_duration))
       }
       this.level.enemy_counter += 1
-    }
-    
+    }*/
+
     this.shooter_change_counter -= 1
 
     if(this.shooter_change_counter <=0) {
@@ -142,7 +286,7 @@ BossOne.prototype.additional_processing = function(dt) {
         this.times_shot += 1
         this.shooter_types = this.get_shooter_types(this.times_shot)
       }
-      
+
       this.shooter_color_change_prog = 1
       this.shooter_change_counter = this.shooter_change_interval
     }
@@ -164,22 +308,52 @@ BossOne.prototype.additional_processing = function(dt) {
   }
 }
 
+BossOne.prototype.draw_body_part = function(body_part, polygon, context, draw_factor) {
+    // fade out if dying
+
+    var alpha = this.visibility ? this.visibility : 1
+    if (this.dying)
+      alpha *= (1 - prog)
+    tp = body_part.GetPosition();
+    draw_shape(context, body_part.GetPosition().x * draw_factor, body_part.GetPosition().y * draw_factor,
+      polygon, draw_factor, this.get_color_with_status(this.interior_color), alpha, body_part.GetAngle())
+
+}
+
+BossOne.prototype.draw_hand = function(arm, context, draw_factor) {
+    // fade out if dying
+
+    var alpha = this.visibility ? this.visibility : 1
+    if (this.dying)
+      alpha *= (1 - prog)
+    tp = arm.GetPosition();
+    draw_shape(context, arm.GetPosition().x * draw_factor, arm.GetPosition().y * draw_factor,
+      impulse_enemy_stats[this.type].hand_polygon[0], draw_factor, this.get_color_with_status(this.interior_color), alpha, arm.GetAngle())
+
+}
+
 BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
   if (this.dying) return
 
   var shooter_locs = this.get_two_shooter_locs()
+  this.draw_body_part(this.left_upperarm, impulse_enemy_stats[this.type].upper_arm_polygon[0], context, draw_factor);
+  this.draw_body_part(this.left_lowerarm, impulse_enemy_stats[this.type].lower_arm_polygon[0], context, draw_factor);
+  this.draw_body_part(this.right_upperarm, impulse_enemy_stats[this.type].upper_arm_polygon[0], context, draw_factor);
+  this.draw_body_part(this.right_lowerarm, impulse_enemy_stats[this.type].lower_arm_polygon[0], context, draw_factor);
+  this.draw_body_part(this.left_hand, impulse_enemy_stats[this.type].hand_polygon[0], context, draw_factor);
+  this.draw_body_part(this.right_hand, impulse_enemy_stats[this.type].hand_polygon[0], context, draw_factor);
 
-  for(var j = 0; j < 2; j++) {
+  /*for(var j = 0; j < 2; j++) {
 
       var tp = shooter_locs[j]
       context.save();
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
       context.rotate(this.body.GetAngle());
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
+
       context.beginPath()
-      
+
       context.moveTo((tp.x+this.shape_points[0][0].x * .5)*draw_factor, (tp.y+this.shape_points[0][0].y * .5)*draw_factor)
       for(var i = 1; i < this.shape_points[0].length; i++)
       {
@@ -187,20 +361,20 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       }
       context.closePath()
       context.lineWidth = 2
-      
+
       if(this.shooter_color_change_prog > 0) {
         context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_types[j]]].color
         context.globalAlpha = 1 - this.shooter_color_change_prog
         context.stroke()
         context.globalAlpha /= 2
         context.fillStyle = context.strokeStyle
-        context.fill() 
+        context.fill()
         context.globalAlpha = this.shooter_color_change_prog
         context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_old_types[j]]].color
         context.stroke()
         context.globalAlpha /= 2
         context.fillStyle = context.strokeStyle
-        context.fill() 
+        context.fill()
       }
       else {
         if(this.spawned == false) {
@@ -211,7 +385,7 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
         context.stroke()
         context.globalAlpha /=2
         context.fillStyle = context.strokeStyle
-        context.fill() 
+        context.fill()
         context.globalAlpha = 1
       }
       if(this.spawned == false) {
@@ -223,7 +397,7 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       context.lineWidth = 2
       context.strokeStyle = "gray"
       context.stroke()
-      
+
       context.restore()
       context.globalAlpha = 1
   }
@@ -234,10 +408,10 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       context.translate(tp.x * draw_factor, tp.y * draw_factor);
       context.rotate(this.body.GetAngle());
       context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-      
+
       context.beginPath()
       context.globalAlpha = this.red_visibility
-      
+
       context.moveTo((tp.x+this.shape_points[0][0].x)*draw_factor, (tp.y+this.shape_points[0][0].y)*draw_factor)
       for(var i = 1; i < this.shape_points[0].length; i++)
       {
@@ -256,7 +430,9 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
     context.lineWidth = 2
     context.strokeStyle = "red"
     context.stroke()
-  }
+  }*/
+
+
 }
 
 BossOne.prototype.get_two_shooter_locs = function() {
@@ -285,7 +461,19 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
 }
 
 BossOne.prototype.move = function() {
-  this.set_heading(this.player.body.GetPosition())
+  /*this.set_heading(this.player.body.GetPosition())*/
+  var cur_angle = this.body.GetAngle();
+  var player_angle =  _atan(this.body.GetPosition(), this.player.body.GetPosition());
+  var angle_between = small_angle_between(cur_angle, player_angle )
+  var torque = Math.min(250, angle_between/Math.PI * 1000);
+
+  if(is_angle_between(cur_angle - Math.PI, cur_angle, player_angle)) {
+
+    this.body.SetAngle(this.body.GetAngle() - Math.PI/2000)
+  } else {
+    this.body.SetAngle(this.body.GetAngle() + Math.PI/2000)
+  }
+
 }
 
 BossOne.prototype.collide_with = function(other) {
@@ -293,7 +481,7 @@ BossOne.prototype.collide_with = function(other) {
     return
 
   if(other === this.player) {
-   
+
     this.player_hit_proc()
     this.impulse_game_state.reset_combo()
   }

@@ -85,23 +85,22 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
   context.restore()
 }
 
-function draw_vprogress_bar(context, x, y, w, h, prop, color, bcolor) {
+function draw_vprogress_bar(context, x, y, w, h, prop, color) {
 
   context.shadowBlur = 20;
   context.shadowColor = color
 
-  context.beginPath()
+  context.save();
 
-  context.shadowColor = color
-  context.rect(x - w * .5, y - h * .5, w, h * prop)
-  context.fillStyle = color
-  context.fill()
-
+  context.globalAlpha /= 10
   context.rect(x - w * .5, y - h * .5, w , h)
-  context.strokeStyle = bcolor
+  context.strokeStyle = color
   context.lineWidth = 2
   context.stroke()
+
+  context.restore()
   context.beginPath()
+
 
   context.shadowColor = color
   context.rect(x - w * .5, y - h * .5, w, h * prop)

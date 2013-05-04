@@ -31,7 +31,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
   this.color = this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss"] : impulse_colors["world "+this.world_num+" lite"]
-  this.dark_color =this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss dark"] : impulse_colors["world "+this.world_num +" dark"];
+  this.dark_color = impulse_colors["world "+this.world_num +" dark"];
 
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
@@ -121,7 +121,6 @@ ImpulseGameState.prototype.process = function(dt) {
       } else {
         var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
         //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
-        console.log((this.zoom_transition_timer) / (this.zoom_transition_period)+" "+ prop)
         this.zoom = 1/(1/(this.zoom_start_scale) * prop + 1/(this.zoom_target_scale) * (1-prop))
         this.camera_center.x = this.zoom_start_pt.x * prop + this.zoom_target_pt.x * (1-prop)
         this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
@@ -273,29 +272,29 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = 'italic 10px sans-serif'
       ctx.fillText(i, this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor)
     	ctx.fill()
-  }
+  }*/
 
-  for(var i = 0; i < this.visibility_graph.poly_edges.length; i++)
+  /*for(var i = 0; i < this.visibility_graph.poly_edges.length; i++)
   {
       ctx.beginPath()
       ctx.lineWidth = 1
     	ctx.strokeStyle = 'green';
-      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
-      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
   /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
       ctx.beginPath()
       ctx.lineWidth = 3
     	ctx.strokeStyle = 'brown';
-      ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor, this.level.obstacle_edges[i].p1.y*this.draw_factor)
-      ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor, this.level.obstacle_edges[i].p2.y*this.draw_factor)
+      ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p1.y*this.draw_factor)
+      ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
-  for(var i = 0; i < this.visibility_graph.edges.length; i++)
+  /*for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
@@ -329,7 +328,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
   }*/
-
 
 }
 
@@ -393,7 +391,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
 
   var temp_stars = this.stars < 3 ? this.stars : 2
 
-  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color, this.dark_color)
+  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
   /*draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
 
   /*ctx.beginPath()
@@ -453,20 +451,27 @@ ImpulseGameState.prototype.get_combo_color = function(combo) {
   return this.get_combo_color((tcombo-0.01)*(Math.abs(hperiod - this.game_numbers.game_length%(2*hperiod))/hperiod))
 }
 
+ImpulseGameState.prototype.transform_to_zoomed_space = function(pt) {
+
+  var new_point = {x: (pt.x - (levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
+    y: (pt.y - (levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
+  return new_point
+}
+
 ImpulseGameState.prototype.on_mouse_move = function(x, y) {
   if(!this.ready) return
   if(!this.pause)
-    this.player.mouseMove({x: x - sidebarWidth, y: y})
+    this.player.mouseMove(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause)
-    this.player.mouse_down({x: x - sidebarWidth, y: y})
+    this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(!this.pause)
-    this.player.mouse_up({x: x - sidebarWidth, y: y})
+    this.player.mouse_up(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
 }
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
@@ -503,7 +508,7 @@ ImpulseGameState.prototype.addWalls = function() {
     fixDef.filter.maskBits = 0x0002
     var bodyDef = new b2BodyDef;
     bodyDef.type = b2Body.b2_staticBody;
-    fixDef.shape = new b2PolygonShape
+    fixDef.shape = new b2PolygonShape;
     fixDef.shape.SetAsBox(wall_dim[i].x, wall_dim[i].y)
     bodyDef.position.Set(wall_pos[i].x, wall_pos[i].y)
     this.world.CreateBody(bodyDef).CreateFixture(fixDef);
@@ -516,8 +521,8 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
   if(!first || !second) return
 
-  first.collide_with(second)
-  second.collide_with(first)
+  first.owner.collide_with(second.owner, first.body)
+  second.owner.collide_with(first.owner, second.body)
 
 }
 

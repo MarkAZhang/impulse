@@ -1,7 +1,8 @@
 self.onmessage = function(event) {
-  
+
   var polygons = event.data.polygons
   var obstacle_edges = event.data.obstacle_edges
+  var draw_factor = event.data.draw_factor
   var poly_edges = []
   var vertices = []
   var edges = []
@@ -24,7 +25,7 @@ self.onmessage = function(event) {
         }
       }
 
-      if(!inPoly)
+      if(!inPoly && check_bounds(0, vertex, draw_factor))
       {
         vertex.p_n = i  //number of polygon
         vertex.p_v = polygon.length
@@ -103,7 +104,7 @@ function isVisible(v_i, v_j, edges)
 {
   for(var k = 0; k < edges.length; k++)
   {
-    
+
     if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
       continue
     }
@@ -130,7 +131,7 @@ function pointInPolygon(polygon, point)
         ans = !ans
       }
     }
-    j = i      
+    j = i
   }
   return ans
 }

@@ -22,7 +22,7 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
 
   context.shadowOffsetX = 0;
   context.shadowOffsetY = 0;
-  context.shadowBlur = 4;
+  context.shadowBlur = 20;
   context.shadowColor = this.color;
 
   context.moveTo(this.verticeSet[0].x*draw_factor, this.verticeSet[0].y*draw_factor)
@@ -34,10 +34,9 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
   context.fillStyle = this.darkColor;
   //var vertices =
   context.strokeStyle = this.color
-  context.lineWidth = 2
+  context.lineWidth = 6
   context.stroke()
   context.fill()
   context.shadowBlur = 0;
-  context.stroke()
 }
 

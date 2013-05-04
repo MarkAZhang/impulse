@@ -44,19 +44,19 @@ function LevelIntroState(level_name, world) {
 
   var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
 
-  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, obstacle_edges: this.level.obstacle_edges})
+  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, obstacle_edges: this.level.obstacle_edges, draw_factor: draw_factor})
 
   visibility_graph_worker.onmessage = function(_this) {
     return function(event) {
-      console.log("Worker has generated visibility graph")
       if (event.data.percentage) {
         _this.load_percentage = event.data.percentage
 
       }
-      else if(event.data.poly_edges)
+      else if(event.data.poly_edges) {
         _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
         _this.load_percentage = 1
         _this.load_complete()
+      }
     }
 
   }(this)

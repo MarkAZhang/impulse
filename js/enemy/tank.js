@@ -27,6 +27,9 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.spin_rate = 4000
 
+  this.require_open = false;
+  this.open_period = 500;
+
 }
 
 Tank.prototype.additional_processing = function(dt) {
@@ -63,9 +66,6 @@ Tank.prototype.activated_processing = function(dt) {
 
 Tank.prototype.check_death = function()
 {
-  if (this.durations["open"] <= 0) {
-    return
-  }
 
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
@@ -127,7 +127,8 @@ Tank.prototype.explode = function() {
     {
       var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
-      this.level.enemies[i].open(1500)
+      if(!(this.level.enemies[i] instanceof Tank))
+        this.level.enemies[i].open(1500)
 
     }
   }

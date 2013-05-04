@@ -36,7 +36,10 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
-  bodyDef.fixedRotation = true  //polygonShapes do not rotate
+  bodyDef.fixedRotation = this.torqueRotate ? false : true  //polygonShapes do not rotate
+  if(!bodyDef.fixedRotation) {
+    bodyDef.angularDamping = 50
+  }
   this.body = world.CreateBody(bodyDef)
 
   this.shapes = []
@@ -64,18 +67,18 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.density = this.density;
     fixDef.friction = 0;
     fixDef.restitution = 1.0;
-    fixDef.filter.categoryBits = 0x0011
-    fixDef.filter.maskBits = 0x0012
+    fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : 0x0011
+    fixDef.filter.maskBits = this.maskBits ? this.maskBits : 0x0112
     fixDef.shape = this_shape
-    this.body.CreateFixture(fixDef).SetUserData(this)
+    this.body.CreateFixture(fixDef).SetUserData({"owner": this})
     this.shapes.push(this_shape)
     if(this_shape instanceof b2PolygonShape)
       this.shape_points.push(this_shape.m_vertices)
     else
       this.shape_points.push(null)
 
-    this.default_heading = true
   }
+    this.default_heading = true
 
   this.shape_polar_points = []
   this.collision_polygons = []

@@ -35,10 +35,10 @@ impulse_enemy_stats["spear"] = {
 
 impulse_enemy_stats["tank"] = {
   color: "#6f27cf",
-  density: 2,
+  density: 2.5,
   lin_damp: 3,
   effective_radius: 1,
-  force: 1,
+  force: 1.25,
   score_value: 1000,
   attack_rating: 8,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -501,6 +501,8 @@ impulse_enemy_stats["first boss"] = {
   score_value: [1000000, 5000000, 15000000],
   attack_rating: 10,
   is_boss: true,
+  categoryBits: 0x0100,
+  maskBits: 0x0012,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -511,6 +513,25 @@ impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
   ],
+  upper_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}
+  ],
+  lower_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}
+  ],
+  hand_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}
+  ],
+
   dies_on_impact: "NO",
   special_ability: "Shoots stunners, spears, and tanks at you. Can cast a global lighten, which causes everything to lighter and much easier to push.",
   other_notes: "The color of the boss's guns reflect what it is shooting. During the global lighten, the boss will shoot faster. Use this time to clear the field of enemies.",

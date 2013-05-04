@@ -1,14 +1,16 @@
   //A = align
   //C = crop
-  //F = full image
   //O = turn into outline
   //Q = cancel selected
-  //H = hide bg
   //D = delete
   //X = reflect horizontally
   //Z = reflect vertically
   //N = add polygon
   //P = print polygons
+  //arrows = move selected polygon
+  //+ = zoom in
+  //- = zoom out
+
 
 LevelEditorState.prototype = new GameState
 
@@ -25,14 +27,7 @@ function LevelEditorState() {
   this.selected_v = null
   this.selected_p = null
 
-  this.image = new Image()
-
-  this.image.src = 'snail.png'
-
   this.crop_coordinates = null
-
-  this.img_w_ratio = levelWidth/this.image.width
-  this.img_h_ratio = levelHeight/this.image.height
 
   this.draw_factor = 15
 
@@ -41,6 +36,9 @@ function LevelEditorState() {
   this.levelWidth = 800
   this.levelHeight = 600
   this.bg_drawn = false
+
+  this.zoom = 1
+  this.camera_center = {x:levelWidth/2, y:levelHeight/2}
 
 }
 
@@ -55,17 +53,17 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
+
+  ctx.save();
+
+  ctx.scale(this.zoom, this.zoom)
+  ctx.translate((levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+
   context.beginPath()
   context.rect(0, 0, 800, 600)
   context.strokeStyle = "gray"
   context.stroke()
 
-  if(this.image_vis) {
-    if(!this.crop_coordinates)
-      context.drawImage(this.image, 0, 0, levelWidth, levelHeight)
-    else
-      context.drawImage(this.image, this.crop_coordinates[0]/this.img_w_ratio, this.crop_coordinates[1]/this.img_h_ratio, (this.crop_coordinates[2] - this.crop_coordinates[0])/this.img_w_ratio, (this.crop_coordinates[3] - this.crop_coordinates[1])/this.img_h_ratio, 0, 0, levelWidth, levelHeight)
-  }
   for(var i = 0; i < this.polygons.length; i++) {
     context.beginPath()
     context.moveTo(this.polygons[i][0].x, this.polygons[i][0].y)
@@ -128,16 +126,26 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
     context.globalAlpha = 1
   }
 
+  context.restore()
+
+}
+
+LevelEditorState.prototype.transform_to_zoomed_space = function(pt) {
+
+  var new_point = {x: (pt.x - (levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
+    y: (pt.y - (levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
+  return new_point
 }
 
 LevelEditorState.prototype.on_mouse_move = function(x, y) {
+  var trans_point = this.transform_to_zoomed_space({x:x, y:y});
+
   if(this.dragging) {
     for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
-      this.polygons[this.selected_p][i].x += (x - this.drag_loc.x)
-      this.polygons[this.selected_p][i].y += (y - this.drag_loc.y)
+      this.polygons[this.selected_p][i].x += (trans_point.x - this.drag_loc.x)
+      this.polygons[this.selected_p][i].y += (trans_point.y - this.drag_loc.y)
     }
-    this.drag_loc = {x: x, y: y}
-    console.log("CHANGE LOC")
+    this.drag_loc = trans_point
   }
 
 }
@@ -149,29 +157,28 @@ LevelEditorState.prototype.on_mouse_up = function(x, y) {
 }
 
 LevelEditorState.prototype.on_mouse_down = function(x, y) {
-  console.log("DOWN")
+  var trans_point = this.transform_to_zoomed_space({x:x, y:y});
   console.log(x+" "+y)
-  if(this.selected_p != null && pointInPolygon(this.polygons[this.selected_p], {x: x, y: y})) {
-    this.drag_loc = {x: x, y: y}
+  if(this.selected_p != null && pointInPolygon(this.polygons[this.selected_p], trans_point)) {
+    this.drag_loc = trans_point
     this.dragging = true
-    console.log("DRAGGING")
   }
 }
 
 
 LevelEditorState.prototype.on_click = function(x, y) {
-
-  if(!check_bounds(0, {x:x, y:y}, 1)) return
+  var trans_point = this.transform_to_zoomed_space({x:x, y:y});
+  console.log(trans_point.x+" "+trans_point.y)
 
   if(this.selected_v != null) {
-    this.polygons[this.selected_v[0]][this.selected_v[1]].x = x
-    this.polygons[this.selected_v[0]][this.selected_v[1]].y = y
+    this.polygons[this.selected_v[0]][this.selected_v[1]].x = trans_point.x
+    this.polygons[this.selected_v[0]][this.selected_v[1]].y = trans_point.y
     return
   }
 
   if(this.selected_av != null) {
-    this.accumulated_vertices[this.selected_av].x = x
-    this.accumulated_vertices[this.selected_av].y = y
+    this.accumulated_vertices[this.selected_av].x = trans_point.x
+    this.accumulated_vertices[this.selected_av].y = trans_point.y
     return
   }
 
@@ -181,7 +188,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
 
   for(var i = 0; i < this.polygons.length; i++) {
     for(var j = 0; j < this.polygons[i].length; j++) {
-      if(p_dist({x: this.polygons[i][j].x, y: this.polygons[i][j].y}, {x: x, y: y}) < 5) {
+      if(p_dist({x: this.polygons[i][j].x, y: this.polygons[i][j].y}, trans_point) < 5/this.zoom) {
         this.selected_v = [i, j]
         return
       }
@@ -189,7 +196,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
   }
 
   for(var i = 0; i < this.polygons.length; i++) {
-    if(pointInPolygon(this.polygons[i], {x: x, y: y})) {
+    if(pointInPolygon(this.polygons[i], trans_point)) {
       this.selected_p = i
       return
     }
@@ -197,14 +204,14 @@ LevelEditorState.prototype.on_click = function(x, y) {
   }
 
   for(var i = 0; i < this.accumulated_vertices.length; i++) {
-    if(p_dist({x: this.accumulated_vertices[i].x, y: this.accumulated_vertices[i].y}, {x: x, y: y}) < 5) {
+    if(p_dist({x: this.accumulated_vertices[i].x, y: this.accumulated_vertices[i].y}, trans_point) < 5/this.zoom) {
         this.selected_av = i
         return
       }
   }
 
 
-  this.accumulated_vertices.push({x: x, y: y})
+  this.accumulated_vertices.push(trans_point)
 }
 
 LevelEditorState.prototype.get_closest_coords = function(x, y) {
@@ -268,10 +275,6 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     this.accumulated_vertices = []
   }
 
-  if(keyCode == 70) { //F = full image
-    this.crop_coordinates = null
-  }
-
   if(keyCode == 79) {
     if(this.selected_p != null) {
       this.outline_polygons.push(this.polygons[this.selected_p])
@@ -284,10 +287,6 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     this.selected_v = null
     this.selected_p = null
     this.selected_av = null
-  }
-
-  if(keyCode == 72) { //H = hide bg
-    this.image_vis = !this.image_vis
   }
 
   if(keyCode == 68) { //D = delete
@@ -365,6 +364,37 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
   if(keyCode == 80) { //P = print polygons
     this.print_polygon()
   }
+
+  if(keyCode == 37) {
+    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+      this.polygons[this.selected_p][i].x -= 1
+    }
+
+  }
+  if(keyCode == 38) {
+    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+      this.polygons[this.selected_p][i].y -= 1
+    }
+
+  }
+  if(keyCode == 39) {
+    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+      this.polygons[this.selected_p][i].x += 1
+    }
+
+  }
+  if(keyCode == 40) {
+    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+      this.polygons[this.selected_p][i].y += 1
+    }
+  }
+  if(keyCode == 187) {
+    this.zoom *=1.25
+  }
+  if(keyCode == 189) {
+    this.zoom /=1.25
+  }
+
 
 }
 
