@@ -27,6 +27,9 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 3000
 
+  this.spawn_interval = 7600
+  this.spawn_duration = this.spawn_interval
+
   this.shoot_speedup_factor = 2
 
   this.times_shot = 0
@@ -41,25 +44,15 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.lightened = false
 
+  this.spawned = false
+
   this.enemies_to_spawn = ["stunner", "spear", "tank"]
-  this.spawn_force = 
+  this.spawn_force =
   {
     "stunner": 10, //30,
     "spear": 5, //15,
     "tank": 40//80
   }
-
-  this.shooter_color_change_prog = 0//if 1, need to push to 0
-
-  this.shooter_color_change_interval = 500
-
-  this.shooter_old_types = null
-
-  this.spawn_interval = 1000//7600
-  this.spawn_duration = this.spawn_interval
-
-  this.spawned = false
-
   this.default_heading = false
 
   this.body.SetAngle(Math.PI/2)
@@ -73,7 +66,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.red_visibility = 0
 
-  this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 2)
+  this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 100)
 
   this.boss_force = 100
 
@@ -82,6 +75,10 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.punch_force = 10
 
   this.action_interval = 1000
+
+  this.action_transition_interval = 500
+
+  this.action_default_interval = 1500
 
   this.min_turret_switch_dist = 15
 
@@ -93,7 +90,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.data = impulse_enemy_stats[this.type]
 
   this.state = "punching"
-  this.state_switch_interval = 7000
+  this.state_switch_interval = 10000
   this.state_switch_timer = this.state_switch_interval
 
   this.arm_states = {
@@ -179,7 +176,7 @@ BossOne.prototype.add_arms = function() {
 }
 
 BossOne.prototype.load_punch_at_player = function(side) {
-    this.action_timer[side] = this.action_interval  
+    this.action_timer[side] = this.action_transition_interval
     if(side=="left") {
       var _this = this;
       this.arm_states[side] = "loading"
@@ -208,7 +205,7 @@ BossOne.prototype.load_punch_at_player = function(side) {
 }
 
 BossOne.prototype.move_arm_to_default = function(side, right_stall) {
-    this.action_timer[side] = this.action_interval  
+    this.action_timer[side] = this.action_transition_interval
     if(side=="left") {
       this.arm_states[side] = "retract"
       this.rotate_joint_to("lu", Math.PI/8)
@@ -217,7 +214,7 @@ BossOne.prototype.move_arm_to_default = function(side, right_stall) {
     } else if(side=="right") {
       this.arm_states[side] = "retract"
       if(right_stall) {
-        this.arm_states[side] = "delay_retract"  
+        this.arm_states[side] = "delay_retract"
       }
       this.rotate_joint_to("ru", -Math.PI/8)
       this.rotate_joint_to("rl", -Math.PI/8)
@@ -226,7 +223,7 @@ BossOne.prototype.move_arm_to_default = function(side, right_stall) {
 }
 
 BossOne.prototype.move_arm_to_turret = function(side, right_stall) {
-    this.action_timer[side] = this.action_interval  
+    this.action_timer[side] = this.action_transition_interval
     if(side=="left") {
       this.arm_states[side] = "loading_turret"
       this.rotate_joint_to("lu", Math.PI/2)
@@ -288,7 +285,7 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
     spawn_loc = {x: this.body_parts['lh'].GetPosition().x + dir.x * 5,
      y: this.body_parts['lh'].GetPosition().y + dir.y * 5}
   if(arm == "right")
-    spawn_loc = {x: this.body_parts['rh'].GetPosition().x + dir.x * 5, 
+    spawn_loc = {x: this.body_parts['rh'].GetPosition().x + dir.x * 5,
   y: this.body_parts['rh'].GetPosition().y + dir.y * 5}
   dir.Multiply(this.spawn_force[enemy_type])
   var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
@@ -342,8 +339,6 @@ BossOne.prototype.additional_processing = function(dt) {
   this.state_switch_timer -= dt
 
   if(this.state == "punching") {
-    console.log(this.state_switch_timer)
-    console.log(p_dist(this.body.GetPosition(), this.player.body.GetPosition())+" "+this.min_turret_switch_dist)
     if(this.state_switch_timer < 0) {
       if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) > this.min_turret_switch_dist) {
         this.switch_to_turret()
@@ -400,20 +395,20 @@ BossOne.prototype.additional_processing = function(dt) {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
         this.arm_states[arm] = "default"
-        this.action_timer[arm] = this.action_interval
+        this.action_timer[arm] = this.action_default_interval
       } else {
         this.process_move_arms_to_target(arm)
-      }    
+      }
     }
 
     if(this.arm_states[arm] == "delay_retract") {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < -this.action_interval * 2) {
         this.arm_states[arm] = "default"
-        this.action_timer[arm] = this.action_interval
+        this.action_timer[arm] = this.action_default_interval
       } else {
         this.process_move_arms_to_target(arm)
-      }    
+      }
     }
 
     if(this.arm_states[arm] == "punching") {
@@ -422,14 +417,14 @@ BossOne.prototype.additional_processing = function(dt) {
         this.action_timer[arm] = this.action_interval
       } else {
         this.process_punching(arm)
-      }   
-      
+      }
+
     }
     if(this.arm_states[arm] == "paralyzed") {
       if(this.action_timer[arm] < 0) {
         this.move_arm_to_default(arm)
         this.action_timer[arm] = this.action_interval
-      }  
+      }
     }
     if(this.arm_states[arm] == "loading_turret") {
       this.process_turning_to_angle(cur_angle)
@@ -450,13 +445,8 @@ BossOne.prototype.additional_processing = function(dt) {
         } else {
           this.switch_to_punching()
         }
-      }  
+      }
     }
-  }
-  
-
-  if(this.shooter_color_change_prog > 0) {
-    this.shooter_color_change_prog = Math.max(this.shooter_color_change_prog - dt/this.shooter_color_change_interval, 0)
   }
 
   if(this.lighten_timer < 0 && !this.lightened) {
@@ -472,46 +462,6 @@ BossOne.prototype.additional_processing = function(dt) {
     this.lighten_timer = this.lighten_interval
   }
   this.lighten_timer -= dt
-
-  if(this.shoot_duration < 0) {
-    this.shoot_duration = this.lightened ? this.shoot_interval/this.shoot_speedup_factor : this.shoot_interval
-
-
-    var shooter_locs = this.get_two_shooter_locs()
-
-    /*for(var j = 0; j < 2; j++) {
-      var dir = new b2Vec2(this.player.body.GetPosition().x - shooter_locs[j].x, this.player.body.GetPosition().y - shooter_locs[j].y)
-      dir.Normalize()
-      var spawn_loc = {x: shooter_locs[j].x + dir.x * 2, y: shooter_locs[j].y + dir.y * 2}
-        dir.Multiply(this.shooter_force[this.shooter_types[j]])
-      var new_enemy = new this.level.enemy_map[this.shooter_enemies[this.shooter_types[j]]](this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
-      this.level.spawned_enemies.push(new_enemy)
-        new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
-      new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
-      if(this.lighten_timer < 0) {
-        new_enemy.lighten((this.lighten_timer + this.lighten_duration))
-      }
-      this.level.enemy_counter += 1
-    }*/
-
-    this.shooter_change_counter -= 1
-
-    if(this.shooter_change_counter <=0) {
-      this.shooter_old_types = this.shooter_types
-      if(this.impulse_game_state.game_numbers.score > impulse_level_data[this.level.level_name].cutoff_scores[2] * .75) {
-        this.shooter_types = [2, 2]
-      }
-      else {
-        this.times_shot += 1
-        this.shooter_types = this.get_shooter_types(this.times_shot)
-      }
-
-      this.shooter_color_change_prog = 1
-      this.shooter_change_counter = this.shooter_change_interval
-    }
-
-  }
-  this.shoot_duration -= dt
 
   if(this.lighten_timer > .9 * this.lighten_interval) {
     this.red_visibility = (this.lighten_timer - .9 * this.lighten_interval)/(.1 * this.lighten_interval)
@@ -608,27 +558,121 @@ BossOne.prototype.process_move_arms_to_target = function(side) {
     }
 }
 
-BossOne.prototype.draw_body_part = function(body_part, polygon, context, draw_factor) {
+BossOne.prototype.draw_arm_piece = function(arm, context, draw_factor) {
     // fade out if dying
 
-    var alpha = this.visibility ? this.visibility : 1
-    if (this.dying)
-      alpha *= (1 - prog)
-    tp = body_part.GetPosition();
-    draw_shape(context, body_part.GetPosition().x * draw_factor, body_part.GetPosition().y * draw_factor,
-      polygon, draw_factor, this.get_color_with_status(this.interior_color), alpha, body_part.GetAngle())
+    var tp = arm.GetPosition();
+
+
+    drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
 
 }
 
-BossOne.prototype.draw_hand = function(arm, context, draw_factor) {
+BossOne.prototype.draw_hand = function(hand, context, draw_factor) {
     // fade out if dying
+    var tp = hand.GetPosition();
+     drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (this.body.GetAngle()), 64, 64, "immunitas_hand", immunitasSprite)
+}
 
-    var alpha = this.visibility ? this.visibility : 1
-    if (this.dying)
-      alpha *= (1 - prog)
-    tp = arm.GetPosition();
-    draw_shape(context, arm.GetPosition().x * draw_factor, arm.GetPosition().y * draw_factor,
-      impulse_enemy_stats[this.type].hand_polygon[0], draw_factor, this.get_color_with_status(this.interior_color), alpha, arm.GetAngle())
+BossOne.prototype.draw_aura = function(context, draw_factor) {
+    // fade out if dying
+    var tp = this.body.GetPosition()
+
+     drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (Math.PI/4), 173, 173, "immunitas_aura", immunitasSprite)
+}
+
+BossOne.prototype.draw_glows = function(context, draw_factor) {
+
+  var tp = this.body.GetPosition()
+  drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (this.body.GetAngle()), 190, 190, "immunitas_glow", immunitasSprite)
+
+  for(name in this.body_parts) {
+    var body_part = this.body_parts[name]
+    tp = body_part.GetPosition()
+    drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (body_part.GetAngle()), 190, 190, "immunitas_glow", immunitasSprite)
+  }
+}
+
+
+BossOne.prototype.draw = function(context, draw_factor) {
+
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
+
+
+  if(!impulse_enemy_stats[this.type].seen) {
+    impulse_enemy_stats[this.type].seen = true
+    save_game()
+  }
+
+  var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+  context.save()
+  if (this.dying)
+      context.globalAlpha *= (1 - prog)
+    else
+      context.globalAlpha *= this.visibility ? this.visibility : 1
+
+
+  //this.draw_glows(context, draw_factor);
+
+  this.draw_arm_piece(this.body_parts["lu"], context, draw_factor)
+  this.draw_arm_piece(this.body_parts["ru"], context, draw_factor)
+  this.draw_arm_piece(this.body_parts["ll"], context, draw_factor)
+  this.draw_arm_piece(this.body_parts["rl"], context, draw_factor)
+  this.draw_hand(this.body_parts["lh"], context, draw_factor)
+  this.draw_hand(this.body_parts["rh"], context, draw_factor)
+
+  var tp = this.body.GetPosition()
+  drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (this.body.GetAngle() + Math.PI/4), -108, -108, "immunitas_head", immunitasSprite)
+
+
+
+  context.restore()
+
+  this.additional_drawing(context, draw_factor)
+
+}
+
+BossOne.prototype.draw_special_attack_timer = function(context, draw_factor) {
+  var prog = 1-(Math.max(this.lighten_timer, 0) / this.lighten_interval);
+
+  context.beginPath()
+  var distance = 106;
+  var tp = {x: draw_factor *this.body.GetPosition().x, y: draw_factor * this.body.GetPosition().y}
+  if(prog> 0) {
+    context.moveTo(tp.x, tp.y - distance)
+    context.lineTo(tp.x + Math.min(1, (prog)/.25) * distance, tp.y - distance + Math.min(1, (prog)/.25) * distance)
+
+  }
+  if(prog > .25) {
+    context.moveTo(tp.x + distance, tp.y)
+    context.lineTo(tp.x + distance - Math.min(1, (prog-.25)/.25) * distance, tp.y + Math.min(1, (prog-.25)/.25) * distance)
+
+  }
+  if(prog> 0.5) {
+    context.moveTo(tp.x , tp.y + distance)
+    context.lineTo(tp.x - Math.min(1, (prog-.5)/.25) * distance , tp.y  + distance - Math.min(1, (prog-.5)/.25) * distance)
+
+  }
+  if(prog> 0.75) {
+    context.moveTo(tp.x - distance, tp.y)
+    context.lineTo(tp.x - distance + Math.min(1, (prog-.75)/.25) * distance, tp.y - Math.min(1, (prog-.75)/.25) * distance)
+  }
+
+  context.lineWidth = 5;
+  context.strokeStyle = this.color;
+  context.stroke()
 
 }
 
@@ -636,34 +680,12 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
   if (this.dying) return
 
-  var shooter_locs = this.get_two_shooter_locs()
-
-  if(this.arm_states["left"] == "punching") {
-    context.beginPath()
-    context.arc(this.punch_target_pts["left"].x * draw_factor, this.punch_target_pts["left"].y *draw_factor, 10, 0, Math.PI * 2, false)
-    context.fillStyle = "white"
-    context.fill()
-
-  }
-  if(this.arm_states["right"] == "punching") {
-    context.beginPath()
-    context.arc(this.punch_target_pts["right"].x * draw_factor, this.punch_target_pts["right"].y *draw_factor, 10, 0, Math.PI * 2, false)
-    context.fillStyle = "white"
-    context.fill()
-
-  }
-  
-  for(bodypart in this.body_parts) {
-
-    this.draw_body_part(this.body_parts[bodypart], this.joint_polygons[bodypart], context, draw_factor)
-  }
-
   if(this.punching_explode_timer != null) {
     if(this.punching_explode_timer < this.punching_explode_warning_interval) {
       context.beginPath()
       context.arc(this.body.GetPosition().x *draw_factor, this.body.GetPosition().y * draw_factor, this.punching_explode_radius * draw_factor, 0, Math.PI * 2, false)
-      context.globalAlpha = (this.punching_explode_warning_interval - this.punching_explode_timer)/this.punching_explode_warning_interval
-      context.strokeStyle = "red"
+      context.globalAlpha = (this.punching_explode_warning_interval - this.punching_explode_timer)/this.punching_explode_warning_interval * 0.7
+      context.strokeStyle = this.color
       context.lineWidth = 2;
       context.stroke()
     }
@@ -671,129 +693,37 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       context.beginPath()
       var prog = (this.punching_explode_shockwave_interval - this.punching_explode_timer)/this.punching_explode_shockwave_interval
       context.arc(this.body.GetPosition().x *draw_factor, this.body.GetPosition().y * draw_factor, prog*(this.punching_explode_radius * draw_factor), 0, Math.PI * 2, false)
-      globalAlpha = 1 
-      context.lineWidth = 5;
-      context.strokeStyle = "red"
+      globalAlpha = 0.7
+      context.lineWidth = 4;
+      context.strokeStyle = this.color
       context.stroke()
     }
-     
   }
-  globalAlpha = 1 
-
-  /*for(var j = 0; j < 2; j++) {
-
-      var tp = shooter_locs[j]
-      context.save();
-      context.translate(tp.x * draw_factor, tp.y * draw_factor);
-      context.rotate(this.body.GetAngle());
-      context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-
-      context.beginPath()
-
-      context.moveTo((tp.x+this.shape_points[0][0].x * .5)*draw_factor, (tp.y+this.shape_points[0][0].y * .5)*draw_factor)
-      for(var i = 1; i < this.shape_points[0].length; i++)
-      {
-        context.lineTo((tp.x+this.shape_points[0][i].x * .5)*draw_factor, (tp.y+this.shape_points[0][i].y * .5)*draw_factor)
-      }
-      context.closePath()
-      context.lineWidth = 2
-
-      if(this.shooter_color_change_prog > 0) {
-        context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_types[j]]].color
-        context.globalAlpha = 1 - this.shooter_color_change_prog
-        context.stroke()
-        context.globalAlpha /= 2
-        context.fillStyle = context.strokeStyle
-        context.fill()
-        context.globalAlpha = this.shooter_color_change_prog
-        context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_old_types[j]]].color
-        context.stroke()
-        context.globalAlpha /= 2
-        context.fillStyle = context.strokeStyle
-        context.fill()
-      }
-      else {
-        if(this.spawned == false) {
-          context.globalAlpha = 1 - this.spawn_duration / this.spawn_interval
-        }
-
-        context.strokeStyle = impulse_enemy_stats[this.shooter_enemies[this.shooter_types[j]]].color
-        context.stroke()
-        context.globalAlpha /=2
-        context.fillStyle = context.strokeStyle
-        context.fill()
-        context.globalAlpha = 1
-      }
-      if(this.spawned == false) {
-        context.globalAlpha = 1 - this.spawn_duration / this.spawn_interval
-      }
-      context.beginPath()
-      var total_time = this.lightened ? this.shoot_interval/this.shoot_speedup_factor : this.shoot_interval
-      context.arc(tp.x*draw_factor, tp.y*draw_factor, (this.effective_radius*draw_factor) * .75, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.shoot_duration / total_time), true)
-      context.lineWidth = 2
-      context.strokeStyle = "gray"
-      context.stroke()
-
-      context.restore()
-      context.globalAlpha = 1
-  }
-
-  if(this.red_visibility > 0) {
-      var tp = this.body.GetPosition()
-      context.save();
-      context.translate(tp.x * draw_factor, tp.y * draw_factor);
-      context.rotate(this.body.GetAngle());
-      context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-
-      context.beginPath()
-      context.globalAlpha = this.red_visibility
-
-      context.moveTo((tp.x+this.shape_points[0][0].x)*draw_factor, (tp.y+this.shape_points[0][0].y)*draw_factor)
-      for(var i = 1; i < this.shape_points[0].length; i++)
-      {
-        context.lineTo((tp.x+this.shape_points[0][i].x)*draw_factor, (tp.y+this.shape_points[0][i].y)*draw_factor)
-      }
-      context.closePath()
-      context.fillStyle = "red"
-      context.fill()
-      context.globalAlpha = 1
-      context.restore()
-  }
-
-  if(this.lighten_timer >= 0) {
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (Math.max(this.lighten_timer, 0) / this.lighten_interval), true)
-    context.lineWidth = 2
-    context.strokeStyle = "red"
-    context.stroke()
-  }*/
-
-
+  globalAlpha = 1
 }
-
-BossOne.prototype.get_two_shooter_locs = function() {
-  var locs = []
-  locs.push({x: this.body.GetPosition().x + Math.cos(this.body.GetAngle() - Math.PI/4) * this.effective_radius * 1.5, y: this.body.GetPosition().y +Math.sin(this.body.GetAngle() - Math.PI/4) * this.effective_radius * 1.5})
-  locs.push({x: this.body.GetPosition().x +Math.cos(this.body.GetAngle() + Math.PI/4) * this.effective_radius * 1.5, y: this.body.GetPosition().y +Math.sin(this.body.GetAngle() + Math.PI/4) * this.effective_radius * 1.5})
-  return locs
-
-}
-
-BossOne.prototype.get_shooter_types = function(num_shot) {
-
-  return this.shooter_types_list[num_shot % this.shooter_types_list.length]
-
-}
-
 
 BossOne.prototype.pre_draw = function(context, draw_factor) {
+  context.save()
+  if (this.dying) {
+      var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+      context.globalAlpha *= (1 - prog)
+  } else
+      context.globalAlpha *= this.visibility ? this.visibility : 1
+
+  context.globalAlpha /= 1.5;
+  if(this.lighten_timer >= 0) {
+    this.draw_special_attack_timer(context, draw_factor)
+  }
+  context.globalAlpha /= 1.3;
+  this.draw_aura(context, draw_factor)
   if(this.lighten_timer < 0 && this.lighten_timer >= -this.lighten_duration) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
-    context.globalAlpha = gray/6
-    context.fillStyle = "#00bfff"
+    context.globalAlpha = gray/2
+    context.fillStyle = this.color
     context.fillRect(0, 0, canvasWidth, canvasHeight)
   }
 
+  context.restore()
 }
 
 BossOne.prototype.move = function() {
@@ -809,7 +739,6 @@ BossOne.prototype.move = function() {
   } else {
     this.body.SetAngle(this.body.GetAngle() + Math.PI/2000)
   }
-
 }
 
 BossOne.prototype.collide_with = function(other) {
@@ -855,7 +784,7 @@ BossOne.prototype.process_impulse = function(attack_loc, impulse_force, hit_angl
 }
 
 BossOne.prototype.switch_to_punching = function() {
-  this.state = "punching"    
+  this.state = "punching"
   this.move_arm_to_default("left", true)
   this.move_arm_to_default("right", true)
   this.state_switch_timer = this.state_switch_interval
@@ -892,4 +821,14 @@ BossOne.prototype.explode = function() {
 
     }
   }
+}
+
+BossOne.prototype.getLife = function() {
+  if(this.dying) {
+    return 0
+  }
+  var dist = Math.min(775/draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/draw_factor)
+  var dist2 = Math.min(575/draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/draw_factor)
+  return Math.min(dist, dist2)/(275/draw_factor)
+
 }

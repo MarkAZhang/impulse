@@ -85,7 +85,7 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
   context.restore()
 }
 
-function draw_vprogress_bar(context, x, y, w, h, prop, color) {
+function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
 
   context.shadowBlur = 20;
   context.shadowColor = color
@@ -101,12 +101,15 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color) {
   context.restore()
   context.beginPath()
 
+  if(up) {
+    context.rect(x - w * .5, y + h * .5 - prop * h, w, h * prop)
+  } else {
+    context.rect(x - w * .5, y - h * .5, w, h * prop)
+  }
 
   context.shadowColor = color
-  context.rect(x - w * .5, y - h * .5, w, h * prop)
   context.fillStyle = color
   context.fill()
-
   context.shadowBlur = 0;
 }
 
@@ -153,7 +156,7 @@ function loadSprite(imageName)
     return image;
 }
 
-mainSprite = loadSprite("art/sprites.png")
+playerSprite = loadSprite("art/sprites.png")
 
 spriteSheetData = {
   //x, y, w, h
@@ -161,9 +164,18 @@ spriteSheetData = {
   "player_red": [0, 0, 60, 60],
   "player_yellow": [120, 0, 60, 60],
   "player_gray": [180, 0, 60, 60],
-  "player_green": [240, 0, 60, 60]
+  "player_green": [240, 0, 60, 60],
 
+  "immunitas_arm": [0, 0, 90, 90],
+  "immunitas_hand": [90, 0, 90, 90],
+  "immunitas_head": [0, 90, 108, 108],
+  "immunitas_glow": [180, 0, 270, 270],
+  "immunitas_aura": [450, 0, 245, 245]
 }
+
+immunitasSprite = loadSprite("art/immunitas_sprite.png")
+
+
 
 var impulse_bg_images = {}
 
@@ -174,7 +186,7 @@ for(var bg in imp_vars.bg) {
 function drawSprite(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, imageObject)
 {
 
-    imageObject = typeof imageObject !== 'undefined' ? imageObject: mainSprite;
+    imageObject = typeof imageObject !== 'undefined' ? imageObject: playerSprite;
     var w = imageObject.width;
     var h = imageObject.height;
 

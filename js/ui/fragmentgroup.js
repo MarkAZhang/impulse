@@ -7,7 +7,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.fragments = []
   velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
 
-  this.burst_force = Math.max(3, Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
+
 
 
   //decrease the velocity some so that the explosion looks good
@@ -16,19 +16,26 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.life_left = this.lifespan
   this.color = "black"
 
-
-  if(enemy_type=="player") {
+  if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
+    this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.color = impulse_enemy_stats[enemy_type].color
+    this.original_v_damping = 0.5
+    this.num_fragments = 20
+    this.burst = 5
+  } else if(enemy_type=="player") {
     this.shape =
       {type: "circle", x: 0, y: 0, r: Player.prototype.radius}
     this.color = impulse_colors["player_color"]
     this.original_v_damping = 0.5
     this.num_fragments = 10
+    this.burst = 1
 
   } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = impulse_enemy_stats[enemy_type].color
     this.original_v_damping = 0.3
     this.num_fragments = 2
+    this.burst = 1
 
   } else {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
@@ -38,7 +45,10 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     }
     this.original_v_damping = 0.3
     this.num_fragments = 3
+    this.burst = 1
   }
+
+  this.burst_force = this.burst * Math.max(3, Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
 
   this.v_decay_per_second = .5
   this.center = {x: loc.x, y: loc.y}

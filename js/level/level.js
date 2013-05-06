@@ -70,11 +70,9 @@ Level.prototype.reset = function() {
   this.spawn_timer = this.spawn_interval
   this.obstacle_visibility = 1 //for Wisp
   this.obstacles_visible_timer = 0
-  this.boss_delay_interval = 10000
-  this.boss_delay_timer = 0
   this.boss_radius = 3
   this.boss = null
-  this.boss_kills = 0
+  this.boss_spawned = false
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
@@ -89,10 +87,6 @@ Level.prototype.reset = function() {
 }
 
 Level.prototype.process = function(dt) {
-
-    if(this.boss_delay_timer > 0) {
-      this.boss_delay_timer -= dt
-    }
 
   //handle obstacle visibility
     if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
@@ -146,10 +140,10 @@ Level.prototype.process = function(dt) {
 
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
       if((impulse_enemy_stats[this.enemies[dead_i].type].className).prototype.is_boss) {
-        this.boss_delay_timer = this.boss_delay_interval
-        this.boss_radius = impulse_enemy_stats[this.enemies[dead_i].type].effective_radius
-        this.boss = null
-        this.boss_kills += 1
+        //boss defeated!!
+
+
+
       }
 
       this.enemies.splice(dead_i, 1)
@@ -230,7 +224,7 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-  if(this.total_fragments < this.max_fragments) {
+  if(this.total_fragments < this.max_fragments || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
     this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
     this.total_fragments += 6;
   }
@@ -241,7 +235,10 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
 
   var this_enemy = impulse_enemy_stats[enemy_type].className
 
-  if(this_enemy.prototype.is_boss && this.boss_delay_timer > 0) return
+  if(this_enemy.prototype.is_boss && this.boss_spawned) {
+    return;
+
+  }
 
   //if at the cap, don't spawn more
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) return
@@ -249,6 +246,8 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
 
   if(this_enemy.prototype.is_boss) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, levelWidth/draw_factor/2, (levelHeight)/draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    this.boss = temp_enemy
+    this.boss_spawned = true
   }
   else if(this.spawn_points) {
 

@@ -30,7 +30,8 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.level_name = this.level.level_name
   this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
-  this.color = this.level_name.slice(0,4) == "BOSS" ? impulse_colors["boss"] : impulse_colors["world "+this.world_num+" lite"]
+  this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
+  this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
 
   var gravity = new b2Vec2(000, 000);
@@ -38,7 +39,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.world = new b2World(gravity, doSleep);
 
   //add walls
-  
+
     this.addWalls()
 
 
@@ -79,6 +80,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.zoom_target_scale = 1
   this.zoom = 0.1
   this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1)
+  this.fade_state = "in"
 }
 
 ImpulseGameState.prototype.zoom_in = function(center, target) {
@@ -134,12 +136,22 @@ ImpulseGameState.prototype.process = function(dt) {
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1)
+        this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.game_over();
         this.ready = false
       }
       return;
-
+    }
+    if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0) {
+      if(this.zoom_state == "none" && this.zoom == 1) {
+        this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 10)
+        this.fade_state = "out"
+      } else if(this.zoom_state == "none"){
+        this.game_over();
+        this.ready = false
+      }
+      return;
     }
 
 
@@ -192,10 +204,10 @@ ImpulseGameState.prototype.bg_transition = function() {
 }
 
 ImpulseGameState.prototype.set_zoom_transparency = function() {
-  if(this.zoom_state == "in") {
+  if(this.fade_state == "in") {
       var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
       ctx.globalAlpha = Math.max(1-prop,0)
-  } else if(this.zoom_state == "out"){
+  } else if(this.fade_state == "out"){
     var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
     ctx.globalAlpha = Math.min(prop,1)
   }
@@ -211,8 +223,14 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.translate((canvasWidth/2 - (this.camera_center.x)*this.zoom)/this.zoom, (canvasHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
   ctx.drawImage(bg_canvas, sidebarWidth*this.zoom, 0)
   ctx.setTransform(1, 0, 0, 1, 0, 0);*/
+
   ctx.save();
   ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+
+  if(this.zoom_state == "in" ) {
+    ctx.rect(0, 0, levelWidth, levelHeight);
+    ctx.clip()
+  }
 
   ctx.scale(this.zoom, this.zoom)
   ctx.translate((levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
@@ -253,8 +271,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.globalAlpha = 1
 
-  if(this.zoom_state == "in")
+  if(this.fade_state == "in")
     ctx.globalAlpha = 1-(this.zoom_transition_timer) / (this.zoom_transition_period)
+  if(this.fade_state == "out")
+    ctx.globalAlpha = (this.zoom_transition_timer) / (this.zoom_transition_period)
   this.player.draw(ctx)
 
   ctx.restore();
@@ -369,31 +389,41 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
 
   ctx.fillText(this.game_numbers.last_time, sidebarWidth/2, canvasHeight/2)
 
+  if(!this.is_boss_level) {
+    // draw score
+    ctx.font = '40px Muli'
+    ctx.fillText(this.game_numbers.score, canvasWidth - sidebarWidth/2, 46)
 
-  // draw score
-  ctx.font = '40px Muli'
-  ctx.fillText(this.game_numbers.score, canvasWidth - sidebarWidth/2, 46)
+    ctx.textAlign = 'center'
 
-  ctx.textAlign = 'center'
+    if(this.stars < 3) {
+      ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.font = '20px Muli'
+      ctx.fillText("GOAL",canvasWidth - sidebarWidth/2, canvasHeight - 15)
+      ctx.font = '40px Muli'
+      ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
+    }
+    else {
+      ctx.fillStyle = impulse_colors[this.star_colors[2]]
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.font = '60px Muli'
+      ctx.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
+    }
 
-  if(this.stars < 3) {
-    ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
+    draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
+  } else {
+    ctx.fillStyle = impulse_colors["boss "+this.world_num]
     ctx.shadowColor = ctx.fillStyle;
     ctx.font = '20px Muli'
-    ctx.fillText("GOAL",canvasWidth - sidebarWidth/2, canvasHeight - 15)
-    ctx.font = '40px Muli'
-    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
-  }
-  else {
-    ctx.fillStyle = impulse_colors[this.star_colors[2]]
-    ctx.shadowColor = ctx.fillStyle;
-    ctx.font = '60px Muli'
-    ctx.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
+    ctx.fillText("BOSS LIFE",canvasWidth - sidebarWidth/2, canvasHeight - 45)
+    if(this.level.boss)
+      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
+    else
+      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
   }
 
-  var temp_stars = this.stars < 3 ? this.stars : 2
 
-  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
   /*draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
 
   /*ctx.beginPath()
@@ -403,14 +433,14 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.globalAlpha = .6
   ctx.fill()
   ctx.globalAlpha = 1*/
-
-  ctx.textAlign = 'center'
-  ctx.font = '72px Muli'
-  ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
-  ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
-  ctx.shadowBlur = 40;
-  ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
-
+  if(!this.is_boss_level) {
+    ctx.textAlign = 'center'
+    ctx.font = '72px Muli'
+    ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
+    ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
+    ctx.shadowBlur = 40;
+    ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
+  }
 
 
 
@@ -495,7 +525,7 @@ ImpulseGameState.prototype.on_key_up = function(keyCode) {
 
 ImpulseGameState.prototype.addWalls = function() {
   var wall_dim, wall_pos;
-  
+
     wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
       {x: levelWidth/this.draw_factor/2, y: 2},
       {x: 2, y: (levelHeight)/draw_factor/2},
@@ -505,8 +535,8 @@ ImpulseGameState.prototype.addWalls = function() {
       {x: levelWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
       {x: -2, y: (levelHeight)/this.draw_factor/2},
       {x: levelWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
-  
-  
+
+
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
     fixDef.filter.categoryBits = 0x0001

@@ -44,7 +44,7 @@ function LevelIntroState(level_name, world) {
 
   var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
 
-  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, 
+  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
     obstacle_edges: this.level.obstacle_edges,
      draw_factor: draw_factor,
      levelWidth: levelWidth,
