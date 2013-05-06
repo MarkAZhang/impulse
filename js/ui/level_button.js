@@ -54,7 +54,7 @@ LevelButton.prototype.additional_draw = function(context) {
 
   context.beginPath()
   context.textAlign = 'center'
-  context.font = this.hover ? (1.25 * this.size) +'px Century Gothic' : this.size +'px Century Gothic'
+  context.font = this.hover ? (1.25 * this.size) +'px Muli' : this.size +'px Muli'
   context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
 
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
@@ -63,7 +63,7 @@ LevelButton.prototype.additional_draw = function(context) {
   if(this.state == "unavailable") {
     context.beginPath()
     context.textAlign = "center"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("UNAVAILABLE", this.x, this.y)
     context.fill()
@@ -74,7 +74,7 @@ LevelButton.prototype.additional_draw = function(context) {
     draw_empty_star(ctx, this.x + 20, this.y + 20, 15, "gray")
     context.beginPath()
     context.textAlign = "center"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("LOCKED", this.x, this.y)
     context.fillText(impulse_level_data[this.level_name].star_cutoff, this.x - 20, this.y + 25)
@@ -148,7 +148,7 @@ LevelButton.prototype.additional_draw = function(context) {
     context.stroke()
     context.beginPath()
     context.textAlign = "left"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = this.color
     context.fillText(this.level_name, this.fx - this.fw/2 + 10, this.fy - this.fh/2 + this.size)
     context.fill()
@@ -181,7 +181,7 @@ LevelButton.prototype.additional_draw = function(context) {
   }
 
   if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score == 0) {
-    context.font = "25px Century Gothic"
+    context.font = "25px Muli"
     context.textAlign = "right"
     context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
     context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)

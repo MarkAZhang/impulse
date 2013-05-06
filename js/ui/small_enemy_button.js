@@ -17,7 +17,7 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.fillStyle = this.color
-  context.font = this.size +'px Century Gothic'
+  context.font = this.size +'px Muli'
   context.fill()
 
   var cur_x = this.x
@@ -26,7 +26,7 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
 
   if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
     (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
-    context.font = "15px Century Gothic"
+    context.font = "15px Muli"
     context.textAlign = "left"
     context.fillStyle = "black"
     context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)

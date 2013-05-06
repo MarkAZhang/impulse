@@ -128,6 +128,7 @@ function getCursorPosition(e){
 
 }
 
+// returns -Math.pi to Math.pi
 var _atan = function(center, ray) {
   var angle
   if(center.x == ray.x)
@@ -143,9 +144,21 @@ var _atan = function(center, ray) {
     return angle
   }
   angle = Math.atan((center.y-ray.y)/(center.x-ray.x))
-  if(center.x > ray.x)
+  if(center.x > ray.x && center.y < ray.y)
   {
     angle +=Math.PI
+  } else if(center.x > ray.x && center.y >= ray.y) {
+    angle -= Math.PI
+  }
+  return angle
+}
+
+var normalize_angle = function(angle) {
+  while(angle < -Math.PI) {
+    angle += 2 * Math.PI
+  }
+  while(angle > Math.PI) {
+    angle -= Math.Pi
   }
   return angle
 }

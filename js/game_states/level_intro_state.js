@@ -44,7 +44,11 @@ function LevelIntroState(level_name, world) {
 
   var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
 
-  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, obstacle_edges: this.level.obstacle_edges, draw_factor: draw_factor})
+  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons, 
+    obstacle_edges: this.level.obstacle_edges,
+     draw_factor: draw_factor,
+     levelWidth: levelWidth,
+     levelHeight: levelHeight})
 
   visibility_graph_worker.onmessage = function(_this) {
     return function(event) {
@@ -110,7 +114,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.beginPath()
   ctx.fillStyle = impulse_colors['world '+ this.world_num]
-  ctx.font = '30px Century Gothic'
+  ctx.font = '30px Muli'
   ctx.textAlign = 'center'
 
   ctx.fillText(this.level_name, levelWidth/2, 80)
@@ -133,7 +137,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   if (this.load_percentage < 1) {
     ctx.textAlign = 'center'
     draw_progress_bar(ctx, levelWidth - 150, levelHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillStyle = 'black'
     ctx.fillText("LOADING", levelWidth - 150, levelHeight - 33)
   }
@@ -142,7 +146,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     for(var i = 0; i < 3; i++) {
       ctx.textAlign = 'right'
-      ctx.font = '25px Century Gothic'
+      ctx.font = '25px Muli'
       ctx.fillStyle = impulse_colors[this.star_colors[i]]
       ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i],  levelWidth/2 + 100, 300 + 35 * i)
       draw_star(ctx,  levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
@@ -163,7 +167,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score,  levelWidth/2, 420)
 
     ctx.fillStyle = "black"
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillText("ENEMIES",  levelWidth/2, 470)
 
 

@@ -1,10 +1,8 @@
 var version_num = "1.0"
 var unlockall = true
 
-var canvasWidth, canvasHeight
-var ctx
-var canvas
-var canvas_container
+var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
+var ctx, canvas, bg_canvas, bg_ctx
 var draw_factor = 15
 var dt = 0
 var last_time = 0

@@ -58,7 +58,7 @@ EnemiesInfoState.prototype.draw = function(ctx, bg_ctx) {
     this.enemy_buttons[i].draw(ctx)
   }
   ctx.fillStyle = this.color
-  ctx.font = "20px Century Gothic"
+  ctx.font = "20px Muli"
   ctx.textAlign = "center"
   ctx.fillText("BONUS SLAYER STARS: "+player_data.kill_stars+"/12", levelWidth/2, 440)
   draw_progress_bar(ctx ,400, 470, 400, 15, player_data.kill_stars/12, impulse_colors["gold"])

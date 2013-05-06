@@ -71,7 +71,7 @@ WorldButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.fillStyle = impulse_colors["world "+this.world+" lite"]
-  context.font = this.hover ? (1.56 * this.size) +'px Century Gothic' : 1.25*this.size +'px Century Gothic'
+  context.font = this.hover ? (1.56 * this.size) +'px Muli' : 1.25*this.size +'px Muli'
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
   if(this.state == "locked") {
@@ -79,7 +79,7 @@ WorldButton.prototype.additional_draw = function(context) {
     draw_empty_star(ctx, this.x + 20, this.y + 20, 15, "gray")
     context.beginPath()
     context.textAlign = "center"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("LOCKED", this.x, this.y)
     context.fillText(world_cutoffs[this.level_name], this.x - 20, this.y + 25)
@@ -88,7 +88,7 @@ WorldButton.prototype.additional_draw = function(context) {
   else if(this.state == "unavailable") {
     context.beginPath()
     context.textAlign = "center"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("UNAVAILABLE", this.x, this.y)
     context.fill()
@@ -99,7 +99,7 @@ WorldButton.prototype.additional_draw = function(context) {
     draw_empty_star(ctx, this.x + 30, this.y + 20, 15, impulse_colors["world "+this.world] + " lite")
     context.beginPath()
     context.textAlign = "center"
-    context.font = this.size +'px Century Gothic'
+    context.font = this.size +'px Muli'
     context.fillStyle = impulse_colors["world "+this.world + ""]
     context.fillText(this.stars+"/"+this.max_stars, this.x - 20, this.y + 25)
 
@@ -108,7 +108,7 @@ WorldButton.prototype.additional_draw = function(context) {
     draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, impulse_colors["world "+this.world], impulse_colors["world "+this.world+" lite"])
 
     if(this.new_world) {
-      context.font = "25px Century Gothic"
+      context.font = "25px Muli"
       context.textAlign = "right"
       context.fillStyle = impulse_colors["world "+(this.world)+ " lite"]
       context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)

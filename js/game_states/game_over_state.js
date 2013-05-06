@@ -111,13 +111,13 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.beginPath()
   ctx.fillStyle = 'red'
-  ctx.font = '30px Century Gothic'
+  ctx.font = '30px Muli'
   ctx.textAlign = 'center'
 
   ctx.fillText("GAME OVER", levelWidth/2, 80)
   ctx.fill()
   ctx.beginPath()
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   ctx.fillStyle = 'black'
   ctx.fillText(this.level.level_name, levelWidth/2, 110)
 

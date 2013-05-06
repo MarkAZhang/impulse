@@ -34,7 +34,7 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
   if(this.cur_song != null) {
     context.beginPath()
     context.textAlign = "center"
-    context.font = "12px Century Gothic"
+    context.font = "12px Muli"
     context.fillStyle = impulse_colors["impulse_blue"]
     ctx.fillText("Currently Playing: " + this.cur_song, levelWidth/2, 175)
     var duration = Math.round(impulse_music.getCurrentSong().sound.getDuration())

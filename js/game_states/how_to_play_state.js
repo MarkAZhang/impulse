@@ -58,7 +58,7 @@ HowToPlayState.prototype.reload_world = function() {
 HowToPlayState.prototype.loading_screen = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath()
-  ctx.font = '30px Century Gothic'
+  ctx.font = '30px Muli'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
   ctx.fillText("LOADING", canvasWidth/2, canvasHeight/2)
@@ -125,12 +125,12 @@ HowToPlayState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[i].draw(ctx)
     }
     ctx.fillStyle = 'black'
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillText("HOW TO PLAY", canvasWidth/2, 25)
     ctx.fillStyle = 'blue'
-    ctx.font = '25px Century Gothic'
+    ctx.font = '25px Muli'
     var text = "ACHIEVE THE BRONZE, SILVER, AND GOLD SCORES IN EACH LEVEL TO EARN STARS AND UNLOCK MORE LEVELS."
-    var phrase_list = getLines(ctx, text, canvasWidth * 3/4, '25px Century Gothic')
+    var phrase_list = getLines(ctx, text, canvasWidth * 3/4, '25px Muli')
 
     for(var i = 0; i < phrase_list.length; i++) {
       var j = (i - phrase_list.length/2)
@@ -180,8 +180,8 @@ HowToPlayState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.beginPath()
   ctx.fillStyle = 'blue'
-  ctx.font = '25px Century Gothic'
-  var phrase_list = getLines(ctx, text[this.state], canvasWidth * 3/4, '25px Century Gothic')
+  ctx.font = '25px Muli'
+  var phrase_list = getLines(ctx, text[this.state], canvasWidth * 3/4, '25px Muli')
 
   for(var i = 0; i < phrase_list.length; i++) {
     var j = (i - phrase_list.length/2)
@@ -217,7 +217,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   ctx.lineWidth = 2
   ctx.stroke()
 
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   ctx.globalAlpha = 1
 
   ctx.fillStyle = "black"
@@ -230,12 +230,12 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   ctx.textAlign = 'right'
 
   if(this.stars < 3) {
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
     ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
   }
   else {
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillStyle = impulse_colors[this.star_colors[2]]
     ctx.fillText("WIN", canvasWidth - 10, 25)
   }
@@ -254,7 +254,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   ctx.globalAlpha = 1
 
   ctx.textAlign = 'center'
-  ctx.font = '30px Century Gothic'
+  ctx.font = '30px Muli'
   ctx.fillStyle = "black"
   ctx.fillText("x"+this.game_numbers.combo, canvasWidth/2, 30)
 
@@ -291,7 +291,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   for(var i = 0; i < this.score_labels.length; i++)
   {
     ctx.beginPath()
-    ctx.font = this.score_labels[i].size+'px Century Gothic'
+    ctx.font = this.score_labels[i].size+'px Muli'
     var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color

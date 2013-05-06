@@ -78,7 +78,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.boss_force = 100
 
-  this.joint_inside_width = 1
+  this.joint_padding = 1
 
   this.punch_force = 200
 
@@ -86,10 +86,27 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.action_timer = this.action_interval
 
+  this.data = impulse_enemy_stats[this.type]
+
   this.state = "none"
+  this.joints = {}
+  this.body_parts = {}
 
   this.add_arms()
 
+  this.joint_target_locs = {}
+
+  this.joint_polygons = {
+
+    "lu": this.data.upper_arm_polygon[0],
+    "ru": this.data.upper_arm_polygon[0],
+    "ll": this.data.lower_arm_polygon[0],
+    "rl": this.data.lower_arm_polygon[0],
+    "lh": this.data.hand_polygon[0],
+    "rh": this.data.hand_polygon[0]
+  }
+
+  this.punch_target_pt = null
 
 
 }
@@ -100,78 +117,62 @@ BossOne.prototype.add_arms = function() {
   var upper_arm_r = impulse_enemy_stats[this.type].upper_arm_polygon[0].r;
   var lower_arm_r = impulse_enemy_stats[this.type].lower_arm_polygon[0].r
   var hand_r = impulse_enemy_stats[this.type].hand_polygon[0].r;
+  var body_r = this.effective_radius;
+  var body_x = this.body.GetPosition().x
+  var body_y = this.body.GetPosition().y
+  var j_gap = this.joint_padding
 
-  this.left_upperarm = this.create_upper_arm_piece(this.body.GetPosition().x+this.effective_radius + upper_arm_r - 2 * this.joint_inside_width, this.body.GetPosition().y)
-  left_upperarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x+this.effective_radius - this.joint_inside_width, this.body.GetPosition().y)
-  left_upperarm_joint.Initialize(this.body, this.left_upperarm, joint_loc)
-  left_upperarm_joint.enableLimit = true;
-  left_upperarm_joint.lowerAngle = -Math.PI/2
-  left_upperarm_joint.upperAngle = Math.PI/2
-  left_upperarm_joint.collideConnected = false
-  this.left_upperarm_joint  = this.world.CreateJoint(left_upperarm_joint)
+  this.body_parts["lu"] = this.create_upper_arm_piece(body_x + body_r + upper_arm_r - 2 * j_gap, body_y)
+  this.joints["lu"] = this.create_joint(new b2Vec2(body_x + body_r - j_gap, body_y), this.body, this.body_parts["lu"])
 
-  this.left_lowerarm = this.create_lower_arm_piece(this.body.GetPosition().x+this.effective_radius + 2 * upper_arm_r +lower_arm_r - 4 * this.joint_inside_width, this.body.GetPosition().y)
-  left_lowerarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x+ this.effective_radius +2*upper_arm_r - 3*this.joint_inside_width, this.body.GetPosition().y)
-  left_lowerarm_joint.Initialize(this.left_upperarm, this.left_lowerarm, joint_loc)
-  left_lowerarm_joint.enableLimit = true;
-  left_lowerarm_joint.lowerAngle = -Math.PI/2
-  left_lowerarm_joint.upperAngle = Math.PI/2
-  left_lowerarm_joint.collideConnected = false
-  this.left_lowerarm_joint  = this.world.CreateJoint(left_lowerarm_joint)
+  this.body_parts["ll"] = this.create_lower_arm_piece(body_x + body_r + 2 * upper_arm_r + lower_arm_r - 4 * j_gap, body_y)
+  this.joints["ll"] = this.create_joint(new b2Vec2(body_x + body_r + 2 * upper_arm_r - 3* j_gap, body_y), this.body_parts["lu"], this.body_parts["ll"])
 
-  this.left_hand = this.create_hand(this.body.GetPosition().x+this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4 * this.joint_inside_width + 0.25 * hand_r, this.body.GetPosition().y)
-  this.left_hand.SetAngle(Math.PI/4)
-  left_hand_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x+ this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4*this.joint_inside_width + 0.25 * hand_r, this.body.GetPosition().y)
-  left_hand_joint.Initialize(this.left_lowerarm, this.left_hand, joint_loc)
-  left_hand_joint.enableLimit = true;
-  left_hand_joint.lowerAngle = -Math.PI/2
-  left_hand_joint.upperAngle = Math.PI/2
-  left_hand_joint.collideConnected = false
-  this.left_hand_joint  = this.world.CreateJoint(left_hand_joint)
+  this.body_parts["lh"] = this.create_hand(body_x + body_r + 2 * upper_arm_r + 2*lower_arm_r - 4 * j_gap + 0.25 * hand_r, body_y)
+  this.body_parts["lh"].SetAngle(Math.PI/4)
+  this.joints["lh"] = this.create_joint(new b2Vec2(body_x + body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r, body_y), this.body_parts["ll"], this.body_parts["lh"])
 
-  this.right_upperarm = this.create_upper_arm_piece(this.body.GetPosition().x - (this.effective_radius + upper_arm_r - 2 * this.joint_inside_width), this.body.GetPosition().y)
-  right_upperarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius - this.joint_inside_width), this.body.GetPosition().y)
-  right_upperarm_joint.Initialize(this.body, this.right_upperarm, joint_loc)
-  right_upperarm_joint.enableLimit = true;
-  right_upperarm_joint.lowerAngle = -Math.PI/2
-  right_upperarm_joint.upperAngle = Math.PI/2
-  right_upperarm_joint.collideConnected = false
-  this.right_upperarm_joint  = this.world.CreateJoint(right_upperarm_joint)
+  this.body_parts["ru"] = this.create_upper_arm_piece(body_x - (body_r + upper_arm_r - 2 * j_gap), body_y)
+  this.joints["ru"] = this.create_joint(new b2Vec2(body_x - (body_r - j_gap), body_y), this.body, this.body_parts["ru"])
 
-  this.right_lowerarm = this.create_lower_arm_piece(this.body.GetPosition().x - (this.effective_radius +  2 * upper_arm_r +lower_arm_r - 4 * this.joint_inside_width), this.body.GetPosition().y)
-  right_lowerarm_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius +2*upper_arm_r - 3*this.joint_inside_width), this.body.GetPosition().y)
-  right_lowerarm_joint.Initialize(this.right_upperarm, this.right_lowerarm, joint_loc)
-  right_lowerarm_joint.enableLimit = true;
-  right_lowerarm_joint.lowerAngle = -Math.PI/2
-  right_lowerarm_joint.upperAngle = Math.PI/2
-  right_lowerarm_joint.collideConnected = false
-  this.right_lowerarm_joint  = this.world.CreateJoint(right_lowerarm_joint)
+  this.body_parts["rl"] = this.create_lower_arm_piece(body_x - (body_r + 2 * upper_arm_r + lower_arm_r - 4 * j_gap), body_y)
+  this.joints["rl"] = this.create_joint(new b2Vec2(body_x - (body_r + 2 * upper_arm_r - 3* j_gap), body_y), this.body_parts["ru"], this.body_parts["rl"])
 
-  this.right_hand = this.create_hand(this.body.GetPosition().x - (this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4 * this.joint_inside_width + 0.25 * hand_r), this.body.GetPosition().y)
-  this.right_hand.SetAngle(Math.PI/4)
-  right_hand_joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
-  joint_loc = new b2Vec2(this.body.GetPosition().x - (this.effective_radius + 2 * upper_arm_r + 2 * lower_arm_r - 4*this.joint_inside_width + 0.25 * hand_r), this.body.GetPosition().y)
-  right_hand_joint.Initialize(this.right_lowerarm, this.right_hand, joint_loc)
-  right_hand_joint.enableLimit = true;
-  right_hand_joint.lowerAngle = -Math.PI/2
-  right_hand_joint.upperAngle = Math.PI/2
-  right_hand_joint.collideConnected = false
-  this.right_hand_joint  = this.world.CreateJoint(right_hand_joint)
+  this.body_parts["rh"] = this.create_hand(body_x - (body_r + 2 * upper_arm_r + 2*lower_arm_r - 4 * j_gap + 0.25 * hand_r), body_y)
+  this.body_parts["rh"].SetAngle(Math.PI/4)
+  this.joints["rh"] = this.create_joint(new b2Vec2(body_x - (body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r), body_y), this.body_parts["rl"], this.body_parts["rh"])
 
 }
 
-BossOne.prototype.punch_at = function(pt, hand) {
-  return
-  if(hand == "left") {
-    var angle = _atan(this.right_hand.GetPosition(), {x: pt.x, y: pt.y})
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
-    dir.Multiply(this.punch_force);
-    this.right_hand.ApplyImpulse(dir, this.right_hand.GetWorldCenter())
+BossOne.prototype.load_punch_at_player = function(side) {
+    this.action_timer = this.action_interval  
+    if(side=="left") {
+      var _this = this;
+      this.state = "loading_left"
+      this.rotate_joint_to("lu", -Math.PI/12)
+      this.rotate_joint_to("ll", function() {
+        return _atan(_this.joints["ll"].GetAnchorA(), _this.player.body.GetPosition()) - _this.joints["lu"].GetJointAngle()
+      })
+      this.rotate_joint_to("lh", 0)
+    }
+}
+
+BossOne.prototype.punch_at = function(pt, side) {
+  if(side=="left") {
+    this.action_timer = this.action_interval * 10
+    this.punch_target_pt = pt
+    this.state = "punching_left"
+    this.joints["ll"].SetLimits(-Math.PI/2, Math.PI/2)
+    this.joints["lu"].SetLimits(-Math.PI/2, Math.PI/2)
+    this.joints["lh"].SetLimits(0, 0)
+  }
+}
+
+BossOne.prototype.rotate_joint_to = function(joint_name, angle) {
+
+  this.joint_target_locs[joint_name] = {
+    start: this.joints[joint_name].GetJointAngle(),
+    end: angle
   }
 }
 
@@ -183,6 +184,16 @@ BossOne.prototype.create_upper_arm_piece = function(x, y) {
 }
 BossOne.prototype.create_hand = function(x, y) {
   return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.1, 0x0100, 0x0012, this)
+}
+BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
+
+  var joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  joint.Initialize(body1, body2, joint_loc)
+  joint.enableLimit = true;
+  joint.lowerAngle = -Math.PI/2
+  joint.upperAngle = Math.PI/2
+  joint.collideConnected = false
+  return this.world.CreateJoint(joint)
 }
 
 BossOne.prototype.additional_processing = function(dt) {
@@ -203,6 +214,8 @@ BossOne.prototype.additional_processing = function(dt) {
 
   }
 
+  this.action_timer -= dt;
+
   // turn the boss around
   if(this.state == "none") {
     if(is_angle_between(cur_angle - Math.PI, cur_angle, player_angle)) {
@@ -216,24 +229,49 @@ BossOne.prototype.additional_processing = function(dt) {
       else
       this.body.SetAngle(this.body.GetAngle() + Math.PI * 2 * dt/2000)
     }
+    if(this.action_timer < 0) {
+      this.load_punch_at_player("left")
+    }
+  }
+
+  if(this.state == "loading_left") {
+    if(this.action_timer < 0) {
+      this.punch_at(this.player.body.GetPosition(), "left")
+    } else {
+    
+      for(joint in this.joint_target_locs) {
+        if(this.joint_target_locs[joint].hasOwnProperty("start") && this.joint_target_locs[joint].hasOwnProperty("end")) {
+          var prog = Math.max((this.action_timer)/(this.action_interval),0)
+          var end_angle = null;
+          if(typeof this.joint_target_locs[joint].end == "function") {
+            end_angle = this.joint_target_locs[joint].end()
+            console.log("FUNCTION END ANGLE "+end_angle)
+          } else {
+            end_angle = this.joint_target_locs[joint].end
+          }
+          var cur_angle = prog * this.joint_target_locs[joint].start + (1-prog) * end_angle;
+          //console.log("CUR ANGLE "+joint+" "+cur_angle)
+          this.joints[joint].SetLimits(cur_angle, cur_angle)
+        }
+      }
+    }
+
+        
   }
 
   if(this.state == "punching_left") {
-    if(this.left_hand.m_linearVelocity.Length() < 1) {
-      this.state = "none"
-      this.action_timer = this.action_interval
-    }
-  }
+      if(this.action_timer < 0) {
+        this.state = "done"
+      } else {
+        var angle = _atan(this.body_parts["lh"].GetPosition(), this.punch_target_pt)
+        var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+        dir.Multiply(this.punch_force);
+        this.body_parts["lh"].ApplyImpulse(dir, this.body_parts["lh"].GetWorldCenter())
 
-  if(this.action_timer < 0) {
-    if(this.state == "none") {
-      this.state = "punching_left"
-      this.punch_at(this.player.body.GetPosition(), "left")
-    }
+      }
 
-  } else {
-    this.action_timer -= dt;
-  }
+    }
+    
 
 
   if(this.shooter_color_change_prog > 0) {
@@ -337,12 +375,19 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
   if (this.dying) return
 
   var shooter_locs = this.get_two_shooter_locs()
-  this.draw_body_part(this.left_upperarm, impulse_enemy_stats[this.type].upper_arm_polygon[0], context, draw_factor);
-  this.draw_body_part(this.left_lowerarm, impulse_enemy_stats[this.type].lower_arm_polygon[0], context, draw_factor);
-  this.draw_body_part(this.right_upperarm, impulse_enemy_stats[this.type].upper_arm_polygon[0], context, draw_factor);
-  this.draw_body_part(this.right_lowerarm, impulse_enemy_stats[this.type].lower_arm_polygon[0], context, draw_factor);
-  this.draw_body_part(this.left_hand, impulse_enemy_stats[this.type].hand_polygon[0], context, draw_factor);
-  this.draw_body_part(this.right_hand, impulse_enemy_stats[this.type].hand_polygon[0], context, draw_factor);
+
+  if(this.state == "punching_left") {
+    context.beginPath()
+    context.arc(this.punch_target_pt.x * draw_factor, this.punch_target_pt.y *draw_factor, 10, 0, Math.PI * 2, false)
+    context.fillStyle = "white"
+    context.fill()
+
+  }
+  
+  for(bodypart in this.body_parts) {
+
+    this.draw_body_part(this.body_parts[bodypart], this.joint_polygons[bodypart], context, draw_factor)
+  }
 
   /*for(var j = 0; j < 2; j++) {
 

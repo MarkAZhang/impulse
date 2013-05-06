@@ -40,7 +40,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)*/
   ctx.globalAlpha = 1
   ctx.beginPath()
-  ctx.font = '72px Century Gothic'
+  ctx.font = '72px Muli'
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 20
   ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -52,7 +52,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[this.state][i].draw(ctx)
     }
 
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'

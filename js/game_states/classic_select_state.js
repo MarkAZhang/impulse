@@ -67,7 +67,7 @@ ClassicSelectState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.beginPath()
 
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'

@@ -28,13 +28,13 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)*/
   ctx.globalAlpha = 1
   ctx.beginPath()
-  ctx.font = '72px Century Gothic'
+  ctx.font = '72px Muli'
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 20
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = 'center'
   ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.fillText("Impulse was conceived, designed, and coded by Mark Zhang", levelWidth/2, levelHeight/2 + 50)
   ctx.fillText("Impulse is based on the Box2D physics engine.", levelWidth/2, levelHeight/2 + 75)

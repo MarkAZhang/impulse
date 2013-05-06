@@ -3,6 +3,8 @@ self.onmessage = function(event) {
   var polygons = event.data.polygons
   var obstacle_edges = event.data.obstacle_edges
   var draw_factor = event.data.draw_factor
+  var levelWidth = event.data.levelWidth
+  var levelHeight = event.data.levelHeight
   var poly_edges = []
   var vertices = []
   var edges = []
@@ -25,7 +27,7 @@ self.onmessage = function(event) {
         }
       }
 
-      if(!inPoly && check_bounds(0, vertex, draw_factor))
+      if(!inPoly && check_bounds(0, vertex, draw_factor, levelWidth, levelHeight))
       {
         vertex.p_n = i  //number of polygon
         vertex.p_v = polygon.length
@@ -141,6 +143,10 @@ function p_dist(p1, p2)
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
 }
 
+function check_bounds(buffer, pt, draw_factor, levelWidth, levelHeight) {
+  var factor = draw_factor ? draw_factor : 1
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= levelWidth/factor - buffer && pt.y <= (levelHeight)/factor - buffer
+}
 function segIntersection(seg1s, seg1f, seg2s, seg2f)
 {
   var seg1d = {x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}

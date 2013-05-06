@@ -100,7 +100,7 @@ ImpulseGameState.prototype.zoom_out = function(center, target) {
 ImpulseGameState.prototype.loading_screen = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath()
-  ctx.font = '30px Century Gothic'
+  ctx.font = '30px Muli'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
   ctx.fillText("LOADING", levelWidth/2, (levelHeight)/2)
@@ -241,7 +241,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   for(var i = 0; i < this.score_labels.length; i++)
   {
     ctx.beginPath()
-    ctx.font = this.score_labels[i].size+'px Century Gothic'
+    ctx.font = this.score_labels[i].size+'px Muli'
     var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
     ctx.globalAlpha = prog
     ctx.fillStyle = this.score_labels[i].color
@@ -344,13 +344,13 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.fillStyle = this.color;
   ctx.textAlign = 'center'
 
-  ctx.font = '64px Century Gothic'
+  ctx.font = '64px Muli'
   ctx.shadowBlur = 20;
   ctx.shadowColor = ctx.fillStyle;
   type = this.level_name.slice(0,4) == "BOSS" ? "BOSS" : "HIVE"
   ctx.fillText(type, sidebarWidth/2, 70)
 
-  ctx.font = '80px Century Gothic'
+  ctx.font = '80px Muli'
   if(this.level_name.slice(0,4) == "BOSS") {
     ctx.fillText(this.world_num, sidebarWidth/2, 140)
   } else {
@@ -359,7 +359,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
 
   // draw the game time
   ctx.fillStyle = this.color;
-  ctx.font = '40px Century Gothic'
+  ctx.font = '40px Muli'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
@@ -369,7 +369,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
 
 
   // draw score
-  ctx.font = '40px Century Gothic'
+  ctx.font = '40px Muli'
   ctx.fillText(this.game_numbers.score, canvasWidth - sidebarWidth/2, 46)
 
   ctx.textAlign = 'center'
@@ -377,15 +377,15 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   if(this.stars < 3) {
     ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
     ctx.shadowColor = ctx.fillStyle;
-    ctx.font = '20px Century Gothic'
+    ctx.font = '20px Muli'
     ctx.fillText("GOAL",canvasWidth - sidebarWidth/2, canvasHeight - 15)
-    ctx.font = '40px Century Gothic'
+    ctx.font = '40px Muli'
     ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
   }
   else {
     ctx.fillStyle = impulse_colors[this.star_colors[2]]
     ctx.shadowColor = ctx.fillStyle;
-    ctx.font = '60px Century Gothic'
+    ctx.font = '60px Muli'
     ctx.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
   }
 
@@ -403,7 +403,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.globalAlpha = 1*/
 
   ctx.textAlign = 'center'
-  ctx.font = '72px Century Gothic'
+  ctx.font = '72px Muli'
   ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
   ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
   ctx.shadowBlur = 40;
@@ -427,7 +427,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   }
   this.fps_counter+=1
   ctx.beginPath()
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   ctx.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
   ctx.fill()
 

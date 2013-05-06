@@ -17,8 +17,8 @@ SmallButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.shadowBlur = 5
-  //context.font = this.hover ? (1.25 * this.size)+'px Century Gothic' : this.size+'px Century Gothic'
-  context.font = this.size+'px Century Gothic';
+  //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
+  context.font = this.size+'px Muli';
   context.fillStyle = this.color;
   //context.fillStyle = this.hover ? this.hover_color : this.color
   context.shadowColor = context.fillStyle

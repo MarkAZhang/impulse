@@ -61,7 +61,7 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
 PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.beginPath()
   ctx.textAlign = "center";
-  ctx.font = '32px Century Gothic';
+  ctx.font = '32px Muli';
   ctx.shadowColor = "gray";
   ctx.shadowBlur = 10;
   ctx.fillStyle = "gray";
@@ -73,7 +73,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
     for(var i = 0; i < 3; i++) {
-      ctx.font = '24px Century Gothic';
+      ctx.font = '24px Muli';
       ctx.fillStyle = impulse_colors[temp_colors[i]]
       ctx.shadowColor = ctx.fillStyle
       ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 110 + 32 * i)
@@ -84,12 +84,12 @@ PauseMenu.prototype.additional_draw = function(ctx) {
       score_color+=1
     }
 
-    ctx.font = '20px Century Gothic';
+    ctx.font = '20px Muli';
     ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 225)
   }
-  ctx.font = '16px Century Gothic'
+  ctx.font = '16px Muli'
   ctx.fillStyle = "gray"
   ctx.fillText("SPACE TO UNPAUSE", this.x, this.y + this.h/2 + 25)
 
@@ -152,10 +152,10 @@ function EnemyBox(enemy_name) {
 EnemyBox.prototype.additional_draw = function(ctx) {
 
   if(this.special_ability == null) {
-    this.special_ability = getLines(ctx, impulse_enemy_stats[this.enemy_name].special_ability, this.w - 20, '20px Century Gothic')
+    this.special_ability = getLines(ctx, impulse_enemy_stats[this.enemy_name].special_ability, this.w - 20, '20px Muli')
   }
   if(this.other_notes == null && impulse_enemy_stats[this.enemy_name].other_notes != "") {
-    this.other_notes = getLines(ctx, impulse_enemy_stats[this.enemy_name].other_notes, this.w - 20, '20px Century Gothic')
+    this.other_notes = getLines(ctx, impulse_enemy_stats[this.enemy_name].other_notes, this.w - 20, '20px Muli')
   }
 
   if(this.special_ability != null && !this.h) {
@@ -169,7 +169,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
   ctx.beginPath()
   ctx.textAlign = "center"
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
   ctx.fillStyle = "black"
   ctx.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + 30)
 
@@ -216,7 +216,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
   ctx.beginPath()
   ctx.textAlign = 'center'
-  ctx.font = '20px Century Gothic'
+  ctx.font = '20px Muli'
 
   ctx.fillStyle = "black"
   for(var i = 0; i < this.special_ability.length; i++) {
@@ -230,7 +230,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
 
 
-  ctx.font = '25px Century Gothic'
+  ctx.font = '25px Muli'
   ctx.fillStyle = "white"
   ctx.fillText("CLICK TO CONTINUE", this.x, this.y + this.h/2 + 50 )
 

@@ -23,12 +23,12 @@ EnemyButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.fillStyle = impulse_enemy_stats[this.enemy_name].color
-  context.font = this.size +'px Century Gothic'
+  context.font = this.size +'px Muli'
   if(this.seen) {
     context.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + this.size + 5)
     if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
       (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
-      context.font = "25px Century Gothic"
+      context.font = "25px Muli"
       context.textAlign = "left"
       context.fillStyle = impulse_enemy_stats[this.enemy_name].color
       context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
@@ -56,7 +56,7 @@ EnemyButton.prototype.additional_draw = function(context) {
   }
   else {
     context.fillText("NOT SEEN", cur_x, this.y + this.h/2 - 5)
-    context.font = (3 * this.size) +'px Century Gothic'
+    context.font = (3 * this.size) +'px Muli'
     context.fillText("?", cur_x, cur_y + 10)
   }
 
