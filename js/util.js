@@ -418,6 +418,17 @@ function is_angle_between(small, large, angle) {
   return t_large - t_small <= Math.PI * 2
 }
 
+function angle_closest_to(this_angle, other_angle) {
+  while(other_angle - this_angle > Math.PI) {
+    other_angle -= 2 * Math.PI
+  }
+  while(other_angle - this_angle < -Math.PI) {
+    other_angle += 2 * Math.PI
+  }
+  return other_angle
+
+}
+
 function small_angle_between(angle1, angle2) {
   var ans = angle1 - angle2;
 

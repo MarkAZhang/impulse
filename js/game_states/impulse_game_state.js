@@ -38,7 +38,9 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.world = new b2World(gravity, doSleep);
 
   //add walls
-  this.addWalls()
+  
+    this.addWalls()
+
 
   if(this.level.player_loc) {
     this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
@@ -492,16 +494,19 @@ ImpulseGameState.prototype.on_key_up = function(keyCode) {
 }
 
 ImpulseGameState.prototype.addWalls = function() {
-  var wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
+  var wall_dim, wall_pos;
+  
+    wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
       {x: levelWidth/this.draw_factor/2, y: 2},
       {x: 2, y: (levelHeight)/draw_factor/2},
       {x: 2, y: (levelHeight)/draw_factor/2}]
 
-  var wall_pos = [{x: levelWidth/this.draw_factor/2, y: -2},
+    wall_pos = [{x: levelWidth/this.draw_factor/2, y: -2},
       {x: levelWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
       {x: -2, y: (levelHeight)/this.draw_factor/2},
       {x: levelWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
-
+  
+  
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
     fixDef.filter.categoryBits = 0x0001

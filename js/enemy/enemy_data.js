@@ -494,8 +494,8 @@ impulse_enemy_stats["deathraydire"] = {
 
 impulse_enemy_stats["first boss"] = {
   color: "rgb(208, 32, 144)",
-  density: 1,
-  lin_damp: 3,
+  density: 5,
+  lin_damp: 10,
   effective_radius: 3,
   force: 0,
   score_value: [1000000, 5000000, 15000000],
@@ -505,6 +505,11 @@ impulse_enemy_stats["first boss"] = {
   maskBits: 0x0012,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]},
+  ],
+   /* [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
@@ -512,14 +517,14 @@ impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
-  ],
+  ],*/
   upper_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}
   ],
-  lower_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
+  lower_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
