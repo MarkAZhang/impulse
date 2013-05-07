@@ -193,5 +193,5 @@ LevelIntroState.prototype.on_click = function(x, y) {
 
 
 LevelIntroState.prototype.load_complete = function() {
-  this.buttons.push(new SmallButton("START LEVEL", 20, levelWidth - 150, levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph))}}(this)))
+  this.buttons.push(new SmallButton("START LEVEL", 20, levelWidth - 150, levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, true))}}(this)))
 }

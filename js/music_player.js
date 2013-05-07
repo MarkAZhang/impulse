@@ -30,7 +30,7 @@ MusicPlayer.prototype.play = function(file) {
 }
 
 MusicPlayer.prototype.play_multisound = function(file) {
-  
+
   for(var i = 0; i < this.multisounds[file].length; i++) {
     if(!this.multisounds[file][i]) {
       this.sounds[file+i].play();
@@ -115,7 +115,7 @@ MusicPlayer.prototype.pause = function(file) {
 
   if(file in this.sounds) {
     this.sounds[file].pause();
-  } 
+  }
 
 }
 

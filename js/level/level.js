@@ -22,6 +22,8 @@ Level.prototype.init = function(data, level_intro_state) {
   this.color = impulse_colors["world "+this.level_intro_state.world_num]
   this.dark_color = impulse_colors["world "+this.level_intro_state.world_num+" dark"]
   this.lite_color = impulse_colors["world "+this.level_intro_state.world_num+" lite"]
+  this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
+  this.boss_victory = false
 
   this.buffer_radius = data.buffer_radius
 
@@ -73,6 +75,7 @@ Level.prototype.reset = function() {
   this.boss_radius = 3
   this.boss = null
   this.boss_spawned = false
+  this.boss_victory = false
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
@@ -89,6 +92,9 @@ Level.prototype.reset = function() {
 Level.prototype.process = function(dt) {
 
   //handle obstacle visibility
+
+
+
     if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
     {
       this.obstacle_visibility = Math.min(1, this.obstacle_visibility + dt/1000)
@@ -124,6 +130,11 @@ Level.prototype.process = function(dt) {
       if(this.enemies[dead_i] instanceof Harpoon) {
         this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].harpoon_head.body)
       }
+
+      if(this.enemies[dead_i] == this.boss) {
+        this.boss_victory = true
+
+      }
     }
 
     for(var i = this.fragments.length - 1; i >= 0; i--) {
@@ -139,12 +150,6 @@ Level.prototype.process = function(dt) {
       var dead_i = this.expired_enemies.pop()
 
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
-      if((impulse_enemy_stats[this.enemies[dead_i].type].className).prototype.is_boss) {
-        //boss defeated!!
-
-
-
-      }
 
       this.enemies.splice(dead_i, 1)
 
@@ -178,6 +183,13 @@ Level.prototype.process = function(dt) {
         }
       }
     }
+
+  if(this.boss_victory) {
+    for(var i = 0; i < this.enemies.length; i++) {
+      if(!this.enemies[i].dying)
+        this.enemies[i].start_death("kill")
+    }
+  }
 
 }
 

@@ -31,6 +31,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.require_open = true
 
+  this.lighten_factor = 2
+
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
@@ -70,7 +72,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : 0x0011
     fixDef.filter.maskBits = this.maskBits ? this.maskBits : 0x0112
     fixDef.shape = this_shape
-    this.body.CreateFixture(fixDef).SetUserData({"owner": this})
+    this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body})
     this.shapes.push(this_shape)
     if(this_shape instanceof b2PolygonShape)
       this.shape_points.push(this_shape.m_vertices)
@@ -161,6 +163,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 2
 
+  this.last_lighten = 0
+
 }
 
 Enemy.prototype.check_death = function() {
@@ -233,20 +237,28 @@ Enemy.prototype.process = function(enemy_index, dt) {
     this.status_duration[2] -= dt
     this.body.SetLinearDamping(this.lin_damp * 3)
   }
-  else if (this.status_duration[3] > 0){
+  if (this.status_duration[3] > 0){
     this.status_duration[3] -= dt
 
     if(!this.is_lightened) {
       this.is_lightened = true
+
       var fixtures = this.body.GetFixtureList()
       if (fixtures.length === undefined) {
         fixtures = [fixtures]
       }
+
       for(var i = 0; i < fixtures.length; i++) {
-        fixtures[i].SetDensity(this.density/5)
+        var vertices = this.body.GetFixtureList().m_shape.m_vertices
+        for(var j = 0; j < vertices.length; j++)
+        {
+          vertices[j] = new b2Vec2(vertices[j].x/this.lighten_factor, vertices[j].y/this.lighten_factor)
+        }
+
+        //fixtures[i].SetDensity(this.density/5)
       }
       this.body.ResetMassData()
-      this.force = impulse_enemy_stats[this.type].force/5
+      this.force = impulse_enemy_stats[this.type].force/this.lighten_factor/this.lighten_factor
     }
   }
   else {
@@ -256,8 +268,13 @@ Enemy.prototype.process = function(enemy_index, dt) {
       if (fixtures.length === undefined) {
         fixtures = [fixtures]
       }
-      for(var i = 0; i < fixtures.length; i++) {
-        fixtures[i].SetDensity(this.density)
+       for(var i = 0; i < fixtures.length; i++) {
+        var vertices = this.body.GetFixtureList().m_shape.m_vertices
+        for(var j = 0; j < vertices.length; j++)
+        {
+          vertices[j] = new b2Vec2(vertices[j].x*this.lighten_factor, vertices[j].y*this.lighten_factor)
+        }
+        //fixtures[i].SetDensity(this.density)
       }
       this.body.ResetMassData()
       this.force = impulse_enemy_stats[this.type].force
@@ -555,21 +572,38 @@ Enemy.prototype.draw = function(context, draw_factor) {
     var cur_shape_points = this.shape_points[k]
     var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
 
-
     // draw the shape
     context.beginPath()
 
     var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
-    if(cur_shape instanceof b2CircleShape) {
+    /*if(cur_shape instanceof b2CircleShape) {
       //draw circle shape
         context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (radius_factor), 0, 2*Math.PI, true)
-    }
+    }*/
     if(cur_shape instanceof b2PolygonShape) {
       //draw polygon shape
-      context.moveTo((tp.x+cur_shape_points[0].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor))*draw_factor)
+      var lighten_factor = 1
+
+      if(this.status_duration[3] > 0) {
+
+        var prog = this.status_duration[3]/this.last_lighten
+        if(prog < .1)
+        {
+          var transition = 1 - prog/.1
+          lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+        } else if(prog > .9) {
+          var transition = (prog - .9)/.1
+          lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+        } else {
+          lighten_factor = this.lighten_finish
+        }
+
+      }
+
+      context.moveTo((tp.x+cur_shape_points[0].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor)*lighten_factor)*draw_factor)
       for(var i = 1; i < cur_shape_points.length; i++)
       {
-        context.lineTo((tp.x+cur_shape_points[i].x*(1 + this.death_radius * prog))*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor))*draw_factor)
+        context.lineTo((tp.x+cur_shape_points[i].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor)*lighten_factor)*draw_factor)
       }
     }
     context.closePath()
@@ -585,6 +619,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
     context.fill()
 
+
+
+
     // revert transparency
     if (!this.interior_color ) {
       context.globalAlpha /= 0.7;
@@ -595,6 +632,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
       context.strokeStyle = cur_color
     else
       context.strokeStyle = context.fillStyle
+
+    if(this.status_duration[3] > 0) {
+      context.strokeStyle = "black"
+    }
+
 
     context.lineWidth = this.dying ? (1 - prog) * 2 : 2
     context.stroke()
@@ -642,8 +684,6 @@ Enemy.prototype.get_color_with_status = function(orig_color) {
         return 'gray'
       } else if(this.status_duration[2] > 0) {
         return "#e6c43c"
-      } else if(this.status_duration[3] > 0) {
-        return 'cyan'
       }
     }
     if(orig_color)
@@ -692,7 +732,10 @@ this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
 Enemy.prototype.lighten = function(dur) {
-this.status_duration[3] = Math.max(dur, this.status_duration[3])
+  this.status_duration[3] = Math.max(dur, this.status_duration[3])
+  this.last_lighten = this.status_duration[3]
+  this.lighten_start = 1
+  this.lighten_finish = 1/this.lighten_factor
 }
 
 Enemy.prototype.open = function(dur) {

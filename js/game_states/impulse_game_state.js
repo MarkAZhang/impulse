@@ -2,7 +2,8 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph) {
+function ImpulseGameState(world, level, visibility_graph, first_time) {
+  this.first_time = first_time
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -27,6 +28,7 @@ function ImpulseGameState(world, level, visibility_graph) {
   this.progress_bar_adjust = 3000
   this.level = level
   this.level.reset() //we re-use the level
+
   this.level_name = this.level.level_name
   this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
@@ -153,8 +155,6 @@ ImpulseGameState.prototype.process = function(dt) {
       }
       return;
     }
-
-
 
     var temp_stars = this.stars < 3 ? this.stars : 2
     var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
@@ -415,8 +415,8 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   } else {
     ctx.fillStyle = impulse_colors["boss "+this.world_num]
     ctx.shadowColor = ctx.fillStyle;
-    ctx.font = '20px Muli'
-    ctx.fillText("BOSS LIFE",canvasWidth - sidebarWidth/2, canvasHeight - 45)
+    ctx.font = '48px Muli'
+    ctx.fillText("LIFE",canvasWidth - sidebarWidth/2, canvasHeight - 45)
     if(this.level.boss)
       draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
     else
@@ -556,8 +556,8 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
   if(!first || !second) return
 
-  first.owner.collide_with(second.owner, first.body)
-  second.owner.collide_with(first.owner, second.body)
+  first.owner.collide_with(second.owner, first.body, second.body)
+  second.owner.collide_with(first.owner, second.body, first.body)
 
 }
 

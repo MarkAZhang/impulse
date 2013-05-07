@@ -84,13 +84,33 @@ Tank.prototype.check_death = function()
   }
 }
 
-Tank.prototype.collide_with = function(other) {
+Tank.prototype.collide_with = function(other, this_body, other_body) {
   if(other instanceof Tank && this.durations["open"] > 0 && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {
       this.activated = true
       this.cause_of_death = "kill"
+    }
+    else {
+      this.start_death("kill")
+    }
+  }
+
+
+  if(other instanceof BossOne && this.durations["open"] > 0 && !this.dying && !this.activated)
+  {
+
+    if(this.status_duration[1] <= 0) {
+      console.log(this.level.boss)
+      console.log(other_body)
+      console.log(this.level.boss.body)
+      if(this.level.boss && other_body == this.level.boss.body) {
+        this.activated = true
+        this.cause_of_death = "kill"
+        var angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+        other_body.ApplyImpulse(new b2Vec2(this.tank_force * 80 * Math.cos(angle), this.tank_force * 80 * Math.sin(angle)), other.body.GetPosition())
+      }
     }
     else {
       this.start_death("kill")
@@ -143,17 +163,22 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
   context.strokeStyle = latest_color;
   context.lineWidth = 4;
   context.beginPath()
-  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor,
-  (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor,
-  (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor)
+
+  var lighten_multiplier = 1;
+  if(this.status_duration[3] > 0) {
+    lighten_multiplier /= this.lighten_factor
+  }
+  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor,
+  (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor,
+  (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor)
   context.stroke()
 
   context.beginPath()
-  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
-   (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
-   (this.body.GetPosition().y + (1 + this.death_radius * prog)*Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
+   (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
+  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
+   (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
   context.stroke()
 
   if(this.activated && this.detonate_timer > 0)

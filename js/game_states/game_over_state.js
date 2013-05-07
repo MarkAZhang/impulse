@@ -9,7 +9,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   this.world_num = world_num
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
-  this.buttons.push(new SmallButton("ONCE AGAIN", 20, levelWidth - 150, levelHeight - 30, 300, 50, "blue", "black", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph))}}(this)))
+  this.buttons.push(new SmallButton("ONCE AGAIN", 20, levelWidth - 150, levelHeight - 30, 300, 50, "blue", "black", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, false))}}(this)))
   this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, levelHeight - 30, 200, 50, "blue", "black", function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
@@ -18,39 +18,43 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
       switch_game_state(new TitleState(true))
     }
   }}(this)))
+
+
+
   this.game_numbers = final_game_numbers
 
+  if(!this.level.is_boss_level) {
+    if(this.game_numbers.score > impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score) {
+      this.high_score = true
+      impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
 
-  if(this.game_numbers.score > impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score) {
-    this.high_score = true
-    impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
+      var stars = 0
+      while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[stars])
+      {
+        stars+=1
+      }
+      impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars = stars
+      this.stars = stars
 
-    var stars = 0
-    while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[stars])
-    {
-      stars+=1
     }
-    impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars = stars
-    this.stars = stars
+    else {
+      this.high_score = false
+      var stars = 0
+      while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[stars])
+      {
+        stars+=1
+      }
+      this.stars = stars
 
-  }
-  else {
-    this.high_score = false
-    var stars = 0
-    while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[stars])
-    {
-      stars+=1
     }
-    this.stars = stars
 
+    if (this.stars < 3)
+        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[this.stars]
+      else
+        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[2]
+
+    this.stars_gained = 0
   }
-
-  if (this.stars < 3)
-      this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[this.stars]
-    else
-      this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[2]
-
-  this.stars_gained = 0
 
   player_data.total_kills += this.game_numbers.kills
 
@@ -110,11 +114,25 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillRect(0, 0, levelWidth, levelHeight)
 
   ctx.beginPath()
-  ctx.fillStyle = 'red'
+
   ctx.font = '30px Muli'
   ctx.textAlign = 'center'
 
-  ctx.fillText("GAME OVER", levelWidth/2, 80)
+  if(this.level.is_boss_level) {
+    if(this.level.boss_victory) {
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("VICTORY", levelWidth/2, 80)
+
+    }
+    else {
+      ctx.fillStyle = 'red'
+      ctx.fillText("DEFEAT", levelWidth/2, 80)
+    }
+  } else {
+    ctx.fillStyle = 'red'
+    ctx.fillText("GAME OVER", levelWidth/2, 80)
+  }
+
   ctx.fill()
   ctx.beginPath()
   ctx.font = '20px Muli'
@@ -123,39 +141,46 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
   ctx.fillText("GAME TIME "+this.game_numbers.last_time, levelWidth/2, 140)
-
   ctx.strokeStyle = "black"
 
   var first_rect_y = 160
-
-
-
   ctx.rect(levelWidth/2 - 200, first_rect_y, 400, 180)
-
-
   ctx.lineWidth = 2
-
   ctx.stroke()
 
 
-  if(this.stars > 0)
-    draw_star(ctx, levelWidth/2, first_rect_y + 50, 30, this.star_colors[this.stars - 1])
-  else
-    draw_empty_star(ctx, levelWidth/2, first_rect_y + 50, 30)
+  if(!this.level.is_boss_level) {
 
-  draw_progress_bar(ctx, levelWidth/2, first_rect_y + 90, 200, 10, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
+    if(this.stars > 0)
+      draw_star(ctx, levelWidth/2, first_rect_y + 50, 30, this.star_colors[this.stars - 1])
+    else
+      draw_empty_star(ctx, levelWidth/2, first_rect_y + 50, 30)
 
-  draw_star(ctx, levelWidth/2 - 100, first_rect_y + 93, 15, this.star_colors[this.stars < 3 ? this.stars : 2])
+    draw_progress_bar(ctx, levelWidth/2, first_rect_y + 90, 200, 10, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]))
 
-  ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : "black"
+    draw_star(ctx, levelWidth/2 - 100, first_rect_y + 93, 15, this.star_colors[this.stars < 3 ? this.stars : 2])
 
-  ctx.fillText("SCORE: "+this.game_numbers.score, levelWidth/2, first_rect_y + 130)
-  ctx.fillStyle = impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[impulse_level_data[this.level_name]['stars'] - 1]] : "black"
-  if(this.high_score)
-    ctx.fillText("NEW HIGH SCORE", levelWidth/2, first_rect_y + 160)
-  else
-    ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, levelWidth/2, first_rect_y + 160)
+    ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : "black"
 
+    ctx.fillText("SCORE: "+this.game_numbers.score, levelWidth/2, first_rect_y + 130)
+    ctx.fillStyle = impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[impulse_level_data[this.level_name]['stars'] - 1]] : "black"
+    if(this.high_score)
+      ctx.fillText("NEW HIGH SCORE", levelWidth/2, first_rect_y + 160)
+    else
+      ctx.fillText("HIGH SCORE: "+ impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, levelWidth/2, first_rect_y + 160)
+  } else {
+    if(this.level.boss_victory) {
+      draw_star(ctx, levelWidth/2, first_rect_y + 50, 30, "gold")
+      draw_progress_bar(ctx, levelWidth/2, first_rect_y + 90, 200, 10, 1, "gold")
+      draw_star(ctx, levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
+    } else {
+      draw_empty_star(ctx, levelWidth/2, first_rect_y + 50, 30)
+      draw_progress_bar(ctx, levelWidth/2, first_rect_y + 90, 200, 10, 0, "gold")
+      draw_star(ctx, levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
+    }
+
+
+  }
   var second_rest_y = 370
 
   ctx.strokeStyle = 'black'

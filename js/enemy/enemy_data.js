@@ -2,13 +2,16 @@ impulse_enemy_stats = {}
 
 impulse_enemy_stats["stunner"] = {
   color: "#5480a2",
-  density: 1,
+  density: 2,
   lin_damp: 3,
   effective_radius: .5,
   force: .5,
   score_value: 100,
   attack_rating: 1,
-  shape_polygons: [{type: "circle", x: 0, y: 0, r: .5}],
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+    [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
   special_ability: "Upon impact, stuns you for 0.5 seconds.",
   other_notes: "Dangerous in swarms.",

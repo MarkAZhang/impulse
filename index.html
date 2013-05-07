@@ -4,37 +4,24 @@
     <title>Impulse</title>
 
     <style type=text/css>
-        body{
-           background:#000;
-           margin: 0px;
-           padding: 0px;
-         }
-         #canvas_container {
-            position: absolute;
-            z-index: 2;
-         }
-         #bg_canvas_container {
-            position: absolute;
-            z-index: 1;
-         }
-         #canvas {
-            outline: none;
-            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-         }
-         #bg_canvas {
-            outline: none;
-            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-        }
-        :-webkit-full-screen {
-        background-color: black;
-        z-index: 2147483647;
-        }
+
+
 
     </style>
 
+    <script type="text/javascript">
+        var fileref = document.createElement("link");
+        fileref.setAttribute("rel", "stylesheet");
+        fileref.setAttribute("type", "text/css");
+        fileref.setAttribute("href", "css/style.css");
+        document.getElementsByTagName("head")[0].insertBefore(fileref,document.getElementsByTagName("head")[0].firstChild);
+    </script>
+
     <!-- box2djs -->
     	<!-- box2djs -->
-        <link href='http://fonts.googleapis.com/css?family=Muli:300' rel='stylesheet' type='text/css'>
+
+        <!--<link href='http://fonts.googleapis.com/css?family=Muli:300' rel='stylesheet' type='text/css'>-->
+    <!--    <link href="css/style.css" type="text/css">-->
     <script src="js/game_vars.js"></script>
     <script src="js/draw.js"></script>
     <script src="js/util.js"></script>

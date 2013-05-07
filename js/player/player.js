@@ -74,6 +74,8 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.color = impulse_colors["player_color"]
   this.force = this.true_force
 
+  this.lighten_factor = 2
+
   this.last_mouse_down = 0
   this.mouse_pressed = false
 
@@ -151,6 +153,9 @@ Player.prototype.goo = function(dur) {
 
 Player.prototype.lighten = function(dur) {
   this.status_duration[3] = Math.max(dur, this.status_duration[3])
+  this.last_lighten = this.status_duration[3]
+  this.lighten_start = 1
+  this.lighten_finish = 1/this.lighten_factor
 }
 
 Player.prototype.confuse= function(dur) {
@@ -206,10 +211,11 @@ Player.prototype.process = function(dt) {
         fixtures = [fixtures]
       }
       for(var i = 0; i < fixtures.length; i++) {
-        fixtures[i].SetDensity(this.density/3)
+        fixtures[i].m_shape.m_radius /= this.lighten_factor
+        //fixtures[i].SetDensity(this.density/3)
       }
       this.body.ResetMassData()
-      this.force = this.true_force/3
+      this.force = this.true_force/this.lighten_factor/this.lighten_factor
     }
   }
   else {
@@ -220,7 +226,8 @@ Player.prototype.process = function(dt) {
         fixtures = [fixtures]
       }
       for(var i = 0; i < fixtures.length; i++) {
-        fixtures[i].SetDensity(this.density)
+        fixtures[i].m_shape.m_radius *= this.lighten_factor
+        //fixtures[i].SetDensity(this.density)
       }
       this.body.ResetMassData()
       this.force = this.true_force
@@ -275,6 +282,8 @@ Player.prototype.process = function(dt) {
       {
         if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
 
+        if(this.level.enemies[i] instanceof BossOne) this.level.enemies[i].process_impulse_on_hands(this.attack_loc, this.impulse_force);
+
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
           var impulse_sensitive_points = this.level.enemies[i].get_impulse_sensitive_pts()
@@ -289,6 +298,7 @@ Player.prototype.process = function(dt) {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                 this.enemies_hit.push(this.level.enemies[i].id)
                 this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
+                break
               }
               if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
                 this.level.enemies[i].disengage_harpoon()
@@ -346,11 +356,11 @@ Player.prototype.point_in_impulse_angle = function(pt) {
 
   var struck;
 
-  if(this.attack_angle < -Math.PI/6)
+  if(this.attack_angle < -Math.PI * 2/3)
   {
     struck = angle <= this.attack_angle + Math.PI/3 || angle >= this.attack_angle + 5*Math.PI/3
   }
-  else if(this.attack_angle > 7*Math.PI/6)
+  else if(this.attack_angle > 2*Math.PI/3)
   {
     struck = angle <= this.attack_angle - 5*Math.PI/3 || angle >= this.attack_angle - Math.PI/3
   }
@@ -361,11 +371,12 @@ Player.prototype.point_in_impulse_angle = function(pt) {
 }
 
 Player.prototype.point_in_impulse_dist = function(pt) {
+  var lighten_factor = this.get_lighten_factor()
   var dist = this.attack_loc.Copy()
   dist.Subtract(pt)
   dist = dist.Normalize()
 
-  return dist >= this.impulse_radius * (((this.attack_length - this.attack_duration)/this.attack_length) - this.impulse_width * 2) && dist <= this.impulse_radius * (((this.attack_length - this.attack_duration)/this.attack_length) + this.impulse_width * 2)
+  return dist >= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) - this.impulse_width * 2) && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + this.impulse_width * 2)
 }
 
 Player.prototype.draw = function(context) {
@@ -404,10 +415,6 @@ Player.prototype.draw = function(context) {
     {
       this.draw_player_sprite(context, "player_yellow");
     }
-    else if(this.status_duration[3] > 0)
-    {
-      this.draw_player_sprite(context, "player_gray");
-    }
     else if(this.status_duration[4] > 0)
     {
       this.draw_player_sprite(context, "player_green");
@@ -422,13 +429,24 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 0;*/
         this.draw_player_sprite(context, "player_normal");
       }
+      var lighten_factor = this.get_lighten_factor()
+
+    if(this.status_duration[3] > 0) {
+      context.beginPath()
+      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor,
+       this.radius * this.draw_factor, 0, 2* Math.PI, false)
+      context.strokeStyle = "black"
+      context.stroke()
+
+    }
     context.beginPath()
 
     if (this.status_duration[1] <= 0) {
       context.fillStyle = this.impulse_target_color
 
-      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-      context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * this.draw_factor)
+
+      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor* this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+      context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*this.draw_factor)
       context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
       context.fill()
     }
@@ -440,7 +458,8 @@ Player.prototype.draw = function(context) {
       context.shadowOffsetY = 0;
       context.shadowBlur = 10;
       context.shadowColor = this.impulse_color;
-      context.lineWidth = this.impulse_radius * this.impulse_width * this.draw_factor
+
+      context.lineWidth = this.impulse_radius * this.impulse_width * this.draw_factor * lighten_factor
       var prop = ((this.attack_length - this.attack_duration)/this.attack_length);
       context.save();
       if(prop > 0.5) {
@@ -448,7 +467,7 @@ Player.prototype.draw = function(context) {
         context.globalAlpha *= (1 - prop)/(0.5) < 0 ? 0 : (1-prop)/(0.5);
       }
 
-      context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, this.impulse_radius * prop * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+      context.arc(this.attack_loc.x*this.draw_factor, this.attack_loc.y*this.draw_factor, this.impulse_radius * lighten_factor* prop * this.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
       //context.lineWidth = 15;
       // line color
       context.strokeStyle = this.impulse_color
@@ -460,8 +479,28 @@ Player.prototype.draw = function(context) {
 }
 
 Player.prototype.draw_player_sprite = function(ctx, name) {
-  drawSprite(ctx, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 6, this.shape.GetRadius() * this.draw_factor * 6, name)
+    var lighten_factor = this.get_lighten_factor()
 
+    drawSprite(ctx, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * this.draw_factor * 6 * lighten_factor, this.shape.GetRadius() * this.draw_factor * 6 * lighten_factor, name)
+
+}
+
+Player.prototype.get_lighten_factor = function() {
+  if(this.status_duration[3] <= 0)
+    return 1
+
+  var prog = this.status_duration[3]/this.last_lighten
+      if(prog < .1)
+      {
+        var transition = 1 - prog/.1
+        lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+      } else if(prog > .9) {
+        var transition = (prog - .9)/.1
+        lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+      } else {
+        lighten_factor = this.lighten_finish
+      }
+  return lighten_factor
 }
 
 Player.prototype.collide_with = function(other) {
