@@ -5,8 +5,11 @@ var FragmentGroup = function(enemy_type, loc, velocity, shadowed) {
 FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.shadowed = shadowed ? true : false;
   this.fragments = []
-  velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)))
+  if(enemy_type == "bit") {
+    velocity = {x: 0, y: 0}
+  }
 
+  velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y+0.01)))
 
 
 
@@ -36,6 +39,12 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.original_v_damping = 0.3
     this.num_fragments = 2
     this.burst = 1
+
+  } else if(enemy_type == "bit") {
+    this.num_fragments = 3
+    this.burst = 10
+    this.original_v_damping = 1
+    this.shape = "bit"
 
   } else {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
@@ -125,6 +134,16 @@ Fragment.prototype.process = function(dt) {
 }
 
 Fragment.prototype.draw = function(context, prog) {
-  var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
-  draw_shape(context, this.loc.x, this.loc.y, this.shape, this.size, this.color, prog, pointer_angle)
+  if(this.shape == "bit") {
+    context.save()
+    context.globalAlpha *= prog
+    draw_bit_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
+    context.restore()
+
+  } else {
+    context.save()
+    var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
+    draw_shape(context, this.loc.x, this.loc.y, this.shape, this.size, this.color, prog, pointer_angle)
+    context.restore()
+  }
 }

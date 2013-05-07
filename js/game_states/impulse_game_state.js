@@ -1,8 +1,11 @@
 ImpulseGameState.prototype = new GameState
 
-ImpulseGameState.prototype.constructor = ImpulseGameState
+ImpulseGameState.prototype. constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph, first_time) {
+function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbers) {
+
+  this.hive_numbers = hive_numbers
+
   this.first_time = first_time
   this.pause = true
   this.ready = false
@@ -27,14 +30,19 @@ function ImpulseGameState(world, level, visibility_graph, first_time) {
   this.progress_bar_prop = 0
   this.progress_bar_adjust = 3000
   this.level = level
+  this.level.impulse_game_state = this
   this.level.reset() //we re-use the level
 
   this.level_name = this.level.level_name
-  this.level.impulse_game_state = this
   this.visibility_graph = visibility_graph
   this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
   this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
+
+  this.boss_intro_text_interval = 6000
+  this.boss_intro_text_duration = 0
+
+
 
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
@@ -57,6 +65,10 @@ function ImpulseGameState(world, level, visibility_graph, first_time) {
   this.world.SetContactListener(contactListener);
   this.pause = false
   this.ready = true
+
+  this.bg_visible = false
+
+  this.temp_bits = 0
 
   this.world_visible = true
 
@@ -81,8 +93,18 @@ function ImpulseGameState(world, level, visibility_graph, first_time) {
   this.zoom_start_scale = 0.1
   this.zoom_target_scale = 1
   this.zoom = 0.1
+  this.zoom_bg_switch = true;
   this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1)
+
   this.fade_state = "in"
+  this.victory = false
+  this.gateway_unlocked = false
+
+  this.draw_interface_interval = 100
+  this.draw_interface_timer = this.draw_interface_interval
+
+  this.level_redraw_bg = false
+
 }
 
 ImpulseGameState.prototype.zoom_in = function(center, target) {
@@ -92,6 +114,7 @@ ImpulseGameState.prototype.zoom_in = function(center, target) {
   this.zoom_target_scale = target;
   this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
   this.zoom_start_scale = this.zoom;
+  this.zoom_bg_switch = false;
 }
 
 ImpulseGameState.prototype.zoom_out = function(center, target) {
@@ -101,6 +124,7 @@ ImpulseGameState.prototype.zoom_out = function(center, target) {
   this.zoom_target_scale = target;
   this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
   this.zoom_start_scale = this.zoom;
+  this.zoom_bg_switch = false;
 }
 
 ImpulseGameState.prototype.loading_screen = function() {
@@ -118,12 +142,15 @@ ImpulseGameState.prototype.process = function(dt) {
   if(!this.pause)
   {
 
+    this.draw_interface_timer -= dt
+
 
     if(this.zoom_state != "none") {
       if(this.zoom_transition_timer <= 0) {
         this.zoom_state = "none"
         this.zoom = this.zoom_target_scale;
         this.camera_center = this.zoom_target_pt;
+        this.zoom_bg_switch = false;
       } else {
         var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
         //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
@@ -132,6 +159,16 @@ ImpulseGameState.prototype.process = function(dt) {
         this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
         this.zoom_transition_timer -= dt;
       }
+    }
+
+    if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && this.first_time) {
+      this.boss_intro_text_duration = this.boss_intro_text_interval
+      this.first_time = false
+    }
+
+    if(this.boss_intro_text_duration > 0) {
+      this.boss_intro_text_duration -= dt
+
     }
 
     if(this.player.dying && this.player.dying_duration < 0)
@@ -156,14 +193,29 @@ ImpulseGameState.prototype.process = function(dt) {
       return;
     }
 
-    var temp_stars = this.stars < 3 ? this.stars : 2
-    var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
-    if(this.progress_bar_prop > prop) {
-      this.progress_bar_prop  = Math.max(this.progress_bar_prop - dt/this.progress_bar_adjust, prop)
-
+    if(this.victory)
+    {
+      if(this.zoom_state == "none" && this.zoom == 1) {
+        this.zoom_out({x: this.player.body.GetPosition().x * draw_factor, y: this.player.body.GetPosition().y * draw_factor}, 10)
+        this.fade_state = "out"
+      } else if(this.zoom_state == "none"){
+        this.game_over(true);
+        this.ready = false
+      }
+      return;
     }
-    else if(this.progress_bar_prop < prop) {
-      this.progress_bar_prop  = Math.min(this.progress_bar_prop + dt/this.progress_bar_adjust, prop)
+
+    if(!this.is_boss_level) {
+
+      var temp_stars = this.stars < 3 ? this.stars : 2
+      var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
+      if(this.progress_bar_prop > prop) {
+        this.progress_bar_prop  = Math.max(this.progress_bar_prop - dt/this.progress_bar_adjust, prop)
+
+      }
+      else if(this.progress_bar_prop < prop) {
+        this.progress_bar_prop  = Math.min(this.progress_bar_prop + dt/this.progress_bar_adjust, prop)
+      }
     }
 
 
@@ -194,11 +246,15 @@ ImpulseGameState.prototype.process = function(dt) {
 }
 
 ImpulseGameState.prototype.bg_transition = function() {
-  if(this.zoom == 1) {
+  if(this.zoom_bg_switch) return
+  if(this.zoom == 1 && this.zoom_state == "none") {
     bg_canvas.setAttribute("style","");//make background visible*/
+    this.bg_visible = true
   } else {
-    bg_canvas.setAttribute("style","display: none");//make background visible*/
+    bg_canvas.setAttribute("style","display: none");//make background invisible*/
+    this.bg_visible = false
   }
+  this.zoom_bg_switch = true
 
 
 }
@@ -206,16 +262,15 @@ ImpulseGameState.prototype.bg_transition = function() {
 ImpulseGameState.prototype.set_zoom_transparency = function() {
   if(this.fade_state == "in") {
       var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
-      ctx.globalAlpha = Math.max(1-prop,0)
+      ctx.globalAlpha = Math.min(1-prop,1)
   } else if(this.fade_state == "out"){
     var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
-    ctx.globalAlpha = Math.min(prop,1)
+    ctx.globalAlpha = Math.max(prop,0)
   }
 }
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
-
   this.bg_transition()
   /*context.save();*/
 
@@ -232,6 +287,11 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.clip()
   }
 
+  if(this.boss_intro_text_duration > 0 && this.hive_numbers && this.zoom == 1) {
+    this.draw_boss_text(ctx)
+  }
+  ctx.fillStyle = this.dark_color
+
   ctx.scale(this.zoom, this.zoom)
   ctx.translate((levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
   /*ctx.translate(this.camera_center.x * (1-this.zoom) * 2, this.camera_center.y * (1-this.zoom) * 2);*/
@@ -245,11 +305,17 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.clip();
 
   this.set_zoom_transparency();
-  if(this.zoom != 1) {
+  if(this.zoom != 1 || !this.bg_visible) {
     ctx.drawImage(bg_canvas, sidebarWidth, 0, levelWidth, levelHeight, 0, 0, levelWidth, levelHeight)
   }
 
   this.level.draw(ctx, this.draw_factor, ctx.globalAlpha)
+
+  if(this.level_redraw_bg) {
+
+    this.level.open_gateway()
+    this.level_redraw_bg = false
+  }
 
   if(this.world_visibility < 1) {
     ctx.globalAlpha = 1 - this.world_visibility
@@ -258,24 +324,29 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fill()
   }
 
-  for(var i = 0; i < this.score_labels.length; i++)
-  {
-    ctx.beginPath()
-    ctx.font = this.score_labels[i].size+'px Muli'
-    var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
-    ctx.globalAlpha = prog
-    ctx.fillStyle = this.score_labels[i].color
-    ctx.textAlign = 'center'
-    ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
-    ctx.fill()
-  }
+
   ctx.globalAlpha = 1
 
-  if(this.fade_state == "in")
-    ctx.globalAlpha = 1-(this.zoom_transition_timer) / (this.zoom_transition_period)
-  if(this.fade_state == "out")
-    ctx.globalAlpha = (this.zoom_transition_timer) / (this.zoom_transition_period)
-  this.player.draw(ctx)
+  if(this.zoom_state == "in")
+    ctx.rect(2, 2, levelWidth-4, levelHeight-4);
+  else {
+    ctx.rect(0, 0, levelWidth, levelHeight);
+  }
+
+  ctx.clip();
+
+  this.set_zoom_transparency()
+  if(this.zoom != 1 && this.victory) {
+    ctx.save()
+
+    ctx.translate(this.player.body.GetPosition().x * draw_factor, this.player.body.GetPosition().y * draw_factor)
+    ctx.scale(1/this.zoom, 1/this.zoom)
+    ctx.translate(-this.player.body.GetPosition().x * draw_factor, -this.player.body.GetPosition().y * draw_factor)
+    this.player.draw(ctx)
+    ctx.restore();
+  } else {
+    this.player.draw(ctx)
+  }
 
   ctx.restore();
   /*ctx.translate(-(levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
@@ -283,8 +354,32 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.scale(1/this.zoom, 1/this.zoom)*/
 
   /*ctx.translate(-sidebarWidth, 0)*/
+  ctx.save()
+  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  this.set_zoom_transparency();
+  if(!this.is_boss_level) {
+    for(var i = 0; i < this.score_labels.length; i++)
+    {
+      ctx.beginPath()
+      ctx.font = this.score_labels[i].size+'px Muli'
+      var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
+      ctx.globalAlpha *= prog
+      ctx.fillStyle = this.score_labels[i].color
+      ctx.textAlign = 'center'
+      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
+      ctx.fill()
+    }
+  }
+  ctx.restore()
 
-  this.draw_interface(ctx)
+  if(this.draw_interface_timer < 0 || this.zoom != 1) {
+    this.draw_interface(ctx)
+    this.draw_interface_timer = this.draw_interface_interval
+  }
+
+  this.draw_score_bar(ctx)
+
+
 
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
@@ -353,9 +448,32 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
 }
 
+ImpulseGameState.prototype.draw_boss_text = function(ctx) {
+  var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval)
+
+  ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
+
+  ctx.beginPath()
+
+  ctx.fillStyle = impulse_colors["boss "+this.world_num];
+  ctx.textAlign = 'center'
+
+  ctx.font = '42px Muli'
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = "black"
+
+  ctx.fillText(this.hive_numbers.boss_name, levelWidth/2, levelHeight/2 - 150)
+  ctx.fill()
+
+  ctx.shadowBlur = 0
+
+}
+
 ImpulseGameState.prototype.draw_interface = function(ctx) {
 
+  ctx.save()
   ctx.globalAlpha = 1;
+  ctx.beginPath()
   ctx.fillStyle = "black"
   ctx.fillRect(0, 0, sidebarWidth, canvasHeight);
   ctx.fillRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
@@ -376,7 +494,7 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   if(this.level_name.slice(0,4) == "BOSS") {
     ctx.fillText(this.world_num, sidebarWidth/2, 140)
   } else {
-    ctx.fillText(this.level_name.slice(6, this.level_name.length), sidebarWidth/2, 140)
+    ctx.fillText(this.level_name.slice(5, this.level_name.length), sidebarWidth/2, 140)
   }
 
   // draw the game time
@@ -411,17 +529,12 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
       ctx.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
     }
 
-    draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
   } else {
     ctx.fillStyle = impulse_colors["boss "+this.world_num]
     ctx.shadowColor = ctx.fillStyle;
     ctx.font = '48px Muli'
     ctx.fillText("LIFE",canvasWidth - sidebarWidth/2, canvasHeight - 45)
-    if(this.level.boss)
-      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
-    else
-      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
-  }
+    }
 
 
   /*draw_star(ctx, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
@@ -433,14 +546,6 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
   ctx.globalAlpha = .6
   ctx.fill()
   ctx.globalAlpha = 1*/
-  if(!this.is_boss_level) {
-    ctx.textAlign = 'center'
-    ctx.font = '72px Muli'
-    ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
-    ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
-    ctx.shadowBlur = 40;
-    ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
-  }
 
 
 
@@ -458,14 +563,58 @@ ImpulseGameState.prototype.draw_interface = function(ctx) {
     this.last_fps_time = (new Date()).getTime()
   }
   this.fps_counter+=1
-  ctx.beginPath()
+  /*ctx.beginPath()
+  ctx.fillStyle = "white"
   ctx.font = '20px Muli'
   ctx.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
-  ctx.fill()
-
-
-
+  ctx.fill()*/
   ctx.shadowBlur = 0;
+
+  ctx.font = '20px Muli'
+
+  if(this.hive_numbers) {
+    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+
+    ctx.beginPath()
+    ctx.fillText("LIVES: "+this.hive_numbers.lives, sidebarWidth/2, canvasHeight - 50)
+    ctx.fill()
+
+    ctx.beginPath()
+    ctx.fillText("BITS: "+this.hive_numbers.bits, sidebarWidth/2, canvasHeight - 20)
+    ctx.fill()
+  } else {
+    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+    ctx.beginPath()
+    ctx.fillText("LIVES: 0", sidebarWidth/2, canvasHeight - 50)
+    ctx.fill()
+
+    ctx.beginPath()
+    ctx.fillText("BITS: "+this.temp_bits, sidebarWidth/2, canvasHeight - 20)
+    ctx.fill()
+  }
+
+  ctx.restore()
+}
+
+ImpulseGameState.prototype.draw_score_bar = function(ctx) {
+  ctx.save()
+
+  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
+
+  if(!this.is_boss_level) {
+    ctx.textAlign = 'center'
+    ctx.font = '72px Muli'
+    ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
+    ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
+    ctx.shadowBlur = 10;
+    ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
+  } else {
+    if(this.level.boss)
+      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
+    else
+      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
+  }
+  ctx.restore()
 }
 
 ImpulseGameState.prototype.get_combo_color = function(combo) {
@@ -508,13 +657,19 @@ ImpulseGameState.prototype.on_mouse_up = function(x, y) {
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
-  if(keyCode == 32) {
+  if(keyCode == 81) {
     this.pause = !this.pause
     if(this.pause) {
       set_dialog_box(new PauseMenu(this.level, this.game_numbers, this, this.visibility_graph))
     }
-  }
-  else
+  } else if(keyCode == 32 && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+
+    //if(this.game_numbers.score >= this.level.cutoff_scores["bronze"]) {
+    this.victory = true
+    if(this.is_boss_level)
+      this.level.boss_victory = true
+    //}
+  } else
     this.player.keyDown(keyCode)  //even if paused, must still process
 }
 
@@ -571,10 +726,29 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
 ImpulseGameState.prototype.check_cutoffs = function() {
   if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
   {
+
     while(this.game_numbers.score >= this.level.cutoff_scores[this.stars]) {
       this.stars+=1
+
+      if(this.stars == 1) {
+        this.gateway_unlocked = true
+        this.level_redraw_bg = true
+        this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
+      } else if(this.stars == 2) {
+        this.hive_numbers.lives +=1
+        this.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+      } else if(this.stars == 3) {
+        if(this.hive_numbers.lives < 3) {
+          this.addScoreLabel((3 - this.hive_numbers.lives)+"UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+          this.hive_numbers.lives = 3
+        } else {
+          this.hive_numbers.lives += 1
+          this.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+        }
+      }
     }
-    this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], levelWidth/this.draw_factor/2, (levelHeight)/this.draw_factor/2, 40, 3000)
+
+    //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], levelWidth/this.draw_factor/2, (levelHeight)/this.draw_factor/2, 40, 3000)
   }
 }
 
@@ -589,5 +763,10 @@ ImpulseGameState.prototype.reset_combo = function() {
 }
 
 ImpulseGameState.prototype.game_over = function() {
-  switch_game_state(new GameOverState(this.game_numbers, this.level, this.world_num, this.visibility_graph))
+
+  if(this.level.main_game) {
+    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory || this.level.boss_victory, this.game_numbers, this.visibility_graph, this.hive_numbers))
+  } else {
+    switch_game_state(new GameOverState(this.game_numbers, this.level, this.world_num, this.visibility_graph))
+  }
 }

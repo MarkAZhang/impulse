@@ -122,8 +122,11 @@ MusicPlayer.prototype.pause = function(file) {
 MusicPlayer.prototype.stop_bg = function() {
   if(this.cur_song) {
     var _this = this;
-    _this.sounds[_this.cur_song].stop()
-    _this.cur_song = null;
+    _this.sounds[_this.cur_song].fadeOut(1000, function() {
+        _this.sounds[_this.cur_song].stop();
+       _this.cur_song = null;
+    })
+
   }
 }
 MusicPlayer.prototype.restart = function(file) {

@@ -434,7 +434,7 @@ Player.prototype.draw = function(context) {
     if(this.status_duration[3] > 0) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor,
-       this.radius * this.draw_factor, 0, 2* Math.PI, false)
+       this.radius* lighten_factor * this.draw_factor, 0, 2* Math.PI, false)
       context.strokeStyle = "black"
       context.stroke()
 
@@ -443,7 +443,6 @@ Player.prototype.draw = function(context) {
 
     if (this.status_duration[1] <= 0) {
       context.fillStyle = this.impulse_target_color
-
 
       context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor* this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
       context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*this.draw_factor)
@@ -472,7 +471,6 @@ Player.prototype.draw = function(context) {
       // line color
       context.strokeStyle = this.impulse_color
       context.stroke();
-      context.shadowBlur = 0;
       context.restore();
     }
   }

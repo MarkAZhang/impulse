@@ -29,7 +29,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.spawn_interval = 1000
   if(this.impulse_game_state.first_time)
-    this.spawn_interval = 7600
+    this.spawn_interval = 6600
 
   this.spawn_duration = this.spawn_interval
 
@@ -152,9 +152,14 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.punching_explode_warning_interval = 2000
   this.punching_explode_shockwave_interval = 200
 
+  this.punching_explode_warning_parts = 8
+  this.punching_explode_warning_size = 100
+
   this.punching_explode_radius = 15
 
   this.punching_explode_force = 150
+
+  this.punch_exploded = false
 
   this.max_turret_interval = 10000
   this.max_turret_timer = this.max_turret_interval
@@ -415,10 +420,8 @@ BossOne.prototype.additional_processing = function(dt) {
     this.punching_explode_timer -= dt
     if(this.punching_explode_timer < 0) {
       this.explode()
-      if(this.state == "punching")
-        this.punching_explode_timer = this.punching_explode_interval
-      else
-        this.punching_explode_timer = null
+      this.punch_exploded = true
+      this.punching_explode_timer = this.punching_explode_interval
     }
   }
 
@@ -814,6 +817,24 @@ BossOne.prototype.draw_special_attack_timer = function(context, draw_factor) {
 
 }
 
+BossOne.prototype.draw_punching_explode_warning = function(ctx, draw_factor) {
+  for(var i = 0; i < this.punching_explode_warning_parts; i++) {
+
+
+    var angle = i/this.punching_explode_warning_parts * Math.PI * 2;
+    drawSprite(ctx, this.body.GetPosition().x*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.cos(angle),
+      this.body.GetPosition().y*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.sin(angle), angle, 70, 70, "immunitas_arrow",immunitasSprite)
+    ctx.globalAlpha *= 0.8
+    ctx.beginPath()
+    ctx.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,  this.punching_explode_radius* draw_factor,
+      0, 2*Math.PI, false)
+    ctx.strokeStyle = "black"
+    ctx.lineWidth = 2
+    ctx.stroke()
+    ctx.globalAlpha /= 0.8
+  }
+}
+
 BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
   /*if(this.punch_target_pts["right"]) {
@@ -828,11 +849,17 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
   if(this.punching_explode_timer != null) {
     if(this.punching_explode_timer < this.punching_explode_warning_interval) {
       context.beginPath()
-      context.arc(this.body.GetPosition().x *draw_factor, this.body.GetPosition().y * draw_factor, this.punching_explode_radius * draw_factor, 0, Math.PI * 2, false)
+
       context.globalAlpha = (this.punching_explode_warning_interval - this.punching_explode_timer)/this.punching_explode_warning_interval * 0.7
-      context.strokeStyle = this.color
+      this.draw_punching_explode_warning(context, draw_factor)
+      /*context.strokeStyle = this.color
       context.lineWidth = 2;
-      context.stroke()
+      context.stroke()*/
+    } else if(this.punching_explode_timer > this.punching_explode_interval - this.punching_explode_warning_interval/2 && this.punch_exploded) {
+      context.beginPath()
+
+      context.globalAlpha = (this.punching_explode_timer - (this.punching_explode_interval - this.punching_explode_warning_interval/2))/this.punching_explode_warning_interval/2 * 0.7
+      this.draw_punching_explode_warning(context, draw_factor)
     }
     if(this.punching_explode_timer < this.punching_explode_shockwave_interval) {
       context.beginPath()
@@ -977,7 +1004,6 @@ BossOne.prototype.switch_to_punching = function() {
   this.move_arm_to_default("left", true)
   this.move_arm_to_default("right", true)
   this.state_switch_timer = this.state_switch_interval
-  this.punching_explode_timer = this.punching_explode_interval + 3000
 }
 
 BossOne.prototype.switch_to_turret = function() {
@@ -986,9 +1012,6 @@ BossOne.prototype.switch_to_turret = function() {
   this.move_arm_to_turret("right")
   this.max_turret_timer = this.max_turret_interval
   this.state_switch_timer = this.state_switch_interval
-  if(this.punching_explode_timer > this.punching_explode_warning_interval) {
-    this.punching_explode_timer = null
-  }
 }
 
 BossOne.prototype.explode = function() {

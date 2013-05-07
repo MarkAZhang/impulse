@@ -3,6 +3,8 @@ var Level = function(data, impulse_game_state) {
 }
 
 Level.prototype.init = function(data, level_intro_state) {
+
+  this.world_num = level_intro_state.world_num
   this.level_intro_state = level_intro_state
   this.impulse_game_state = null
   this.enemies_data = data.enemies
@@ -11,6 +13,8 @@ Level.prototype.init = function(data, level_intro_state) {
   this.enemy_spawn_counters = {}
   this.enemy_numbers = {}
   this.level_name = data.level_name
+  this.bit_spawn_points = data.bit_spawn_points
+
   this.player_loc = data.player_loc
 
   this.spawn_points = data.spawn_points
@@ -23,6 +27,9 @@ Level.prototype.init = function(data, level_intro_state) {
   this.dark_color = impulse_colors["world "+this.level_intro_state.world_num+" dark"]
   this.lite_color = impulse_colors["world "+this.level_intro_state.world_num+" lite"]
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
+  if(!this.is_boss_level) {
+    this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
+  }
   this.boss_victory = false
 
   this.buffer_radius = data.buffer_radius
@@ -58,6 +65,11 @@ Level.prototype.init = function(data, level_intro_state) {
     "fourth boss": BossFour,
     "boss four spawner": BossFourSpawner,
   }
+  this.gateway_loc = {x: data.player_loc.x/draw_factor, y: data.player_loc.y/draw_factor}
+  this.gateway_size = 4
+
+  this.gateway_transition_interval = 500
+  this.gateway_transition_duration = null
 
 
   this.spawn_point_counter = 0;
@@ -66,6 +78,12 @@ Level.prototype.init = function(data, level_intro_state) {
 }
 
 Level.prototype.reset = function() {
+
+  if(this.impulse_game_state && this.impulse_game_state.hive_numbers) {
+    this.main_game = true
+  } else {
+    this.main_game = false
+  }
   this.enemies = []
   this.enemy_counter = 0
   this.spawn_interval = 200
@@ -87,12 +105,63 @@ Level.prototype.reset = function() {
   this.spawned_enemies = []
   this.spawn_queue = [] //enemies that need to be spawned
   this.initial_spawn_done = false
+  this.bit_loc = null
+  this.bit_duration = null
+  this.bit_life = 10000
+  this.bit_value = null
+
+}
+
+Level.prototype.generate_bit = function() {
+  this.bit_loc = this.bit_spawn_points[Math.floor(Math.random() * this.bit_spawn_points.length)]
+  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
+  while(p_dist(player_loc, this.bit_loc) < 125) {
+    this.bit_loc = this.bit_spawn_points[Math.floor(Math.random() * this.bit_spawn_points.length)]
+    player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
+
+  }
+
+  this.bit_loc = {x: this.bit_loc[0], y: this.bit_loc[1]}
+  this.bit_duration = this.bit_life
+  this.bit_value = 1
 }
 
 Level.prototype.process = function(dt) {
 
   //handle obstacle visibility
 
+    this.bit_duration -= dt
+    if(!this.is_boss_level && (this.bit_loc == null || this.bit_duration < 0)) {
+      this.generate_bit()
+    } else if(!this.is_boss_level) {
+      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
+      if(p_dist(player_loc, this.bit_loc) < 25) {
+        if(this.impulse_game_state.hive_numbers) {
+          this.impulse_game_state.hive_numbers.bits += 5;
+          if(this.impulse_game_state.hive_numbers.bits >= 100) {
+            this.impulse_game_state.hive_numbers.bits -= 100;
+            this.impulse_game_state.hive_numbers.lives += 1
+            this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
+          }
+        } else
+          this.impulse_game_state.temp_bits += 5
+
+        this.add_fragments("bit", {x: this.bit_loc.x, y: this.bit_loc.y})
+        this.generate_bit()
+      }
+
+    }
+
+    if(this.gateway_transition_duration != null) {
+      if(this.gateway_transition_duration > 0) {
+        this.gateway_transition_duration -= dt
+      } else {
+        bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+        this.draw_bg(bg_ctx)
+        bg_ctx.translate(-sidebarWidth, 0)//allows us to have a topbar
+        this.gateway_transition_duration = null
+      }
+    }
 
 
     if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
@@ -316,7 +385,51 @@ Level.prototype.generate_obstacle_edges = function() {
   }
 }
 
+Level.prototype.draw_gateway = function(ctx, draw_factor) {
+  if(this.world_num == 1) {
+      var factor = 1
+      ctx.save()
+      ctx.globalAlpha = 1
+
+      if(this.gateway_transition_duration != null) {
+        var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
+        factor = 1 * prog + 2 * (1-prog)
+        ctx.globalAlpha *= 0.3*(1-prog)
+        drawSprite(ctx,  this.gateway_loc.x*draw_factor,
+         this.gateway_loc.y*draw_factor,
+        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, "immunitas_glow", immunitasSprite)
+      }
+
+      else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked) {
+        factor = 2
+        ctx.globalAlpha *= 0.3
+        drawSprite(ctx,  this.gateway_loc.x*draw_factor,
+         this.gateway_loc.y*draw_factor,
+        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, "immunitas_glow", immunitasSprite)
+      }
+      ctx.restore()
+      draw_immunitas_sign(ctx, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * 2 * draw_factor, factor)
+    }
+}
+
 Level.prototype.draw = function(context, draw_factor, alpha) {
+
+  if(this.bit_loc) {
+    var prog = this.bit_duration/this.bit_life;
+    context.save()
+    context.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
+
+    draw_bit(context, this.bit_loc.x, this.bit_loc.y, this.bit_value)
+    context.restore()
+
+  }
+
+  if(this.redraw_bg) {
+    bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+    this.draw_bg(bg_ctx, true)
+    bg_ctx.translate(-sidebarWidth, 0)//allows us to have a topbar
+    this.redraw_bg = false
+  }
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].pre_draw(context, draw_factor)
   }
@@ -343,26 +456,31 @@ Level.prototype.draw = function(context, draw_factor, alpha) {
 
     context.globalAlpha = 1
   }
+  if(this.gateway_transition_duration != null) {
+    if(this.gateway_loc) {
+      this.draw_gateway(ctx, draw_factor)
+
+    }
+  }
 }
-Level.prototype.draw_bg = function(bg_ctx) {
+
+Level.prototype.open_gateway = function() {
+
+  this.gateway_transition_duration = this.gateway_transition_interval
+  this.redraw_bg = true
+}
+
+Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
+
   draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
 
-  /*bg_ctx.beginPath()
 
-  bg_ctx.shadowOffsetX = 0;
-  bg_ctx.shadowOffsetY = 0;
-  bg_ctx.shadowBlur = 20;
-  bg_ctx.shadowColor = this.lite_color;
-
-
-  bg_ctx.rect(0, -10, levelWidth, 10)
-  bg_ctx.rect(0, levelHeight, levelWidth, 10)
-  bg_ctx.rect(-10, 0, 10, levelHeight)
-  bg_ctx.rect(levelWidth, 0, 10, levelHeight)
-  bg_ctx.fillStyle = this.lite_color;
-  bg_ctx.fill()*/
 
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(bg_ctx, draw_factor)
+  }
+
+  if(this.gateway_loc && !omit_gateway) {
+    this.draw_gateway(bg_ctx, draw_factor)
   }
 }

@@ -14,9 +14,9 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   var max_stars = 0
   var available = false
   for(var i = 1; i <= 7; i++) {
-    if(impulse_level_data["LEVEL "+world+"-"+i]) {
+    if(impulse_level_data["HIVE "+world+"-"+i]) {
       available = true
-      stars += impulse_level_data["LEVEL "+world+"-"+i].save_state[player_data.difficulty_mode].stars
+      stars += impulse_level_data["HIVE "+world+"-"+i].save_state[player_data.difficulty_mode].stars
       max_stars +=3
     }
   }
@@ -45,7 +45,7 @@ function WorldButton(world, size, x, y, w, h, color, action) {
 
   this.new_world = true
   for(var i = 1; i <= 7; i++) {
-    if(impulse_level_data["LEVEL "+world+"-"+i].save_state[player_data.difficulty_mode].high_score > 0) {
+    if(impulse_level_data["HIVE "+world+"-"+i].save_state[player_data.difficulty_mode].high_score > 0) {
       this.new_world = false
     }
   }

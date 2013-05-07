@@ -46,6 +46,36 @@ function draw_enemy(context, enemy_name, x, y, d) {
 
 }
 
+function draw_immunitas_sign(context, x, y, size, extra_factor) {
+
+    context.save()
+    context.globalAlpha *= 0.5
+    if(extra_factor)
+      context.globalAlpha = Math.min(1, context.globalAlpha * extra_factor)
+    drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, "immunitas_glow", immunitasSprite)
+
+    context.restore()
+    context.save()
+    context.globalAlpha /= 6
+    if(extra_factor)
+      context.globalAlpha = Math.min(1, context.globalAlpha * extra_factor)
+
+    // set screen position
+    context.translate(x, y);
+    // set rotation
+    context.rotate(Math.PI/4);
+    drawSprite(context, 0, 0, 0, size, size, "immunitas_arm", immunitasSprite)
+    context.beginPath()
+    context.rect(-size/2-10, -size/2-10, size+20, size+20)
+    context.lineWidth = 5
+    context.strokeStyle = impulse_colors["boss 1"]
+    context.stroke()
+
+    context.restore()
+
+
+}
+
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
 function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
@@ -87,18 +117,31 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
 
 function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
 
-  context.shadowBlur = 20;
-  context.shadowColor = color
 
   context.save();
+  context.shadowBlur = 0
+
+  context.globalAlpha = 1
+  context.beginPath()
+  context.rect(x - w * .5 - 40, y - h * .5 - 20, w+80 , h+40)
+  context.fillStyle ="black"
+  context.fill()
+
+  context.restore();
+  context.save();
+  context.beginPath()
+  context.shadowBlur = 20;
+  context.shadowColor = color
 
   context.globalAlpha /= 10
   context.rect(x - w * .5, y - h * .5, w , h)
   context.strokeStyle = color
+  context.fillStyle = color
   context.lineWidth = 2
+  context.fill()
   context.stroke()
 
-  context.restore()
+  context.globalAlpha *= 10
   context.beginPath()
 
   if(up) {
@@ -107,10 +150,9 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
     context.rect(x - w * .5, y - h * .5, w, h * prop)
   }
 
-  context.shadowColor = color
   context.fillStyle = color
   context.fill()
-  context.shadowBlur = 0;
+  context.restore()
 }
 
 function draw_progress_bar(context, x, y, w, h, prop, color, bcolor) {
@@ -124,6 +166,18 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor) {
   context.strokeStyle = bcolor ? bcolor : "black"
   context.lineWidth = 2
   context.stroke()
+}
+
+function draw_bit(context, x, y) {
+
+  drawSprite(context, x, y, 0, 30, 30, "bit")
+
+}
+
+function draw_bit_fragment(context, x, y) {
+
+  drawSprite(context, x, y, 0, 15, 15, "bit")
+
 }
 
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
@@ -165,12 +219,14 @@ spriteSheetData = {
   "player_yellow": [120, 0, 60, 60],
   "player_gray": [180, 0, 60, 60],
   "player_green": [240, 0, 60, 60],
+  "bit": [0, 60, 30, 30],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_hand": [90, 0, 90, 90],
   "immunitas_head": [0, 90, 108, 108],
   "immunitas_glow": [180, 0, 270, 270],
-  "immunitas_aura": [450, 0, 245, 245]
+  "immunitas_aura": [450, 0, 245, 245],
+  "immunitas_arrow": [0, 200, 70, 70]
 }
 
 immunitasSprite = loadSprite("art/immunitas_sprite.png")

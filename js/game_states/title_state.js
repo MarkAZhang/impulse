@@ -84,7 +84,7 @@ TitleState.prototype.setup_main_menu = function() {
   _this = this;
   this.buttons["menu"] = []
   var button_color = impulse_colors["impulse_blue"]
-  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, "gray", "gray",function(){}))
+  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",function(){switch_game_state(new WorldMapState())}))
   this.buttons["menu"].push(new SmallButton("PRACTICE", 20, levelWidth/2, levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
   //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
   //      levelHeight/2+70, 200, 50, function(){switch_game_state(new

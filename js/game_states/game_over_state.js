@@ -19,8 +19,6 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
     }
   }}(this)))
 
-
-
   this.game_numbers = final_game_numbers
 
   if(!this.level.is_boss_level) {

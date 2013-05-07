@@ -9,6 +9,8 @@ function LevelIntroState(level_name, world) {
   this.buttons = []
   this.world_num = world
   this.bg_drawn = false
+
+  this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, levelHeight - 30, 200, 50, "black", "blue", function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
@@ -23,7 +25,7 @@ function LevelIntroState(level_name, world) {
 
   this.drawn_enemies = null
 
-  if(this.level_name.slice(0, 4) == "BOSS") {
+  if(this.is_boss_level) {
     this.drawn_enemies = {}
     this.drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
     this.num_enemy_type = 1
@@ -144,17 +146,22 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-    for(var i = 0; i < 3; i++) {
-      ctx.textAlign = 'right'
-      ctx.font = '25px Muli'
-      ctx.fillStyle = impulse_colors[this.star_colors[i]]
-      ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i],  levelWidth/2 + 100, 300 + 35 * i)
-      draw_star(ctx,  levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
+    if(!this.is_boss_level) {
+      for(var i = 0; i < 3; i++) {
+        ctx.textAlign = 'right'
+        ctx.font = '25px Muli'
+        ctx.fillStyle = impulse_colors[this.star_colors[i]]
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i],  levelWidth/2 + 100, 300 + 35 * i)
+        draw_star(ctx,  levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
+      }
     }
     score_color = 0
 
-    while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
-      score_color+=1
+    if(!this.is_boss_level) {
+
+      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+        score_color+=1
+      }
     }
 
     ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : "black"

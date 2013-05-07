@@ -41,20 +41,29 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
   this.game_numbers = game_numbers
   this.game_state = game_state
   this.level_name = this.level.level_name
+  this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   this.visibility_graph = visibility_graph
   this.init(400, 300)
   this.solid = false;
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-    this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
-          switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num, _this.visibility_graph))
-          clear_dialog_box()
-            }}(this)))
-    this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
+    if(!this.level.main_game) {
+      this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
           switch_game_state(new ImpulseGameState(_this.game_state.world_num, _this.level, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
+      this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
+          switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num, _this.visibility_graph))
+          clear_dialog_box()
+            }}(this)))
+    } else {
+
+      this.buttons.push(new SmallButton("QUIT", 25, this.x, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
+          switch_game_state(new MainGameSummaryState(_this.game_state.world_num, false, _this.game_state.hive_numbers))
+          clear_dialog_box()
+            }}(this)))
+    }
   }
 }
 
@@ -72,16 +81,20 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-    for(var i = 0; i < 3; i++) {
-      ctx.font = '24px Muli';
-      ctx.fillStyle = impulse_colors[temp_colors[i]]
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 110 + 32 * i)
+    if(!this.is_boss_level) {
+      for(var i = 0; i < 3; i++) {
+        ctx.font = '24px Muli';
+        ctx.fillStyle = impulse_colors[temp_colors[i]]
+        ctx.shadowColor = ctx.fillStyle
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 110 + 32 * i)
+      }
     }
     var score_color = 0
 
-    while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
-      score_color+=1
+    if(!this.is_boss_level) {
+      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+        score_color+=1
+      }
     }
 
     ctx.font = '20px Muli';
@@ -91,7 +104,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   }
   ctx.font = '16px Muli'
   ctx.fillStyle = "gray"
-  ctx.fillText("SPACE TO UNPAUSE", this.x, this.y + this.h/2 + 25)
+  ctx.fillText("'Q' TO UNPAUSE", this.x, this.y + this.h/2 + 25)
 
   ctx.fill()
 
@@ -114,7 +127,7 @@ PauseMenu.prototype.on_click = function(x, y) {
 }
 
 PauseMenu.prototype.on_key_down = function(keyCode) {
-  if(keyCode == 32) {
+  if(keyCode == 81) {
     clear_dialog_box()
     this.game_state.pause = false
   }

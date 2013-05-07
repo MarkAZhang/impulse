@@ -1,11 +1,11 @@
 impulse_enemy_stats = {}
 
 impulse_enemy_stats["stunner"] = {
-  color: "#5480a2",
+  color: "#999",
   density: 2,
   lin_damp: 3,
   effective_radius: .5,
-  force: .5,
+  force: .4,
   score_value: 100,
   attack_rating: 1,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -116,7 +116,8 @@ impulse_enemy_stats["goo"] = {
 }
 
 impulse_enemy_stats["disabler"] = {
-  color: "rgb(205, 201, 201)",
+  color: "#ccc",
+  interior_color: "rgb(205, 201, 201)",
   density: 8,
   lin_damp: 9,
   effective_radius: .5,

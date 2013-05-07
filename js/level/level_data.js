@@ -93,7 +93,7 @@ impulse_level_data['HOW TO PLAY 3']  = {
 impulse_level_data['HOW TO PLAY 4'] = impulse_level_data['HOW TO PLAY 3']
 impulse_level_data['HOW TO PLAY 5'] = impulse_level_data['HOW TO PLAY 3']
 
-impulse_level_data['LEVEL 1-1'] = {
+impulse_level_data['HIVE 1-1'] = {
   enemies: {
               stunner: [3, 3, 2, 4, 40]
            },
@@ -102,14 +102,16 @@ impulse_level_data['LEVEL 1-1'] = {
   },
   dominant_enemy: "stunner",
   obstacle_v: [[[700,255],[457,255],[457,90],[700,90]],[[700,510],[457,510],[457,345],[700,345]],[[100,90],[343,90],[343,255],[100,255]],[[100,345],[343,345],[343,510],[100,510]],[[100,-8],[700,-8],[700,15],[100,15]],[[700,608],[100,608],[100,585],[700,585]],[[-8,90],[19,90],[19,510],[-8,510]],[[808,510],[781,510],[781,90],[808,90]]],
+  bit_spawn_points: [[50, 50], [50, 300], [50, 550], [400, 50], [400, 550], [750, 50], [750, 300], [750, 550]],
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700]],
   buffer_radius: 1,
-  cutoff_scores: [50000, 750000, 2000000],
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: [500, 750000, 2000000],
   player_loc: {x: 400, y: 300}
 
 }
 
-impulse_level_data['LEVEL 1-2'] = {
+impulse_level_data['HIVE 1-2'] = {
   enemies: {
               stunner: [3, 3, 2, 2, 40],
               spear: [3, 3, 1, 1.5, 15],
@@ -123,6 +125,7 @@ impulse_level_data['LEVEL 1-2'] = {
   dominant_enemy: "spear",
   //obstacle_v: [[[103,104],[343,104],[103,245]],[[103,356],[343,496],[103,496]],[[697,245],[457,104],[697,104]],[[697,496],[457,496],[697,356]]],
   obstacle_v: [[[112,-6],[688,-6],[688,26],[112,26]],[[-9,96],[30,96],[30,505],[-9,505]],[[809,504],[770,504],[770,95],[809,95]],[[688,606],[112,606],[112,574],[688,574]],[[135,126],[330,126],[135,259]],[[135,341],[330,474],[135,474]],[[665,259],[470,126],[665,126]],[[665,474],[470,474],[665,341]]],
+  bit_spawn_points: [[135, 300], [665, 300], [400, 125], [400, 475], [709, 78], [91, 78], [709, 522], [91, 522]],
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700]],
   buffer_radius: 1,
   cutoff_scores: [75000, 250000, 1000000],
@@ -130,7 +133,7 @@ impulse_level_data['LEVEL 1-2'] = {
 
 }
 
-impulse_level_data['LEVEL 1-3'] = {
+impulse_level_data['HIVE 1-3'] = {
   enemies: {
               stunner: [0, 1, 1, 1, 40],
               spear: [30, 5, 1, 2, 15],
@@ -143,13 +146,14 @@ impulse_level_data['LEVEL 1-3'] = {
   //obstacle_v: [[[103,104],[343,104],[104,275]],[[696,275],[457,104],[697,104]],[[104,325],[343,496],[103,496]],[[697,496],[457,496],[696,325]]] ,
   obstacle_v: [[[-11,-10],[335,-10],[-11,252]],[[-11,348],[335,610],[-11,610]],[[811,252],[465,-10],[811,-10]],[[811,610],[465,610],[811,348]],[[466,300],[400,348],[335,300],[400,251]]],
   spawn_points: [[-100, 300], [400, -100], [900, 300], [400, 700]],
+  bit_spawn_points: [[400, 50], [50, 300], [400, 550], [750, 300]],
   buffer_radius: 1,
   cutoff_scores: [75000, 250000, 1500000],
   player_loc: {x: 400, y: 400}
 
 }
 
-impulse_level_data['LEVEL 1-4'] = {
+impulse_level_data['HIVE 1-4'] = {
   enemies: {
               spear: [3, 3, 1, 4, 40],
 
@@ -160,6 +164,7 @@ impulse_level_data['LEVEL 1-4'] = {
   dominant_enemy: "spear",
   obstacle_v: [[[-15,73],[323,269],[-15,269]],[[-15,331],[323,331],[-15,528]],[[815,269],[477,269],[815,73]],[[362,387],[362,610],[-15,610]],[[438,213],[438,-10],[815,-10]],[[-15,-10],[362,-10],[362,213]],[[815,610],[438,610],[438,387]],[[815,528],[477,331],[815,331]]],
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700], [-100, 300], [400, -100], [900, 300], [400, 700]],
+  bit_spawn_points: [[400, 125], [400, 475], [125,300], [675, 300], [177, 145], [623, 145], [177, 455], [623, 455]],
   buffer_radius: 1,
   cutoff_scores: [50000, 200000, 1000000],
   player_loc: {x: 400, y: 300}
@@ -168,7 +173,7 @@ impulse_level_data['LEVEL 1-4'] = {
 
 
 
-impulse_level_data['LEVEL 1-5'] = {
+impulse_level_data['HIVE 1-5'] = {
   enemies: {
               stunner: [5, 5, 2, 2, 25],
               tank: [5, 8, 2, 4, 15]
@@ -181,6 +186,7 @@ impulse_level_data['LEVEL 1-5'] = {
   //obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]], [[200, 200], [600, 200], [600, 400], [200, 400]]],
   obstacle_v: [[[828,322],[518,8],[554,-32],[823,-32]],[[-28,278],[282,592],[246,632],[-23,632]],[[398,125],[575,300],[399,476],[223,300]],[[107,185],[-25,53],[-25,-34],[325,-34]],[[693,415],[825,547],[825,634],[475,634]]],
   spawn_points: [[400, -100], [400, 700], [-100, 300], [900, 300]],
+  bit_spawn_points: [[50, 240], [400, 15], [400, 585], [750, 360]],
   buffer_radius: 1,
   cutoff_scores: [125000, 800000, 3000000],
   player_loc: {x: 250, y: 150}
@@ -188,7 +194,7 @@ impulse_level_data['LEVEL 1-5'] = {
 
 }
 
-impulse_level_data['LEVEL 1-6'] = {
+impulse_level_data['HIVE 1-6'] = {
   enemies: {
               spear: [4, 4, 1, 2, 15],
               tank: [4, 4, 1.5, 1.5, 25]
@@ -201,6 +207,7 @@ impulse_level_data['LEVEL 1-6'] = {
   //obstacle_v: [[[150, 50], [650, 50], [650, 100], [150, 100]], [[150, 500], [650, 500], [650, 550], [150, 550]], [[50, 150], [100, 150], [100, 450], [50, 450]], [[700, 150], [750, 150], [750, 450], [700, 450]]],
   obstacle_v: [[[103,1],[688,1],[688,27],[103,27]],[[799,483],[770,483],[770,116],[799,116]],[[103,573],[688,573],[688,599],[103,599]],[[1,116],[30,116],[30,483],[1,483]]],
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700]],
+  bit_spawn_points: [[66, 528], [66, 72], [734, 528], [66, 528]],
   buffer_radius: 1,
   cutoff_scores: [75000, 400000, 1750000],
    player_loc: {x: 400, y: 300}
@@ -208,7 +215,7 @@ impulse_level_data['LEVEL 1-6'] = {
 
 }
 
-impulse_level_data['LEVEL 1-7'] = {
+impulse_level_data['HIVE 1-7'] = {
   enemies: {
               stunner: [3, 3, 2, 1.5, 30],
               spear: [5, 5, 2, 2, 15],
@@ -223,6 +230,7 @@ impulse_level_data['LEVEL 1-7'] = {
   //obstacle_v: [[[75, 75], [362.5, 75], [362.5, 175], [75, 175]], [[437.5, 75], [725, 75], [725, 175], [437.5, 175]], [[75, 250], [362.5, 250], [362.5, 350], [75, 350]], [[437.5, 250], [725, 250], [725, 350], [437.5, 350]], [[75, 425], [362.5, 425], [362.5, 525], [75, 525]], [[437.5, 425], [725, 425], [725, 525], [437.5, 525]]],
   obstacle_v: [[[652,144],[562,179],[473,144],[562,110]],[[562,490],[473,456],[562,421],[652,456]],[[238,110],[327,144],[238,179],[148,144]],[[400,569],[489,603],[400,638],[310,603]],[[310,-3],[400,-38],[489,-3],[400,31]],[[310,300],[400,265],[489,300],[400,334]],[[78,-38],[167,-3],[78,31],[-12,-3]],[[723,334],[634,300],[723,265],[813,300]],[[-12,300],[78,265],[167,300],[78,334]],[[-12,603],[78,569],[167,603],[78,638]],[[813,-3],[723,31],[634,-3],[723,-38]],[[723,638],[634,603],[723,569],[813,603]],[[148,456],[238,421],[327,456],[238,490]],[[-36,125],[10,143],[-36,163]],[[836,475],[790,457],[836,438]],[[-36,438],[10,457],[-36,475]],[[836,163],[790,143],[836,125]]],
   spawn_points: [[-100, 50], [-100, 300], [-100, 550], [900, 50], [900, 300], [900, 550], [240, -100], [560, -100], [240, 700], [560, 700]],
+  bit_spawn_points: [[75, 145], [235, 34], [565, 34], [725, 145], [725, 455], [565, 566], [235, 566], [75, 455]],
   buffer_radius: 2,
   cutoff_scores: [75000, 600000, 2000000],
   player_loc: {x: 400, y: 450}
@@ -241,12 +249,11 @@ impulse_level_data['BOSS 1'] = {
   obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700]],
   buffer_radius: 1,
-  cutoff_scores: [400000, 1300000, 6500000],
   player_loc: {x: 400, y: 500}
 
 }
 
-impulse_level_data['LEVEL 2-1'] = {
+impulse_level_data['HIVE 2-1'] = {
   enemies: {
               stunner: [0, 3, 2, 2, 20],
               tank: [0, 10, 1, 2, 15],
@@ -262,7 +269,7 @@ impulse_level_data['LEVEL 2-1'] = {
 
 }
 
-impulse_level_data['LEVEL 2-2'] = {
+impulse_level_data['HIVE 2-2'] = {
   enemies: {
               stunner: [2, 3, 2, 1, 30],
               spear: [1, 5, 1, 1, 20],
@@ -278,7 +285,7 @@ impulse_level_data['LEVEL 2-2'] = {
 
 }
 
-impulse_level_data['LEVEL 2-3'] = {
+impulse_level_data['HIVE 2-3'] = {
   enemies: {
               spear: [4, 15, 8, 2, 15],
               tank: [4, 15, 8, 2, 20],
@@ -293,7 +300,7 @@ impulse_level_data['LEVEL 2-3'] = {
 
 }
 
-impulse_level_data['LEVEL 2-4'] = {
+impulse_level_data['HIVE 2-4'] = {
   enemies: {
               stunner: [0, 8, 2, 1, 10],
               spear: [4, 20, 8, 2, 15],
@@ -314,7 +321,7 @@ impulse_level_data['LEVEL 2-4'] = {
 
 
 
-impulse_level_data['LEVEL 2-5'] = {
+impulse_level_data['HIVE 2-5'] = {
   enemies: {
               tank: [0, 6, 1, 1, 12],
               harpoon: [0, 5, 1, 1, 10],
@@ -327,7 +334,7 @@ impulse_level_data['LEVEL 2-5'] = {
 
 }
 
-impulse_level_data['LEVEL 2-6'] = {
+impulse_level_data['HIVE 2-6'] = {
   enemies: {
               spear: [0, 12, 4, 2, 15],
               mote: [0, 8, 1, 1, 10],
@@ -342,7 +349,7 @@ impulse_level_data['LEVEL 2-6'] = {
   player_loc: {x: 400, y: 450}
 }
 
-impulse_level_data['LEVEL 2-7'] = {
+impulse_level_data['HIVE 2-7'] = {
   enemies: {
               stunner: [0, 3, 2, 2, 15],
               spear: [0, 8, 2, 2, 10],
@@ -378,7 +385,7 @@ impulse_level_data['BOSS 2'] = {
 
 }
 
-impulse_level_data['LEVEL 3-1'] = {
+impulse_level_data['HIVE 3-1'] = {
   enemies: {
 
               stunner: [5, 5, 1, 1, 20],
@@ -396,7 +403,7 @@ impulse_level_data['LEVEL 3-1'] = {
 
 }
 
-impulse_level_data['LEVEL 3-2'] = {
+impulse_level_data['HIVE 3-2'] = {
   enemies: {
               spear: [0, 4, 1, 1, 20],
               goo: [0, 10, 1, 0, 1],
@@ -419,7 +426,7 @@ impulse_level_data['LEVEL 3-2'] = {
 
 
 
-impulse_level_data['LEVEL 3-3'] = {
+impulse_level_data['HIVE 3-3'] = {
   enemies: {
               tank: [0, 10, 4, 2, 30],
               harpoon: [0, 12, 2, 1, 10],
@@ -437,7 +444,7 @@ impulse_level_data['LEVEL 3-3'] = {
 }
 
 
-impulse_level_data['LEVEL 3-4'] = {
+impulse_level_data['HIVE 3-4'] = {
   enemies: {
 
               spear: [5, 12, 4, 2, 15],
@@ -453,7 +460,7 @@ impulse_level_data['LEVEL 3-4'] = {
   player_loc: {x: 250, y:200}
 }
 
-impulse_level_data['LEVEL 3-5'] = {
+impulse_level_data['HIVE 3-5'] = {
   enemies: {
              stunner: [0, 3, 1, 1, 15],
              tank: [0, 5, 1, 1, 5],
@@ -471,7 +478,7 @@ impulse_level_data['LEVEL 3-5'] = {
 
 }
 
-impulse_level_data['LEVEL 3-6'] = {
+impulse_level_data['HIVE 3-6'] = {
   enemies: {
               stunner: [0, 3, 2, 2, 20],
               spear: [0, 8, 1, 1, 20],
@@ -488,7 +495,7 @@ impulse_level_data['LEVEL 3-6'] = {
 
 }
 
-impulse_level_data['LEVEL 3-7'] = {
+impulse_level_data['HIVE 3-7'] = {
   enemies: {
 
               stunner: [0, 6, 1, .5, 15],
@@ -535,7 +542,7 @@ impulse_level_data['BOSS 3'] = {
 
 }
 
-impulse_level_data['LEVEL 4-1'] = {
+impulse_level_data['HIVE 4-1'] = {
   enemies: {
              mote: [0, 15, 1, 1, 5],
              spear: [5, 8, 1, 1, 10],
@@ -551,7 +558,7 @@ impulse_level_data['LEVEL 4-1'] = {
 
 }
 
-impulse_level_data['LEVEL 4-2'] = {
+impulse_level_data['HIVE 4-2'] = {
   enemies: {
 
              tank: [8, 8, 1, 1, 10],
@@ -570,7 +577,7 @@ impulse_level_data['LEVEL 4-2'] = {
 
 }
 
-impulse_level_data['LEVEL 4-3'] = {
+impulse_level_data['HIVE 4-3'] = {
   enemies: {
              stunner: [0, 3, 3, 1, 40],
              tank: [0, 6, 1, 1, 20],
@@ -588,7 +595,7 @@ impulse_level_data['LEVEL 4-3'] = {
 
 }
 
-impulse_level_data['LEVEL 4-4'] = {
+impulse_level_data['HIVE 4-4'] = {
   enemies: {
             spear: [0, 6, 2, 1, 20],
             goo:  [0, 5, 1, 0, 1],
@@ -609,7 +616,7 @@ impulse_level_data['LEVEL 4-4'] = {
 
 
 
-impulse_level_data['LEVEL 4-5'] = {
+impulse_level_data['HIVE 4-5'] = {
   enemies: {
              stunner: [0, 3, 1, 1, 20],
              tank: [5, 8, 1, .5, 20],
@@ -631,7 +638,7 @@ impulse_level_data['LEVEL 4-5'] = {
 
 }
 
-impulse_level_data['LEVEL 4-6'] = {
+impulse_level_data['HIVE 4-6'] = {
   enemies: {
              stunner: [3, 3, 1, 2, 40],
              spear: [3, 10, 1, 1, 20],
@@ -650,7 +657,7 @@ impulse_level_data['LEVEL 4-6'] = {
 
 }
 
-impulse_level_data['LEVEL 4-7'] = {
+impulse_level_data['HIVE 4-7'] = {
   enemies: {
              /*stunner: [0, 8, 25, 2, 25],
              spear: [0, 10, 25, 1, 25],
@@ -759,7 +766,7 @@ var level_cutoffs = [0, 1, 3, 5, 7, 9, 11, 15]
 for(var i = 0; i < 8; i++) {
   world_cutoffs['WORLD '+(i+1)] = i * 16
   for(var j = 0; j < 7; j++) {
-    impulse_level_cutoffs['LEVEL '+(i+1)+'-'+(j+1)] = 16 * i + level_cutoffs[j]
+    impulse_level_cutoffs['HIVE '+(i+1)+'-'+(j+1)] = 16 * i + level_cutoffs[j]
   }
   impulse_level_cutoffs['BOSS '+(i+1)] = 16 * i + level_cutoffs[7]
 }

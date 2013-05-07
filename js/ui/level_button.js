@@ -6,6 +6,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
   this.state = null
   this.world = world
   this.level_name = level_name
+  this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   this.size = size
 
   var action = function() {
@@ -55,7 +56,7 @@ LevelButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
   context.font = this.hover ? (1.25 * this.size) +'px Muli' : this.size +'px Muli'
-  context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
+  context.fillStyle = this.is_boss_level? "red" : impulse_colors["world "+(this.world)+" lite"]
 
   context.fillText(this.level_name, this.x, this.y - this.h/2 + this.size + 10)
   context.fill()
@@ -101,7 +102,7 @@ LevelButton.prototype.additional_draw = function(context) {
 
   var drawn_enemies = null
 
-  if(this.level_name.slice(0, 4) == "BOSS") {
+  if(this.is_boss_level) {
     drawn_enemies = {}
     drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
     num_enemy_type = 1
@@ -155,11 +156,13 @@ LevelButton.prototype.additional_draw = function(context) {
     context.beginPath()
     context.textAlign = "right"
 
-    for(var i = 0; i < 3; i++) {
-      context.fillStyle = impulse_colors[this.star_colors[i]]
-      context.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
+    if(!this.is_boss_level) {
+      for(var i = 0; i < 3; i++) {
+        context.fillStyle = impulse_colors[this.star_colors[i]]
+        context.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
+      }
+      context.fill()
     }
-    context.fill()
     context.beginPath()
     context.textAlign = "center"
 
@@ -183,7 +186,7 @@ LevelButton.prototype.additional_draw = function(context) {
   if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score == 0) {
     context.font = "25px Muli"
     context.textAlign = "right"
-    context.fillStyle = this.level_name.slice(0, 4) == "BOSS" ? "red" : impulse_colors["world "+(this.world)+" lite"]
+    context.fillStyle = this.is_boss_level ? "red" : impulse_colors["world "+(this.world)+" lite"]
     context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
 
   }
