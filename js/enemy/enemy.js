@@ -165,6 +165,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
+  this.statuses = ["normal", "stunned", "silenced", "gooed", "lighten"]
+  this.additional_statuses = []
+
 }
 
 Enemy.prototype.check_death = function() {
@@ -553,126 +556,180 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.save();
     context.translate(tp.x * draw_factor, tp.y * draw_factor);
     context.rotate(this.body.GetAngle());
-    context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
+    /*context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);*/
   //}
-  var latest_color = null;
+  var latest_color = this.get_current_color_with_status()
 
-  for(var k = 0; k < this.shapes.length; k++) {
+  var size = this.level.enemy_images[this.type]["normal"].height;
+  if (this.dying)
+    context.globalAlpha *= (1 - prog)
+  else
+    context.globalAlpha *= this.visibility ? this.visibility : 1
 
-    if(this.shape_polygons[k].visible === false) continue
+   var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
 
-    // fade out if dying
-    if (this.dying)
-      context.globalAlpha *= (1 - prog)
-    else
-      context.globalAlpha *= this.visibility ? this.visibility : 1
+   var my_size = size
+   if(this.status_duration[3] > 0) {
 
-    var cur_shape = this.shapes[k]
-    var cur_shape_points = this.shape_points[k]
-    var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
-
-    // draw the shape
-    context.beginPath()
-
-    var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
-    /*if(cur_shape instanceof b2CircleShape) {
-      //draw circle shape
-        context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (radius_factor), 0, 2*Math.PI, true)
-    }*/
-    if(cur_shape instanceof b2PolygonShape) {
-      //draw polygon shape
+      var prog = this.status_duration[3]/this.last_lighten
       var lighten_factor = 1
-
-      if(this.status_duration[3] > 0) {
-
-        var prog = this.status_duration[3]/this.last_lighten
-        if(prog < .1)
-        {
-          var transition = 1 - prog/.1
-          lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
-        } else if(prog > .9) {
-          var transition = (prog - .9)/.1
-          lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
-        } else {
-          lighten_factor = this.lighten_finish
-        }
-
-      }
-
-      context.moveTo((tp.x+cur_shape_points[0].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor)*lighten_factor)*draw_factor)
-      for(var i = 1; i < cur_shape_points.length; i++)
+      if(prog < .1)
       {
-        context.lineTo((tp.x+cur_shape_points[i].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor)*lighten_factor)*draw_factor)
+        var transition = 1 - prog/.1
+        lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+      } else if(prog > .9) {
+        var transition = (prog - .9)/.1
+        lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+      } else {
+        lighten_factor = this.lighten_finish
       }
+      my_size *= lighten_factor
     }
-    context.closePath()
+  my_size *= radius_factor
 
-    if (!this.interior_color ) {
-      context.globalAlpha *= 0.7;
-    }
-
-
-    context.fillStyle = this.get_color_with_status(this.interior_color)
-
-    latest_color = context.fillStyle
-
-    context.fill()
-
-
-
-
-    // revert transparency
-    if (!this.interior_color ) {
-      context.globalAlpha /= 0.7;
-    }
-
-
-    if(this.interior_color && context.fillStyle == this.interior_color)
-      context.strokeStyle = cur_color
-    else
-      context.strokeStyle = context.fillStyle
-
-    if(this.status_duration[3] > 0) {
-      context.strokeStyle = "black"
-    }
-
-
-    context.lineWidth = this.dying ? (1 - prog) * 2 : 2
-    context.stroke()
-
-    // give enemies a tiny of the level color
-    /*context.strokeStyle = this.level.color;
-    context.fillStyle = this.level.color;
-    context.globalAlpha = .3;
-    context.stroke();
-    context.fill();
-    context.globalAlpha = 1;*/
-
-    /*if(this.special_mode && !this.dying) {
-      context.globalAlpha = this.sp_visibility
-      context.beginPath()
-      if(this.shape instanceof b2CircleShape) {
-        context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
-      }
-
-      if(this.shape instanceof b2PolygonShape) {
-        context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
-        for(var i = 1; i < cur_shape_points.length; i++) {
-          context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
-        }
-        context.closePath()
-      }
-      context.lineWidth = 1
-      context.strokeStyle = cur_color
-      context.stroke()
-    }*/
+  if(this.get_current_status() != "normal")
+  {
+    console.log("M")
   }
+
+  ctx.drawImage( this.level.enemy_images[this.type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+
+  if(this.status_duration[3] > 0) {
+    ctx.drawImage( this.level.enemy_images[this.type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+  }
+
+
+  // for(var k = 0; k < this.shapes.length; k++) {
+
+  //   if(this.shape_polygons[k].visible === false) continue
+
+  //   // fade out if dying
+  //   if (this.dying)
+  //     context.globalAlpha *= (1 - prog)
+  //   else
+  //     context.globalAlpha *= this.visibility ? this.visibility : 1
+
+  //   var cur_shape = this.shapes[k]
+  //   var cur_shape_points = this.shape_points[k]
+  //   var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
+
+  //   // draw the shape
+  //   context.beginPath()
+
+  //   var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
+  //   /*if(cur_shape instanceof b2CircleShape) {
+  //     //draw circle shape
+  //       context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (radius_factor), 0, 2*Math.PI, true)
+  //   }*/
+  //   if(cur_shape instanceof b2PolygonShape) {
+  //     //draw polygon shape
+  //     var lighten_factor = 1
+
+  //     if(this.status_duration[3] > 0) {
+
+  //       var prog = this.status_duration[3]/this.last_lighten
+  //       if(prog < .1)
+  //       {
+  //         var transition = 1 - prog/.1
+  //         lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+  //       } else if(prog > .9) {
+  //         var transition = (prog - .9)/.1
+  //         lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
+  //       } else {
+  //         lighten_factor = this.lighten_finish
+  //       }
+
+  //     }
+
+  //     context.moveTo((tp.x+cur_shape_points[0].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor)*lighten_factor)*draw_factor)
+  //     for(var i = 1; i < cur_shape_points.length; i++)
+  //     {
+  //       context.lineTo((tp.x+cur_shape_points[i].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor)*lighten_factor)*draw_factor)
+  //     }
+  //   }
+  //   context.closePath()
+
+  //   if (!this.interior_color ) {
+  //     context.globalAlpha *= 0.7;
+  //   }
+
+
+  //   context.fillStyle = this.get_color_with_status(this.interior_color)
+
+  //   latest_color = context.fillStyle
+
+  //   context.fill()
+
+
+
+
+  //   // revert transparency
+  //   if (!this.interior_color ) {
+  //     context.globalAlpha /= 0.7;
+  //   }
+
+
+  //   if(this.interior_color && context.fillStyle == this.interior_color)
+  //     context.strokeStyle = cur_color
+  //   else
+  //     context.strokeStyle = context.fillStyle
+
+  //   if(this.status_duration[3] > 0) {
+  //     context.strokeStyle = "black"
+  //   }
+
+
+  //   context.lineWidth = this.dying ? (1 - prog) * 2 : 2
+  //   context.stroke()
+
+  //   // give enemies a tiny of the level color
+  //   /*context.strokeStyle = this.level.color;
+  //   context.fillStyle = this.level.color;
+  //   context.globalAlpha = .3;
+  //   context.stroke();
+  //   context.fill();
+  //   context.globalAlpha = 1;*/
+
+  //   /*if(this.special_mode && !this.dying) {
+  //     context.globalAlpha = this.sp_visibility
+  //     context.beginPath()
+  //     if(this.shape instanceof b2CircleShape) {
+  //       context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
+  //     }
+
+  //     if(this.shape instanceof b2PolygonShape) {
+  //       context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
+  //       for(var i = 1; i < cur_shape_points.length; i++) {
+  //         context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
+  //       }
+  //       context.closePath()
+  //     }
+  //     context.lineWidth = 1
+  //     context.strokeStyle = cur_color
+  //     context.stroke()
+  //   }*/
+  // }
   context.restore()
 
   this.additional_drawing(context, draw_factor, latest_color)
 }
 
-Enemy.prototype.get_color_with_status = function(orig_color) {
+Enemy.prototype.get_current_status = function() {
+
+  if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'stunned';
+      } else if(this.color_silenced) {
+        return 'silenced'
+      } else if(this.status_duration[2] > 0) {
+        return "gooed"
+      }
+    }
+
+    return "normal"
+}
+
+Enemy.prototype.get_current_color_with_status = function(orig_color) {
   /*if (this.durations["open"] > 0) {
         context.fillStyle = impulse_colors["impulse_blue"]
       } else */
@@ -803,4 +860,164 @@ Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
 
 Enemy.prototype.get_impulse_sensitive_pts = function() {
   return [this.body.GetPosition()]
+}
+
+Enemy.prototype.set_up_images = function() {
+  var normal_canvas = document.createElement('canvas');
+  normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+  normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+
+  normal_canvas_ctx = normal_canvas.getContext('2d');
+
+  this.draw_enemy_image(normal_canvas_ctx);
+  this.enemy_images = {}
+  this.enemy_images["normal"] = normal_canvas
+}
+
+Enemy.prototype.draw_additional_image = function(context, color) {
+
+}
+
+Enemy.prototype.get_color_for_status = function(status) {
+  if(status == "normal") {
+    return this.color
+  } else if(status == "stunned") {
+    return 'gray';
+  } else if(status == "silenced") {
+    return 'gray'
+  } else if(status == "gooed") {
+    return "#e6c43c"
+  }
+
+  return this.get_additional_color_for_status(status)
+}
+
+Enemy.prototype.get_additional_color_for_status = function(status) {
+
+}
+
+Enemy.prototype.generate_images = function() {
+
+  var images = {};
+  for(index in this.statuses) {
+    var status = this.statuses[index]
+    var normal_canvas = document.createElement('canvas');
+    normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+    normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+
+    normal_canvas_ctx = normal_canvas.getContext('2d');
+
+    this.draw_enemy_image(normal_canvas_ctx, status);
+    images[status] = normal_canvas
+
+  }
+
+
+  for(index in this.additional_statuses) {
+    var status = this.additional_statuses[index]
+    var normal_canvas = document.createElement('canvas');
+    normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+    normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+
+    normal_canvas_ctx = normal_canvas.getContext('2d');
+
+    this.draw_enemy_image(normal_canvas_ctx, status);
+    images[status] = normal_canvas
+
+  }
+  return images
+
+}
+
+Enemy.prototype.draw_enemy_image = function(context, state) {
+
+  context.save()
+  var tp = {x: impulse_enemy_stats[this.type].effective_radius, y: impulse_enemy_stats[this.type].effective_radius}
+  for(var k = 0; k < this.shapes.length; k++) {
+
+    if(this.shape_polygons[k].visible === false) continue
+
+    var cur_shape = this.shapes[k]
+    var cur_shape_points = this.shape_points[k]
+    var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
+
+    if(state) {
+      cur_color = this.get_color_for_status(state)
+    }
+
+    // draw the shape
+    context.beginPath()
+
+    if(cur_shape instanceof b2PolygonShape) {
+      //draw polygon shape
+      context.moveTo((tp.x+cur_shape_points[0].x)*draw_factor, (tp.y+cur_shape_points[0].y)*draw_factor)
+      for(var i = 1; i < cur_shape_points.length; i++)
+      {
+        context.lineTo((tp.x+cur_shape_points[i].x)*draw_factor, (tp.y+cur_shape_points[i].y)*draw_factor)
+      }
+    }
+    context.closePath()
+
+    if (!this.interior_color ) {
+      context.globalAlpha *= 0.7;
+    }
+
+    context.fillStyle =cur_color
+
+    if(state != "lighten")
+      context.fill()
+
+    // revert transparency
+    if (!this.interior_color ) {
+      context.globalAlpha /= 0.7;
+    }
+
+
+    if(this.interior_color && context.fillStyle == this.interior_color)
+      context.strokeStyle = cur_color
+    else
+      context.strokeStyle = context.fillStyle
+
+    if(state == "lighten") {
+      context.strokeStyle = "black"
+    }
+
+    context.lineWidth = this.dying ? (1 - prog) * 2 : 2
+    context.stroke()
+
+    // give enemies a tiny of the level color
+    /*context.strokeStyle = this.level.color;
+    context.fillStyle = this.level.color;
+    context.globalAlpha = .3;
+    context.stroke();
+    context.fill();
+    context.globalAlpha = 1;*/
+
+    /*if(this.special_mode && !this.dying) {
+      context.globalAlpha = this.sp_visibility
+      context.beginPath()
+      if(this.shape instanceof b2CircleShape) {
+        context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
+      }
+
+      if(this.shape instanceof b2PolygonShape) {
+        context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
+        for(var i = 1; i < cur_shape_points.length; i++) {
+          context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
+        }
+        context.closePath()
+      }
+      context.lineWidth = 1
+      context.strokeStyle = cur_color
+      context.stroke()
+    }*/
+  }
+
+  context.restore()
+
+  this.draw_enemy_image_additional(context, cur_color)
+}
+
+Enemy.prototype.draw_enemy_image_additional = function(context, color) {
+
 }

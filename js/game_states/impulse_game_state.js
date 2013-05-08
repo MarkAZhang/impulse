@@ -363,7 +363,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   this.set_zoom_transparency();
   if(!this.is_boss_level) {
 
-    this.draw_score_labels()
+    this.draw_score_labels(ctx)
   }
   ctx.restore()
 
@@ -744,11 +744,11 @@ ImpulseGameState.prototype.check_cutoffs = function() {
       if(this.stars == 1) {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
-        this.addScoreLabel("GATEWAY UNLOCKED", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-      } else if(this.stars == 2) {
+        this.addScoreLabel("GATEWAY UNLOCKED", "white", levelWidth/2/draw_factor, levelHeight/2/draw_factor, 24, 3000)
+      } else if(this.stars == 2 && this.hive_numbers) {
         this.hive_numbers.lives +=1
         this.addScoreLabel("1UP", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-      } else if(this.stars == 3) {
+      } else if(this.stars == 3 && this.hive_numbers) {
         if(this.hive_numbers.lives < 5) {
           this.addScoreLabel((5 - this.hive_numbers.lives)+"UP", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
           this.hive_numbers.lives = 5

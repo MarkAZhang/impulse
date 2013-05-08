@@ -285,8 +285,6 @@ function on_key_down(event) {
     mute = !mute
   }
 
-  console.log(keyCode)
-
   if(cur_dialog_box) {
     cur_dialog_box.on_key_down(keyCode)
     return

@@ -29,6 +29,8 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.require_open = false;
   this.open_period = 500;
+  this.additional_statuses = ["hot"]
+
 
 }
 
@@ -161,25 +163,13 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
   context.globalAlpha *= 1 - prog
   var this_angle = this.body.GetAngle() + Math.PI/4;
   context.strokeStyle = latest_color;
-  context.lineWidth = 4;
   context.beginPath()
 
   var lighten_multiplier = 1;
   if(this.status_duration[3] > 0) {
     lighten_multiplier /= this.lighten_factor
   }
-  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor,
-  (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor,
-  (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.stroke()
 
-  context.beginPath()
-  context.moveTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
-   (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.lineTo((this.body.GetPosition().x + (1 + this.death_radius * prog)*lighten_multiplier*Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor,
-   (this.body.GetPosition().y + (1 + this.death_radius * prog)*lighten_multiplier*Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2))*draw_factor)
-  context.stroke()
 
   if(this.activated && this.detonate_timer > 0)
   {
@@ -203,4 +193,49 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
   }
   context.restore();
 
+}
+
+Tank.prototype.get_additional_color_for_status = function(status) {
+  if(status == "hot") {
+    return "red"
+  }
+}
+
+Tank.prototype.get_current_status = function() {
+
+  if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'stunned';
+      } else if(this.color_silenced) {
+        return 'silenced'
+      } else if(this.durations["open"] > 0) {
+        return "hot";
+      } else if(this.status_duration[2] > 0) {
+        return "gooed"
+      }
+    }
+    return "normal"
+}
+
+Tank.prototype.draw_enemy_image_additional = function(context, color) {
+  context.strokeStyle = color
+  context.lineWidth = 4;
+  var this_angle = Math.PI/4
+  var tp = {x: impulse_enemy_stats[this.type].effective_radius *draw_factor , y: impulse_enemy_stats[this.type].effective_radius*draw_factor}
+
+  context.beginPath()
+
+  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*draw_factor,
+  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*draw_factor)
+
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*draw_factor,
+  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.stroke()
+
+  context.beginPath()
+  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.stroke()
 }

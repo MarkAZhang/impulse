@@ -207,7 +207,6 @@ BossOne.prototype.add_arms = function() {
 }
 
 BossOne.prototype.load_punch_at_player = function(side) {
-    console.log("LOAD PUNCH AT PLAYER "+side+" "+this.start_time)
     this.set_timer(side, this.action_transition_interval)
     if(side=="left") {
       var _this = this;
@@ -237,7 +236,6 @@ BossOne.prototype.load_punch_at_player = function(side) {
 }
 
 BossOne.prototype.move_arm_to_default = function(side, right_stall) {
-  console.log("MOVING ARM TO DEFAULT"+side+" "+this.start_time)
     this.set_timer(side, this.action_transition_interval)
     if(side=="left") {
       this.arm_states[side] = "default"
@@ -258,7 +256,6 @@ BossOne.prototype.move_arm_to_default = function(side, right_stall) {
 
 
 BossOne.prototype.move_arm_to_turret = function(side, right_stall) {
-  console.log("MOVING ARM TO TURRET"+side+" "+this.start_time)
     this.set_timer(side, this.action_transition_interval)
     if(side=="left") {
       this.arm_states[side] = "loading_turret"
@@ -274,7 +271,6 @@ BossOne.prototype.move_arm_to_turret = function(side, right_stall) {
 }
 
 BossOne.prototype.punch_at = function(pt, side) {
-  console.log("PUNCHING "+side+" "+this.start_time)
   this.set_timer(side, this.action_transition_interval)
   if(side=="left") {
 
@@ -304,7 +300,6 @@ BossOne.prototype.punch_at = function(pt, side) {
 }
 
 BossOne.prototype.retract_punch = function(side) {
-  console.log("RETRACTING PUNCH "+side+" "+this.start_time)
   this.set_timer(side, this.action_transition_interval)
   if(side=="left") {
 
@@ -463,7 +458,6 @@ BossOne.prototype.additional_processing = function(dt) {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
         if(this.paralyzed_pause[arm] > 0) {
-          console.log("CONSUMING PARALYZE "+this.paralyzed_pause[arm])
           this.paralyzed_pause[arm] -= dt
         } else {
           this.load_punch_at_player(arm)
@@ -477,7 +471,6 @@ BossOne.prototype.additional_processing = function(dt) {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < - this.last_action_interval[arm] * 2) {
         if(this.paralyzed_pause[arm] > 0) {
-          console.log("CONSUMING PARALYZE "+this.paralyzed_pause[arm])
           this.paralyzed_pause[arm] -= dt
         } else {
           this.load_punch_at_player(arm)
@@ -986,11 +979,9 @@ BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, s
       {
         var angle = _atan(attack_loc, hand_point)//not sure if it should be this point
         this.arm_states[side] = "paralyzed"
-        console.log('PARALYZE SET TO ')
         this.paralyzed_pause[side] = this.action_timer[side]
         if(this.arm_states[side] == "loading")
           this.paralyzed_pause[side] += this.action_transition_interval
-        console.log('PARALYZE SET TO '+this.paralyzed_pause[side])
         hand.ApplyImpulse(new b2Vec2(this.impulse_hand_force * impulse_force*Math.cos(angle),
          this.impulse_hand_force * impulse_force*Math.sin(angle)),
         hand.GetWorldCenter())

@@ -75,6 +75,8 @@ Level.prototype.init = function(data, level_intro_state) {
   this.spawn_point_counter = 0;
   this.reset();
 
+  this.enemy_images = {}
+
 }
 
 Level.prototype.reset = function() {
@@ -228,8 +230,7 @@ Level.prototype.process = function(dt) {
     {
       var new_enemy = this.spawned_enemies.pop()
 
-      this.enemy_numbers[new_enemy.type] += 1
-      this.enemies.push(new_enemy)
+      this.add_enemy(new_enemy)
 
     }
 
@@ -340,13 +341,23 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p.x, r_p.y, this.enemy_counter, this.impulse_game_state)
   }
 
-  this.enemies.push(temp_enemy)
+  this.add_enemy(temp_enemy)
+
+
+}
+
+Level.prototype.add_enemy = function(enemy) {
+  this.enemies.push(enemy)
 
   this.enemy_counter+=1
 
-  this.enemy_numbers[enemy_type] += 1
+  this.enemy_numbers[enemy.type] += 1
 
-  if(this_enemy.prototype.is_boss) this.boss = temp_enemy
+  if(enemy.is_boss) this.boss = enemy
+
+  if(!this.enemy_images.hasOwnProperty(enemy.type)) {
+    this.enemy_images[enemy.type] = enemy.generate_images()
+  }
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -483,4 +494,9 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   if(this.gateway_loc && !omit_gateway) {
     this.draw_gateway(bg_ctx, draw_factor)
   }
+}
+
+Level.prototype.create_enemy_images = function(enemy) {
+
+
 }

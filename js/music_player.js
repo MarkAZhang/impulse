@@ -4,6 +4,8 @@ var MusicPlayer = function() {
   this.multisounds = {}
   this.cur_song = null
   this.initialize_multisounds();
+
+  this.playing = {}
 }
 
 MusicPlayer.prototype.initialize_multisounds = function() {
@@ -79,13 +81,17 @@ MusicPlayer.prototype.resume_bg = function() {
 }
 
 MusicPlayer.prototype.play_bg = function(file) {
- if(this.cur_song!= null && this.cur_song != file) {
+
+
+  if(this.cur_song!= null && this.cur_song != file) {
     var _this = this;
     if(this.sounds[this.cur_song].isPaused()) {
       this.switch_bg(file)
       return
 
     }
+    this.playing[this.cur_song] = false
+    this.playing[file] = true
     this.sounds[this.cur_song].fadeOut(1000, function() {
        _this.switch_bg(file)
     })
@@ -101,13 +107,17 @@ MusicPlayer.prototype.play_bg = function(file) {
           });
 
     } else {
-    this.sounds[file] = new buzz.sound("audio/"+file+".ogg",{
+      this.sounds[file] = new buzz.sound("audio/"+file+".ogg",{
           loop: true
         });
     }
   }
+  if(!this.playing[file]) {
+    this.sounds[file].stop()
+  }
   this.sounds[file].setVolume(100);
   this.sounds[file].play();
+  this.playing[file] = true
   this.cur_song = file;
 }
 
@@ -121,10 +131,14 @@ MusicPlayer.prototype.pause = function(file) {
 
 MusicPlayer.prototype.stop_bg = function() {
   if(this.cur_song) {
+    this.playing[this.cur_song] = false
     var _this = this;
-    _this.sounds[_this.cur_song].fadeOut(1000, function() {
-        _this.sounds[_this.cur_song].stop();
-       _this.cur_song = null;
+    _this.sounds[_this.cur_song].fadeOut(300, function() {
+        if(!_this.playing[_this.cur_song]) {
+
+          _this.sounds[_this.cur_song].stop();
+         _this.cur_song = null;
+        }
     })
 
   }
