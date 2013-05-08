@@ -27,7 +27,7 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   }
 
   if(available) {
-    if(player_data.stars <world_cutoffs[this.level_name]) {
+    if(!impulse_level_data["HIVE "+this.world+"-1"].save_state[player_data.difficulty_mode].seen && !unlockall){
       this.set_active(false)
       this.state = "locked"
     }
@@ -76,13 +76,10 @@ WorldButton.prototype.additional_draw = function(context) {
   context.fill()
   if(this.state == "locked") {
     context.beginPath()
-    draw_empty_star(ctx, this.x + 20, this.y + 20, 15, "gray")
-    context.beginPath()
     context.textAlign = "center"
     context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("LOCKED", this.x, this.y)
-    context.fillText(world_cutoffs[this.level_name], this.x - 20, this.y + 25)
     context.fill()
   }
   else if(this.state == "unavailable") {

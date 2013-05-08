@@ -1,5 +1,5 @@
 var version_num = "1.0"
-var unlockall = true
+var unlockall = false
 
 var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
 var ctx, canvas, bg_canvas, bg_ctx
@@ -363,10 +363,12 @@ function load_level_data(difficulty_level, load_obj) {
       if(load_obj['levels'].hasOwnProperty(i)) {
         impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i].save_state[difficulty_level].high_score
         impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i].save_state[difficulty_level].stars
+        impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i].save_state[difficulty_level].seen
       }
       else {
         impulse_level_data[i].save_state[difficulty_level].high_score = 0
         impulse_level_data[i].save_state[difficulty_level].stars = 0
+        impulse_level_data[i].save_state[difficulty_level].seen = false
       }
     }
   }
@@ -398,6 +400,7 @@ function save_level_data(difficulty_level, save_obj) {
       save_obj['levels'][i].save_state[difficulty_level] = {}
       save_obj['levels'][i].save_state[difficulty_level].high_score = impulse_level_data[i].save_state[difficulty_level].high_score
       save_obj['levels'][i].save_state[difficulty_level].stars = impulse_level_data[i].save_state[difficulty_level].stars
+      save_obj['levels'][i].save_state[difficulty_level].seen = impulse_level_data[i].save_state[difficulty_level].seen
     }
   }
 }

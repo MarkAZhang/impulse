@@ -15,7 +15,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
   this.init(x, y, w, h, action, true, color)
   if(impulse_level_data[level_name]) {
 
-    if(player_data.stars < impulse_level_data[level_name].star_cutoff) {
+  if(!impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].seen && !unlockall) {
       this.set_active(false)
       this.state = "locked"
     }
@@ -72,13 +72,10 @@ LevelButton.prototype.additional_draw = function(context) {
   }
   if(this.state == "locked") {
     context.beginPath()
-    draw_empty_star(ctx, this.x + 20, this.y + 20, 15, "gray")
-    context.beginPath()
     context.textAlign = "center"
     context.font = this.size +'px Muli'
     context.fillStyle = "gray"
     context.fillText("LOCKED", this.x, this.y)
-    context.fillText(impulse_level_data[this.level_name].star_cutoff, this.x - 20, this.y + 25)
     context.fill()
     return
   }

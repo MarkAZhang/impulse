@@ -13,6 +13,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.level_intro_interval = 2200
   this.last_level_summary_interval = 4000
   this.last_level = null
+  this.high_score = false
   if(level) {
     this.last_level = level
     this.last_level_name = level.level_name
@@ -44,6 +45,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   if(this.victory || !this.last_level) {
 
     this.level = new Level(impulse_level_data[this.get_next_level_name(this.last_level)], this)
+
+    impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
+    save_game()
 
     this.level.generate_obstacles()
 
@@ -126,6 +130,21 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
     else
       this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[2]
   }
+
+  if(this.game_numbers.score > impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score) {
+      this.high_score = true
+      impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
+
+      var stars = 0
+      while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[stars])
+      {
+        stars+=1
+      }
+      impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].stars = stars
+      this.stars = stars
+      save_game()
+
+    }
 
   if(this.victory) {
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name)) {
@@ -350,6 +369,12 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     var color = this.color
     draw_progress_bar(ctx, levelWidth/2, 420, 300, 15,
      Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
+
+    if(this.high_score) {
+      ctx.font = '18px Muli'
+      ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+      ctx.fillText("HIGH SCORE", levelWidth/2, 450)
+    }
 
     ctx.fillStyle = impulse_colors["impulse_blue_dark"]
     ctx.shadowColor = ctx.fillStyle
