@@ -676,7 +676,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     }
   } else if(keyCode == 32 && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
 
-    //if(this.game_numbers.score >= this.level.cutoff_scores["bronze"]) {
+    //if(this.game_numbers.score >= this.level.cutoff_scores[player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true

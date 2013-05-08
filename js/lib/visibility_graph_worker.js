@@ -1,5 +1,6 @@
 self.onmessage = function(event) {
 
+
   var polygons = event.data.polygons
   var obstacle_edges = event.data.obstacle_edges
   var draw_factor = event.data.draw_factor

@@ -232,7 +232,7 @@ HowToPlayState.prototype.draw_interface = function(ctx) {
   if(this.stars < 3) {
     ctx.font = '20px Muli'
     ctx.fillStyle = impulse_colors[this.star_colors[this.stars]]
-    ctx.fillText(this.level.cutoff_scores[this.stars], canvasWidth - 10, 25)
+    ctx.fillText(this.level.cutoff_scores[player_data.difficulty_mode][this.stars], canvasWidth - 10, 25)
   }
   else {
     ctx.font = '20px Muli'
@@ -420,7 +420,7 @@ HowToPlayState.prototype.addScoreLabel = function(str, color, x, y, font_size) {
 }
 
 HowToPlayState.prototype.check_cutoffs = function() {
-  if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
+  if(this.game_numbers.score >= this.level.cutoff_scores[player_data.difficulty_mode][this.stars])
   {
     this.stars+=1
     this.addScoreLabel(this.cutoff_messages[this.stars-1], this.star_colors[this.stars-1], canvasWidth/this.draw_factor/2, canvasHeight/this.draw_factor/2, 40)

@@ -156,7 +156,7 @@ LevelButton.prototype.additional_draw = function(context) {
     if(!this.is_boss_level) {
       for(var i = 0; i < 3; i++) {
         context.fillStyle = impulse_colors[this.star_colors[i]]
-        context.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
+        context.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
       }
       context.fill()
     }

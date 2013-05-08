@@ -19,7 +19,7 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.spawn_points = data.spawn_points
 
-  this.cutoff_scores = data.cutoff_scores
+  this.cutoff_scores = data.cutoff_scores[player_data.difficulty_mode]
   this.obstacle_num = data.obstacle_num
   this.obstacle_v = data.obstacle_v
   this.get_obstacle_vertices = data.get_obstacle_vertices

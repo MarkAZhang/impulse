@@ -44,6 +44,8 @@ function LevelIntroState(level_name, world) {
 
   this.level.generate_obstacles()
 
+  console.log("BEGIN WORKER")
+
   var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
 
   visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
@@ -54,7 +56,10 @@ function LevelIntroState(level_name, world) {
 
   visibility_graph_worker.onmessage = function(_this) {
     return function(event) {
-      if (event.data.percentage) {
+      if(event.data.print) {
+        console.log(event.data.print)
+      }
+      else if (event.data.percentage) {
         _this.load_percentage = event.data.percentage
 
       }
@@ -151,7 +156,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
         ctx.textAlign = 'right'
         ctx.font = '25px Muli'
         ctx.fillStyle = impulse_colors[this.star_colors[i]]
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i],  levelWidth/2 + 100, 300 + 35 * i)
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i],  levelWidth/2 + 100, 300 + 35 * i)
         draw_star(ctx,  levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
       }
     }
@@ -159,7 +164,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     if(!this.is_boss_level) {
 
-      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][score_color]) {
         score_color+=1
       }
     }

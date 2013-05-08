@@ -27,7 +27,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
       impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
 
       var stars = 0
-      while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[stars])
+      while(this.game_numbers.score >= impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][stars])
       {
         stars+=1
       }
@@ -38,7 +38,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
     else {
       this.high_score = false
       var stars = 0
-      while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[stars])
+      while(this.game_numbers.score > impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][stars])
       {
         stars+=1
       }
@@ -47,9 +47,9 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
     }
 
     if (this.stars < 3)
-        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[this.stars]
+        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][this.stars]
       else
-        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[2]
+        this.bar_top_score = impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][2]
 
     this.stars_gained = 0
   }

@@ -482,6 +482,14 @@ Enemy.prototype.collide_with = function(other) {
 
   if(this.dying)//ensures the collision effect only activates once
     return
+  if(this.durations["open"] > 0) {
+    console.log("HIT "+other.type)
+    if(other.type=="mote") {
+      var magnitude = this.body.m_linearVelocity
+
+      other.body.ApplyImpulse(new b2Vec2(magnitude.x*0.4, magnitude.y*0.4), other.body.GetPosition())
+    }
+  }
 
   if(other === this.player) {
 

@@ -86,13 +86,13 @@ PauseMenu.prototype.additional_draw = function(ctx) {
         ctx.font = '24px Muli';
         ctx.fillStyle = impulse_colors[temp_colors[i]]
         ctx.shadowColor = ctx.fillStyle
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[i], this.x, this.y - this.h/2 + 110 + 32 * i)
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x, this.y - this.h/2 + 110 + 32 * i)
       }
     }
     var score_color = 0
 
     if(!this.is_boss_level) {
-      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[score_color]) {
+      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][score_color]) {
         score_color+=1
       }
     }

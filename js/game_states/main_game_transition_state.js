@@ -117,7 +117,7 @@ MainGameTransitionState.prototype.get_next_level_name = function(level) {
 MainGameTransitionState.prototype.compute_last_level_stats = function() {
   var stars = 0
   if(!this.last_level.is_boss_level) {
-    while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[stars])
+    while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
     {
       stars+=1
     }
@@ -126,9 +126,9 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
   if(!this.last_level.is_boss_level) {
     if (this.stars < 3)
-      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[this.stars]
+      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][this.stars]
     else
-      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[2]
+      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][2]
   }
 
   if(this.game_numbers.score > impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score) {
@@ -136,7 +136,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
 
       var stars = 0
-      while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[stars])
+      while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
       {
         stars+=1
       }
@@ -155,7 +155,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       for(var attribute in this.game_numbers)
         this.hive_numbers.game_numbers[this.last_level.level_name][attribute] = this.game_numbers[attribute]
       var stars = 0
-      while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[stars])
+      while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
       {
         stars+=1
       }
