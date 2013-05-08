@@ -4,7 +4,6 @@ MainGameTransitionState.prototype.constructor = MainGameTransitionState
 
 function MainGameTransitionState(world_num, level, victory, final_game_numbers, visibility_graph, hive_numbers) {
 
-
   this.hive_numbers = hive_numbers
   this.victory = victory
 
@@ -12,7 +11,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
   this.world_intro_interval = 4200
   this.level_intro_interval = 2200
-  this.last_level_summary_interval = 5000
+  this.last_level_summary_interval = 4000
   this.last_level = null
   if(level) {
     this.last_level = level
@@ -69,14 +68,22 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       }
 
     }(this)
+
+    this.hive_numbers.game_numbers[this.level.level_name] = {}
+    this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
   } else {
-    if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level))
+    if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
       this.hive_numbers.game_numbers[this.last_level.level_name] = {deaths: 0}
     this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
 
 
     this.hive_numbers.lives -= 1
     this.level = this.last_level
+    this.level.impulse_game_state = null
+    bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+    this.level.draw_bg(bg_ctx)
+    this.bg_drawn = true
+    bg_ctx.translate(-sidebarWidth, 0)
 
   }
 
@@ -128,8 +135,18 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
     if(!this.last_level.is_boss_level) {
       for(var attribute in this.game_numbers)
         this.hive_numbers.game_numbers[this.last_level.level_name][attribute] = this.game_numbers[attribute]
+      var stars = 0
+      while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[stars])
+      {
+        stars+=1
+      }
+      this.hive_numbers.game_numbers[this.last_level.level_name]["stars"]  = stars
+      if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
+        this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+
     } else {
       this.hive_numbers.game_numbers[this.last_level.level_name]["score"] = "WIN"
+      this.hive_numbers.game_numbers[this.last_level.level_name]["stars"] = 3
       this.hive_numbers.game_numbers[this.last_level.level_name]["last_time"] = this.game_numbers["last_time"]
     }
 
@@ -267,6 +284,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
       ctx.restore()
+      if(this.last_level && !this.victory) {
+        ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      }
     }
 
   }
@@ -338,6 +358,21 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
+    if(!this.victory) {
+      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    }
+
+  }
+}
+
+MainGameTransitionState.prototype.on_key_down = function(keyCode) {
+
+  if(this.last_level && !this.victory) {
+
+    this.world_intro_interval /=4
+    this.level_intro_interval /=4
+    this.last_level_summary_interval /=4
+    this.transition_timer /=4
   }
 }
 

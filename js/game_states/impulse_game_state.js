@@ -271,6 +271,7 @@ ImpulseGameState.prototype.set_zoom_transparency = function() {
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
+  if(this.pause) return
   this.bg_transition()
   /*context.save();*/
 
@@ -326,6 +327,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
 
   ctx.globalAlpha = 1
+  ctx.beginPath()
 
   if(this.zoom_state == "in")
     ctx.rect(2, 2, levelWidth-4, levelHeight-4);
@@ -356,19 +358,12 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.translate(-sidebarWidth, 0)*/
   ctx.save()
   ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  ctx.rect(0, 0, levelWidth, levelHeight);
+  ctx.clip()
   this.set_zoom_transparency();
   if(!this.is_boss_level) {
-    for(var i = 0; i < this.score_labels.length; i++)
-    {
-      ctx.beginPath()
-      ctx.font = this.score_labels[i].size+'px Muli'
-      var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
-      ctx.globalAlpha *= prog
-      ctx.fillStyle = this.score_labels[i].color
-      ctx.textAlign = 'center'
-      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
-      ctx.fill()
-    }
+
+    this.draw_score_labels()
   }
   ctx.restore()
 
@@ -446,6 +441,23 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     }
   }*/
 
+}
+
+ImpulseGameState.prototype.draw_score_labels = function(ctx) {
+  for(var i = 0; i < this.score_labels.length; i++)
+    {
+      ctx.save()
+      ctx.beginPath()
+      ctx.font = this.score_labels[i].size+'px Muli'
+      var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
+
+      ctx.globalAlpha *= prog
+      ctx.fillStyle = this.score_labels[i].color
+      ctx.textAlign = 'center'
+      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
+      ctx.fill()
+      ctx.restore()
+    }
 }
 
 ImpulseGameState.prototype.draw_boss_text = function(ctx) {
@@ -729,21 +741,20 @@ ImpulseGameState.prototype.check_cutoffs = function() {
 
     while(this.game_numbers.score >= this.level.cutoff_scores[this.stars]) {
       this.stars+=1
-
       if(this.stars == 1) {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
-        this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
+        this.addScoreLabel("GATEWAY UNLOCKED", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
       } else if(this.stars == 2) {
         this.hive_numbers.lives +=1
-        this.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+        this.addScoreLabel("1UP", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
       } else if(this.stars == 3) {
-        if(this.hive_numbers.lives < 3) {
-          this.addScoreLabel((3 - this.hive_numbers.lives)+"UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-          this.hive_numbers.lives = 3
+        if(this.hive_numbers.lives < 5) {
+          this.addScoreLabel((5 - this.hive_numbers.lives)+"UP", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+          this.hive_numbers.lives = 5
         } else {
           this.hive_numbers.lives += 1
-          this.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
+          this.addScoreLabel("1UP", "white", this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
         }
       }
     }

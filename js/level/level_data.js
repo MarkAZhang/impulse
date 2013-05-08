@@ -106,7 +106,7 @@ impulse_level_data['HIVE 1-1'] = {
   spawn_points: [[-100, -100], [900, -100], [900, 700], [-100, 700]],
   buffer_radius: 1,
   //cutoff_scores: [100, 500, 1000],
-  cutoff_scores: [500, 750000, 2000000],
+  cutoff_scores: [40000, 750000, 2000000],
   player_loc: {x: 400, y: 300}
 
 }

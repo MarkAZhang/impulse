@@ -123,7 +123,7 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
 
   context.globalAlpha = 1
   context.beginPath()
-  context.rect(x - w * .5 - 40, y - h * .5 - 20, w+80 , h+40)
+  context.rect(x - w * .5 - 60, y - h * .5 - 20, w+120 , h+40)
   context.fillStyle ="black"
   context.fill()
 
