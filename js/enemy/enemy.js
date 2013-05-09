@@ -986,11 +986,14 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
     else
       context.strokeStyle = context.fillStyle
 
-    if(state == "lighten") {
-      context.strokeStyle = "black"
-    }
 
     context.lineWidth = this.dying ? (1 - prog) * 2 : 2
+
+
+    if(state == "lighten") {
+      context.strokeStyle = "black"
+      context.lineWidth = 4
+    }
     context.stroke()
 
     // give enemies a tiny of the level color
