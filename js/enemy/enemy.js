@@ -595,11 +595,13 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
-  ctx.drawImage( this.level.enemy_images[this.image_enemy_type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+  context.drawImage( this.level.enemy_images[this.image_enemy_type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
   if(this.status_duration[3] > 0) {
-    ctx.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+    context.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
+
+  context.restore()
 
   this.additional_drawing(context, draw_factor, latest_color)
 
@@ -713,7 +715,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
   //     context.stroke()
   //   }*/
   // }
-  context.restore()
 
 }
 
