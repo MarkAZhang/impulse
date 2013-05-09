@@ -77,9 +77,11 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
   } else {
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
-      this.hive_numbers.game_numbers[this.last_level.level_name] = {deaths: 0}
-    this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
+      this.hive_numbers.game_numbers[this.last_level.level_name] = {}
+    if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
 
+      this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+    this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
 
     this.hive_numbers.lives -= 1
     this.level = this.last_level
@@ -270,8 +272,11 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2+25)
     }
       ctx.shadowBlur = 0
-
-    ctx.restore()
+      ctx.fillStyle = this.lite_color;
+      ctx.shadowColor = ctx.fillStyle
+      ctx.font = '12px Muli'
+      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      ctx.restore()
 
   } else if(this.state == "level_intro") {
 
@@ -302,10 +307,12 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
       ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
+      ctx.fillStyle = this.lite_color;
+      ctx.shadowColor = ctx.fillStyle
+      ctx.font = '12px Muli'
+      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
       ctx.restore()
-      if(this.last_level && !this.victory) {
-        ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
-      }
+
     }
 
   }
@@ -376,29 +383,24 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("HIGH SCORE", levelWidth/2, 450)
     }
 
-    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+    ctx.fillStyle = this.lite_color;
     ctx.shadowColor = ctx.fillStyle
-    ctx.font = '20px Muli'
+    ctx.font = '12px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
     ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
-    if(!this.victory) {
-      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
-    }
+    ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
 
   }
 }
 
 MainGameTransitionState.prototype.on_key_down = function(keyCode) {
 
-  if(this.last_level && !this.victory) {
-
     this.world_intro_interval /=4
     this.level_intro_interval /=4
     this.last_level_summary_interval /=4
     this.transition_timer /=4
-  }
 }
 
 MainGameTransitionState.prototype.get_combo_color = function(combo) {

@@ -42,7 +42,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "tank" : 4,
    "mote" : 4,
    "goo" : 2,
-   "harpoondire" : 3,
+   "harpoon" : 3,
    "orbiter" : 5,
    "disabler" : 2,
    "fighterdire" : 3,
@@ -69,13 +69,13 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
  this.possible_spawn_sets = [
 
-  ["fighterdire", "spear"],
+  ["fighter", "spear"],
   ["goo", "troll"],
   ["tank", "disabler"],
   ["stunner", "deathraydire"],
   ["mote", "slingshot"],
   ["orbiter", "spear"],
-  ["harpoondire", "goo"]
+  ["harpoon", "goo"]
  ]
 
   this.spawner_push_force = 500
@@ -480,4 +480,14 @@ BossFour.prototype.explode = function() {
 BossFour.prototype.get_time_factor = function() {
   //spawn increases by 30% for every minute
   return 1 + (this.impulse_game_state.game_numbers.seconds/60) * .2
+}
+
+BossFour.prototype.getLife = function() {
+  if(this.dying) {
+    return 0
+  }
+  var dist = Math.min(775/draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/draw_factor)
+  var dist2 = Math.min(575/draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/draw_factor)
+  return Math.min(dist, dist2)/(275/draw_factor)
+
 }

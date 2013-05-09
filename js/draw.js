@@ -104,14 +104,13 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
     }
     context.closePath()
   }
-  context.globalAlpha = alpha
+  context.globalAlpha *= alpha
   context.strokeStyle = color
   context.lineWidth = 2
   context.stroke()
   context.fillStyle = color
   context.globalAlpha /=2
   context.fill()
-  context.globalAlpha = 1
   context.restore()
 }
 

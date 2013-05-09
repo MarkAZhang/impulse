@@ -336,10 +336,20 @@ function load_game() {
     load_obj['enemies_killed'] = {}
   }
 
+  if(!load_obj['world_rankings']) {
+    load_obj['world_rankings'] = {
+        easy: {},
+        normal: {}
+    }
+  }
+
+
   player_data.difficulty_mode = load_obj['difficulty_mode'];
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
+
+  player_data.world_rankings = load_obj['world_rankings']
 
   for(i in impulse_enemy_stats) {
     //load if enemies are seen
@@ -387,6 +397,7 @@ function save_game() {
   }
   save_obj['total_kills'] = player_data.total_kills
   save_obj['difficulty_mode'] = player_data.difficulty_mode
+  save_obj['world_rankings'] = player_data.world_rankings
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 

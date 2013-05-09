@@ -19,7 +19,8 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.spawn_points = data.spawn_points
 
-  this.cutoff_scores = data.cutoff_scores[player_data.difficulty_mode]
+
+
   this.obstacle_num = data.obstacle_num
   this.obstacle_v = data.obstacle_v
   this.get_obstacle_vertices = data.get_obstacle_vertices
@@ -29,6 +30,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
+    this.cutoff_scores = data.cutoff_scores[player_data.difficulty_mode]
   }
   this.boss_victory = false
 
@@ -59,6 +61,7 @@ Level.prototype.init = function(data, level_intro_state) {
     "orbiter": Orbiter,
     "slingshot": Slingshot,
     "deathray": DeathRay,
+    "deathraydire": DeathRayDire,
     "first boss": BossOne,
     "second boss": BossTwo,
     "third boss": BossThree,
@@ -367,8 +370,8 @@ Level.prototype.add_enemy = function(enemy) {
 
   if(enemy.is_boss) this.boss = enemy
 
-  if(!this.enemy_images.hasOwnProperty(enemy.type)) {
-    this.enemy_images[enemy.type] = enemy.generate_images()
+  if(!this.enemy_images.hasOwnProperty(enemy.image_enemy_type)) {
+    this.enemy_images[enemy.image_enemy_type] = enemy.generate_images()
   }
 }
 
@@ -409,6 +412,7 @@ Level.prototype.generate_obstacle_edges = function() {
 }
 
 Level.prototype.draw_gateway = function(ctx, draw_factor) {
+  if(this.is_boss_level) return
   if(this.world_num == 1) {
       var factor = 1
       ctx.save()

@@ -2,21 +2,7 @@ MainGameSummaryState.prototype = new GameState
 
 MainGameSummaryState.prototype.constructor = MainGameSummaryState
 
-function MainGameSummaryState(world_num, victory, hive_numbers) {
-
-  this.buttons = []
-  this.bg_drawn = false
-  this.hive_numbers = hive_numbers
-  this.world_num = world_num
-  this.victory = victory
-
-
-  this.transition_interval = 1000
-  this.transition_timer = this.transition_interval
-  this.transition_state = "in"
-
-  this.rank = "F"
-  this.rank_cutoffs = {
+MainGameSummaryState.prototype.rank_cutoffs = {
     "D": 10,
     "D+": 11,
     "C-": 13,
@@ -31,8 +17,22 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
     "S": 24
   }
 
-  this.rank_color = "red"
+function MainGameSummaryState(world_num, victory, hive_numbers) {
 
+  this.buttons = []
+  this.bg_drawn = false
+  this.hive_numbers = hive_numbers
+  this.world_num = world_num
+  this.victory = victory
+
+
+  this.transition_interval = 1000
+  this.transition_timer = this.transition_interval
+  this.transition_state = "in"
+
+  this.rank = "F"
+
+  this.rank_color = "red"
 
   if(victory) {
     if(world_num == 1) {
@@ -52,15 +52,11 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
         break
       }
     }
+    this.rank_color = this.get_rank_color(total_stars, world_num)
 
-    if(this.stars >= this.rank_cutoffs["C-"]) {
-      this.rank_color = impulse_colors["world "+world_num]
-    }
-    if(this.stars >= this.rank_cutoffs["B-"]) {
-      this.rank_color = impulse_colors["world "+world_num+" lite"]
-    }
-    if(this.stars >= this.rank_cutoffs["A-"]) {
-      this.rank_color = impulse_colors["impulse_blue"]
+    if(this.rank_cutoffs[this.rank] > this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]]) {
+      player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num] = this.rank
+      save_game()
     }
 
   }
@@ -73,6 +69,21 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
 
   impulse_music.stop_bg()
   this.star_colors = ["bronze", "silver", "gold"]
+}
+
+MainGameSummaryState.prototype.get_rank_color = function(stars, world_num) {
+    if(stars >= this.rank_cutoffs["S"]) {
+      return impulse_colors["impulse_blue"]
+    }
+    if(stars >= this.rank_cutoffs["B-"]) {
+      return impulse_colors["world "+world_num+" list"]
+    }
+
+    if(stars >= this.rank_cutoffs["C-"]) {
+      return impulse_colors["world "+world_num]
+    }
+    return "red"
+
 }
 
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
@@ -129,14 +140,16 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, 140)
 
 
-  ctx.fillStyle = this.lite_color
-  ctx.font = '18px Muli'
-  ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("RANK", levelWidth/2, 180)
-  ctx.fillStyle = this.rank_color
-  ctx.shadowColor = ctx.fillStyle
-  ctx.font = '84px Muli'
-  ctx.fillText(this.rank, levelWidth/2, 250)
+  if(this.victory) {
+    ctx.fillStyle = this.lite_color
+    ctx.font = '18px Muli'
+    ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("RANK", levelWidth/2, 180)
+    ctx.fillStyle = this.rank_color
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '84px Muli'
+    ctx.fillText(this.rank, levelWidth/2, 250)
+  }
 
 
   ctx.shadowBlur = 0

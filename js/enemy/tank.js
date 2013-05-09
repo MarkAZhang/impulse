@@ -186,7 +186,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.beginPath()
     context.strokeStyle = this.color
     context.lineWidth = 2
-    context.globalAlpha = .5
+    context.globalAlpha *= .5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
     context.stroke()
 

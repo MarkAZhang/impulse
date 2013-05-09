@@ -8,6 +8,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set effective_radius if do_yield = true
 
   this.impulse_game_state = impulse_game_state
+  this.image_enemy_type = this.type
   this.level = impulse_game_state.level
   this.player = impulse_game_state.player
   this.world = world
@@ -483,7 +484,6 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
   if(this.durations["open"] > 0) {
-    console.log("HIT "+other.type)
     if(other.type=="mote") {
       var magnitude = this.body.m_linearVelocity
 
@@ -568,7 +568,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   //}
   var latest_color = this.get_current_color_with_status()
 
-  var size = this.level.enemy_images[this.type]["normal"].height;
+  var size = this.level.enemy_images[this.image_enemy_type]["normal"].height;
   if (this.dying)
     context.globalAlpha *= (1 - prog)
   else
@@ -595,17 +595,13 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
-  if(this.get_current_status() != "normal")
-  {
-    console.log("M")
-  }
-
-  ctx.drawImage( this.level.enemy_images[this.type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+  ctx.drawImage( this.level.enemy_images[this.image_enemy_type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
   if(this.status_duration[3] > 0) {
-    ctx.drawImage( this.level.enemy_images[this.type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+    ctx.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
 
+  this.additional_drawing(context, draw_factor, latest_color)
 
   // for(var k = 0; k < this.shapes.length; k++) {
 
@@ -719,7 +715,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
   // }
   context.restore()
 
-  this.additional_drawing(context, draw_factor, latest_color)
 }
 
 Enemy.prototype.get_current_status = function() {
@@ -971,6 +966,10 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
     }
 
     context.fillStyle =cur_color
+
+    if(state == "normal" && this.interior_color) {
+      context.fillStyle = this.interior_color
+    }
 
     if(state != "lighten")
       context.fill()
