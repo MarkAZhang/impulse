@@ -29,7 +29,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.spawn_interval = 1000
   if(this.impulse_game_state.first_time)
-    this.spawn_interval = 1000
+    this.spawn_interval = 6600
 
   this.spawn_duration = this.spawn_interval
 
@@ -52,9 +52,9 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.enemies_to_spawn = ["stunner", "spear", "tank"]
   this.spawn_force =
   {
-    "stunner": 10, //30,
-    "spear": 5, //15,
-    "tank": 40//80
+    "stunner": 5, //30,
+    "spear": 3, //15,
+    "tank": 20//80
   }
   this.default_heading = false
 
@@ -67,7 +67,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.turret_firing_interval = 1000
 
-  this.turn_rate = 15000
+  this.turn_rate = 5000
 
   this.red_visibility = 0
 
@@ -97,6 +97,14 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.action_default_interval = 1500
   this.turret_transition_interval = 1500
 
+  this.knockback_red_interval = 150
+  this.knockback_red_duration = 0
+
+  this.knockback_arm_interval = 150
+  this.knockback_arm_timers = {
+    left: 0,
+    right: 0
+  }
 
 
   this.min_turret_switch_dist = 15
@@ -406,13 +414,13 @@ BossOne.prototype.set_timer = function(side, time) {
 }
 
 BossOne.prototype.create_lower_arm_piece = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this)
+  return create_body(this.world, impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
 }
 BossOne.prototype.create_upper_arm_piece = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this)
+  return create_body(this.world, impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
 }
 BossOne.prototype.create_hand = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this)
+  return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
 }
 BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
 
@@ -449,6 +457,11 @@ BossOne.prototype.additional_processing = function(dt) {
     }*/
   //}
 
+  if(this.knockback_red_duration > 0) {
+    this.knockback_red_duration -= dt
+  }
+
+
   if(this.state == "turret") {
     this.max_turret_timer -= dt;
     if(this.max_turret_timer < 0) {
@@ -463,6 +476,9 @@ BossOne.prototype.additional_processing = function(dt) {
 
   for(arm in this.arm_states) {
     this.action_timer[arm] -= dt;
+    if(this.knockback_arm_timers[arm] > 0) {
+      this.knockback_arm_timers[arm] -= dt
+    }
 
     if(this.arm_states[arm] == "none") {
       this.switch_to_turret()
@@ -713,42 +729,68 @@ BossOne.prototype.process_move_arms_to_target = function(side) {
     }
 }
 
-BossOne.prototype.draw_arm_piece = function(arm, context, draw_factor) {
+BossOne.prototype.draw_arm_piece = function(arm, context, draw_factor, side) {
     // fade out if dying
 
     var tp = arm.GetPosition();
 
+    if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm_red", immunitasSprite)
 
-    drawSprite(context, tp.x*draw_factor,
-    tp.y*draw_factor,
-    (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
+    } else
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
+
 
 }
 
-BossOne.prototype.draw_hand = function(hand, context, draw_factor) {
+BossOne.prototype.draw_hand = function(hand, context, draw_factor, side) {
     // fade out if dying
     var tp = hand.GetPosition();
-     drawSprite(context, tp.x*draw_factor,
-    tp.y*draw_factor,
-    (this.body.GetAngle()), 64, 64, "immunitas_hand", immunitasSprite)
+        if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand_red", immunitasSprite)
+
+    } else
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand", immunitasSprite)
+
+
 }
 
 BossOne.prototype.draw_aura = function(context, draw_factor) {
     // fade out if dying
     var tp = this.body.GetPosition()
+    context.globalAlpha *= 0.6
+    if(this.knockback_red_duration > 0) {
+      drawSprite(context, tp.x*draw_factor,
+    tp.y*draw_factor,
+    (Math.PI/4), 173, 173, "immunitas_aura_red", immunitasSprite)
 
+    } else
      drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
     (Math.PI/4), 173, 173, "immunitas_aura", immunitasSprite)
+     context.globalAlpha /= 0.6
 }
 
 BossOne.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
-  drawSprite(context, tp.x*draw_factor,
+  if(this.knockback_red_duration > 0) {
+    drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (this.body.GetAngle()), 285, 285, "immunitas_glow", immunitasSprite)
-
+    (this.body.GetAngle()), 285, 285, "immunitas_red_glow", immunitasSprite)
+  } else {
+    drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle()), 285, 285, "immunitas_glow", immunitasSprite)
+  }
 
   var glowing_body_parts = []
    if(this.arm_states["left"] == "punching" || this.arm_states["left"] == "loading")
@@ -787,18 +829,29 @@ BossOne.prototype.draw = function(context, draw_factor) {
 
 
   this.draw_glows(context, draw_factor);
+  if(this.lighten_timer >= 0) {
+    this.draw_special_attack_timer(context, draw_factor)
+  }
+  this.draw_aura(context, draw_factor)
 
-  this.draw_arm_piece(this.body_parts["lu"], context, draw_factor)
-  this.draw_arm_piece(this.body_parts["ru"], context, draw_factor)
-  this.draw_arm_piece(this.body_parts["ll"], context, draw_factor)
-  this.draw_arm_piece(this.body_parts["rl"], context, draw_factor)
-  this.draw_hand(this.body_parts["lh"], context, draw_factor)
-  this.draw_hand(this.body_parts["rh"], context, draw_factor)
+  this.draw_arm_piece(this.body_parts["lu"], context, draw_factor, "left")
+  this.draw_arm_piece(this.body_parts["ru"], context, draw_factor, "right")
+  this.draw_arm_piece(this.body_parts["ll"], context, draw_factor, "left")
+  this.draw_arm_piece(this.body_parts["rl"], context, draw_factor, "right")
+  this.draw_hand(this.body_parts["lh"], context, draw_factor, "left")
+  this.draw_hand(this.body_parts["rh"], context, draw_factor, "right")
 
   var tp = this.body.GetPosition()
-  drawSprite(context, tp.x*draw_factor,
-    tp.y*draw_factor,
-    (this.body.GetAngle() + Math.PI/4), -76, -76, "immunitas_head", immunitasSprite)
+      if(this.knockback_red_duration > 0) {
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head_red", immunitasSprite)
+
+    } else
+      drawSprite(context, tp.x*draw_factor,
+      tp.y*draw_factor,
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head", immunitasSprite)
+
 
 
 
@@ -835,7 +888,7 @@ BossOne.prototype.draw_special_attack_timer = function(context, draw_factor) {
   }
 
   context.lineWidth = 15;
-  context.strokeStyle = this.color;
+  context.strokeStyle = impulse_colors["boss 1"];
   context.stroke()
 
 }
@@ -912,10 +965,6 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
       context.globalAlpha *= this.visibility ? this.visibility : 1
 
   context.globalAlpha /= 1.5;
-  if(this.lighten_timer >= 0) {
-    this.draw_special_attack_timer(context, draw_factor)
-  }
-  this.draw_aura(context, draw_factor)
   if(this.lighten_timer < 0 && this.lighten_timer >= -this.lighten_duration) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
     context.globalAlpha = gray/2
@@ -945,17 +994,13 @@ BossOne.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
 
-  if(other === this.player) {
     if(body == this.body) {
-      var boss_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
+      var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
+      other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
     } else {
-      var boss_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
-
+      var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+      other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
     }
-    this.impulse_game_state.reset_combo()
-  }
 
 }
 BossOne.prototype.get_impulse_sensitive_pts = function() {
@@ -987,8 +1032,11 @@ BossOne.prototype.process_impulse = function(attack_loc, impulse_force, hit_angl
     this.switch_to_punching()
   }*/
 
-  this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
-    this.body.GetWorldCenter())
+  if(this.spawned)  {
+    this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
+      this.body.GetWorldCenter())
+    this.knockback_red_duration = this.knockback_red_interval
+  }
 }
 
 BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
@@ -1024,6 +1072,7 @@ BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, s
         //hand.ApplyImpulse(new b2Vec2(this.impulse_hand_force * impulse_force*Math.cos(angle),
         // this.impulse_hand_force * impulse_force*Math.sin(angle)),
         //hand.GetWorldCenter())
+        this.knockback_arm_timers[side] = this.knockback_arm_interval
       }
     }
 

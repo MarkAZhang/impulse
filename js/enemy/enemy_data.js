@@ -320,7 +320,7 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
   density: 3,
-  lin_damp: 3,
+  lin_damp: 6,
   effective_radius: .7,
   force: 2.5,
   score_value: 3000,
@@ -498,7 +498,7 @@ impulse_enemy_stats["deathraydire"] = {
 
 impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
-  density: 4,
+  density: 4.5,
   lin_damp: 8,
   effective_radius: 3,
   force: 0,

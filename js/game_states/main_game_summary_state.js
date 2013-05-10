@@ -180,7 +180,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
     ctx.fillStyle = gn.visited ? this.lite_color : "#333";
     var y = 320 + 30 * i;
-    ctx.fillText(title,150, y)
+    ctx.fillText(real_title,150, y)
 
     if(gn.score != undefined) {
       if(gn.stars > 0) {

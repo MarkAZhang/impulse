@@ -221,10 +221,15 @@ spriteSheetData = {
   "bit": [0, 60, 30, 30],
 
   "immunitas_arm": [0, 0, 90, 90],
+  "immunitas_arm_red": [180, 135, 90, 90],
   "immunitas_hand": [90, 0, 90, 90],
+  "immunitas_hand_red": [270, 135, 90, 90],
   "immunitas_head": [0, 90, 108, 108],
-  "immunitas_glow": [180, 0, 270, 270],
-  "immunitas_aura": [450, 0, 245, 245],
+  "immunitas_head_red": [450, 123, 108, 108],
+  "immunitas_glow": [180, 0, 135, 135],
+  "immunitas_red_glow": [315, 0, 135, 135],
+  "immunitas_aura": [450, 0, 123, 123],
+  "immunitas_aura_red": [573, 0, 123, 123],
   "immunitas_arrow": [0, 200, 70, 70]
 }
 

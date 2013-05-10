@@ -372,6 +372,9 @@ Level.prototype.add_enemy = function(enemy) {
 
   if(!this.enemy_images.hasOwnProperty(enemy.image_enemy_type)) {
     this.enemy_images[enemy.image_enemy_type] = enemy.generate_images()
+    if(enemy.image_enemy_type == "harpoon") {
+      this.enemy_images["harpoonhead"] = enemy.harpoon_head.generate_images()
+    }
   }
 }
 

@@ -1,12 +1,13 @@
 ImpulseGameState.prototype = new GameState
 
-ImpulseGameState.prototype. constructor = ImpulseGameState
+ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbers) {
+function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
 
   this.hive_numbers = hive_numbers
 
   this.first_time = first_time
+  this.first_ever = first_ever
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -62,6 +63,7 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
   }
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
+  contactListener.PreSolve = this.filter_collisions
   this.world.SetContactListener(contactListener);
   this.pause = false
   this.ready = true
@@ -288,9 +290,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.clip()
   }
 
-  if(this.boss_intro_text_duration > 0 && this.hive_numbers && this.zoom == 1) {
-    this.draw_boss_text(ctx)
-  }
+
+
+
   ctx.fillStyle = this.dark_color
 
   ctx.scale(this.zoom, this.zoom)
@@ -348,6 +350,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.restore();
   } else {
     this.player.draw(ctx)
+  }
+
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1 && this.first_ever) {
+      this.draw_boss_hint(ctx)
+  }
+  if(this.boss_intro_text_duration > 0 && this.hive_numbers && this.zoom == 1) {
+    this.draw_boss_text(ctx)
   }
 
   ctx.restore();
@@ -418,8 +427,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
   }*/
+  /*ctx.globalAlpha = 0.5
 
-  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -439,7 +449,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.lineWidth = 1
       }
     }
-  }*/
+  }
+  ctx.globalAlpha = 1*/
 
 }
 
@@ -479,6 +490,32 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
 
   ctx.shadowBlur = 0
 
+}
+
+ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
+  var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval)
+
+  ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
+
+  ctx.globalAlpha /= 2
+
+  ctx.beginPath()
+  ctx.moveTo(this.level.boss.body.GetPosition().x * draw_factor, (this.level.boss.body.GetPosition().y - this.level.boss.effective_radius)* draw_factor - 5)
+  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor, 2 * draw_factor + 15)
+  ctx.strokeStyle = "red"
+  ctx.lineWidth = 10;
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.arc(this.level.boss.body.GetPosition().x* draw_factor, this.level.boss.body.GetPosition().y* draw_factor,
+    this.level.boss.effective_radius * draw_factor, 0, 2* Math.PI, false)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*3/2), 2 * draw_factor + 30 * Math.sin(Math.PI*3/2))
+  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*1/6), 2 * draw_factor + 30 * Math.sin(Math.PI*1/6))
+  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*5/6), 2 * draw_factor + 30 * Math.sin(Math.PI*5/6))
+  ctx.fillStyle = "red"
+  ctx.fill()
+  ctx.globalAlpha *= 2
 }
 
 ImpulseGameState.prototype.draw_interface = function(ctx) {
@@ -725,6 +762,46 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
   first.owner.collide_with(second.owner, first.body, second.body)
   second.owner.collide_with(first.owner, second.body, first.body)
+
+}
+
+ImpulseGameState.prototype.filter_collisions = function(contact) {
+  var first = contact.GetFixtureA().GetUserData()
+  var second = contact.GetFixtureB().GetUserData()
+  if(first == null || second == null) return
+
+  var first_object = first.self
+  var second_object = second.self
+
+  if(first_object == null || second_object == null) return
+
+  var harpoon_object = null
+
+  var objects = [first_object, second_object]
+  var other_objects =[second_object, first_object]
+
+  for(var index in objects) {
+    var first_object = objects[index]
+    if(first_object.type == "harpoonhead") {
+      var second_object = other_objects[index]
+
+      if(first_object.type == "harpoonhead" && second_object != first_object.harpoon && second_object.type != "harpoonhead") {
+
+        if(first_object.harpoon.harpoon_state != "inactive") {
+          if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
+            if(second_object.is_enemy)
+            {
+              second_object.open(3000)
+            }
+            first_object.harpoon.engage_harpoon(second_object)
+
+            contact.SetEnabled(false)
+          }
+        }
+      }
+    }
+  }
+
 
 }
 

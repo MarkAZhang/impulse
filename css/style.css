@@ -27,3 +27,31 @@ body{
             font-family: Muli;
             src: local(Century Gothic), local(Futura), url('../font/Muli-Light.ttf');
         }
+
+        #message{
+            font-family: "Muli";
+            display: none;
+            color: #0088ff;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            z-index: 3;
+            text-align: center;
+        }
+
+        #banner {
+            font-size: 72px;
+            margin-bottom: 95px;
+        }
+
+        #warning {
+            margin-bottom: 50px;
+            font-size: 24px;
+        }
+
+        .button {
+            cursor: pointer;
+        }
+        .button:hover {
+            text-decoration: underline;
+        }

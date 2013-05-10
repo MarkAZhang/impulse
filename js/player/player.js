@@ -20,6 +20,7 @@ Player.prototype.impulse_color = impulse_colors["impulse_blue"]
 Player.prototype.density = 9/16
 
 Player.prototype.radius = .66
+Player.prototype.effective_radius = .66
 
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   if(player_data.difficulty_mode == "easy") {
@@ -42,7 +43,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
   this.body = world.CreateBody(bodyDef)
-  this.body.CreateFixture(fixDef).SetUserData({"owner": this});
+  this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self": this});
   this.shape = fixDef.shape
 
 

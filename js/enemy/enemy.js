@@ -73,7 +73,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : 0x0011
     fixDef.filter.maskBits = this.maskBits ? this.maskBits : 0x0112
     fixDef.shape = this_shape
-    this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body})
+    this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
     this.shapes.push(this_shape)
     if(this_shape instanceof b2PolygonShape)
       this.shape_points.push(this_shape.m_vertices)
@@ -240,6 +240,8 @@ Enemy.prototype.process = function(enemy_index, dt) {
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
     this.body.SetLinearDamping(this.lin_damp * 3)
+  } else {
+    this.body.SetLinearDamping(this.lin_damp)
   }
   if (this.status_duration[3] > 0){
     this.status_duration[3] -= dt
@@ -284,7 +286,6 @@ Enemy.prototype.process = function(enemy_index, dt) {
       this.force = impulse_enemy_stats[this.type].force
 
     }
-    this.body.SetLinearDamping(this.lin_damp)
   }
   if(this.pointer_visibility < 1) {
     this.pointer_visibility = Math.min(this.pointer_visibility + dt/this.pointer_fadein_duration, 1)
@@ -431,7 +432,7 @@ Enemy.prototype.modify_movement_vector = function(dir) {
 
   this.in_poly = in_poly
 
-  if(this.in_poly && this.cautious && this.in_poly_slow_duration > 0)//move cautiously...isn't very effective in preventing accidental deaths
+  if((this.in_poly && this.cautious && this.in_poly_slow_duration > 0) || this.status_duration[2] > 0 )//move cautiously...isn't very effective in preventing accidental deaths
   {
     dir.Multiply(this.slow_force)
   }

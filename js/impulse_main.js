@@ -1,5 +1,5 @@
 var version_num = "1.0"
-var unlockall = false
+var unlockall = true
 
 var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
 var ctx, canvas, bg_canvas, bg_ctx
@@ -14,7 +14,7 @@ var save_name = "impulse_save_data"
 var player_data = {}
 var impulse_music = new MusicPlayer()
 
-window.onload =  function() {
+var impulse_main =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2AABB = Box2D.Collision.b2AABB
     ,	b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -109,7 +109,7 @@ window.onload =  function() {
     centerCanvas()
     load_game()
     cur_game_state = new TitleState(false)
-    step()
+  step()
 
 }
 
@@ -137,6 +137,7 @@ function centerCanvas() {
     {
       offset_top = 0
     }
+    message.style.display = ""
 }
 
 function step() {
