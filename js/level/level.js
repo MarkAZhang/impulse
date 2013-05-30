@@ -510,7 +510,6 @@ Level.prototype.draw = function(context, draw_factor) {
     this.enemies[i].draw(context, draw_factor)
   }
 
-  context.globalAlpha = 1
   for(var i = 0; i < this.fragments.length; i++) {
     this.fragments[i].draw(context, draw_factor)
   }

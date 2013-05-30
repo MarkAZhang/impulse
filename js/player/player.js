@@ -395,6 +395,7 @@ Player.prototype.draw = function(context) {
     context.globalAlpha = .5
     context.fillStyle = this.color
     context.fill()*/
+    context.save()
     if(this.status_duration[4] > 0)
     {
       context.beginPath()
@@ -479,6 +480,7 @@ Player.prototype.draw = function(context) {
     context.strokeStyle = this.color //impulse_colors[this.impulse_game_state.star_colors[this.impulse_game_state.stars]]
     context.lineWidth = 2
     context.stroke()
+    context.restore()
   }
 }
 

@@ -133,7 +133,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-    return "HIVE "+this.world_num+"-7";
+    return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
       return "HIVE "+this.world_num+"-"+(level.level_number+1)
@@ -381,6 +381,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.font = '18px Muli'
 
+    ctx.fillStyle = this.lite_color;
+    ctx.shadowColor = ctx.fillStyle
+
     if(!this.last_level.is_boss_level) {
       ctx.fillText("FINAL COMBO", levelWidth/2 + 100, 190)
       ctx.fillText("LEVEL TIME", levelWidth/2 - 100, 190)
@@ -388,8 +391,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("LEVEL TIME", levelWidth/2, 190)
     }
     ctx.font = '54px Muli'
-
-
 
     if(!this.last_level.is_boss_level) {
       ctx.fillText(this.game_numbers.combo, levelWidth/2 + 100, 240)
@@ -409,7 +410,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(!this.last_level.is_boss_level) {
-      ctx.fillStyle = this.bright_color;
+      ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '24px Muli'
       //ctx.fillStyle = (this.stars > 0) ? impulse_colors[this.star_colors[this.stars-1]] : this.color
@@ -417,7 +418,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '72px Muli'
       ctx.fillText(this.game_numbers.score, levelWidth/2, 390)
       //var color = (this.stars < 3) ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
-      var color = this.bright_color
+      var color = this.lite_color
       draw_progress_bar(ctx, levelWidth/2, 420, 300, 15,
        Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
 
@@ -429,7 +430,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
 
-    ctx.fillStyle = this.bright_color;
+    ctx.fillStyle = this.lite_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)

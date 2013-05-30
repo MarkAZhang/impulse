@@ -246,13 +246,13 @@ ImpulseGameState.prototype.process = function(dt) {
 
     this.game_numbers.game_length += dt
     this.level.process(dt)
-    for(var i = 0; i < this.score_labels.length; i++) {
+    for(var i = this.score_labels.length - 1; i >= 0; i--) {
       this.score_labels[i].duration -= dt
+      if(this.score_labels[i].duration <= 0) {
+        this.score_labels.splice(i, 1)
+      }
     }
-    while(this.score_labels[0] && this.score_labels[0].duration <= 0)
-    {
-      this.score_labels = this.score_labels.slice(1)
-    }
+
     this.world.Step(1.0/60, 1, 10, 10);
   } else {
 
@@ -314,7 +314,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   this.set_zoom_transparency(ctx);
-  if(this.zoom != 1 || !this.bg_visible) {
+  if(this.zoom_state != "none") {
     ctx.drawImage(bg_canvas, sidebarWidth, 0, levelWidth, levelHeight, 0, 0, levelWidth, levelHeight)
   }
 
@@ -345,7 +345,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.player.draw(ctx)
   }
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1 && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1){//} && this.first_ever) {
       this.draw_boss_hint(ctx)
   }
   if(this.boss_intro_text_duration > 0 && this.hive_numbers && this.zoom == 1) {
@@ -486,7 +486,7 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
 }
 
 ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
-  var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval)
+  var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval/2)
 
   ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 

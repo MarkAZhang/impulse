@@ -141,7 +141,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '20px Muli'
   if(this.victory) {
-    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+    ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText(this.victory_text , levelWidth/2, 90)
   }

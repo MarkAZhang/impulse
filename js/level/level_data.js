@@ -104,7 +104,7 @@ impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    normal: [40, 300000, 1500000],
+    normal: [40000, 300000, 1500000],
     easy: [20000, 150000, 750000],
   },
   player_loc: {x: 400, y: 300}
@@ -130,7 +130,7 @@ impulse_level_data['HIVE 1-2'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal: [75, 400000, 2000000],
+    normal: [75000, 400000, 2000000],
     easy: [30000, 200000, 1250000],
   },
   player_loc: {x: 400, y: 300}
@@ -154,7 +154,7 @@ impulse_level_data['HIVE 1-3'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal: [75, 250000, 1250000],
+    normal: [75000, 250000, 1250000],
     easy: [30000, 125000, 600000],
   },
   player_loc: {x: 400, y: 400}
@@ -177,7 +177,7 @@ impulse_level_data['HIVE 1-4'] = {
   buffer_radius: 1,
     cutoff_scores: {
 
-    normal:  [40, 150000, 1000000],
+    normal:  [40000, 150000, 1000000],
     easy: [20000, 75000, 500000],
   },
   player_loc: {x: 400, y: 300}
@@ -202,7 +202,7 @@ impulse_level_data['HIVE 1-5'] = {
   buffer_radius: 1,
       cutoff_scores: {
 
-    normal:   [75, 300000, 1750000],
+    normal:   [75000, 300000, 1750000],
     easy: [30000, 150000, 750000],
   },
   player_loc: {x: 250, y: 150}
@@ -227,7 +227,7 @@ impulse_level_data['HIVE 1-6'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal:   [50, 300000, 1000000],
+    normal:   [50000, 300000, 1000000],
     easy: [30000, 150000, 500000],
   },
   player_loc: {x: 400, y: 300}
@@ -254,7 +254,7 @@ impulse_level_data['HIVE 1-7'] = {
   buffer_radius: 2,
   cutoff_scores: {
 
-    normal:   [50, 300000, 1000000],
+    normal:   [50000, 300000, 1000000],
     easy: [30000, 150000, 500000],
   },
   player_loc: {x: 400, y: 450}
@@ -455,7 +455,7 @@ enemies: {
   dominant_enemy: "harpoon",
   obstacle_v: [[[830,52],[-29,52],[-29,-27],[830,-27]],[[-30,548],[829,548],[829,627],[-30,627]],[[-30,134],[307,133],[307,186],[73,185],[73,414],[307,414],[307,467],[-30,467]],[[830,466],[493,467],[493,414],[727,415],[727,186],[493,186],[493,133],[830,133]],[[570,325],[229,325],[229,275],[570,275]]],
   spawn_points: [[-100, 100], [900, 100], [-100, 500], [900, 500]],
-  bit_spawn_points: [[400, 500], [400, 100]],
+  bit_spawn_points: [[200, 93], [600, 93], [200, 507], [600, 507]],
   buffer_radius: 1,
   cutoff_scores: {
     normal:[100000, 400000, 1500000],

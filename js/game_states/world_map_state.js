@@ -29,7 +29,6 @@ WorldMapState.prototype.set_up_world_map = function() {
     this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
      function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
       setTimeout(function(){
-
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})
 
@@ -70,7 +69,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.world_buttons[index].draw(ctx)
     if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
       ctx.save()
-      ctx.globalAlpha = 1
       ctx.font = '12px Muli'
       ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
       ctx.font = '36px Muli'
