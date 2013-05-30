@@ -50,6 +50,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.is_lightened = false
 
+  this.impulsed_duration = 500
+
   for(var i = 0; i < this.shape_polygons.length; i++) {
     var polygon = this.shape_polygons[i]
     var this_shape = null
@@ -133,6 +135,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.durations = {}
   this.durations["open"] = 0
+  this.durations["impulsed"] = 0
 
   this.is_enemy = true
 
@@ -166,23 +169,26 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "stunned", "silenced", "gooed", "lighten"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten"]
   this.additional_statuses = []
+
 
 }
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
 
-  if (this.durations["open"] <= 0 && this.require_open) {
-    return
-  }
 
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      this.start_death("kill")
+
+      if (this.durations["open"] <= 0 && this.require_open) {
+        this.start_death("accident")
+      } else {
+        this.start_death("kill")
+      }
 
       return
     }
@@ -234,9 +240,12 @@ Enemy.prototype.process = function(enemy_index, dt) {
     }
   }
 
-  if(this.durations["open"] > 0) {
-    this.durations["open"] -= dt;
+  for( status in this.durations) {
+    if(this.durations[status] > 0) {
+      this.durations[status] -= dt
+    }
   }
+
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
     this.body.SetLinearDamping(this.lin_damp * 3)
@@ -467,7 +476,9 @@ Enemy.prototype.start_death = function(death) {
     }
   }
 
-  impulse_music.play_sound("sdeath")
+  if(this.dying != "accidental") {
+    impulse_music.play_sound("sdeath")
+  }
 
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
 
@@ -722,6 +733,9 @@ Enemy.prototype.draw = function(context, draw_factor) {
 Enemy.prototype.get_current_status = function() {
 
   if(!this.dying) {
+      if(this.durations["impulsed"] > 0) {
+        return "impulsed"
+      }
       if(this.status_duration[0] > 0) {
         return 'stunned';
       } else if(this.color_silenced) {
@@ -731,7 +745,11 @@ Enemy.prototype.get_current_status = function() {
       }
     }
 
-    return "normal"
+    return this.get_additional_current_status()
+}
+
+Enemy.prototype.get_additional_current_status = function() {
+  return "normal"
 }
 
 Enemy.prototype.get_current_color_with_status = function(orig_color) {
@@ -739,6 +757,9 @@ Enemy.prototype.get_current_color_with_status = function(orig_color) {
         context.fillStyle = impulse_colors["impulse_blue"]
       } else */
     if(!this.dying) {
+      if(this.durations["impulsed"] > 0) {
+        return impulse_colors["impulse_blue"]
+      }
       if(this.status_duration[0] > 0) {
         return 'gray';
       } else if(this.color_silenced) {
@@ -764,6 +785,7 @@ Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
   this.open(this.open_period)
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
+  this.durations["impulsed"] += this.impulsed_duration
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 
 }
@@ -892,6 +914,8 @@ Enemy.prototype.get_color_for_status = function(status) {
     return 'gray'
   } else if(status == "gooed") {
     return "#e6c43c"
+  } else if(status == "impulsed") {
+    return impulse_colors["impulse_blue"]
   }
 
   return this.get_additional_color_for_status(status)

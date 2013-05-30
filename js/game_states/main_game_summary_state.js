@@ -35,9 +35,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
   this.rank_color = "red"
 
   if(victory) {
-    if(world_num == 1) {
-      this.victory_text = "IMMUNITAS DEFEATED"
-    }
+    this.victory_text = this.hive_numbers.boss_name+" DEFEATED"
 
     var total_stars = 0
     for(level in hive_numbers.game_numbers) {
@@ -46,7 +44,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
 
 
     for(rank in this.rank_cutoffs) {
-      if(this.rank_cutoffs[rank] <= this.stars){
+      if(this.rank_cutoffs[rank] <= total_stars){
         this.rank = rank;
       } else {
         break
@@ -93,6 +91,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   }
 
 
+
   ctx.save()
   this.transition_timer -= dt;
   if(this.transition_timer < 0) {
@@ -118,9 +117,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[i].draw(ctx)
   }
 
+  ctx.globalAlpha *= 0.3
+  draw_tessellation_sign(ctx, this.world_num, levelWidth/2, 130, 150)
+  ctx.globalAlpha /= 0.3
+
   ctx.shadowBlur = 20;
 
   ctx.textAlign = 'center'
+
 
   ctx.font = '30px Muli'
   if(this.victory) {

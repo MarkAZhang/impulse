@@ -1,6 +1,7 @@
 var version_num = "1.0"
-var unlockall = true
 
+var dev = true
+var unlockall = dev
 var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
 var ctx, canvas, bg_canvas, bg_ctx
 var draw_factor = 15
@@ -106,12 +107,36 @@ var impulse_main =  function() {
     window.addEventListener('mousemove', on_mouse_move, false)
     window.addEventListener('resize', centerCanvas, false)
 
+    //addVisibilityListener()
+
     centerCanvas()
     load_game()
     cur_game_state = new TitleState(false)
   step()
 
 }
+
+/*function addVisibilityListener() {
+  var hidden = "hidden";
+
+    // Standards:
+    if (hidden in document)
+        document.addEventListener("visibilitychange", on_visibility_change);
+    else if ((hidden = "mozHidden") in document)
+        document.addEventListener("mozvisibilitychange", on_visibility_change);
+    else if ((hidden = "webkitHidden") in document)
+        document.addEventListener("webkitvisibilitychange", on_visibility_change);
+    else if ((hidden = "msHidden") in document)
+        document.addEventListener("msvisibilitychange", on_visibility_change);
+    // IE 9 and lower:
+    else if ('onfocusin' in document)
+        document.onfocusin = document.onfocusout = on_visibility_change;
+    // All others:
+    else
+        window.onpageshow = window.onpagehide
+            = window.onfocus = window.onblur = on_visibility_change;
+
+}*/
 
 function centerCanvas() {
   var dim = getWindowDimensions()
@@ -210,6 +235,7 @@ function on_mouse_move(event) {
 }
 
 function on_mouse_down(event) {
+  event.preventDefault()
 
   var mPos = getCursorPosition(event)
 
@@ -225,6 +251,7 @@ function on_mouse_down(event) {
 }
 
 function on_mouse_up(event) {
+  event.preventDefault()
 
   var mPos = getCursorPosition(event)
 
@@ -241,6 +268,7 @@ function on_mouse_up(event) {
 
 function on_click(event) {
 
+  event.preventDefault()
 
   var mPos = getCursorPosition(event)
   if(cur_dialog_box) {
@@ -257,6 +285,25 @@ function on_click(event) {
 
 
 }
+
+/*function on_visibility_change(evt) {
+  var v = 'visible', h = 'hidden',
+  evtMap = {
+      focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h
+  };
+
+  evt = evt || window.event;
+
+  var event_type = null
+  if (evt.type in evtMap)
+      event_type = evtMap[evt.type];
+  else
+      event_type = this.webkitHidden ? "hidden" : "visible";
+
+  if(cur_game_state) {
+    cur_game_state.on_visibility_change(event_type)
+  }
+}*/
 
 function DoFullScreen() {
   return
@@ -281,9 +328,15 @@ function DoFullScreen() {
 
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
-  if(keyCode == 77) { //M = mute/unmute
 
-    mute = !mute
+  if(keyCode == 77) { //M = mute/unmute
+    impulse_music.mute = !impulse_music.mute
+    if(impulse_music.mute) {
+      impulse_music.pause_bg()
+    } else {
+      impulse_music.resume_bg()
+    }
+
   }
 
   if(cur_dialog_box) {

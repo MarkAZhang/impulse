@@ -14,13 +14,12 @@ function Mote(world, x, y, id, impulse_game_state) {
 
   this.spin_rate = 2000
 
-  this.require_open = false
   this.cautious = true
 
 }
 
 Mote.prototype.player_hit_proc = function() {
-  this.player.silence(2000)
+  this.player.silence(3000)
 }
 
 Mote.prototype.additional_processing = function(dt) {

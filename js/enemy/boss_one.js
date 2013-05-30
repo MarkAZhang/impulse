@@ -1,8 +1,6 @@
-BossOne.prototype = new Enemy()
+BossOne.prototype = new Boss()
 
 BossOne.prototype.constructor = BossOne
-
-BossOne.prototype.is_boss = true
 
 function BossOne(world, x, y, id, impulse_game_state) {
   this.type = "first boss"
@@ -27,11 +25,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 3000
 
-  this.spawn_interval = 1000
-  if(this.impulse_game_state.first_time)
-    this.spawn_interval = 6600
 
-  this.spawn_duration = this.spawn_interval
 
   this.shoot_speedup_factor = 2
 
@@ -964,10 +958,10 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
   } else
       context.globalAlpha *= this.visibility ? this.visibility : 1
 
-  context.globalAlpha /= 1.5;
+  context.globalAlpha *= 0.8;
   if(this.lighten_timer < 0 && this.lighten_timer >= -this.lighten_duration) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
-    context.globalAlpha = gray/2
+    context.globalAlpha *= gray/2
     context.fillStyle = this.color
     context.fillRect(0, 0, canvasWidth, canvasHeight)
   }
@@ -999,7 +993,11 @@ BossOne.prototype.collide_with = function(other, body) {
       other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
     } else {
       var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-      other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+      if(this.state == "punching" && !this.lightened) {
+        other.body.ApplyImpulse(new b2Vec2(this.boss_force/2 * Math.cos(boss_angle), this.boss_force/2 * Math.sin(boss_angle)), other.body.GetWorldCenter())
+      } else {
+        other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+      }
     }
 
 }
@@ -1027,17 +1025,11 @@ BossOne.prototype.player_hit_proc = function() {
   this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 }
 
-BossOne.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  /*if(this.state == "turret" && this.arm_states["left"] == "turret_firing")  {
-    this.switch_to_punching()
-  }*/
-
-  if(this.spawned)  {
-    this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
-      this.body.GetWorldCenter())
-    this.knockback_red_duration = this.knockback_red_interval
-  }
+BossOne.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+  this.knockback_red_duration = this.knockback_red_interval
 }
+
+
 
 BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
   if(this.state == "punching") {
@@ -1119,12 +1111,3 @@ BossOne.prototype.explode = function() {
   }
 }
 
-BossOne.prototype.getLife = function() {
-  if(this.dying) {
-    return 0
-  }
-  var dist = Math.min(775/draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/draw_factor)
-  var dist2 = Math.min(575/draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/draw_factor)
-  return Math.min(dist, dist2)/(275/draw_factor)
-
-}

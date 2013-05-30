@@ -11,6 +11,9 @@ function WorldMapState(world) {
   var _this = this
   this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, this.color, "blue", function(){
     if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}}))
+  this.world_buttons = {
+
+  }
 
   this.set_up_world_map()
 
@@ -19,15 +22,24 @@ function WorldMapState(world) {
 
   this.fade_out_interval = 1000
   this.fade_out_duration = null
+
+
 }
 
 WorldMapState.prototype.set_up_world_map = function() {
     var _this = this;
-    this.world_one_button = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
+    this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
      function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
       setTimeout(function(){
 
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
+      }, 1000)})
+
+    this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
+     function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 2 dark"];
+      setTimeout(function(){
+
+        switch_game_state(new MainGameTransitionState(2, null, null, null, null))
       }, 1000)})
 }
 
@@ -52,19 +64,25 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
   }
 
-  draw_immunitas_sign(ctx,this.world_one_button.x, this.world_one_button.y - 10, 100)
-  this.world_one_button.draw(ctx)
-  if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world 1")) {
-    ctx.save()
-    ctx.font = '12px Muli'
-    ctx.fillText('RANK', this.world_one_button.x, this.world_one_button.y + 30)
-    ctx.font = '36px Muli'
-    ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world 1"]], 1)
-    ctx.shadowColor = ctx.fillStyle
-    ctx.shadowBlur = 10
-    ctx.fillText(player_data.world_rankings[player_data.difficulty_mode]["world 1"], this.world_one_button.x, this.world_one_button.y + 60)
-    ctx.restore()
+  for(var index in this.world_buttons) {
+
+    this.world_buttons[index].draw(ctx)
+    if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
+      ctx.save()
+      ctx.font = '12px Muli'
+      ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
+      ctx.font = '36px Muli'
+      ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+index]], index)
+      ctx.shadowColor = ctx.fillStyle
+      ctx.shadowBlur = 10
+      ctx.fillText(player_data.world_rankings[player_data.difficulty_mode]["world "+index], this.world_buttons[index].x, this.world_buttons[index].y + 60)
+      ctx.restore()
+    }
+    draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100)
   }
+
+
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
@@ -82,12 +100,18 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   {
     this.buttons[i].on_mouse_move(x, y)
   }
-  this.world_one_button.on_mouse_move(x,y)
+  for(var i in this.world_buttons)
+  {
+    this.world_buttons[i].on_mouse_move(x, y)
+  }
 }
 
 WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  this.world_one_button.on_click(x,y)
+  for(var i in this.world_buttons)
+  {
+    this.world_buttons[i].on_click(x, y)
+  }
 }

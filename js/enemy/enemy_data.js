@@ -550,9 +550,10 @@ impulse_enemy_stats["first boss"] = {
 }
 
 impulse_enemy_stats["second boss"] = {
-  color: "gray",//"rgb(244, 164, 96)",
-  density: 1.6,
-  lin_damp: 3,
+  color: impulse_colors["boss 2"],
+  //color: "gray",//"rgb(244, 164, 96)",
+  density: 4.5,
+  lin_damp: 8,
   effective_radius: 3,
   force: 0,
   score_value: [1000000, 5000000, 15000000],

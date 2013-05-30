@@ -277,19 +277,17 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = "black"
 
 
-    if(this.world_num == 1) {
-      ctx.save()
-      ctx.globalAlpha *= 0.8
-      draw_immunitas_sign(ctx,levelWidth/2, levelHeight/2, 150)
-      ctx.restore()
-      ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2+25)
-    }
-      ctx.shadowBlur = 0
-      ctx.fillStyle = this.lite_color;
-      ctx.shadowColor = ctx.fillStyle
-      ctx.font = '12px Muli'
-      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
-      ctx.restore()
+    ctx.save()
+    ctx.globalAlpha *= 0.8
+    draw_tessellation_sign(ctx,this.world_num,levelWidth/2, levelHeight/2, 150)
+    ctx.restore()
+    ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2+25)
+    ctx.shadowBlur = 0
+    ctx.fillStyle = this.lite_color;
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '12px Muli'
+    ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    ctx.restore()
 
   } else if(this.state == "level_intro") {
 
@@ -307,11 +305,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowBlur = 20;
       ctx.shadowColor = "black"
 
-      if(this.world_num == 1) {
-        ctx.globalAlpha *= 0.8
-        draw_immunitas_sign(ctx,levelWidth/2, levelHeight/2 - 100, 100)
-        ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2-100)
-      }
+      ctx.globalAlpha *= 0.8
+      draw_tessellation_sign(ctx,this.world_num, levelWidth/2, levelHeight/2 - 100, 100)
+      ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2-100)
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
 

@@ -100,12 +100,13 @@ Goo.prototype.collide_with = function(other) {
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced
       this.player_hit_proc()
-      //this.impulse_game_state.reset_combo()
+      this.impulse_game_state.reset_combo()
     }
   }
 }
 
 Goo.prototype.player_hit_proc = function() {
+
 }
 
 Goo.prototype.area_effect = function(obj) {

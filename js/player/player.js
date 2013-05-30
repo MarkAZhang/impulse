@@ -474,6 +474,11 @@ Player.prototype.draw = function(context) {
       context.stroke();
       context.restore();
     }
+    context.beginPath()
+    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.radius * 1.5 * this.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
+    context.strokeStyle = this.color //impulse_colors[this.impulse_game_state.star_colors[this.impulse_game_state.stars]]
+    context.lineWidth = 2
+    context.stroke()
   }
 }
 

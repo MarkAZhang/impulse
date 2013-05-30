@@ -33,3 +33,6 @@ GameState.prototype.on_key_down = function(keyCode) {
 GameState.prototype.on_key_up = function(keyCode) {
 
 }
+GameState.prototype.on_visibility_change = function(event_type) {
+  console.log("VISIBILITY "+event_type)
+}

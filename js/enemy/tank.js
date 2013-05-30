@@ -201,17 +201,11 @@ Tank.prototype.get_additional_color_for_status = function(status) {
   }
 }
 
-Tank.prototype.get_current_status = function() {
+Tank.prototype.get_additional_current_status = function() {
 
   if(!this.dying) {
-      if(this.status_duration[0] > 0) {
-        return 'stunned';
-      } else if(this.color_silenced) {
-        return 'silenced'
-      } else if(this.durations["open"] > 0) {
+      if(this.durations["open"] > 0) {
         return "hot";
-      } else if(this.status_duration[2] > 0) {
-        return "gooed"
       }
     }
     return "normal"

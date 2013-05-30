@@ -46,13 +46,26 @@ function draw_enemy(context, enemy_name, x, y, d) {
 
 }
 
-function draw_immunitas_sign(context, x, y, size, extra_factor) {
+
+var tessellation_logo_factor = {
+    "1": 1,
+    "2": 1.4
+}
+
+function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor) {
+
+  size *= tessellation_logo_factor[tessellation]
 
     context.save()
     context.globalAlpha *= 0.5
     if(extra_factor)
       context.globalAlpha = Math.min(1, context.globalAlpha * extra_factor)
-    drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, "immunitas_glow", immunitasSprite)
+
+    if(tessellation == 1) {
+      drawSprite(context, x, y, (Math.PI/4), size * 2, size * 2, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
+    }
+    drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
+
 
     context.restore()
     context.save()
@@ -64,13 +77,14 @@ function draw_immunitas_sign(context, x, y, size, extra_factor) {
     context.translate(x, y);
     // set rotation
     context.rotate(Math.PI/4);
-    drawSprite(context, 0, 0, 0, size, size, "immunitas_arm", immunitasSprite)
-    context.beginPath()
-    context.rect(-size/2-10, -size/2-10, size+20, size+20)
-    context.lineWidth = 5
-    context.strokeStyle = impulse_colors["boss 1"]
-    context.stroke()
-
+    drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
+    if(tessellation == 1) {
+      context.beginPath()
+      context.rect(-size/2-10, -size/2-10, size+20, size+20)
+      context.lineWidth = 5
+      context.strokeStyle = impulse_colors["boss "+tessellation]
+      context.stroke()
+    }
     context.restore()
 
 
@@ -154,17 +168,19 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.restore()
 }
 
-function draw_progress_bar(context, x, y, w, h, prop, color, bcolor) {
+function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder) {
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w * prop, h)
   context.fillStyle = color
   context.fill()
 
-  context.beginPath()
-  context.rect(x - w * .5, y - h * .5, w , h)
-  context.strokeStyle = bcolor ? bcolor : "black"
-  context.lineWidth = 2
-  context.stroke()
+  if(!noborder) {
+    context.beginPath()
+    context.rect(x - w * .5, y - h * .5, w , h)
+    context.strokeStyle = bcolor ? bcolor : "black"
+    context.lineWidth = 2
+    context.stroke()
+  }
 }
 
 function draw_bit(context, x, y) {
@@ -176,6 +192,19 @@ function draw_bit(context, x, y) {
 function draw_bit_fragment(context, x, y) {
 
   drawSprite(context, x, y, 0, 15, 15, "bit")
+
+}
+
+
+function draw_multi(context, x, y) {
+
+  drawSprite(context, x, y, 0, 30, 30, "multi")
+
+}
+
+function draw_multi_fragment(context, x, y) {
+
+  drawSprite(context, x, y, 0, 15, 15, "multi")
 
 }
 
@@ -219,6 +248,7 @@ spriteSheetData = {
   "player_gray": [180, 0, 60, 60],
   "player_green": [240, 0, 60, 60],
   "bit": [0, 60, 30, 30],
+  "multi": [30, 60, 30, 30],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [180, 135, 90, 90],
@@ -230,12 +260,34 @@ spriteSheetData = {
   "immunitas_red_glow": [315, 0, 135, 135],
   "immunitas_aura": [450, 0, 123, 123],
   "immunitas_aura_red": [573, 0, 123, 123],
-  "immunitas_arrow": [0, 200, 70, 70]
+  "immunitas_arrow": [0, 200, 70, 70],
+
+  "consumendi_head": [0, 0, 180, 180],
+  "consumendi_aura": [180, 0, 270, 270],
+  "consumendi_aura_filled": [450, 0, 270, 270],
+  "consumendi_mini": [0, 180, 64, 64],
+  "consumendi_small_arrow": [64, 180, 50, 32],
+  "consumendi_long_arrow": [64, 210, 50, 80],
+  "consumendi_small_arrow_filled": [120, 180, 50, 32],
+  "consumendi_glow": [720, 0, 135, 135],
+  "consumendi_logo": [720, 135, 128, 128]
 }
 
-immunitasSprite = loadSprite("art/immunitas_sprite.png")
+var immunitasSprite = loadSprite("art/immunitas_sprite.png")
+var consumendiSprite = loadSprite("art/consumendi_sprite.png")
 
-
+var tessellation_glow_map = {
+  "1": "immunitas_glow",
+  "2": "consumendi_glow"
+}
+var tessellation_logo_map = {
+  "1": "immunitas_arm",
+  "2": "consumendi_mini"
+}
+var tessellation_sprite_map = {
+  "1": immunitasSprite,
+  "2": consumendiSprite
+}
 
 var impulse_bg_images = {}
 
@@ -271,6 +323,7 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   var bg = impulse_bg_images[spriteName]
   var w = bg.width;
   var h = bg.height;
+  ctx.save()
 
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
   ctx.clip()
@@ -279,5 +332,6 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
       ctx.drawImage(bg, 0, 0, w, h, x, y, w, h)
     }
   }
+  ctx.restore()
 
 }
