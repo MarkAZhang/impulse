@@ -3,6 +3,7 @@ MainGameSummaryState.prototype = new GameState
 MainGameSummaryState.prototype.constructor = MainGameSummaryState
 
 MainGameSummaryState.prototype.rank_cutoffs = {
+    "F": 0,
     "D": 10,
     "D+": 11,
     "C-": 13,
@@ -17,16 +18,18 @@ MainGameSummaryState.prototype.rank_cutoffs = {
     "S": 24
   }
 
-function MainGameSummaryState(world_num, victory, hive_numbers) {
+function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph) {
 
   this.buttons = []
   this.bg_drawn = false
   this.hive_numbers = hive_numbers
+  this.level = level
+  this.visibility_graph = visibility_graph
   this.world_num = world_num
   this.victory = victory
 
 
-  this.transition_interval = 1000
+  this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
 
@@ -42,17 +45,21 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
       total_stars += hive_numbers.game_numbers[level].stars
     }
 
-
-    for(rank in this.rank_cutoffs) {
-      if(this.rank_cutoffs[rank] <= total_stars){
-        this.rank = rank;
-      } else {
-        break
+    if(!hive_numbers.continues) {
+      for(rank in this.rank_cutoffs) {
+        if(this.rank_cutoffs[rank] <= total_stars){
+          this.rank = rank;
+        } else {
+          break
+        }
       }
+      this.rank_color = this.get_rank_color(total_stars, world_num)
+    } else {
+      this.rank_color = "red"
     }
-    this.rank_color = this.get_rank_color(total_stars, world_num)
 
-    if(this.rank_cutoffs[this.rank] > this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]]) {
+    if(!this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]] ||
+      this.rank_cutoffs[this.rank] > this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]]) {
       player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num] = this.rank
       save_game()
     }
@@ -61,6 +68,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers) {
 
   this.color = impulse_colors["world "+world_num]
   this.lite_color = impulse_colors["world "+world_num+" lite"]
+  this.bright_color = impulse_colors["world "+world_num+" bright"]
   this.dark_color = impulse_colors["world "+world_num+" dark"]
   var _this = this;
 
@@ -90,8 +98,6 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
 
-
-
   ctx.save()
   this.transition_timer -= dt;
   if(this.transition_timer < 0) {
@@ -99,9 +105,18 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       this.transition_state = "none"
     }
     if(this.transition_state == "out") {
-      switch_game_state(new TitleState(true))
+      if(this.victory)
+        switch_game_state(new TitleState(true))
+      else if(this.level) {
+        this.hive_numbers.continue()
+        switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
+      } else {
+        switch_game_state(new TitleState(true))
+      }
     }
   }
+  ctx.fillStyle = this.dark_color
+  ctx.fillRect(0, 0, levelWidth, levelHeight)
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
@@ -110,8 +125,6 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = Math.max(0, prog)
   }
 
-  ctx.fillStyle = this.dark_color
-  ctx.fillRect(0, 0, levelWidth, levelHeight)
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
@@ -126,7 +139,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = 'center'
 
 
-  ctx.font = '30px Muli'
+  ctx.font = '20px Muli'
   if(this.victory) {
     ctx.fillStyle = impulse_colors["impulse_blue_dark"]
     ctx.shadowColor = ctx.fillStyle
@@ -135,24 +148,31 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   else {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("YOU ARE DEFEATED", levelWidth/2, 90)
+    ctx.fillText("YOU ARE DEFEATED", levelWidth/2, 80)
   }
 
-  ctx.fillStyle = this.lite_color;
+  ctx.fillStyle = this.bright_color;
   ctx.shadowColor = ctx.fillStyle
   ctx.font = '40px Muli'
-  ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, 140)
+  ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, 130)
 
+  if(this.victory && this.hive_numbers.continues) {
+    ctx.fillStyle = "red";
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '10px Muli'
+    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, levelWidth/2, 255)
+  }
 
   if(this.victory) {
-    ctx.fillStyle = this.lite_color
+
+    ctx.fillStyle = this.bright_color
     ctx.font = '18px Muli'
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("RANK", levelWidth/2, 180)
+    ctx.fillText("RANK", levelWidth/2, 167)
     ctx.fillStyle = this.rank_color
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '84px Muli'
-    ctx.fillText(this.rank, levelWidth/2, 250)
+    ctx.fillText(this.rank, levelWidth/2, 235)
   }
 
 

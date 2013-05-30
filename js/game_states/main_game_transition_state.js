@@ -8,24 +8,40 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.victory = victory
 
   this.game_numbers = final_game_numbers
+  this.first_process = false
 
   this.world_intro_interval = 4200
   this.level_intro_interval = 2200
   this.last_level_summary_interval = 4000
   this.last_level = null
   this.high_score = false
-  if(level) {
-    this.last_level = level
-    this.last_level_name = level.level_name
-    this.state = "last_level_summary"
-    this.transition_timer = this.last_level_summary_interval
-    this.compute_last_level_stats()
-    if(!this.victory) {
-      this.last_level_summary_interval /= 2
-      this.transition_timer /= 2
-      this.level_intro_interval /= 2
 
+  this.continued = false
+  if(level) {
+    if(this.game_numbers) {
+      this.last_level = level
+      this.last_level_name = level.level_name
+      this.state = "last_level_summary"
+      this.transition_timer = this.last_level_summary_interval
+      this.compute_last_level_stats()
+      if(!this.victory) {
+        this.last_level_summary_interval /= 2
+        this.transition_timer /= 2
+        this.level_intro_interval /= 2
+
+      }
+    } else {
+      //allows us to skip the last level summary if coming from main game summary state
+      this.state = "level_intro"
+      this.last_level = level
+      this.level = level
+      this.last_level_name = level.level_name
+      this.level_intro_interval /= 2
+      this.transition_timer = this.level_intro_interval
+      this.continued = true
     }
+
+
 
   } else {
     this.state = "world_intro"
@@ -33,79 +49,83 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     this.transition_timer = this.world_intro_interval
   }
 
+
+
   this.world_num = world_num
   this.color = impulse_colors["world "+world_num]
   this.lite_color = impulse_colors["world "+world_num+" lite"]
+  this.bright_color = impulse_colors["world "+world_num+" bright"]
   this.dark_color = impulse_colors["world "+world_num+" dark"]
   this.visibility_graph = visibility_graph
   this.buttons = []
   this.bg_drawn = false
   this.star_colors = ["bronze", "silver", "gold"]
   this.first_time = false
+  if(!this.continued) {
+    if(this.victory || !this.last_level) {
 
-  if(this.victory || !this.last_level) {
+      if(this.last_level && this.last_level.is_boss_level) {
+        return
+      }
+        this.level = new Level(impulse_level_data[this.get_next_level_name(this.last_level)], this)
 
-    if(this.last_level && this.last_level.is_boss_level) {
-      return
+        this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
+
+        impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
+        save_game()
+
+        this.level.generate_obstacles()
+
+        var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
+
+        visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
+          obstacle_edges: this.level.obstacle_edges,
+           draw_factor: draw_factor,
+           levelWidth: levelWidth,
+           levelHeight: levelHeight})
+
+        visibility_graph_worker.onmessage = function(_this) {
+          return function(event) {
+            if (event.data.percentage) {
+              _this.load_percentage = event.data.percentage
+
+            }
+            else if(event.data.poly_edges) {
+              _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
+              _this.load_percentage = 1
+            }
+          }
+
+        }(this)
+
+        this.hive_numbers.game_numbers[this.level.level_name] = {}
+        this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
+        this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+    } else {
+      if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
+        this.hive_numbers.game_numbers[this.last_level.level_name] = {}
+      if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
+
+        this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+      this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
+
+      this.hive_numbers.lives -= 1
+      this.level = this.last_level
+      this.level.impulse_game_state = null
+      bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+      this.level.draw_bg(bg_ctx)
+      this.bg_drawn = true
+      bg_ctx.translate(-sidebarWidth, 0)
+
     }
-      this.level = new Level(impulse_level_data[this.get_next_level_name(this.last_level)], this)
-
-      this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
-
-      impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
-      save_game()
-
-      this.level.generate_obstacles()
-
-      var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
-
-      visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
-        obstacle_edges: this.level.obstacle_edges,
-         draw_factor: draw_factor,
-         levelWidth: levelWidth,
-         levelHeight: levelHeight})
-
-      visibility_graph_worker.onmessage = function(_this) {
-        return function(event) {
-          if (event.data.percentage) {
-            _this.load_percentage = event.data.percentage
-
-          }
-          else if(event.data.poly_edges) {
-            _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
-            _this.load_percentage = 1
-          }
-        }
-
-      }(this)
-
-      this.hive_numbers.game_numbers[this.level.level_name] = {}
-      this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
-      this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
-  } else {
-    if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
-      this.hive_numbers.game_numbers[this.last_level.level_name] = {}
-    if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
-
-      this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
-    this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
-
-    this.hive_numbers.lives -= 1
-    this.level = this.last_level
-    this.level.impulse_game_state = null
-    bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
-    this.level.draw_bg(bg_ctx)
-    this.bg_drawn = true
-    bg_ctx.translate(-sidebarWidth, 0)
-
+    if(this.level.is_boss_level) {
+      if(this.victory)
+        this.level_intro_interval = 1000
+      else
+        this.level_intro_interval = 500
+    }
   }
 
-  if(this.level.is_boss_level) {
-    if(this.victory)
-      this.level_intro_interval = 1000
-    else
-      this.level_intro_interval = 500
-  }
 
   if(!this.last_level || !this.last_level.is_boss_level)
     impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
@@ -113,7 +133,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-    return "HIVE "+this.world_num+"-1";
+    return "HIVE "+this.world_num+"-7";
   } else {
     if(level.level_number < 7) {
       return "HIVE "+this.world_num+"-"+(level.level_number+1)
@@ -199,8 +219,10 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
 MainGameTransitionState.prototype.process = function(dt) {
 
+  this.first_process = true
+
   if(this.hive_numbers.lives < 0) {
-    switch_game_state(new MainGameSummaryState(this.world_num, false, this.hive_numbers))
+    switch_game_state(new MainGameSummaryState(this.world_num, false, this.hive_numbers, this.level, this.visibility_graph))
     return
   }
   if(this.last_level && this.last_level.is_boss_level && this.last_level.boss_victory) {
@@ -242,6 +264,10 @@ MainGameTransitionState.prototype.process = function(dt) {
 }
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
+  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
+  ctx.fillRect(0, 0, levelWidth, levelHeight)
+  if(!this.first_process) return
+
   if(!this.bg_drawn && this.level) {
     bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
@@ -251,8 +277,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   }
 
 
-  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(0, 0, levelWidth, levelHeight)
+
 
   if(this.state == "world_intro") {
 
@@ -273,7 +298,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.font = '54px Muli'
 
-    ctx.fillStyle = this.lite_color;
+    ctx.fillStyle = this.bright_color;
     ctx.shadowColor = "black"
 
 
@@ -298,7 +323,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 
 
-      ctx.fillStyle = this.lite_color;
+      ctx.fillStyle = this.bright_color;
       ctx.textAlign = 'center'
 
       ctx.font = '42px Muli'
@@ -312,7 +337,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
 
       ctx.font = '20px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
       ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
@@ -337,7 +362,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.font = '30px Muli'
     if(this.victory) {
-      ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.shadowColor = ctx.fillStyle
       ctx.fillText("LEVEL CONQUERED", levelWidth/2, 100)
     }
@@ -349,7 +374,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
 
 
-    ctx.fillStyle = this.lite_color;
+    ctx.fillStyle = this.bright_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '40px Muli'
     ctx.fillText(this.last_level.level_name, levelWidth/2, 150)
@@ -373,7 +398,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.game_numbers.last_time, levelWidth/2, 240)
     }
 
-    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
+    ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '18px Muli'
     if(this.victory) {
@@ -384,7 +409,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(!this.last_level.is_boss_level) {
-      ctx.fillStyle = this.lite_color;
+      ctx.fillStyle = this.bright_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '24px Muli'
       //ctx.fillStyle = (this.stars > 0) ? impulse_colors[this.star_colors[this.stars-1]] : this.color
@@ -392,7 +417,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '72px Muli'
       ctx.fillText(this.game_numbers.score, levelWidth/2, 390)
       //var color = (this.stars < 3) ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
-      var color = this.color
+      var color = this.bright_color
       draw_progress_bar(ctx, levelWidth/2, 420, 300, 15,
        Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
 
@@ -404,7 +429,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
 
-    ctx.fillStyle = this.lite_color;
+    ctx.fillStyle = this.bright_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)

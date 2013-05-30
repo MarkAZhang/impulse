@@ -50,6 +50,11 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
 
     if(!this.level.main_game) {
       this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
+          bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+          _this.level.impulse_game_state.gateway_unlocked = false
+          _this.level.draw_bg(bg_ctx)
+          bg_ctx.translate(-sidebarWidth, 0)
+
           switch_game_state(new ImpulseGameState(_this.game_state.world_num, _this.level, _this.visibility_graph))
           clear_dialog_box()
             }}(this)))
@@ -60,7 +65,7 @@ function PauseMenu(level, game_numbers, game_state, visibility_graph) {
     } else {
 
       this.buttons.push(new SmallButton("QUIT", 25, this.x, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
-          switch_game_state(new MainGameSummaryState(_this.game_state.world_num, false, _this.game_state.hive_numbers))
+          switch_game_state(new MainGameSummaryState(_this.game_state.world_num, false, _this.game_state.hive_numbers, null, null))
           clear_dialog_box()
             }}(this)))
     }

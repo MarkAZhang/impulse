@@ -2,6 +2,7 @@ var HiveNumbers = function(world_num) {
 
   this.lives = 3
   this.bits = 0
+  this.continues = 0
 
   this.game_numbers = {}
   this.world = world_num
@@ -14,3 +15,8 @@ var HiveNumbers = function(world_num) {
   }
 }
 
+HiveNumbers.prototype.continue = function() {
+  this.lives = 3
+  this.bits = 0
+  this.continued += 1
+}

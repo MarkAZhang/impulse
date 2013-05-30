@@ -457,14 +457,14 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     if(this.gateway_transition_duration != null) {
       var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
       factor = 1 * prog + 2 * (1-prog)
-      ctx.globalAlpha *= 0.3*(1-prog)
+      ctx.globalAlpha *= 0.5*(1-prog)
       drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
       (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
     }
 
     else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked) {
       factor = 2
-      ctx.globalAlpha *= 0.3
+      ctx.globalAlpha *= 0.5
       drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
       (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
     }
@@ -472,7 +472,8 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, factor)
 }
 
-Level.prototype.draw = function(context, draw_factor, alpha) {
+Level.prototype.draw = function(context, draw_factor) {
+  context.save()
 
   if(this.bit_loc) {
     var prog = this.bit_duration/this.bit_life;
@@ -505,15 +506,13 @@ Level.prototype.draw = function(context, draw_factor, alpha) {
   }
   //context.globalAlpha = this.obstacle_visibility
 
-  context.globalAlpha = alpha;
-
   for(var i = 0; i < this.enemies.length; i++) {
-    this.enemies[i].draw(ctx, draw_factor)
+    this.enemies[i].draw(context, draw_factor)
   }
 
   context.globalAlpha = 1
   for(var i = 0; i < this.fragments.length; i++) {
-    this.fragments[i].draw(ctx, draw_factor)
+    this.fragments[i].draw(context, draw_factor)
   }
 
   if(this.boss_delay_timer >= 0) {
@@ -529,10 +528,10 @@ Level.prototype.draw = function(context, draw_factor, alpha) {
   }
   if(this.gateway_transition_duration != null) {
     if(this.gateway_loc) {
-      this.draw_gateway(ctx, draw_factor)
-
+      this.draw_gateway(context, draw_factor)
     }
   }
+  context.restore()
 }
 
 Level.prototype.open_gateway = function() {
@@ -543,6 +542,10 @@ Level.prototype.open_gateway = function() {
 
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
 
+  bg_ctx.save()
+  bg_ctx.rect(0, 0, levelWidth, levelHeight)
+  bg_ctx.clip()
+
   draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
 
   for(var i = 0; i < this.obstacles.length; i++) {
@@ -552,6 +555,9 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   if(this.gateway_loc && !omit_gateway) {
     this.draw_gateway(bg_ctx, draw_factor)
   }
+  bg_ctx.restore()
+  //bg_ctx.clearRect(-100, 0, 100, levelHeight)
+  //bg_ctx.clearRect(levelWidth, 0, 100, levelHeight)
 }
 
 Level.prototype.create_enemy_images = function(enemy) {

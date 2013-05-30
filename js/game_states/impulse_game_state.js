@@ -318,21 +318,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.drawImage(bg_canvas, sidebarWidth, 0, levelWidth, levelHeight, 0, 0, levelWidth, levelHeight)
   }
 
-  this.level.draw(ctx, this.draw_factor, ctx.globalAlpha)
+  this.level.draw(ctx, this.draw_factor )
 
   if(this.level_redraw_bg) {
 
     this.level.open_gateway()
     this.level_redraw_bg = false
   }
-
-  if(this.world_visibility < 1) {
-    ctx.globalAlpha = 1 - this.world_visibility
-    ctx.fillStyle = "white"
-    ctx.rect(0, 0, canvas.width, canvas.height)
-    ctx.fill()
-  }
-
 
   ctx.beginPath()
 

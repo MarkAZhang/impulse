@@ -20,10 +20,8 @@ function WorldMapState(world) {
 
   impulse_music.play_bg(imp_vars.songs["Menu"])
 
-  this.fade_out_interval = 1000
+  this.fade_out_interval = 500
   this.fade_out_duration = null
-
-
 }
 
 WorldMapState.prototype.set_up_world_map = function() {
@@ -33,14 +31,16 @@ WorldMapState.prototype.set_up_world_map = function() {
       setTimeout(function(){
 
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
-      }, 1000)})
+      }, 500)})
 
-    this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
-     function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 2 dark"];
-      setTimeout(function(){
+    if(player_data.world_rankings[player_data.difficulty_mode]["world 1"]) {
+      this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
+       function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 2 dark"];
+        setTimeout(function(){
 
-        switch_game_state(new MainGameTransitionState(2, null, null, null, null))
-      }, 1000)})
+          switch_game_state(new MainGameTransitionState(2, null, null, null, null))
+        }, 500)})
+    }
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
@@ -65,10 +65,12 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   for(var index in this.world_buttons) {
+    draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100)
 
     this.world_buttons[index].draw(ctx)
     if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
       ctx.save()
+      ctx.globalAlpha = 1
       ctx.font = '12px Muli'
       ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
       ctx.font = '36px Muli'
@@ -78,7 +80,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(player_data.world_rankings[player_data.difficulty_mode]["world "+index], this.world_buttons[index].x, this.world_buttons[index].y + 60)
       ctx.restore()
     }
-    draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100)
   }
 
 

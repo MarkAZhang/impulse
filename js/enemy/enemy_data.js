@@ -498,8 +498,8 @@ impulse_enemy_stats["deathraydire"] = {
 
 impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
-  density: 4.5,
-  lin_damp: 8,
+  density: 1,
+  lin_damp: 1,
   effective_radius: 3,
   force: 0,
   score_value: [1000000, 5000000, 15000000],
