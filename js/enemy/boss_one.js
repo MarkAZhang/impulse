@@ -25,8 +25,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 3000
 
-
-
   this.shoot_speedup_factor = 2
 
   this.times_shot = 0
@@ -1025,9 +1023,7 @@ BossOne.prototype.player_hit_proc = function() {
   this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 }
 
-BossOne.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-  this.knockback_red_duration = this.knockback_red_interval
-}
+
 
 
 

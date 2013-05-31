@@ -69,6 +69,8 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.world_buttons[index].draw(ctx)
     if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
       ctx.save()
+      ctx.textAlign = "center"
+      ctx.fillStyle = impulse_colors["world "+index+" bright"]
       ctx.font = '12px Muli'
       ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
       ctx.font = '36px Muli'
@@ -79,8 +81,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
       ctx.restore()
     }
   }
-
-
 
   for(var i = 0; i < this.buttons.length; i++)
   {

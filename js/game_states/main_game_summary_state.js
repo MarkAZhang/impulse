@@ -18,8 +18,10 @@ MainGameSummaryState.prototype.rank_cutoffs = {
     "S": 24
   }
 
-function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph) {
+function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph, save_screen, just_saved) {
 
+  this.just_saved = just_saved
+  this.save_screen = save_screen
   this.buttons = []
   this.bg_drawn = false
   this.hive_numbers = hive_numbers
@@ -28,12 +30,21 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.world_num = world_num
   this.victory = victory
 
+  if(save_screen) {
+    this.hive_numbers = player_data.save_data[player_data.difficulty_mode]
+    this.world_num = this.hive_numbers.world
+    this.victory = false
+  }
 
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
+  this.buttons = []
 
   this.rank = "F"
+
+  this.shift_held = false
+  this.ctrl_held = false
 
   this.rank_color = "red"
 
@@ -63,15 +74,40 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
       player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num] = this.rank
       save_game()
     }
-
   }
 
-  this.color = impulse_colors["world "+world_num]
-  this.lite_color = impulse_colors["world "+world_num+" lite"]
-  this.bright_color = impulse_colors["world "+world_num+" bright"]
-  this.dark_color = impulse_colors["world "+world_num+" dark"]
+
+
+  this.color = impulse_colors["world "+this.world_num]
+  this.lite_color = impulse_colors["world "+this.world_num+" lite"]
+  this.bright_color = impulse_colors["world "+this.world_num+" bright"]
+  this.dark_color = impulse_colors["world "+this.world_num+" dark"]
   var _this = this;
 
+  if(this.save_screen && !this.just_saved) {
+    this.resume_button = new SmallButton("RESUME", 20, levelWidth - 115, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+      _this.resume_game()
+    }}(this))
+    this.resume_button.shadow = false
+    this.resume_button.underline_index = 0
+    this.buttons.push(this.resume_button)
+
+    this.delete_button = new SmallButton("DELETE", 20, levelWidth/2, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+      _this.delete_game()
+    }}(this))
+    this.buttons.push(this.delete_button)
+    this.delete_button.shadow = false
+    this.delete_button.underline_index = 0
+    this.delete_button.shift_enabled = true
+
+    this.return_to_main_button = new SmallButton("EXIT", 20, 100, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+      _this.exit_game()
+    }}(this))
+
+    this.buttons.push(this.return_to_main_button)
+    this.return_to_main_button.shadow = false
+    this.return_to_main_button.underline_index = 0
+  }
 
   impulse_music.stop_bg()
   this.star_colors = ["bronze", "silver", "gold"]
@@ -89,7 +125,6 @@ MainGameSummaryState.prototype.get_rank_color = function(stars, world_num) {
       return impulse_colors["world "+world_num]
     }
     return "red"
-
 }
 
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
@@ -115,6 +150,9 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
   }
+
+
+
   ctx.fillStyle = this.dark_color
   ctx.fillRect(0, 0, levelWidth, levelHeight)
   if(this.transition_state == "in") {
@@ -145,7 +183,11 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText(this.victory_text , levelWidth/2, 90)
   }
-  else {
+  else if(this.save_screen) {
+    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("GAME SAVED" , levelWidth/2, 90)
+  } else {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("YOU ARE DEFEATED", levelWidth/2, 80)
@@ -173,6 +215,17 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '84px Muli'
     ctx.fillText(this.rank, levelWidth/2, 235)
+  } else if(this.save_screen) {
+    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '16px Muli'
+    ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, 167)
+    ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, 190)
+    if(this.hive_numbers.continues) {
+      ctx.fillStyle = "red"
+      ctx.shadowColor = ctx.fillStyle
+      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), levelWidth/2, 213)
+    }
   }
 
 
@@ -194,8 +247,8 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
 
     var real_title = title;
-    if(i==7 && this.world_num == 1) {
-      real_title = "IMMUNITAS";
+    if(i==7) {
+      real_title = this.hive_numbers.boss_name;
     }
     if(this.hive_numbers.game_numbers[title]) {
       var gn = this.hive_numbers.game_numbers[title];
@@ -234,11 +287,23 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '24px Muli'
   ctx.fillStyle = this.lite_color
-  ctx.fillText("PRESS SPACE TO CONTINUE", levelWidth/2, levelHeight - 30, 300)
+  if(this.save_screen) {
+    if(this.just_saved)
+      ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+  } else if(this.victory)
+    ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+  else if(this.level) {
+    ctx.fillText("SPACEBAR TO CONTINUE", levelWidth/2, levelHeight - 30, 300)
+  } else {
+    ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+  }
   ctx.restore()
 
-}
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].draw(ctx)
+  }
 
+}
 
 MainGameSummaryState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
@@ -261,10 +326,35 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
 
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
 
-  if(keyCode == 32) {
-    if(this.transition_state=="none") {
-      this.transition_state="out"; this.transition_timer = this.transition_interval
+  if(this.save_screen && !this.just_saved) {
+    if(keyCode == 69) {
+      this.exit_game()
+    } else if(keyCode == 68 && this.shift_held) {
+      this.delete_game()
+    } else if(keyCode == 82 && !this.ctrl_held) {
+      this.resume_game()
     }
+  } else{
+    if(keyCode == 32) { // SPACEBAR = EXIT
+      if(this.transition_state=="none") {
+        this.transition_state="out";
+        this.transition_timer = this.transition_interval
+      }
+    }
+  }
+  if(keyCode == 16) {
+    this.shift_held= true
+  }
+  if(keyCode == 17) {
+    this.ctrl_held = true
+  }
+}
+MainGameSummaryState.prototype.on_key_up = function(keyCode) {
+  if(keyCode == 16) {
+    this.shift_held= false
+  }
+  if(keyCode == 17) {
+    this.ctrl_held = false
   }
 }
 
@@ -272,3 +362,18 @@ MainGameSummaryState.prototype.process = function(dt) {
 
 }
 
+MainGameSummaryState.prototype.resume_game = function() {
+  player_data.save_data[player_data.difficulty_mode] = {}
+  save_game()
+  switch_game_state(new MainGameTransitionState(this.world_num, null, false, null, null, this.hive_numbers, true))
+}
+
+MainGameSummaryState.prototype.delete_game = function() {
+  player_data.save_data[player_data.difficulty_mode] = {}
+  save_game()
+  switch_game_state(new WorldMapState())
+}
+
+MainGameSummaryState.prototype.exit_game = function() {
+  switch_game_state( new TitleState(true))
+}

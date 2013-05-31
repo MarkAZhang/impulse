@@ -263,6 +263,7 @@ spriteSheetData = {
   "immunitas_arrow": [0, 200, 70, 70],
 
   "consumendi_head": [0, 0, 180, 180],
+  "consumendi_head_red": [720, 136, 135, 135],
   "consumendi_aura": [180, 0, 270, 270],
   "consumendi_aura_filled": [450, 0, 270, 270],
   "consumendi_mini": [0, 180, 64, 64],
@@ -270,7 +271,6 @@ spriteSheetData = {
   "consumendi_long_arrow": [64, 210, 50, 80],
   "consumendi_small_arrow_filled": [120, 180, 50, 32],
   "consumendi_glow": [720, 0, 135, 135],
-  "consumendi_logo": [720, 135, 128, 128]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")

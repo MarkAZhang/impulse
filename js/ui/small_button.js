@@ -10,18 +10,27 @@ function SmallButton(text, size, x, y, w, h, color, hcolor, action) {
   this.init(x, y, w, h, action, false, color)
   this.hover_color = hcolor
   this.underline = false
+  this.underline_index = null
+  this.shift_enabled = false
+  this.shadow = true
+
 }
 
 SmallButton.prototype.additional_draw = function(context) {
-
+  context.save()
   context.beginPath()
   context.textAlign = 'center'
-  context.shadowBlur = 5
+
   //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
   context.font = this.size+'px Muli';
   context.fillStyle = this.color;
   //context.fillStyle = this.hover ? this.hover_color : this.color
-  context.shadowColor = context.fillStyle
+  if(this.shadow) {
+    context.shadowBlur = 5
+    context.shadowColor = context.fillStyle
+  } else {
+    context.shadowBlur = 0
+  }
   context.fillText(this.text, this.x, this.y)
   context.fill()
   if(this.hover || this.underline) {
@@ -32,7 +41,26 @@ SmallButton.prototype.additional_draw = function(context) {
     context.strokeStyle = this.color;
     context.lineWidth = 1;
     context.stroke();
+  } else if(this.underline_index != null && this.underline_index < this.text.length) {
+
+    context.globalAlpha *= 0.5
+    context.beginPath();
+    var textStart = context.measureText(this.text.slice(0, this.underline_index)).width;
+    var textEnd = context.measureText(this.text.slice(0, this.underline_index+1)).width;
+    var textWidth = context.measureText(this.text).width;
+    context.moveTo(this.x - textWidth/2 + textStart, this.y + this.size/4);
+    context.lineTo(this.x - textWidth/2 + textEnd, this.y + this.size/4);
+    context.strokeStyle = this.color;
+    context.lineWidth = 1;
+    context.stroke();
+    if(this.shift_enabled) {
+      context.font = this.size/2 + 'px Muli'
+      context.fillText("SHIFT+", this.x - textWidth/2 + (textStart + textEnd)/2, this.y + 3*this.size/4)
+    }
+    context.globalAlpha /= 0.5
+
   }
+  context.restore()
   context.shadowBlur = 0
 }
 

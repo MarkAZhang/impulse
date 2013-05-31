@@ -36,64 +36,85 @@ PauseMenu.prototype = new DialogBox()
 
 PauseMenu.prototype.constructor = PauseMenu
 
-function PauseMenu(level, game_numbers, game_state, visibility_graph) {
+function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph) {
   this.level = level
   this.game_numbers = game_numbers
   this.game_state = game_state
+  this.world_num = world_num
   this.level_name = this.level.level_name
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   this.visibility_graph = visibility_graph
-  this.init(400, 300)
+  this.init(500, 400)
   this.solid = false;
+  this.shift_down = false
+  this.bg_color = impulse_colors["world "+this.world_num +" dark"]
+  this.lite_color = impulse_colors["world "+this.world_num +" lite"]
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
     if(!this.level.main_game) {
-      this.buttons.push(new SmallButton("RESTART", 25, this.x - this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
-          bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
-          _this.level.impulse_game_state.gateway_unlocked = false
-          _this.level.draw_bg(bg_ctx)
-          bg_ctx.translate(-sidebarWidth, 0)
+      this.restart_button = new SmallButton("RESTART", 25, this.x - 153, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.restart_practice()
+      }}(this))
+      this.buttons.push(this.restart_button)
+      this.restart_button.underline_index = 0
 
-          switch_game_state(new ImpulseGameState(_this.game_state.world_num, _this.level, _this.visibility_graph))
-          clear_dialog_box()
-            }}(this)))
-      this.buttons.push(new SmallButton("QUIT", 25, this.x + this.w/4, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
-          switch_game_state(new GameOverState(_this.game_numbers, _this.level, _this.game_state.world_num, _this.visibility_graph))
-          clear_dialog_box()
-            }}(this)))
+      this.quit_button = new SmallButton("QUIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.quit_practice()
+      }}(this))
+
+      this.buttons.push(this.quit_button)
+      this.quit_button.underline_index = 0
+
     } else {
+      this.restart_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.save_and_quit_main_game()
+      }}(this))
+      this.buttons.push(this.restart_button)
+      this.restart_button.underline_index = 0
 
-      this.buttons.push(new SmallButton("QUIT", 25, this.x, this.y - this.h/2 + 270, 200, 50, "gray", this.level.color, function(_this) { return function() {
-          switch_game_state(new MainGameSummaryState(_this.game_state.world_num, false, _this.game_state.hive_numbers, null, null))
-          clear_dialog_box()
-            }}(this)))
+      this.quit_button = new SmallButton("QUIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.quit_main_game()
+      }}(this))
+      this.buttons.push(this.quit_button)
+      this.quit_button.underline_index = 0
+      this.quit_button.shift_enabled = true
     }
   }
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
+  ctx.save()
   ctx.beginPath()
   ctx.textAlign = "center";
   ctx.font = '32px Muli';
-  ctx.shadowColor = "gray";
+  ctx.shadowColor = this.lite_color;
   ctx.shadowBlur = 10;
-  ctx.fillStyle = "gray";
-  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 60)
+  ctx.fillStyle = this.lite_color;
+  ctx.fillText("PAUSED", this.x, this.y - this.h/2)
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY")
-    var temp_colors = ['bronze', 'silver', 'gold']
+    var temp_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
+    var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
+    var score_rewards = ['(OPENS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
-
     if(!this.is_boss_level) {
       for(var i = 0; i < 3; i++) {
         ctx.font = '24px Muli';
+        ctx.textAlign = "right"
         ctx.fillStyle = impulse_colors[temp_colors[i]]
         ctx.shadowColor = ctx.fillStyle
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x, this.y - this.h/2 + 110 + 32 * i)
+        ctx.font = '30px Muli';
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 70 + 50 * i + 7)
+        ctx.textAlign = "left"
+        ctx.font = '24px Muli';
+        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 70 + 50 * i)
+        ctx.font = '12px Muli'
+        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 70 + 50 * i+15)
       }
     }
+    ctx.textAlign = "center";
     var score_color = 0
 
     if(!this.is_boss_level) {
@@ -102,14 +123,15 @@ PauseMenu.prototype.additional_draw = function(ctx) {
       }
     }
 
-    ctx.font = '20px Muli';
+    /*ctx.font = '20px Muli';
     ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 225)
+    ctx.fillText("HIGH SCORE "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 250)*/
   }
   ctx.font = '16px Muli'
-  ctx.fillStyle = "gray"
-  ctx.fillText("'Q' TO UNPAUSE", this.x, this.y + this.h/2 + 25)
+  ctx.fillStyle = this.lite_color
+  ctx.shadowColor = ctx.fillStyle
+  ctx.fillText("SPACEBAR TO RESUME", this.x, this.y - this.h/2 + 350)
 
   ctx.fill()
 
@@ -117,6 +139,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
+  ctx.restore()
 }
 
 PauseMenu.prototype.on_mouse_move = function(x, y) {
@@ -131,10 +154,64 @@ PauseMenu.prototype.on_click = function(x, y) {
   }
 }
 
+PauseMenu.prototype.quit_practice = function() {
+  switch_game_state(new GameOverState(this.game_numbers, this.level, this.game_state.world_num, this.visibility_graph))
+  clear_dialog_box()
+}
+PauseMenu.prototype.restart_practice = function() {
+  bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  this.level.impulse_game_state.gateway_unlocked = false
+  this.level.draw_bg(bg_ctx)
+  bg_ctx.translate(-sidebarWidth, 0)
+
+  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph))
+  clear_dialog_box()
+}
+
+PauseMenu.prototype.quit_main_game = function() {
+  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
+  clear_dialog_box()
+}
+
+PauseMenu.prototype.save_and_quit_main_game = function() {
+
+  player_data.save_data[player_data.difficulty_mode] = this.game_state.hive_numbers
+  save_game()
+  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, null, null, null, true, true))
+  clear_dialog_box()
+}
+
 PauseMenu.prototype.on_key_down = function(keyCode) {
-  if(keyCode == 81) {
+   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    if(!this.level.main_game) {
+      if(keyCode == 81) { //Q = QUIT
+        this.quit_practice()
+      }
+      if(keyCode == 82) { //R = RESTART
+        this.restart_practice()
+      }
+    } else {
+      if(keyCode == 81 && this.shift_down) { //Q = QUIT
+        this.quit_main_game()
+      } else if(keyCode == 83) {
+        this.save_and_quit_main_game()
+      }
+    }
+  }
+
+  if(keyCode == 32) { //SPACEBAR = RESUME
     clear_dialog_box()
     this.game_state.pause = false
+  }
+  if(keyCode == 16) {
+    this.shift_down = true
+  }
+
+}
+
+PauseMenu.prototype.on_key_up = function(keyCode) {
+  if(keyCode == 16) {
+    this.shift_down = false
   }
 }
 

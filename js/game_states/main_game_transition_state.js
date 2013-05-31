@@ -2,7 +2,7 @@ MainGameTransitionState.prototype = new GameState
 
 MainGameTransitionState.prototype.constructor = MainGameTransitionState
 
-function MainGameTransitionState(world_num, level, victory, final_game_numbers, visibility_graph, hive_numbers) {
+function MainGameTransitionState(world_num, level, victory, final_game_numbers, visibility_graph, hive_numbers, loading_game) {
 
   this.hive_numbers = hive_numbers
   this.victory = victory
@@ -45,11 +45,13 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
   } else {
     this.state = "world_intro"
-    this.hive_numbers = new HiveNumbers(world_num)
+    if(loading_game) {
+      this.hive_numbers = hive_numbers
+    } else {
+      this.hive_numbers = new HiveNumbers(world_num)
+    }
     this.transition_timer = this.world_intro_interval
   }
-
-
 
   this.world_num = world_num
   this.color = impulse_colors["world "+world_num]
@@ -67,7 +69,12 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       if(this.last_level && this.last_level.is_boss_level) {
         return
       }
+
+      if(loading_game) {
+        this.level = new Level(impulse_level_data[this.hive_numbers.current_level], this)
+      } else {
         this.level = new Level(impulse_level_data[this.get_next_level_name(this.last_level)], this)
+      }
 
         this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
 
@@ -101,6 +108,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.hive_numbers.game_numbers[this.level.level_name] = {}
         this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
         this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+        this.hive_numbers.current_level = this.level.level_name
     } else {
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
         this.hive_numbers.game_numbers[this.last_level.level_name] = {}

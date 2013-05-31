@@ -4,6 +4,11 @@ var HiveNumbers = function(world_num) {
   this.bits = 0
   this.continues = 0
 
+  this.last_lives = null
+  this.last_bits = null
+
+  this.current_level = null
+
   this.game_numbers = {}
   this.world = world_num
   if(world_num == 1) {

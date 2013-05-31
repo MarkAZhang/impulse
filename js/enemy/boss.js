@@ -41,5 +41,5 @@ Boss.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) 
 }
 
 Boss.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-
+  this.knockback_red_duration = this.knockback_red_interval
 }

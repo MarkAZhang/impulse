@@ -146,9 +146,8 @@ ImpulseGameState.prototype.loading_screen = function() {
 ImpulseGameState.prototype.check_pause = function() {
   if(document.webkitHidden) {
     this.pause = true
-    set_dialog_box(new PauseMenu(this.level, this.game_numbers, this, this.visibility_graph))
+    set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
   }
-
 }
 
 ImpulseGameState.prototype.process = function(dt) {
@@ -704,10 +703,9 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(keyCode == 81) {
     this.pause = !this.pause
     if(this.pause) {
-      set_dialog_box(new PauseMenu(this.level, this.game_numbers, this, this.visibility_graph))
+      set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
   } else if(keyCode == 32 && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
-
     //if(this.game_numbers.score >= this.level.cutoff_scores[player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)

@@ -24,7 +24,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_change_transition = 500
 
-  this.goo_expand_period = 1500
+  this.goo_expand_period = 2000
 
   this.goo_state = "small"
 

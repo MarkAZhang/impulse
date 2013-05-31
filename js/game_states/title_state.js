@@ -84,7 +84,14 @@ TitleState.prototype.setup_main_menu = function() {
   _this = this;
   this.buttons["menu"] = []
   var button_color = impulse_colors["impulse_blue"]
-  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",function(){switch_game_state(new WorldMapState())}))
+  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",
+    function(){
+      if(player_data.save_data[player_data.difficulty_mode].game_numbers) {
+        switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+      } else {
+        switch_game_state(new WorldMapState())
+      }
+    }))
   this.buttons["menu"].push(new SmallButton("PRACTICE", 20, levelWidth/2, levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
   this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
   //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,

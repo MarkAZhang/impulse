@@ -44,6 +44,9 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.black_hole_switch_time = 1000
   this.black_hole_expand_prop = 0.7
 
+  this.knockback_red_interval = 150
+  this.knockback_red_duration = 0
+
   this.player_gravity_force = 0
 
   this.red_visibility = 0
@@ -150,6 +153,9 @@ BossTwo.prototype.additional_processing = function(dt) {
   }
   this.body.SetAngle(this.arm_core_angle)
 
+  if(this.knockback_red_duration > 0) {
+    this.knockback_red_duration -= dt
+  }
   // get spawners to spawn enemys simultaneously in a pattern
   this.enemy_spawn_duration -= dt
   if(this.enemy_spawn_duration < 0) {
@@ -370,8 +376,11 @@ BossTwo.prototype.draw = function(context, draw_factor) {
 
   this.draw_glows(context, draw_factor)
 
-  drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head", consumendiSprite)
-
+  if(this.knockback_red_duration > 0) {
+    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head_red", consumendiSprite)
+  } else {
+    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head", consumendiSprite)
+  }
   this.additional_drawing(context, draw_factor)
 
   context.restore()

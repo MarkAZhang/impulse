@@ -10,7 +10,7 @@ function Stunner(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
-  if(this.impulse_game_state.level.level_name == "HIVE 1-1") {
+  if(this.impulse_game_state.level.level_name == "HIVE 1-1" || this.impulse_game_state.level.level_name == "HIVE 1-2") {
     var factor = Math.min((this.impulse_game_state.game_numbers.seconds / 120), 1)
     this.force *= 1 + .3 * factor
   }

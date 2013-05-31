@@ -198,7 +198,7 @@ function step() {
   if(cur_dialog_box!=null) {
     ctx.beginPath()
     ctx.globalAlpha = 1
-    ctx.fillStyle = "black"
+    ctx.fillStyle = cur_dialog_box.bg_color ? cur_dialog_box.bg_color : "black"
     ctx.rect(sidebarWidth, 0, levelWidth, levelHeight)
     ctx.fill()
     ctx.globalAlpha = 1
@@ -397,6 +397,14 @@ function load_game() {
     }
   }
 
+  if(!load_obj['save_data']) {
+    load_obj['save_data'] = {
+      easy: {},
+      normal: {}
+    }
+  }
+
+  player_data.save_data = load_obj['save_data']
 
   player_data.difficulty_mode = load_obj['difficulty_mode'];
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
@@ -452,6 +460,7 @@ function save_game() {
   save_obj['total_kills'] = player_data.total_kills
   save_obj['difficulty_mode'] = player_data.difficulty_mode
   save_obj['world_rankings'] = player_data.world_rankings
+  save_obj['save_data'] = player_data.save_data
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 
