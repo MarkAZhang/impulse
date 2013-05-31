@@ -53,6 +53,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
     if(!this.level.main_game) {
+
       this.restart_button = new SmallButton("RESTART", 25, this.x - 153, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.restart_practice()
       }}(this))
@@ -67,11 +68,17 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
       this.quit_button.underline_index = 0
 
     } else {
-      this.restart_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-        _this.save_and_quit_main_game()
-      }}(this))
-      this.buttons.push(this.restart_button)
-      this.restart_button.underline_index = 0
+      if(this.game_numbers.seconds < 5) {
+        this.save_and_quit_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+          _this.save_and_quit_main_game()
+        }}(this))
+        this.save_and_quit_button.underline_index = 0
+      } else {
+        this.save_and_quit_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, "gray", "gray", function(_this) { return function() {
+        }}(this))
+      }
+
+      this.buttons.push(this.save_and_quit_button)
 
       this.quit_button = new SmallButton("QUIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.quit_main_game()
@@ -135,6 +142,13 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 
   ctx.fill()
 
+  if(this.game_numbers.seconds >= 5) {
+    ctx.font = '12px Muli'
+    ctx.fillStyle = "gray"
+    ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("ONLY BEFORE 0:05", this.x - 108, this.y - this.h/2 + 290)
+  }
+
 
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
@@ -144,6 +158,8 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 
 PauseMenu.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
+    if(this.game_numbers.seconds >= 5 && this.buttons[i] == this.save_and_quit_button)
+      continue
     this.buttons[i].on_mouse_move(x,y)
   }
 }
@@ -175,6 +191,8 @@ PauseMenu.prototype.quit_main_game = function() {
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
 
+  this.game_state.hive_numbers.bits = this.game_state.hive_numbers.last_bits
+  this.game_state.hive_numbers.lives = this.game_state.hive_numbers.last_lives
   player_data.save_data[player_data.difficulty_mode] = this.game_state.hive_numbers
   save_game()
   switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, null, null, null, true, true))

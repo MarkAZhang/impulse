@@ -222,6 +222,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.target_lives += 1
     }
 
+
   }
 }
 
@@ -250,6 +251,8 @@ MainGameTransitionState.prototype.process = function(dt) {
     console.log("SET "+this.hive_numbers.bits+" "+this.hive_numbers.lives)
       this.hive_numbers.bits = Math.floor(this.target_bits);
       this.hive_numbers.lives = Math.floor(this.target_lives);
+      this.hive_numbers.last_bits = this.hive_numbers.bits
+      this.hive_numbers.last_lives = this.hive_numbers.lives
   }
 
   this.transition_timer -= dt;

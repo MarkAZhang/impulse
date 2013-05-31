@@ -4,8 +4,8 @@ var HiveNumbers = function(world_num) {
   this.bits = 0
   this.continues = 0
 
-  this.last_lives = null
-  this.last_bits = null
+  this.last_lives = 3
+  this.last_bits = 0
 
   this.current_level = null
 
