@@ -793,10 +793,11 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
             }
             first_object.harpoon.engage_harpoon(second_object)
 
-            contact.SetEnabled(false)
           }
         }
       }
+
+      contact.SetEnabled(false)
     }
   }
 }

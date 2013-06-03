@@ -23,5 +23,7 @@ var HiveNumbers = function(world_num) {
 HiveNumbers.prototype.continue = function() {
   this.lives = 3
   this.bits = 0
+  this.last_lives = 3
+  this.last_bits = 0
   this.continues += 1
 }

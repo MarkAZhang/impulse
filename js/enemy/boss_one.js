@@ -77,14 +77,13 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.action_transition_interval = 525
 
-
   this.default_transition_interval = 525
   this.loading_punch_interval = 150
 
   this.retract_transition_interval = 500
   this.punch_action_interval = 525
 
-  this.right_arm_punch_offset_delay = 850
+  this.right_arm_punch_offset_delay = (this.default_transition_interval + this.punch_action_interval + this.retract_transition_interval + this.loading_punch_interval)/2
 
   this.action_default_interval = 1500
   this.turret_transition_interval = 1500
@@ -150,7 +149,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
     left: 0,
     right: 0
   }
-  this.punch_range = 11
+  this.punch_range = 14
 
   this.punch_angle= {
     left: 0,
@@ -612,7 +611,7 @@ BossOne.prototype.process_punching = function(arm) {
     if(this.arm_states[arm] == "punching")
       dir.Multiply(this.punch_force);
     this.body_parts["lh"].ApplyImpulse(dir, this.body_parts["lh"].GetWorldCenter())
-    if(this.arm_states[arm] == "punching" && dist < 2 || body_dist > this.punch_range) {
+    if(this.arm_states[arm] == "punching" && dist < 1 || body_dist > this.punch_range) {
       this.arm_states[arm] = "paralyzed"
       this.paralyzed_pause[arm] += this.action_timer[arm]
     }
@@ -629,7 +628,7 @@ BossOne.prototype.process_punching = function(arm) {
     if(this.arm_states[arm] == "punching")
       dir.Multiply(this.punch_force);
     this.body_parts["rh"].ApplyImpulse(dir, this.body_parts["rh"].GetWorldCenter())
-    if(this.arm_states[arm] == "punching" && dist < 2 || body_dist > this.punch_range) {
+    if(this.arm_states[arm] == "punching" && dist < 1 || body_dist > this.punch_range) {
       this.arm_states[arm] = "paralyzed"
       this.paralyzed_pause[arm] += this.action_timer[arm]
     }
@@ -1069,9 +1068,12 @@ BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, s
 BossOne.prototype.switch_to_punching = function() {
   this.state = "punching"
   this.move_arm_to_default("left", true)
+  this.paralyzed_pause["left"] = 0
+  this.paralyzed_pause["right"] = 0
   this.move_arm_to_default("right", true)
   this.max_punching_timer = this.max_punching_interval
   this.state_switch_timer = this.state_switch_interval
+
 }
 
 BossOne.prototype.switch_to_turret = function() {

@@ -60,7 +60,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
       this.buttons.push(this.restart_button)
       this.restart_button.underline_index = 0
 
-      this.quit_button = new SmallButton("QUIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.quit_button = new SmallButton("EXIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.quit_practice()
       }}(this))
 
@@ -98,7 +98,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.shadowColor = this.lite_color;
   ctx.shadowBlur = 10;
   ctx.fillStyle = this.lite_color;
-  ctx.fillText("PAUSED", this.x, this.y - this.h/2)
+  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 30)
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY")
     var temp_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
@@ -113,12 +113,12 @@ PauseMenu.prototype.additional_draw = function(ctx) {
         ctx.fillStyle = impulse_colors[temp_colors[i]]
         ctx.shadowColor = ctx.fillStyle
         ctx.font = '30px Muli';
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 70 + 50 * i + 7)
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 100 + 50 * i + 7)
         ctx.textAlign = "left"
         ctx.font = '24px Muli';
-        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 70 + 50 * i)
+        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 100 + 50 * i)
         ctx.font = '12px Muli'
-        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 70 + 50 * i+15)
+        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 100 + 50 * i+15)
       }
     }
     ctx.textAlign = "center";
@@ -138,11 +138,11 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.font = '16px Muli'
   ctx.fillStyle = this.lite_color
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("SPACEBAR TO RESUME", this.x, this.y - this.h/2 + 350)
+  ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 350)
 
   ctx.fill()
 
-  if(this.game_numbers.seconds >= 5) {
+  if(this.game_numbers.seconds >= 5 && this.level.main_game) {
     ctx.font = '12px Muli'
     ctx.fillStyle = "gray"
     ctx.shadowColor = ctx.fillStyle
@@ -202,7 +202,7 @@ PauseMenu.prototype.save_and_quit_main_game = function() {
 PauseMenu.prototype.on_key_down = function(keyCode) {
    if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
     if(!this.level.main_game) {
-      if(keyCode == 81) { //Q = QUIT
+      if(keyCode == 69) { //E = EXIT
         this.quit_practice()
       }
       if(keyCode == 82) { //R = RESTART
@@ -211,13 +211,13 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
     } else {
       if(keyCode == 81 && this.shift_down) { //Q = QUIT
         this.quit_main_game()
-      } else if(keyCode == 83) {
+      } else if(keyCode == 83) { //S = SAVE AND QUIT
         this.save_and_quit_main_game()
       }
     }
   }
 
-  if(keyCode == 32) { //SPACEBAR = RESUME
+  if(keyCode == 81 && !this.shift_down) { //SPACEBAR = RESUME
     clear_dialog_box()
     this.game_state.pause = false
   }
