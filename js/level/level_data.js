@@ -154,7 +154,7 @@ impulse_level_data['HIVE 1-3'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal: [75000, 300000, 1200000],
+    normal: [100000, 300000, 1200000],
     easy: [30000, 125000, 600000],
   },
   player_loc: {x: 400, y: 400}
@@ -177,7 +177,7 @@ impulse_level_data['HIVE 1-4'] = {
   buffer_radius: 1,
     cutoff_scores: {
 
-    normal:  [150000, 400000, 1000000],
+    normal:  [125000, 400000, 1000000],
     easy: [20000, 75000, 500000],
   },
   player_loc: {x: 400, y: 300}

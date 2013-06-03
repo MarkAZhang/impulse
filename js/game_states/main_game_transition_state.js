@@ -1,4 +1,4 @@
-MainGameTransitionState.prototype = new GameState
+MainGameTransitionState.prototype = new LoaderGameState
 
 MainGameTransitionState.prototype.constructor = MainGameTransitionState
 
@@ -15,6 +15,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.last_level_summary_interval = 4000
   this.last_level = null
   this.high_score = false
+  this.level_loaded = true
 
   this.continued = false
   if(level) {
@@ -65,56 +66,35 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.first_time = false
   if(!this.continued) {
     if(this.victory || !this.last_level) {
+      // beat last level
 
       if(this.last_level && this.last_level.is_boss_level) {
         return
       }
 
+      this.level_loaded = false
       if(loading_game) {
-        this.level = new Level(impulse_level_data[this.hive_numbers.current_level], this)
+        this.level = this.load_level(impulse_level_data[this.hive_numbers.current_level])
       } else {
-        this.level = new Level(impulse_level_data[this.get_next_level_name(this.last_level)], this)
+        this.level = this.load_level(impulse_level_data[this.get_next_level_name(this.last_level)])
       }
 
-        this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
+      this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
 
-        impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
-        save_game()
+      impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
+      save_game()
 
-        this.level.generate_obstacles()
-
-        var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
-
-        visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
-          obstacle_edges: this.level.obstacle_edges,
-           draw_factor: draw_factor,
-           levelWidth: levelWidth,
-           levelHeight: levelHeight})
-
-        visibility_graph_worker.onmessage = function(_this) {
-          return function(event) {
-            if (event.data.percentage) {
-              _this.load_percentage = event.data.percentage
-
-            }
-            else if(event.data.poly_edges) {
-              _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
-              _this.load_percentage = 1
-            }
-          }
-
-        }(this)
-
-        this.hive_numbers.game_numbers[this.level.level_name] = {}
-        this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
-        this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
-        this.hive_numbers.current_level = this.level.level_name
+      this.hive_numbers.game_numbers[this.level.level_name] = {}
+      this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
+      this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+      this.hive_numbers.current_level = this.level.level_name
     } else {
+      // died at last level
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
         this.hive_numbers.game_numbers[this.last_level.level_name] = {}
       if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
-
         this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+
       this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
 
       this.hive_numbers.lives -= 1
@@ -255,14 +235,18 @@ MainGameTransitionState.prototype.process = function(dt) {
       this.hive_numbers.last_lives = this.hive_numbers.lives
   }
 
-  this.transition_timer -= dt;
+  if(this.level_loaded || (this.state == "world_intro" && this.transition_timer >= this.world_intro_interval/2) ||
+    (this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval/2)) {
+    this.transition_timer -= dt;
+  }
 
   if(this.transition_timer < 0) {
 
-    if(this.state == "world_intro") {
+    if(this.state == "world_intro" && this.level_loaded) {
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
-    } else if(this.state == "last_level_summary") {
+    } else if(this.state == "last_level_summary" && this.level_loaded) {
+
       if(this.victory && this.level.is_boss_level) {
         impulse_music.stop_bg()
       }
@@ -322,7 +306,11 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.lite_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
-    ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    if(!this.level_loaded) {
+      ctx.fillText("LOADING LEVEL", levelWidth/2, levelHeight/2 + 270)
+    } else {
+      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    }
     ctx.restore()
 
   } else if(this.state == "level_intro") {
@@ -454,11 +442,16 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 }
 
 MainGameTransitionState.prototype.on_key_down = function(keyCode) {
+    if(this.level_loaded) {
+      this.world_intro_interval /=4
+      this.level_intro_interval /=4
+      this.last_level_summary_interval /=4
+      this.transition_timer /=4
+    }
+}
 
-    this.world_intro_interval /=4
-    this.level_intro_interval /=4
-    this.last_level_summary_interval /=4
-    this.transition_timer /=4
+MainGameTransitionState.prototype.load_complete = function() {
+  this.level_loaded = true
 }
 
 MainGameTransitionState.prototype.get_combo_color = function(combo) {

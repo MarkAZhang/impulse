@@ -1,4 +1,4 @@
-LevelIntroState.prototype = new GameState
+LevelIntroState.prototype = new LoaderGameState
 
 LevelIntroState.prototype.constructor = LevelIntroState
 
@@ -39,38 +39,7 @@ function LevelIntroState(level_name, world) {
   }
   this.enemy_image_size = 40
 
-  // create the level beforehand
-  this.level = new Level(impulse_level_data[this.level_name], this)
-
-  this.level.generate_obstacles()
-
-  console.log("BEGIN WORKER")
-
-  var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
-
-  visibility_graph_worker.postMessage({polygons: this.level.boundary_polygons,
-    obstacle_edges: this.level.obstacle_edges,
-     draw_factor: draw_factor,
-     levelWidth: levelWidth,
-     levelHeight: levelHeight})
-
-  visibility_graph_worker.onmessage = function(_this) {
-    return function(event) {
-      if(event.data.print) {
-        console.log(event.data.print)
-      }
-      else if (event.data.percentage) {
-        _this.load_percentage = event.data.percentage
-
-      }
-      else if(event.data.poly_edges) {
-        _this.visibility_graph = new VisibilityGraph(_this.level.boundary_polygons, _this.level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths)
-        _this.load_percentage = 1
-        _this.load_complete()
-      }
-    }
-
-  }(this)
+  this.level = this.load_level(impulse_level_data[this.level_name])
 
   var num_row = 12
 

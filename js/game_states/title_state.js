@@ -97,7 +97,7 @@ TitleState.prototype.setup_main_menu = function() {
   //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
   //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
   //        ImpulseGameState(ctx, "SURVIVAL"))}))
-  //this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+70, 200, 50, function(){switch_game_state(new HowToPlayState())}))
+  this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
   //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
   this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
   this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
