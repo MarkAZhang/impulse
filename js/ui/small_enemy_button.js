@@ -14,11 +14,17 @@ function SmallEnemyButton(enemy_name, size, x, y, w, h, color) {
 }
 
 SmallEnemyButton.prototype.additional_draw = function(context) {
+  context.save()
   context.beginPath()
   context.textAlign = 'center'
   context.fillStyle = this.color
   context.font = this.size +'px Muli'
+  context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+  context.globalAlpha = 0.3
+  if(this.hover)
+    context.globalAlpha = 0.5
   context.fill()
+  context.globalAlpha = 1
 
   var cur_x = this.x
   var cur_y = this.y
@@ -32,5 +38,5 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
     context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
 
   }
-
+  context.restore()
 }

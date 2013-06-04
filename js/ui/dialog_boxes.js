@@ -32,6 +32,10 @@ DialogBox.prototype.on_click = function(x, y) {}
 DialogBox.prototype.on_key_down = function(x, y) {}
 DialogBox.prototype.on_key_up = function(x, y) {}
 
+
+
+
+
 PauseMenu.prototype = new DialogBox()
 
 PauseMenu.prototype.constructor = PauseMenu
@@ -44,7 +48,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.level_name = this.level.level_name
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   this.visibility_graph = visibility_graph
-  this.init(500, 400)
+  this.init(800, 600)
   this.solid = false;
   this.shift_down = false
   this.bg_color = impulse_colors["world "+this.world_num +" dark"]
@@ -54,13 +58,13 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
     if(!this.level.main_game) {
 
-      this.restart_button = new SmallButton("RESTART", 25, this.x - 153, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.restart_button = new SmallButton("RESTART", 20, this.x - 163, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.restart_practice()
       }}(this))
       this.buttons.push(this.restart_button)
       this.restart_button.underline_index = 0
 
-      this.quit_button = new SmallButton("EXIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.quit_button = new SmallButton("EXIT", 20, this.x + 180, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.quit_practice()
       }}(this))
 
@@ -69,18 +73,18 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
     } else {
       if(this.game_numbers.seconds < 5) {
-        this.save_and_quit_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
           _this.save_and_quit_main_game()
         }}(this))
         this.save_and_quit_button.underline_index = 0
       } else {
-        this.save_and_quit_button = new SmallButton("SAVE AND QUIT", 25, this.x - 108, this.y - this.h/2 + 270, 200, 50, "gray", "gray", function(_this) { return function() {
+        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
         }}(this))
       }
 
       this.buttons.push(this.save_and_quit_button)
 
-      this.quit_button = new SmallButton("QUIT", 25, this.x + 170, this.y - this.h/2 + 270, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.quit_button = new SmallButton("QUIT", 20, this.x + 177, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.quit_main_game()
       }}(this))
       this.buttons.push(this.quit_button)
@@ -88,17 +92,87 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
       this.quit_button.shift_enabled = true
     }
   }
+
+  this.option_button = new SmallButton("OPTIONS", 20, this.x, this.y - this.h/2 + 490, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+    set_dialog_box(new OptionsMenu(_this))
+  }}(this))
+  this.buttons.push(this.option_button)
+  this.option_button.underline_index = 0
+
+  this.drawn_enemies = null
+
+  if(this.is_boss_level) {
+    this.drawn_enemies = {}
+    this.drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
+    this.num_enemy_type = 1
+  }
+  else {
+    this.drawn_enemies = impulse_level_data[this.level_name].enemies
+    this.num_enemy_type = 0
+    for(var j in impulse_level_data[this.level_name].enemies) {
+      this.num_enemy_type += 1
+    }
+  }
+  this.enemy_image_size = 40
+
+    var num_row = 12
+
+  var i = 0
+
+  for(var j in this.drawn_enemies) {
+
+    var k = 0
+    var num_in_this_row = 0
+
+    while(k < i+1 && k < this.num_enemy_type) {
+      k+=num_row
+    }
+
+    if(k <= this.num_enemy_type) {
+      num_in_this_row = num_row
+    }
+    else {
+      num_in_this_row = this.num_enemy_type - (k - num_row)
+    }
+    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
+
+    var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
+
+    var cur_x =  this.x + (this.enemy_image_size+10) * diff
+    var cur_y = this.y - this.h/2 + 270 + this.enemy_image_size * h_diff
+    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color))
+
+    i+=1
+  }
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.save()
   ctx.beginPath()
   ctx.textAlign = "center";
+
+  if(this.level.main_game && this.game_state.hive_numbers.continues > 0) {
+    ctx.font = '18px Muli'
+    ctx.fillStyle = "red"
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("CONTINUES: "+this.game_state.hive_numbers.continues, this.x, this.y - this.h/2 + 70)
+  }
+
   ctx.font = '32px Muli';
-  ctx.shadowColor = this.lite_color;
   ctx.shadowBlur = 10;
+  ctx.shadowColor = this.lite_color;
   ctx.fillStyle = this.lite_color;
-  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 30)
+  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 50)
+
+  draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
+
+  draw_agents_within_rect(ctx, this.game_state.player, this.game_state.level, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
+
+  ctx.font = '12px Muli';
+  ctx.fillText("CLICK FOR INFO", this.x, this.y - this.h/2 + 310)
+
+
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY")
     var temp_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
@@ -112,13 +186,13 @@ PauseMenu.prototype.additional_draw = function(ctx) {
         ctx.textAlign = "right"
         ctx.fillStyle = impulse_colors[temp_colors[i]]
         ctx.shadowColor = ctx.fillStyle
-        ctx.font = '30px Muli';
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 100 + 50 * i + 7)
+        ctx.font = '25px Muli';
+        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 350 + 40 * i + 7)
         ctx.textAlign = "left"
-        ctx.font = '24px Muli';
-        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 100 + 50 * i)
+        ctx.font = '20px Muli';
+        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 350 + 40 * i)
         ctx.font = '12px Muli'
-        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 100 + 50 * i+15)
+        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 350 + 40 * i+15)
       }
     }
     ctx.textAlign = "center";
@@ -135,10 +209,11 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("HIGH SCORE "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 250)*/
   }
+  ctx.beginPath()
   ctx.font = '16px Muli'
   ctx.fillStyle = this.lite_color
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 350)
+  ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 570)
 
   ctx.fill()
 
@@ -215,6 +290,10 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
         this.save_and_quit_main_game()
       }
     }
+
+    if(keyCode == 79) { // O = OPTIONS MENU
+      set_dialog_box(new OptionsMenu(this))
+    }
   }
 
   if(keyCode == 81 && !this.shift_down) { //SPACEBAR = RESUME
@@ -230,6 +309,53 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
 PauseMenu.prototype.on_key_up = function(keyCode) {
   if(keyCode == 16) {
     this.shift_down = false
+  }
+}
+
+
+
+
+OptionsMenu.prototype = new DialogBox()
+
+OptionsMenu.prototype.constructor = OptionsMenu
+
+function OptionsMenu(previous_menu) {
+  this.init(800, 600)
+  this.solid = false;
+  this.previous_menu = previous_menu
+  this.bg_color = this.previous_menu.bg_color
+  this.lite_color = this.previous_menu.lite_color
+  this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+    set_dialog_box(_this.previous_menu)
+  }}(this))
+  this.buttons.push(this.back_button)
+  this.back_button.underline_index = 0
+}
+
+OptionsMenu.prototype.additional_draw = function(ctx) {
+  ctx.save()
+  ctx.font = '32px Muli';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = this.lite_color;
+  ctx.fillStyle = this.lite_color;
+  ctx.fillText("OPTIONS", this.x, this.y - this.h/2 + 50)
+  ctx.shadowBlur = 0
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].draw(ctx)
+  }
+
+  ctx.restore()
+}
+
+OptionsMenu.prototype.on_mouse_move = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_move(x,y)
+  }
+}
+
+OptionsMenu.prototype.on_click = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_click(x,y)
   }
 }
 

@@ -18,10 +18,7 @@ ImpulseButton.prototype.draw = function(context) {
   if(this.border) {
     context.beginPath()
     context.strokeStyle = this.active ? this.color : "gray"
-    if(this.hover)
-      context.rect(this.x - this.w/2 * 1.1, this.y - this.h/2 * 1.1, this.w * 1.1, this.h * 1.1)
-    else
-      context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+    context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
     context.lineWidth = 2
     context.stroke()
   }

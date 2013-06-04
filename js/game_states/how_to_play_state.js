@@ -34,17 +34,38 @@ HowToPlayState.prototype.load_complete = function() {
 HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   ctx.save()
   ctx.translate(sidebarWidth, 0)//allows us to have a topbar
-  ctx.beginPath()
 
-  ctx.fillStyle = "white";
-  ctx.textAlign = 'center'
+  if(this.slide_num == 0) {
+    ctx.shadowColor = "white"
+    ctx.shadowBlur = 10
+    drawSprite(ctx, 400, 430, 0, 60, 60, "key")
+    drawSprite(ctx, 340, 430, 0, 60, 60, "key")
+    drawSprite(ctx, 460, 430, 0, 60, 60, "key")
+    drawSprite(ctx, 400, 370, 0, 60, 60, "key")
+    ctx.fillStyle = "white";
+    ctx.font = '20px Muli'
+    ctx.textAlign = "center"
+    ctx.fillText("W", 400, 390)
+    ctx.fillText("A", 340, 450)
+    ctx.fillText("S", 400, 450)
+    ctx.fillText("D", 460, 450)
+    draw_arrow(ctx, 400, 362, 20, "up", "white")
+    draw_arrow(ctx, 340, 422, 20, "left", "white")
+    draw_arrow(ctx, 400, 420, 20, "down", "white")
+    draw_arrow(ctx, 460, 422, 20, "right", "white")
 
-  ctx.font = '42px Muli'
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = ctx.fillStyle
+    ctx.fillText("MOVE", 400, 500)
 
-  ctx.fillText("YES "+ this.slide_num, 400, 400)
-  ctx.fill()
+
+    ctx.globalAlpha = 0.5
+    ctx.font = '12px Muli'
+    ctx.fillText("ALTERNATE CONTROLS AVAILABLE IN PAUSE MENU", 400, 550)
+    //ctx.rect(390, 420, 20, 20)
+    //ctx.fill()
+
+  }
+
+
   ctx.restore()
 }
 

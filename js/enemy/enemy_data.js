@@ -107,7 +107,7 @@ impulse_enemy_stats["goo"] = {
   /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
-  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 2}],
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1}],
   dies_on_impact: "YES",
   special_ability: "Leaves behind a trail of sticky goo. Everything that passes through the goo is slowed and harder to push around. Upon impact, goos the player for 2 seconds.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Getting gooed can also keep you alive in a tough spot.",

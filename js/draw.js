@@ -29,6 +29,13 @@ function draw_empty_star(context, x, y, r, color) {
 }
 
 function draw_enemy(context, enemy_name, x, y, d) {
+
+  context.save()
+  /*context.translate(x, y);
+  context.rotate(Math.PI);
+  context.translate(-x, -y);*/
+
+
   var draw_scale = Math.min(1/impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
    if(enemy_name.slice(enemy_name.length - 4) == "boss") {
       draw_scale = 2/impulse_enemy_stats[enemy_name].effective_radius * d/2
@@ -43,7 +50,7 @@ function draw_enemy(context, enemy_name, x, y, d) {
         draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
       }
     }
-
+  context.restore()
 }
 
 
@@ -178,6 +185,32 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.restore()
 }
 
+function draw_arrow(context, x, y, size, dir, color) {
+
+  ctx.save();
+  ctx.translate(x, y);
+
+  if(dir == "left") {
+    ctx.rotate(Math.PI);
+  } else if(dir == "up") {
+    ctx.rotate(3*Math.PI/2);
+  } else if(dir == "down") {
+    ctx.rotate(Math.PI/2);
+  }
+
+  context.beginPath()
+  context.moveTo( Math.cos(0) * size/2,  Math.sin(0) * size/2)
+  context.lineTo( Math.cos(Math.PI*2/3) * size/2,  Math.sin(Math.PI*2/3) * size/2)
+  context.lineTo( Math.cos(Math.PI*4/3) * size/2,  Math.sin(Math.PI*4/3) * size/2)
+  context.closePath()
+  context.fillStyle = color
+  context.shadowBlur = 10
+  context.shadowColor = color
+  context.fill()
+
+  context.restore()
+}
+
 function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder) {
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w * prop, h)
@@ -220,6 +253,17 @@ function draw_multi_fragment(context, x, y) {
 
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
 
+  context.save()
+  context.shadowBlur = 0
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.clip()
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.globalAlpha = 0.3
+  context.fillStyle = border_color
+  context.fill()
+  context.globalAlpha = 1
   var polygons = impulse_level_data[level_name].obstacle_v
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
@@ -230,13 +274,59 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
     }
     context.closePath()
     context.fillStyle = "black"
-    context.fill()
     context.strokeStyle = border_color
     context.lineWidth = 2
     context.stroke()
+    context.fill()
   }
 
+  context.restore()
+  context.save()
+  context.beginPath()
+  context.shadowBlur = 0
+  context.rect(x - w/2, y - h/2, w, h)
+  context.lineWidth = 2
+  context.strokeStyle = border_color
+  context.stroke()
+  context.restore()
 }
+
+function draw_agents_within_rect(context, player, level, x, y, w, h, border_color) {
+
+  context.save()
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.clip()
+
+  //draw player
+  context.beginPath()
+  var player_loc = player.body.GetPosition()
+  context.arc(x - w/2 + player_loc.x*draw_factor/levelWidth * w-1, y - h/2 + player_loc.y*draw_factor/levelHeight * h -1, 2, 0, 2 * Math.PI, true)
+  context.fillStyle = impulse_colors["impulse_blue"]
+  context.shadowBlur = 2
+  context.shadowColor = context.fillStyle
+  context.fill()
+
+  for(var i = 0; i < level.enemies.length; i++) {
+    var enemy_loc = level.enemies[i].body.GetPosition()
+    context.beginPath()
+    context.arc(x - w/2 + enemy_loc.x*draw_factor/levelWidth * w-1, y - h/2 + enemy_loc.y*draw_factor/levelHeight * h-1, 2, 0, 2 * Math.PI, true)
+    context.fillStyle = level.enemies[i].color
+    context.shadowBlur = 2
+    context.shadowColor = context.fillStyle
+    context.fill()
+  }
+
+  context.restore()
+  context.save()
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.lineWidth = 2
+  context.strokeStyle = border_color
+  context.stroke()
+  context.restore()
+}
+
 
 function loadSprite(imageName)
 {
@@ -259,6 +349,7 @@ spriteSheetData = {
   "player_green": [240, 0, 60, 60],
   "spark": [0, 60, 30, 30],
   "multi": [30, 60, 30, 30],
+  "key": [60, 60, 60, 60],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [180, 135, 90, 90],

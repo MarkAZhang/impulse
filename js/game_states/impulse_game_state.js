@@ -544,9 +544,17 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
+  if(player_data.difficulty_mode == "easy") {
+    context.font = "18px Muli"
+    context.globalAlpha = 0.5
+    context.fillText("EASY MODE", sidebarWidth/2, 15)
+  }
+
   context.font = '64px Muli'
-  context.shadowBlur = 20;
+  context.shadowBlur = 10;
   context.shadowColor = context.fillStyle;
+
+
   type = this.level_name.split(" ")[0]
   if(type != "HOW") {
     context.fillText(type, sidebarWidth/2, 70)
@@ -642,24 +650,21 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.font = '20px Muli'
 
   if(this.hive_numbers) {
+
     context.fillStyle = impulse_colors["impulse_blue_dark"]
 
     context.beginPath()
     context.fillText("LIVES: "+this.hive_numbers.lives, sidebarWidth/2, canvasHeight - 50)
-    context.fill()
 
     context.beginPath()
     context.fillText("SPARKS: "+this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 20)
-    context.fill()
   } else {
     context.fillStyle = impulse_colors["impulse_blue_dark"]
     context.beginPath()
     context.fillText("LIVES: 0", sidebarWidth/2, canvasHeight - 50)
-    context.fill()
 
     context.beginPath()
     context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 20)
-    context.fill()
   }
 
   context.restore()

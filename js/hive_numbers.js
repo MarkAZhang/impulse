@@ -1,6 +1,6 @@
 var HiveNumbers = function(world_num) {
 
-  this.lives = 3
+  this.lives = 0
   this.sparks = 0
   this.continues = 0
 
