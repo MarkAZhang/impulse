@@ -329,7 +329,26 @@ function OptionsMenu(previous_menu) {
     set_dialog_box(_this.previous_menu)
   }}(this))
   this.buttons.push(this.back_button)
+  this.checkboxes = []
   this.back_button.underline_index = 0
+  /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
+  this.music_volume_slider.value = Math.log(impulse_music.bg_music_volume)/Math.log(100.0)
+
+  this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
+  this.effects_volume_slider.value = Math.log(impulse_music.effects_volume)/Math.log(100.0)*/
+
+
+  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 148, 20, 20, this.lite_color, function(on) {
+    impulse_music.mute_effects(!on)
+  }, !impulse_music.effects_mute))
+
+  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 178, 20, 20, this.lite_color, function() {
+
+  }))
+  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 208, 20, 20, this.lite_color, function() {
+  }))
+  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 238, 20, 20, this.lite_color, function() {
+  }))
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -344,6 +363,20 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
     this.buttons[i].draw(ctx)
   }
 
+  ctx.font = '18px Muli';
+  ctx.fillText("CONTROLS", this.x - 110, this.y - this.h/2 + 125)
+  ctx.fillText("EFFECTS VOLUME", this.x - 110, this.y - this.h/2 + 155)
+  ctx.fillText("EXPLOSIONS", this.x - 110, this.y - this.h/2 + 185)
+  ctx.fillText("PROGRESS CIRCLE", this.x - 110, this.y - this.h/2 + 215)
+  ctx.fillText("MULTIPLIER DISPLAY", this.x - 110, this.y - this.h/2 + 245)
+
+
+  //this.music_volume_slider.draw(ctx)
+  //this.effects_volume_slider.draw(ctx)
+
+  for(var index in this.checkboxes) {
+    this.checkboxes[index].draw(ctx)
+  }
   ctx.restore()
 }
 
@@ -351,12 +384,41 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_mouse_move(x,y)
   }
+
+  //this.music_volume_slider.on_mouse_move(x,y)
+  //this.effects_volume_slider.on_mouse_move(x,y)
 }
 
 OptionsMenu.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x,y)
   }
+  for(var i = 0; i < this.checkboxes.length; i++) {
+    this.checkboxes[i].on_click(x,y)
+  }
+  //this.music_volume_slider.on_click(x,y)
+  //this.effects_volume_slider.on_click(x,y)
+}
+
+OptionsMenu.prototype.on_key_down = function(keyCode) {
+  if(keyCode == 66) {
+    set_dialog_box(this.previous_menu)
+  }
+}
+
+OptionsMenu.prototype.on_mouse_down = function(x, y) {
+  //this.music_volume_slider.on_mouse_down(x,y)
+  //this.effects_volume_slider.on_mouse_down(x,y)
+}
+OptionsMenu.prototype.on_mouse_up = function(x, y) {
+  //this.music_volume_slider.on_mouse_up(x,y)
+  //this.effects_volume_slider.on_mouse_up(x,y)
+  //impulse_music.change_bg_volume(this.convert_slider_value(this.music_volume_slider.value))
+  //impulse_music.change_effects_volume(this.convert_slider_value(this.effects_volume_slider.value))
+}
+
+OptionsMenu.prototype.convert_slider_value = function(value) {
+  return Math.pow(Math.E, value * Math.log(100))
 }
 
 EnemyBox.prototype = new DialogBox()

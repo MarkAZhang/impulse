@@ -10,7 +10,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.game_numbers = final_game_numbers
   this.first_process = false
 
-  this.world_intro_interval = 4200
+  this.world_intro_interval = 3700
   this.level_intro_interval = 2200
   this.last_level_summary_interval = 4000
   this.last_level = null

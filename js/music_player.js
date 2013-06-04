@@ -6,7 +6,10 @@ var MusicPlayer = function() {
   this.initialize_multisounds();
 
   this.playing = {}
-  this.mute = false
+  this.mute = player_data.options.music_mute
+  this.bg_music_volume = 100
+  this.effects_volume = 100
+  this.effects_mute = player_data.options.effects_mute
 }
 
 MusicPlayer.prototype.initialize_multisounds = function() {
@@ -20,6 +23,7 @@ MusicPlayer.prototype.play_sound = function(sound) {
 }
 
 MusicPlayer.prototype.play = function(file) {
+  if(this.effects_mute) return
   if(file in this.multisounds) {
     this.play_multisound(file);
     return;
@@ -28,8 +32,14 @@ MusicPlayer.prototype.play = function(file) {
   if(!(file in this.sounds)) {
     this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
   }
-  this.sounds[file].setVolume(50);
+  this.sounds[file].setVolume(this.effects_volume);
   this.sounds[file].play();
+}
+
+MusicPlayer.prototype.mute_effects = function(mute) {
+  this.effects_mute = mute
+  player_data.options.effects_mute = mute
+  save_game()
 }
 
 MusicPlayer.prototype.play_multisound = function(file) {
@@ -37,6 +47,7 @@ MusicPlayer.prototype.play_multisound = function(file) {
   for(var i = 0; i < this.multisounds[file].length; i++) {
     if(!this.multisounds[file][i]) {
       this.sounds[file+i].play();
+      this.sounds[file+i].setVolume(this.effects_volume);
       this.multisounds[file][i] = true;
       return;
     }
@@ -56,10 +67,7 @@ MusicPlayer.prototype.initialize_sound_set = function(file, maxnum) {
               _this.multisounds[file][index] = false;
             }
           })(i, file))
-
   }
-
-
 }
 
 MusicPlayer.prototype.switch_bg = function(file) {
@@ -71,18 +79,35 @@ MusicPlayer.prototype.switch_bg = function(file) {
 
 }
 
-MusicPlayer.prototype.pause_bg = function() {
+MusicPlayer.prototype.mute_bg = function() {
+  this.mute = true
+  player_data.options.music_mute = true
+  save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(0);
     this.playing[this.cur_song] = false
   }
 }
 
-MusicPlayer.prototype.resume_bg = function() {
+MusicPlayer.prototype.unmute_bg = function() {
+  this.mute = false
+  player_data.options.music_mute = false
+  save_game()
   if(this.cur_song) {
-    this.sounds[this.cur_song].setVolume(100);
+    this.sounds[this.cur_song].setVolume(this.bg_music_volume);
     this.playing[this.cur_song] = true
   }
+}
+
+MusicPlayer.prototype.change_bg_volume = function(volume) {
+  this.bg_music_volume = volume
+  if(this.cur_song && !this.mute) {
+    this.sounds[this.cur_song].setVolume(this.bg_music_volume);
+  }
+}
+
+MusicPlayer.prototype.change_effects_volume = function(volume) {
+  this.effects_volume = volume
 }
 
 MusicPlayer.prototype.bg_is_playing = function() {
@@ -101,7 +126,7 @@ MusicPlayer.prototype.play_bg = function(file) {
     }
     this.playing[this.cur_song] = false
     this.playing[file] = true
-    this.sounds[this.cur_song].fadeOut(1000, function() {
+    this.sounds[this.cur_song].fadeOut(500, function() {
        _this.switch_bg(file)
     })
     return
@@ -125,7 +150,7 @@ MusicPlayer.prototype.play_bg = function(file) {
     this.sounds[file].stop()
   }
   if(!this.mute) {
-    this.sounds[file].setVolume(100);
+    this.sounds[file].setVolume(this.bg_music_volume);
   } else {
     this.sounds[file].setVolume(0);
   }
@@ -135,7 +160,7 @@ MusicPlayer.prototype.play_bg = function(file) {
   this.cur_song = file;
 }
 
-MusicPlayer.prototype.pause = function() {
+MusicPlayer.prototype.pause_bg = function() {
 
   if(this.cur_song in this.sounds) {
     this.sounds[this.cur_song].pause();
@@ -154,12 +179,12 @@ MusicPlayer.prototype.stop_bg = function() {
          _this.cur_song = null;
         }
     })
-
   }
 }
-MusicPlayer.prototype.restart = function() {
+
+MusicPlayer.prototype.resume_bg = function() {
   if(this.cur_song in this.sounds) {
-    this.sounds[this.cur_song].pause();
+    this.sounds[this.cur_song].play();
   }
 }
 

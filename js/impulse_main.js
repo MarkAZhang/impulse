@@ -13,7 +13,7 @@ var cur_dialog_box = null
 var save_name = "impulse_save_data"
 
 var player_data = {}
-var impulse_music = new MusicPlayer()
+var impulse_music = null
 
 var impulse_main =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -111,8 +111,10 @@ var impulse_main =  function() {
 
     centerCanvas()
     load_game()
+    impulse_music = new MusicPlayer()
     cur_game_state = new TitleState(false)
-  step()
+    step()
+
 
 }
 
@@ -330,11 +332,10 @@ function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
   if(keyCode == 77) { //M = mute/unmute
-    impulse_music.mute = !impulse_music.mute
-    if(impulse_music.mute) {
-      impulse_music.pause_bg()
+    if(!impulse_music.mute) {
+      impulse_music.mute_bg()
     } else {
-      impulse_music.resume_bg()
+      impulse_music.unmute_bg()
     }
 
   }
@@ -371,7 +372,6 @@ function load_game() {
 
     player_data.first_time = true
     load_obj.difficulty_mode = "normal"
-
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
@@ -397,6 +397,14 @@ function load_game() {
     }
   }
 
+  if(!load_obj['options']) {
+    //default options
+    load_obj['options'] = {
+      "music_mute": false,
+      "effects_mute": false
+    }
+  }
+
   if(!load_obj['save_data']) {
     load_obj['save_data'] = {
       easy: {},
@@ -408,6 +416,7 @@ function load_game() {
 
   player_data.difficulty_mode = load_obj['difficulty_mode'];
   player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
+  player_data.options = load_obj.options
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
 
@@ -461,6 +470,7 @@ function save_game() {
   save_obj['difficulty_mode'] = player_data.difficulty_mode
   save_obj['world_rankings'] = player_data.world_rankings
   save_obj['save_data'] = player_data.save_data
+  save_obj['options'] = player_data.options
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 
