@@ -53,6 +53,16 @@ var tessellation_logo_factor = {
 }
 
 function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor) {
+  if(tessellation == 0) {
+    context.beginPath()
+    context.lineWidth = 2
+    context.rect(x-size/2, y-size/2, size, size)
+    context.rect(x-size/2+5, y-size/2+5, size-10, size-10)
+    context.strokeStyle = "#eee"
+
+    context.stroke()
+    return
+  }
 
   size *= tessellation_logo_factor[tessellation]
 
@@ -183,15 +193,15 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder) {
   }
 }
 
-function draw_bit(context, x, y) {
+function draw_spark(context, x, y) {
 
-  drawSprite(context, x, y, 0, 30, 30, "bit")
+  drawSprite(context, x, y, 0, 30, 30, "spark")
 
 }
 
-function draw_bit_fragment(context, x, y) {
+function draw_spark_fragment(context, x, y) {
 
-  drawSprite(context, x, y, 0, 15, 15, "bit")
+  drawSprite(context, x, y, 0, 15, 15, "spark")
 
 }
 
@@ -247,7 +257,7 @@ spriteSheetData = {
   "player_yellow": [120, 0, 60, 60],
   "player_gray": [180, 0, 60, 60],
   "player_green": [240, 0, 60, 60],
-  "bit": [0, 60, 30, 30],
+  "spark": [0, 60, 30, 30],
   "multi": [30, 60, 30, 30],
 
   "immunitas_arm": [0, 0, 90, 90],

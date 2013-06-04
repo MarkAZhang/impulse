@@ -13,7 +13,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.enemy_spawn_counters = {}
   this.enemy_numbers = {}
   this.level_name = data.level_name
-  this.bit_spawn_points = data.bit_spawn_points
+  this.spark_spawn_points = data.spark_spawn_points
 
   this.player_loc = data.player_loc
 
@@ -110,10 +110,10 @@ Level.prototype.reset = function() {
   this.spawned_enemies = []
   this.spawn_queue = [] //enemies that need to be spawned
   this.initial_spawn_done = false
-  this.bit_loc = null
-  this.bit_duration = null
-  this.bit_life = 10000
-  this.bit_value = null
+  this.spark_loc = null
+  this.spark_duration = null
+  this.spark_life = 10000
+  this.spark_value = null
 
   this.multi_loc = null
   this.multi_duration = null
@@ -121,32 +121,32 @@ Level.prototype.reset = function() {
   this.multi_value = null
 }
 
-Level.prototype.generate_bit = function() {
-  var bit_index = Math.floor(Math.random() * this.bit_spawn_points.length)
-  this.bit_loc = {x: this.bit_spawn_points[bit_index][0], y: this.bit_spawn_points[bit_index][1]};
+Level.prototype.generate_spark = function() {
+  var spark_index = Math.floor(Math.random() * this.spark_spawn_points.length)
+  this.spark_loc = {x: this.spark_spawn_points[spark_index][0], y: this.spark_spawn_points[spark_index][1]};
   var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
 
 
-  while(p_dist(player_loc,  this.bit_loc) < 125 || (this.multi_loc && this.multi_loc.x == this.bit_loc.x && this.multi_loc.y == this.bit_loc.y)) {
-    bit_index+=1
-    bit_index = bit_index % this.bit_spawn_points.length
-    this.bit_loc =  {x: this.bit_spawn_points[bit_index][0], y: this.bit_spawn_points[bit_index][1]};
+  while(p_dist(player_loc,  this.spark_loc) < 125 || (this.multi_loc && this.multi_loc.x == this.spark_loc.x && this.multi_loc.y == this.spark_loc.y)) {
+    spark_index+=1
+    spark_index = spark_index % this.spark_spawn_points.length
+    this.spark_loc =  {x: this.spark_spawn_points[spark_index][0], y: this.spark_spawn_points[spark_index][1]};
 
   }
 
-  console.log("SPAWNED BIT AT "+this.bit_loc.x+" "+this.bit_loc.y)
-  this.bit_duration = this.bit_life
-  this.bit_value = 1
+  console.log("SPAWNED spark AT "+this.spark_loc.x+" "+this.spark_loc.y)
+  this.spark_duration = this.spark_life
+  this.spark_value = 1
 }
 
 Level.prototype.generate_multi = function() {
-  var multi_index = Math.floor(Math.random() * this.bit_spawn_points.length)
-  this.multi_loc = {x: this.bit_spawn_points[multi_index][0], y: this.bit_spawn_points[multi_index][1]};
+  var multi_index = Math.floor(Math.random() * this.spark_spawn_points.length)
+  this.multi_loc = {x: this.spark_spawn_points[multi_index][0], y: this.spark_spawn_points[multi_index][1]};
   var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
-  while(p_dist(player_loc,  this.multi_loc) < 125 || (this.bit_loc && this.multi_loc.x == this.bit_loc.x && this.multi_loc.y == this.bit_loc.y)) {
+  while(p_dist(player_loc,  this.multi_loc) < 125 || (this.spark_loc && this.multi_loc.x == this.spark_loc.x && this.multi_loc.y == this.spark_loc.y)) {
     multi_index+=1
-    multi_index = multi_index % this.bit_spawn_points.length
-    this.multi_loc = {x: this.bit_spawn_points[multi_index][0], y: this.bit_spawn_points[multi_index][1]};
+    multi_index = multi_index % this.spark_spawn_points.length
+    this.multi_loc = {x: this.spark_spawn_points[multi_index][0], y: this.spark_spawn_points[multi_index][1]};
   }
 
   this.multi_duration = this.multi_life
@@ -157,24 +157,24 @@ Level.prototype.process = function(dt) {
 
   //handle obstacle visibility
 
-    this.bit_duration -= dt
-    if(!this.is_boss_level && (this.bit_loc == null || this.bit_duration < 0)) {
-      this.generate_bit()
+    this.spark_duration -= dt
+    if(!this.is_boss_level && (this.spark_loc == null || this.spark_duration < 0)) {
+      this.generate_spark()
     } else if(!this.is_boss_level) {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * draw_factor}
-      if(p_dist(player_loc, this.bit_loc) < 25) {
+      if(p_dist(player_loc, this.spark_loc) < 25) {
         if(this.impulse_game_state.hive_numbers) {
-          this.impulse_game_state.hive_numbers.bits += 10;
-          if(this.impulse_game_state.hive_numbers.bits >= 100) {
-            this.impulse_game_state.hive_numbers.bits -= 100;
+          this.impulse_game_state.hive_numbers.sparks += 10;
+          if(this.impulse_game_state.hive_numbers.sparks >= 100) {
+            this.impulse_game_state.hive_numbers.sparks -= 100;
             this.impulse_game_state.hive_numbers.lives += 1
             this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
           }
         } else
-          this.impulse_game_state.temp_bits += 10
+          this.impulse_game_state.temp_sparks += 10
 
-        this.add_fragments("bit", {x: this.bit_loc.x, y: this.bit_loc.y})
-        this.generate_bit()
+        this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
+        this.generate_spark()
       }
 
     }
@@ -310,9 +310,9 @@ Level.prototype.initial_spawn = function() {
         spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
-      if(player_data.difficulty_mode == "easy") {
-        num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.5)
-      }
+      //if(player_data.difficulty_mode == "easy") {
+      //  num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.75)
+      //}
 
       for(var i = 0; i < num_enemies_to_spawn; i++) {
         this.spawn_this_enemy(enemy, spawn_point_index);
@@ -340,9 +340,9 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
       var num_enemies_to_spawn = this.enemy_spawn_counters[k]
 
-      if(player_data.difficulty_mode == "easy") {
-        num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.7)
-      }
+      //if(player_data.difficulty_mode == "easy") {
+      //  num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.7)
+      //}
 
       for(var j = 1; j <= num_enemies_to_spawn; j++) {
         this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
@@ -458,15 +458,20 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
       var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
       factor = 1 * prog + 2 * (1-prog)
       ctx.globalAlpha *= 0.5*(1-prog)
-      drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-      (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
+      if(this.world_num != 0) {
+        drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
+        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
+
+      }
     }
 
     else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked) {
       factor = 2
       ctx.globalAlpha *= 0.5
-      drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-      (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
+      if(this.world_num != 0) {
+        drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
+        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
+      }
     }
     ctx.restore()
     draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, factor)
@@ -475,12 +480,12 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
 Level.prototype.draw = function(context, draw_factor) {
   context.save()
 
-  if(this.bit_loc) {
-    var prog = this.bit_duration/this.bit_life;
+  if(this.spark_loc) {
+    var prog = this.spark_duration/this.spark_life;
     context.save()
     context.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.7)
 
-    draw_bit(context, this.bit_loc.x, this.bit_loc.y, this.bit_value)
+    draw_spark(context, this.spark_loc.x, this.spark_loc.y, this.spark_value)
     context.restore()
 
   }
@@ -545,7 +550,12 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.rect(0, 0, levelWidth, levelHeight)
   bg_ctx.clip()
 
-  draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
+  if(this.level_intro_state.world_num)
+    draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
+  else {
+    bg_ctx.fillStyle = "white"
+    bg_ctx.fillRect(0, 0, levelWidth, levelHeight)
+  }
 
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(bg_ctx, draw_factor)

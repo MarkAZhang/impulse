@@ -1,11 +1,11 @@
 var HiveNumbers = function(world_num) {
 
   this.lives = 3
-  this.bits = 0
+  this.sparks = 0
   this.continues = 0
 
   this.last_lives = 3
-  this.last_bits = 0
+  this.last_sparks = 0
 
   this.current_level = null
 
@@ -22,8 +22,8 @@ var HiveNumbers = function(world_num) {
 
 HiveNumbers.prototype.continue = function() {
   this.lives = 3
-  this.bits = 0
+  this.sparks = 0
   this.last_lives = 3
-  this.last_bits = 0
+  this.last_sparks = 0
   this.continues += 1
 }

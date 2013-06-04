@@ -118,11 +118,11 @@ MainGameSummaryState.prototype.get_rank_color = function(stars, world_num) {
       return impulse_colors["impulse_blue"]
     }
     if(stars >= this.rank_cutoffs["B-"]) {
-      return impulse_colors["world "+world_num+" list"]
+      return impulse_colors["world "+world_num+" bright"]
     }
 
     if(stars >= this.rank_cutoffs["C-"]) {
-      return impulse_colors["world "+world_num]
+      return impulse_colors["world "+world_num+" bright"]
     }
     return "red"
 }
@@ -220,7 +220,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '16px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, 167)
-    ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, 190)
+    ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, 190)
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
       ctx.shadowColor = ctx.fillStyle

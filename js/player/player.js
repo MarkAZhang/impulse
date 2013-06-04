@@ -24,8 +24,8 @@ Player.prototype.effective_radius = .66
 
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   if(player_data.difficulty_mode == "easy") {
-    this.density *= 3;
-    this.true_force *= 3;
+    this.density *= 1.5;
+    this.true_force *= 1.5;
   }
   var fixDef = new b2FixtureDef;
   fixDef.density = this.density;

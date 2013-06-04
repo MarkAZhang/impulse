@@ -191,7 +191,7 @@ PauseMenu.prototype.quit_main_game = function() {
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
 
-  this.game_state.hive_numbers.bits = this.game_state.hive_numbers.last_bits
+  this.game_state.hive_numbers.sparks = this.game_state.hive_numbers.last_sparks
   this.game_state.hive_numbers.lives = this.game_state.hive_numbers.last_lives
   player_data.save_data[player_data.difficulty_mode] = this.game_state.hive_numbers
   save_game()

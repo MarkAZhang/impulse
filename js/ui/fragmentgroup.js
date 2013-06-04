@@ -5,7 +5,7 @@ var FragmentGroup = function(enemy_type, loc, velocity, shadowed) {
 FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.shadowed = shadowed ? true : false;
   this.fragments = []
-  if(enemy_type == "bit" || enemy_type == "multi") {
+  if(enemy_type == "spark" || enemy_type == "multi") {
     velocity = {x: 0, y: 0}
   }
 
@@ -40,7 +40,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.num_fragments = 2
     this.burst = 1
 
-  } else if(enemy_type == "bit" ||  enemy_type == "multi") {
+  } else if(enemy_type == "spark" ||  enemy_type == "multi") {
     this.num_fragments = 3
     this.burst = 10
     this.original_v_damping = 1
@@ -134,11 +134,11 @@ Fragment.prototype.process = function(dt) {
 }
 
 Fragment.prototype.draw = function(context, prog) {
-  if(this.shape == "bit" || this.shape == "multi") {
+  if(this.shape == "spark" || this.shape == "multi") {
     context.save()
     context.globalAlpha *= prog
-    if(this.shape == "bit")
-      draw_bit_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
+    if(this.shape == "spark")
+      draw_spark_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
     else if(this.shape == "multi")
       draw_multi_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
 

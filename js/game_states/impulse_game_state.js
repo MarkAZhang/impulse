@@ -4,9 +4,18 @@ ImpulseGameState.prototype.constructor = ImpulseGameState
 
 function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
 
+  if(!world) return
+
+  this.init(world, level, visibility_graph, first_time, hive_numbers, first_ever)
+
+
+}
+
+ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
+
   this.hive_numbers = hive_numbers
   if(this.hive_numbers) {
-    this.hive_numbers.bits = Math.floor(this.hive_numbers.bits);
+    this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
   }
 
@@ -34,13 +43,27 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
 
   this.progress_bar_prop = 0
   this.progress_bar_adjust = 3000
-  this.level = level
-  this.level.impulse_game_state = this
-  this.level.reset() //we re-use the level
+  var gravity = new b2Vec2(000, 000);
+  var doSleep = false; //objects in our world will rarely go to sleep
+  this.world = new b2World(gravity, doSleep);
 
-  this.level_name = this.level.level_name
+  if(level) {
+    this.level = level
+    this.level.impulse_game_state = this
+    this.level.reset() //we re-use the level
+    this.level_name = this.level.level_name
+    this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
+    this.make_player()
+    if(this.level_name == "BOSS 4") {
+      impulse_music.play_bg(imp_vars.songs["Final Tessellation"])
+    }
+    else if(this.level_name.slice(0, 4) == "BOSS")
+      impulse_music.play_bg(imp_vars.songs["Tessellation"])
+    else
+      impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
+  }
+
   this.visibility_graph = visibility_graph
-  this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
   this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
 
@@ -48,23 +71,12 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
   this.boss_intro_text_duration = 0
 
 
-
-  var gravity = new b2Vec2(000, 000);
-  var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep);
-
   //add walls
 
-    this.addWalls()
+  this.addWalls()
 
 
-  if(this.level.player_loc) {
-    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
-  }
-  else {
-    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
-    this.player = new Player(this.world, r_p.x, r_p.y, this)
-  }
+
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
@@ -74,19 +86,11 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
 
   this.bg_visible = false
 
-  this.temp_bits = 0
+  this.temp_sparks = 0
 
   this.world_visible = true
 
   this.world_visibility = 1
-
-  if(this.level_name == "BOSS 4") {
-    impulse_music.play_bg(imp_vars.songs["Final Tessellation"])
-  }
-  else if(this.level_name.slice(0, 4) == "BOSS")
-    impulse_music.play_bg(imp_vars.songs["Tessellation"])
-  else
-    impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
 
   this.camera_center = {x: levelWidth/2, y: levelHeight/2}
   //this.zoom = 0.1
@@ -110,7 +114,16 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
   this.draw_interface_timer = this.draw_interface_interval
 
   this.level_redraw_bg = false
+}
 
+ImpulseGameState.prototype.make_player = function() {
+  if(this.level.player_loc) {
+    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
+  }
+  else {
+    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
+    this.player = new Player(this.world, r_p.x, r_p.y, this)
+  }
 }
 
 ImpulseGameState.prototype.zoom_in = function(center, target) {
@@ -444,6 +457,12 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.globalAlpha = 1*/
 
+  this.additional_draw(ctx, bg_ctx)
+
+}
+
+ImpulseGameState.prototype.additional_draw = function(ctx, bg_ctx) {
+
 }
 
 ImpulseGameState.prototype.draw_score_labels = function(ctx) {
@@ -528,12 +547,20 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.font = '64px Muli'
   context.shadowBlur = 20;
   context.shadowColor = context.fillStyle;
-  type = this.level_name.slice(0,4) == "BOSS" ? "BOSS" : "HIVE"
-  context.fillText(type, sidebarWidth/2, 70)
+  type = this.level_name.split(" ")[0]
+  if(type != "HOW") {
+    context.fillText(type, sidebarWidth/2, 70)
+  } else {
+    context.font = '40px Muli'
+    context.fillText("HOW TO", sidebarWidth/2, 70)
+  }
 
   context.font = '80px Muli'
-  if(this.level_name.slice(0,4) == "BOSS") {
+  if(type == "BOSS") {
     context.fillText(this.world_num, sidebarWidth/2, 140)
+  } else if(type == "HOW") {
+    context.font = '60px Muli'
+    context.fillText("PLAY", sidebarWidth/2, 130)
   } else {
     context.fillText(this.level_name.slice(5, this.level_name.length), sidebarWidth/2, 140)
   }
@@ -564,10 +591,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
     }
     else {
-      context.fillStyle = impulse_colors[this.star_colors[2]]
+      /*context.fillStyle = impulse_colors[this.star_colors[2]]
       context.shadowColor = context.fillStyle;
       context.font = '60px Muli'
-      context.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)
+      context.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)*/
     }
 
   } else {
@@ -622,7 +649,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fill()
 
     context.beginPath()
-    context.fillText("BITS: "+this.hive_numbers.bits, sidebarWidth/2, canvasHeight - 20)
+    context.fillText("SPARKS: "+this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 20)
     context.fill()
   } else {
     context.fillStyle = impulse_colors["impulse_blue_dark"]
@@ -631,7 +658,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fill()
 
     context.beginPath()
-    context.fillText("BITS: "+this.temp_bits, sidebarWidth/2, canvasHeight - 20)
+    context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 20)
     context.fill()
   }
 
@@ -780,20 +807,16 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
 
   for(var index in objects) {
     var first_object = objects[index]
-    if(first_object.type == "harpoonhead") {
+    if(first_object.type == "harpoonhead" && first_object.harpoon.harpoon_state != "inactive") {
       var second_object = other_objects[index]
 
-      if(first_object.type == "harpoonhead" && second_object != first_object.harpoon && second_object.type != "harpoonhead") {
-
-        if(first_object.harpoon.harpoon_state != "inactive") {
-          if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
-            if(second_object.is_enemy)
-            {
-              second_object.open(3000)
-            }
-            first_object.harpoon.engage_harpoon(second_object)
-
+      if(second_object != first_object.harpoon && second_object.type != "harpoonhead") {
+        if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
+          if(second_object.is_enemy)
+          {
+            second_object.open(3000)
           }
+          first_object.harpoon.engage_harpoon(second_object)
         }
       }
 

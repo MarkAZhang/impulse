@@ -319,7 +319,7 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 
 impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 3,
+  density: 4,
   lin_damp: 6,
   effective_radius: .7,
   force: 2.5,

@@ -192,13 +192,13 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.hive_numbers.game_numbers[this.last_level.level_name]["last_time"] = this.game_numbers["last_time"]
     }
 
-    this.time_bits_awarded = Math.floor(this.game_numbers.seconds/10)
-    this.combo_bits_awarded = Math.floor(this.game_numbers.combo/2)
+    this.time_sparks_awarded = Math.floor(this.game_numbers.seconds/5)
+    this.combo_sparks_awarded = Math.floor(this.game_numbers.combo/2)
 
-    this.target_bits = this.hive_numbers.bits + this.time_bits_awarded + this.combo_bits_awarded;
+    this.target_sparks = this.hive_numbers.sparks + this.time_sparks_awarded + this.combo_sparks_awarded;
     this.target_lives = this.hive_numbers.lives
-    while(this.target_bits >= 100) {
-      this.target_bits -= 100;
+    while(this.target_sparks >= 100) {
+      this.target_sparks -= 100;
       this.target_lives += 1
     }
 
@@ -222,16 +222,16 @@ MainGameTransitionState.prototype.process = function(dt) {
   var prog = (this.transition_timer/this.last_level_summary_interval);
 
   if(this.state == "last_level_summary" && this.victory && prog > 0.3 &&  prog < 0.7) {
-      this.hive_numbers.bits += (dt)/(0.4 * this.last_level_summary_interval) * (this.time_bits_awarded+this.combo_bits_awarded);
-      if(this.hive_numbers.bits >= 100) {
-        this.hive_numbers.bits -= 100;
+      this.hive_numbers.sparks += (dt)/(0.4 * this.last_level_summary_interval) * (this.time_sparks_awarded+this.combo_sparks_awarded);
+      if(this.hive_numbers.sparks >= 100) {
+        this.hive_numbers.sparks -= 100;
         this.hive_numbers.lives += 1;
       }
   } else if(this.state == "last_level_summary" && this.victory && prog < 0.3) {
-    console.log("SET "+this.hive_numbers.bits+" "+this.hive_numbers.lives)
-      this.hive_numbers.bits = Math.floor(this.target_bits);
+    console.log("SET "+this.hive_numbers.sparks+" "+this.hive_numbers.lives)
+      this.hive_numbers.sparks = Math.floor(this.target_sparks);
       this.hive_numbers.lives = Math.floor(this.target_lives);
-      this.hive_numbers.last_bits = this.hive_numbers.bits
+      this.hive_numbers.last_sparks = this.hive_numbers.sparks
       this.hive_numbers.last_lives = this.hive_numbers.lives
   }
 
@@ -268,11 +268,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
     bg_ctx.translate(-sidebarWidth, 0)
-    bg_canvas.setAttribute("style", "display:none")
+   bg_canvas.setAttribute("style", "display:none")
   }
-
-
-
 
   if(this.state == "world_intro") {
 
@@ -338,7 +335,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '20px Muli'
       ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
-      ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
+      ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
@@ -402,8 +399,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '18px Muli'
     if(this.victory) {
-      ctx.fillText("(+"+this.time_bits_awarded+" BITS)", levelWidth/2 - 100, 270)
-      ctx.fillText("(+"+this.combo_bits_awarded+" BITS)", levelWidth/2 + 100, 270)
+      ctx.fillText("(+"+this.time_sparks_awarded+" sparks)", levelWidth/2 - 100, 270)
+      ctx.fillText("(+"+this.combo_sparks_awarded+" sparks)", levelWidth/2 + 100, 270)
     } else {
 
     }
@@ -433,7 +430,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
-    ctx.fillText("BITS: "+Math.floor(this.hive_numbers.bits), levelWidth/2, levelHeight/2+230)
+    ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
     ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)

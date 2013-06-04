@@ -5,8 +5,8 @@ LoaderGameState.prototype = new GameState()
 
 LoaderGameState.prototype.constructor = LoaderGameState
 
-LoaderGameState.prototype.load_level = function(level_name) {
-  var level = new Level(level_name, this)
+LoaderGameState.prototype.load_level = function(level_data) {
+  var level = new Level(level_data, this)
 
   level.generate_obstacles()
 
