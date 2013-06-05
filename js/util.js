@@ -382,11 +382,14 @@ function getLines(ctx,phrase,maxPxLength,textStyle) {
   for (var i=1;i<wa.length;i++) {
       var w=wa[i];
       measure=ctx.measureText(lastPhrase+w).width;
-      if (measure<l) {
+      if (measure<l && w!= "#") {
           lastPhrase+=(" "+w);
       }else {
           phraseArray.push(lastPhrase);
-          lastPhrase=w;
+          if(w != "#")
+            lastPhrase=w;
+          else
+            lastPhrase = ""
       }
       if (i===wa.length-1) {
           phraseArray.push(lastPhrase);

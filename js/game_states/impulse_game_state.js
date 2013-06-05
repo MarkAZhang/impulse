@@ -437,7 +437,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
   }*/
-  /*ctx.globalAlpha = 0.5
+  ctx.globalAlpha = 0.5
 
   for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
@@ -460,7 +460,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
   }
-  ctx.globalAlpha = 1*/
+  ctx.globalAlpha = 1
 
   this.additional_draw(ctx, bg_ctx)
 

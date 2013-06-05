@@ -13,8 +13,11 @@ impulse_enemy_stats["stunner"] = {
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
-  special_ability: "Upon impact, stuns you for 0.5 seconds.",
-  other_notes: "Dangerous in swarms.",
+  enemy_info: [
+    "Upon collision, stuns you for 0.5 seconds # (you cannot move or impulse)",
+    "If hit directly into another enemy, # may stop moving or ricochet back at you. # This property is not unique to Stunners"
+  ],
+
   className: Stunner
 }
 
@@ -31,6 +34,15 @@ impulse_enemy_stats["spear"] = {
     [Math.cos(Math.PI * 5/6), Math.sin(Math.PI * 5/6)],
     [Math.cos(Math.PI * 7/6), Math.sin(Math.PI * 7/6)]]}],
   dies_on_impact: "YES",
+
+  enemy_info: [
+    "Charges at you. # Upon collision, causes significant knockback",
+    "Will only charge if it has line of sight",
+    "Cannot charge for 1 second after entering the screen. # Cannot charge from off-screen",
+    "When Impulsed, cannot charge for 5 seconds",
+    "Will always cause some knockback upon collision even if not charging.",
+  ],
+
   special_ability: "Charges you on sight. Hurls you backward on impact.",
   other_notes: "Silenced for two seconds upon entering or re-entering stage. When Impulsed, silenced for five seconds.",
   className: Spear
@@ -61,8 +73,15 @@ impulse_enemy_stats["tank"] = {
   [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05]]}],
 
   dies_on_impact: "YES",
-  special_ability: "Explodes on death, blasting everything nearby away. The blast radius is outlined around the Tank.",
-  other_notes: "When Impulsed, becomes 'hot' for 1 second. During this time, collision with another Tank will cause it to explode.",
+
+  enemy_info: [
+    "Explodes upon collision, # causing huge knockback to all nearby units",
+    "Also explodes on death",
+    "The blast radius is outlined around the Tank",
+    "When Impulsed, becomes volatile for 1 second. # Collision with another Tank will cause the volatile Tank to explode."
+
+  ],
+
   className: Tank
 }
 
@@ -80,8 +99,10 @@ impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
   dies_on_impact: "YES",
-  special_ability: "Cannot be impulsed. Upon impact, silences you for 2 seconds.",
-  other_notes: "Other enemies can be pushed into the Mote.",
+  enemy_info: [
+    "Cannot be Impulsed. # Upon impact, silences you for 3 seconds # (You cannot impulse)",
+    "The Mote is not immune to any other effect, # including collision with other enemies",
+  ],
   className: Mote
 
 }
@@ -109,6 +130,12 @@ impulse_enemy_stats["goo"] = {
   {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
   extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1}],
   dies_on_impact: "YES",
+  enemy_info: [
+    "All units within its area of influence are slowed",
+    "Dies upon collision. # Units immediately regain speed.",
+    "When Impulsed, dramatically expands its area of influence for 2 seconds",
+  ],
+
   special_ability: "Leaves behind a trail of sticky goo. Everything that passes through the goo is slowed and harder to push around. Upon impact, goos the player for 2 seconds.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Getting gooed can also keep you alive in a tough spot.",
   className: Goo
@@ -336,9 +363,20 @@ impulse_enemy_stats["harpoon"] = {
   [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
   [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
   dies_on_impact: "NO",
-  special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
-  other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  enemy_info: [
+    "Fires its hook at you. # If the hook latches onto you, the harpoon will yank you in. # Can only fire through walls.",
+    "While the hook is detached from the Harpoon, # cannot move",
+    "If the hook is Impulsed while the Harpoon is latched # it will let go",
+    "If the hook is Impulsed while the harpoon is firing # it will not be able to latch on",
+    "Can latch onto other enemies and will yank them in.",
+    "Will actively try to avoid you",
+    "Cannot fire for 1 second after entering the screen. # Cannot fire from off-screen",
+    "When Impulsed, cannot fire for 2 seconds",
+    "The hook range is outlined around the Harpoon",
+    "During boss battles, can fire at any time"
+
+  ],
+
   className: Harpoon
 
 }

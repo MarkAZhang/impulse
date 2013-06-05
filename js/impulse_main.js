@@ -408,8 +408,8 @@ function load_game() {
       "progress_circle": false,
       "multiplier_display": true,
       "control_hand": "right",
-      "control_scheme": "mouse"
-
+      "control_scheme": "mouse",
+      "impulse_shadow": true
     }
   }
 

@@ -522,21 +522,23 @@ Player.prototype.draw = function(context) {
     }
     context.beginPath()
 
-    if (this.status_duration[1] <= 0 && player_data.options.control_scheme == "mouse") {
-      context.fillStyle = this.impulse_target_color
+    if(player_data.options.impulse_shadow) {
+      if (this.status_duration[1] <= 0 && player_data.options.control_scheme == "mouse") {
+        context.fillStyle = this.impulse_target_color
 
-      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor* this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-      context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*this.draw_factor)
-      context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
-      context.fill()
-    } else if(this.status_duration[1] <= 0 && player_data.options.control_scheme == "keyboard") {
-      context.beginPath()
-      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor *this.draw_factor, 0, 2 * Math.PI)
-      context.globalAlpha /= 10
-      context.lineWidth = 2
-      context.strokeStyle = impulse_colors["impulse_blue"]
-      context.stroke()
-      context.globalAlpha *= 10
+        context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor* this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+        context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*this.draw_factor)
+        context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
+        context.fill()
+      } else if(this.status_duration[1] <= 0 && player_data.options.control_scheme == "keyboard") {
+        context.beginPath()
+        context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor *this.draw_factor, 0, 2 * Math.PI)
+        context.globalAlpha /= 10
+        context.lineWidth = 2
+        context.strokeStyle = impulse_colors["impulse_blue"]
+        context.stroke()
+        context.globalAlpha *= 10
+      }
     }
     if(this.attacking)
     {
@@ -562,6 +564,7 @@ Player.prototype.draw = function(context) {
       context.stroke();
       context.restore();
     }
+
 
     if(player_data.options.progress_circle) {
       context.beginPath()

@@ -30,7 +30,7 @@ EnemyButton.prototype.additional_draw = function(context) {
       (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
       context.font = "25px Muli"
       context.textAlign = "left"
-      context.fillStyle = impulse_enemy_stats[this.enemy_name].color
+      context.fillStyle = "white"
       context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
     }
     if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {

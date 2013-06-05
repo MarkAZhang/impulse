@@ -12,9 +12,8 @@ function SmallButton(text, size, x, y, w, h, color, hcolor, action) {
   this.underline = false
   this.underline_index = null
   this.extra_text = ""
-  this.shadow = true
+  this.shadow = false
   this.dim_extra_text = false
-
 }
 
 SmallButton.prototype.additional_draw = function(context) {

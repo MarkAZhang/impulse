@@ -55,12 +55,8 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num +" lite"]
 
-
-
-
   this.drawn_enemies = null
 
-  this.add_buttons()
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
@@ -76,35 +72,8 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   }
   this.enemy_image_size = 40
 
-    var num_row = 12
+  this.add_buttons()
 
-  var i = 0
-
-  for(var j in this.drawn_enemies) {
-
-    var k = 0
-    var num_in_this_row = 0
-
-    while(k < i+1 && k < this.num_enemy_type) {
-      k+=num_row
-    }
-
-    if(k <= this.num_enemy_type) {
-      num_in_this_row = num_row
-    }
-    else {
-      num_in_this_row = this.num_enemy_type - (k - num_row)
-    }
-    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
-
-    var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
-
-    var cur_x =  this.x + (this.enemy_image_size+10) * diff
-    var cur_y = this.y - this.h/2 + 270 + this.enemy_image_size * h_diff
-    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color))
-
-    i+=1
-  }
 }
 
 PauseMenu.prototype.add_buttons = function() {
@@ -170,6 +139,40 @@ PauseMenu.prototype.add_buttons = function() {
     set_dialog_box(new OptionsMenu(_this))
   }}(this))
   this.buttons.push(this.option_button)
+
+    var num_row = 12
+
+  var i = 0
+
+  for(var j in this.drawn_enemies) {
+
+    var k = 0
+    var num_in_this_row = 0
+
+    while(k < i+1 && k < this.num_enemy_type) {
+      k+=num_row
+    }
+
+    if(k <= this.num_enemy_type) {
+      num_in_this_row = num_row
+    }
+    else {
+      num_in_this_row = this.num_enemy_type - (k - num_row)
+    }
+    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
+
+    var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
+
+    var cur_x =  this.x + (this.enemy_image_size+10) * diff
+    var cur_y = this.y - this.h/2 + 270 + this.enemy_image_size * h_diff
+    var _this = this
+    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color, function() {
+      set_dialog_box(new EnemyBox(this.enemy_name, _this))
+
+    }))
+
+    i+=1
+  }
 
 }
 
@@ -416,6 +419,11 @@ function OptionsMenu(previous_menu) {
   player_data.options.multiplier_display = !player_data.options.multiplier_display
     save_game()
   }, player_data.options.multiplier_display))
+
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 348, 20, 20, this.lite_color, function() {
+  player_data.options.impulse_shadow = !player_data.options.impulse_shadow
+    save_game()
+  }, player_data.options.impulse_shadow))
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -437,9 +445,11 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2 + 265)
   ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
   ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 325)
+  ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 355)
 
   ctx.font = '12px Muli';
   ctx.textAlign = "center"
+  ctx.globalAlpha = 0.5
   if(player_data.options.control_hand == "right" && player_data.options.control_scheme == "mouse") {
     ctx.fillText("RIGHT-HANDED KEYBOARD-MOUSE", this.x, this.y - this.h/2 + 150)
   }
@@ -663,7 +673,15 @@ EnemyBox.prototype = new DialogBox()
 
 EnemyBox.prototype.constructor = EnemyBox
 
-function EnemyBox(enemy_name) {
+function EnemyBox(enemy_name, previous_menu) {
+  this.init(800, 600)
+  this.game_state = previous_menu.game_state
+  this.solid = false;
+  this.previous_menu = previous_menu
+  this.bg_color = this.previous_menu.bg_color
+  this.lite_color = this.previous_menu.lite_color
+
+
   this.enemy_name = enemy_name
   this.max_enemy_d = 50
   this.special_ability = null
@@ -672,25 +690,49 @@ function EnemyBox(enemy_name) {
   this.seen = impulse_enemy_stats[this.enemy_name].seen
 
   this.w = 600
-  var gravity = new b2Vec2(000, 000);
+  this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+    set_dialog_box(_this.previous_menu)
+  }}(this))
+
+  this.buttons.push(this.back_button)
+
+  this.world_num = this.game_state.world_num
+
+  this.color = impulse_colors["world "+this.world_num]
+  this.text_width = 500
+
+  this.enemy_info = impulse_enemy_stats[this.enemy_name].enemy_info
+
+
+  this.current_lines = null
+
+  this.num_pages = this.enemy_info.length
+
+  this.cur_page = 0
+  /*var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
   var world = new b2World(gravity, doSleep);
 
-  var temp_enemy = new (impulse_enemy_stats[this.enemy_name].className)(world, 0, 0, 0, 0)
+  /*var temp_enemy = new (impulse_enemy_stats[this.enemy_name].className)(world, 0, 0, 0, 0)
 
   this.def_value = Math.min(temp_enemy.body.m_mass/5.5, 1)
 
   this.atk_value = impulse_enemy_stats[this.enemy_name].attack_rating/10
 
-  this.spd_value = ((impulse_enemy_stats[this.enemy_name].force/temp_enemy.body.m_mass)/impulse_enemy_stats[this.enemy_name].lin_damp)/.35
+  this.spd_value = ((impulse_enemy_stats[this.enemy_name].force/temp_enemy.body.m_mass)/impulse_enemy_stats[this.enemy_name].lin_damp)/.35*/
 
   if(this.enemy_name == "spear") this.spd_value = 1
 
 }
 
 EnemyBox.prototype.additional_draw = function(ctx) {
+  ctx.save()
 
-  if(this.special_ability == null) {
+  if(this.current_lines == null) {
+    this.current_lines = getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
+  }
+
+  /*if(this.special_ability == null) {
     this.special_ability = getLines(ctx, impulse_enemy_stats[this.enemy_name].special_ability, this.w - 20, '20px Muli')
   }
   if(this.other_notes == null && impulse_enemy_stats[this.enemy_name].other_notes != "") {
@@ -703,85 +745,131 @@ EnemyBox.prototype.additional_draw = function(ctx) {
     this.x = canvasWidth/2
     this.y = 50 + this.h/2
     this.buttons = []
-  }
+  }*/
 
 
   ctx.beginPath()
   ctx.textAlign = "center"
+  ctx.fillStyle = this.lite_color
+  ctx.font = '12px Muli'
+  ctx.globalAlpha /= 0.5
+  ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 70)
+  ctx.globalAlpha *= 2
+  ctx.font = '30px Muli'
+
+  ctx.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + 120)
+
+
+  ctx.globalAlpha /= 3
+  draw_tessellation_sign(ctx, this.world_num, this.x, this.y - this.h/2 + 215, 80)
+  ctx.globalAlpha *= 3
+  draw_enemy(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, this.max_enemy_d)
+
+  ctx.font = '12px Muli'
+  ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)
+  ctx.font = '24px Muli'
+  ctx.fillText(impulse_enemy_stats[this.enemy_name].score_value, this.x, this.y - this.h/2 + 335)
+
   ctx.font = '20px Muli'
-  ctx.fillStyle = "black"
-  ctx.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + 30)
 
-  draw_enemy(ctx, this.enemy_name, this.x, this.y - this.h/2 + 90, this.max_enemy_d)
+   for(var i = 0; i < this.current_lines.length; i++) {
+    var offset = i - (this.current_lines.length-1)/2
+    ctx.fillText(this.current_lines[i], this.x, this.y - this.h/2 + 427 + 25 * offset)
+  }
 
-  ctx.fillStyle = "black"
+  draw_arrow(ctx, this.x - 300, this.y - this.h/2 + 420, 20, "left", this.lite_color)
+  draw_arrow(ctx, this.x + 300, this.y - this.h/2 + 420, 20, "right", this.lite_color)
 
-  ctx.textAlign = 'left'
+  for(var i = 0; i < this.num_pages; i++) {
+    var offset = (this.num_pages-1)/2 - i
+    ctx.beginPath()
+    ctx.shadowBlur = 5
+    ctx.arc(this.x - 25 * offset, this.y - this.h/2 + 515, 4, 0, 2*Math.PI, true)
+    ctx.fillStyle = this.color
+    if(this.cur_page == i) {
+      ctx.fillStyle = this.lite_color
+      ctx.shadowColor = ctx.fillStyle
+      ctx.fill()
+    } else {
+      ctx.globalAlpha /= 2
+      ctx.shadowColor = ctx.fillStyle
+      ctx.fill()
+      ctx.globalAlpha *= 2
+    }
 
-  ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
+  }
 
-  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, impulse_enemy_stats[this.enemy_name].color)
-
-  ctx.fillStyle = "black"
-
-  ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
-
-
-  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, impulse_enemy_stats[this.enemy_name].color)
-
-  ctx.fillStyle = "black"
-
-  ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
-
-
-  draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, impulse_enemy_stats[this.enemy_name].color)
-
-
-  ctx.fillStyle = "black"
-
+  //ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, impulse_enemy_stats[this.enemy_name].color)
+  //ctx.fillStyle = "black"
+  //ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, impulse_enemy_stats[this.enemy_name].color)
+  //ctx.fillStyle = "black"
+  //ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, impulse_enemy_stats[this.enemy_name].color)
+  /*ctx.fillStyle = "black"
   ctx.fillText("DIES UPON PLAYER COLLISION", this.x - this.w * .30, this.y - this.h/2 + 245)
-
   ctx.textAlign = 'center'
-
   ctx.fillText("SPECIAL ABILITY", this.x, this.y - this.h/2 + 280)
-
   if (this.other_notes != null)
     ctx.fillText("OTHER NOTES", this.x, this.y - this.h/2 + 315 + 25 * this.special_ability.length)
-
   ctx.textAlign = 'right'
-
   ctx.fillText(impulse_enemy_stats[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
-
-
   ctx.beginPath()
   ctx.textAlign = 'center'
   ctx.font = '20px Muli'
-
   ctx.fillStyle = "black"
   for(var i = 0; i < this.special_ability.length; i++) {
     ctx.fillText(this.special_ability[i], this.x, this.y - this.h/2 + 305 + 25 * i)
   }
-
   if (this.other_notes != null) {
     for(var i = 0; i < this.other_notes.length; i++) {
       ctx.fillText(this.other_notes[i], this.x, this.y - this.h/2 + 340 + 25 * this.special_ability.length + 25 * i)
     }
+  }*/
+
+
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].draw(ctx)
   }
-
-
-  ctx.font = '25px Muli'
-  ctx.fillStyle = "white"
-  ctx.fillText("CLICK TO CONTINUE", this.x, this.y + this.h/2 + 50 )
-
-  ctx.fill()
-
+  ctx.restore()
 }
 
 EnemyBox.prototype.on_mouse_move = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_move(x, y)
+  }
 }
 
 EnemyBox.prototype.on_click = function(x, y) {
-  clear_dialog_box()
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_click(x, y)
+  }
+
+  if(x < this.x - this.text_width/2) {
+    this.set_page(this.cur_page - 1)
+  } else if(x > this.x + this.text_width/2) {
+    this.set_page(this.cur_page + 1)
+  }
+
+  if(y > 500 && y < 530) {
+    var index = Math.round((this.num_pages-1)/2 - (this.x - x)/25)
+
+    if(index >= 0 && index < this.num_pages)
+      this.set_page(index)
+  }
+
+}
+
+EnemyBox.prototype.set_page = function(page) {
+  this.cur_page = page
+  if(this.cur_page < 0) {
+    this.cur_page += this.num_pages
+  }
+  if(this.cur_page >= this.num_pages) {
+    this.cur_page -= this.num_pages
+  }
+  this.current_lines = null
 }
 
 EnemyBox.prototype.on_key_down = function(keyCode) {

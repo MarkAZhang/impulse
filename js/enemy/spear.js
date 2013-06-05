@@ -7,8 +7,6 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.init(world, x, y, id, impulse_game_state)
 
-  this.spear_range = 30   //distance from which spear effects activate
-
   this.fast_factor = 5
 
   this.spear_force = 30 //force that the spear impulses the player
@@ -70,7 +68,7 @@ Spear.prototype.additional_processing = function(dt) {
     this.entered_arena = false
   }
 
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.spear_range && (this.status_duration[1] <= 0) && this.entered_arena
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
 
 }
 

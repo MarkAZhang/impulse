@@ -201,20 +201,62 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
 
 }
 
+
+
 Tank.prototype.get_additional_color_for_status = function(status) {
   if(status == "hot") {
     return "red"
   }
 }
 
+Enemy.prototype.get_color_for_status = function(status) {
+  if(status == "normal") {
+    return this.color
+  } else if(status == "stunned") {
+    return 'gray';
+  } else if(status == "silenced") {
+    return 'gray'
+  } else if(status == "gooed") {
+    return "#e6c43c"
+  } else if(status == "impulsed") {
+    return "red"
+  }
+
+  return this.get_additional_color_for_status(status)
+}
+
+Tank.prototype.get_current_color_with_status = function(orig_color) {
+  /*if (this.durations["open"] > 0) {
+        context.fillStyle = impulse_colors["impulse_blue"]
+      } else */
+    if(!this.dying) {
+      if(this.durations["impulsed"] > 0) {
+        return "red"
+      }
+      if(this.status_duration[0] > 0) {
+        return 'gray';
+      } else if(this.color_silenced) {
+        return 'gray'
+      } else if(this.status_duration[2] > 0) {
+        return "#e6c43c"
+      }
+    }
+    if(orig_color)
+      return orig_color
+    return this.color;
+}
+
 Tank.prototype.get_additional_current_status = function() {
+  if(this.dying) {
+    return "hot"
+  }
 
   if(!this.dying) {
       if(this.durations["open"] > 0) {
         return "hot";
       }
-    }
-    return "normal"
+  }
+  return "normal"
 }
 
 Tank.prototype.draw_enemy_image_additional = function(context, color) {
