@@ -306,7 +306,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     if(!this.level_loaded) {
       ctx.fillText("LOADING LEVEL", levelWidth/2, levelHeight/2 + 270)
     } else {
-      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
     }
     ctx.restore()
 
@@ -340,7 +340,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '12px Muli'
-      ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
       ctx.restore()
 
     }
@@ -433,7 +433,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
-    ctx.fillText("PRESS SPACE TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
 
   }
 }

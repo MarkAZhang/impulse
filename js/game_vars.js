@@ -82,9 +82,17 @@ function set_key_bindings() {
       "UP_KEY": 38,
       "RIGHT_KEY": 39,
       "DOWN_KEY": 40,
-      "PAUSE": 17,
+      "PAUSE": 16,
       "GATEWAY_KEY": 13,
-      "MUTE_KEY": 77
+      "MUTE_KEY": 77,
+      "EXIT_KEY": 39,
+      "SAVE_AND_QUIT_KEY": 37,
+      "RESTART_KEY": 37,
+      "QUIT_KEY": 39,
+      "EXIT_GAME_KEY": 37,
+      "RESUME_GAME_KEY": 39,
+      "DELETE_GAME_KEY": 40,
+      "NEXT_KEY": 13
     }
   } else if(type == "right mouse") {
     imp_vars.keys = {
@@ -94,7 +102,15 @@ function set_key_bindings() {
       "DOWN_KEY": 83,
       "PAUSE": 81,
       "GATEWAY_KEY": 32,
-      "MUTE_KEY": 88
+      "MUTE_KEY": 88,
+      "EXIT_KEY": 69,
+      "RESTART_KEY": 82,
+      "SAVE_AND_QUIT_KEY": 83,
+      "QUIT_KEY": 81,
+      "EXIT_GAME_KEY": 69,
+      "RESUME_GAME_KEY": 82,
+      "DELETE_GAME_KEY": 68,
+      "NEXT_KEY": 32
     }
   } else if(type == "right keyboard") {
     imp_vars.keys = {
@@ -108,7 +124,15 @@ function set_key_bindings() {
       "IRIGHT_KEY": 39,
       "IDOWN_KEY": 40,
       "GATEWAY_KEY": 32,
-      "MUTE_KEY": 88
+      "MUTE_KEY": 88,
+      "EXIT_KEY": 69,
+      "RESTART_KEY": 82,
+      "SAVE_AND_QUIT_KEY": 83,
+      "QUIT_KEY": 81,
+      "EXIT_GAME_KEY": 69,
+      "RESUME_GAME_KEY": 82,
+      "DELETE_GAME_KEY": 68,
+      "NEXT_KEY": 32
     }
   }
 }

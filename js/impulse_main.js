@@ -339,7 +339,6 @@ function on_key_down(event) {
     } else {
       impulse_music.unmute_bg()
     }
-
   }
 
   if(cur_dialog_box) {

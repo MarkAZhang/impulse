@@ -89,7 +89,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
       _this.resume_game()
     }}(this))
     this.resume_button.shadow = false
-    this.resume_button.underline_index = 0
+    if(player_data.options.control_hand == "right") {
+      this.resume_button.underline_index = 0
+    } else {
+      this.resume_button.extra_text = "RIGHT ARROW"
+      this.resume_button.dim_extra_text = true
+    }
     this.buttons.push(this.resume_button)
 
     this.delete_button = new SmallButton("DELETE", 20, levelWidth/2, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
@@ -97,7 +102,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }}(this))
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
-    this.delete_button.underline_index = 0
+    if(player_data.options.control_hand == "right") {
+      this.delete_button.underline_index = 0
+    } else {
+      this.delete_button.extra_text = "SHIFT + DOWN ARROW"
+      this.delete_button.dim_extra_text = true
+    }
     this.delete_button.shift_enabled = true
 
     this.return_to_main_button = new SmallButton("EXIT", 20, 100, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
@@ -106,7 +116,13 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
     this.buttons.push(this.return_to_main_button)
     this.return_to_main_button.shadow = false
-    this.return_to_main_button.underline_index = 0
+    if(player_data.options.control_hand == "right") {
+      this.return_to_main_button.underline_index = 0
+    } else {
+      this.return_to_main_button.extra_text = "LEFT ARROW"
+      this.return_to_main_button.dim_extra_text = true
+
+    }
   }
 
   impulse_music.stop_bg()
@@ -285,17 +301,17 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
-  ctx.font = '24px Muli'
+  ctx.font = '20px Muli'
   ctx.fillStyle = this.lite_color
   if(this.save_screen) {
     if(this.just_saved)
-      ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+      ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
   } else if(this.victory)
-    ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
   else if(this.level) {
-    ctx.fillText("SPACEBAR TO CONTINUE", levelWidth/2, levelHeight - 30, 300)
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", levelWidth/2, levelHeight - 30)
   } else {
-    ctx.fillText("SPACEBAR FOR MAIN MENU", levelWidth/2, levelHeight - 30, 300)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
   }
   ctx.restore()
 
@@ -327,19 +343,17 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
 
   if(this.save_screen && !this.just_saved) {
-    if(keyCode == 69) {
+    if(keyCode == imp_vars.keys.EXIT_GAME_KEY) {
       this.exit_game()
-    } else if(keyCode == 68 && this.shift_held) {
+    } else if(keyCode == imp_vars.keys.DELETE_GAME_KEY && this.shift_held) {
       this.delete_game()
-    } else if(keyCode == 82 && !this.ctrl_held) {
+    } else if(keyCode == imp_vars.keys.RESUME_GAME_KEY && !this.ctrl_held) {
       this.resume_game()
     }
   } else{
-    if(keyCode == 32) { // SPACEBAR = EXIT
-      if(this.transition_state=="none") {
-        this.transition_state="out";
-        this.transition_timer = this.transition_interval
-      }
+    if(this.transition_state=="none") {
+      this.transition_state="out";
+      this.transition_timer = this.transition_interval
     }
   }
   if(keyCode == 16) {

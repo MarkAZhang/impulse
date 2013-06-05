@@ -232,7 +232,7 @@ function draw_pause_icon(context, x, y, scale, color) {
   context.font = "10px Muli"
   context.textAlign = "center"
   if(player_data.options.control_hand == "left") {
-    context.fillText("R-CTRL", x+scale, y+scale)
+    context.fillText("SHIFT", x+scale, y+scale)
   } else {
     context.fillText("Q", x+scale, y+scale)
   }

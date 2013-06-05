@@ -55,51 +55,12 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num +" lite"]
 
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-    if(!this.level.main_game) {
 
-      this.restart_button = new SmallButton("RESTART", 20, this.x - 163, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-        _this.restart_practice()
-      }}(this))
-      this.buttons.push(this.restart_button)
-      this.restart_button.underline_index = 0
-
-      this.quit_button = new SmallButton("EXIT", 20, this.x + 180, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-        _this.quit_practice()
-      }}(this))
-
-      this.buttons.push(this.quit_button)
-      this.quit_button.underline_index = 0
-
-    } else {
-      if(this.game_numbers.seconds < 5) {
-        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-          _this.save_and_quit_main_game()
-        }}(this))
-        this.save_and_quit_button.underline_index = 0
-      } else {
-        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
-        }}(this))
-      }
-
-      this.buttons.push(this.save_and_quit_button)
-
-      this.quit_button = new SmallButton("QUIT", 20, this.x + 177, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-        _this.quit_main_game()
-      }}(this))
-      this.buttons.push(this.quit_button)
-      this.quit_button.underline_index = 0
-      this.quit_button.shift_enabled = true
-    }
-  }
-
-  this.option_button = new SmallButton("OPTIONS", 20, this.x, this.y - this.h/2 + 490, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
-    set_dialog_box(new OptionsMenu(_this))
-  }}(this))
-  this.buttons.push(this.option_button)
 
   this.drawn_enemies = null
+
+  this.add_buttons()
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
@@ -144,6 +105,72 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
     i+=1
   }
+}
+
+PauseMenu.prototype.add_buttons = function() {
+
+  this.buttons = []
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+
+    if(!this.level.main_game) {
+
+      this.restart_button = new SmallButton("RETRY", 20, this.x - 163, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.restart_practice()
+      }}(this))
+      this.buttons.push(this.restart_button)
+
+      if(player_data.options.control_hand == "right") {
+        this.restart_button.underline_index = 0
+      } else {
+        this.restart_button.extra_text= "LEFT ARROW"
+      }
+
+      this.quit_button = new SmallButton("EXIT", 20, this.x + 180, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.quit_practice()
+      }}(this))
+
+      this.buttons.push(this.quit_button)
+      if(player_data.options.control_hand == "right") {
+        this.quit_button.underline_index = 0
+      } else {
+        this.quit_button.extra_text = "RIGHT ARROW"
+      }
+
+
+    } else {
+      if(this.game_numbers.seconds < 5) {
+        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+          _this.save_and_quit_main_game()
+        }}(this))
+        if(player_data.options.control_hand == "right") {
+          this.save_and_quit_button.underline_index = 0
+        } else {
+          this.save_and_quit_button.extra_text = "LEFT ARROW"
+        }
+      } else {
+        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 20, this.x - 140, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
+        }}(this))
+      }
+
+      this.buttons.push(this.save_and_quit_button)
+
+      this.quit_button = new SmallButton("QUIT", 20, this.x + 177, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.quit_main_game()
+      }}(this))
+      this.buttons.push(this.quit_button)
+      if(player_data.options.control_hand == "right") {
+        this.quit_button.underline_index = 0
+        this.quit_button.extra_text= "SHIFT+"
+      } else {
+        this.quit_button.extra_text = "SHIFT + RIGHT ARROW"
+      }
+    }
+  }
+   this.option_button = new SmallButton("OPTIONS", 20, this.x, this.y - this.h/2 + 490, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+    set_dialog_box(new OptionsMenu(_this))
+  }}(this))
+  this.buttons.push(this.option_button)
+
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
@@ -213,7 +240,12 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.font = '16px Muli'
   ctx.fillStyle = this.lite_color
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 570)
+  if(player_data.options.control_hand == "right") {
+    ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 570)
+  } else {
+    ctx.fillText("'SHIFT' TO RESUME", this.x, this.y - this.h/2 + 570)
+  }
+
 
   ctx.fill()
 
@@ -292,16 +324,16 @@ PauseMenu.prototype.save_and_quit_main_game = function() {
 PauseMenu.prototype.on_key_down = function(keyCode) {
    if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
     if(!this.level.main_game) {
-      if(keyCode == 69) { //E = EXIT
+      if(keyCode == imp_vars.keys.EXIT_KEY) { //E = EXIT
         this.quit_practice()
       }
-      if(keyCode == 82) { //R = RESTART
+      if(keyCode == imp_vars.keys.RESTART_KEY) { //R = RESTART
         this.restart_practice()
       }
     } else {
-      if(keyCode == 81 && this.shift_down) { //Q = QUIT
+      if(keyCode == imp_vars.keys.QUIT_KEY && this.shift_down) { //Q = QUIT
         this.quit_main_game()
-      } else if(keyCode == 83) { //S = SAVE AND QUIT
+      } else if(keyCode == imp_vars.keys.SAVE_AND_QUIT_KEY) { //S = SAVE AND QUIT
         this.save_and_quit_main_game()
       }
     }
@@ -311,7 +343,7 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
     }*/
   }
 
-  if(keyCode == 81 && !this.shift_down) { //SPACEBAR = RESUME
+  if(keyCode == imp_vars.keys.PAUSE && !this.shift_down) {
     clear_dialog_box()
     this.game_state.pause = false
   }
@@ -344,6 +376,7 @@ function OptionsMenu(previous_menu) {
   this.bg_color = this.previous_menu.bg_color
   this.lite_color = this.previous_menu.lite_color
   this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+    _this.previous_menu.add_buttons()
     set_dialog_box(_this.previous_menu)
   }}(this))
   this.buttons.push(this.back_button)

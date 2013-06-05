@@ -11,8 +11,9 @@ function SmallButton(text, size, x, y, w, h, color, hcolor, action) {
   this.hover_color = hcolor
   this.underline = false
   this.underline_index = null
-  this.shift_enabled = false
+  this.extra_text = ""
   this.shadow = true
+  this.dim_extra_text = false
 
 }
 
@@ -53,13 +54,30 @@ SmallButton.prototype.additional_draw = function(context) {
     context.strokeStyle = this.color;
     context.lineWidth = 1;
     context.stroke();
-    if(this.shift_enabled) {
-      context.font = this.size/2 + 'px Muli'
-      context.fillText("SHIFT+", this.x - textWidth/2 + (textStart + textEnd)/2, this.y + 3*this.size/4)
-    }
     context.globalAlpha /= 0.5
+    if(this.extra_text != "") {
 
+      context.globalAlpha *= 0.5
+      if(this.dim_extra_text) {
+        context.globalAlpha *= 0.5
+      }
+      context.font = this.size/2 + 'px Muli'
+      context.fillText(this.extra_text, this.x - textWidth/2 + (textStart + textEnd)/2, this.y + 3*this.size/4)
+    }
+  } else {
+    if(this.extra_text != "") {
+      context.globalAlpha *= 0.5
+      if(this.dim_extra_text) {
+        context.globalAlpha *= 0.5
+      }
+      context.font = this.size/2 + 'px Muli'
+      var textWidth = context.measureText(this.text).width;
+      context.fillText(this.extra_text, this.x, this.y + 3*this.size/4)
+    }
   }
+
+
+
   context.restore()
   context.shadowBlur = 0
 }
