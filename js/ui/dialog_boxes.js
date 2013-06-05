@@ -52,6 +52,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.solid = false;
   this.shift_down = false
   this.bg_color = impulse_colors["world "+this.world_num +" dark"]
+  this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num +" lite"]
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
@@ -97,7 +98,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
     set_dialog_box(new OptionsMenu(_this))
   }}(this))
   this.buttons.push(this.option_button)
-  this.option_button.underline_index = 0
 
   this.drawn_enemies = null
 
@@ -228,7 +228,22 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
+  this.check_redraw_icons(ctx)
   ctx.restore()
+}
+
+PauseMenu.prototype.check_redraw_icons = function(ctx) {
+  if(this.redraw_icons) {
+    if(this.game_state.zoom == 1 && this.game_state.zoom_state == "none") {
+      draw_music_icon(bg_ctx, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.lite_color)
+      draw_pause_icon(bg_ctx, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.lite_color)
+    } else {
+      this.game_state.set_zoom_transparency(ctx);
+      draw_music_icon(ctx, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.lite_color)
+      draw_pause_icon(ctx, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.lite_color)
+    }
+    this.redraw_icons = false
+  }
 }
 
 PauseMenu.prototype.on_mouse_move = function(x, y) {
@@ -291,9 +306,9 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
       }
     }
 
-    if(keyCode == 79) { // O = OPTIONS MENU
+    /*if(keyCode == 79) { // O = OPTIONS MENU
       set_dialog_box(new OptionsMenu(this))
-    }
+    }*/
   }
 
   if(keyCode == 81 && !this.shift_down) { //SPACEBAR = RESUME
@@ -302,6 +317,10 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
   }
   if(keyCode == 16) {
     this.shift_down = true
+  }
+
+  if(keyCode == imp_vars.keys.MUTE_KEY) {
+    this.redraw_icons = true
   }
 
 }
@@ -313,24 +332,28 @@ PauseMenu.prototype.on_key_up = function(keyCode) {
 }
 
 
-
-
 OptionsMenu.prototype = new DialogBox()
 
 OptionsMenu.prototype.constructor = OptionsMenu
 
 function OptionsMenu(previous_menu) {
   this.init(800, 600)
+  this.game_state = previous_menu.game_state
   this.solid = false;
   this.previous_menu = previous_menu
   this.bg_color = this.previous_menu.bg_color
   this.lite_color = this.previous_menu.lite_color
-  this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+  this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
     set_dialog_box(_this.previous_menu)
   }}(this))
   this.buttons.push(this.back_button)
+  this.controls_button = new SmallButton("CONTROLS", 20, this.x, this.y - this.h/2 + 125, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+    set_dialog_box(new ControlsMenu(_this))
+  }}(this))
+  this.buttons.push(this.controls_button)
+
   this.checkboxes = []
-  this.back_button.underline_index = 0
+  //this.back_button.underline_index = 0
   /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
   this.music_volume_slider.value = Math.log(impulse_music.bg_music_volume)/Math.log(100.0)
 
@@ -338,17 +361,28 @@ function OptionsMenu(previous_menu) {
   this.effects_volume_slider.value = Math.log(impulse_music.effects_volume)/Math.log(100.0)*/
 
 
-  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 148, 20, 20, this.lite_color, function(on) {
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 198, 20, 20, this.lite_color, function(on) {
     impulse_music.mute_effects(!on)
   }, !impulse_music.effects_mute))
 
-  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 178, 20, 20, this.lite_color, function() {
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 228, 20, 20, this.lite_color, function() {
+    player_data.options.explosions = !player_data.options.explosions
+    save_game()
+  }, player_data.options.explosions))
 
-  }))
-  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 208, 20, 20, this.lite_color, function() {
-  }))
-  this.checkboxes.push(new CheckBox(this.x + 110, this.y - this.h/2 + 238, 20, 20, this.lite_color, function() {
-  }))
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 258, 20, 20, this.lite_color, function() {
+    player_data.options.score_labels = !player_data.options.score_labels
+    save_game()
+  }, player_data.options.score_labels))
+
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 288, 20, 20, this.lite_color, function() {
+    player_data.options.progress_circle = !player_data.options.progress_circle
+    save_game()
+  }, player_data.options.progress_circle))
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 318, 20, 20, this.lite_color, function() {
+  player_data.options.multiplier_display = !player_data.options.multiplier_display
+    save_game()
+  }, player_data.options.multiplier_display))
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -364,11 +398,24 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   }
 
   ctx.font = '18px Muli';
-  ctx.fillText("CONTROLS", this.x - 110, this.y - this.h/2 + 125)
-  ctx.fillText("EFFECTS VOLUME", this.x - 110, this.y - this.h/2 + 155)
-  ctx.fillText("EXPLOSIONS", this.x - 110, this.y - this.h/2 + 185)
-  ctx.fillText("PROGRESS CIRCLE", this.x - 110, this.y - this.h/2 + 215)
-  ctx.fillText("MULTIPLIER DISPLAY", this.x - 110, this.y - this.h/2 + 245)
+  ctx.textAlign = "left"
+  ctx.fillText("EFFECTS VOLUME", this.x - 130, this.y - this.h/2 + 205)
+  ctx.fillText("PARTICLES", this.x - 130, this.y - this.h/2 + 235)
+  ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2 + 265)
+  ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
+  ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 325)
+
+  ctx.font = '12px Muli';
+  ctx.textAlign = "center"
+  if(player_data.options.control_hand == "right" && player_data.options.control_scheme == "mouse") {
+    ctx.fillText("RIGHT-HANDED KEYBOARD-MOUSE", this.x, this.y - this.h/2 + 150)
+  }
+  if(player_data.options.control_hand == "left" && player_data.options.control_scheme == "mouse") {
+    ctx.fillText("LEFT-HANDED KEYBOARD-MOUSE", this.x, this.y - this.h/2 + 150)
+  }
+  if(player_data.options.control_hand == "right" && player_data.options.control_scheme == "keyboard") {
+    ctx.fillText("KEYBOARD-ONLY", this.x, this.y - this.h/2 + 150)
+  }
 
 
   //this.music_volume_slider.draw(ctx)
@@ -377,8 +424,10 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   for(var index in this.checkboxes) {
     this.checkboxes[index].draw(ctx)
   }
+  this.check_redraw_icons(ctx)
   ctx.restore()
 }
+
 
 OptionsMenu.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
@@ -388,6 +437,8 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
   //this.music_volume_slider.on_mouse_move(x,y)
   //this.effects_volume_slider.on_mouse_move(x,y)
 }
+
+OptionsMenu.prototype.check_redraw_icons = PauseMenu.prototype.check_redraw_icons
 
 OptionsMenu.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
@@ -401,8 +452,11 @@ OptionsMenu.prototype.on_click = function(x, y) {
 }
 
 OptionsMenu.prototype.on_key_down = function(keyCode) {
-  if(keyCode == 66) {
+  /*if(keyCode == 66 || keyCode == 79) {
     set_dialog_box(this.previous_menu)
+  }*/
+  if(keyCode == imp_vars.keys.MUTE_KEY) {
+    this.redraw_icons = true
   }
 }
 
@@ -420,6 +474,157 @@ OptionsMenu.prototype.on_mouse_up = function(x, y) {
 OptionsMenu.prototype.convert_slider_value = function(value) {
   return Math.pow(Math.E, value * Math.log(100))
 }
+
+ControlsMenu.prototype = new DialogBox()
+
+ControlsMenu.prototype.constructor = ControlsMenu
+
+function ControlsMenu(previous_menu) {
+  this.init(800, 600)
+  this.game_state = previous_menu.game_state
+  this.solid = false;
+  this.previous_menu = previous_menu
+
+  this.bg_color = this.previous_menu.bg_color
+  this.lite_color = this.previous_menu.lite_color
+
+  this.current_hand = player_data.options.control_hand
+  this.current_scheme = player_data.options.control_scheme
+
+  this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
+    set_dialog_box(_this.previous_menu)
+  }}(this))
+
+
+
+  this.buttons.push(new SmallButton("LEFT-HANDED KEYBOARD-MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
+    player_data.options.control_hand = "left"
+    player_data.options.control_scheme = "mouse"
+    save_game()
+    set_key_bindings()
+    _this.redraw_icons = true
+    _this.adjust_underlines()
+  }}(this)))
+  this.buttons.push(new SmallButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
+    player_data.options.control_hand = "right"
+    player_data.options.control_scheme = "keyboard"
+    save_game()
+    set_key_bindings()
+    _this.redraw_icons = true
+    _this.adjust_underlines()
+  }}(this)))
+  this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
+    player_data.options.control_hand = "right"
+    player_data.options.control_scheme = "mouse"
+    save_game()
+    set_key_bindings()
+    _this.redraw_icons = true
+    _this.adjust_underlines()
+  }}(this)))
+  /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
+    player_data.options.control_hand = "right"
+    player_data.options.control_scheme = "keyboard"
+    save_game()
+    _this.adjust_underlines()
+  }}(this)))*/
+
+  this.control_buttons = {}
+  this.control_buttons["left mouse"] = this.buttons[0]
+  this.control_buttons["right keyboard"] = this.buttons[1]
+  this.control_buttons["right mouse"] = this.buttons[2]
+
+  this.buttons.push(this.back_button)
+
+  this.checkboxes = []
+  /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
+  this.music_volume_slider.value = Math.log(impulse_music.bg_music_volume)/Math.log(100.0)
+
+  this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
+  this.effects_volume_slider.value = Math.log(impulse_music.effects_volume)/Math.log(100.0)*/
+  this.adjust_underlines()
+}
+
+
+ControlsMenu.prototype.on_mouse_move = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_move(x,y)
+  }
+}
+
+ControlsMenu.prototype.on_click = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_click(x,y)
+  }
+}
+
+ControlsMenu.prototype.adjust_underlines = function() {
+  for(var i= 0; i < this.buttons.length; i++) {
+    this.buttons[i].underline = false
+  }
+  this.control_buttons[player_data.options.control_hand +" "+player_data.options.control_scheme].underline = true
+}
+
+ControlsMenu.prototype.additional_draw = function(ctx) {
+  ctx.save()
+  ctx.font = '32px Muli';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = this.lite_color;
+  ctx.fillStyle = this.lite_color;
+  ctx.fillText("CONTROLS", this.x, this.y - this.h/2 + 50)
+
+  ctx.font = '18px Muli';
+  ctx.fillText("SELECT SCHEME", this.x, this.y - this.h/2 + 75)
+  ctx.shadowBlur = 0
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].draw(ctx)
+  }
+
+  if(player_data.options.control_hand == "right" && player_data.options.control_scheme == "mouse") {
+    draw_arrow_keys(ctx, this.x - 180, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
+    ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
+    draw_mouse(ctx, this.x + 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+    ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
+    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
+    ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
+    ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
+  }
+
+  if(player_data.options.control_hand == "left" && player_data.options.control_scheme == "mouse") {
+    draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
+    ctx.fillText("MOVE", this.x + 180, this.y - this.h/2 + 360)
+    draw_mouse(ctx, this.x - 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+    ctx.fillText("IMPULSE", this.x - 180, this.y - this.h/2 + 360)
+    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 120, 40, 10, this.lite_color)
+    ctx.fillText("ENTER", this.x, this.y - this.h/2 + 436)
+    ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
+  }
+
+  if(player_data.options.control_hand == "right" && player_data.options.control_scheme == "keyboard") {
+    draw_arrow_keys(ctx, this.x - 180, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
+    ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
+    draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
+    ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
+    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
+    ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
+    ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
+  }
+
+  ctx.restore()
+  this.check_redraw_icons(ctx)
+
+}
+
+ControlsMenu.prototype.on_key_down = function(keyCode) {
+  /*if(keyCode == 66 || keyCode == 79) {
+    set_dialog_box(this.previous_menu)
+  }*/
+  if(keyCode == imp_vars.keys.MUTE_KEY) {
+    this.redraw_icons = true
+  }
+}
+
+
+ControlsMenu.prototype.check_redraw_icons = PauseMenu.prototype.check_redraw_icons
 
 EnemyBox.prototype = new DialogBox()
 
@@ -549,3 +754,4 @@ EnemyBox.prototype.on_click = function(x, y) {
 EnemyBox.prototype.on_key_down = function(keyCode) {
 
 }
+

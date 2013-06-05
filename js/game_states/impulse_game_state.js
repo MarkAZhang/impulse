@@ -39,7 +39,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
   this.score_goal_messages = ["BRONZE: ", "SILVER: ", "GOLD: "]
-  this.star_colors =  ["world "+this.world_num, "silver", "gold"]
+  this.star_colors =  ["world "+this.world_num+ " lite", "silver", "gold"]
 
   this.progress_bar_prop = 0
   this.progress_bar_adjust = 3000
@@ -114,6 +114,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.draw_interface_timer = this.draw_interface_interval
 
   this.level_redraw_bg = false
+
 }
 
 ImpulseGameState.prototype.make_player = function() {
@@ -387,6 +388,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   this.draw_score_bar(ctx)
 
+  for(var i=0; i < this.buttons.length; i++) {
+    this.buttons[i].draw(ctx)
+  }
+
 
   this.bg_transition()
 
@@ -548,6 +553,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.font = "18px Muli"
     context.globalAlpha = 0.5
     context.fillText("EASY MODE", sidebarWidth/2, 15)
+    context.globalAlpha = 1
   }
 
   context.font = '64px Muli'
@@ -574,7 +580,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   }
 
   // draw the game time
-  context.fillStyle = this.color;
+  context.fillStyle = this.lite_color;
   context.font = '40px Muli'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
@@ -654,18 +660,21 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillStyle = impulse_colors["impulse_blue_dark"]
 
     context.beginPath()
-    context.fillText("LIVES: "+this.hive_numbers.lives, sidebarWidth/2, canvasHeight - 50)
+    context.fillText("LIVES: "+this.hive_numbers.lives, sidebarWidth/2, canvasHeight - 80)
 
     context.beginPath()
-    context.fillText("SPARKS: "+this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 20)
+    context.fillText("SPARKS: "+this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 50)
   } else {
     context.fillStyle = impulse_colors["impulse_blue_dark"]
     context.beginPath()
-    context.fillText("LIVES: 0", sidebarWidth/2, canvasHeight - 50)
+    context.fillText("LIVES: 0", sidebarWidth/2, canvasHeight - 80)
 
     context.beginPath()
-    context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 20)
+    context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 50)
   }
+
+  draw_music_icon(context, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.color)
+  draw_pause_icon(context, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.color)
 
   context.restore()
 }
@@ -716,8 +725,12 @@ ImpulseGameState.prototype.transform_to_zoomed_space = function(pt) {
 
 ImpulseGameState.prototype.on_mouse_move = function(x, y) {
   if(!this.ready) return
-  if(!this.pause)
+  for(var i = 0; i <this.buttons.length; i++) {
+    this.buttons[i].on_mouse_move(x, y)
+  }
+  if(!this.pause) {
     this.player.mouseMove(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+  }
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
@@ -732,12 +745,12 @@ ImpulseGameState.prototype.on_mouse_up = function(x, y) {
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
-  if(keyCode == 81) {
+  if(keyCode == imp_vars.keys.PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
-  } else if(keyCode == 32 && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+  } else if(keyCode == imp_vars.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)

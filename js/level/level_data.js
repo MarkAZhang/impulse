@@ -112,7 +112,7 @@ impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    normal: [50000, 300000, 1200000],
+    normal: [500, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
 

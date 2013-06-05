@@ -36,7 +36,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   ctx.translate(sidebarWidth, 0)//allows us to have a topbar
 
   if(this.slide_num == 0) {
-    ctx.shadowColor = "white"
+    /*ctx.shadowColor = "white"
     ctx.shadowBlur = 10
     drawSprite(ctx, 400, 430, 0, 60, 60, "key")
     drawSprite(ctx, 340, 430, 0, 60, 60, "key")
@@ -52,7 +52,9 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     draw_arrow(ctx, 400, 362, 20, "up", "white")
     draw_arrow(ctx, 340, 422, 20, "left", "white")
     draw_arrow(ctx, 400, 420, 20, "down", "white")
-    draw_arrow(ctx, 460, 422, 20, "right", "white")
+    draw_arrow(ctx, 460, 422, 20, "right", "white")*/
+
+    draw_arrow_keys(ctx, 400, 430, 60, "white", ["W", "A", "S", "D"])
 
     ctx.fillText("MOVE", 400, 500)
 
@@ -64,8 +66,6 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     //ctx.fill()
 
   }
-
-
   ctx.restore()
 }
 

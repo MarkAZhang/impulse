@@ -29,6 +29,9 @@ var imp_vars = {
     "Hive 2": "bg/hive2",
     "Hive 3": "bg/hive3",
     "Hive 4": "bg/hive4"
+  },
+  keys: {
+
   }
 }
 
@@ -68,3 +71,45 @@ impulse_colors["boss"] = "red"
 impulse_colors["boss dark"] = "#900"
 impulse_colors["boss 1"] = "#05c205"
 impulse_colors["boss 2"] = "#002eff"
+
+function set_key_bindings() {
+
+  var type = player_data.options.control_hand +" "+player_data.options.control_scheme
+
+  if(type == "left mouse") {
+    imp_vars.keys = {
+      "LEFT_KEY": 37,
+      "UP_KEY": 38,
+      "RIGHT_KEY": 39,
+      "DOWN_KEY": 40,
+      "PAUSE": 17,
+      "GATEWAY_KEY": 13,
+      "MUTE_KEY": 77
+    }
+  } else if(type == "right mouse") {
+    imp_vars.keys = {
+      "LEFT_KEY": 65,
+      "UP_KEY": 87,
+      "RIGHT_KEY": 68,
+      "DOWN_KEY": 83,
+      "PAUSE": 81,
+      "GATEWAY_KEY": 32,
+      "MUTE_KEY": 88
+    }
+  } else if(type == "right keyboard") {
+    imp_vars.keys = {
+      "LEFT_KEY": 65,
+      "UP_KEY": 87,
+      "RIGHT_KEY": 68,
+      "DOWN_KEY": 83,
+      "PAUSE": 81,
+      "ILEFT_KEY": 37,
+      "IUP_KEY": 38,
+      "IRIGHT_KEY": 39,
+      "IDOWN_KEY": 40,
+      "GATEWAY_KEY": 32,
+      "MUTE_KEY": 88
+    }
+  }
+}
+

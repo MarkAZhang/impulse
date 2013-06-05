@@ -355,6 +355,8 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
+  if(!player_data.options.explosions) return
+
   if(this.total_fragments < this.max_fragments || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
     this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
     this.total_fragments += 6;

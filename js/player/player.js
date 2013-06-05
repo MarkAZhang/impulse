@@ -56,6 +56,10 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.right = false
   this.down = false
   this.up = false
+  this.ileft = null
+  this.iright = null
+  this.idown = null
+  this.iup = null
   this.impulse_angle = 0
   this.attacking = false
   this.attack_start = 0
@@ -85,48 +89,79 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
 Player.prototype.keyDown = function(keyCode) {
   switch(keyCode)
   {
-    case 65:
+    case imp_vars.keys.LEFT_KEY:
       this.left = true
       break;
-    case 68:
+    case imp_vars.keys.RIGHT_KEY:
       this.right = true
       break;
-    case 83:
+    case imp_vars.keys.DOWN_KEY:
       this.down = true
       break;
-    case 87:
+    case imp_vars.keys.UP_KEY:
       this.up = true
       break;
-    case 81:
+    case imp_vars.keys.PAUSE:
       this.up = false
       this.down = false
       this.left = false
       this.right = false
+      this.ileft = null
+      this.iright = null
+      this.iup = null
+      this.idown = null
       break
-
+    case imp_vars.keys.ILEFT_KEY:
+      this.ileft = (new Date()).getTime()
+      break;
+    case imp_vars.keys.IUP_KEY:
+      this.iup = (new Date()).getTime()
+      break;
+    case imp_vars.keys.IRIGHT_KEY:
+      this.iright = (new Date()).getTime()
+      break;
+    case imp_vars.keys.IDOWN_KEY:
+      this.idown = (new Date()).getTime()
+      break;
   }
 }
 
 Player.prototype.keyUp = function(keyCode) {
   switch(keyCode)
   {
-    case 65:
+    case imp_vars.keys.LEFT_KEY:
       this.left = false
       break;
-    case 68:
+    case imp_vars.keys.RIGHT_KEY:
       this.right = false
       break;
-    case 83:
+    case imp_vars.keys.DOWN_KEY:
       this.down = false
       break;
-    case 87:
+    case imp_vars.keys.UP_KEY:
       this.up = false
       break;
-    case 81:
+    case imp_vars.keys.ILEFT_KEY:
+      this.ileft = null
+      break;
+    case imp_vars.keys.IUP_KEY:
+      this.iup = null
+      break;
+    case imp_vars.keys.IRIGHT_KEY:
+      this.iright = null
+      break;
+    case imp_vars.keys.IDOWN_KEY:
+      this.idown = null
+      break;
+    case imp_vars.keys.PAUSE_KEY:
       this.up = false
       this.down = false
       this.left = false
       this.right = false
+      this.ileft = null
+      this.iright = null
+      this.iup = null
+      this.idown = null
       break
   }
 }
@@ -243,16 +278,60 @@ Player.prototype.process = function(dt) {
 
   cur_time = (new Date()).getTime()
 
-  if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
-  {
-    this.attacking = true
-    this.attack_loc = this.body.GetPosition().Copy()
-    this.attack_angle = this.impulse_angle
-    this.attack_duration = this.attack_length
-    impulse_music.play_sound("impulse")
-  }
+  if(player_data.options.control_scheme == "mouse") {
+    if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
+    {
+      this.attacking = true
+      this.attack_loc = this.body.GetPosition().Copy()
+      this.attack_angle = this.impulse_angle
+      this.attack_duration = this.attack_length
+      impulse_music.play_sound("impulse")
+    }
 
-  this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
+    this.impulse_angle = _atan({x: this.body.GetPosition().x*this.draw_factor, y: this.body.GetPosition().y*this.draw_factor}, this.mouse_pos)
+  } else if(player_data.options.control_scheme == "keyboard") {
+    if(!this.attacking && this.status_duration[1] <= 0) {
+      var earliest_key_press = 0
+      if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
+      if(this.iright != null && this.iright > earliest_key_press) earliest_key_press = this.iright
+      if(this.iup != null && this.iup > earliest_key_press) earliest_key_press = this.iup
+      if(this.idown != null && this.idown > earliest_key_press) earliest_key_press = this.idown
+
+
+      if(earliest_key_press != 0 && (new Date().getTime() - earliest_key_press > 40)) {
+        if(this.ileft != null && this.iup != null) {
+          this.attack_angle = Math.PI * 5/4
+        }
+        else if(this.ileft != null && this.idown != null) {
+          this.attack_angle = Math.PI * 3/4
+        }
+        else if(this.iright != null && this.iup != null) {
+          this.attack_angle = Math.PI * 7/4
+        }
+        else if(this.iright != null && this.idown != null) {
+          this.attack_angle = Math.PI * 1/4
+        }
+        else if(this.ileft != null) {
+          this.attack_angle = Math.PI
+        }
+        else if(this.iright != null) {
+          this.attack_angle = 0
+        }
+        else if(this.iup != null) {
+          this.attack_angle = Math.PI * 3/2
+        }
+        else if(this.idown != null) {
+          this.attack_angle = Math.PI * 1/2
+        }
+        this.attacking = true
+        this.attack_loc = this.body.GetPosition().Copy()
+        this.attack_duration = this.attack_length
+        impulse_music.play_sound("impulse")
+      }
+    }
+
+
+  }
 
   this.body.SetAngle(this.impulse_angle)
 
@@ -443,13 +522,21 @@ Player.prototype.draw = function(context) {
     }
     context.beginPath()
 
-    if (this.status_duration[1] <= 0) {
+    if (this.status_duration[1] <= 0 && player_data.options.control_scheme == "mouse") {
       context.fillStyle = this.impulse_target_color
 
       context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor* this.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
       context.lineTo(this.body.GetPosition().x*this.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * this.draw_factor, this.body.GetPosition().y*this.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*this.draw_factor)
       context.lineTo(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor)
       context.fill()
+    } else if(this.status_duration[1] <= 0 && player_data.options.control_scheme == "keyboard") {
+      context.beginPath()
+      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.impulse_radius * lighten_factor *this.draw_factor, 0, 2 * Math.PI)
+      context.globalAlpha /= 10
+      context.lineWidth = 2
+      context.strokeStyle = impulse_colors["impulse_blue"]
+      context.stroke()
+      context.globalAlpha *= 10
     }
     if(this.attacking)
     {
@@ -475,11 +562,21 @@ Player.prototype.draw = function(context) {
       context.stroke();
       context.restore();
     }
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.radius * 1.5 * this.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
-    context.strokeStyle = this.color //impulse_colors[this.impulse_game_state.star_colors[this.impulse_game_state.stars]]
-    context.lineWidth = 2
-    context.stroke()
+
+    if(player_data.options.progress_circle) {
+      context.beginPath()
+      context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.radius * 1.5 * this.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
+      context.strokeStyle = this.color //impulse_colors[this.impulse_game_state.star_colors[this.impulse_game_state.stars]]
+      context.lineWidth = 2
+      context.stroke()
+    }
+    if(player_data.options.multiplier_display) {
+      context.font = "12px Muli"
+      context.fillStyle = impulse_colors["impulse_blue"]
+      context.textAlign = "center"
+      context.shadowBlur = 0
+      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor + 25)
+    }
     context.restore()
   }
 }

@@ -107,6 +107,139 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor)
 
 }
 
+function draw_music_icon(context, x, y, scale, color) {
+  context.save()
+  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
+
+  context.beginPath()
+  context.moveTo(x - scale/2 * 0.75, y - scale/2 * 0.6)
+  context.lineTo(x, y - scale/2 * 0.6)
+  context.lineTo(x + scale/2 * 0.75, y - scale * 0.6)
+  context.lineTo(x + scale/2  * 0.75, y + scale * 0.6)
+  context.lineTo(x, y + scale/2* 0.6)
+  context.lineTo(x - scale/2 * 0.75, y + scale/2  * 0.6)
+  context.fillStyle = color
+  context.fill()
+  if(player_data.options.music_mute) {
+    context.beginPath()
+    context.arc(x + scale * 0.75, y, scale/2 * 0.45, 0, 2 * Math.PI, true)
+    context.moveTo(x + scale  * 0.75- Math.cos(Math.PI/4) * scale/2 * 0.45, y - Math.cos(Math.PI/4) * scale/2 * 0.45)
+    context.lineTo(x + scale* 0.75+ Math.cos(Math.PI/4) * scale/2 * 0.45, y + Math.cos(Math.PI/4) * scale/2 * 0.405)
+    context.lineWidth = 2
+    context.strokeStyle = color
+    context.stroke()
+  } else {
+    context.beginPath()
+    context.arc(x + scale * 0.4, y, scale/2 * 0.6, -Math.PI/3,Math.PI/3, false)
+    context.lineWidth = 2
+    context.strokeStyle = color
+    context.stroke()
+    context.beginPath()
+    context.arc(x + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
+    context.stroke()
+  }
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  if(player_data.options.control_hand == "left") {
+    context.fillText("M", x+scale, y+scale)
+  } else {
+    context.fillText("X", x+scale, y+scale)
+  }
+  context.restore()
+}
+
+function draw_arrow_keys(context, x, y, size, color, keysArray) {
+
+  ctx.shadowColor = color
+  ctx.shadowBlur = 10
+  //drawSprite(ctx, x, y - size, 0, size, size, "key")
+  //drawSprite(ctx, x - size, y, 0, size, size, "key")
+  //drawSprite(ctx, x, y , 0, size, size, "key")
+  //drawSprite(ctx, x + size, y , 0, size, size, "key")
+  draw_rounded_rect(ctx, x, y-size, size-5, size-5, 10, color)
+  draw_rounded_rect(ctx, x - size, y, size-5, size-5, 10, color)
+  draw_rounded_rect(ctx, x, y, size-5, size-5, 10, color)
+  draw_rounded_rect(ctx, x + size, y, size-5, size-5, 10, color)
+
+  ctx.fillStyle = color;
+  ctx.font = '20px Muli'
+  ctx.textAlign = "center"
+  if(keysArray) {
+    ctx.fillText(keysArray[0], x, y - size * 2/3)
+    ctx.fillText(keysArray[1], x - size, y + size * 1/3)
+    ctx.fillText(keysArray[2], x, y + size * 1/3)
+    ctx.fillText(keysArray[3], x + size, y + size * 1/3)
+    draw_arrow(ctx, x, y - size - 8, 20, "up", color)
+    draw_arrow(ctx, x - size, y - 8, 20, "left", color)
+    draw_arrow(ctx, x, y - 10, 20, "down", color)
+    draw_arrow(ctx, x + size, y - 8, 20, "right", color)
+  } else {
+    draw_arrow(ctx, x, y - size , 20, "up", color)
+    draw_arrow(ctx, x - size, y , 20, "left", color)
+    draw_arrow(ctx, x, y - 2, 20, "down", color)
+    draw_arrow(ctx, x + size, y, 20, "right", color)
+  }
+}
+
+function draw_mouse(context, x, y, w, h, color) {
+  context.save()
+  draw_rounded_rect(context, x, y, w, h, 10, color)
+  context.clip()
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w/2, h/3)
+  context.globalAlpha = 0.5
+  context.fillStyle = color
+  context.fill()
+  context.restore()
+  context.save()
+  context.globalAlpha = 1
+  context.beginPath()
+  context.moveTo(x - w/2, y - h/6)
+  context.lineTo(x + w/2, y - h/6)
+  context.moveTo(x, y - h/6)
+  context.lineTo(x, y - h/2)
+
+  context.lineWidth = 2
+  context.strokeStyle = color
+  context.stroke()
+  context.restore()
+}
+
+function draw_rounded_rect(context, x, y, w, h, r, color) {
+  context.beginPath();
+  context.moveTo(x - w/2 + r, y - h/2);
+  context.arcTo(x+w/2, y - h/2,   x+w/2, y+h/2, r);
+  context.arcTo(x+w/2, y + h/2, x - w/2,   y+h/2, r);
+  context.arcTo(x - w/2,   y+h/2, x - w/2,   y - h/2,   r);
+  context.arcTo(x - w/2,   y - h/2,   x+w/2, y - h/2,   r);
+  context.closePath();
+  context.strokeStyle = color
+  context.lineWidth = 2
+  context.stroke()
+}
+
+function draw_pause_icon(context, x, y, scale, color) {
+
+  context.save()
+  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
+  context.beginPath()
+  context.rect(x - scale * 3/8, y - scale/2, scale * 1/4, scale)
+  context.rect(x + scale * 1/8, y - scale/2, scale * 1/4, scale)
+  context.fillStyle = color
+  context.fill()
+
+
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  if(player_data.options.control_hand == "left") {
+    context.fillText("R-CTRL", x+scale, y+scale)
+  } else {
+    context.fillText("Q", x+scale, y+scale)
+  }
+
+  context.restore()
+}
+
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
 function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {

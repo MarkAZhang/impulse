@@ -1,5 +1,6 @@
-var ImpulseButton = function() {
-
+var ImpulseButton = function(x, y, w, h, action, border, color) {
+  if(!action) return
+    this.init(x, y, w, h, action, border, color)
 }
 
 ImpulseButton.prototype.init = function(x, y, w, h, action, border, color) {

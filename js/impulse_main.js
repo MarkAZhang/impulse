@@ -15,6 +15,8 @@ var save_name = "impulse_save_data"
 var player_data = {}
 var impulse_music = null
 
+var control_scheme = "mouse"
+
 var impulse_main =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2AABB = Box2D.Collision.b2AABB
@@ -111,6 +113,7 @@ var impulse_main =  function() {
 
     centerCanvas()
     load_game()
+    set_key_bindings()
     impulse_music = new MusicPlayer()
     cur_game_state = new TitleState(false)
     step()
@@ -227,7 +230,6 @@ function on_mouse_move(event) {
 
   if(cur_dialog_box) {
     cur_dialog_box.on_mouse_move(mPos.x, mPos.y)
-    return
   }
   if(!(cur_game_state instanceof ImpulseGameState)) {
     cur_game_state.on_mouse_move(mPos.x - sidebarWidth, mPos.y)
@@ -331,7 +333,7 @@ function DoFullScreen() {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
-  if(keyCode == 77) { //M = mute/unmute
+  if(keyCode == imp_vars.keys.MUTE_KEY) { //X = mute/unmute
     if(!impulse_music.mute) {
       impulse_music.mute_bg()
     } else {
@@ -401,7 +403,14 @@ function load_game() {
     //default options
     load_obj['options'] = {
       "music_mute": false,
-      "effects_mute": false
+      "effects_mute": false,
+      'explosions': true,
+      'score_labels': true,
+      "progress_circle": false,
+      "multiplier_display": true,
+      "control_hand": "right",
+      "control_scheme": "mouse"
+
     }
   }
 
