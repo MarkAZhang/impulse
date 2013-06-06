@@ -7,8 +7,6 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
   if(!world) return
 
   this.init(world, level, visibility_graph, first_time, hive_numbers, first_ever)
-
-
 }
 
 ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
@@ -25,7 +23,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.ready = false
   this.buttons = []
   this.draw_factor = draw_factor
-  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   this.last_fps_time = 0
   this.fps_counter = null
   this.fps = 0
@@ -34,6 +31,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.score_label_rise = 30
   this.buffer_radius = 1 //primarily for starting player location
   this.bg_drawn = false
+  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
 
   this.stars = 0
   this.world_num = world
@@ -66,6 +64,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.visibility_graph = visibility_graph
   this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
+  this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
 
   this.boss_intro_text_interval = 6000
@@ -116,8 +115,52 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.new_enemy_duration = 10000
   this.new_enemy_timer = 0
   this.new_enemy_type = null
-  this.check_new_enemies()
 
+  this.score_achieve_duration = 10000
+  this.score_achieve_timer = 0
+  this.score_achieve_type = null
+  this.score_achieve_color = null
+  this.score_achieve_size = null
+
+  this.message_canvas = document.createElement('canvas');
+  this.message_canvas.width = 120
+  this.message_canvas.height = 160
+  this.message_ctx = this.message_canvas.getContext('2d');
+
+  if(level)
+    this.check_new_enemies()
+
+}
+
+ImpulseGameState.prototype.reset = function() {
+  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
+  this.new_enemy_duration = 10000
+  this.new_enemy_timer = 0
+  this.new_enemy_type = null
+  var gravity = new b2Vec2(000, 000);
+  var doSleep = false; //objects in our world will rarely go to sleep
+  this.world = new b2World(gravity, doSleep);
+  this.addWalls()
+
+  var contactListener = new b2ContactListener;
+  contactListener.BeginContact = this.handle_collisions
+  contactListener.PreSolve = this.filter_collisions
+  this.world.SetContactListener(contactListener);
+
+  this.score_achieve_duration = 10000
+  this.score_achieve_timer = 0
+  this.score_achieve_type = null
+  this.score_achieve_color = null
+  this.score_achieve_size = null
+  this.stars = 0
+  this.gateway_unlocked = false
+  this.victory = false
+  this.level.reset()
+  this.check_new_enemies()
+  bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  this.level.draw_bg(bg_ctx)
+  bg_ctx.translate(-sidebarWidth, 0)
+  this.progress_bar_prop = 0
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
@@ -127,6 +170,7 @@ ImpulseGameState.prototype.check_new_enemies = function() {
     if(!impulse_enemy_stats[enemy].is_boss && impulse_enemy_stats[enemy].seen <= 1) {
       this.new_enemy_type = enemy
       this.new_enemy_timer = this.new_enemy_duration
+      draw_new_enemy_button(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.new_enemy_type)
     }
   }
 }
@@ -191,6 +235,12 @@ ImpulseGameState.prototype.process = function(dt) {
       this.new_enemy_type = null
     }
 
+    if(this.score_achieve_timer > 0) {
+      this.score_achieve_timer -= dt
+    } else {
+      this.score_achieve_text= null
+    }
+
     if(this.zoom_state != "none") {
       if(this.zoom_transition_timer <= 0) {
         this.zoom_state = "none"
@@ -217,14 +267,14 @@ ImpulseGameState.prototype.process = function(dt) {
 
     }
 
-    if(this.player.dying && this.player.dying_duration < 0)
+    if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
-        this.game_over();
         this.ready = false
+        this.game_over();
       }
       return;
     }
@@ -233,8 +283,8 @@ ImpulseGameState.prototype.process = function(dt) {
         this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 10)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
-        this.game_over();
         this.ready = false
+        this.game_over();
       }
       return;
     }
@@ -245,8 +295,8 @@ ImpulseGameState.prototype.process = function(dt) {
         this.zoom_out({x: this.player.body.GetPosition().x * draw_factor, y: this.player.body.GetPosition().y * draw_factor}, 10)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
-        this.game_over(true);
         this.ready = false
+        this.game_over(true);
       }
       return;
     }
@@ -614,7 +664,15 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     var prog = this.new_enemy_timer/this.new_enemy_duration
     context.save()
     context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
-    draw_new_enemy_button(context, sidebarWidth/2, canvasHeight/2 + 60, 120, 160, this.bright_color, this.new_enemy_type)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, sidebarWidth/2 - 60, canvasHeight/2 - 20, 120, 160)
+    context.restore()
+  }
+
+  if(this.score_achieve_text != null) {
+    var prog = this.score_achieve_timer/this.score_achieve_duration
+    context.save()
+    context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, sidebarWidth/2 - 60, canvasHeight/2 - 20, 120, 160)
     context.restore()
   }
 
@@ -703,8 +761,9 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 50)
   }
 
-  draw_music_icon(context, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.color)
-  draw_pause_icon(context, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.color)
+  draw_music_icon(context, sidebarWidth/2, canvasHeight - 20, 15, this.color)
+  draw_pause_icon(context, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.color)
+  draw_fullscreen_icon(context, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.color)
 
   context.restore()
 }
@@ -896,7 +955,16 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
   this.score_labels.push(temp_score_label)
 }
 
+ImpulseGameState.prototype.set_score_achieve_text = function(text, color, size) {
+  this.score_achieve_text = text
+  this.score_achieve_timer = this.score_achieve_duration
+  this.score_achieve_color = color
+  this.score_achieve_size = size
+  draw_score_achieved_box(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.score_achieve_text, this.score_achieve_color, this.score_achieve_size, this.world_num)
+}
+
 ImpulseGameState.prototype.check_cutoffs = function() {
+
   if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
   {
 
@@ -905,14 +973,15 @@ ImpulseGameState.prototype.check_cutoffs = function() {
       if(this.stars == 1) {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
-        this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], levelWidth/2/draw_factor, levelHeight/2/draw_factor, 24, 3000)
+
+        //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], levelWidth/2/draw_factor, levelHeight/2/draw_factor, 24, 3000)
+        this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
       } else if(this.stars == 2) {
         if(this.hive_numbers) {
           this.hive_numbers.lives +=1
-          this.addScoreLabel("1UP", impulse_colors["silver"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
-        } else {
-          this.addScoreLabel("SILVER", impulse_colors["silver"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
+          this.addScoreLabel("1UP", impulse_colors["silver"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
         }
+        this.set_score_achieve_text("SILVER SCORE", impulse_colors["silver"], 24)
       } else if(this.stars == 3 ) {
         if(this.hive_numbers) {
           if(this.hive_numbers.lives < 5) {
@@ -920,12 +989,10 @@ ImpulseGameState.prototype.check_cutoffs = function() {
             this.hive_numbers.lives = 5
           } else {
             this.hive_numbers.lives += 1
-            this.addScoreLabel("1UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
+            this.addScoreLabel("1UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
           }
-        } else {
-            this.addScoreLabel("GOLD", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 16, 3000)
         }
-
+        this.set_score_achieve_text("GOLD SCORE", impulse_colors["gold"], 24)
       }
     }
 

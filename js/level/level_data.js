@@ -34,10 +34,11 @@ impulse_level_data['SURVIVAL'] = {
 
 impulse_level_data['HOW TO PLAY'] = {
   enemies: {
-              stunner: [3, 3, 1, 0, 1]
+              stunner: [1, 1, 1, 0, 1]
 
            },
   initial_spawn_data: {
+    stunner: 4
   },
   dominant_enemy: "stunner",
   obstacle_v: [[[838,84],[-38,84],[-38,-45],[838,-45]],[[-38,175],[42,175],[42,258],[756,258],[756,175],[838,175],[838,645],[-38,645]]],
@@ -112,7 +113,7 @@ impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    normal: [500, 300000, 1200000],
+    normal: [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
 

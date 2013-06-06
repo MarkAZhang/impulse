@@ -29,6 +29,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.entered_arena_delay = 1000;
 
   this.orbiter_force = 30;
+  this.twitch = true
 
 }
 

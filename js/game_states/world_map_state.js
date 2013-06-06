@@ -15,6 +15,10 @@ function WorldMapState(world) {
 
   }
 
+  this.requirements = {
+    2: "DEFEAT IMMUNITAS"
+  }
+
   this.set_up_world_map()
 
 
@@ -39,6 +43,10 @@ WorldMapState.prototype.set_up_world_map = function() {
 
           switch_game_state(new MainGameTransitionState(2, null, null, null, null))
         }, 500)})
+    } else {
+      this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
+       function(){})
+      this.world_buttons[2].active = false
     }
 }
 
@@ -64,9 +72,27 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   for(var index in this.world_buttons) {
+
+
+    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+      ctx.globalAlpha *= 0.2
+    }
+
     draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100)
+    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+      ctx.globalAlpha *= 5
+    }
 
     this.world_buttons[index].draw(ctx)
+
+    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+      ctx.font = '12px Muli'
+      ctx.fillStyle = this.world_buttons[index].color
+      ctx.textAlign = "center"
+      ctx.fillText(this.requirements[index], this.world_buttons[index].x, this.world_buttons[index].y + 20)
+    }
+
+
     if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
       ctx.save()
       ctx.textAlign = "center"

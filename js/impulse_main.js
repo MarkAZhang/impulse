@@ -115,7 +115,11 @@ var impulse_main =  function() {
     load_game()
     set_key_bindings()
     impulse_music = new MusicPlayer()
-    cur_game_state = new TitleState(false)
+    if(player_data.first_time) {
+      cur_game_state = new HowToPlayState()
+    } else {
+      cur_game_state = new TitleState(false)
+    }
     step()
 
 
@@ -285,7 +289,6 @@ function on_click(event) {
     cur_game_state.on_click(mPos.x, mPos.y)
   }
 
-  DoFullScreen();
 
 
 }
@@ -309,8 +312,9 @@ function on_click(event) {
   }
 }*/
 
-function DoFullScreen() {
-  return
+function toggleFullScreen() {
+
+
 
     var isInFullScreen = (document.fullScreenElement && document.fullScreenElement !==     null) ||    // alternative standard method
             (document.mozFullScreen || document.webkitIsFullScreen);
@@ -327,6 +331,16 @@ function DoFullScreen() {
         else if (docElm.webkitRequestFullscreen) {
             docElm.webkitRequestFullscreen ();
         }
+    } else {
+      if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        else if (document.mozExitFullscreen) {
+            document.mozExitFullscreen();
+        }
+        else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen ();
+        }
     }
 }
 
@@ -339,6 +353,10 @@ function on_key_down(event) {
     } else {
       impulse_music.unmute_bg()
     }
+  }
+
+  if(keyCode == imp_vars.keys.FULLSCREEN_KEY) {
+    toggleFullScreen()
   }
 
   if(cur_dialog_box) {
@@ -370,13 +388,12 @@ function load_game() {
 
   var load_obj = {}
   if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
-
     player_data.first_time = true
     load_obj.difficulty_mode = "normal"
   }
   else {
     load_obj = JSON.parse(localStorage[save_name])
-    player_data.first_time = false
+    player_data.first_time = load_obj['first_time'] == false? false: true
   }
 
   if(!load_obj['levels']) {
@@ -478,6 +495,7 @@ function save_game() {
   save_obj['world_rankings'] = player_data.world_rankings
   save_obj['save_data'] = player_data.save_data
   save_obj['options'] = player_data.options
+  save_obj['first_time'] = player_data.first_time
   localStorage[save_name] = JSON.stringify(save_obj)
 }
 

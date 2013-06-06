@@ -561,6 +561,7 @@ Player.prototype.draw = function(context) {
       //context.lineWidth = 15;
       // line color
       context.strokeStyle = this.impulse_color
+      context.lineWidth = 5
       context.stroke();
       context.restore();
     }

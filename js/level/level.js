@@ -553,7 +553,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   if(this.level_intro_state.world_num)
     draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
   else {
-    bg_ctx.fillStyle = "white"
+    bg_ctx.fillStyle = impulse_colors["world 0 bright"]
     bg_ctx.fillRect(0, 0, levelWidth, levelHeight)
   }
 

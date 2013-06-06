@@ -83,7 +83,7 @@ PauseMenu.prototype.add_buttons = function() {
 
     if(!this.level.main_game) {
 
-      this.restart_button = new SmallButton("RETRY", 20, this.x - 163, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.restart_button = new SmallButton("RETRY", 20, this.x - 173, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
         _this.restart_practice()
       }}(this))
       this.buttons.push(this.restart_button)
@@ -129,12 +129,25 @@ PauseMenu.prototype.add_buttons = function() {
       this.buttons.push(this.quit_button)
       if(player_data.options.control_hand == "right") {
         this.quit_button.underline_index = 0
-        this.quit_button.extra_text= "SHIFT+"
+        this.quit_button.extra_text= "CTRL+"
       } else {
-        this.quit_button.extra_text = "SHIFT + RIGHT ARROW"
+        this.quit_button.extra_text = "CTRL + RIGHT ARROW"
       }
     }
+  } else {
+    this.quit_button = new SmallButton("QUIT", 20, this.x, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+        _this.quit_tutorial()
+      }}(this))
+      this.buttons.push(this.quit_button)
+      if(player_data.options.control_hand == "right") {
+        this.quit_button.underline_index = 0
+        this.quit_button.extra_text= "CTRL+"
+      } else {
+        this.quit_button.extra_text = "CTRL + RIGHT ARROW"
+      }
   }
+
+
    this.option_button = new SmallButton("OPTIONS", 20, this.x, this.y - this.h/2 + 490, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
     set_dialog_box(new OptionsMenu(_this))
   }}(this))
@@ -203,13 +216,9 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.fillText("CLICK FOR INFO", this.x, this.y - this.h/2 + 310)
 
 
-
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY")
     var temp_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
     var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
-    var score_rewards = ['(OPENS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
-
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    var score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
     if(!this.is_boss_level) {
       for(var i = 0; i < 3; i++) {
         ctx.font = '24px Muli';
@@ -226,19 +235,18 @@ PauseMenu.prototype.additional_draw = function(ctx) {
       }
     }
     ctx.textAlign = "center";
-    var score_color = 0
+    //var score_color = 0
 
-    if(!this.is_boss_level) {
+    /*if(!this.is_boss_level) {
       while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][score_color]) {
         score_color+=1
       }
-    }
+    }*/
 
     /*ctx.font = '20px Muli';
     ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("HIGH SCORE "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 250)*/
-  }
   ctx.beginPath()
   ctx.font = '16px Muli'
   ctx.fillStyle = this.lite_color
@@ -256,7 +264,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     ctx.font = '12px Muli'
     ctx.fillStyle = "gray"
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("ONLY BEFORE 0:05", this.x - 108, this.y - this.h/2 + 290)
+    ctx.fillText("ONLY BEFORE 0:05", this.x - 140, this.y - this.h/2 + 548)
   }
 
 
@@ -270,12 +278,15 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 PauseMenu.prototype.check_redraw_icons = function(ctx) {
   if(this.redraw_icons) {
     if(this.game_state.zoom == 1 && this.game_state.zoom_state == "none") {
-      draw_music_icon(bg_ctx, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.lite_color)
-      draw_pause_icon(bg_ctx, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.lite_color)
+
+      draw_music_icon(bg_ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color)
+      draw_pause_icon(bg_ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color)
+      draw_fullscreen_icon(bg_ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color)
     } else {
       this.game_state.set_zoom_transparency(ctx);
-      draw_music_icon(ctx, sidebarWidth/2 + 20, canvasHeight - 20, 15, this.lite_color)
-      draw_pause_icon(ctx, sidebarWidth/2 - 20, canvasHeight - 20, 15, this.lite_color)
+      draw_music_icon(ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color)
+      draw_pause_icon(ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color)
+      draw_fullscreen_icon(ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color)
     }
     this.redraw_icons = false
   }
@@ -314,6 +325,11 @@ PauseMenu.prototype.quit_main_game = function() {
   clear_dialog_box()
 }
 
+PauseMenu.prototype.quit_tutorial = function() {
+  switch_game_state(new TitleState(true))
+  clear_dialog_box()
+}
+
 PauseMenu.prototype.save_and_quit_main_game = function() {
 
   this.game_state.hive_numbers.sparks = this.game_state.hive_numbers.last_sparks
@@ -334,7 +350,7 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
         this.restart_practice()
       }
     } else {
-      if(keyCode == imp_vars.keys.QUIT_KEY && this.shift_down) { //Q = QUIT
+      if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down) { //Q = QUIT
         this.quit_main_game()
       } else if(keyCode == imp_vars.keys.SAVE_AND_QUIT_KEY) { //S = SAVE AND QUIT
         this.save_and_quit_main_game()
@@ -344,6 +360,10 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
     /*if(keyCode == 79) { // O = OPTIONS MENU
       set_dialog_box(new OptionsMenu(this))
     }*/
+  } else {
+    if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down) { //Q = QUIT
+      this.quit_tutorial()
+    }
   }
 
   if(keyCode == imp_vars.keys.PAUSE && !this.shift_down) {
@@ -352,6 +372,9 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
   }
   if(keyCode == 16) {
     this.shift_down = true
+  }
+  if(keyCode == 17) {
+    this.ctrl_down = true
   }
 
   if(keyCode == imp_vars.keys.MUTE_KEY) {
@@ -363,6 +386,9 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
 PauseMenu.prototype.on_key_up = function(keyCode) {
   if(keyCode == 16) {
     this.shift_down = false
+  }
+  if(keyCode == 17) {
+    this.ctrl_down = false
   }
 }
 
@@ -428,6 +454,7 @@ function OptionsMenu(previous_menu) {
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.save()
+  ctx.textAlign = "center"
   ctx.font = '32px Muli';
   ctx.shadowBlur = 10;
   ctx.shadowColor = this.lite_color;
@@ -610,6 +637,7 @@ ControlsMenu.prototype.adjust_underlines = function() {
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
   ctx.save()
+  ctx.textAlign = "center"
   ctx.font = '32px Muli';
   ctx.shadowBlur = 10;
   ctx.shadowColor = this.lite_color;
@@ -628,8 +656,11 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
     ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
     draw_mouse(ctx, this.x + 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
     ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
+    ctx.shadowColor = this.lite_color
+    ctx.shadowBlur = 10
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
+    ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
   }
 
@@ -638,8 +669,11 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
     ctx.fillText("MOVE", this.x + 180, this.y - this.h/2 + 360)
     draw_mouse(ctx, this.x - 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
     ctx.fillText("IMPULSE", this.x - 180, this.y - this.h/2 + 360)
+    ctx.shadowColor = this.lite_color
+    ctx.shadowBlur = 10
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 120, 40, 10, this.lite_color)
     ctx.fillText("ENTER", this.x, this.y - this.h/2 + 436)
+    ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
   }
 
@@ -648,8 +682,11 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
     ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
     draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
     ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
+    ctx.shadowColor = this.lite_color
+    ctx.shadowBlur = 10
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
+    ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
   }
 
@@ -764,7 +801,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.globalAlpha /= 3
   draw_tessellation_sign(ctx, this.world_num, this.x, this.y - this.h/2 + 215, 80)
   ctx.globalAlpha *= 3
-  draw_enemy(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, this.max_enemy_d)
+  draw_enemy_real_size(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, this.max_enemy_d)
 
   ctx.font = '12px Muli'
   ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)

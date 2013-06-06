@@ -22,6 +22,11 @@ function TitleState(start_clicked) {
   this.setup_main_menu()
 
   impulse_music.play_bg(imp_vars.songs["Menu"])
+
+  if(player_data.first_time) {
+    player_data.first_time = false
+    save_game()
+  }
 }
 
 TitleState.prototype.process = function(dt) {

@@ -31,6 +31,7 @@ function draw_empty_star(context, x, y, r, color) {
 function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
 
   context.save()
+  context.clearRect(x - w/2, y - h/2, w, h)
 
   context.beginPath()
   context.rect(x - w/2, y - h/2, w, h)
@@ -41,6 +42,7 @@ function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
   context.fill()
 
   context.globalAlpha *= 10
+  context.textAlign = "center"
 
   context.font = "10px MUli"
   context.fillText("NEW ENEMY", x, y - h * 0.4)
@@ -56,6 +58,43 @@ function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
   context.restore()
 
 }
+
+
+function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, text_size, world_num) {
+
+  context.save()
+
+  context.clearRect(x - w/2, y - h/2, w, h)
+
+  context.shadowBlur = 10
+  context.shadowColor = text_color
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.lineWidth = 4
+  context.strokeStyle = text_color
+  context.stroke()
+  context.globalAlpha *= 0.1
+  context.fillStyle = text_color
+  context.fill()
+
+  context.globalAlpha *= 10
+  context.globalAlpha *= 0.5
+  if(text == "GATEWAY UNLOCKED")
+    draw_tessellation_sign(context, world_num, x, y, 50)
+  context.globalAlpha /= 0.5
+  context.textAlign = "center"
+  context.font = text_size+"px Muli"
+  context.fillStyle = text_color
+  context.shadowColor = text_color
+  context.fillText(text.split(" ")[0].toUpperCase(), x, y - 10)
+  context.fillText(text.split(" ")[1].toUpperCase(), x, y + 10)
+
+
+
+  context.restore()
+
+}
+
 
 function draw_enemy(context, enemy_name, x, y, d) {
 
@@ -81,6 +120,33 @@ function draw_enemy(context, enemy_name, x, y, d) {
     }
   context.restore()
 }
+
+function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
+
+  context.save()
+  if(rotate) {
+    context.translate(x, y);
+    context.rotate(rotate);
+    context.translate(-x, -y);
+  }
+
+  var draw_scale = d/2
+  if(enemy_name.slice(enemy_name.length - 4) == "boss") {
+    draw_scale = d/2
+  }
+  for(var m = 0; m < impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
+    var this_shape = impulse_enemy_stats[enemy_name].shape_polygons[m]
+    draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
+  }
+  if(impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+    for(var m = 0; m < impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
+      var this_shape = impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
+      draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
+    }
+  }
+  context.restore()
+}
+
 
 
 var tessellation_logo_factor = {
@@ -136,48 +202,10 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor)
 
 }
 
-function draw_music_icon(context, x, y, scale, color) {
-  context.save()
-  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
 
-  context.beginPath()
-  context.moveTo(x - scale/2 * 0.75, y - scale/2 * 0.6)
-  context.lineTo(x, y - scale/2 * 0.6)
-  context.lineTo(x + scale/2 * 0.75, y - scale * 0.6)
-  context.lineTo(x + scale/2  * 0.75, y + scale * 0.6)
-  context.lineTo(x, y + scale/2* 0.6)
-  context.lineTo(x - scale/2 * 0.75, y + scale/2  * 0.6)
-  context.fillStyle = color
-  context.fill()
-  if(player_data.options.music_mute) {
-    context.beginPath()
-    context.arc(x + scale * 0.75, y, scale/2 * 0.45, 0, 2 * Math.PI, true)
-    context.moveTo(x + scale  * 0.75- Math.cos(Math.PI/4) * scale/2 * 0.45, y - Math.cos(Math.PI/4) * scale/2 * 0.45)
-    context.lineTo(x + scale* 0.75+ Math.cos(Math.PI/4) * scale/2 * 0.45, y + Math.cos(Math.PI/4) * scale/2 * 0.405)
-    context.lineWidth = 2
-    context.strokeStyle = color
-    context.stroke()
-  } else {
-    context.beginPath()
-    context.arc(x + scale * 0.4, y, scale/2 * 0.6, -Math.PI/3,Math.PI/3, false)
-    context.lineWidth = 2
-    context.strokeStyle = color
-    context.stroke()
-    context.beginPath()
-    context.arc(x + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
-    context.stroke()
-  }
-  context.font = "10px Muli"
-  context.textAlign = "center"
-  if(player_data.options.control_hand == "left") {
-    context.fillText("M", x+scale, y+scale)
-  } else {
-    context.fillText("X", x+scale, y+scale)
-  }
-  context.restore()
-}
 
 function draw_arrow_keys(context, x, y, size, color, keysArray) {
+  context.save()
 
   ctx.shadowColor = color
   ctx.shadowBlur = 10
@@ -208,10 +236,14 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
     draw_arrow(ctx, x, y - 2, 20, "down", color)
     draw_arrow(ctx, x + size, y, 20, "right", color)
   }
+  context.restore()
 }
 
 function draw_mouse(context, x, y, w, h, color) {
   context.save()
+  ctx.shadowColor = color
+
+  ctx.shadowBlur = 10
   draw_rounded_rect(context, x, y, w, h, 10, color)
   context.clip()
   context.beginPath()
@@ -266,6 +298,84 @@ function draw_pause_icon(context, x, y, scale, color) {
     context.fillText("Q", x+scale, y+scale)
   }
 
+  context.restore()
+}
+
+function draw_music_icon(context, x, y, scale, color) {
+  context.save()
+  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
+
+  context.beginPath()
+  context.moveTo(x - scale * 0.3- scale/2 * 0.75, y - scale/2 * 0.6)
+  context.lineTo(x- scale * 0.3, y - scale/2 * 0.6)
+  context.lineTo(x - scale * 0.3+ scale/2 * 0.75, y - scale * 0.6)
+  context.lineTo(x- scale * 0.3 + scale/2  * 0.75, y + scale * 0.6)
+  context.lineTo(x- scale * 0.3, y + scale/2* 0.6)
+  context.lineTo(x- scale * 0.3 - scale/2 * 0.75, y + scale/2  * 0.6)
+  context.fillStyle = color
+  context.fill()
+  if(player_data.options.music_mute) {
+    context.beginPath()
+    context.arc(x - scale * 0.3+ scale * 0.75, y, scale/2 * 0.45, 0, 2 * Math.PI, true)
+    context.moveTo(x - scale * 0.3+ scale  * 0.75- Math.cos(Math.PI/4) * scale/2 * 0.45, y - Math.cos(Math.PI/4) * scale/2 * 0.45)
+    context.lineTo(x - scale * 0.3+ scale* 0.75+ Math.cos(Math.PI/4) * scale/2 * 0.45, y + Math.cos(Math.PI/4) * scale/2 * 0.405)
+    context.lineWidth = 2
+    context.strokeStyle = color
+    context.stroke()
+  } else {
+    context.beginPath()
+    context.arc(x - scale * 0.3+ scale * 0.4, y, scale/2 * 0.6, -Math.PI/3,Math.PI/3, false)
+    context.lineWidth = 2
+    context.strokeStyle = color
+    context.stroke()
+    context.beginPath()
+    context.arc(x- scale * 0.3 + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
+    context.stroke()
+  }
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  if(player_data.options.control_hand == "left") {
+    context.fillText("M", x+scale, y+scale)
+  } else {
+    context.fillText("X", x+scale, y+scale)
+  }
+  context.restore()
+}
+
+function draw_fullscreen_icon(context, x, y, scale, color) {
+  context.save()
+  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
+  context.beginPath()
+  context.globalAlpha /= 2
+  context.rect(x - scale * 3/4, y - scale * 3/4, scale * 3/2, scale * 3/2)
+  context.strokeStyle = color
+  context.fillStyle = color
+  context.lineWidth = 2
+  context.stroke()
+  context.globalAlpha *= 2
+  context.beginPath()
+  context.moveTo(x - scale * 1/2, y - scale * 1/2)
+  context.lineTo(x - scale * 0/8, y - scale * 1/2)
+  context.lineTo(x - scale * 1/2, y - scale * 0/8)
+  context.closePath()
+  context.fill()
+  context.beginPath()
+  context.moveTo(x + scale * 1/2, y + scale * 1/2)
+  context.lineTo(x + scale * 0/8, y + scale * 1/2)
+  context.lineTo(x + scale * 1/2, y + scale * 0/8)
+  context.closePath()
+  context.fill()
+  context.beginPath()
+  context.moveTo(x - scale * 1/2, y - scale * 1/2)
+  context.lineTo(x + scale * 1/2, y + scale * 1/2)
+  context.stroke()
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  if(player_data.options.control_hand == "left") {
+    context.fillText("N", x+scale, y+scale)
+  } else {
+    context.fillText("F", x+scale, y+scale)
+  }
   context.restore()
 }
 
@@ -347,8 +457,9 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.restore()
 }
 
-function draw_arrow(context, x, y, size, dir, color) {
+function draw_arrow(context, x, y, size, dir, color, shadowed) {
 
+  shadowed = shadowed == undefined ? true : shadowed
   ctx.save();
   ctx.translate(x, y);
 
@@ -366,8 +477,10 @@ function draw_arrow(context, x, y, size, dir, color) {
   context.lineTo( Math.cos(Math.PI*4/3) * size/2,  Math.sin(Math.PI*4/3) * size/2)
   context.closePath()
   context.fillStyle = color
-  context.shadowBlur = 10
-  context.shadowColor = color
+  if(shadowed) {
+    context.shadowBlur = 10
+    context.shadowColor = color
+  }
   context.fill()
 
   context.restore()
