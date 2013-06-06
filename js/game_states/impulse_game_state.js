@@ -66,16 +66,14 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.visibility_graph = visibility_graph
   this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
+  this.bright_color = impulse_colors["world "+this.world_num +" bright"];
 
   this.boss_intro_text_interval = 6000
   this.boss_intro_text_duration = 0
 
-
   //add walls
 
   this.addWalls()
-
-
 
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
@@ -115,6 +113,22 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
 
   this.level_redraw_bg = false
 
+  this.new_enemy_duration = 10000
+  this.new_enemy_timer = 0
+  this.new_enemy_type = null
+  this.check_new_enemies()
+
+}
+
+ImpulseGameState.prototype.check_new_enemies = function() {
+  for(var enemy in impulse_level_data[this.level_name].enemies) {
+    impulse_enemy_stats[enemy].seen += 1
+    save_game()
+    if(!impulse_enemy_stats[enemy].is_boss && impulse_enemy_stats[enemy].seen <= 1) {
+      this.new_enemy_type = enemy
+      this.new_enemy_timer = this.new_enemy_duration
+    }
+  }
 }
 
 ImpulseGameState.prototype.make_player = function() {
@@ -171,6 +185,11 @@ ImpulseGameState.prototype.process = function(dt) {
     this.check_pause()
     this.draw_interface_timer -= dt
 
+    if(this.new_enemy_timer > 0) {
+      this.new_enemy_timer -= dt
+    } else {
+      this.new_enemy_type = null
+    }
 
     if(this.zoom_state != "none") {
       if(this.zoom_transition_timer <= 0) {
@@ -437,7 +456,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
   }*/
-  ctx.globalAlpha = 0.5
+  /*ctx.globalAlpha = 0.5
 
   for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
@@ -459,7 +478,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.lineWidth = 1
       }
     }
-  }
+  }*/
   ctx.globalAlpha = 1
 
   this.additional_draw(ctx, bg_ctx)
@@ -579,15 +598,26 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText(this.level_name.slice(5, this.level_name.length), sidebarWidth/2, 140)
   }
 
+
   // draw the game time
-  context.fillStyle = this.lite_color;
-  context.font = '40px Muli'
+  context.fillStyle = this.color;
+  context.font = '32px Muli'
   this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
   var a =  this.game_numbers.seconds % 60
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
 
-  context.fillText(this.game_numbers.last_time, sidebarWidth/2, canvasHeight/2)
+  context.fillText(this.game_numbers.last_time, sidebarWidth/2, canvasHeight/2 - 80)
+
+
+  if(this.new_enemy_type != null) {
+    var prog = this.new_enemy_timer/this.new_enemy_duration
+    context.save()
+    context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
+    draw_new_enemy_button(context, sidebarWidth/2, canvasHeight/2 + 60, 120, 160, this.bright_color, this.new_enemy_type)
+    context.restore()
+  }
+
 
   if(!this.is_boss_level) {
     // draw score
@@ -734,8 +764,23 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
-  if(!this.pause)
+  if(!this.pause) {
     this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+  }
+
+  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+      var _this = this
+      setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
+      this.pause = true
+      this.reset_player_state()
+      this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
+  }
+
+}
+
+ImpulseGameState.prototype.reset_player_state = function() {
+  this.player.keyDown(imp_vars.keys.PAUSE)
+  this.player.mouse_up(null)
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
@@ -748,6 +793,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(keyCode == imp_vars.keys.PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
+      this.reset_player_state()
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
   } else if(keyCode == imp_vars.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {

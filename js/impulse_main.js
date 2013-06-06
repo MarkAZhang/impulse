@@ -432,8 +432,7 @@ function load_game() {
 
   for(i in impulse_enemy_stats) {
     //load if enemies are seen
-
-    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] || unlockall? true : false
+    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] ? load_obj['enemies_seen'][i] : 0
     impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
   }
 

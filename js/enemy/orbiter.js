@@ -18,7 +18,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.pathfinding_delay = 18;
 
   this.pathfinding_delay_far = 18;
-  this.pathfinding_delay_near = 6;
+  this.pathfinding_delay_near = 9;
 
   this.cautious = false;
   this.fast_factor = 2;
@@ -65,12 +65,17 @@ Orbiter.prototype.additional_processing = function(dt) {
 
 Orbiter.prototype.get_target_path = function() {
 
+  //console.log("GET PATH AT "+(new Date()).getTime()+" "+this.id)
+  //console.log(this.pathfinding_delay)
+
   if(!this.attack_mode) {
     var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
     var divisions = 64;
     var offsets = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
     var offset = 0;
-    this.offset_multiplier *= -1;
+
+    if(this.twitch)
+      this.offset_multiplier *= -1;
 
     var is_valid = false;
     var this_path = null;
@@ -78,8 +83,6 @@ Orbiter.prototype.get_target_path = function() {
 
 
       var guess_angle = orig_angle + (Math.PI * 2) / divisions * offsets[offset] * this.offset_multiplier;
-      if(isNaN(guess_angle)) {
-      }
 
       is_valid = true;
 
@@ -91,6 +94,7 @@ Orbiter.prototype.get_target_path = function() {
         if(pointInPolygon(this.level.boundary_polygons[k], tempPt))
         {
           is_valid = false
+          console.log("IN POLYGON")
           break;
         }
       }
@@ -100,8 +104,10 @@ Orbiter.prototype.get_target_path = function() {
 
         if(!this_path.path) {
           is_valid = false;
+          console.log("NO PATH")
         } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.player.impulse_radius * 1.1)) {
           is_valid = false
+          console.log("PATH NOT SAFE")
         }
       }
 
@@ -113,10 +119,8 @@ Orbiter.prototype.get_target_path = function() {
 
 
 
-    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safe_point(this, this.player), this.level.boundary_polygons, this)
+    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
   } else {
-
-
     return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)
   }
 }
@@ -128,11 +132,11 @@ Orbiter.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
   this.pathfinding_counter+=1
-  if ((this.path && !this.path[0]) || this.pathfinding_counter % 8 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
+  if ((this.path && !this.path[0]) || /*this.pathfinding_counter % 8 == 0 ||*/ this.pathfinding_counter >= this.pathfinding_delay) {
     //only update path every four frames. Pretty expensive operation
     var target_path = this.get_target_path()
-
     if(!target_path.path) return
+
     if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_path.path[target_path.length - 1] == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
@@ -143,7 +147,7 @@ Orbiter.prototype.move = function() {
         this.path_dist = new_path.dist
         this.target_point = this.path[this.path.length - 1]
       }
-      this.pathfinding_counter = Math.floor(Math.random()*.5 * this.pathfinding_delay)
+      this.pathfinding_counter = Math.floor(Math.random()*.1 * this.pathfinding_delay)
     }
 
   }

@@ -28,6 +28,35 @@ function draw_empty_star(context, x, y, r, color) {
   context.stroke()
 }
 
+function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
+
+  context.save()
+
+  context.beginPath()
+  context.rect(x - w/2, y - h/2, w, h)
+  context.strokeStyle = color
+  context.stroke()
+  context.globalAlpha *= 0.1
+  context.fillStyle =color
+  context.fill()
+
+  context.globalAlpha *= 10
+
+  context.font = "10px MUli"
+  context.fillText("NEW ENEMY", x, y - h * 0.4)
+  context.font = "18px MUli"
+  context.fillStyle = impulse_enemy_stats[enemy_name].color
+  context.fillText(enemy_name.toUpperCase(), x, y - h * 0.25)
+
+  draw_enemy(context, enemy_name, x, y, 30)
+
+  context.font = "10px MUli"
+  context.fillStyle =color
+  context.fillText("CLICK FOR INFO", x, y + h * 0.4)
+  context.restore()
+
+}
+
 function draw_enemy(context, enemy_name, x, y, d) {
 
   context.save()

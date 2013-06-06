@@ -43,12 +43,21 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.safe_radius = this.player.impulse_radius
   this.safe_radius_buffer = 2
 
+  this.safe_distance = this.harpoon_length * 0.8
+
+  this.pathfinding_delay_far = 40;
+  this.pathfinding_delay_near = 20;
+
+  this.pathfinding_delay = 40;
+
+  this.offset_multiplier = Math.random() < 0.5 ? 1 : -1;
   this.stun_length = 2000 //after being hit by player, becomes stunned
 
-  this.safe = true
   this.harpoon_joint = null
 
   this.do_yield = false
+
+  this.twitch = false
 
   this.check_harpoon_interval = 5//so that we don't check for harpooning every frame
   this.check_harpoon_timer = this.check_harpoon_interval
@@ -82,12 +91,13 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.delay_between_shots = 1000
   this.harpooned_target = null
-  this.cautious = true
+  this.cautious = false
   this.harpoonable = false
 
   this.additional_statuses = ["unharpoonable"]
 
   this.dire_harpoon = false
+  this.attack_mode = true
 }
 
 Harpoon.prototype.add_harpoon_head = function() {
@@ -105,7 +115,10 @@ Harpoon.prototype.draw_harpoon_head = function(context, draw_factor, latest_colo
 
 }
 
-Harpoon.prototype.get_target_point = function() {
+
+Harpoon.prototype.get_target_path = Orbiter.prototype.get_target_path
+
+/*Harpoon.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
     return get_safe_point(this, this.player)
@@ -155,9 +168,9 @@ Harpoon.prototype.get_target_point = function() {
     return this.player.body.GetPosition()
 
   }
-}
+}*/
 
-Harpoon.prototype.enemy_move = Enemy.prototype.move
+Harpoon.prototype.enemy_move = Orbiter.prototype.move
 
 Harpoon.prototype.move = function() {
   if(this.harpoon_state != "inactive" && this.harpoon_state != "engaged") {return}//do not move if harpooning
@@ -174,10 +187,12 @@ Harpoon.prototype.move = function() {
     return
   }
 
-    if(this.path == null) {
-      this.pathfinding_counter = this.pathfinding_delay
-    }
-    this.enemy_move()
+  if(this.path == null) {
+    this.pathfinding_counter = this.pathfinding_delay
+    //console.log("PATH IS NULL")
+  }
+  //console.log("BEFORE ENEMY MOVE "+this.pathfinding_counter)
+  this.enemy_move()
 
 }
 
@@ -239,6 +254,8 @@ Harpoon.prototype.get_virtual_harpoon_loc = function() {
 
 Harpoon.prototype.additional_processing = function(dt) {
 
+  //console.log(this.pathfinding_counter)
+
   if(this.harpoon_state == "inactive" || this.harpoon_state == "engaged") {
     this.set_heading(this.player.body.GetPosition())
   } else {
@@ -254,6 +271,12 @@ Harpoon.prototype.additional_processing = function(dt) {
 
   if(this.entered_arena_timer > 0) {
     this.entered_arena_timer -= dt
+  }
+  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.safe_distance * 1.5) {
+    this.pathfinding_delay = this.pathfinding_delay_near;
+
+  } else {
+    this.pathfinding_delay = this.pathfinding_delay_far;
   }
 
   if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
@@ -309,12 +332,12 @@ Harpoon.prototype.additional_processing = function(dt) {
     var cur_dist = p_dist(this.player.body.GetPosition(), this.body.GetPosition())
     var cur_vis = isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)
 
-    if((cur_dist > this.safe_radius + this.safe_radius_buffer || !cur_vis) && !this.safe) {
-      this.safe = true
+    if((cur_dist > this.safe_distance + this.safe_distance_buffer || !cur_vis) && !this.attack_mode) {
+      this.attack_mode = true
       this.path = null
     }
-    else if ((cur_dist < this.safe_radius && cur_vis) && this.safe) {
-      this.safe = false
+    else if ((cur_dist < this.safe_distance && cur_vis) && this.attack_mode) {
+      this.attack_mode = false
       this.path = null
     }
 

@@ -133,5 +133,8 @@ TitleState.prototype.clear_data = function() {
   localStorage.removeItem(save_name);
   this.clear_data_button.text = "DATA CLEARED";
   this.clear_data_button.color = "red";
+  var old_player_options = player_data.options
   load_game();
+  player_data.options = old_player_options
+  save_game();
 }

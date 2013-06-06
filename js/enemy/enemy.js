@@ -561,12 +561,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
 
-
-  if(!impulse_enemy_stats[this.type].seen) {
-    impulse_enemy_stats[this.type].seen = true
-    save_game()
-  }
-
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
 
   //rotate enemy

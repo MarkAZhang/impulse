@@ -209,7 +209,7 @@ Tank.prototype.get_additional_color_for_status = function(status) {
   }
 }
 
-Enemy.prototype.get_color_for_status = function(status) {
+Tank.prototype.get_color_for_status = function(status) {
   if(status == "normal") {
     return this.color
   } else if(status == "stunned") {

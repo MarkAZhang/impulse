@@ -461,6 +461,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   }
 
 
+  ctx.globalAlpha = 1
   //this.music_volume_slider.draw(ctx)
   //this.effects_volume_slider.draw(ctx)
 
@@ -841,7 +842,7 @@ EnemyBox.prototype.on_mouse_move = function(x, y) {
   }
 }
 
-EnemyBox.prototype.on_click = function(x, y) {
+EnemyBox.prototype.on_mouse_down = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }

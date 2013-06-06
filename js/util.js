@@ -267,6 +267,28 @@ function get_safe_point(object, player) {
   }
 }
 
+function get_safest_spawn_point(object, player, level_name) {
+  //returns the spawn point whose angle is closest to opposite the player
+
+  var spawn_points = impulse_level_data[level_name].spawn_points
+
+  var best_point = null
+  var best_value = 2 * Math.PI
+
+  var angle_to_player = _atan(object.body.GetPosition(), player.body.GetPosition())
+
+  for(var i = 0; i < spawn_points.length; i++){
+    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0], y: spawn_points[i][1]}))
+    var diff = Math.abs(angle, angle_to_player)
+    if(diff < best_value) {
+      best_value = diff
+      best_point = spawn_points[i]
+    }
+  }
+
+  return {x: best_point[0], y: best_point[1]}
+
+}
 
 function get_pointer_point(object) {
 

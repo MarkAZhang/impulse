@@ -28,8 +28,8 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   var cur_y = this.y
   draw_enemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
 
-  if((impulse_enemy_stats[this.enemy_name].kills < 5 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
-    (impulse_enemy_stats[this.enemy_name].kills < 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
+  if((impulse_enemy_stats[this.enemy_name].seen <= 3 && !impulse_enemy_stats[this.enemy_name].is_boss) ||
+    (impulse_enemy_stats[this.enemy_name].kills <= 1 && impulse_enemy_stats[this.enemy_name].is_boss)) {
     context.font = "12px Muli"
     context.textAlign = "center"
     context.fillStyle = this.color
