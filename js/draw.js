@@ -151,11 +151,12 @@ function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
 
 var tessellation_logo_factor = {
     "1": 1,
-    "2": 1.4
+    "2": 1.4,
+    "3": 1
 }
 
 function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor) {
-  if(tessellation == 0) {
+  if(tessellation == 0 || tessellation >= 3) {
     context.beginPath()
     context.lineWidth = 2
     context.rect(x-size/2, y-size/2, size, size)
@@ -165,6 +166,7 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor)
     context.stroke()
     return
   }
+
 
   size *= tessellation_logo_factor[tessellation]
 

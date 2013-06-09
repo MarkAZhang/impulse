@@ -69,7 +69,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.joint_padding = 1
 
-  this.punch_force = 15
+  this.punch_force = 10
 
   this.retract_force = 1
 

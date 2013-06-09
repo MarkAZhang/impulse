@@ -8,7 +8,7 @@ var draw_factor = 15
 var dt = 0
 var last_time = 0
 var step_id = 0
-var cur_game_state
+var cur_game_state = null
 var cur_dialog_box = null
 var save_name = "impulse_save_data"
 

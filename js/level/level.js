@@ -454,7 +454,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     ctx.save()
     ctx.globalAlpha = 1
 
-    if(this.gateway_transition_duration != null) {
+    if(this.gateway_transition_duration != null && this.world_num <= 2) {
       var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
       factor = 1 * prog + 2 * (1-prog)
       ctx.globalAlpha *= 0.5*(1-prog)
@@ -465,7 +465,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
       }
     }
 
-    else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked) {
+    else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 2) {
       factor = 2
       ctx.globalAlpha *= 0.5
       if(this.world_num != 0) {
