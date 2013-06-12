@@ -76,9 +76,9 @@ impulse_enemy_stats["tank"] = {
 
   enemy_info: [
     "Explodes upon collision, # causing huge knockback to all nearby units",
-    "Also explodes on death",
     "The blast radius is outlined around the Tank",
-    "When Impulsed, becomes volatile for 1 second. # Collision with another Tank will cause the volatile Tank to explode."
+    "When Impulsed, becomes volatile for 1 second. # Collision with another Tank will cause the volatile Tank to explode.",
+    "Explodes on death if volatile",
 
   ],
 
@@ -136,8 +136,6 @@ impulse_enemy_stats["goo"] = {
     "When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
 
-  special_ability: "Leaves behind a trail of sticky goo. Everything that passes through the goo is slowed and harder to push around. Upon impact, goos the player for 2 seconds.",
-  other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Getting gooed can also keep you alive in a tough spot.",
   className: Goo
 
 }
@@ -148,7 +146,7 @@ impulse_enemy_stats["disabler"] = {
   density: 8,
   lin_damp: 9,
   effective_radius: .5,
-  force: 3,
+  force: 4,
   score_value: 5000,
   attack_rating: .25,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -268,8 +266,8 @@ impulse_enemy_stats["fighter"] = {
   density: 4,
   lin_damp: 3,
   effective_radius: 1,
-  force: 2,
-  score_value: 4000,
+  force: 3,
+  score_value: 5000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
@@ -285,6 +283,13 @@ impulse_enemy_stats["fighter"] = {
   [Math.cos(Math.PI * 5/4)  + 0.3, Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, -Math.sqrt(2)]]}
   ],
+
+  enemy_info: [
+    "All units within its area of influence are slowed",
+    "Dies upon collision. # Units immediately regain speed.",
+    "When Impulsed, dramatically expands its area of influence for 2 seconds",
+  ],
+
 
 
   dies_on_impact: "NO",
@@ -365,15 +370,13 @@ impulse_enemy_stats["harpoon"] = {
   dies_on_impact: "NO",
   enemy_info: [
     "Fires its hook at you. # If the hook latches onto you, the harpoon will yank you in. # Can only fire through walls.",
-    "While the hook is detached from the Harpoon, # cannot move",
-    "If the hook is Impulsed while the Harpoon is latched # it will let go",
-    "If the hook is Impulsed while the harpoon is firing # it will not be able to latch on",
-    "Can latch onto other enemies and will yank them in.",
-    "Will actively try to avoid you",
-    "Cannot fire for 1 second after entering the screen. # Cannot fire from off-screen",
-    "When Impulsed, cannot fire for 2 seconds",
     "The hook range is outlined around the Harpoon",
-    "During boss battles, can fire at any time"
+    "While the hook is detached from the Harpoon, # it cannot move",
+    "When Impulsed, the hook is disabled for 2 seconds",
+    "Can latch onto other enemies and will yank them in.",
+    "Will actively try to avoid you. Does not die on collision.",
+    "Cannot fire for 1 second after entering the screen. # Cannot fire from off-screen",
+    "During boss battles, can fire at any time",
 
   ],
 

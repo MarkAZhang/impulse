@@ -339,8 +339,8 @@ Enemy.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
   this.pathfinding_counter+=1
-  if (this.pathfinding_counter >= this.pathfinding_delay) {
-    //only update path every four frames. Pretty expensive operation
+  if (this.pathfinding_counter % 4 == 0) {
+    //this first loop only checks whether the first point is still reachable (see below for loop)
     var target_point = this.get_target_point()
 
     if(!target_point) return

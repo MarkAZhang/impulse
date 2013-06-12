@@ -80,13 +80,13 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
     context.globalAlpha = 1
 
     context.beginPath()
-    context.arc(this.polygons[i][0].x, this.polygons[i][0].y, 5, 0, 2*Math.PI, true)
+    context.arc(this.polygons[i][0].x, this.polygons[i][0].y, 5, 0, 2*Math.PI * 0.999)
     context.fillStyle = (this.selected_v && this.selected_v[0] == i && this.selected_v[1] == 0) ? "red" : "black"
     context.fill()
     for(var j = 1; j < this.polygons[i].length; j++)
     {
       context.beginPath()
-      context.arc(this.polygons[i][j].x, this.polygons[i][j].y, 5, 0, 2*Math.PI, true)
+      context.arc(this.polygons[i][j].x, this.polygons[i][j].y, 5, 0, 2*Math.PI * 0.999)
       context.fillStyle = (this.selected_v && this.selected_v[0] == i && this.selected_v[1] == j) ? "red" : "black"
       context.fill()
     }
@@ -97,7 +97,7 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
   for(var i= 0; i < this.accumulated_vertices.length; i++) {
     context.beginPath()
     context.fillStyle = (this.selected_av != null && this.selected_av == i) ? "red" : "black"
-    context.arc(this.accumulated_vertices[i].x, this.accumulated_vertices[i].y, 5, 0, 2*Math.PI, true)
+    context.arc(this.accumulated_vertices[i].x, this.accumulated_vertices[i].y, 5, 0, 2*Math.PI * 0.999)
     context.fill()
   }
 
@@ -118,7 +118,7 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
     for(var j = 0; j < this.outline_polygons[i].length; j++)
     {
       context.beginPath()
-      context.arc(this.outline_polygons[i][j].x, this.outline_polygons[i][j].y, 5, 0, 2*Math.PI, true)
+      context.arc(this.outline_polygons[i][j].x, this.outline_polygons[i][j].y, 5, 0, 2*Math.PI * 0.999)
       context.fillStyle = "cyan"
       context.fill()
     }
@@ -128,6 +128,47 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
 
   context.restore()
 
+}
+
+LevelEditorState.prototype.rotate_world = function(angle, center_point) {
+  var new_polygons = []
+
+  for(var i = 0; i < this.polygons.length; i++) {
+    var new_polygon = []
+    for(var j = 0; j < this.polygons[i].length; j++) {
+      var pt = this.polygons[i][j]
+      var r = p_dist(pt, center_point)
+      var theta = _atan(center_point, pt)
+      var new_pt = {x: center_point.x + r*Math.cos(angle + theta), y: center_point.y + r*Math.sin(angle + theta)}
+      new_polygon.push(new_pt)
+    }
+    new_polygons.push(new_polygon)
+
+  }
+  this.polygons = new_polygons
+}
+
+LevelEditorState.prototype.duplicate_polygon = function(index, translation) {
+  var new_polygon = []
+    for(var j = 0; j < this.polygons[index].length; j++) {
+      var pt = this.polygons[index][j]
+      var new_pt = {x: pt.x + translation.x, y: pt.y + translation.y}
+      new_polygon.push(new_pt)
+    }
+  this.polygons.push(new_polygon)
+
+}
+
+LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point) {
+  var new_polygon = []
+  for(var j = 0; j < this.polygons[index].length; j++) {
+    var pt = this.polygons[index][j]
+    var r = p_dist(pt, center_point)
+    var theta = _atan(center_point, pt)
+    var new_pt = {x: center_point.x + r*Math.cos(angle + theta), y: center_point.y + r*Math.sin(angle + theta)}
+    new_polygon.push(new_pt)
+  }
+  this.polygons.push(new_polygon)
 }
 
 LevelEditorState.prototype.transform_to_zoomed_space = function(pt) {
@@ -151,14 +192,12 @@ LevelEditorState.prototype.on_mouse_move = function(x, y) {
 }
 
 LevelEditorState.prototype.on_mouse_up = function(x, y) {
-  console.log("UP")
   this.dragging = false
   this.drag_loc = null
 }
 
 LevelEditorState.prototype.on_mouse_down = function(x, y) {
   var trans_point = this.transform_to_zoomed_space({x:x, y:y});
-  console.log(x+" "+y)
   if(this.selected_p != null && pointInPolygon(this.polygons[this.selected_p], trans_point)) {
     this.drag_loc = trans_point
     this.dragging = true
@@ -198,6 +237,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.polygons.length; i++) {
     if(pointInPolygon(this.polygons[i], trans_point)) {
       this.selected_p = i
+      console.log("CLICKED ON POLYGON "+i)
       return
     }
 
@@ -412,6 +452,15 @@ LevelEditorState.prototype.print_polygon = function() {
   }
   console.log(JSON.stringify(polygon_ans))
   return JSON.stringify(polygon_ans)
+}
+
+LevelEditorState.prototype.print_accumulated_vertices = function() {
+  var temp_p = []
+  for(var i = 0; i < this.accumulated_vertices.length; i++) {
+    temp_p.push([Math.round(this.accumulated_vertices[i].x), Math.round(this.accumulated_vertices[i].y)])
+  }
+  console.log(JSON.stringify(temp_p))
+  return JSON.stringify(temp_p)
 }
 
 LevelEditorState.prototype.save = function(string) {

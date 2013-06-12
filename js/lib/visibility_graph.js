@@ -1,10 +1,10 @@
 
-var VisibilityGraph = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths ) {
+var VisibilityGraph = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
   console.log("CREATING VISIBILITY GRAPH")
-  this.init(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths)
+  this.init(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)
 }
 
-VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths ) {
+VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices) {
 //polygons is an array of array of vertices
   this.level = level
   this.polygons = polygons
@@ -16,6 +16,7 @@ VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices,
     //edge_list uses the indices according to this.vertices
     this.edge_list = edge_list
     this.shortest_paths = shortest_paths
+    this.visible_vertices = visible_vertices
   }
   else {
     poly_edges = []
@@ -164,21 +165,55 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
 
   var min_distance = null
   var min_path = null
-  var point1_adj = []
-  var point2_adj = []
+  var split_size = 50
+  var point1_adj = this.visible_vertices[Math.floor(point1.x*draw_factor/split_size)*split_size+" "+Math.floor(point1.y*draw_factor/split_size)*split_size]
+  var point2_adj = this.visible_vertices[Math.floor(point2.x*draw_factor/split_size)*split_size+" "+Math.floor(point2.y*draw_factor/split_size)*split_size]
 
   var inPoly = false
 
-  // slow
-  for(var i = 0; i < this.vertices.length; i++)
-  {
-    if(isVisible(point1, this.vertices[i], this.poly_edges) && isVisible(point1, this.vertices[i], this.level.obstacle_edges))
+  if(point1_adj) {
+     var actual_point1_adj = []
+    for(var i = 0; i < point1_adj.length; i++)
     {
-      point1_adj.push(i)
+      if(isVisible(point1, this.vertices[point1_adj[i]], this.level.obstacle_edges)  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
+      {
+        actual_point1_adj.push(point1_adj[i])
+      }
     }
-    if(isVisible(point2, this.vertices[i], this.level.obstacle_edges))
+    point1_adj = actual_point1_adj
+  }
+
+  if(!point1_adj || point1_adj.length == 0) {
+    point1_adj = []
+    for(var i = 0; i < this.vertices.length; i++)
     {
-      point2_adj.push(i)
+      if(isVisible(point1, this.vertices[i], this.level.obstacle_edges) && isVisible(point1, this.vertices[i], this.poly_edges) )
+      {
+        point1_adj.push(i)
+      }
+    }
+  }
+
+  if(point2_adj) {
+    var actual_point2_adj = []
+    for(var i = 0; i < point2_adj.length; i++)
+    {
+      if(isVisible(point2, this.vertices[point2_adj[i]], this.level.obstacle_edges)  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
+      {
+        actual_point2_adj.push(point2_adj[i])
+      }
+    }
+    point2_adj = actual_point2_adj
+  }
+
+  if(!point2_adj || point2_adj.length == 0) {
+    point2_adj = []
+    for(var i = 0; i < this.vertices.length; i++)
+    {
+      if(isVisible(point2, this.vertices[i], this.level.obstacle_edges)   && isVisible(point2, this.vertices[i], this.poly_edges))
+      {
+        point2_adj.push(i)
+      }
     }
   }
   //console.log(point1_adj)

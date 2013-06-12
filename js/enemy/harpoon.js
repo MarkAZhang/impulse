@@ -183,6 +183,9 @@ Harpoon.prototype.move = function() {
       dir.Multiply(this.harpooned_goo_factor)
     }
     this.harpooned_target.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+    if(this.harpooned_target != this.player) {
+      this.harpooned_target.open(1500)
+    }
     this.body.SetAngle(_atan(this.player.body.GetPosition(), this.body.GetPosition()))
     return
   }
@@ -489,7 +492,7 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor, latest_col
 
   if(!this.dying && this.status_duration[1] > 0) {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.status_duration[1] / this.last_stun), true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
     context.strokeStyle = this.color;
     context.stroke()
@@ -501,7 +504,7 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor, latest_col
     context.strokeStyle = this.color
     context.lineWidth = 2
     context.globalAlpha *= .3
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.harpoon_length * draw_factor, 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.harpoon_length * draw_factor, 0, 2*Math.PI * 0.999)
     context.stroke()
 
   }

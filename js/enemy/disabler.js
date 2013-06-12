@@ -25,7 +25,7 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
   this.goo_change_transition = 500
 
-  this.goo_expand_period = 2000
+  this.goo_expand_period = 4000
 
   this.goo_state = "small"
 
@@ -34,6 +34,8 @@ function Disabler(world, x, y, id, impulse_game_state) {
   this.default_heading = false
 
   this.spin_rate = 6000
+
+  this.slow_factor = 0
 
 }
 

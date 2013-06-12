@@ -123,14 +123,14 @@ Goo.prototype.additional_drawing = function(context, draw_factor) {
     context.lineWidth = 2
     context.save();
     context.globalAlpha *= .3
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.goo_radius * draw_factor, 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.goo_radius * draw_factor, 0, 2*Math.PI * 0.999)
     context.stroke()
     context.fill()
     context.restore();
   }
   if(this.goo_state == "big") {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.goo_state_timer / this.goo_expand_period), true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.goo_state_timer / this.goo_expand_period), true)
     context.lineWidth = 2
     context.strokeStyle = this.color
     context.stroke()

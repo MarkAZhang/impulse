@@ -161,7 +161,7 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor)
     context.lineWidth = 2
     context.rect(x-size/2, y-size/2, size, size)
     context.rect(x-size/2+5, y-size/2+5, size-10, size-10)
-    context.strokeStyle = "#eee"
+    context.strokeStyle = impulse_colors["world "+tessellation+" dark"]
 
     context.stroke()
     return
@@ -396,7 +396,7 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
     context.translate(-x, -y);
   }
   if(shape.type == "circle") {
-    context.arc(x + shape.x, y + shape.y, scale * shape.r, 0, 2 * Math.PI, true)
+    context.arc(x + shape.x, y + shape.y, scale * shape.r, 0, 2 * Math.PI * 0.999)
   }
 
   if(shape.type == "polygon") {

@@ -478,7 +478,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   {
       ctx.beginPath()
       ctx.lineWidth = 1
-    	ctx.strokeStyle = 'green';
+    	ctx.strokeStyle = '#ccc';
       ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
@@ -492,9 +492,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p1.y*this.draw_factor)
       ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
-  /*for(var i = 0; i < this.visibility_graph.edges.length; i++)
+  for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
     	ctx.strokeStyle = 'red';
@@ -505,10 +505,43 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = 'red'
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
-  }*/
-  /*ctx.globalAlpha = 0.5
+  }
+  /*ctx.globalAlpha = 0.5*/
 
-  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+
+  /*ctx.save();
+
+  var split_size = 50
+  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  ctx.beginPath()
+  for(var i = 0; i < levelWidth; i += split_size) {
+    ctx.moveTo(i, 0)
+    ctx.lineTo(i, levelHeight)
+  }
+  for(var j = 0; j < levelHeight; j += split_size) {
+    ctx.moveTo(0, j)
+    ctx.lineTo(levelWidth, j)
+  }
+  ctx.lineWidth = 2
+  ctx.strokeStyle = "#ccc"
+  ctx.stroke()
+
+  if(this.last_loc) {
+    var visible_vertices = this.visibility_graph.visible_vertices[Math.floor(this.last_loc.x/split_size)*split_size+" "+Math.floor(this.last_loc.y/split_size)*split_size]
+    ctx.beginPath()
+    for(var i = 0; i < visible_vertices.length; i++) {
+      ctx.moveTo(this.last_loc.x, this.last_loc.y)
+
+      ctx.lineTo(this.visibility_graph.vertices[visible_vertices[i]].x * draw_factor, this.visibility_graph.vertices[visible_vertices[i]].y * draw_factor)
+    }
+    ctx.stroke()
+  }
+
+  ctx.restore()
+
+
+
+  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -825,6 +858,8 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause) {
     this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+
+    this.last_loc = {x: x-sidebarWidth, y: y}
   }
 
   if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {

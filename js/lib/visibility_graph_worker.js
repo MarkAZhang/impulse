@@ -2,15 +2,16 @@ self.onmessage = function(event) {
 
 
   var polygons = event.data.polygons
-  var obstacle_edges = event.data.obstacle_edges
+  var obstacle_edges = event.data.obstacle_edges // actual obstacle edges
   var draw_factor = event.data.draw_factor
   var levelWidth = event.data.levelWidth
   var levelHeight = event.data.levelHeight
-  var poly_edges = []
+  var poly_edges = [] // buffered obstacle edges (surround)
   var vertices = []
-  var edges = []
+  var edges = [] // visibility graph edges
   var edge_list = {}
   var shortest_paths = {}
+  var visible_vertices = {}
 
   for(var i = 0; i < polygons.length; i++)
   {
@@ -41,7 +42,7 @@ self.onmessage = function(event) {
     }
   }
 
-  postMessage({percentage: .33})
+  postMessage({percentage: .25})
 
   for(var i = 0; i < vertices.length; i++)
   {
@@ -74,7 +75,7 @@ self.onmessage = function(event) {
     }
   }
 
-  postMessage({percentage: .66})
+  postMessage({percentage: .50})
 
   for(var h = 0; h < vertices.length; h++)
   {
@@ -100,7 +101,57 @@ self.onmessage = function(event) {
        shortest_paths[i][h] = {path: path.slice(0).reverse(), dist: sum}
     }
   }
-  postMessage({poly_edges: poly_edges, vertices: vertices, edges: edges, edge_list: edge_list, shortest_paths: shortest_paths})
+  postMessage({percentage: .75})
+
+  var split_size = 50
+
+  var vertices_visible_cache = {}
+
+  for(var i = -150; i < levelWidth+150; i += split_size) {
+    for(var j = -150; j < levelHeight+150; j += split_size) {
+      var vertices_visible_from_square = []
+      var pts_to_check = [{x: i/draw_factor, y: j/draw_factor}, {x: i/draw_factor, y: (j+split_size)/draw_factor}, {x: (i+split_size)/draw_factor, y: j/draw_factor}, {x: (i+split_size)/draw_factor, y: (j+split_size)/draw_factor}]
+
+      for(var k = 0; k < pts_to_check.length; k++) {
+        var pts = getVerticesVisibleFromSquare(pts_to_check[k], vertices, obstacle_edges, vertices_visible_cache)
+        for(var n = 0; n < pts.length; n++) {
+          var not_present = true
+          for(var m = 0; m < vertices_visible_from_square.length; m++) {
+            if(vertices_visible_from_square[m] == pts[n]) {
+              not_present = false
+              break;
+            }
+          }
+          if(not_present) {
+            vertices_visible_from_square.push(pts[n])
+          }
+        }
+
+      }
+      visible_vertices[i+" "+j] = vertices_visible_from_square
+    }
+
+  }
+
+
+  postMessage({poly_edges: poly_edges, vertices: vertices, edges: edges, edge_list: edge_list, shortest_paths: shortest_paths, visible_vertices: visible_vertices})
+}
+
+function getVerticesVisibleFromSquare(pt, vertices, edges, cache) {
+  if(cache.hasOwnProperty(pt.x+" "+pt.y)) {
+    return cache[pt.x+" "+pt.y]
+  } else {
+    var vertices_visible_from_point = []
+
+    for(var k = 0; k < vertices.length; k++) {
+     if(isVisible(pt, vertices[k], edges))
+      {
+        vertices_visible_from_point.push(k)
+      }
+    }
+  }
+  cache[pt.x+" "+pt.y] = vertices_visible_from_point
+  return vertices_visible_from_point
 }
 
 function isVisible(v_i, v_j, edges)

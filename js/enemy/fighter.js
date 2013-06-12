@@ -12,8 +12,8 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-  this.shoot_interval = 2000
-  this.frenzy_shoot_interval = 1000
+  this.shoot_interval = 1500
+  this.frenzy_shoot_interval = 750
 
   this.shoot_duration = this.shoot_interval
 
@@ -25,7 +25,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.bullet_alternater = 0
 
-  this.fast_factor = 5
+  this.fast_factor = 4
 
   this.safe = true
 
@@ -51,6 +51,9 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.activated = false
 
   this.tank_force = 100 //force that the fighter impulses the player
+  this.cautious = false
+
+  this.additional_statuses = ["frenzy"]
 
 }
 
@@ -62,18 +65,31 @@ Fighter.prototype.get_bullet_locations = function(side) {
 
 }
 
+Fighter.prototype.get_additional_color_for_status = function(status) {
+}
+
+Fighter.prototype.get_additional_current_status = function() {
+  if(this.fighter_status == "frenzy") {
+    return "frenzy"
+  }
+  return "normal"
+}
+
+
 Fighter.prototype.additional_processing = function(dt) {
 
   if(this.fighter_status == "normal" && this.frenzy_charge == this.frenzy_charge_bars) {
     this.fighter_status = "frenzy"
     this.shoot_duration = this.frenzy_shoot_interval;
     this.color = "red";
+    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 5)
   }
 
   if(this.fighter_status == "frenzy" && this.frenzy_charge == 0) {
     this.fighter_status = "normal"
     this.shoot_duration = this.shoot_interval;
     this.color = impulse_enemy_stats[this.type].color;
+    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
   }
 
   if(this.shoot_duration <= 0 && this.status_duration[1] <= 0) {
@@ -101,7 +117,9 @@ Fighter.prototype.additional_processing = function(dt) {
       this.bullet_alternater += 1
     }
   }
-  this.shoot_duration -= dt
+  if(check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    this.shoot_duration -= dt
+  }
 
   if (this.fighter_status == "normal" && this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), draw_factor)) {
     this.frenzy_charge_timer -= dt
@@ -137,14 +155,14 @@ Fighter.prototype.additional_drawing = function(context) {
       }
     }
 
-    if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
+    /*if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,
        (this.effective_radius*draw_factor) * 1.8, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (1 - this.frenzy_charge_timer/this.frenzy_charge_interval), true)
       context.lineWidth = 2
       context.strokeStyle = "red"
       context.stroke()
-    }
+    }*/
     context.restore();
 
 
@@ -154,6 +172,18 @@ Fighter.prototype.additional_drawing = function(context) {
 
     draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
       impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+
+    context.save()
+    context.globalAlpha *= loaded_prop
+    if(this.shoot_duration > 0) {
+      context.beginPath()
+      context.arc(cur_bullet_loc.x*draw_factor, cur_bullet_loc.y*draw_factor,
+       (this.effective_radius*draw_factor) * 1, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * loaded_prop * 0.999)
+      context.lineWidth = 2
+      context.strokeStyle = this.color
+      context.stroke()
+    }
+    context.restore()
 
     if(this.fighter_status == "frenzy") {
       var alt_bullet_loc = this.get_bullet_locations(this.bullet_alternater + 1);
@@ -169,7 +199,7 @@ Fighter.prototype.additional_drawing = function(context) {
     context.beginPath()
     context.strokeStyle = this.color;
     context.lineWidth = 2
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI * 0.999)
     context.stroke()
   }
 
@@ -177,18 +207,6 @@ Fighter.prototype.additional_drawing = function(context) {
 
 
 Fighter.prototype.activated_processing = function(dt) {
-  if(this.activated)
-  {
-    if(this.detonate_timer <= 0 && !this.dying)
-    {
-      this.start_death(this.cause_of_death)
-      this.explode()
-    }
-    if(this.detonate_timer > 0)
-    {
-      this.detonate_timer -= dt
-    }
-  }
 
 }
 
@@ -201,14 +219,32 @@ Fighter.prototype.collide_with = function(other) {
   if(other === this.player) {
 
     if(this.status_duration[1] <= 0) {
-      this.activated = true
-      this.cause_of_death = "hit_player"
+      this.explode()
+      //this.cause_of_death = "hit_player"
       this.impulse_game_state.reset_combo()
     }
     else {
-      this.start_death("hit_player")
+      //this.start_death("hit_player")
     }
   }
+}
+
+Fighter.prototype.get_color_for_status = function(status) {
+  if(status == "normal") {
+    return this.color
+  } else if(status == "stunned") {
+    return 'gray';
+  } else if(status == "silenced") {
+    return 'gray'
+  } else if(status == "gooed") {
+    return "#e6c43c"
+  } else if(status == "frenzy") {
+    return "red"
+  } else if(status == "impulsed") {
+    return impulse_colors["impulse_blue"]
+  }
+
+  return this.get_additional_color_for_status(status)
 }
 
 Fighter.prototype.modify_movement_vector = function(dir) {

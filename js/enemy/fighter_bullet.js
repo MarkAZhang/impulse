@@ -71,17 +71,28 @@ FighterBullet.prototype.collide_with = function(other) {
         other.open(1500)
 
         var factor = 1;
-        if(other.id == this.parent_id) {
+
+        if(other.type == "fighter") {
+          if(this.reflected || other.id != this.parent_id)
+            factor = this.bullet_self_factor
+          else
+            factor = this.bullet_low_enemy_factor
+        } else {
+          factor = this.bullet_enemy_factor
+        }
+
+        /*if(other.id == this.parent_id) {
+          factor = this.bullet_self_factor;
+
+        } else if(this.reflected && other.type == "fighter") {
           factor = this.bullet_self_factor;
 
         } else if(this.reflected) {
-          factor = this.bullet_enemy_factor;
-
+          factor = this.bullet_enemy_factor
         } else {
           factor = this.bullet_low_enemy_factor;
-        }
+        }*/
         var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
-        console.log("THIS_FORCE"+force.x+" "+force.y+" "+factor)
 
         other.body.ApplyImpulse(force, other.body.GetWorldCenter())
       }

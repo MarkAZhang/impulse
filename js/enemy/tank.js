@@ -80,7 +80,7 @@ Tank.prototype.check_death = function()
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      if(this.status_duration[1] <= 0) {
+      if(this.status_duration[1] <= 0 && this.durations["open"] > 0) {
         this.activated = true
         this.cause_of_death = "kill"
       }
@@ -182,7 +182,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.beginPath()
     context.strokeStyle = this.color;
     context.lineWidth = 5
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI*0.999)
     context.stroke()
   }
 
@@ -193,7 +193,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.strokeStyle = this.color
     context.lineWidth = 2
     context.globalAlpha *= .5
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI, true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI * 0.999)
     context.stroke()
 
   }
