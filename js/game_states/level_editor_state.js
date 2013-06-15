@@ -132,6 +132,8 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
 
 LevelEditorState.prototype.rotate_world = function(angle, center_point) {
   var new_polygons = []
+  if(center_point === undefined)
+    center_point = {x: 400, y: 300}
 
   for(var i = 0; i < this.polygons.length; i++) {
     var new_polygon = []
@@ -160,6 +162,8 @@ LevelEditorState.prototype.duplicate_polygon = function(index, translation) {
 }
 
 LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point) {
+  if(center_point === undefined)
+    center_point = {x: 400, y: 300}
   var new_polygon = []
   for(var j = 0; j < this.polygons[index].length; j++) {
     var pt = this.polygons[index][j]
@@ -405,29 +409,37 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     this.print_polygon()
   }
 
-  if(keyCode == 37) {
-    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
-      this.polygons[this.selected_p][i].x -= 1
+  if(keyCode >= 37 && keyCode <= 40) {
+    var dx = 0;
+    var dy = 0;
+    if(keyCode == 37) dx = -1
+    if(keyCode == 38) dy = -1
+    if(keyCode == 39) dx = 1
+    if(keyCode == 40) dy = 1
+
+    if(this.selected_p != null) {
+      for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
+        this.polygons[this.selected_p][i].x += dx
+        this.polygons[this.selected_p][i].y += dy
+        return
+      }
     }
 
-  }
-  if(keyCode == 38) {
-    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
-      this.polygons[this.selected_p][i].y -= 1
+
+    if(this.selected_v != null) {
+      this.polygons[this.selected_v[0]][this.selected_v[1]].x += dx
+      this.polygons[this.selected_v[0]][this.selected_v[1]].y += dy
+      return
     }
 
-  }
-  if(keyCode == 39) {
-    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
-      this.polygons[this.selected_p][i].x += 1
+    if(this.selected_av != null) {
+      this.accumulated_vertices[this.selected_av].x += dx
+      this.accumulated_vertices[this.selected_av].y += dy
+      return
     }
+  }
 
-  }
-  if(keyCode == 40) {
-    for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
-      this.polygons[this.selected_p][i].y += 1
-    }
-  }
+
   if(keyCode == 187) {
     this.zoom *=1.25
   }

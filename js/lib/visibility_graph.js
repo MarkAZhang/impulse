@@ -175,7 +175,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
      var actual_point1_adj = []
     for(var i = 0; i < point1_adj.length; i++)
     {
-      if(isVisible(point1, this.vertices[point1_adj[i]], this.level.obstacle_edges)  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
+      if(isVisible(point1, this.vertices[point1_adj[i]], this.level.obstacle_edges))//  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
       {
         actual_point1_adj.push(point1_adj[i])
       }
@@ -187,7 +187,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     point1_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point1, this.vertices[i], this.level.obstacle_edges) && isVisible(point1, this.vertices[i], this.poly_edges) )
+      if(isVisible(point1, this.vertices[i], this.level.obstacle_edges))// && isVisible(point1, this.vertices[i], this.poly_edges) )
       {
         point1_adj.push(i)
       }
@@ -198,7 +198,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     var actual_point2_adj = []
     for(var i = 0; i < point2_adj.length; i++)
     {
-      if(isVisible(point2, this.vertices[point2_adj[i]], this.level.obstacle_edges)  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
+      if(isVisible(point2, this.vertices[point2_adj[i]], this.level.obstacle_edges))//  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
       {
         actual_point2_adj.push(point2_adj[i])
       }
@@ -210,14 +210,14 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     point2_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point2, this.vertices[i], this.level.obstacle_edges)   && isVisible(point2, this.vertices[i], this.poly_edges))
+      if(isVisible(point2, this.vertices[i], this.level.obstacle_edges))//   && isVisible(point2, this.vertices[i], this.poly_edges))
       {
         point2_adj.push(i)
       }
     }
   }
-  //console.log(point1_adj)
-  //console.log(point2_adj)
+
+
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)
@@ -255,7 +255,58 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     }
   }
 
+  var random_path_index = Math.floor(Math.random() * point1_adj.length * point2_adj.length)
+
+  var i = Math.floor(random_path_index / point2_adj.length)
+  var j = random_path_index % point2_adj.length
+
   if(!min_path) return {path: null, dist: null}//it's possible that player is inside an open-space that is surrouded by triangle edges.
+
+  if(p_dist(point1, this.vertices[min_path[0]] < 5)) {
+    i = point1_adj.indexOf(min_path[0])
+  }
+
+  var v_dist;
+  if(point1_adj.length * point2_adj.length != 0) {
+    if(point1_adj[i] == point2_adj[j])//same point
+    {
+      v_dist = 0
+    }
+    else
+    {
+      v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
+    }
+    if(v_dist != null) {
+      var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
+      + p_dist(this.vertices[point2_adj[j]], point2);
+      var orig_angle = _atan(point1, this.vertices[min_path[0]])
+      var new_angle = _atan(point1, this.vertices[point1_adj[i]])
+
+
+      if(dist < 1.2 * min_distance && small_angle_between(orig_angle, new_angle) < Math.PI*3/8)
+      {
+        min_distance = dist
+        if(point1_adj[i] == point2_adj[j])
+        {
+          min_path = [point1_adj[i]]
+          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+          //console.log("NEW MIN PATH with "+dist)
+          //console.log(min_path)
+        }
+        else
+        {
+          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+          min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
+          //console.log("NEW MIN PATH with "+dist)
+          //console.log(min_path)
+        }
+      }
+
+    }
+  }
+
+
+
     //thus, no visible vertices
     //this is only if the player "tunnels" (cheats)
   var ans = []

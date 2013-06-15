@@ -33,7 +33,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.spin_rate = 4000
 
-  this.require_open = false;
+  this.require_open = true;
   this.open_period = 500;
   this.additional_statuses = ["hot"]
 
@@ -100,9 +100,7 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
       this.activated = true
       this.cause_of_death = "kill"
     }
-    else {
-      this.start_death("kill")
-    }
+
   }
 
 
@@ -230,13 +228,14 @@ Tank.prototype.get_current_color_with_status = function(orig_color) {
         context.fillStyle = impulse_colors["impulse_blue"]
       } else */
     if(!this.dying) {
+      if(this.color_silenced) {
+        return 'gray'
+      }
       if(this.durations["impulsed"] > 0) {
         return "red"
       }
       if(this.status_duration[0] > 0) {
         return 'gray';
-      } else if(this.color_silenced) {
-        return 'gray'
       } else if(this.status_duration[2] > 0) {
         return "#e6c43c"
       }

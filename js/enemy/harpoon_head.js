@@ -17,9 +17,15 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
 }
 
 HarpoonHead.prototype.collide_with = function(other) {
-  if(!this.level.is_boss_level && other === this.player && this.harpoon.harpoon_state == "inactive") {
-    this.impulse_game_state.reset_combo()
+  if(other === this.player && this.harpoon.harpoon_state == "inactive") {
+    if(this.level.is_boss_level  && this.status_duration[1] <= 0)
+      this.impulse_game_state.reset_combo()
+    else if(this.harpoon.destroyable_timer > 0) {
+      this.harpoon.start_death("hit_player")
+    }
+
   }
+
   /*if(other === this.player){
     if(this.harpoon.harpoon_state == "inactive") {
       this.harpoon.start_death("hit_player")

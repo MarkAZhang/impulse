@@ -69,7 +69,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.draw_factor = impulse_game_state.draw_factor
   this.status = "normal"  //currently unused
-  this.status_duration = [0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse], time left for each status
+  this.status_duration = [0, 0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse, bulk], time left for each status
   this.attack_length = 500
   this.attack_duration = 0
   this.slow_factor = .3
@@ -78,6 +78,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying_duration = 0
   this.color = impulse_colors["player_color"]
   this.force = this.true_force
+  this.bulk_factor = 10
 
   this.lighten_factor = 2
 
@@ -194,6 +195,10 @@ Player.prototype.lighten = function(dur) {
   this.lighten_finish = 1/this.lighten_factor
 }
 
+Player.prototype.bulk = function(dur) {
+  this.status_duration[5] = Math.max(dur, this.status_duration[5])
+}
+
 Player.prototype.confuse= function(dur) {
   this.confuse_duration = dur;
   this.status_duration[4] = Math.max(dur, this.status_duration[4])
@@ -276,6 +281,32 @@ Player.prototype.process = function(dt) {
     this.status_duration[4] -= dt
   }
 
+  if(this.status_duration[5] > 0) {
+    this.status_duration[5] -= dt
+    var fixtures = this.body.GetFixtureList()
+    if (fixtures.length === undefined) {
+      fixtures = [fixtures]
+    }
+    for(var i = 0; i < fixtures.length; i++) {
+
+      fixtures[i].SetDensity(this.density*this.bulk_factor)
+    }
+    this.force = this.true_force * this.bulk_factor
+    this.body.ResetMassData()
+
+  } else {
+    var fixtures = this.body.GetFixtureList()
+    if (fixtures.length === undefined) {
+      fixtures = [fixtures]
+    }
+    for(var i = 0; i < fixtures.length; i++) {
+      fixtures[i].SetDensity(this.density)
+    }
+    this.force = this.true_force
+    this.body.ResetMassData()
+  }
+
+
   cur_time = (new Date()).getTime()
 
   if(player_data.options.control_scheme == "mouse") {
@@ -322,6 +353,9 @@ Player.prototype.process = function(dt) {
         }
         else if(this.idown != null) {
           this.attack_angle = Math.PI * 1/2
+        }
+        if (this.status_duration[4] > 0) {
+          this.attack_angle += Math.PI
         }
         this.attacking = true
         this.attack_loc = this.body.GetPosition().Copy()

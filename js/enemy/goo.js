@@ -75,6 +75,18 @@ Goo.prototype.additional_processing = function(dt) {
     }
   }
 
+  if(this.status_duration[1] <= 0) {
+    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+    this.force = impulse_enemy_stats[this.type].force
+  } else {
+    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 0.3)
+    this.force = impulse_enemy_stats[this.type].force * 0.3
+  }
+
+  this.check_area_of_effect()
+}
+
+Goo.prototype.check_area_of_effect = function() {
   if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
     this.area_effect(this.player)
   }
@@ -114,6 +126,10 @@ Goo.prototype.area_effect = function(obj) {
 }
 
 Goo.prototype.additional_drawing = function(context, draw_factor) {
+
+  if(this.status_duration[1] > 0) {
+    return
+  }
 
   if(!this.dying) {
 
@@ -156,7 +172,7 @@ Goo.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit
 Goo.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
-  if(this.goo_state != "small")
+  if(this.goo_state != "small" && this.status_duration[1] <= 0)
   {
     dir.Multiply(this.slow_factor)
   }

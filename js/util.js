@@ -10,7 +10,7 @@ function isVisible(v_i, v_j, edges)
     if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
       continue
     }
-    if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
+  if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
     {
       return false
     }
@@ -59,7 +59,7 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   }
   var t = crossProduct(a, seg2d)/b
   var s = crossProduct(a, seg1d)/b
-  return t>0 && t<1 && s>0 && s<1
+  return t>=0 && t<=1 && s>=0 && s<=1
 }
 
 function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
@@ -222,7 +222,7 @@ function getBoundaryPolygon(polygon, radius) {
       ans.push({x: polygon[i].x+j_to_i_normal.x*radius - j_to_i.x*1/Math.tan(cur_angle/2 - Math.PI/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius - j_to_i.y *1/Math.tan(cur_angle/2 - Math.PI/2)* radius})
 
     }
-    else if(cur_angle > 3*Math.PI/4)
+    else if(cur_angle > 5*Math.PI/6)
     {
       ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
       ans.push({x: polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, y: polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})
@@ -457,7 +457,7 @@ function angle_closest_to(this_angle, other_angle) {
 function small_angle_between(angle1, angle2) {
   var ans = angle1 - angle2;
 
-  var ans = ans % Math.PI * 2;
+  if(ans > Math.PI * 2) ans -= Math.PI * 2
   if(ans < 0) ans += Math.PI * 2;
 
   if(ans > Math.PI)

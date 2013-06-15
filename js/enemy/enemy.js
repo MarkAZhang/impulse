@@ -146,7 +146,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
-  this.pathfinding_delay = 15
+  this.pathfinding_delay = 40
   this.pathfinding_counter =  this.pathfinding_delay  //pathfinding_delay and yield are defined in enemy
 
   //how often enemy checks to see if it can move if yielding
@@ -353,6 +353,9 @@ Enemy.prototype.move = function() {
       if(new_path.path!=null) {
         this.path = new_path.path
         this.path_dist = new_path.dist
+      } else {
+        this.path = null
+        this.path_dist = null
       }
       this.pathfinding_counter = Math.floor(Math.random()*.25 * this.pathfinding_delay)
     }
@@ -497,7 +500,7 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
   if(this.durations["open"] > 0) {
-    if(other.type=="mote") {
+    if(other.type=="mote" || open.type == "troll") {
       var magnitude = this.body.m_linearVelocity
 
       other.body.ApplyImpulse(new b2Vec2(magnitude.x*0.4, magnitude.y*0.4), other.body.GetPosition())
@@ -728,15 +731,15 @@ Enemy.prototype.draw = function(context, draw_factor) {
 Enemy.prototype.get_current_status = function() {
 
   if(!this.dying) {
-      if(this.durations["impulsed"] > 0) {
-        return "impulsed"
-      }
       if(this.status_duration[0] > 0) {
         return 'stunned';
       } else if(this.color_silenced) {
         return 'silenced'
       } else if(this.status_duration[2] > 0) {
         return "gooed"
+      }
+      if(this.durations["impulsed"] > 0) {
+        return "impulsed"
       }
     }
 

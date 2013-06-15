@@ -482,7 +482,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
       ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
   /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
@@ -492,8 +492,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p1.y*this.draw_factor)
       ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p2.y*this.draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
+  /*ctx.save()
+  ctx.translate(sidebarWidth, 0)
   for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
@@ -506,6 +508,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
       ctx.fill()
   }
+  ctx.restore()*/
   /*ctx.globalAlpha = 0.5*/
 
 
@@ -537,7 +540,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.stroke()
   }
 
-  ctx.restore()
+  ctx.restore()*/
 
 
 
@@ -932,7 +935,7 @@ ImpulseGameState.prototype.addWalls = function() {
     bodyDef.type = b2Body.b2_staticBody;
     fixDef.shape = new b2PolygonShape;
     fixDef.shape.SetAsBox(wall_dim[i].x, wall_dim[i].y)
-    bodyDef.position.Set(wall_pos[i].x, wall_pos[i].y)
+  bodyDef.position.Set(wall_pos[i].x, wall_pos[i].y)
     this.world.CreateBody(bodyDef).CreateFixture(fixDef);
   }
 }
@@ -943,8 +946,12 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
   if(!first || !second) return
 
+
+
   first.owner.collide_with(second.owner, first.body, second.body)
   second.owner.collide_with(first.owner, second.body, first.body)
+
+  contact.SetEnabled(false)
 
 }
 

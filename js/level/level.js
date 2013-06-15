@@ -43,7 +43,7 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.fragments = []
   this.total_fragments = 0
-  this.max_fragments = 42
+  this.max_fragments = 20
 
   this.enemy_map = {
     "stunner": Stunner,
@@ -247,7 +247,7 @@ Level.prototype.process = function(dt) {
       this.fragments[i].process(dt);
       if(this.fragments[i].isDone()) {
         this.fragments.splice(i, 1);
-        this.total_fragments -= 6;
+        this.total_fragments -= 4;
       }
     }
 
@@ -353,12 +353,11 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-  if(!player_data.options.explosions) return
-
-  if(this.total_fragments < this.max_fragments || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
+if(enemy_type == "player" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
+  || (this.total_fragments < this.max_fragments && player_data.options.explosions)) {
     this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
-    this.total_fragments += 6;
-  }
+    this.total_fragments += 4;
+}
 
 }
 

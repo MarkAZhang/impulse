@@ -23,14 +23,14 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = impulse_enemy_stats[enemy_type].color
     this.original_v_damping = 0.5
-    this.num_fragments = 20
+    this.num_fragments = 10
     this.burst = 5
   } else if(enemy_type=="player") {
     this.shape =
       {type: "circle", x: 0, y: 0, r: Player.prototype.radius}
     this.color = impulse_colors["player_color"]
     this.original_v_damping = 0.5
-    this.num_fragments = 10
+    this.num_fragments = 6
     this.burst = 1
 
   } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
@@ -53,7 +53,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
       this.color = "red"
     }
     this.original_v_damping = 0.3
-    this.num_fragments = 3
+    this.num_fragments = 2
     this.burst = 1
   }
 

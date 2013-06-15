@@ -31,6 +31,8 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.orbiter_force = 30;
   this.twitch = true
 
+  this.orbiter_checks = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
+
 }
 
 Orbiter.prototype.player_hit_proc = function() {
@@ -72,7 +74,7 @@ Orbiter.prototype.get_target_path = function() {
   if(!this.attack_mode) {
     var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
     var divisions = 64;
-    var offsets = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
+    var offsets = this.orbiter_checks
     var offset = 0;
 
     if(this.twitch)
@@ -106,9 +108,11 @@ Orbiter.prototype.get_target_path = function() {
         if(!this_path.path) {
           is_valid = false;
           console.log("NO PATH")
+          break
         } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.player.impulse_radius * 1.1)) {
           is_valid = false
           console.log("PATH NOT SAFE")
+          break
         }
       }
 

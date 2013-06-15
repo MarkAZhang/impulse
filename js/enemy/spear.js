@@ -23,7 +23,7 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.entered_arena_timer = 1000
   this.last_stun = this.entered_arena_delay
 
-  this.require_open = false
+  this.require_open = true
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
@@ -86,17 +86,19 @@ Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, h
 
 Spear.prototype.stun = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.silence(dur)
 }
 
-Spear.prototype.silence = function(dur) {
+Spear.prototype.silence = function(dur, color_silence) {
+  if(color_silence)
+    this.color_silenced = color_silence
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stu = this.status_duration[1]
+  this.last_stun = this.status_duration[1]
 }
 
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.status_duration[1] > 0 && !this.dying && (!this.status_duration[0] > 0)) {
+  if(this.status_duration[1] > 0 && !this.color_silenced && !this.dying && (!this.status_duration[0] > 0)) {
     context.beginPath()
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
@@ -107,7 +109,7 @@ Spear.prototype.additional_drawing = function(context, draw_factor) {
 }
 
 
-Enemy.prototype.collide_with = function(other) {
+Spear.prototype.collide_with = function(other) {
 //function for colliding with the player
 
   if(this.dying)//ensures the collision effect only activates once
@@ -123,7 +125,7 @@ Enemy.prototype.collide_with = function(other) {
   if(other === this.player) {
 
     this.start_death("hit_player")
-    if(this.status_duration[0] <= 0)
+    if(this.status_duration[1] <= 0)
       this.player_hit_proc()
     if(!this.level.is_boss_level) {
       this.impulse_game_state.reset_combo()

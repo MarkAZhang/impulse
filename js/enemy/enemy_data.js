@@ -1,7 +1,7 @@
 impulse_enemy_stats = {}
 
 impulse_enemy_stats["stunner"] = {
-  color: "#999",
+  color: "00ffff",///"#999",
   density: 2,
   lin_damp: 3,
   effective_radius: .5,
@@ -142,7 +142,7 @@ impulse_enemy_stats["goo"] = {
 
 impulse_enemy_stats["disabler"] = {
   color: "#ccc",
-  interior_color: "rgb(205, 201, 201)",
+  //interior_color: "rgb(205, 201, 201)",
   density: 8,
   lin_damp: 9,
   effective_radius: .5,
@@ -157,13 +157,20 @@ impulse_enemy_stats["disabler"] = {
   [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
   [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}
     ],
-  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 2}],
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1}],
   /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
   dies_on_impact: "YES",
+  enemy_info: [
+    "All units within its area of effect (AOE) lose all special powers. # Specifically, you cannot Impulse.",
+    "All enemies within its AOE die upon collision, even those that do not normally.",
+    "Colliding with an enemy within its AOE (excluding the disabler itself) does not reset the multiplier. # However, you do not score points.",
+    "Dies upon collision. # Units immediately regain special powers.",
+    "When Impulsed, dramatically expands its area of influence for 3 seconds"
+  ],
   special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
   className: Disabler
@@ -188,29 +195,35 @@ impulse_enemy_stats["disabler"] = {
 
 impulse_enemy_stats["troll"] = {
   color: "#159d31",
-  density: .2,
+  density: .3,
   lin_damp: 3,
   effective_radius: 1,
-  force: 0.2,
-  score_value: 2000,
+  force: 0.05,
+  score_value: 5000,
   attack_rating: 2,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[0, 0],
   [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)],
   [Math.sqrt(52)/8 * Math.cos(-0.408), Math.sqrt(52)/8 * Math.sin(-0.408)],
   [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)]]},
-  {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[0, 0],
   [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)],
   [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*2/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*2/3)],
   [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)]]},
-    {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[0, 0],
   [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)],
   [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3)],
   [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)]]},
 
   ],
+  enemy_info: [
+    "If Impulsed while spinning, reverses your movement and Impulse controls for 1 second",
+    "All trolls become inactive at regular intervals. Inactive trolls will not reverse you and fly farther when Impulsed.",
+    "Upon collision, reverses you for 5 seconds",
+  ],
+  //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
   dies_on_impact: "YES",
   special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
   other_notes: "The troll alternates between active and inactive every second.",
@@ -263,10 +276,10 @@ impulse_enemy_stats["wispdire"] = {
 
 impulse_enemy_stats["fighter"] = {
   color: "#0000ec",
-  density: 4,
-  lin_damp: 3,
+  density: 1.5,
+  lin_damp: 6,
   effective_radius: 1,
-  force: 3,
+  force: 2,
   score_value: 5000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -285,9 +298,13 @@ impulse_enemy_stats["fighter"] = {
   ],
 
   enemy_info: [
-    "All units within its area of influence are slowed",
-    "Dies upon collision. # Units immediately regain speed.",
-    "When Impulsed, dramatically expands its area of influence for 2 seconds",
+    "Launches deadly bullets that blow away anything they hit. # The bullets can be reflected with Impulse and can hit the Fighter that fired it.",
+    "Very resistant to Impulse",
+    "If the player is not within line of sight of the bullet, the fighter will not fire the bullet.",
+    "Every two seconds, charges up a Frenzy bar. When the Fighter has five Frenzy bars, it will activate Frenzy mode.",
+    "During Frenzy mode, the Fighter moves faster and fires more rapidly. # Additionally, the bullets move faster and cannot be Impulsed.",
+    "While in Frenzy mode, loses a Frenzy bar whenever it fires. # When the Frenzy bars are depleted, the Fighter exits Frenzy mode.",
+    "Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
 
@@ -319,10 +336,10 @@ impulse_enemy_stats["fighterdire"] = {
 
 impulse_enemy_stats["fighter_bullet"] = {
   color: "#0000ec",
-  density: 5,
+  density: 1,
   lin_damp: 3,
   effective_radius: .3,
-  force: 2,
+  force: 0.4,
   score_value: 0,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -351,10 +368,10 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 
 impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 5,
+  density: 4,
   lin_damp: 6,
   effective_radius: .7,
-  force: 3.5,
+  force: 2.8,
   score_value: 3000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
@@ -494,7 +511,7 @@ impulse_enemy_stats["orbiter"] = {
 }
 
 impulse_enemy_stats["deathray"] = {
-  color: "#169f95",
+  color: "#111",//"#169f95",
   density: 1.5,
   lin_damp: 6,
   effective_radius: 1.5,

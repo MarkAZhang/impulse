@@ -25,7 +25,7 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
   this.goo_change_transition = 500
 
-  this.goo_expand_period = 4000
+  this.goo_expand_period = 3000
 
   this.goo_state = "small"
 
@@ -39,8 +39,32 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
 }
 
+Disabler.prototype.check_area_of_effect = function() {
+  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
+    this.area_effect(this.player)
+  }
+
+  for(var j = 0; j < this.level.enemies.length; j++) {
+    if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
+    {
+      if(this.level.enemies[j].className != this.className)
+        this.area_effect(this.level.enemies[j])
+    } else if(this.level.enemies[j].type == "harpoon" &&
+      (p_dist(this.level.enemies[j].harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.goo_radius ||
+        (this.level.enemies[j].harpoon_state == "engaged" && p_dist(this.level.enemies[j].harpooned_target.body.GetPosition(), this.body.GetPosition()) < this.goo_radius))) {
+      this.area_effect(this.level.enemies[j])
+    }
+  }
+}
+
 Disabler.prototype.area_effect = function(obj) {
-  obj.silence(100, true)
+  obj.silence(100, true, true)
+  if(obj.type == "harpoonhead") {
+    obj.harpoon.silence(100, true)
+  }
+  if(obj === this.player) {
+    obj.bulk(100)
+  }
 }
 
 Disabler.prototype.collide_with = function(other) {

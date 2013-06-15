@@ -52,6 +52,9 @@ self.onmessage = function(event) {
 
       var v_i = vertices[i]
       var v_j = vertices[j]
+      if(v_i.x *draw_factor == 400 && v_i.y *draw_factor== 350) {
+        console.log("HERE")
+      }
       if(v_i.p_n!=v_j.p_n || (v_i.p_n==v_j.p_n && (Math.max(v_i.p_i, v_j.p_i) - Math.min(v_i.p_i, v_j.p_i) == 1 || Math.min(v_i.p_i, v_j.p_i) == 0 && Math.max(v_i.p_i, v_j.p_i) == v_i.p_v - 1)))//if adjacent edges of same polygon, add. else, if different polygons and visible, add
       {
         if(isVisible(v_i, v_j, poly_edges) && isVisible(v_i, v_j, obstacle_edges))
@@ -215,7 +218,7 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   }
   var t = crossProduct(a, seg2d)/b
   var s = crossProduct(a, seg1d)/b
-  return t>0 && t<1 && s>0 && s<1
+  return t>=0 && t<=1 && s>=0 && s<=1
 }
 
 var eq = function(a, b) {

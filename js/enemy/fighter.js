@@ -35,7 +35,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.frenzy_charge = 0
 
-  this.frenzy_charge_interval = 2000
+  this.frenzy_charge_interval = 2500
 
   this.frenzy_charge_timer = this.frenzy_charge_interval;
 
@@ -90,6 +90,10 @@ Fighter.prototype.additional_processing = function(dt) {
     this.shoot_duration = this.shoot_interval;
     this.color = impulse_enemy_stats[this.type].color;
     this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+  }
+
+  if(this.destroyable_timer > 0) {
+    this.destroyable_timer -= dt
   }
 
   if(this.shoot_duration <= 0 && this.status_duration[1] <= 0) {
@@ -154,6 +158,21 @@ Fighter.prototype.additional_drawing = function(context) {
         context.stroke()
       }
     }
+
+
+
+    if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
+      i = this.frenzy_charge
+      var prop = Math.min(1 - this.frenzy_charge_timer/this.frenzy_charge_interval,1)
+      context.beginPath()
+      context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
+        this.effective_radius * 2 * draw_factor,
+        Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24 + (2 * Math.PI/this.frenzy_charge_bars - Math.PI/12) * prop, Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
+      context.lineWidth = 5
+      context.strokeStyle = "red"
+      context.stroke()
+    }
+
 
     /*if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
       context.beginPath()
@@ -223,10 +242,26 @@ Fighter.prototype.collide_with = function(other) {
       //this.cause_of_death = "hit_player"
       this.impulse_game_state.reset_combo()
     }
-    else {
-      //this.start_death("hit_player")
+    else if(this.destroyable_timer > 0) {
+      this.start_death("hit_player")
+
     }
   }
+}
+
+
+Fighter.prototype.silence = function(dur, color_silence, destroyable) {
+  if(color_silence) {
+    this.color_silenced = true
+  }
+  if(destroyable) {
+    this.destroyable_timer = dur
+  }
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.last_stun = this.status_duration[1]
+  this.shoot_duration = this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval // reset shoot duration
+  this.frenzy_charge_timer = this.frenzy_charge_interval
+
 }
 
 Fighter.prototype.get_color_for_status = function(status) {
@@ -262,7 +297,7 @@ Fighter.prototype.modify_movement_vector = function(dir) {
     dir.Multiply(this.slow_force)
   }
   else {
-    if(this.fighter_status == "frenzy") {
+    if(this.fighter_status == "frenzy" && this.status_duration[1] <= 0) {
       dir.Multiply(this.fast_factor)
     }
 
