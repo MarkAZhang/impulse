@@ -19,7 +19,7 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
 
   this.do_yield = false
   this.bullet_force = 100
-  this.bullet_self_factor = 3;
+  this.bullet_self_factor = 8;
 
   this.bullet_enemy_factor = 1.5;
   this.bullet_low_enemy_factor= 0.3;

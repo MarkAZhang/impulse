@@ -123,8 +123,10 @@ Orbiter.prototype.get_target_path = function() {
     }
 
 
-
-    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
+    if(!this.impulse_game_state.is_boss_level)
+      return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
+    else
+      return {path: null, dist: null}
   } else {
     return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)
   }

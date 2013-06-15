@@ -929,8 +929,8 @@ ImpulseGameState.prototype.addWalls = function() {
 
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
-    fixDef.filter.categoryBits = 0x0001
-    fixDef.filter.maskBits = 0x0002
+    fixDef.filter.categoryBits = imp_vars.WALL_BIT
+    fixDef.filter.maskBits = imp_vars.PLAYER_BIT
     var bodyDef = new b2BodyDef;
     bodyDef.type = b2Body.b2_staticBody;
     fixDef.shape = new b2PolygonShape;

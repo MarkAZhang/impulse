@@ -195,10 +195,10 @@ impulse_enemy_stats["disabler"] = {
 
 impulse_enemy_stats["troll"] = {
   color: "#159d31",
-  density: .3,
+  density: 1,
   lin_damp: 3,
   effective_radius: 1,
-  force: 0.05,
+  force: 0.2,
   score_value: 5000,
   attack_rating: 2,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -276,10 +276,10 @@ impulse_enemy_stats["wispdire"] = {
 
 impulse_enemy_stats["fighter"] = {
   color: "#0000ec",
-  density: 1.5,
+  density: 3.5,
   lin_damp: 6,
   effective_radius: 1,
-  force: 2,
+  force: 4,
   score_value: 5000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -563,8 +563,8 @@ impulse_enemy_stats["first boss"] = {
   score_value: [1000000, 5000000, 15000000],
   attack_rating: 10,
   is_boss: true,
-  categoryBits: 0x0100,
-  maskBits: 0x0012,
+  categoryBits: imp_vars.BOSS_ONE_BIT,
+  maskBits: imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -655,7 +655,7 @@ impulse_enemy_stats["fixed_harpoon"] = {
 }
 
 impulse_enemy_stats["third boss"] = {
-  color: "rgb(0, 0, 205)",//"rgb(244, 164, 96)",
+  color: "#8C4299",//"rgb(244, 164, 96)",
   density: 1.6,
   lin_damp: 3,
   effective_radius: 3,
@@ -663,15 +663,31 @@ impulse_enemy_stats["third boss"] = {
   attack_rating: 10,
   score_value: [1000000, 5000000, 15000000],
   is_boss: true,
+  categoryBits: imp_vars.BOSS_THREE_BIT,
+  maskBits: imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)],
+  [Math.cos(Math.PI * 2/8), Math.sin(Math.PI * 2/8)],
+  [Math.cos(Math.PI * 3/8), Math.sin(Math.PI * 3/8)],
+  [Math.cos(Math.PI * 4/8), Math.sin(Math.PI * 4/8)],
+  [Math.cos(Math.PI * 5/8), Math.sin(Math.PI * 5/8)],
+  [Math.cos(Math.PI * 6/8), Math.sin(Math.PI * 6/8)],
+  [Math.cos(Math.PI * 7/8), Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 8/8), Math.sin(Math.PI * 8/8)],
+  [Math.cos(Math.PI * 9/8), Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 10/8), Math.sin(Math.PI * 10/8)],
+  [Math.cos(Math.PI * 11/8), Math.sin(Math.PI * 11/8)],
+  [Math.cos(Math.PI * 12/8), Math.sin(Math.PI * 12/8)],
+  [Math.cos(Math.PI * 13/8), Math.sin(Math.PI * 13/8)],
+  [Math.cos(Math.PI * 14/8), Math.sin(Math.PI * 14/8)],
+  [Math.cos(Math.PI * 15/8), Math.sin(Math.PI * 15/8)]
+  ]}],
+  arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+    [[0, 0],
+  [Math.cos(Math.PI * 0/8), Math.sin(Math.PI * 0/8)],
+  [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)]]}
+  ],
   dies_on_impact: "NO",
   special_ability: "Has six turrets which fire bullets. Can cast a global silence and enter berserk mode, during which its attack speed is doubled.",
   other_notes: "Turrets which enter an obstacle cannot attack. Bullets can be reflected by Impulse to hit other enemies, including the boss.",

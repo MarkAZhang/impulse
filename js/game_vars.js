@@ -32,7 +32,14 @@ var imp_vars = {
   },
   keys: {
 
-  }
+  },
+
+  WALL_BIT: 0x0001,
+  PLAYER_BIT: 0x0002,
+  ENEMY_BIT: 0x0004,
+  BOSS_ONE_BIT: 0x0008,
+  BOSS_THREE_BIT: 0x0010,
+  BOSS_BITS: 0x0018
 }
 
 for(var multisounds in imp_vars.multisounds) {

@@ -72,8 +72,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.density = this.density;
     fixDef.friction = 0;
     fixDef.restitution = 1.0;
-    fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : 0x0011
-    fixDef.filter.maskBits = this.maskBits ? this.maskBits : 0x0112
+    fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : imp_vars.ENEMY_BIT
+    fixDef.filter.maskBits = this.maskBits ? this.maskBits : imp_vars.ENEMY_BIT | imp_vars.PLAYER_BIT | imp_vars.BOSS_BITS
     fixDef.shape = this_shape
     this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
     this.shapes.push(this_shape)
@@ -500,7 +500,7 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
   if(this.durations["open"] > 0) {
-    if(other.type=="mote" || open.type == "troll") {
+    if(other.type=="mote" || other.type == "troll") {
       var magnitude = this.body.m_linearVelocity
 
       other.body.ApplyImpulse(new b2Vec2(magnitude.x*0.4, magnitude.y*0.4), other.body.GetPosition())

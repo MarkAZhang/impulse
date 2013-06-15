@@ -470,9 +470,12 @@ function bezier_interpolate(mid1, mid2, t) {
  return (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*mid1+ 3*(1-t)*Math.pow(t,2)*mid2+ Math.pow(t,3)*1);
 }
 
-function create_body(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, owner, self) {
+function create_body(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, type, owner, self) {
   var bodyDef = new b2BodyDef;
-  bodyDef.type = b2Body.b2_dynamicBody;
+  if(type == "static") {
+    bodyDef.type = b2Body.b2_staticBody
+  } else
+    bodyDef.type = b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = lin_damp;

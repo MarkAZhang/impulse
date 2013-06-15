@@ -405,13 +405,13 @@ BossOne.prototype.set_timer = function(side, time) {
 }
 
 BossOne.prototype.create_lower_arm_piece = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
+  return create_body(this.world, impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.01, imp_vars.BOSS_ONE_BIT, imp_vars.ENEMY_BIT | imp_vars.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_upper_arm_piece = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
+  return create_body(this.world, impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.01, imp_vars.BOSS_ONE_BIT, imp_vars.ENEMY_BIT | imp_vars.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_hand = function(x, y) {
-  return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.01, 0x0100, 0x0012, this, null)
+  return create_body(this.world, impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.01, imp_vars.BOSS_ONE_BIT, imp_vars.ENEMY_BIT | imp_vars.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
 
