@@ -407,7 +407,7 @@ Player.prototype.process = function(dt) {
             if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
             {
 
-              if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
+              if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
               {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                 this.enemies_hit.push(this.level.enemies[i].id)
@@ -431,7 +431,7 @@ Player.prototype.process = function(dt) {
             if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
             {
 
-              if (this.point_in_impulse_dist(impulse_sensitive_points[j]))
+              if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
               {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                 this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
@@ -484,13 +484,15 @@ Player.prototype.point_in_impulse_angle = function(pt) {
   return struck
 }
 
-Player.prototype.point_in_impulse_dist = function(pt) {
+Player.prototype.point_in_impulse_dist = function(pt, fast) {
   var lighten_factor = this.get_lighten_factor()
   var dist = this.attack_loc.Copy()
   dist.Subtract(pt)
   dist = dist.Normalize()
+  var speedy_factor = fast ? this.impulse_width * 4: this.impulse_width * 2
 
-  return dist >= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) - this.impulse_width * 2) && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + this.impulse_width * 2)
+  return dist >= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) - speedy_factor)
+   && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + speedy_factor)
 }
 
 Player.prototype.draw = function(context) {

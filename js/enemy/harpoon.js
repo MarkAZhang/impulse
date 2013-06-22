@@ -373,7 +373,7 @@ Harpoon.prototype.additional_processing = function(dt) {
 
 
   if(this.check_harpoon_timer <= 0) {
-    if(this.no_sight() || this.dire_harpoon) {
+    if(this.no_sight() || this.impulse_game_state.is_boss_level) {
       this.harpoonable = true
       if(this.can_harpoon() ) {
         this.harpoon_state = "fire"

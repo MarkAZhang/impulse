@@ -499,15 +499,29 @@ Enemy.prototype.collide_with = function(other) {
 
   if(this.dying)//ensures the collision effect only activates once
     return
+
+  var transfer_factor = 0.2
   if(this.durations["open"] > 0) {
     if(other.type=="mote" || other.type == "troll") {
       var magnitude = this.body.m_linearVelocity
-
-      other.body.ApplyImpulse(new b2Vec2(magnitude.x*0.4, magnitude.y*0.4), other.body.GetPosition())
+      var ratio = this.body.GetMass()/other.body.GetMass()
+      other.body.ApplyImpulse(new b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+    } else if(this.body.GetLinearVelocity().Length() > 20 && other !== this.player) {
+      var magnitude = this.body.GetLinearVelocity()
+      var ratio = this.body.GetMass()/other.body.GetMass()
+      other.body.ApplyImpulse(new b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
     }
   }
 
   if(other === this.player) {
+    if(this.body.GetLinearVelocity().Length() > 20) {
+      var magnitude = this.body.GetLinearVelocity()
+      var ratio = this.body.GetMass()/other.body.GetMass()
+      other.body.ApplyImpulse(new b2Vec2(magnitude.x*ratio, magnitude.y*ratio), other.body.GetPosition())
+      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+    }
 
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {//do not proc if silenced

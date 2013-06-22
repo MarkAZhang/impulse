@@ -96,12 +96,14 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 }
 
 
-function draw_enemy(context, enemy_name, x, y, d) {
+function draw_enemy(context, enemy_name, x, y, d, rotate) {
 
   context.save()
-  /*context.translate(x, y);
-  context.rotate(Math.PI);
-  context.translate(-x, -y);*/
+  if(rotate) {
+    context.translate(x, y);
+    context.rotate(rotate);
+    context.translate(-x, -y);
+  }
 
 
   var draw_scale = Math.min(1/impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
@@ -155,8 +157,17 @@ var tessellation_logo_factor = {
     "3": 1
 }
 
-function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor) {
+function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor, rotate) {
+
+
+
   if(tessellation == 0 || tessellation >= 3) {
+    context.save()
+    if(rotate) {
+      context.translate(x, y)
+      context.rotate(rotate)
+      context.translate(-x, -y)
+    }
     context.beginPath()
     context.lineWidth = 2
     context.rect(x-size/2, y-size/2, size, size)
@@ -164,6 +175,7 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor)
     context.strokeStyle = impulse_colors["world "+tessellation+" dark"]
 
     context.stroke()
+    context.restore()
     return
   }
 

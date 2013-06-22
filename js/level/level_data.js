@@ -100,7 +100,7 @@ impulse_level_data['HOW TO PLAY 5'] = impulse_level_data['HOW TO PLAY 3']
 
 impulse_level_data['HIVE 1-1'] = {
   enemies: {
-              stunner: [3, 3, 2, 4, 1]//50]
+              stunner: [3, 3, 2, 4, 50]
            },
   initial_spawn_data: {
     stunner: 4
@@ -735,7 +735,7 @@ impulse_level_data['BOSS 3'] = {
   //obstacle_v: [[[0,0],[352,0],[352,21],[23,21],[23,254],[0,254]],[[0,346],[23,346],[23,579],[352,579],[352,600],[0,600]],[[800,254],[777,254],[777,21],[448,21],[448,0],[800,0]],[[800,600],[448,600],[448,579],[777,579],[777,346],[800,346]]],
   spawn_points: [[-100, 300], [900, 300], [400, -100], [400, 700]],
   buffer_radius: 1,
-  player_loc: {x: 400, y: 400}
+  player_loc: {x: 400, y: 500}
 
 }
 

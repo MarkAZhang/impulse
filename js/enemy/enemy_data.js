@@ -87,10 +87,10 @@ impulse_enemy_stats["tank"] = {
 
 impulse_enemy_stats["mote"] = {
   color: "#ee42ae",
-  density: .5,
+  density: .2,
   lin_damp: 3,
   effective_radius: .5,
-  force: .15,
+  force: .06,
   score_value: 1000,
   attack_rating: .5,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -656,16 +656,16 @@ impulse_enemy_stats["fixed_harpoon"] = {
 
 impulse_enemy_stats["third boss"] = {
   color: "#8C4299",//"rgb(244, 164, 96)",
-  density: 1.6,
-  lin_damp: 3,
-  effective_radius: 3,
+  density: 1.5,
+  lin_damp: 8,
+  effective_radius: 4.5,
   force: 0,
   attack_rating: 10,
   score_value: [1000000, 5000000, 15000000],
   is_boss: true,
   categoryBits: imp_vars.BOSS_THREE_BIT,
   maskBits: imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 4.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)],
   [Math.cos(Math.PI * 2/8), Math.sin(Math.PI * 2/8)],
@@ -683,7 +683,7 @@ impulse_enemy_stats["third boss"] = {
   [Math.cos(Math.PI * 14/8), Math.sin(Math.PI * 14/8)],
   [Math.cos(Math.PI * 15/8), Math.sin(Math.PI * 15/8)]
   ]}],
-  arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+  arm_polygon: [{type: "polygon", x: 0, y: 0, r: 4.5, vertices:
     [[0, 0],
   [Math.cos(Math.PI * 0/8), Math.sin(Math.PI * 0/8)],
   [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)]]}
