@@ -13,11 +13,6 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
-  this.type = "disabler"
-  this.init(world, x, y, id, impulse_game_state)
-
-  this.death_radius = 2
-
   this.goo_radius_small = 3;
   this.goo_radius_big = 9;
 

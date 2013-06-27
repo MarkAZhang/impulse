@@ -38,6 +38,24 @@ function pointInPolygon(polygon, point)
   return ans
 }
 
+function closestPolygonEdgeToPoint(polygon, point) {
+  var j = polygon.length - 1
+  var ans = {p1: null, p2: null, dist: null}
+
+  for(var i = 0; i < polygon.length; i++)
+  {
+
+    var dist = seg_dist_from_pt(polygon[i], polygon[j], point)
+    if(ans.dist == null || dist < ans.dist) {
+      ans.p1 = polygon[j]
+      ans.p2 = polygon[i]
+      ans.dist = dist
+    }
+    j = i
+  }
+  return ans
+}
+
 function p_dist(p1, p2)
 {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))

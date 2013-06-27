@@ -154,14 +154,14 @@ function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
 var tessellation_logo_factor = {
     "1": 1,
     "2": 1.4,
-    "3": 1
+    "3": 1.4
 }
 
 function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor, rotate) {
 
 
 
-  if(tessellation == 0 || tessellation >= 3) {
+  if(tessellation == 0 || tessellation >= 4) {
     context.save()
     if(rotate) {
       context.translate(x, y)
@@ -661,22 +661,40 @@ spriteSheetData = {
   "consumendi_long_arrow": [64, 210, 50, 80],
   "consumendi_small_arrow_filled": [120, 180, 50, 32],
   "consumendi_glow": [720, 0, 135, 135],
+
+  "negligentia_head": [0, 0, 180, 180],
+  "negligentia_head_red": [0, 180, 180, 180],
+  "negligentia_arm_striking": [180, 0, 244, 100],
+  "negligentia_arm_striking_red": [180, 100, 244, 100],
+  "negligentia_wheel": [424, 0, 134, 134],
+  "negligentia_wheel_red": [424, 270, 134, 134],
+  "negligentia_wheel_complete": [423, 135, 135, 135],
+  "negligentia_glow": [559, 0, 135, 135],
+  "negligentia_glow_red": [559, 135, 135, 135],
+  "negligentia_aura": [559, 270, 39, 65],
+  "negligentia_aura_open": [598, 270, 39, 65],
+  "negligentia_arm_ring": [180, 200, 180, 180],
+  "negligentia_logo": [656, 261, 144, 144]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")
 var consumendiSprite = loadSprite("art/consumendi_sprite.png")
+var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
 
 var tessellation_glow_map = {
   "1": "immunitas_glow",
-  "2": "consumendi_glow"
+  "2": "consumendi_glow",
+  "3": "negligentia_glow"
 }
 var tessellation_logo_map = {
   "1": "immunitas_arm",
-  "2": "consumendi_mini"
+  "2": "consumendi_mini",
+  "3": "negligentia_logo"
 }
 var tessellation_sprite_map = {
   "1": immunitasSprite,
-  "2": consumendiSprite
+  "2": consumendiSprite,
+  "3": negligentiaSprite
 }
 
 var impulse_bg_images = {}

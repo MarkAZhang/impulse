@@ -79,8 +79,9 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.color = impulse_colors["player_color"]
   this.force = this.true_force
   this.bulk_factor = 10
+  this.bulked = false
 
-  this.lighten_factor = 2
+  this.lighten_factor = 1.5
 
   this.last_mouse_down = 0
   this.mouse_pressed = false
@@ -242,8 +243,11 @@ Player.prototype.process = function(dt) {
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
     this.body.SetLinearDamping(this.lin_damp * 3)
+    this.gooed = true
+  } else if(this.gooed){
+    this.body.SetLinearDamping(this.lin_damp)
   }
-  else if (this.status_duration[3] > 0){
+  if (this.status_duration[3] > 0){
     this.status_duration[3] -= dt
     if(!this.is_lightened) {
       this.is_lightened = true
@@ -272,9 +276,9 @@ Player.prototype.process = function(dt) {
       }
       this.body.ResetMassData()
       this.force = this.true_force
+      this.body.SetLinearDamping(this.lin_damp)
 
     }
-    this.body.SetLinearDamping(this.lin_damp)
   }
 
   if(this.status_duration[4] > 0) {
@@ -293,8 +297,8 @@ Player.prototype.process = function(dt) {
     }
     this.force = this.true_force * this.bulk_factor
     this.body.ResetMassData()
-
-  } else {
+    this.bulked = true
+  } else if(this.bulked){
     var fixtures = this.body.GetFixtureList()
     if (fixtures.length === undefined) {
       fixtures = [fixtures]

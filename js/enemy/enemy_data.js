@@ -368,10 +368,10 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 
 impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 4,
+  density: 6,
   lin_damp: 6,
   effective_radius: .7,
-  force: 2.8,
+  force: 4.2,
   score_value: 3000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
@@ -655,7 +655,7 @@ impulse_enemy_stats["fixed_harpoon"] = {
 }
 
 impulse_enemy_stats["third boss"] = {
-  color: "#8C4299",//"rgb(244, 164, 96)",
+  color: "#a260a6",//"rgb(244, 164, 96)",
   density: 1.5,
   lin_damp: 8,
   effective_radius: 4.5,

@@ -37,18 +37,18 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.open_period = 500;
   this.additional_statuses = ["hot"]
 
-
+  this.has_bulk_draw = true
 }
 
 Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = this.status_duration[1] <= 0
   this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
-  if(this.durations["open"] > 0) {
+  /*if(this.durations["open"] > 0) {
     this.color = "red";
   } else {
     this.color = impulse_enemy_stats[this.type].color;
-  }
+  }*/
 }
 
 Tank.prototype.additional_death_prep = function(death) {
@@ -166,29 +166,22 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
   context.save();
   context.globalAlpha *= 1 - prog
   var this_angle = this.body.GetAngle() + Math.PI/4;
-  context.strokeStyle = latest_color;
-  context.beginPath()
 
   var lighten_multiplier = 1;
   if(this.status_duration[3] > 0) {
     lighten_multiplier /= this.lighten_factor
   }
 
-
   if(this.activated && this.detonate_timer > 0)
   {
     context.beginPath()
-    context.strokeStyle = this.color;
+    context.strokeStyle = "red";
     context.lineWidth = 5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI*0.999)
     context.stroke()
-  }
-
-
-
-  if(this.status_duration[1] <=0) {
+  } else if(this.status_duration[1] <=0 && this.durations["open"] > 0) {
     context.beginPath()
-    context.strokeStyle = this.color
+    context.strokeStyle = "red"
     context.lineWidth = 2
     context.globalAlpha *= .5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI * 0.999)
@@ -199,7 +192,25 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
 
 }
 
+Tank.prototype.bulk_draw_start = function(context, draw_factor) {
+  context.save()
+  context.beginPath()
+  context.lineWidth = 2
+  context.globalAlpha *= .5
+  context.strokeStyle = impulse_enemy_stats[this.type].color
+}
 
+Tank.prototype.bulk_draw = function(context, draw_factor) {
+  if(this.durations["open"] <= 0) {
+    context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)
+  }
+}
+
+Tank.prototype.bulk_draw_end = function(context, draw_factor) {
+  context.stroke()
+  context.restore()
+}
 
 Tank.prototype.get_additional_color_for_status = function(status) {
   if(status == "hot") {

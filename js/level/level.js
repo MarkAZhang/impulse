@@ -78,6 +78,8 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.enemy_images = {}
 
+  this.bulk_draw_enemies = [] // allows us to use a single beginPath/stroke to draw the same characteristics for many enemies
+
 }
 
 Level.prototype.reset = function() {
@@ -409,6 +411,10 @@ Level.prototype.add_enemy = function(enemy) {
       this.enemy_images["harpoonhead"] = enemy.harpoon_head.generate_images()
     }
   }
+
+  if(enemy.has_bulk_draw && this.bulk_draw_enemies.indexOf(enemy.type) == -1) {
+    this.bulk_draw_enemies.push(enemy.type)
+  }
 }
 
 Level.prototype.generate_obstacles = function() {
@@ -453,7 +459,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     ctx.save()
     ctx.globalAlpha = 1
 
-    if(this.gateway_transition_duration != null && this.world_num <= 2) {
+    if(this.gateway_transition_duration != null && this.world_num <= 3) {
       var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
       factor = 1 * prog + 2 * (1-prog)
       ctx.globalAlpha *= 0.5*(1-prog)
@@ -464,7 +470,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
       }
     }
 
-    else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 2) {
+    else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 3) {
       factor = 2
       ctx.globalAlpha *= 0.5
       if(this.world_num != 0) {
@@ -512,6 +518,25 @@ Level.prototype.draw = function(context, draw_factor) {
 
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].draw(context, draw_factor)
+  }
+
+
+  for(var index in this.bulk_draw_enemies) {
+    var type = this.bulk_draw_enemies[index]
+    var firstEnemy = null
+    for(var i = 0; i < this.enemies.length; i++) {
+      if(this.enemies[i].type == type) {
+        if(firstEnemy == null) {
+          firstEnemy = this.enemies[i]
+          firstEnemy.bulk_draw_start(context, draw_factor)
+        }
+        this.enemies[i].bulk_draw(context, draw_factor)
+      }
+
+    }
+    if(firstEnemy != null) {
+      firstEnemy.bulk_draw_end(context, draw_factor)
+    }
   }
 
   for(var i = 0; i < this.fragments.length; i++) {

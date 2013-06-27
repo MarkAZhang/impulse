@@ -109,30 +109,3 @@ Spear.prototype.additional_drawing = function(context, draw_factor) {
 }
 
 
-Spear.prototype.collide_with = function(other) {
-//function for colliding with the player
-
-  if(this.dying)//ensures the collision effect only activates once
-    return
-  if(this.durations["open"] > 0) {
-    if(other.type=="mote") {
-      var magnitude = this.body.m_linearVelocity
-
-      other.body.ApplyImpulse(new b2Vec2(magnitude.x*0.4, magnitude.y*0.4), other.body.GetPosition())
-    }
-  }
-
-  if(other === this.player) {
-
-    this.start_death("hit_player")
-    if(this.status_duration[1] <= 0)
-      this.player_hit_proc()
-    if(!this.level.is_boss_level) {
-      this.impulse_game_state.reset_combo()
-    }
-  } else if(other instanceof Enemy) {
-      if(other.durations["open"] > 0) {
-        this.open(other.durations["open"])
-      }
-  }
-}

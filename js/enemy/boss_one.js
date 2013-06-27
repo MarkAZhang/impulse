@@ -75,13 +75,11 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.action_interval = 750
 
-  this.action_transition_interval = 525
-
-  this.default_transition_interval = 525
+  this.default_transition_interval = 450
   this.loading_punch_interval = 150
 
-  this.retract_transition_interval = 500
-  this.punch_action_interval = 525
+  this.retract_transition_interval = 400
+  this.punch_action_interval = 500
 
   this.right_arm_punch_offset_delay = (this.default_transition_interval + this.punch_action_interval + this.retract_transition_interval + this.loading_punch_interval)/2
 
@@ -90,6 +88,8 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.knockback_red_interval = 150
   this.knockback_red_duration = 0
+
+  this.punch_knockback_window = 150
 
   this.knockback_arm_interval = 150
   this.knockback_arm_timers = {
@@ -176,7 +176,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.punch_exploded = false
 
   this.max_turret_interval = 10000
-  this.max_punching_interval = 12500
+  this.max_punching_interval = 125000
   this.max_turret_timer = this.max_turret_interval/2
   this.max_punching_timer = this.max_punching_interval
 
@@ -784,9 +784,9 @@ BossOne.prototype.draw_glows = function(context, draw_factor) {
   }
 
   var glowing_body_parts = []
-   if(this.arm_states["left"] == "punching" || this.arm_states["left"] == "loading")
+  if(this.arm_states["left"] == "loading" || (this.arm_states["left"] == "punching" && this.punch_action_interval - this.action_timer["left"] < this.punch_knockback_window))
     glowing_body_parts.push("lh")
-  if(this.arm_states["right"] == "punching" || this.arm_states["right"] == "loading")
+  if(this.arm_states["right"] == "loading" || (this.arm_states["right"] == "punching" && this.punch_action_interval - this.action_timer["right"] < this.punch_knockback_window))
     glowing_body_parts.push("rh")
   for(index in glowing_body_parts) {
     var name = glowing_body_parts[index]
@@ -987,8 +987,10 @@ BossOne.prototype.collide_with = function(other, body) {
       var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
       if(this.state == "punching" && !this.lightened) {
         other.body.ApplyImpulse(new b2Vec2(this.boss_force/2 * Math.cos(boss_angle), this.boss_force/2 * Math.sin(boss_angle)), other.body.GetWorldCenter())
-      } else {
+      } else if(body != this.body_parts["lh"] && body != this.body_parts["rh"]){
         other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+      } else {
+        other.body.ApplyImpulse(new b2Vec2(this.boss_force/2 * Math.cos(boss_angle), this.boss_force/2 * Math.sin(boss_angle)), other.body.GetWorldCenter())
       }
     }
 
@@ -1023,9 +1025,9 @@ BossOne.prototype.player_hit_proc = function() {
 
 BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
   if(this.state == "punching") {
-    if(this.arm_states["left"] == "punching" || this.arm_states["left"] == "loading" )
+    if(this.arm_states["left"] == "loading" || (this.arm_states["left"] == "punching" && this.punch_action_interval - this.action_timer["left"] < this.punch_knockback_window))
       this.check_impulse_on_hands(attack_loc, impulse_force, "left")
-    if(this.arm_states["right"] == "punching" || this.arm_states["right"] == "loading")
+    if(this.arm_states["right"] == "loading" || (this.arm_states["right"] == "punching" && this.punch_action_interval - this.action_timer["right"] < this.punch_knockback_window))
       this.check_impulse_on_hands(attack_loc, impulse_force, "right")
   }
 }

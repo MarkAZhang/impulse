@@ -695,7 +695,7 @@ impulse_level_data['HIVE 3-7'] = {
               harpoon: [2, 18, 4, 4, 6],
               fighter: [12, 18, 2, 1, 6],
               disabler: [10, 18, 1, 0, 1],
-              troll: [18, 18, 4, 2, 10],
+              troll: [18, 18, 4, 2, 10]
 
            },
   dominant_enemy: "troll",

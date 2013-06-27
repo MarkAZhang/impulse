@@ -32,7 +32,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.require_open = true
 
-  this.lighten_factor = 2
+  this.lighten_factor = 1.5
 
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
@@ -172,6 +172,12 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten"]
   this.additional_statuses = []
 
+  this.adjust_position_counter = 0
+  this.adjust_position_freq = 4
+  this.adjust_position_polygon = false
+  this.adjust_position_angle = null
+
+  this.has_bulk_draw = false
 
 }
 
@@ -314,9 +320,43 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
   this.check_death()
 
+  this.adjust_position()
+
   this.move()
 
   this.additional_processing(dt)
+}
+
+Enemy.prototype.adjust_position = function() {
+  this.adjust_position_counter += 1
+  if(this.adjust_position_counter > this.adjust_position_freq) {
+    this.adjust_position_counter = 0
+
+    var in_polygon = false
+    var polygons = this.level.boundary_polygons
+    var angle = null
+
+    for(var i = 0; i < polygons.length; i++) {
+      if(pointInPolygon(polygons[i], this.body.GetPosition())) {
+        in_polygon = true
+        var closest_edge = closestPolygonEdgeToPoint(polygons[i], this.body.GetPosition())
+        var angle = _atan({x: 0, y: 0}, {x: closest_edge.p2.x - closest_edge.p1.x, y: closest_edge.p2.y - closest_edge.p1.y})
+        break
+      }
+    }
+    this.adjust_position_polygon = in_polygon
+    if(in_polygon)
+      this.adjust_position_angle = angle - Math.PI/2
+    else
+      this.adjust_position_angle = null
+  }
+
+  if(this.adjust_position_angle != null) {
+    var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
+    dir.Multiply(this.force * 0.5)
+    this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
+
+  }
 }
 
 Enemy.prototype.additional_processing = function(dt) {
@@ -415,8 +455,6 @@ Enemy.prototype.move = function() {
 
 Enemy.prototype.move_to = function(endPt) {
 
-
-
   var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
 
@@ -500,41 +538,45 @@ Enemy.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  var transfer_factor = 0.2
-  if(this.durations["open"] > 0) {
-    if(other.type=="mote" || other.type == "troll") {
-      var magnitude = this.body.m_linearVelocity
-      var ratio = this.body.GetMass()/other.body.GetMass()
-      other.body.ApplyImpulse(new b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
-      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-    } else if(this.body.GetLinearVelocity().Length() > 20 && other !== this.player) {
-      var magnitude = this.body.GetLinearVelocity()
-      var ratio = this.body.GetMass()/other.body.GetMass()
-      other.body.ApplyImpulse(new b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
-      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-    }
-  }
 
-  if(other === this.player) {
-    if(this.body.GetLinearVelocity().Length() > 20) {
-      var magnitude = this.body.GetLinearVelocity()
-      var ratio = this.body.GetMass()/other.body.GetMass()
-      other.body.ApplyImpulse(new b2Vec2(magnitude.x*ratio, magnitude.y*ratio), other.body.GetPosition())
-      this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-    }
-
-    this.start_death("hit_player")
-    if(this.status_duration[1] <= 0) {//do not proc if silenced
-      this.player_hit_proc()
-      if(!this.level.is_boss_level) {
-        this.impulse_game_state.reset_combo()
+    var transfer_factor = 0.2
+    if(this.durations["open"] > 0) {
+      if(other.type=="mote" || other.type == "troll") {
+        var magnitude = this.body.m_linearVelocity
+        var ratio = this.body.GetMass()/other.body.GetMass()
+        other.body.ApplyImpulse(new b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+        this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+      } else if(this.body.GetLinearVelocity().Length() > 20 && other !== this.player) {
+        var magnitude = this.body.GetLinearVelocity()
+        var ratio = this.body.GetMass()/other.body.GetMass()
+        other.body.ApplyImpulse(new b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+        this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
       }
     }
-  } else if(other instanceof Enemy) {
-      if(other.durations["open"] > 0) {
-        this.open(other.durations["open"])
+
+    if(other === this.player) {
+      if(this.impulse_game_state.is_boss_level && !this.is_lightened) {
+        if(this.body.GetLinearVelocity().Length() > 50) {
+          var player_transfer_factor = 0.5
+          var magnitude = this.body.GetLinearVelocity()
+          var ratio = this.body.GetMass()/other.body.GetMass()
+          other.body.ApplyImpulse(new b2Vec2(magnitude.x*ratio * player_transfer_factor, magnitude.y*ratio* player_transfer_factor), other.body.GetPosition())
+          this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+        }
       }
-  }
+
+      this.start_death("hit_player")
+      if(this.status_duration[1] <= 0) {//do not proc if silenced
+        this.player_hit_proc()
+        if(!this.level.is_boss_level) {
+          this.impulse_game_state.reset_combo()
+        }
+      }
+    } else if(other instanceof Enemy) {
+        if(other.durations["open"] > 0) {
+          this.open(other.durations["open"])
+        }
+    }
 }
 
 Enemy.prototype.player_hit_proc = function() {
@@ -624,8 +666,18 @@ Enemy.prototype.draw = function(context, draw_factor) {
   if(this.status_duration[3] > 0) {
     context.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
-
   context.restore()
+  /*if(this.adjust_position_polygon) {
+    context.beginPath()
+    context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, size, 0, 2 * Math.PI * 0.999)
+    context.strokeStyle = "white"
+    context.stroke()
+    context.beginPath()
+    context.moveTo(this.body.GetPosition().x  * draw_factor, this.body.GetPosition().y * draw_factor)
+    context.lineTo(this.body.GetPosition().x  * draw_factor+ Math.cos(this.adjust_position_angle) * 50, this.body.GetPosition().y  * draw_factor+ Math.sin(this.adjust_position_angle) * 50)
+    context.stroke()
+  }*/
+
 
   this.additional_drawing(context, draw_factor, latest_color)
 
@@ -790,6 +842,18 @@ Enemy.prototype.additional_drawing = function(context, draw_factor) {
 
 Enemy.prototype.pre_draw = function(context, draw_factor) {
 //things that should be drawn before anything else in the world
+
+}
+
+Enemy.prototype.bulk_draw_start = function(context, draw_factor) {
+
+}
+
+Enemy.prototype.bulk_draw = function(context, draw_factor) {
+
+}
+
+Enemy.prototype.bulk_draw_end = function(context, draw_factor) {
 
 }
 

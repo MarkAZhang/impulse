@@ -16,7 +16,8 @@ function WorldMapState(world) {
   }
 
   this.requirements = {
-    2: "DEFEAT IMMUNITAS"
+    2: "DEFEAT IMMUNITAS",
+    3: "DEFEAT CONSUMENDI"
   }
 
   this.set_up_world_map()
@@ -36,17 +37,26 @@ WorldMapState.prototype.set_up_world_map = function() {
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})
 
-    if(player_data.world_rankings[player_data.difficulty_mode]["world 1"]) {
-      this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
-       function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 2 dark"];
+    this.set_up_world_icon(1, levelWidth/2 - 150, levelHeight/2 - 100, "I. HIVE IMMUNITAS", true)
+    this.set_up_world_icon(2, levelWidth/2 + 150, levelHeight/2 - 100, "II. HIVE CONSUMENDI", player_data.world_rankings[player_data.difficulty_mode]["world 1"])
+    this.set_up_world_icon(3, levelWidth/2 - 150, levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", player_data.world_rankings[player_data.difficulty_mode]["world 2"])
+
+
+}
+
+WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlocked) {
+  var _this = this
+  if(unlocked) {
+      this.world_buttons[world_num] = new SmallButton(name, 20, x, y, 200, 200, impulse_colors["boss "+world_num], impulse_colors["boss "+world_num],
+       function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
         setTimeout(function(){
 
-          switch_game_state(new MainGameTransitionState(2, null, null, null, null))
+          switch_game_state(new MainGameTransitionState(world_num, null, null, null, null))
         }, 500)})
     } else {
-      this.world_buttons[2] = new SmallButton("II. HIVE CONSUMENDI", 20, levelWidth/2 + 150, levelHeight/2-100, 200, 200, impulse_colors["boss 2"], impulse_colors["boss 2"],
+      this.world_buttons[world_num] = new SmallButton(name, 20, x, y, 200, 200, impulse_colors["boss "+world_num], impulse_colors["boss "+world_num],
        function(){})
-      this.world_buttons[2].active = false
+      this.world_buttons[world_num].active = false
     }
 }
 
