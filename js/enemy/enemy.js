@@ -176,6 +176,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.adjust_position_freq = 4
   this.adjust_position_polygon = false
   this.adjust_position_angle = null
+  this.adjust_position_factor = 0.5
+  this.adjust_position_enabled = true
 
   this.has_bulk_draw = false
 
@@ -329,6 +331,8 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
 Enemy.prototype.adjust_position = function() {
   this.adjust_position_counter += 1
+
+  if(!this.adjust_position_enabled) return
   if(this.adjust_position_counter > this.adjust_position_freq) {
     this.adjust_position_counter = 0
 
@@ -353,7 +357,10 @@ Enemy.prototype.adjust_position = function() {
 
   if(this.adjust_position_angle != null) {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
-    dir.Multiply(this.force * 0.5)
+    dir.Multiply(this.force * this.adjust_position_factor)
+    if(this.durations["open"] > 0 && player_data.difficulty_mode == "normal") {
+      dir.Multiply(2)
+    }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
   }

@@ -257,7 +257,7 @@ Harpoon.prototype.can_harpoon = function() {
 Harpoon.prototype.get_virtual_harpoon_loc = function() {
   return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(impulse_enemy_stats[this.type].effective_radius) * Math.cos(this.body.GetAngle()),
     this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(impulse_enemy_stats[this.type].effective_radius) * Math.sin(this.body.GetAngle()))
- 0.33}
+}
 
 
 Harpoon.prototype.silence = function(dur, color_silence, destroyable) {
@@ -284,6 +284,8 @@ Harpoon.prototype.additional_processing = function(dt) {
   } else {
     this.set_heading(this.harpoon_head.body.GetPosition())
   }
+
+  this.adjust_position_enabled = (this.harpoon_state == "inactive")
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
     this.silence(this.entered_arena_delay, true)
