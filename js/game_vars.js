@@ -79,7 +79,7 @@ impulse_colors["boss"] = "red"
 impulse_colors["boss dark"] = "#900"
 impulse_colors["boss 1"] = "#05c205"
 impulse_colors["boss 2"] = "#002eff"
-impulse_colors["boss 3"] = "#5f0775"
+impulse_colors["boss 3"] = "#a260a6"
 
 function set_key_bindings() {
 

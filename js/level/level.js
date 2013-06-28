@@ -78,7 +78,7 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.enemy_images = {}
 
-  this.bulk_draw_enemies = [] // allows us to use a single beginPath/stroke to draw the same characteristics for many enemies
+  this.bulk_draw_enemies = {} // allows us to use a single beginPath/stroke to draw the same characteristics for many enemies
 
 }
 
@@ -412,8 +412,8 @@ Level.prototype.add_enemy = function(enemy) {
     }
   }
 
-  if(enemy.has_bulk_draw && this.bulk_draw_enemies.indexOf(enemy.type) == -1) {
-    this.bulk_draw_enemies.push(enemy.type)
+  if(enemy.has_bulk_draw && !this.bulk_draw_enemies.hasOwnProperty(enemy.type)) {
+    this.bulk_draw_enemies[enemy.type] = enemy.bulk_draw_nums
   }
 }
 
@@ -521,22 +521,25 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
 
-  for(var index in this.bulk_draw_enemies) {
-    var type = this.bulk_draw_enemies[index]
-    var firstEnemy = null
-    for(var i = 0; i < this.enemies.length; i++) {
-      if(this.enemies[i].type == type) {
-        if(firstEnemy == null) {
-          firstEnemy = this.enemies[i]
-          firstEnemy.bulk_draw_start(context, draw_factor)
+  for(var type in this.bulk_draw_enemies) {
+    var num_bulks = this.bulk_draw_enemies[type]
+    for(var num = 1; num <= num_bulks; num++) {
+      var firstEnemy = null
+      for(var i = 0; i < this.enemies.length; i++) {
+        if(this.enemies[i].type == type) {
+          if(firstEnemy == null) {
+            firstEnemy = this.enemies[i]
+            firstEnemy.bulk_draw_start(context, draw_factor, num)
+          }
+          this.enemies[i].bulk_draw(context, draw_factor, num)
         }
-        this.enemies[i].bulk_draw(context, draw_factor)
-      }
 
+      }
+      if(firstEnemy != null) {
+        firstEnemy.bulk_draw_end(context, draw_factor, num)
+      }
     }
-    if(firstEnemy != null) {
-      firstEnemy.bulk_draw_end(context, draw_factor)
-    }
+
   }
 
   for(var i = 0; i < this.fragments.length; i++) {

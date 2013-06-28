@@ -30,7 +30,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_state_timer = 0
 
-  this.slow_factor = 0.4
+  this.slow_factor = 0.2
 
   this.default_heading = false
 

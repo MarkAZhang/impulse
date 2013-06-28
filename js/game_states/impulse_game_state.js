@@ -544,7 +544,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
 
 
-  for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
+  /*for(var j = 0; j < Math.min(this.level.enemies.length, 10); j++)
   {
     if(this.level.enemies[j])
     {
@@ -564,7 +564,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.lineWidth = 1
       }
     }
-  }
+  }*/
   ctx.globalAlpha = 1
 
   this.additional_draw(ctx, bg_ctx)

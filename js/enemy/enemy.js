@@ -180,6 +180,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.adjust_position_enabled = true
 
   this.has_bulk_draw = false
+  this.bulk_draw_nums = 0
+  this.extra_adjust = false
 
 }
 
@@ -358,8 +360,10 @@ Enemy.prototype.adjust_position = function() {
   if(this.adjust_position_angle != null) {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
-    if(this.durations["open"] > 0 && player_data.difficulty_mode == "normal") {
+    if(this.durations["open"] > 0 && player_data.difficulty_mode == "normal" && this.extra_adjust) {
       dir.Multiply(2)
+    } else if((this.type == "goo" || this.type == "harpoon") && this.durations["open"] > 0) {
+      dir.Multiply(0)
     }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
@@ -553,12 +557,12 @@ Enemy.prototype.collide_with = function(other) {
         var ratio = this.body.GetMass()/other.body.GetMass()
         other.body.ApplyImpulse(new b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
         this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-      } else if(this.body.GetLinearVelocity().Length() > 20 && other !== this.player) {
+      }/* else if(this.body.GetLinearVelocity().Length() > 40 && other !== this.player) {
         var magnitude = this.body.GetLinearVelocity()
         var ratio = this.body.GetMass()/other.body.GetMass()
         other.body.ApplyImpulse(new b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
         this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-      }
+      }*/
     }
 
     if(other === this.player) {
@@ -852,15 +856,15 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 
 }
 
-Enemy.prototype.bulk_draw_start = function(context, draw_factor) {
+Enemy.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
 }
 
-Enemy.prototype.bulk_draw = function(context, draw_factor) {
+Enemy.prototype.bulk_draw = function(context, draw_factor, num) {
 
 }
 
-Enemy.prototype.bulk_draw_end = function(context, draw_factor) {
+Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 
 }
 

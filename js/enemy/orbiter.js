@@ -31,7 +31,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.orbiter_force = 30;
   this.twitch = true
 
-  this.orbiter_checks = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
+  this.orbiter_checks = [-1, 1, -2, 2, -4, 4, -8, 8, -16, 16]
 
 }
 

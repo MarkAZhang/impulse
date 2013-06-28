@@ -55,7 +55,7 @@ Disabler.prototype.check_area_of_effect = function() {
 Disabler.prototype.area_effect = function(obj) {
   obj.silence(100, true, true)
   if(obj.type == "harpoonhead") {
-    obj.harpoon.silence(100, true)
+    obj.harpoon.silence(100, true, true)
   }
   if(obj === this.player) {
     obj.bulk(100)

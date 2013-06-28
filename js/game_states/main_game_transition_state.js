@@ -333,11 +333,11 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
 
       ctx.font = '20px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillStyle = this.bright_color
       ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
       ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
-      ctx.fillStyle = this.lite_color;
+      ctx.fillStyle = this.bright_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '12px Muli'
       ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
@@ -377,7 +377,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.font = '18px Muli'
 
-    ctx.fillStyle = this.lite_color;
+    ctx.fillStyle = this.bright_color;
     ctx.shadowColor = ctx.fillStyle
 
     if(!this.last_level.is_boss_level) {
@@ -395,7 +395,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.game_numbers.last_time, levelWidth/2, 240)
     }
 
-    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.fillStyle = this.bright_color
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '18px Muli'
     if(this.victory) {
@@ -406,7 +406,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(!this.last_level.is_boss_level) {
-      ctx.fillStyle = this.lite_color;
+      ctx.fillStyle = this.bright_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '24px Muli'
       //ctx.fillStyle = (this.stars > 0) ? impulse_colors[this.star_colors[this.stars-1]] : this.color
@@ -414,7 +414,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '72px Muli'
       ctx.fillText(this.game_numbers.score, levelWidth/2, 390)
       //var color = (this.stars < 3) ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
-      var color = this.lite_color
+      var color = this.bright_color
       draw_progress_bar(ctx, levelWidth/2, 420, 300, 15,
        Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
 
@@ -426,7 +426,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
 
-    ctx.fillStyle = this.lite_color;
+    ctx.fillStyle = this.bright_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)

@@ -87,10 +87,10 @@ impulse_enemy_stats["tank"] = {
 
 impulse_enemy_stats["mote"] = {
   color: "#ee42ae",
-  density: .2,
+  density: .5,
   lin_damp: 3,
   effective_radius: .5,
-  force: .06,
+  force: .15,
   score_value: 1000,
   attack_rating: .5,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -368,10 +368,10 @@ impulse_enemy_stats["piercing_fighter_bullet"] = {
 
 impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 6,
+  density: 5,
   lin_damp: 6,
   effective_radius: .7,
-  force: 4.2,
+  force: 3.5,
   score_value: 3000,
   attack_rating: 6,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:

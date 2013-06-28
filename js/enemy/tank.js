@@ -38,6 +38,7 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.additional_statuses = ["hot"]
 
   this.has_bulk_draw = true
+  this.bulk_draw_nums = 1
 }
 
 Tank.prototype.additional_processing = function(dt) {
@@ -192,7 +193,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
 
 }
 
-Tank.prototype.bulk_draw_start = function(context, draw_factor) {
+Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
   context.save()
   context.beginPath()
   context.lineWidth = 2
@@ -200,14 +201,14 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor) {
   context.strokeStyle = impulse_enemy_stats[this.type].color
 }
 
-Tank.prototype.bulk_draw = function(context, draw_factor) {
+Tank.prototype.bulk_draw = function(context, draw_factor, num) {
   if(this.durations["open"] <= 0) {
     context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)
   }
 }
 
-Tank.prototype.bulk_draw_end = function(context, draw_factor) {
+Tank.prototype.bulk_draw_end = function(context, draw_factor, num) {
   context.stroke()
   context.restore()
 }
