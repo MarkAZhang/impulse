@@ -11,6 +11,9 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100 //force that the spear impulses the player
 
+  if(player_data.difficulty_mode == "easy")
+    this.tank_force = 80
+
   this.death_radius = 5
 
 

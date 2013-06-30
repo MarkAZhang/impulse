@@ -11,6 +11,9 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.spear_force = 30 //force that the spear impulses the player
 
+  if(player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+    this.spear_force = 40
+
   this.death_radius = 5
 
   this.stun_length = 3000 //after being hit by player, becomes stunned

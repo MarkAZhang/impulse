@@ -176,7 +176,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.punch_exploded = false
 
   this.max_turret_interval = 10000
-  this.max_punching_interval = 125000
+  this.max_punching_interval = 12500
   this.max_turret_timer = this.max_turret_interval/2
   this.max_punching_timer = this.max_punching_interval
 
@@ -188,7 +188,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.start_time = 0
 
   this.first_turret = true
-
 }
 
 //
@@ -372,7 +371,7 @@ BossOne.prototype.rotate_joint_to = function(joint_name, angle) {
 }
 
 BossOne.prototype.turret_fire_enemy = function(arm) {
-
+  return
 
   var dir = new b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
 
@@ -439,6 +438,10 @@ BossOne.prototype.additional_processing = function(dt) {
     this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
   }
 
+  console.log("LH: "+this.joints["lh"].GetJointAngle()+"RH: "+this.joints["rh"].GetJointAngle()+"LL: "+this.joints["ll"].GetJointAngle()
+    +"RL: "+this.joints["rl"].GetJointAngle()+"LU: "+this.joints["lu"].GetJointAngle()+"RU: "+this.joints["ru"].GetJointAngle()
+    +"CUR ANGLE: "+this.body.GetAngle())
+
   //if(this.punching_explode_timer != null) {
     /*this.punching_explode_timer -= dt
     if(this.punching_explode_timer < 0) {
@@ -477,7 +480,7 @@ BossOne.prototype.additional_processing = function(dt) {
       //this.move_arm_to_default(arm, true)
     }
 
-    var cur_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())+(Math.abs((this.start_time % 2000) - 1000)-500)/500*Math.PI/8;
+    var cur_angle = angle_closest_to(this.body.GetAngle(), _atan(this.body.GetPosition(), this.player.body.GetPosition())+(Math.abs((this.start_time % 2000) - 1000)-500)/500*Math.PI/8);
     // turn the boss around
     /*if(this.arm_states[arm] == "default") {
       this.process_turning_to_angle(cur_angle)
@@ -672,7 +675,12 @@ BossOne.prototype.process_punching = function(arm) {
   }
 }*/
 BossOne.prototype.process_turning_to_angle = function(angle) {
-  var cur_angle = this.body.GetAngle();
+  this.body.SetAngle(angle)
+  return
+
+  // before there was the concept of going around the arms to hit the body, but this is currently not viable, so we simply the code
+
+  /*var cur_angle = this.body.GetAngle();
   var player_angle =  angle;
   var angle_between = small_angle_between(cur_angle, player_angle )
 
@@ -692,7 +700,7 @@ BossOne.prototype.process_turning_to_angle = function(angle) {
       this.body.SetAngle(this.body.GetAngle() + angle_between)
     else
     this.body.SetAngle(this.body.GetAngle() + Math.PI * 2 * dt/turn_rate)
-  }
+  }*/
 
 }
 
@@ -728,12 +736,12 @@ BossOne.prototype.draw_arm_piece = function(arm, context, draw_factor, side) {
     if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
       drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm_red", immunitasSprite)
+      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm_red", immunitasSprite)
 
     } else
       drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
+      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
 
 
 }
@@ -744,12 +752,12 @@ BossOne.prototype.draw_hand = function(hand, context, draw_factor, side) {
         if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
       drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand_red", immunitasSprite)
+      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand_red", immunitasSprite)
 
     } else
       drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand", immunitasSprite)
+      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand", immunitasSprite)
 
 
 }
@@ -1018,10 +1026,6 @@ BossOne.prototype.player_hit_proc = function() {
   var boss_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 }
-
-
-
-
 
 BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
   if(this.state == "punching") {
