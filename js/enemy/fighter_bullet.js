@@ -19,7 +19,7 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
 
   this.do_yield = false
   this.bullet_force = 100
-  this.bullet_self_factor = 8;
+  this.bullet_self_factor = 12;
 
   this.bullet_enemy_factor = 1.5;
   this.bullet_low_enemy_factor= 0.3;
@@ -45,12 +45,15 @@ FighterBullet.prototype.collide_with = function(other) {
   if(other === this.player) {
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {
-      var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      var vel = this.body.GetLinearVelocity().Copy()
+      vel.Normalize()
+      //_atan(this.body.GetPosition(), this.player.body.GetPosition())
       if(this.player.status_duration[2] > 0) {
-        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_goo_factor * Math.cos(bullet_angle),
-        this.bullet_force * this.bullet_goo_factor* Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
+        vel.Multiply(this.bullet_force * this.bullet_goo_factor)
+        this.player.body.ApplyImpulse(vel, this.player.body.GetWorldCenter())
       } else {
-        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
+        vel.Multiply(this.bullet_force)
+        this.player.body.ApplyImpulse(vel, this.player.body.GetWorldCenter())
       }
       this.impulse_game_state.reset_combo()
     }
@@ -67,7 +70,9 @@ FighterBullet.prototype.collide_with = function(other) {
         other.process_hit();
       }
       if(this.status_duration[1] <= 0) {
-        var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+        var vel = this.body.GetLinearVelocity().Copy()
+        vel.Normalize()
+        //var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
         other.open(1500)
 
         var factor = 1;
@@ -92,9 +97,10 @@ FighterBullet.prototype.collide_with = function(other) {
         } else {
           factor = this.bullet_low_enemy_factor;
         }*/
-        var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
+        vel.Multiply(this.bullet_force * factor)
+        //var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
 
-        other.body.ApplyImpulse(force, other.body.GetWorldCenter())
+        other.body.ApplyImpulse(vel, other.body.GetWorldCenter())
       }
     }
   }

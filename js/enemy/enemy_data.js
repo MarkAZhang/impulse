@@ -199,7 +199,7 @@ impulse_enemy_stats["troll"] = {
   lin_damp: 3,
   effective_radius: 1,
   force: 0.2,
-  score_value: 5000,
+  score_value: 3000,
   attack_rating: 2,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[0, 0],
@@ -279,7 +279,7 @@ impulse_enemy_stats["fighter"] = {
   density: 3.5,
   lin_damp: 6,
   effective_radius: 1,
-  force: 4,
+  force: 5.3,
   score_value: 5000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -302,7 +302,7 @@ impulse_enemy_stats["fighter"] = {
     "Very resistant to Impulse",
     "If the player is not within line of sight of the bullet, the fighter will not fire the bullet.",
     "Every two seconds, charges up a Frenzy bar. When the Fighter has five Frenzy bars, it will activate Frenzy mode.",
-    "During Frenzy mode, the Fighter moves faster and fires more rapidly. # Additionally, the bullets move faster and cannot be Impulsed.",
+    "During Frenzy mode, the Fighter moves faster and fires more rapidly. # Additionally, the bullets move faster, go through enemies, and cannot be Impulsed.",
     "While in Frenzy mode, loses a Frenzy bar whenever it fires. # When the Frenzy bars are depleted, the Fighter exits Frenzy mode.",
     "Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
@@ -446,10 +446,10 @@ impulse_enemy_stats["harpoondire"] = {
 impulse_enemy_stats["slingshot"] = {
   color: "rgb(160, 82, 45)",
   density: .2,
-  lin_damp: 6,
+  lin_damp: 7,
   effective_radius: 1,
-  force: .4,
-  score_value: 3000,
+  force: .45,
+  score_value: 5000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4],
@@ -468,31 +468,36 @@ impulse_enemy_stats["slingshot"] = {
   dies_on_impact: "YES",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
   other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
-  className: Slingshot
-
+  className: Slingshot,
+  enemy_info: [
+    "Upon Impulse, latches onto its current position and slingshots.",
+    "While in slingshot mode, turns red and cannot be Impulsed.",
+    "Upon collision in slingshot mode, hurls you backward.",
+    "Upon collision outside of slingshot mode, still knocks you back a significant amount"
+  ],
 }
 
 impulse_enemy_stats["orbiter"] = {
   color: "red",
   density: .3,
   lin_damp: 10,
-  effective_radius: 0.5,
-  force: .6,
-  score_value: 5000,
+  effective_radius: 1,
+  force: .5,
+  score_value: 8000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [0, 0]]},
+    [[Math.cos(Math.PI * 0) + 0.4, Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/3) + 0.4, Math.sin(Math.PI * 2/3)],
+  [0.4, 0]]},
    {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
-    [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI*4/3)],
-  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [0, 0]]},
+    [[Math.cos(Math.PI * 4/3) + 0.4, Math.sin(Math.PI*4/3)],
+  [Math.cos(Math.PI * 0) + 0.4, Math.sin(Math.PI * 0)],
+  [0.4, 0]]},
   {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
-    [[0, 0],
-    [-1, 0.3],
-    [-2, 0],
-    [-1, -0.3]]}
+    [[0.4, 0],
+    [-0.6, 0.3],
+    [-1.6, 0],
+    [-0.6, -0.3]]}
 
   /* {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2],

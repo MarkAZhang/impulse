@@ -29,6 +29,11 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.cautious = false
 
+  this.additional_statuses = ["empowered"]
+
+  this.orig_lin_damp = impulse_enemy_stats[this.type].lin_damp
+  this.slingshot_lin_damp = 6
+
 }
 
 Slingshot.prototype.enemy_move = Enemy.prototype.move
@@ -55,12 +60,13 @@ Slingshot.prototype.additional_processing = function(dt) {
 
   if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.status_duration[1] > 0) {
     this.slingshot_mode = false
-    this.body.SetLinearDamping(6)
+    this.lin_damp = this.orig_lin_damp
   }
 
   this.special_mode = this.empowered_duration > 0
 
   this.color = this.empowered_duration > 0 ? "red" : this.real_color
+  this.empowered = this.empowered_duration > 0 && this.status_duration[1] <= 0
 
   if(this.slingshot_duration > 0)
   {
@@ -72,6 +78,8 @@ Slingshot.prototype.additional_processing = function(dt) {
     this.empowered_duration -= dt
   }
 }
+
+
 
 Slingshot.prototype.player_hit_proc = function() {
 
@@ -100,7 +108,7 @@ Slingshot.prototype.check_death = function() {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
-      this.body.SetLinearDamping(6)
+      this.lin_damp = this.orig_lin_damp
       return
     }
   }
@@ -114,9 +122,42 @@ Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_forc
     this.slingshot_mode = true
     this.slingshot_duration = this.slingshot_interval
     this.empowered_duration = this.empowered_interval
-    this.body.SetLinearDamping(1)
+    this.lin_damp = this.slingshot_lin_damp
   }
 }
+
+Slingshot.prototype.get_current_status = function() {
+
+  if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'stunned';
+      } else if(this.color_silenced) {
+        return 'silenced'
+      } else if(this.status_duration[2] > 0) {
+        return "gooed"
+      }
+    }
+
+    return this.get_additional_current_status()
+}
+
+
+Slingshot.prototype.get_additional_color_for_status = function(status) {
+  if(status == "empowered") {
+    return "red"
+  }
+}
+
+Slingshot.prototype.get_additional_current_status = function() {
+
+  if(!this.dying) {
+      if(this.empowered_duration > 0) {
+        return "empowered";
+      }
+  }
+  return "normal"
+}
+
 
 Slingshot.prototype.get_slingshot_hooks = function(hook) {
 
@@ -125,7 +166,7 @@ Slingshot.prototype.get_slingshot_hooks = function(hook) {
 }
 
 Slingshot.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.slingshot_mode) {
+  if(this.slingshot_mode && !this.dying) {
     context.beginPath()
     context.strokeStyle = this.color
     context.lineWidth = 2

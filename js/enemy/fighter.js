@@ -25,7 +25,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.bullet_alternater = 0
 
-  this.fast_factor = 4
+  this.fast_factor = 3
 
   this.safe = true
 

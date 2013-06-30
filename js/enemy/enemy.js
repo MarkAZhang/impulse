@@ -362,7 +362,7 @@ Enemy.prototype.adjust_position = function() {
     dir.Multiply(this.force * this.adjust_position_factor)
     if(this.durations["open"] > 0 && player_data.difficulty_mode == "normal" && this.extra_adjust) {
       dir.Multiply(2)
-    } else if((this.type == "goo" || this.type == "harpoon") && this.durations["open"] > 0) {
+    } else if((this.type == "goo" || this.type == "harpoon" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
     }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
@@ -805,48 +805,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
 }
 
-Enemy.prototype.get_current_status = function() {
-
-  if(!this.dying) {
-      if(this.status_duration[0] > 0) {
-        return 'stunned';
-      } else if(this.color_silenced) {
-        return 'silenced'
-      } else if(this.status_duration[2] > 0) {
-        return "gooed"
-      }
-      if(this.durations["impulsed"] > 0) {
-        return "impulsed"
-      }
-    }
-
-    return this.get_additional_current_status()
-}
-
-Enemy.prototype.get_additional_current_status = function() {
-  return "normal"
-}
-
-Enemy.prototype.get_current_color_with_status = function(orig_color) {
-  /*if (this.durations["open"] > 0) {
-        context.fillStyle = impulse_colors["impulse_blue"]
-      } else */
-    if(!this.dying) {
-      if(this.durations["impulsed"] > 0) {
-        return impulse_colors["impulse_blue"]
-      }
-      if(this.status_duration[0] > 0) {
-        return 'gray';
-      } else if(this.color_silenced) {
-        return 'gray'
-      } else if(this.status_duration[2] > 0) {
-        return "#e6c43c"
-      }
-    }
-    if(orig_color)
-      return orig_color
-    return this.color;
-}
 
 Enemy.prototype.additional_drawing = function(context, draw_factor) {
 }
@@ -992,6 +950,56 @@ Enemy.prototype.draw_additional_image = function(context, color) {
 
 }
 
+Enemy.prototype.get_current_status = function() {
+
+  if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'stunned';
+      } else if(this.color_silenced) {
+        return 'silenced'
+      } else if(this.status_duration[2] > 0) {
+        return "gooed"
+      }
+      if(this.durations["impulsed"] > 0) {
+        return "impulsed"
+      }
+    }
+
+    return this.get_additional_current_status()
+}
+
+Enemy.prototype.get_additional_current_status = function() {
+  return "normal"
+}
+
+Enemy.prototype.get_current_color_with_status = function(orig_color) {
+
+  var cur_color = this.get_color_for_status(this.get_current_status())
+
+  if(cur_color == this.color && orig_color) return orig_color
+
+  return cur_color
+  /*if (this.durations["open"] > 0) {
+        context.fillStyle = impulse_colors["impulse_blue"]
+      } else */
+  /*  if(!this.dying) {
+      if(this.durations["impulsed"] > 0) {
+        return impulse_colors["impulse_blue"]
+      }
+      if(this.status_duration[0] > 0) {
+        return 'gray';
+      } else if(this.color_silenced) {
+        return 'gray'
+      } else if(this.status_duration[2] > 0) {
+        return "#e6c43c"
+      }
+    }
+    if(orig_color)
+      return orig_color
+    return this.color;*/
+}
+
+
 Enemy.prototype.get_color_for_status = function(status) {
   if(status == "normal") {
     return this.color
@@ -1007,6 +1015,8 @@ Enemy.prototype.get_color_for_status = function(status) {
 
   return this.get_additional_color_for_status(status)
 }
+
+
 
 Enemy.prototype.get_additional_color_for_status = function(status) {
 

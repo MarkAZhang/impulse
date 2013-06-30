@@ -400,6 +400,8 @@ Player.prototype.process = function(dt) {
       {
         if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
 
+        if(this.level.enemies[i] instanceof Slingshot && this.level.enemies[i].empowered) continue
+
         if(this.level.enemies[i] instanceof BossOne) this.level.enemies[i].process_impulse_on_hands(this.attack_loc, this.impulse_force);
 
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit

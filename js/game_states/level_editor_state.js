@@ -421,8 +421,8 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
       for(var i = 0; i < this.polygons[this.selected_p].length; i++) {
         this.polygons[this.selected_p][i].x += dx
         this.polygons[this.selected_p][i].y += dy
-        return
       }
+      return
     }
 
 

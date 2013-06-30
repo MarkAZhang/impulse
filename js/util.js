@@ -105,7 +105,9 @@ function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
 }
 
 function seg_dist_from_pt(seg1s, seg1f, pt) {
-  return Math.abs((seg1f.x - seg1s.x) * (seg1s.y - pt.y) - (seg1s.x - pt.x) * (seg1f.y -seg1s.y)) /
+
+  return Math.abs(crossProduct({x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}, {x: pt.x - seg1s.x, y: pt.y - seg1s.y})) /
+  //return Math.abs((seg1f.x - seg1s.x) * (seg1s.y - pt.y) - (seg1s.x - pt.x) * (seg1f.y -seg1s.y)) /
          Math.sqrt((seg1f.x - seg1s.x) * (seg1f.x - seg1s.x)  + (seg1f.y -seg1s.y) * (seg1f.y -seg1s.y));
 }
 

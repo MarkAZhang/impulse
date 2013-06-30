@@ -451,7 +451,8 @@ Harpoon.prototype.start_death = function(death) {
       impulse_enemy_stats[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
-      this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
+      if(player_data.options.score_labels)
+        this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()
       this.impulse_game_state.check_cutoffs()
