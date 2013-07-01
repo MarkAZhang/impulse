@@ -43,8 +43,8 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   this.rank = "F"
 
-  this.shift_held = false
-  this.ctrl_held = false
+  this.shift_down_time = 0
+  this.ctrl_down_time = 0
 
   this.rank_color = "red"
 
@@ -104,6 +104,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     this.delete_button.shadow = false
     if(player_data.options.control_hand == "right") {
       this.delete_button.underline_index = 0
+      this.quit_button.extra_text= "SHIFT+"
     } else {
       this.delete_button.extra_text = "SHIFT + DOWN ARROW"
       this.delete_button.dim_extra_text = true
@@ -345,9 +346,9 @@ MainGameSummaryState.prototype.on_key_down = function(keyCode) {
   if(this.save_screen && !this.just_saved) {
     if(keyCode == imp_vars.keys.EXIT_GAME_KEY) {
       this.exit_game()
-    } else if(keyCode == imp_vars.keys.DELETE_GAME_KEY && this.shift_held) {
+    } else if(keyCode == imp_vars.keys.DELETE_GAME_KEY && this.shift_down()) {
       this.delete_game()
-    } else if(keyCode == imp_vars.keys.RESUME_GAME_KEY && !this.ctrl_held) {
+    } else if(keyCode == imp_vars.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
       this.resume_game()
     }
   } else{
@@ -357,10 +358,10 @@ MainGameSummaryState.prototype.on_key_down = function(keyCode) {
     }
   }
   if(keyCode == 16) {
-    this.shift_held= true
+    this.shift_down_time = (new Date()).getTime()
   }
   if(keyCode == 17) {
-    this.ctrl_held = true
+    this.ctrl_down_time = (new Date()).getTime()
   }
 }
 MainGameSummaryState.prototype.on_key_up = function(keyCode) {
@@ -370,6 +371,14 @@ MainGameSummaryState.prototype.on_key_up = function(keyCode) {
   if(keyCode == 17) {
     this.ctrl_held = false
   }
+}
+
+MainGameSummaryState.prototype.shift_down = function() {
+  return (new Date()).getTime() - this.shift_down_time < 1000
+}
+
+MainGameSummaryState.prototype.ctrl_down = function() {
+  return (new Date()).getTime() - this.ctrl_down_time < 1000
 }
 
 MainGameSummaryState.prototype.process = function(dt) {

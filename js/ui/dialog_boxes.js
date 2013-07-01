@@ -50,7 +50,8 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.visibility_graph = visibility_graph
   this.init(800, 600)
   this.solid = false;
-  this.shift_down = false
+  this.shift_down_time = 0
+  this.ctrl_down_time = 0
   this.bg_color = impulse_colors["world "+this.world_num +" dark"]
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num +" lite"]
@@ -127,7 +128,7 @@ PauseMenu.prototype.add_buttons = function() {
       this.buttons.push(this.quit_button)
       if(player_data.options.control_hand == "right") {
         this.quit_button.underline_index = 0
-        this.quit_button.extra_text= "CTRL+"
+        this.quit_button.extra_text= "SHIFT+"
       } else {
         this.quit_button.extra_text = "CTRL + RIGHT ARROW"
       }
@@ -348,7 +349,7 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
         this.restart_practice()
       }
     } else {
-      if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down) { //Q = QUIT
+      if(keyCode == imp_vars.keys.QUIT_KEY && this.shift_down()) { //Q = QUIT
         this.quit_main_game()
       } else if(keyCode == imp_vars.keys.SAVE_AND_QUIT_KEY) { //S = SAVE AND QUIT
         this.save_and_quit_main_game()
@@ -359,20 +360,20 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
       set_dialog_box(new OptionsMenu(this))
     }*/
   } else {
-    if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down) { //Q = QUIT
+    if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down()) { //Q = QUIT
       this.quit_tutorial()
     }
   }
 
-  if(keyCode == imp_vars.keys.PAUSE && !this.shift_down) {
+  if(keyCode == imp_vars.keys.PAUSE && !this.shift_down()) {
     clear_dialog_box()
     this.game_state.pause = false
   }
   if(keyCode == 16) {
-    this.shift_down = true
+    this.shift_down_time = (new Date()).getTime()
   }
   if(keyCode == 17) {
-    this.ctrl_down = true
+    this.ctrl_down_time = (new Date()).getTime()
   }
 
   if(keyCode == imp_vars.keys.MUTE_KEY) {
@@ -380,14 +381,21 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
   }
 
 }
+PauseMenu.prototype.shift_down = function() {
+  return (new Date()).getTime() - this.shift_down_time < 1000
+}
+
+PauseMenu.prototype.ctrl_down = function() {
+  return (new Date()).getTime() - this.ctrl_down_time < 1000
+}
 
 PauseMenu.prototype.on_key_up = function(keyCode) {
-  if(keyCode == 16) {
+  /*if(keyCode == 16) {
     this.shift_down = false
   }
   if(keyCode == 17) {
     this.ctrl_down = false
-  }
+  }*/
 }
 
 
