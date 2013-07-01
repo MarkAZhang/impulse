@@ -57,7 +57,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
   this.drawn_enemies = null
 
-
   if(this.is_boss_level) {
     this.drawn_enemies = {}
     this.drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
@@ -71,7 +70,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
     }
   }
   this.enemy_image_size = 40
-
   this.add_buttons()
 
 }
@@ -336,7 +334,7 @@ PauseMenu.prototype.save_and_quit_main_game = function() {
   this.game_state.hive_numbers.lives = this.game_state.hive_numbers.last_lives
   player_data.save_data[player_data.difficulty_mode] = this.game_state.hive_numbers
   save_game()
-  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, null, null, null, true, true))
+  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
   clear_dialog_box()
 }
 
@@ -450,6 +448,14 @@ function OptionsMenu(previous_menu) {
   player_data.options.impulse_shadow = !player_data.options.impulse_shadow
     save_game()
   }, player_data.options.impulse_shadow))
+
+  if(this.game_state.level.main_game) {
+    this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 378, 20, 20, this.lite_color, function() {
+    player_data.options.show_transition_screens = !player_data.options.show_transition_screens
+      save_game()
+    }, player_data.options.show_transition_screens))
+  }
+
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -473,6 +479,8 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
   ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 325)
   ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 355)
+  if(this.game_state.level.main_game)
+    ctx.fillText("SHOW DEFEAT SCREEN", this.x - 130, this.y - this.h/2 + 385)
 
   ctx.font = '12px Muli';
   ctx.textAlign = "center"

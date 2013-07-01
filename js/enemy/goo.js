@@ -26,6 +26,9 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_expand_period = 2000
 
+  if(player_data.difficulty_mode == "easy")
+    this.goo_expand_period = 2500
+
   this.goo_state = "small"
 
   this.goo_state_timer = 0

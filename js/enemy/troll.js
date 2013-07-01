@@ -32,6 +32,16 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.entered_arena_timer = 1000
   this.last_stun = this.entered_arena_delay
 
+  this.short_troll_period = 1000
+  if(player_data.difficulty_mode == "easy") {
+    this.short_troll_period = 500
+  }
+
+
+  this.long_troll_period = 5000
+  if(player_data.difficulty_mode == "easy") {
+    this.long_troll_period = 2500
+  }
 }
 
 Troll.prototype.additional_processing = function(dt) {
@@ -104,7 +114,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
     //if(isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges)) {
       this.body.ApplyImpulse(new b2Vec2(.25 * impulse_force*Math.cos(hit_angle), .25 * impulse_force*Math.sin(hit_angle)),
       this.body.GetWorldCenter())
-      this.player.confuse(1000)
+      this.player.confuse(this.short_troll_period)
       this.confused_targets.push({object: this.player, timer: this.confused_duration})
     //}
   }
@@ -118,5 +128,5 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
 
 Troll.prototype.player_hit_proc = function() {
   if(this.status_duration[1] <= 0){}
-    this.player.confuse(5000)
+    this.player.confuse(this.long_troll_period)
 }

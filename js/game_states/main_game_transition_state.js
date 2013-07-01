@@ -22,14 +22,22 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     if(this.game_numbers) {
       this.last_level = level
       this.last_level_name = level.level_name
-      this.state = "last_level_summary"
-      this.transition_timer = this.last_level_summary_interval
+
+      if(this.victory) {
+        this.state = "last_level_summary"
+        this.transition_timer = this.last_level_summary_interval
+      } else {
+        this.state = player_data.options.show_transition_screens ? "last_level_summary" : "level_intro"
+        this.transition_timer = player_data.options.show_transition_screens ? this.last_level_summary_interval : this.level_intro_interval
+      }
       this.compute_last_level_stats()
       if(!this.victory) {
         this.last_level_summary_interval /= 2
         this.transition_timer /= 2
         this.level_intro_interval /= 2
-
+        this.hive_numbers.lives -= 1
+        this.hive_numbers.last_sparks = this.hive_numbers.sparks
+        this.hive_numbers.last_lives = this.hive_numbers.lives
       }
     } else {
       //allows us to skip the last level summary if coming from main game summary state
@@ -41,8 +49,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       this.transition_timer = this.level_intro_interval
       this.continued = true
     }
-
-
 
   } else {
     this.state = "world_intro"
@@ -66,9 +72,10 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.first_time = false
   if(!this.continued) {
     if(this.victory || !this.last_level) {
-      // beat last level
+      // beat last level or first level
 
       if(this.last_level && this.last_level.is_boss_level) {
+        // do not do the following if we have beat the last level.. will transfer to summary_state later
         return
       }
 
@@ -84,9 +91,11 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
       save_game()
 
-      this.hive_numbers.game_numbers[this.level.level_name] = {}
-      this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
-      this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+      if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
+        this.hive_numbers.game_numbers[this.level.level_name] = {}
+        this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
+        this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+      }
       this.hive_numbers.current_level = this.level.level_name
     } else {
       // died at last level
@@ -97,7 +106,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
       this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
 
-      this.hive_numbers.lives -= 1
       this.level = this.last_level
       this.level.impulse_game_state = null
       bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
@@ -201,8 +209,6 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.target_sparks -= 100;
       this.target_lives += 1
     }
-
-
   }
 }
 
@@ -210,6 +216,7 @@ MainGameTransitionState.prototype.process = function(dt) {
 
   this.first_process = true
 
+  //go to summary state
   if(this.hive_numbers.lives < 0) {
     switch_game_state(new MainGameSummaryState(this.world_num, false, this.hive_numbers, this.level, this.visibility_graph))
     return
@@ -219,6 +226,7 @@ MainGameTransitionState.prototype.process = function(dt) {
     return
   }
 
+  // adjust sparks based on prog
   var prog = (this.transition_timer/this.last_level_summary_interval);
 
   if(this.state == "last_level_summary" && this.victory && prog > 0.3 &&  prog < 0.7) {
@@ -228,15 +236,16 @@ MainGameTransitionState.prototype.process = function(dt) {
         this.hive_numbers.lives += 1;
       }
   } else if(this.state == "last_level_summary" && this.victory && prog < 0.3) {
-    console.log("SET "+this.hive_numbers.sparks+" "+this.hive_numbers.lives)
-      this.hive_numbers.sparks = Math.floor(this.target_sparks);
-      this.hive_numbers.lives = Math.floor(this.target_lives);
-      this.hive_numbers.last_sparks = this.hive_numbers.sparks
-      this.hive_numbers.last_lives = this.hive_numbers.lives
+    this.hive_numbers.sparks = Math.floor(this.target_sparks);
+    this.hive_numbers.lives = Math.floor(this.target_lives);
+    this.hive_numbers.last_sparks = this.hive_numbers.sparks
+    this.hive_numbers.last_lives = this.hive_numbers.lives
   }
 
+  // pause in the until level loaded
   if(this.level_loaded || (this.state == "world_intro" && this.transition_timer >= this.world_intro_interval/2) ||
-    (this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval/2)) {
+    (this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval/2) ||
+    (this.state == "level_intro" && this.transition_timer >= this.level_intro_interval/2)) {
     this.transition_timer -= dt;
   }
 
@@ -253,7 +262,7 @@ MainGameTransitionState.prototype.process = function(dt) {
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
     } else if(this.state == "level_intro") {
-      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.victory, this.hive_numbers, this.first_time))
+      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.victory === null ? true : this.victory, this.hive_numbers, this.first_time))
     }
   }
 }
@@ -333,11 +342,11 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
 
       ctx.font = '20px Muli'
-      ctx.fillStyle = this.bright_color
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
       ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
       ctx.shadowBlur = 0
-      ctx.fillStyle = this.bright_color;
+      ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '12px Muli'
       ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
@@ -395,7 +404,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(this.game_numbers.last_time, levelWidth/2, 240)
     }
 
-    ctx.fillStyle = this.bright_color
+    ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '18px Muli'
     if(this.victory) {
@@ -426,13 +435,15 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     }
 
 
-    ctx.fillStyle = this.bright_color;
+    ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
-    ctx.font = '12px Muli'
+    ctx.font = '20px Muli'
     ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
     ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
+    ctx.fillStyle = this.lite_color;
+    ctx.font = '12px Muli'
     ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
 
   }

@@ -33,7 +33,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   if(save_screen) {
     this.hive_numbers = player_data.save_data[player_data.difficulty_mode]
     this.world_num = this.hive_numbers.world
-    this.victory = false
+    this.victory = null
   }
 
   this.transition_interval = 250
@@ -379,7 +379,7 @@ MainGameSummaryState.prototype.process = function(dt) {
 MainGameSummaryState.prototype.resume_game = function() {
   player_data.save_data[player_data.difficulty_mode] = {}
   save_game()
-  switch_game_state(new MainGameTransitionState(this.world_num, null, false, null, null, this.hive_numbers, true))
+  switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {

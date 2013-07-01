@@ -21,7 +21,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.harpoon_length = 15
   if(player_data.difficulty_mode == "easy") {
-    this.harpoon_length = 10
+    this.harpoon_length = 15
   }
 
   this.goalPt = null
@@ -31,13 +31,20 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.harpoon_state = "inactive"
 
   this.harpooned_force = 6
+  if(player_data.difficulty_mode == "easy") {
+    this.harpooned_force = 4.5
+  }
   this.harpooned_goo_factor = 0.33
 
   this.harpoonhead_force = 400
   if(player_data.difficulty_mode == "easy") {
-    this.harpoonhead_force = 200
+    this.harpoonhead_force = 250
   }
   this.harpoonhead_retract_force = 6
+  if(player_data.difficulty_mode == "easy") {
+    this.harpoonhead_retract_force = 3
+  }
+
   this.harpoon_explode_force = 70
 
   this.safe_radius = this.player.impulse_radius

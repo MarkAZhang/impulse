@@ -674,7 +674,7 @@ spriteSheetData = {
   "negligentia_aura": [559, 270, 39, 65],
   "negligentia_aura_open": [598, 270, 39, 65],
   "negligentia_arm_ring": [180, 200, 180, 180],
-  "negligentia_logo": [680, 285, 120, 120]
+  "negligentia_logo": [670, 275, 130, 130]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")

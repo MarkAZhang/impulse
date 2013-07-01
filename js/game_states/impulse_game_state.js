@@ -92,7 +92,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.camera_center = {x: levelWidth/2, y: levelHeight/2}
   //this.zoom = 0.1
 
-  this.zoom_transition_period = 1500;
+  this.slow_zoom_transition_period = 1500;
+  this.fast_zoom_transition_period = 750
   this.zoom_transition_timer = 0;
   this.zoom_state = "none";
   this.zoom_start_pt = {x:levelWidth, y:levelHeight}
@@ -101,7 +102,12 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.zoom_target_scale = 1
   this.zoom = 0.1
   this.zoom_bg_switch = true;
-  this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1)
+  if(this.first_time) {
+    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, this.slow_zoom_transition_period)
+  } else {
+    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, this.fast_zoom_transition_period)
+  }
+
 
   this.fade_state = "in"
   this.victory = false
@@ -185,9 +191,10 @@ ImpulseGameState.prototype.make_player = function() {
   }
 }
 
-ImpulseGameState.prototype.zoom_in = function(center, target) {
+ImpulseGameState.prototype.zoom_in = function(center, target, interval) {
   this.zoom_state = "in"
-  this.zoom_transition_timer = this.zoom_transition_period;
+  this.zoom_transition_period = interval
+  this.zoom_transition_timer = interval
   this.zoom_target_pt = center;
   this.zoom_target_scale = target;
   this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
@@ -195,9 +202,10 @@ ImpulseGameState.prototype.zoom_in = function(center, target) {
   this.zoom_bg_switch = false;
 }
 
-ImpulseGameState.prototype.zoom_out = function(center, target) {
+ImpulseGameState.prototype.zoom_out = function(center, target, interval) {
   this.zoom_state = "out"
-  this.zoom_transition_timer = this.zoom_transition_period;
+  this.zoom_transition_period = interval
+  this.zoom_transition_timer = interval;
   this.zoom_target_pt = center;
   this.zoom_target_scale = target;
   this.zoom_start_pt = {x:this.camera_center.x, y:this.camera_center.y};
@@ -270,7 +278,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1)
+        this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1, this.fast_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -280,7 +288,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0) {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 10)
+        this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -292,7 +300,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if(this.victory)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x: this.player.body.GetPosition().x * draw_factor, y: this.player.body.GetPosition().y * draw_factor}, 10)
+        this.zoom_out({x: this.player.body.GetPosition().x * draw_factor, y: this.player.body.GetPosition().y * draw_factor}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -951,7 +959,7 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
   first.owner.collide_with(second.owner, first.body, second.body)
   second.owner.collide_with(first.owner, second.body, first.body)
 
-  contact.SetEnabled(false)
+  //contact.SetEnabled(false)
 
 }
 

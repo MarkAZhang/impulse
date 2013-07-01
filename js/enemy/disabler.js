@@ -9,7 +9,6 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
 
   this.death_radius = 2
-  this.life_time = 7500 //goo automatically dies after this
 
   this.do_yield = false
 
@@ -20,7 +19,9 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
   this.goo_change_transition = 500
 
-  this.goo_expand_period = 3000
+  this.goo_expand_period = 2500
+  if(player_data.difficulty_mode == "easy")
+    this.goo_expand_period = 3000
 
   this.goo_state = "small"
 

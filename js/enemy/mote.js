@@ -16,10 +16,14 @@ function Mote(world, x, y, id, impulse_game_state) {
 
   this.cautious = true
 
+  this.silence_duration = 3000
+  if(player_data.difficulty_mode == "easy")
+    this.silence_duration = 2000
+
 }
 
 Mote.prototype.player_hit_proc = function() {
-  this.player.silence(3000)
+  this.player.silence(this.silence_duration)
 }
 
 Mote.prototype.additional_processing = function(dt) {

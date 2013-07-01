@@ -415,18 +415,27 @@ function load_game() {
     }
   }
 
-  if(!load_obj['options']) {
-    //default options
-    load_obj['options'] = {
+  var default_options = {
       "music_mute": false,
       "effects_mute": false,
       'explosions': true,
       'score_labels': true,
       "progress_circle": false,
       "multiplier_display": true,
+      "impulse_shadow": true,
+      "show_transition_screens": false,
       "control_hand": "right",
       "control_scheme": "mouse",
-      "impulse_shadow": true
+    }
+
+  if(!load_obj['options']) {
+    //default options
+    load_obj['options'] = {}
+  }
+
+  for(var option in default_options) {
+    if(!load_obj['options'].hasOwnProperty(option)) {
+      load_obj['options'][option] = default_options[option]
     }
   }
 
