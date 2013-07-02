@@ -140,7 +140,7 @@ PauseMenu.prototype.add_buttons = function() {
       this.buttons.push(this.quit_button)
       if(player_data.options.control_hand == "right") {
         this.quit_button.underline_index = 0
-        this.quit_button.extra_text= "CTRL+"
+        this.quit_button.extra_text= "SHIFT+"
       } else {
         this.quit_button.extra_text = "CTRL + RIGHT ARROW"
       }
@@ -360,7 +360,7 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
       set_dialog_box(new OptionsMenu(this))
     }*/
   } else {
-    if(keyCode == imp_vars.keys.QUIT_KEY && this.ctrl_down()) { //Q = QUIT
+    if(keyCode == imp_vars.keys.QUIT_KEY && this.shift_down()) { //Q = QUIT
       this.quit_tutorial()
     }
   }

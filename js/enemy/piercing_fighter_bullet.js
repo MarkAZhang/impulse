@@ -15,8 +15,27 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
   this.v.Normalize()
   this.v.Multiply(this.force)
 
+  if(player_data.difficulty_mode == "easy") {
+    this.v.Multiply(0.5)
+  }
   this.do_yield = false
   this.bullet_force = 100
+  if(player_data.difficulty_mode == "easy") {
+    this.bullet_force = 50
+  }
+  this.bullet_self_factor = 12;
+  if(player_data.difficulty_mode == "easy") {
+    this.bullet_self_factor = 24
+  }
+
+
+  this.reflected = false
+  this.body.SetBullet(true)
+
+  this.bullet_goo_factor = 0.33
+
+
+  this.do_yield = false
   this.bullet_enemy_factor = 1.5
 
   this.parent_id = parent_id
@@ -29,20 +48,4 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
 PiercingFighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
 }
 
-PiercingFighterBullet.prototype.collide_with = function(other) {
-  if(this.dying)//ensures the collision effect only activates once
-    return
-  if(other === this.player) {
-    this.start_death("hit_player")
-    if(this.status_duration[1] <= 0) {
-      var bullet_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-      if(this.player.status_duration[2] > 0) {
-        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * this.bullet_goo_factor * Math.cos(bullet_angle),
-        this.bullet_force * this.bullet_goo_factor* Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
-      } else {
-        this.player.body.ApplyImpulse(new b2Vec2(this.bullet_force * Math.cos(bullet_angle), this.bullet_force * Math.sin(bullet_angle)), this.player.body.GetWorldCenter())
-      }
-      this.impulse_game_state.reset_combo()
-    }
-  }
-}
+PiercingFighterBullet.prototype.collide_with = FighterBullet.prototype.collide_with

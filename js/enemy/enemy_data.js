@@ -276,10 +276,10 @@ impulse_enemy_stats["wispdire"] = {
 
 impulse_enemy_stats["fighter"] = {
   color: "#0000ec",
-  density: 3.5,
+  density: 2,
   lin_damp: 6,
   effective_radius: 1,
-  force: 5.3,
+  force: 3.3,
   score_value: 5000,
   attack_rating: 9,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:

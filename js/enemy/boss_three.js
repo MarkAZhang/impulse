@@ -38,7 +38,13 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.num_arms = 16
   this.striking_arms = {}
   this.strike_duration = 2800
+  if(player_data.difficulty_mode == "easy") {
+    this.strike_duration = 3400
+  }
   this.strike_interval = 1500
+  if(player_data.difficulty_mode == "easy") {
+    this.strike_interval = 1700
+  }
   this.strike_timer = this.strike_interval
   this.strike_charging_prop = 0.7
 
@@ -104,6 +110,13 @@ function BossThree(world, x, y, id, impulse_game_state) {
    "fighter" : 3,
    "troll" : 8,
  }
+
+  if(player_data.difficulty_mode == "easy") {
+    for(var enemy in this.spawn_count) {
+      this.spawn_count[enemy] *= 0.6
+      this.spawn_count[enemy] = Math.ceil(this.spawn_count[enemy])
+    }
+  }
 
  this.spawn_force = {
   "stunner" : 50,

@@ -104,7 +104,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     this.delete_button.shadow = false
     if(player_data.options.control_hand == "right") {
       this.delete_button.underline_index = 0
-      this.quit_button.extra_text= "SHIFT+"
+    this.delete_button.extra_text= "SHIFT+"
     } else {
       this.delete_button.extra_text = "SHIFT + DOWN ARROW"
       this.delete_button.dim_extra_text = true

@@ -484,9 +484,9 @@ impulse_level_data['HIVE 3-1'] = {
   enemies: {
 
               stunner: [6, 6, 2, 1, 20],
-              tank:[8, 8, 1, 1, 10],
-              mote: [10, 10, 1, 1, 15],
-              fighter: [12, 12, 1, 1.5, 10]
+              tank:[12, 12, 1, 1, 10],
+              mote: [12, 12, 1, 1, 15],
+              fighter: [14, 14, 1, 1.5, 10]
 
            },
   dominant_enemy: "fighter",
@@ -501,13 +501,13 @@ spawn_points: [[-100, 360], [-100, -100], [900, 200], [900, 700], [200, 700], [4
   spark_spawn_points: [[586, 50], [83, 88], [205, 548], [715, 515], [728, 260], [83, 330]],
   buffer_radius: 0.6,
    cutoff_scores: {
-    normal:[250000, 600000, 2000000],
+    normal:[250000, 600000, 1500000],
   },
   initial_spawn_data: {
     fighter: 1,
-    tank: 2,
+    tank: 1,
     stunner: 2,
-    mote: 2
+    mote: 1
   },
 
   colored_interface: true,

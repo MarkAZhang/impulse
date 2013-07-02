@@ -77,6 +77,9 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.shrink_rate = 0.025
 
   this.enemy_spawn_interval = 10000
+  if(player_data.difficulty_mode == "easy") {
+    this.enemy_spawn_interval = 11000
+  }
   this.enemy_spawn_duration = 1000
 
   this.spawn_sets = [

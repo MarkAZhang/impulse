@@ -175,8 +175,8 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.punch_exploded = false
 
-  this.max_turret_interval = 10000
-  this.max_punching_interval = 12500
+  this.max_turret_interval = 1000
+  this.max_punching_interval = 8000
   this.max_turret_timer = this.max_turret_interval/5
   this.max_punching_timer = this.max_punching_interval
 
@@ -402,6 +402,8 @@ BossOne.prototype.rotate_joint_to = function(joint_name, angle) {
 }
 
 BossOne.prototype.turret_fire_enemy = function(arm) {
+
+  return
   var dir = new b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
 
   var enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
@@ -590,7 +592,7 @@ BossOne.prototype.additional_processing = function(dt) {
       }*/
     }
     if(this.arm_states[arm] == "loading_turret") {
-      if(arm == "left")
+      //if(arm == "left")
         //console.log("LOADING TURRET "+arm)
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
@@ -638,7 +640,6 @@ BossOne.prototype.additional_processing = function(dt) {
 }
 
 BossOne.prototype.process_punching = function(arm) {
-  //console.log("PUNCHING "+arm+" "+this.action_timer[arm])
   if(arm == "left") {
     var angle = _atan(this.body_parts["lh"].GetPosition(), this.punch_target_pts[arm])
     var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
@@ -650,6 +651,8 @@ BossOne.prototype.process_punching = function(arm) {
     if(this.arm_states[arm] == "punching")
       dir.Multiply(this.punch_force);
     this.body_parts["lh"].ApplyImpulse(dir, this.body_parts["lh"].GetWorldCenter())
+    //console.log("PUNCHING "+arm+" "+this.action_timer[arm])
+    console.log(angle+" "+dir.x+" "+dir.y+" "+dist+" "+body_dist+" "+this.body_parts["lh"].GetWorldCenter().x+" "+this.body_parts["lh"].GetWorldCenter().y)
     /*if(this.arm_states[arm] == "punching" && dist < 1){// || body_dist > this.punch_range) {
       this.arm_states[arm] = "paralyzed"
       this.paralyzed_pause[arm] += this.action_timer[arm]
