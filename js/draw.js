@@ -651,6 +651,7 @@ spriteSheetData = {
   "immunitas_aura": [450, 0, 123, 123],
   "immunitas_aura_red": [573, 0, 123, 123],
   "immunitas_arrow": [0, 200, 70, 70],
+  "immunitas_lockon" : [573, 123, 120, 120],
 
   "consumendi_head": [0, 0, 180, 180],
   "consumendi_head_red": [720, 136, 135, 135],

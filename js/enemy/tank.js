@@ -205,7 +205,7 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
 }
 
 Tank.prototype.bulk_draw = function(context, draw_factor, num) {
-  if(this.durations["open"] <= 0) {
+  if(this.durations["open"] <= 0 && this.status_duration[1] <= 0) {
     context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)
   }
