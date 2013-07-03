@@ -27,6 +27,8 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.last_stun = this.entered_arena_delay
 
   this.require_open = true
+
+  this.hit_proc_on_silenced = true
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {

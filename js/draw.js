@@ -78,10 +78,14 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
   context.fill()
 
   context.globalAlpha *= 10
+  context.save()
   context.globalAlpha *= 0.5
+  if(world_num == 0) {
+    context.globalAlpha *= 0.5
+  }
   if(text == "GATEWAY UNLOCKED")
     draw_tessellation_sign(context, world_num, x, y, 50)
-  context.globalAlpha /= 0.5
+  context.restore()
   context.textAlign = "center"
   context.font = text_size+"px Muli"
   context.fillStyle = text_color
@@ -152,6 +156,7 @@ function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
 
 
 var tessellation_logo_factor = {
+    "0": 1.4,
     "1": 1,
     "2": 1.4,
     "3": 1.4
@@ -159,9 +164,7 @@ var tessellation_logo_factor = {
 
 function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor, rotate) {
 
-
-
-  if(tessellation == 0 || tessellation >= 4) {
+  if(tessellation >= 4) {
     context.save()
     if(rotate) {
       context.translate(x, y)
@@ -293,7 +296,7 @@ function draw_rounded_rect(context, x, y, w, h, r, color) {
   context.stroke()
 }
 
-function draw_pause_icon(context, x, y, scale, color) {
+function draw_pause_icon(context, x, y, scale, color, key_display) {
 
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
@@ -303,19 +306,20 @@ function draw_pause_icon(context, x, y, scale, color) {
   context.fillStyle = color
   context.fill()
 
-
-  context.font = "10px Muli"
-  context.textAlign = "center"
-  if(player_data.options.control_hand == "left") {
-    context.fillText("SHIFT", x+scale, y+scale)
-  } else {
-    context.fillText("Q", x+scale, y+scale)
+  if(key_display) {
+    context.font = "10px Muli"
+    context.textAlign = "center"
+    if(player_data.options.control_hand == "left") {
+      context.fillText("SHIFT", x+scale, y+scale)
+    } else {
+      context.fillText("Q", x+scale, y+scale)
+    }
   }
 
   context.restore()
 }
 
-function draw_music_icon(context, x, y, scale, color) {
+function draw_music_icon(context, x, y, scale, color, key_display) {
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
 
@@ -346,17 +350,19 @@ function draw_music_icon(context, x, y, scale, color) {
     context.arc(x- scale * 0.3 + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
     context.stroke()
   }
-  context.font = "10px Muli"
-  context.textAlign = "center"
-  if(player_data.options.control_hand == "left") {
-    context.fillText("M", x+scale, y+scale)
-  } else {
-    context.fillText("X", x+scale, y+scale)
+  if(key_display) {
+    context.font = "10px Muli"
+    context.textAlign = "center"
+    if(player_data.options.control_hand == "left") {
+      context.fillText("M", x+scale, y+scale)
+    } else {
+      context.fillText("X", x+scale, y+scale)
+    }
   }
   context.restore()
 }
 
-function draw_fullscreen_icon(context, x, y, scale, color) {
+function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
   context.beginPath()
@@ -383,12 +389,14 @@ function draw_fullscreen_icon(context, x, y, scale, color) {
   context.moveTo(x - scale * 1/2, y - scale * 1/2)
   context.lineTo(x + scale * 1/2, y + scale * 1/2)
   context.stroke()
-  context.font = "10px Muli"
-  context.textAlign = "center"
-  if(player_data.options.control_hand == "left") {
-    context.fillText("N", x+scale, y+scale)
-  } else {
-    context.fillText("F", x+scale, y+scale)
+  if(key_display) {
+    context.font = "10px Muli"
+    context.textAlign = "center"
+    if(player_data.options.control_hand == "left") {
+      context.fillText("N", x+scale, y+scale)
+    } else {
+      context.fillText("F", x+scale, y+scale)
+    }
   }
   context.restore()
 }
@@ -494,6 +502,8 @@ function draw_arrow(context, x, y, size, dir, color, shadowed) {
   if(shadowed) {
     context.shadowBlur = 10
     context.shadowColor = color
+  } else {
+    context.shadowBlur = 0
   }
   context.fill()
 
@@ -537,6 +547,25 @@ function draw_multi(context, x, y) {
 function draw_multi_fragment(context, x, y) {
 
   drawSprite(context, x, y, 0, 15, 15, "multi")
+
+}
+
+function draw_logo(context, x, y, name) {
+  ctx.textAlign = "center"
+  ctx.shadowColor = impulse_colors["impulse_blue"]
+  ctx.shadowBlur = 20
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+
+  ctx.font = '72px Muli'
+  ctx.fillText("IMPULSE", x, y)
+
+  if(name) {
+    ctx.font = '24px Muli'
+  ctx.globalAlpha /= 2
+  ctx.fillText("MARK ZHANG", x, y + 50)
+  ctx.globalAlpha *= 2
+  }
+
 
 }
 
@@ -588,13 +617,7 @@ function draw_agents_within_rect(context, player, level, x, y, w, h, border_colo
   context.clip()
 
   //draw player
-  context.beginPath()
-  var player_loc = player.body.GetPosition()
-  context.arc(x - w/2 + player_loc.x*draw_factor/levelWidth * w-1, y - h/2 + player_loc.y*draw_factor/levelHeight * h -1, 2, 0, 2 * Math.PI, true)
-  context.fillStyle = impulse_colors["impulse_blue"]
-  context.shadowBlur = 2
-  context.shadowColor = context.fillStyle
-  context.fill()
+
 
   for(var i = 0; i < level.enemies.length; i++) {
     var enemy_loc = level.enemies[i].body.GetPosition()
@@ -605,6 +628,19 @@ function draw_agents_within_rect(context, player, level, x, y, w, h, border_colo
     context.shadowColor = context.fillStyle
     context.fill()
   }
+
+  context.beginPath()
+  var player_loc = player.body.GetPosition()
+  context.arc(x - w/2 + player_loc.x*draw_factor/levelWidth * w-1, y - h/2 + player_loc.y*draw_factor/levelHeight * h -1, 2, 0, 2 * Math.PI, true)
+  context.fillStyle = impulse_colors["impulse_blue"]
+  context.shadowBlur = 2
+  context.shadowColor = context.fillStyle
+  context.fill()
+  context.beginPath()
+  context.arc(x - w/2 + player_loc.x*draw_factor/levelWidth * w-1, y - h/2 + player_loc.y*draw_factor/levelHeight * h -1, 4, 0, 2 * Math.PI, true)
+  context.strokeStyle = impulse_colors["impulse_blue"]
+  context.lineWidth = 1
+  context.stroke()
 
   context.restore()
   context.save()
@@ -638,7 +674,9 @@ spriteSheetData = {
   "player_green": [240, 0, 60, 60],
   "spark": [0, 60, 30, 30],
   "multi": [30, 60, 30, 30],
-  "key": [60, 60, 60, 60],
+  "white_glow": [100, 80, 100, 100],
+  "world_logo": [200, 80, 100, 100],
+
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [180, 135, 90, 90],
@@ -683,16 +721,19 @@ var consumendiSprite = loadSprite("art/consumendi_sprite.png")
 var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
 
 var tessellation_glow_map = {
+  "0": "white_glow",
   "1": "immunitas_glow",
   "2": "consumendi_glow",
   "3": "negligentia_glow"
 }
 var tessellation_logo_map = {
+  "0": "world_logo",
   "1": "immunitas_arm",
   "2": "consumendi_mini",
   "3": "negligentia_logo"
 }
 var tessellation_sprite_map = {
+  "0": playerSprite,
   "1": immunitasSprite,
   "2": consumendiSprite,
   "3": negligentiaSprite

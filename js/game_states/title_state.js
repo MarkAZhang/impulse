@@ -37,34 +37,32 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "black"
+    bg_ctx.fillStyle = "#080808"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
   ctx.globalAlpha = .3
   /*ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)*/
   ctx.globalAlpha = 1
-  ctx.beginPath()
-  ctx.font = '72px Muli'
-  ctx.shadowColor = impulse_colors["impulse_blue"]
-  ctx.shadowBlur = 20
-  ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.textAlign = 'center'
-  ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)
+
+  draw_logo(ctx,levelWidth/2, levelHeight/2 - 160, true)
+
 
     for(var i = 0; i < this.buttons[this.state].length; i++)
     {
       this.buttons[this.state][i].draw(ctx)
     }
 
-  ctx.font = '20px Muli'
+  /*ctx.font = '20px Muli'
   draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars[player_data.difficulty_mode], levelWidth - 40, levelHeight - 10)
+  ctx.fillText(player_data.stars[player_data.difficulty_mode], levelWidth - 40, levelHeight - 10)*/
 
   if(player_data.difficulty_mode == "easy") {
+    ctx.font = '12px Muli'
     ctx.textAlign = 'left'
+    ctx.fillStyle = "white"
     ctx.fillText("EASY MODE", 10, levelHeight - 10)
   }
 }
@@ -88,7 +86,7 @@ TitleState.prototype.setup_main_menu = function() {
   }*/
   _this = this;
   this.buttons["menu"] = []
-  var button_color = impulse_colors["impulse_blue"]
+  var button_color = "white"//impulse_colors["impulse_blue"]
   this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",
     function(){
       if(player_data.save_data[player_data.difficulty_mode].game_numbers) {
@@ -118,6 +116,7 @@ if(dev){this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth
   this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){_this.clear_data()})
   this.buttons["options"].push(this.clear_data_button)
   this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
+
 
 }
 

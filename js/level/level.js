@@ -463,21 +463,17 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
       var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
       factor = 1 * prog + 2 * (1-prog)
       ctx.globalAlpha *= 0.5*(1-prog)
-      if(this.world_num != 0) {
         drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
         (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
 
-      }
     }
 
     else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 3) {
       factor = 2
       ctx.globalAlpha *= 0.5
-      if(this.world_num != 0) {
         drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
         (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
       }
-    }
     ctx.restore()
     draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, factor)
 }
@@ -577,7 +573,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.rect(0, 0, levelWidth, levelHeight)
   bg_ctx.clip()
 
-  if(this.level_intro_state.world_num)
+  if(this.level_intro_state.world_num != null)
     draw_bg(bg_ctx, 0, 0, levelWidth, levelHeight, "Hive "+this.level_intro_state.world_num)
   else {
     bg_ctx.fillStyle = impulse_colors["world 0 bright"]

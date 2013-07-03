@@ -54,7 +54,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.ctrl_down_time = 0
   this.bg_color = impulse_colors["world "+this.world_num +" dark"]
   this.color = impulse_colors["world "+this.world_num]
-  this.lite_color = impulse_colors["world "+this.world_num +" lite"]
+  this.lite_color = this.game_state.lite_color
 
   this.drawn_enemies = null
 
@@ -150,6 +150,7 @@ PauseMenu.prototype.add_buttons = function() {
    this.option_button = new SmallButton("OPTIONS", 20, this.x, this.y - this.h/2 + 490, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
     set_dialog_box(new OptionsMenu(_this))
   }}(this))
+  //this.option_button.underline = true
   this.buttons.push(this.option_button)
 
     var num_row = 12
@@ -215,7 +216,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.fillText("CLICK FOR INFO", this.x, this.y - this.h/2 + 310)
 
 
-    var temp_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
+    var temp_colors = [this.lite_color, 'silver', 'gold']
     var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
     var score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
     if(!this.is_boss_level) {
@@ -251,9 +252,9 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.fillStyle = this.lite_color
   ctx.shadowColor = ctx.fillStyle
   if(player_data.options.control_hand == "right") {
-    ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 570)
+    ctx.fillText("'Q' TO RESUME", this.x, this.y - this.h/2 + 585)
   } else {
-    ctx.fillText("'SHIFT' TO RESUME", this.x, this.y - this.h/2 + 570)
+    ctx.fillText("'SHIFT' TO RESUME", this.x, this.y - this.h/2 + 585)
   }
 
 
@@ -278,14 +279,14 @@ PauseMenu.prototype.check_redraw_icons = function(ctx) {
   if(this.redraw_icons) {
     if(this.game_state.zoom == 1 && this.game_state.zoom_state == "none") {
 
-      draw_music_icon(bg_ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color)
-      draw_pause_icon(bg_ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color)
-      draw_fullscreen_icon(bg_ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color)
+      draw_music_icon(bg_ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color, true)
+      draw_pause_icon(bg_ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color, true)
+      draw_fullscreen_icon(bg_ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color, true)
     } else {
       this.game_state.set_zoom_transparency(ctx);
-      draw_music_icon(ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color)
-      draw_pause_icon(ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color)
-      draw_fullscreen_icon(ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color)
+      draw_music_icon(ctx, sidebarWidth/2, canvasHeight - 20, 15, this.lite_color, true)
+      draw_pause_icon(ctx, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.lite_color, true)
+      draw_fullscreen_icon(ctx, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.lite_color, true)
     }
     this.redraw_icons = false
   }
@@ -481,14 +482,14 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
 
   ctx.font = '18px Muli';
   ctx.textAlign = "left"
-  ctx.fillText("EFFECTS VOLUME", this.x - 130, this.y - this.h/2 + 205)
-  ctx.fillText("PARTICLES", this.x - 130, this.y - this.h/2 + 235)
+  ctx.fillText("SOUND EFFECTS", this.x - 130, this.y - this.h/2 + 205)
+  ctx.fillText("PARTICLE EFFECTS", this.x - 130, this.y - this.h/2 + 235)
   ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2 + 265)
   ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
   ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 325)
   ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 355)
   if(this.game_state.level.main_game)
-    ctx.fillText("SHOW DEFEAT SCREEN", this.x - 130, this.y - this.h/2 + 385)
+    ctx.fillText("SHOW DEFEAT SCREENS", this.x - 130, this.y - this.h/2 + 385)
 
   ctx.font = '12px Muli';
   ctx.textAlign = "center"
@@ -745,7 +746,7 @@ function EnemyBox(enemy_name, previous_menu) {
 
   this.w = 600
   this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
-    set_dialog_box(_this.previous_menu)
+    setTimeout(function() { set_dialog_box(_this.previous_menu) }, 50)
   }}(this))
 
   this.buttons.push(this.back_button)
@@ -895,7 +896,7 @@ EnemyBox.prototype.on_mouse_move = function(x, y) {
   }
 }
 
-EnemyBox.prototype.on_mouse_down = function(x, y) {
+EnemyBox.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }

@@ -7,6 +7,8 @@ function HowToPlayState() {
   this.init(0, null, null, true, null, true)
   this.ready = false
   this.level = this.load_level(impulse_level_data["HOW TO PLAY"])
+  this.level.no_spawn = true
+  this.level.check_enemy_spawn_timers = this.check_enemy_spawn_timers
   this.slide_num = 0
 
 }
@@ -24,12 +26,14 @@ HowToPlayState.prototype.load_complete = function() {
   bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
   this.level.draw_bg(bg_ctx)
   bg_ctx.translate(-sidebarWidth, 0)
+
   impulse_music.play_bg(imp_vars.songs["Interlude"])
 
   this.color = "white"
+  this.lite_color = "#ccc"
   this.dark_color = "black"
   this.check_new_enemies()
-  this.num_pages = 10
+  this.num_pages = 12
   this.cur_page = 0
 
   this.temp_fragments = null
@@ -46,9 +50,10 @@ HowToPlayState.prototype.load_complete = function() {
   this.secondary_canvas.height = 150
   this.secondary_ctx = this.  secondary_canvas.getContext('2d');
 
-  this.score_colors = ['world '+this.world_num+" lite", 'silver', 'gold']
+  this.score_colors = ["white", 'silver', 'gold']
   this.score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
   this.score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
+  this.star_colors =  ["white", "silver", "gold"]
 
   this.special_buttons = []
   var _this = this
@@ -61,6 +66,40 @@ HowToPlayState.prototype.load_complete = function() {
 
   this.set_difficulty_button_underline();
   this.hive_numbers = new HiveNumbers(this.world_num)
+
+}
+
+//replaces the check_enemy_spawn_timers in Level
+HowToPlayState.prototype.check_enemy_spawn_timers = function(dt) {
+  if(this.no_spawn) return
+  for(var k in this.enemy_spawn_timers) {
+      //if we haven't reached the initial spawn time
+    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
+    //increment the spawn_counters
+    this.enemy_spawn_counters[k] += dt/1000/60 * this.enemies_data[k][3]
+
+    this.enemy_spawn_timers[k] += dt/1000
+    if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
+      this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
+
+      // re-seed for each type of enemy
+      var spawn_point_index = 0;
+      if(this.spawn_points)
+        spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
+
+      var num_enemies_to_spawn = this.enemy_spawn_counters[k]
+
+      //if(player_data.difficulty_mode == "easy") {
+      //  num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.7)
+      //}
+
+      for(var j = 1; j <= num_enemies_to_spawn; j++) {
+        this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
+        spawn_point_index+=1;
+
+      }
+    }
+  }
 }
 
 HowToPlayState.prototype.change_mode = function(type) {
@@ -87,6 +126,19 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   ctx.textAlign = "center"
   ctx.fillStyle = this.color
   if(this.cur_page == 0) {
+    draw_logo(ctx, 400, 380, true)
+    /*ctx.font = '72px Muli'
+    ctx.shadowColor = impulse_colors["impulse_blue"]
+    ctx.shadowBlur = 20
+    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.fillText("IMPULSE", 400, 420)*/
+    ctx.font = '36px Muli'
+    ctx.fillStyle = "white"
+    ctx.shadowColor = "white"
+    ctx.fillText("HOW TO PLAY", 400, 500)
+  }
+
+  if(this.cur_page == 1) {
 
     if(player_data.options.control_hand == "right") {
       draw_arrow_keys(ctx, 400, 430, 60, this.color, ["W", "A", "S", "D"])
@@ -100,7 +152,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillText("ALTERNATE CONTROLS AVAILABLE IN PAUSE MENU", 400, 550)
   }
 
-  if(this.cur_page == 1) {
+  if(this.cur_page == 2) {
     if(player_data.options.control_scheme == "mouse") {
       draw_mouse(ctx, 400, 400, 83, 125, this.color)
     } else {
@@ -109,11 +161,11 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillText("IMPULSE", 400, 500)
     ctx.globalAlpha *= 0.5
     ctx.font = '12px Muli'
-    ctx.fillText("ALTERNATE CONTROLS AVAILABLE IN PAUSE MENU", 400, 550)
+    ctx.fillText("HOLD MOUSE TO CONTINUOUSLY IMPULSE", 400, 550)
 
   }
 
-  if(this.cur_page == 2) {
+  if(this.cur_page == 3) {
 
     ctx.drawImage(this.primary_canvas, 0, 0, 150, 150, 225, 300, 150, 150);
     ctx.drawImage(this.secondary_canvas, 0, 0, 150, 150, 425, 300, 150, 150);
@@ -164,7 +216,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.restore()
   }
 
-   if(this.cur_page == 3) {
+   if(this.cur_page == 4) {
 
     ctx.drawImage(this.primary_canvas, 0, 0, 150, 150, 225, 300, 150, 150);
     ctx.drawImage(this.secondary_canvas, 0, 0, 150, 150, 425, 300, 150, 150);
@@ -193,7 +245,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
   }
 
-  if(this.cur_page == 4) {
+  if(this.cur_page == 5) {
     for(var i = 0; i < 3; i++) {
       ctx.font = '24px Muli';
       ctx.textAlign = "right"
@@ -207,40 +259,56 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText(this.score_rewards[i], 200, 330 + 40 * i+15)
     }
+
+    ctx.beginPath()
+    ctx.rect(190, 308, 420, 45)
+    ctx.strokeStyle = "red"
+    ctx.lineWidth = 8
+    ctx.stroke()
     ctx.font = '20px Muli'
     ctx.textAlign = "center"
     ctx.fillStyle = this.color
-    ctx.fillText("GET THE GATEWAY SCORE", 400, 500)
+    ctx.fillText("GET THE GATEWAY SCORE...", 400, 500)
   }
 
-  if(this.cur_page == 5) {
-    if(player_data.options.control_hand == "right") {
-      ctx.shadowColor = this.color
-      ctx.shadowBlur = 10
-
-      draw_rounded_rect(ctx, 400, 400, 300, 50, 10, this.color)
-      ctx.fillText("SPACEBAR", 400, 406)
-    }
-
-    if(player_data.options.control_hand == "left") {
-      draw_rounded_rect(ctx, 400, 400, 120, 50, 10, this.color)
-      ctx.fillText("ENTER", 400, 406)
-    }
-
-
-    ctx.beginPath()
-    ctx.arc(400, 200, 50, 0, 2 * Math.PI)
-    ctx.lineWidth = 8
-    ctx.strokeStyle = 'red'
-    ctx.stroke()
+  if(this.cur_page == 6) {
 
     ctx.font = '20px Muli'
     ctx.textAlign = "center"
     ctx.fillStyle = this.color
     ctx.shadowBlur = 0
-    ctx.fillText("ENTER THE UNLOCKED GATEWAY", 400, 500)
+    ctx.fillText("...THEN PRESS", 400, 370)
+
+    if(player_data.options.control_hand == "right") {
+      ctx.shadowColor = this.color
+      ctx.shadowBlur = 10
+
+      draw_rounded_rect(ctx, 400, 430, 300, 50, 10, this.color)
+      ctx.fillText("SPACEBAR", 400, 436)
+    }
+
+    if(player_data.options.control_hand == "left") {
+      draw_rounded_rect(ctx, 400, 430, 120, 50, 10, this.color)
+      ctx.fillText("ENTER", 400, 436)
+    }
+
+
+
+    draw_arrow(ctx, 355, 170, 25, "right", "red", false)
+    draw_arrow(ctx, 445, 170, 25, "left", "red", false)
+    draw_arrow(ctx, 400, 125, 25, "down", "red", false)
+    draw_arrow(ctx, 400, 215, 25, "up", "red", false)
+    ctx.beginPath()
+    ctx.arc(400, 170, 50, 0, 2 * Math.PI)
+    ctx.lineWidth = 8
+    ctx.shadowBlur = 0
+    ctx.strokeStyle = 'red'
+    ctx.stroke()
+
+    ctx.shadowBlur = 0
+    ctx.fillText("TO ENTER THE UNLOCKED GATEWAY", 400, 500)
     ctx.font = '12px Muli'
-    ctx.fillText("(MUST BE ON TOP OF GATEWAY)", 400, 515)
+    ctx.fillText("(MUST MOVE ON TOP OF GATEWAY)", 400, 515)
     ctx.globalAlpha = 0.5
     ctx.font = '12px Muli'
     ctx.shadowBlur = 5
@@ -249,8 +317,8 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.shadowColor = "red"
     ctx.fillStyle = "red"
 
-    ctx.clearRect(460, 480, 95, 25)
-    ctx.fillText("GATEWAY", 508, 500)
+    ctx.clearRect(474, 480, 105, 25)
+    ctx.fillText("GATEWAY", 523, 500)
     ctx.font = '12px Muli'
     ctx.shadowBlur = 0
     ctx.globalAlpha = 0.5
@@ -260,7 +328,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
   }
 
-  if(this.cur_page == 6) {
+  if(this.cur_page == 7) {
     ctx.fillText("KILLING ENEMIES INCREASES YOUR MULTIPLIER", 400, 400)
     ctx.fillText("GETTING HIT RESETS YOUR MULTIPLIER", 400, 440)
 
@@ -276,9 +344,13 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "red"
     ctx.clearRect(515, 380, 115, 25)
     ctx.fillText("MULTIPLIER", 568, 400)
+    ctx.font = '12px Muli'
+    ctx.fillStyle = this.color
+    ctx.globalAlpha /= 2
+    ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 530)
   }
 
-  if(this.cur_page == 7) {
+  if(this.cur_page == 8) {
 
     ctx.beginPath()
     ctx.arc(this.level.spark_loc.x, this.level.spark_loc.y, 15, 0, 2 * Math.PI)
@@ -319,10 +391,38 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.font = '12px Muli'
     ctx.fillStyle = this.color
     ctx.globalAlpha /= 2
-    ctx.fillText("100 SPARKS = 1UP", 400, 520)
+    ctx.fillText("100 SPARKS = 1UP", 400, 530)
   }
 
-  if(this.cur_page == 8) {
+  if(this.cur_page == 9) {
+    ctx.font = '20px Muli'
+    ctx.fillStyle = "white"
+    draw_rounded_rect(ctx, 250, 406, 55, 55, 10, "white")
+    ctx.fillText("Q", 250, 412)
+    draw_rounded_rect(ctx, 400, 406, 55, 55, 10, "white")
+    ctx.fillText("X", 400, 412)
+    draw_rounded_rect(ctx, 550, 406, 55, 55, 10, "white")
+    ctx.fillText("F", 550, 412)
+    ctx.font = '16px Muli'
+    ctx.fillText("PAUSE", 250, 462)
+    ctx.fillText("MUTE", 400, 462)
+    ctx.fillText("FULLSCREEN", 550, 462)
+    ctx.font = '12px Muli'
+    ctx.globalAlpha /= 2
+    ctx.fillText("ENEMY INFO AND GAME OPTIONS IN THE PAUSE MENU", 400, 530)
+    ctx.globalAlpha *= 2
+
+
+    ctx.beginPath()
+    ctx.rect(-155, canvasHeight - 40, 120, 37)
+    ctx.strokeStyle = "red"
+    ctx.lineWidth = 4
+    ctx.stroke()
+    //redraw
+
+  }
+
+  if(this.cur_page == 10) {
     for(var i=0; i < this.special_buttons.length; i++) {
       this.special_buttons[i].draw(ctx)
     }
@@ -341,7 +441,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillText("CAN BE CHANGED IN MAIN MENU OPTIONS", 400, 520)
   }
 
-  if(this.cur_page == 9) {
+  if(this.cur_page == 11) {
 
     this.exit_button.draw(ctx)
 
@@ -354,10 +454,18 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
   ctx.globalAlpha = 1
 
-  if(this.cur_page > 0)
+  if(this.cur_page > 0) {
     draw_arrow(ctx, 100, 420, 20, "left", this.color)
-  if(this.cur_page < this.num_pages - 1)
+    ctx.font = '10px Muli'
+    ctx.fillStyle = this.color
+    ctx.fillText("BACK", 98, 450)
+  }
+  if(this.cur_page < this.num_pages - 1) {
     draw_arrow(ctx, 700, 420, 20, "right", this.color)
+    ctx.font = '10px Muli'
+    ctx.fillStyle = this.color
+    ctx.fillText("NEXT", 702, 450)
+  }
 
   for(var i = 0; i < this.num_pages; i++) {
     var offset = (this.num_pages-1)/2 - i
@@ -381,7 +489,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 }
 
 HowToPlayState.prototype.draw_contexts = function() {
-  if(this.cur_page == 2) {
+  if(this.cur_page == 3) {
     this.primary_ctx.clearRect(0, 0, 150, 150)
     this.secondary_ctx.clearRect(0, 0, 150, 150)
     this.draw_picture_bg_on_canvas(this.primary_ctx)
@@ -390,7 +498,7 @@ HowToPlayState.prototype.draw_contexts = function() {
     drawSprite(this.primary_ctx, 75, 75, 0, 60, 60, "player_normal")
     this.temp_fragments.draw(this.secondary_ctx)
   }
-  if(this.cur_page == 3) {
+  if(this.cur_page == 4) {
     this.primary_ctx.clearRect(0, 0, 150, 150)
     this.secondary_ctx.clearRect(0, 0, 150, 150)
     this.draw_picture_bg_on_canvas(this.primary_ctx)
@@ -431,20 +539,20 @@ HowToPlayState.prototype.draw_contexts = function() {
 
 HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
   var boundary_x = 75
-  if(this.cur_page == 3) {
+  if(this.cur_page == 4) {
     boundary_x = 100
   }
 
   ctx.save()
   ctx.beginPath()
   ctx.rect(0, 0, boundary_x, 150)
-  ctx.fillStyle = this.color
+  ctx.fillStyle = impulse_colors['world 0 bright']
   ctx.fill()
   ctx.beginPath()
   ctx.moveTo(boundary_x, 0)
   ctx.lineTo(boundary_x, 150)
   ctx.lineWidth = 6
-  ctx.strokeStyle = this.lite_color
+  ctx.strokeStyle = impulse_colors['world 0 bright']
   ctx.stroke()
   ctx.beginPath()
   ctx.rect(boundary_x, 0, 150-boundary_x, 150)
@@ -452,7 +560,7 @@ HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
   ctx.shadowColor = this.lite_color
   ctx.shadowBlur = 20
   ctx.fill()
-  if(this.cur_page == 2) {
+  if(this.cur_page == 3) {
     ctx.beginPath()
     ctx.moveTo(boundary_x, 0)
     ctx.lineTo(boundary_x, 150)
@@ -465,12 +573,12 @@ HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
 
 HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
-    if(this.cur_page == 8) {
+    if(this.cur_page == 10) {
       for(var i=0; i < this.special_buttons.length; i++) {
         this.special_buttons[i].on_mouse_move(x - sidebarWidth, y)
       }
     }
-    if(this.cur_page == 9) {
+    if(this.cur_page == 11) {
       this.exit_button.on_mouse_move(x - sidebarWidth, y)
     }
     this.player.mouseMove(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
@@ -494,13 +602,17 @@ HowToPlayState.prototype.on_key_down = function(keyCode) {
 
 HowToPlayState.prototype.setPage = function(page) {
 
-  if(page == 2 && this.cur_page != 2) {
+  if(page >= 4) {
+    this.level.no_spawn = false
+  }
+
+  if(page == 3 && this.cur_page != 3) {
 
     this.temp_fragments = new FragmentGroup("player", {x: 75/draw_factor, y: 75/draw_factor}, {x:0, y:0}, false)
     this.temp_fragments.process(300)
   }
 
-  if(page == 3 && this.cur_page != 3) {
+  if(page == 4 && this.cur_page != 4) {
 
     this.temp_fragments = new FragmentGroup("stunner", {x: 110/draw_factor, y: 75/draw_factor}, {x: 5, y:0}, false)
     this.temp_fragments.process(300)
@@ -513,15 +625,15 @@ HowToPlayState.prototype.setPage = function(page) {
 HowToPlayState.prototype.on_mouse_down = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
 
-    if(x > sidebarWidth && (x < canvasWidth - sidebarWidth && y > 400 || (this.cur_page == 8 && y > 350))) {
+    if(x > sidebarWidth && (x < canvasWidth - sidebarWidth && y > 400 || (this.cur_page == 10 && y > 350))) {
 
-      if(this.cur_page == 8) {
+      if(this.cur_page == 10) {
         for(var i=0; i < this.special_buttons.length; i++) {
           this.special_buttons[i].on_click(x - sidebarWidth, y)
         }
       }
 
-      if(this.cur_page == 9) {
+      if(this.cur_page == 11) {
         this.exit_button.on_click(x - sidebarWidth, y)
       }
 
@@ -566,7 +678,7 @@ HowToPlayState.prototype.game_over = function() {
     this.zoom_target_scale = 1
     this.zoom = 0.1
     this.zoom_bg_switch = true;
-    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1)
+    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, 1000)
 
     this.fade_state = "in"
     this.ready = true
@@ -574,5 +686,6 @@ HowToPlayState.prototype.game_over = function() {
     this.level.reset()
     this.reset()
     this.make_player()
+    this.level.main_game = false
   }
 }

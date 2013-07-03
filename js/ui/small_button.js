@@ -12,7 +12,7 @@ function SmallButton(text, size, x, y, w, h, color, hcolor, action) {
   this.underline = false
   this.underline_index = null
   this.extra_text = ""
-  this.shadow = false
+  this.shadow = true
   this.dim_extra_text = false
 }
 

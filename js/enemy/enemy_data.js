@@ -15,7 +15,8 @@ impulse_enemy_stats["stunner"] = {
   dies_on_impact: "YES",
   enemy_info: [
     "Upon collision, stuns you for 0.5 seconds # (you cannot move or impulse)",
-    "If hit directly into another enemy, # may stop moving or ricochet back at you. # This property is not unique to Stunners"
+    "If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
+    "Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
 
   className: Stunner
@@ -36,11 +37,11 @@ impulse_enemy_stats["spear"] = {
   dies_on_impact: "YES",
 
   enemy_info: [
-    "Charges at you. # Upon collision, causes significant knockback",
+    "Charges at you # # Upon collision, causes significant knockback",
     "Will only charge if it has line of sight",
-    "Cannot charge for 1 second after entering the screen. # Cannot charge from off-screen",
+    "Cannot charge for 1 second after entering the screen # # Cannot charge from off-screen",
     "When Impulsed, cannot charge for 5 seconds",
-    "Will always cause some knockback upon collision even if not charging.",
+    "Will cause some knockback upon collision even if not charging",
   ],
 
   special_ability: "Charges you on sight. Hurls you backward on impact.",
@@ -77,8 +78,8 @@ impulse_enemy_stats["tank"] = {
   enemy_info: [
     "Explodes upon collision, # causing huge knockback to all nearby units",
     "The blast radius is outlined around the Tank",
-    "When Impulsed, becomes volatile for 1 second. # Collision with another Tank will cause the volatile Tank to explode.",
-    "Explodes on death if volatile",
+    "When Impulsed, becomes volatile for 1 second # # Collision with another Tank will cause a volatile Tank to explode and die",
+    "Explodes upon death if volatile # # Therefore Will explode upon death when Impulsed into the Hiveline"
 
   ],
 

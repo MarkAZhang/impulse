@@ -183,6 +183,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.bulk_draw_nums = 0
   this.extra_adjust = false
 
+  this.hit_proc_on_silenced = true // for spears, since they cannot charge while silenced but still cause knockback
 }
 
 Enemy.prototype.check_death = function() {
@@ -577,7 +578,7 @@ Enemy.prototype.collide_with = function(other) {
       }
 
       this.start_death("hit_player")
-      if(this.status_duration[1] <= 0) {//do not proc if silenced
+      if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
         if(!this.level.is_boss_level) {
           this.impulse_game_state.reset_combo()

@@ -25,6 +25,7 @@ var imp_vars = {
     }
   },
   bg: {
+    "Hive 0": "bg/hive0",
     "Hive 1": "bg/hive1",
     "Hive 2": "bg/hive2",
     "Hive 3": "bg/hive3",
@@ -57,7 +58,7 @@ impulse_colors['gold'] = "#edb900"
 
 impulse_colors['world 0'] = "#333"
 impulse_colors['world 0 lite'] = "#555"
-impulse_colors['world 0 bright'] = "#ccc"
+impulse_colors['world 0 bright'] = "#aaa"
 impulse_colors['world 0 dark'] = "#080808"
 impulse_colors['world 1'] = "#034903"
 impulse_colors['world 1 lite'] = "#046a04"

@@ -34,12 +34,9 @@ impulse_level_data['SURVIVAL'] = {
 
 impulse_level_data['HOW TO PLAY'] = {
   enemies: {
-              stunner: [1, 1, 1, 0, 1]
+              stunner: [0, 1, 1, 0, 1]
 
            },
-  initial_spawn_data: {
-    stunner: 4
-  },
   dominant_enemy: "stunner",
   obstacle_v: [[[838,84],[-38,84],[-38,-45],[838,-45]],[[-38,175],[42,175],[42,258],[756,258],[756,175],[838,175],[838,645],[-38,645]]],
   spark_spawn_points: [[72, 225], [728, 225], [21, 127], [779, 127]],
@@ -50,7 +47,7 @@ impulse_level_data['HOW TO PLAY'] = {
     normal: [500, 2000, 10000],
     easy: [500, 2000, 10000],
   },
-  player_loc: {x: 400, y: 200},
+  player_loc: {x: 400, y: 170},
   buffer_radius: 1
 
 }
@@ -113,7 +110,7 @@ impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    normal: [500, 300000, 1200000],
+    normal: [50, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
 
@@ -193,7 +190,7 @@ impulse_level_data['HIVE 1-4'] = {
 
 impulse_level_data['HIVE 1-5'] = {
   enemies: {
-              stunner: [5, 5, 2, 2, 25],
+              stunner: [6, 6, 2, 1, 25],
               tank: [5, 8, 2, 4, 25]
            },
   initial_spawn_data: {
@@ -231,7 +228,7 @@ impulse_level_data['HIVE 1-6'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal:   [150000, 400000, 1500000],
+    normal:   [150000, 400000, 1250000],
   },
   player_loc: {x: 400, y: 300}
 
@@ -738,7 +735,7 @@ impulse_level_data['HIVE 4-1'] = {
              troll: [8, 16, 2, 1, 10],
              tank: [12, 16, 2, 1, 10],
              harpoon: [16, 16, 1, 1, 10],
-             slingshot: [1, 9, 2, 2, 20]
+             slingshot: [1, 5, 1, 1, 20]
 
            },
   dominant_enemy: "slingshot",

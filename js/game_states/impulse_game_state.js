@@ -805,9 +805,9 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 50)
   }
 
-  draw_music_icon(context, sidebarWidth/2, canvasHeight - 20, 15, this.color)
-  draw_pause_icon(context, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.color)
-  draw_fullscreen_icon(context, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.color)
+  draw_music_icon(context, sidebarWidth/2, canvasHeight - 20, 15, this.color, true)
+  draw_pause_icon(context, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.color, true)
+  draw_fullscreen_icon(context, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.color, true)
 
   context.restore()
 }

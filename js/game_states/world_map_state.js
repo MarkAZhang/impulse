@@ -4,7 +4,7 @@ WorldMapState.prototype.constructor = WorldMapState
 
 function WorldMapState(world) {
   this.bg_drawn = false
-  this.color = impulse_colors["impulse_blue"]
+  this.color = "white"//impulse_colors["impulse_blue"]
 
 
   this.buttons = []
@@ -72,7 +72,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "black"
+    bg_ctx.fillStyle = "#080808"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
@@ -121,6 +121,13 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
+  }
+
+  if(player_data.difficulty_mode == "easy") {
+    ctx.font = '12px Muli'
+    ctx.textAlign = 'left'
+    ctx.fillStyle = "white"
+    ctx.fillText("EASY MODE", 10, levelHeight - 10)
   }
 }
 
