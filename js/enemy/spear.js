@@ -78,9 +78,12 @@ Spear.prototype.additional_processing = function(dt) {
 }
 
 Spear.prototype.player_hit_proc = function() {
-  var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-  var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-  this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
+
+  if(this.status_duration[0] <= 0) {
+    var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
+    this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
+  }
 }
 
 Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {

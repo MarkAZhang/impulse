@@ -7,7 +7,7 @@ function CreditsState() {
   this.start_clicked = false
   this.buttons = []
   var _this = this
-  this.buttons.push(new SmallButton("RETURN", 20, levelWidth/2, levelHeight/2+270, 200, 50, impulse_colors["impulse_blue"], "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+  this.buttons.push(new SmallButton("RETURN", 20, levelWidth/2, levelHeight/2+270, 200, 50, "white", "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
   this.image = new Image()
 
   this.image.src = 'impulse_logo.png'
@@ -20,24 +20,30 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "black"
+    bg_ctx.fillStyle = "#080808"
     bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.bg_drawn = true
   }
-  ctx.globalAlpha = .3
+  /*ctx.globalAlpha = .3
   /*ctx.drawImage(this.image, levelWidth/2 - this.image.width/2, levelHeight/2 - 100 - this.image.height/2 - 15)*/
-  ctx.globalAlpha = 1
-  ctx.beginPath()
+  //ctx.globalAlpha = 1
+  draw_logo(ctx,levelWidth/2, levelHeight/2 - 160, true)
+  /*ctx.beginPath()
   ctx.font = '72px Muli'
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 20
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = 'center'
-  ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)
+  ctx.fillText("IMPULSE", levelWidth/2, levelHeight/2 - 100)*/
   ctx.font = '20px Muli'
-  ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.fillText("Impulse was conceived, designed, and coded by Mark Zhang", levelWidth/2, levelHeight/2 + 50)
-  ctx.fillText("Impulse is based on the Box2D physics engine.", levelWidth/2, levelHeight/2 + 75)
+  ctx.fillStyle = "white"//impulse_colors["impulse_blue"]
+  ctx.shadowColor = ctx.fillStyle
+  ctx.fillText("Music by Matt McFarland", levelWidth/2, levelHeight/2 - 20)
+  ctx.fillText("Some textures from SubtlePatterns.com", levelWidth/2, levelHeight/2 + 30)
+  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", levelWidth/2, levelHeight/2 + 80)
+  ctx.fillText("Based on the Box2dWeb Physics Engine", levelWidth/2, levelHeight/2 + 130)
+  ctx.fillText("Game design, UI design, programming, art, and everything else", levelWidth/2, levelHeight/2 + 180)
+  ctx.fillText("by Mark Zhang", levelWidth/2, levelHeight/2 + 210)
 
   for(var i = 0; i < this.buttons.length; i++)
   {

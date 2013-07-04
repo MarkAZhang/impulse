@@ -16,8 +16,9 @@ function WorldMapState(world) {
   }
 
   this.requirements = {
-    2: "DEFEAT IMMUNITAS",
-    3: "DEFEAT CONSUMENDI"
+    2: "DEFEAT IGNAVIAM",
+    3: "DEFEAT CONSUMENDI",
+    4: "IN DEVELOPMENT"
   }
 
   this.set_up_world_map()
@@ -31,15 +32,16 @@ function WorldMapState(world) {
 
 WorldMapState.prototype.set_up_world_map = function() {
     var _this = this;
-    this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
+    /*this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
      function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
       setTimeout(function(){
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
-      }, 500)})
+      }, 500)})*/
 
-    this.set_up_world_icon(1, levelWidth/2 - 150, levelHeight/2 - 100, "I. HIVE IMMUNITAS", true)
+    this.set_up_world_icon(1, levelWidth/2 - 150, levelHeight/2 - 100, "I. HIVE IGNAVIAM", true)
     this.set_up_world_icon(2, levelWidth/2 + 150, levelHeight/2 - 100, "II. HIVE CONSUMENDI", player_data.world_rankings[player_data.difficulty_mode]["world 1"])
     this.set_up_world_icon(3, levelWidth/2 - 150, levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", player_data.world_rankings[player_data.difficulty_mode]["world 2"])
+    this.set_up_world_icon(4, levelWidth/2 + 150, levelHeight/2 + 100, "IV. HIVE ADROGANTIA", false)
 
 
 }
@@ -80,6 +82,14 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   if(this.fade_out_duration != null) {
     ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
   }
+
+  ctx.save()
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.font = "36px Muli"
+  ctx.shadowBlur = 10
+  ctx.shadowColor = ctx.fillStyle
+  ctx.fillText("SELECT HIVE", levelWidth/2, 70)
+  ctx.restore()
 
   for(var index in this.world_buttons) {
 

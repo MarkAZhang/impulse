@@ -38,16 +38,23 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.require_open = true;
   this.open_period = 500;
-  this.additional_statuses = ["hot"]
+  this.additional_statuses = ["volatile"]
+  this.durations["volatile"] = 0
 
   this.has_bulk_draw = true
   this.bulk_draw_nums = 1
+
+  this.volatile_interval = 1500
 }
 
 Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = this.status_duration[1] <= 0
   this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+
+  if(this.durations["volatile"] > 0) {
+    this.durations["volatile"] -= dt
+  }
   /*if(this.durations["open"] > 0) {
     this.color = "red";
   } else {
@@ -84,20 +91,26 @@ Tank.prototype.check_death = function()
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      if(this.status_duration[1] <= 0 && this.durations["open"] > 0) {
+      if(this.status_duration[1] <= 0 && this.durations["volatile"] > 0) {
         this.activated = true
         this.cause_of_death = "kill"
       }
-      else {
+      else if(this.durations["open"] > 0) {
         this.start_death("kill")
+      } else {
+        this.start_death("accident")
       }
       return
     }
   }
 }
 
+Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+  this.durations["volatile"] = this.volatile_interval
+}
+
 Tank.prototype.collide_with = function(other, this_body, other_body) {
-  if(other instanceof Tank && this.durations["open"] > 0 && !this.dying && !this.activated)
+  if(other instanceof Tank && this.durations["volatile"] > 0 && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {
@@ -108,7 +121,7 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
   }
 
 
-  if(other instanceof BossOne && this.durations["open"] > 0 && !this.dying && !this.activated)
+  /*if(other instanceof BossOne && this.durations["open"] > 0 && !this.dying && !this.activated)
   {
 
     if(this.status_duration[1] <= 0) {
@@ -125,7 +138,7 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
     else {
       this.start_death("kill")
     }
-  }
+  }*/
 
   if(this.dying || this.activated)//ensures the collision effect only activates once
     return
@@ -157,8 +170,7 @@ Tank.prototype.explode = function() {
     {
       var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
-      if(!(this.level.enemies[i] instanceof Tank))
-        this.level.enemies[i].open(1500)
+      this.level.enemies[i].open(1500)
 
     }
   }
@@ -183,7 +195,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.lineWidth = 5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI*0.999)
     context.stroke()
-  } else if(this.status_duration[1] <=0 && this.durations["open"] > 0) {
+  } else if(this.status_duration[1] <=0 && this.durations["volatile"] > 0) {
     context.beginPath()
     context.strokeStyle = "red"
     context.lineWidth = 2
@@ -205,7 +217,7 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
 }
 
 Tank.prototype.bulk_draw = function(context, draw_factor, num) {
-  if(this.durations["open"] <= 0 && this.status_duration[1] <= 0) {
+  if(this.durations["volatile"] <= 0 && this.status_duration[1] <= 0) {
     context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)
   }
@@ -217,7 +229,7 @@ Tank.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Tank.prototype.get_additional_color_for_status = function(status) {
-  if(status == "hot") {
+  if(status == "volatile") {
     return "red"
   }
 }
@@ -262,12 +274,12 @@ Tank.prototype.get_current_color_with_status = function(orig_color) {
 
 Tank.prototype.get_additional_current_status = function() {
   if(this.dying) {
-    return "hot"
+    return "volatile"
   }
 
   if(!this.dying) {
-      if(this.durations["open"] > 0) {
-        return "hot";
+      if(this.durations["volatile"] > 0) {
+        return "volatile";
       }
   }
   return "normal"

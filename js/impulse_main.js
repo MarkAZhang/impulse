@@ -1,6 +1,6 @@
 var version_num = "1.0"
 
-var dev = true
+var dev = false
 var unlockall = dev
 var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
 var ctx, canvas, bg_canvas, bg_ctx

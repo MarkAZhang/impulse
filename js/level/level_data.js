@@ -632,7 +632,7 @@ impulse_level_data['HIVE 3-5'] = {
 
   player_loc: {x: 400, y: 400},
   initial_spawn_data: {
-    tank: 2,
+    tank: 1,
     spear: 2,
     harpoon: 2,
     troll: 2

@@ -392,6 +392,13 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.color
     ctx.globalAlpha /= 2
     ctx.fillText("100 SPARKS = 1UP", 400, 530)
+    ctx.globalAlpha *= 2
+
+    ctx.beginPath()
+    ctx.rect(-155, canvasHeight - 140, 120, 80)
+    ctx.strokeStyle = "red"
+    ctx.lineWidth = 4
+    ctx.stroke()
   }
 
   if(this.cur_page == 9) {

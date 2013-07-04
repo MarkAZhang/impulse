@@ -319,6 +319,35 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
   context.restore()
 }
 
+function draw_gear(context, x, y, scale, color, center_color) {
+  context.save()
+  context.shadowBlur = 5
+  var spokes = 6
+  var unit = 2 * Math.PI / (spokes * 4)
+  var offset = -0.4
+  context.beginPath()
+  for(var i = 0; i < spokes; i++) {
+
+    if(i == 0) {
+      context.moveTo(x - Math.cos(unit * (4 * i+ offset)) * scale, y - Math.sin(unit * (4 * i + offset)) * scale)
+    } else {
+      context.lineTo(x - Math.cos(unit * (4 * i+ offset)) * scale, y - Math.sin(unit * (4 * i+ offset)) * scale)
+    }
+    context.lineTo(x - Math.cos(unit * (4 * i + 1+ offset)) * scale, y - Math.sin(unit * (4 * i + 1+ offset)) * scale)
+    context.lineTo(x - Math.cos(unit * (4 * i + 2+ offset)) * scale * 0.75, y - Math.sin(unit * (4 * i + 2+ offset)) * scale * 0.75)
+    context.lineTo(x - Math.cos(unit * (4 * i + 3+ offset)) * scale * 0.75, y - Math.sin(unit * (4 * i + 3+ offset)) * scale * 0.75)
+  }
+  context.closePath()
+  context.fillStyle = color
+  context.fill()
+  context.globalAlpha /= 2
+  context.beginPath()
+  context.arc(x, y, scale * 0.5, 0, 2 * Math.PI * 0.999)
+  context.fillStyle = center_color
+  context.fill()
+  context.restore()
+}
+
 function draw_music_icon(context, x, y, scale, color, key_display) {
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
@@ -569,6 +598,23 @@ function draw_logo(context, x, y, name) {
 
 }
 
+function draw_lives_and_sparks(context, lives, sparks, x, y, size, color) {
+
+
+  context.font = size+'px Muli'
+  context.fillStyle = color ? color : impulse_colors["impulse_blue_dark"]
+  context.shadowBlur = 10
+  context.shadowColor = context.fillStyle
+  drawSprite(context, x - 25, y, 0, 35, 35, "lives_icon")
+  drawSprite(context, x - 25, y + size * 1.6, 0, 35, 35, "sparks_icon")
+  context.textAlign = 'center'
+  context.fillText(lives, x + 31, y + 10)
+  context.fillText(sparks, x + 31, y + 10 + size * 1.6)
+  context.font = size+'px Muli'
+  context.fillText("x", x + 5, y + 10)
+  context.fillText("x", x + 5, y + 10+size * 1.6)
+}
+
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
 
   context.save()
@@ -676,6 +722,8 @@ spriteSheetData = {
   "multi": [30, 60, 30, 30],
   "white_glow": [100, 80, 100, 100],
   "world_logo": [200, 80, 100, 100],
+  "lives_icon": [0, 90, 35, 35],
+  "sparks_icon": [35, 90, 35, 35],
 
 
   "immunitas_arm": [0, 0, 90, 90],

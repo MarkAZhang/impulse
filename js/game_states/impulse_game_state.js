@@ -784,26 +784,15 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
   context.fill()*/
   context.shadowBlur = 0;
-
-  context.font = '20px Muli'
-
+  context.save()
   if(this.hive_numbers) {
 
-    context.fillStyle = impulse_colors["impulse_blue_dark"]
-
-    context.beginPath()
-    context.fillText("LIVES: "+this.hive_numbers.lives, sidebarWidth/2, canvasHeight - 80)
-
-    context.beginPath()
-    context.fillText("SPARKS: "+this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 50)
+    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 120, 24)
   } else {
-    context.fillStyle = impulse_colors["impulse_blue_dark"]
-    context.beginPath()
-    context.fillText("LIVES: 0", sidebarWidth/2, canvasHeight - 80)
 
-    context.beginPath()
-    context.fillText("SPARKS: "+this.temp_sparks, sidebarWidth/2, canvasHeight - 50)
+    draw_lives_and_sparks(context, "0", this.temp_sparks, sidebarWidth/2, canvasHeight - 120,24)
   }
+  context.restore()
 
   draw_music_icon(context, sidebarWidth/2, canvasHeight - 20, 15, this.color, true)
   draw_pause_icon(context, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.color, true)

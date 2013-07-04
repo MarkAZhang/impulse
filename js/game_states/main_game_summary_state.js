@@ -233,11 +233,8 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '84px Muli'
     ctx.fillText(this.rank, levelWidth/2, 235)
   } else if(this.save_screen) {
-    ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.shadowColor = ctx.fillStyle
+    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, levelWidth/2, 150, 16, impulse_colors["impulse_blue"])
     ctx.font = '16px Muli'
-    ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, 167)
-    ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, 190)
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
       ctx.shadowColor = ctx.fillStyle

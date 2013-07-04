@@ -612,7 +612,10 @@ Player.prototype.draw = function(context) {
     if(player_data.options.progress_circle) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor, this.radius * 1.5 * this.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
-      context.strokeStyle = this.color //impulse_colors[this.impulse_game_state.star_colors[this.impulse_game_state.stars]]
+      context.strokeStyle = impulse_colors["impulse_blue"]
+      if(this.impulse_game_state.world_num == 0) {
+        context.strokeStyle = impulse_colors["impulse_blue_dark"]
+      }
       context.lineWidth = 2
       context.stroke()
     }
@@ -624,7 +627,7 @@ Player.prototype.draw = function(context) {
       }
       context.textAlign = "center"
       context.shadowBlur = 0
-      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor + 25)
+      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*this.draw_factor, this.body.GetPosition().y*this.draw_factor + 30)
     }
     context.restore()
   }

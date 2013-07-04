@@ -87,7 +87,9 @@ TitleState.prototype.setup_main_menu = function() {
   _this = this;
   this.buttons["menu"] = []
   var button_color = "white"//impulse_colors["impulse_blue"]
-  this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",
+
+  if(dev) {
+    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2-30, 200, 50, button_color, "blue",
     function(){
       if(player_data.save_data[player_data.difficulty_mode].game_numbers) {
         switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
@@ -95,27 +97,42 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new WorldMapState())
       }
     }))
-  this.buttons["menu"].push(new SmallButton("PRACTICE", 20, levelWidth/2, levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-  this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
-  //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
-  //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
-  //        ImpulseGameState(ctx, "SURVIVAL"))}))
-  this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
-  //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
-  this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
-  this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
-if(dev){this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))}
+    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, levelWidth/2, levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
+    this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+    //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, levelWidth/2,
+    //      levelHeight/2+70, 200, 50, function(){switch_game_state(new
+    //        ImpulseGameState(ctx, "SURVIVAL"))}))
+    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
+    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
+    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, levelWidth/2, levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
+  } else {
+    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",
+    function(){
+      if(player_data.save_data[player_data.difficulty_mode].game_numbers) {
+        switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+      } else {
+        switch_game_state(new WorldMapState())
+      }
+    }))
+    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    this.buttons["menu"].push(new SmallButton("CREDITS", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+
+  }
 
   this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, levelWidth/2, levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
 "blue",
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+20, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
+  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
+
   this.buttons["options"].push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+20, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, levelHeight/2+120, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
   this.buttons["options"].push(this.normal_mode_button)
   this.set_difficulty_button_underline();
-  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+70, 200, 50, button_color, "blue",function(){_this.clear_data()})
+  this.clear_data_button = new SmallButton("CLEAR DATA", 20, levelWidth/2, levelHeight/2+170, 200, 50, button_color, "blue",function(){_this.clear_data()})
   this.buttons["options"].push(this.clear_data_button)
-  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
+  this.buttons["options"].push(new SmallButton("BACK", 20, levelWidth/2, levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
 
 
 }

@@ -12,8 +12,8 @@ var HiveNumbers = function(world_num) {
   this.game_numbers = {}
   this.world = world_num
   if(world_num == 1) {
-    this.hive_name = "HIVE IMMUNITAS"
-    this.boss_name = "IMMUNITAS"
+    this.hive_name = "HIVE IGNAVIAM"
+    this.boss_name = "IGNAVIAM"
   } else if(world_num == 2){
     this.hive_name = "HIVE CONSUMENDI"
     this.boss_name = "CONSUMENDI"

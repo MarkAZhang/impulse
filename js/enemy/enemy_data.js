@@ -79,7 +79,8 @@ impulse_enemy_stats["tank"] = {
     "Explodes upon collision, # causing huge knockback to all nearby units",
     "The blast radius is outlined around the Tank",
     "When Impulsed, becomes volatile for 1 second # # Collision with another Tank will cause a volatile Tank to explode and die",
-    "Explodes upon death if volatile # # Therefore Will explode upon death when Impulsed into the Hiveline"
+    "Explodes upon death if volatile # # Therefore Will explode upon death when Impulsed into the Hiveline",
+    "Due to its mass, other enemies easily bounce off of the tank # # be wary of hitting smaller enemies directly into tanks"
 
   ],
 
@@ -101,7 +102,7 @@ impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Cannot be Impulsed. # Upon impact, silences you for 3 seconds # (You cannot impulse)",
+    "Cannot be Impulsed # # Upon impact, silences you for 3 seconds # (You cannot impulse)",
     "The Mote is not immune to any other effect, # including collision with other enemies",
   ],
   className: Mote
@@ -133,7 +134,7 @@ impulse_enemy_stats["goo"] = {
   dies_on_impact: "YES",
   enemy_info: [
     "All units within its area of influence are slowed",
-    "Dies upon collision. # Units immediately regain speed.",
+    "Dies upon collision # # Units immediately regain speed",
     "When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
 
@@ -166,10 +167,10 @@ impulse_enemy_stats["disabler"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
   dies_on_impact: "YES",
   enemy_info: [
-    "All units within its area of effect (AOE) lose all special powers. # Specifically, you cannot Impulse.",
-    "All enemies within its AOE die upon collision, even those that do not normally.",
-    "Colliding with an enemy within its AOE (excluding the disabler itself) does not reset the multiplier. # However, you do not score points.",
-    "Dies upon collision. # Units immediately regain special powers.",
+    "All units within its area of effect (AOE) lose all special powers # # Specifically, you cannot Impulse",
+    "All enemies within its AOE die upon collision, even those that do not normally",
+    "Colliding with an enemy within its AOE # (excluding the disabler itself) # does not reset your multiplier # # However you do not score points",
+    "Dies upon collision # # Units immediately regain special powers",
     "When Impulsed, dramatically expands its area of influence for 3 seconds"
   ],
   special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
@@ -202,6 +203,7 @@ impulse_enemy_stats["troll"] = {
   force: 0.2,
   score_value: 3000,
   attack_rating: 2,
+  true_name: "pinwheel",
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[0, 0],
   [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)],
@@ -220,8 +222,8 @@ impulse_enemy_stats["troll"] = {
 
   ],
   enemy_info: [
-    "If Impulsed while spinning, reverses your movement and Impulse controls for 1 second",
-    "All trolls become inactive at regular intervals. Inactive trolls will not reverse you and fly farther when Impulsed.",
+    "If Impulsed while active, # reverses your movement and Impulse controls for 1 second",
+    "All Pinwheels become inactive at regular intervals # # Inactive trolls will not reverse you and fly farther when Impulsed",
     "Upon collision, reverses you for 5 seconds",
   ],
   //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
@@ -283,6 +285,7 @@ impulse_enemy_stats["fighter"] = {
   force: 3.3,
   score_value: 5000,
   attack_rating: 9,
+  true_name: "hunter",
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 3/4) + 0.3, Math.sin(Math.PI * 3/4)],
@@ -299,12 +302,12 @@ impulse_enemy_stats["fighter"] = {
   ],
 
   enemy_info: [
-    "Launches deadly bullets that blow away anything they hit. # The bullets can be reflected with Impulse and can hit the Fighter that fired it.",
-    "Very resistant to Impulse",
-    "If the player is not within line of sight of the bullet, the fighter will not fire the bullet.",
-    "Every two seconds, charges up a Frenzy bar. When the Fighter has five Frenzy bars, it will activate Frenzy mode.",
-    "During Frenzy mode, the Fighter moves faster and fires more rapidly. # Additionally, the bullets move faster, go through enemies, and cannot be Impulsed.",
-    "While in Frenzy mode, loses a Frenzy bar whenever it fires. # When the Frenzy bars are depleted, the Fighter exits Frenzy mode.",
+    "Launches deadly bullets that blow away anything they hit # # Impulse can reflect the bullets",
+    "Very resistant to Impulse # # Very weak against the force of its own bullets",
+    "If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
+    "Every two seconds, charges up a Frenzy bar # # When the Hunter has five Frenzy bars, it will activate Frenzy mode",
+    "During Frenzy mode, the Hunter moves faster and fires more rapidly # # Additionally, its bullets move faster and cannot be Impulsed",
+    "While in Frenzy mode, loses a Frenzy bar whenever it fires # # When the Frenzy bars are depleted, the Hunter exits Frenzy mode",
     "Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
@@ -387,13 +390,13 @@ impulse_enemy_stats["harpoon"] = {
   [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
   dies_on_impact: "NO",
   enemy_info: [
-    "Fires its hook at you. # If the hook latches onto you, the harpoon will yank you in. # Can only fire through walls.",
+    "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
     "The hook range is outlined around the Harpoon",
-    "While the hook is detached from the Harpoon, # it cannot move",
+    "While the hook is detached from the Harpoon, it cannot move",
     "When Impulsed, the hook is disabled for 2 seconds",
-    "Can latch onto other enemies and will yank them in.",
-    "Will actively try to avoid you. Does not die on collision.",
-    "Cannot fire for 1 second after entering the screen. # Cannot fire from off-screen",
+    "Can latch onto other enemies and will yank them in",
+    "Will actively try to avoid you # # Does not die on collision",
+    "Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
     "During boss battles, can fire at any time",
 
   ],

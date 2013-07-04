@@ -341,10 +341,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
 
-      ctx.font = '20px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
-      ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
+      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2 + 180, 24)
+
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
@@ -434,12 +432,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
 
+    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2 + 180, 24)
 
-    ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '20px Muli'
-    ctx.fillText("LIVES: "+Math.floor(this.hive_numbers.lives), levelWidth/2, levelHeight/2+200)
-    ctx.fillText("SPARKS: "+Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2+230)
     ctx.shadowBlur = 0
 
     ctx.fillStyle = this.lite_color;
