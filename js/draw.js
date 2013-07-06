@@ -205,7 +205,10 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor,
     // set screen position
     context.translate(x, y);
     // set rotation
-    context.rotate(Math.PI/4);
+    if(rotate)
+      context.rotate(rotate);
+    else
+      context.rotate(Math.PI/4)
     drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
     if(tessellation == 1) {
       context.beginPath()
@@ -602,7 +605,7 @@ function draw_lives_and_sparks(context, lives, sparks, x, y, size, color) {
 
 
   context.font = size+'px Muli'
-  context.fillStyle = color ? color : impulse_colors["impulse_blue_dark"]
+  context.fillStyle = color ? color : impulse_colors["impulse_blue"]
   context.shadowBlur = 10
   context.shadowColor = context.fillStyle
   drawSprite(context, x - 25, y, 0, 35, 35, "lives_icon")

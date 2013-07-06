@@ -199,7 +199,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     ctx.fillStyle = "red"
     ctx.shadowBlur = 10;
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("CONTINUES: 0",this.x, this.y - this.h/2 + 70)//+this.game_state.hive_numbers.continues, this.x, this.y - this.h/2 + 50)
+    ctx.fillText("CONTINUES: "+this.game_state.hive_numbers.continues,this.x, this.y - this.h/2 + 70)
   }
 
   ctx.font = '32px Muli';

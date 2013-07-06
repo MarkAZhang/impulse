@@ -11,7 +11,7 @@ function HarpoonDire(world, x, y, id, impulse_game_state) {
 
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0), s_radius*Math.sin(Math.PI*0)))
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
-  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))  
+  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
   this.harpoon_shape = h_vertices
 
   this.init(world, x, y, id, impulse_game_state)
@@ -34,7 +34,7 @@ function HarpoonDire(world, x, y, id, impulse_game_state) {
 
   this.safe_radius = 10
   this.safe_radius_buffer = 2
-  
+
 
   this.safe = true
   this.harpoon_joint = null
@@ -84,7 +84,7 @@ HarpoonDire.prototype.move = function() {
   if(this.harpooning) {return}//do not move if harpooning
 
   if(this.harpooned) {
-    
+
     var dir = new b2Vec2(this.body.GetPosition().x - this.player.body.GetPosition().x, this.body.GetPosition().y - this.player.body.GetPosition().y)
     dir.Normalize()
     dir.Multiply(this.harpooned_force)

@@ -201,7 +201,7 @@ impulse_enemy_stats["troll"] = {
   lin_damp: 3,
   effective_radius: 1,
   force: 0.2,
-  score_value: 3000,
+  score_value: 5000,
   attack_rating: 2,
   true_name: "pinwheel",
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:

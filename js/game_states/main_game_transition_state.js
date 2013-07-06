@@ -404,13 +404,24 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
-    ctx.font = '18px Muli'
+    ctx.font = '24px Muli'
     if(this.victory) {
-      ctx.fillText("(+"+this.time_sparks_awarded+" sparks)", levelWidth/2 - 100, 270)
-      ctx.fillText("(+"+this.combo_sparks_awarded+" sparks)", levelWidth/2 + 100, 270)
+      ctx.textAlign = "left"
+      ctx.fillText("+"+this.time_sparks_awarded, levelWidth/2 - 105, 275)
+      draw_spark(ctx, levelWidth/2 - 115, 267)
+
+      if(this.combo_sparks_awarded < 10) {
+        ctx.fillText("+"+this.combo_sparks_awarded, levelWidth/2 + 95, 275)
+        draw_spark(ctx, levelWidth/2 + 85, 267)
+      } else {
+        ctx.fillText("+"+this.combo_sparks_awarded, levelWidth/2 + 89, 275)
+        draw_spark(ctx, levelWidth/2 + 79, 267)
+      }
     } else {
 
     }
+
+    ctx.textAlign = "center"
 
     if(!this.last_level.is_boss_level) {
       ctx.fillStyle = this.bright_color;
@@ -427,8 +438,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
       if(this.high_score) {
         ctx.font = '18px Muli'
-        ctx.fillStyle = impulse_colors["impulse_blue_dark"]
-        ctx.fillText("HIGH SCORE", levelWidth/2, 450)
+        ctx.fillStyle = impulse_colors["impulse_blue"]
+        ctx.shadowColor = ctx.fillStyle
+        ctx.fillText("HIGH SCORE", levelWidth/2, 455)
       }
     }
 

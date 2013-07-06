@@ -23,7 +23,8 @@ function Mote(world, x, y, id, impulse_game_state) {
 }
 
 Mote.prototype.player_hit_proc = function() {
-  this.player.silence(this.silence_duration)
+  if(this.status_duration[1] <= 0)
+    this.player.silence(this.silence_duration)
 }
 
 Mote.prototype.additional_processing = function(dt) {

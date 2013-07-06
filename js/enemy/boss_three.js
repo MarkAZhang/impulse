@@ -119,14 +119,14 @@ function BossThree(world, x, y, id, impulse_game_state) {
   }
 
  this.spawn_force = {
-  "stunner" : 50,
+  "stunner" : 70,
    "spear" : 60,
    "tank" : 300,
    "mote" : 6,
    "goo" : 200,
    "harpoon" : 1250,
    "disabler" : 300,
-   "fighter" : 1000,
+   "fighter" : 700,
    "troll" : 30,
 }
 
@@ -154,10 +154,10 @@ this.rotating = false
 }
 
 BossThree.prototype.generate_wheel_set = function() {
-  /*var temp = []
+  var temp = []
   for(var i = 0; i < 4; i++)
-    temp.push("troll")
-  return temp*/
+    temp.push("frenzy")
+  return temp
   var tough_enemies = ["tank", "fighter", "troll", "harpoon"]
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
   var all_enemies = ["mote", "harpoon", "stunner", "spear", "goo", "disabler", "tank", "fighter", "troll"]
@@ -695,12 +695,13 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     else
       context.globalAlpha *= this.visibility != null ? this.visibility : 1
 
-  context.globalAlpha *= 0.8;
   if(this.silence_timer < 0 && this.silence_timer >= -this.silence_duration) {
+    context.save()
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
     context.fillRect(0, 0, canvasWidth, canvasHeight)
+    context.restore()
   }
 
   this.draw_glows(context, draw_factor);
@@ -711,6 +712,28 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     var tp = this.body.GetPosition()
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
   }
+
+   context.save()
+  context.globalAlpha *= 0.4
+    for(var i = 0; i < 16; i++) {
+    var tp = this.body.GetPosition()
+    var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
+
+    if(1 - this.silence_timer/this.silence_interval > 1-i/16) {
+      context.globalAlpha *= 2
+      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
+      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
+      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
+      context.globalAlpha /= 2
+
+    } else {
+      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
+      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
+      angle + Math.PI/2, 30, 50, "negligentia_aura_open", negligentiaSprite)
+    }
+
+  }
+  context.restore()
 
   for(var index in this.striking_arms) {
     //context.beginPath()
@@ -785,7 +808,7 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
             this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 15, angle + Math.PI*1/4)
         } else {
           draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
-            this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 15, null, angle)
+            this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 20, 6, angle)
 
         }
       }
@@ -794,7 +817,7 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
         if(this.current_wheel_set[this.wheel_cur_index] != "frenzy") {
           draw_enemy(context, this.current_wheel_set[this.wheel_cur_index], this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 20, angle + Math.PI*1/4)
         } else {
-          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 20, null, angle)
+          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 50, 6, angle)
         }
       }
     }
@@ -807,27 +830,7 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
 
 
   context.restore()
-  context.save()
-  context.globalAlpha *= 0.4
-    for(var i = 0; i < 16; i++) {
-    var tp = this.body.GetPosition()
-    var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
 
-    if(1 - this.silence_timer/this.silence_interval > 1-i/16) {
-      context.globalAlpha *= 2
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
-      context.globalAlpha /= 2
-
-    } else {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura_open", negligentiaSprite)
-    }
-
-  }
-  context.restore()
 }
 
 BossThree.prototype.draw_special_attack_timer = function(context, draw_factor) {

@@ -127,6 +127,6 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
 }
 
 Troll.prototype.player_hit_proc = function() {
-  if(this.status_duration[1] <= 0){}
+  if(this.status_duration[1] <= 0)
     this.player.confuse(this.long_troll_period)
 }

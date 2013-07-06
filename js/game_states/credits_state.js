@@ -38,12 +38,14 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '20px Muli'
   ctx.fillStyle = "white"//impulse_colors["impulse_blue"]
   ctx.shadowColor = ctx.fillStyle
+  ctx.globalAlpha *= 0.6
   ctx.fillText("Music by Matt McFarland", levelWidth/2, levelHeight/2 - 20)
   ctx.fillText("Some textures from SubtlePatterns.com", levelWidth/2, levelHeight/2 + 30)
   ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", levelWidth/2, levelHeight/2 + 80)
   ctx.fillText("Based on the Box2dWeb Physics Engine", levelWidth/2, levelHeight/2 + 130)
   ctx.fillText("Game design, UI design, programming, art, and everything else", levelWidth/2, levelHeight/2 + 180)
   ctx.fillText("by Mark Zhang", levelWidth/2, levelHeight/2 + 210)
+  ctx.globalAlpha /= 0.6
 
   for(var i = 0; i < this.buttons.length; i++)
   {

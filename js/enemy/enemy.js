@@ -183,7 +183,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.bulk_draw_nums = 0
   this.extra_adjust = false
 
-  this.hit_proc_on_silenced = true // for spears, since they cannot charge while silenced but still cause knockback
+  this.hit_proc_on_silenced = false // for spears, since they cannot charge while silenced but still cause knockback
 }
 
 Enemy.prototype.check_death = function() {

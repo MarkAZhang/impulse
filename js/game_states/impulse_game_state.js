@@ -856,19 +856,17 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
+
+  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+    return
+  }
+
   if(!this.pause) {
     this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
-
     this.last_loc = {x: x-sidebarWidth, y: y}
   }
 
-  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
-      var _this = this
-      setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
-      this.pause = true
-      this.reset_player_state()
-      this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
-  }
+
 
 }
 
@@ -878,8 +876,17 @@ ImpulseGameState.prototype.reset_player_state = function() {
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
-  if(!this.pause)
+  if(this.pause) return
+
+  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+      var _this = this
+      setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
+      this.pause = true
+      this.reset_player_state()
+      this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
+  } else {
     this.player.mouse_up(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+  }
 }
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {

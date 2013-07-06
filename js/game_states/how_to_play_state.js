@@ -630,6 +630,10 @@ HowToPlayState.prototype.setPage = function(page) {
 }
 
 HowToPlayState.prototype.on_mouse_down = function(x, y) {
+
+  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+    return
+  }
   if(!this.pause && this.ready && this.zoom == 1) {
 
     if(x > sidebarWidth && (x < canvasWidth - sidebarWidth && y > 400 || (this.cur_page == 10 && y > 350))) {
@@ -643,7 +647,6 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
       if(this.cur_page == 11) {
         this.exit_button.on_click(x - sidebarWidth, y)
       }
-
 
 
       if(x < 400) {
@@ -667,15 +670,9 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
       this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
     }
   }
-
-  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
-      var _this = this
-      setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
-      this.pause = true
-      this.reset_player_state()
-      this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
-  }
 }
+
+
 
 HowToPlayState.prototype.game_over = function() {
   if(this.exit_tutorial) {

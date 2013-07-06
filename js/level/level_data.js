@@ -143,7 +143,7 @@ impulse_level_data['HIVE 1-2'] = {
 
 impulse_level_data['HIVE 1-3'] = {
   enemies: {
-              stunner: [1, 1, 1.5, 2, 40],
+              stunner: [2, 1, 1.5, 2, 40],
               spear: [20, 5, 1, 3, 15],
 
            },
@@ -383,8 +383,8 @@ impulse_level_data['HIVE 2-4'] = {
 impulse_level_data['HIVE 2-5'] = {
   enemies: {
               stunner: [6, 6, 2, 2, 15],
-              mote: [6, 6, 1, 2, 15],
-              harpoon: [10, 10, 1.5, 1.5, 15],
+              mote: [7, 7, 1, 1, 15],
+              harpoon: [11, 11, 1.5, 1.5, 15],
            },
   dominant_enemy: "harpoon",
   initial_spawn_data: {
@@ -398,7 +398,7 @@ impulse_level_data['HIVE 2-5'] = {
   spawn_points: [[100, -100], [700, -100], [100, 700], [700, 700]],
   spark_spawn_points: [[100, 50], [100, 300], [100, 550],[700, 50], [700, 300],[700, 550]],
   cutoff_scores: {
-    normal:   [200000, 700000, 2000000],
+    normal:   [200000, 600000, 1750000],
   },
 
   player_loc: {x:400, y: 425}
@@ -612,10 +612,10 @@ impulse_level_data['HIVE 3-4'] = {
 
 impulse_level_data['HIVE 3-5'] = {
   enemies: {
-             spear: [8, 8, 2, 2, 5],
-             tank: [10, 10, 1, 2, 5],
-             harpoon: [12, 12, 1, 2, 5],
-             troll: [10, 10, 2, 2, 10],
+             spear: [8, 8, 1, 2, 8],
+             tank: [10, 10, 1, 2, 8],
+             harpoon: [12, 12, 1, 1, 8],
+             troll: [10, 10, 1, 2, 10],
 
            },
   dominant_enemy: "troll",
@@ -627,15 +627,15 @@ impulse_level_data['HIVE 3-5'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    normal:  [300000, 600000, 2000000],
+    normal:  [300000, 600000, 1250000],
   },
 
   player_loc: {x: 400, y: 400},
   initial_spawn_data: {
     tank: 1,
-    spear: 2,
-    harpoon: 2,
-    troll: 2
+    spear: 1,
+    harpoon: 1,
+    troll: 1
 
   },
 
@@ -645,11 +645,10 @@ impulse_level_data['HIVE 3-6'] = {
   enemies: {
 
               stunner: [4, 8, 2, 2, 15],
-              tank: [6, 15, 2, 2, 10],
-              mote: [4, 8, 1, 1, 15],
-              fighter: [12, 12, 1, 1, 10],
-              disabler: [2, 20, 1, 0, 1],
-              troll: [10, 10, 2, 2, 10]
+              tank: [6, 15, 1, 1, 10],
+              mote: [4, 10, 1, 1, 15],
+              fighter: [14, 14, 1, 1, 10],
+              troll: [5, 10, 2, 2, 10]
            },
   dominant_enemy: "troll",
   spark_spawn_points:[[100, 100]],
@@ -661,10 +660,9 @@ impulse_level_data['HIVE 3-6'] = {
   buffer_radius: 1,
     cutoff_scores: {
 
-    normal:   [400000, 800000, 2500000],
+    normal:   [400000, 750000, 1500000],
   },
   initial_spawn_data: {
-    troll: 2,
     stunner: 2,
     fighter: 1,
     mote: 2,
@@ -716,7 +714,7 @@ impulse_level_data['BOSS 3'] = {
               goo: [0, 12, 0, 0, 2],
               mote: [0, 8, 0, 0, 10],
               disabler: [0, 10, 0, 0, 2],
-              harpoondire: [0, 15, 0, 0, 10],
+              harpoon: [0, 15, 0, 0, 10],
 
            },
   dominant_enemy: "third boss",
