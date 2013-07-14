@@ -259,6 +259,10 @@ Level.prototype.process = function(dt) {
 
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
 
+      if(this.enemies[dead_i].type == "goo" || this.enemies[dead_i].type == "disabler") { // if goo or disabler died, reset the death timer
+        this.enemy_spawn_timers[this.enemies[dead_i].type] = 0
+      }
+
       this.enemies.splice(dead_i, 1)
 
     }

@@ -39,6 +39,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.weakened_interval = 500
   this.orig_lin_damp = impulse_enemy_stats[this.type].lin_damp
   this.extra_adjust = true
+  this.adjust_position_factor = 0.5
 
 }
 
@@ -170,7 +171,10 @@ Orbiter.prototype.get_target_path = function() {
 
     if(!this.impulse_game_state.is_boss_level) {
       //console.log("RETURNING escape path")
-      return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
+      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.player.impulse_radius * 1.1) 
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
+      else
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)    
     } else {
       //console.log("null path")
       return {path: null, dist: null}
@@ -237,15 +241,34 @@ Orbiter.prototype.move = function() {
 }
 
 Orbiter.prototype.modify_movement_vector = function(dir) {
+  var in_poly = false
+  for(var i = 0; i < this.level.boundary_polygons.length; i++)
+  {
+    if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
+    {
+      in_poly = true
+    }
+  }
 
-  dir.Multiply(this.force)
-
+  this.in_poly = in_poly
   if(this.charging) {
     dir.Multiply(this.fast_factor)
+    dir.Multiply(this.force)
+  } else {
+    if((this.in_poly && this.cautious && this.in_poly_slow_duration > 0) || this.status_duration[2] > 0 )//move cautiously...isn't very effective in preventing accidental deaths
+    {
+      dir.Multiply(this.slow_force)
+    }
+    else
+    {
+      dir.Multiply(this.force)
+    }
   }
-  if(this.status_duration[1] > 0) { // if silenced, cannot move
-    dir.Multiply(0)
-  }
+
+  
+  //if(this.status_duration[1] > 0) { // if silenced, cannot move
+  //  dir.Multiply(0)
+  //}
 }
 
 Orbiter.prototype.move_to = function(endPt) {

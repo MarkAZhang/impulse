@@ -391,7 +391,7 @@ Enemy.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
   this.pathfinding_counter+=1
-  if (this.pathfinding_counter % 4 == 0) {
+  if (this.pathfinding_counter % 4 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
     //this first loop only checks whether the first point is still reachable (see below for loop)
     var target_point = this.get_target_point()
 
@@ -679,7 +679,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
   context.restore()
-  /*if(this.adjust_position_polygon) {
+  if(this.adjust_position_polygon) {
     context.beginPath()
     context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, size, 0, 2 * Math.PI * 0.999)
     context.strokeStyle = "white"
@@ -688,7 +688,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.moveTo(this.body.GetPosition().x  * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(this.body.GetPosition().x  * draw_factor+ Math.cos(this.adjust_position_angle) * 50, this.body.GetPosition().y  * draw_factor+ Math.sin(this.adjust_position_angle) * 50)
     context.stroke()
-  }*/
+  }
 
 
   this.additional_drawing(context, draw_factor, latest_color)
@@ -1104,7 +1104,7 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
     }
 
 
-    if(this.interior_color && context.fillStyle == this.interior_color)
+    if(this.interior_color && state == "normal")
       context.strokeStyle = cur_color
     else
       context.strokeStyle = context.fillStyle

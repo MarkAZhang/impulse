@@ -154,10 +154,10 @@ this.rotating = false
 }
 
 BossThree.prototype.generate_wheel_set = function() {
-  var temp = []
+  /*var temp = []
   for(var i = 0; i < 4; i++)
     temp.push("frenzy")
-  return temp
+  return temp*/
   var tough_enemies = ["tank", "fighter", "troll", "harpoon"]
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
   var all_enemies = ["mote", "harpoon", "stunner", "spear", "goo", "disabler", "tank", "fighter", "troll"]

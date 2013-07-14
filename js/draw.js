@@ -116,12 +116,21 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
    }
    for(var m = 0; m < impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = impulse_enemy_stats[enemy_name].shape_polygons[m]
-      draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
+      if(impulse_enemy_stats[enemy_name].interior_color) {
+        draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color, 1, 0, impulse_enemy_stats[enemy_name].interior_color)  
+      } else {
+        draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)  
+      }
+      
     }
     if(impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
       for(var m = 0; m < impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
-        draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)
+        if(impulse_enemy_stats[enemy_name].interior_color) {
+          draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color, 1, 0, impulse_enemy_stats[enemy_name].interior_color)  
+        } else {
+          draw_shape(context, x, y, this_shape, draw_scale, impulse_enemy_stats[enemy_name].color)  
+        }
       }
     }
   context.restore()
@@ -435,7 +444,7 @@ function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
 
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
-function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
+function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_color) {
 
   alpha = typeof alpha !== 'undefined' ? alpha: 1;
   rotate = typeof rotate !== 'undefined' ? rotate: 0;
@@ -466,7 +475,11 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate) {
   context.lineWidth = 2
   context.stroke()
   context.fillStyle = color
-  context.globalAlpha /=2
+  if(interior_color) {
+    context.fillStyle = interior_color  
+  } else {
+    context.globalAlpha /= 2
+  }
   context.fill()
   context.restore()
 }

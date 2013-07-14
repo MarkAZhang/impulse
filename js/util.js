@@ -47,9 +47,16 @@ function closestPolygonEdgeToPoint(polygon, point) {
 
     var dist = seg_dist_from_pt(polygon[i], polygon[j], point)
     if(ans.dist == null || dist < ans.dist) {
-      ans.p1 = polygon[j]
-      ans.p2 = polygon[i]
-      ans.dist = dist
+
+      var angle_one = _atan(point, polygon[j])
+      var angle_two = angle_closest_to(angle_one,_atan(point, polygon[i]))
+      if(ans.dist != null && angle_two - angle_one < Math.PI/2) {
+        // ensure that the edge is close to the point...necessary for CONCAVE polygons
+      } else {
+        ans.p1 = polygon[j]
+        ans.p2 = polygon[i]
+        ans.dist = dist
+      }
     }
     j = i
   }
@@ -298,10 +305,32 @@ function get_safest_spawn_point(object, player, level_name) {
   var angle_to_player = _atan(object.body.GetPosition(), player.body.GetPosition())
 
   for(var i = 0; i < spawn_points.length; i++){
-    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0], y: spawn_points[i][1]}))
+    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0]/draw_factor, y: spawn_points[i][1]/draw_factor}))
     var diff = Math.abs(angle, angle_to_player)
     if(diff < best_value) {
       best_value = diff
+      best_point = spawn_points[i]
+    }
+  }
+
+  return {x: best_point[0], y: best_point[1]}
+
+}
+
+
+function get_nearest_spawn_point(object, player, level_name) {
+  //returns the spawn point whose angle is closest to opposite the player
+
+  var spawn_points = impulse_level_data[level_name].spawn_points
+
+  var best_point = null
+  var best_value = 1000
+
+
+  for(var i = 0; i < spawn_points.length; i++){
+    var dist = p_dist({x: spawn_points[i][0]/draw_factor, y: spawn_points[i][1]/draw_factor}, object.body.GetPosition())
+    if(dist < best_value) {
+      best_value = dist
       best_point = spawn_points[i]
     }
   }

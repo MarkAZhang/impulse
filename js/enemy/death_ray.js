@@ -22,13 +22,13 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.turret_mode = false
   this.turret_timer = 0 //1 indicates ready to fire, 0 indicates ready to move
-  this.turret_duration = 1000
+  this.turret_duration = 2500
 
-  this.shoot_interval = 1500
+  this.shoot_interval = 2000
 
   this.shoot_duration = this.shoot_interval
 
-  this.aim_proportion = .75
+  this.aim_proportion = .56
 
   this.fire_interval = 200
 
@@ -40,7 +40,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.ray_buffer_radius = 3
   this.ray_polygon = []
 
-  this.ray_force = 100
+  this.ray_force = 200
 
   this.turret_arm_angle = 0
 
@@ -49,10 +49,14 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.goalPt = null
 
+  this.ray_size = 100
 
   this.default_heading = false
 
   this.spin_rate = 4000
+
+  this.impulse_extra_factor = 10
+
 
 }
 
@@ -118,7 +122,6 @@ DeathRay.prototype.additional_processing = function(dt) {
         //fire the ray
         if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
           this.fired = true
-          console.log("FIRED")
           if(pointInPolygon(this.ray_polygon, this.player.body.GetPosition())) {
             this.player.body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
             this.impulse_game_state.reset_combo()
@@ -126,6 +129,7 @@ DeathRay.prototype.additional_processing = function(dt) {
           for(var i = 0; i < this.level.enemies.length; i++) {
             if(pointInPolygon(this.ray_polygon, this.level.enemies[i].body.GetPosition())) {
               this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter())
+              this.level.enemies[i].open(1500)
             }
           }
         }
@@ -142,10 +146,10 @@ DeathRay.prototype.additional_processing = function(dt) {
          y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
         this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
           y: this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
-        this.ray_polygon.push({x: this.body.GetPosition().x + 50 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
-         y: this.body.GetPosition().y + 50 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
-        this.ray_polygon.push({x: this.body.GetPosition().x + 50 * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2),
-         y: this.body.GetPosition().y + 50 * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_size * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
+         y: this.body.GetPosition().y + this.ray_size * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
+        this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_size * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2),
+         y: this.body.GetPosition().y + this.ray_size * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})
         this.aimed = true
       }
     }
@@ -155,15 +159,24 @@ DeathRay.prototype.additional_processing = function(dt) {
 DeathRay.prototype.player_hit_proc = function() {
 }
 
+DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.open(this.open_period)
+  this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
+    this.body.GetWorldCenter())
+  this.durations["impulsed"] += this.impulsed_duration
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+
+}
 
 DeathRay.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
-    return get_safe_point(this, this.player)
+    var point = get_nearest_spawn_point(this, this.player, this.impulse_game_state.level_name)
+    return {x: point.x/draw_factor, y: point.y/draw_factor}
   }
   else {
     if(this.goalPt == null) {
-      this.goalPt = getRandomCentralValidLocation({x: -10, y: -10})
+      this.goalPt = {x: this.level.player_loc.x/draw_factor, y: this.level.player_loc.y/draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
     }
     return this.goalPt
   }
@@ -201,10 +214,17 @@ DeathRay.prototype.move = function() {
 }
 
 DeathRay.prototype.pre_draw = function(context, draw_factor) {
+
+
+
   if(this.turret_timer > 0) {
+    var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+    context.save()
+    context.globalAlpha *= (1-prog)
+    context.shadowBlur = 0
     var tp = this.body.GetPosition()
     var prog = this.turret_timer
-    context.fillStyle= this.get_color_with_status()
+    context.fillStyle= this.get_current_color_with_status(this.interior_color)
 
     // draw the arms
 
@@ -226,16 +246,21 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
       context.save();
       context.globalAlpha *= 0.7;
       context.fill()
-      context.strokeStyle = context.fillStyle
       context.restore();
+      context.strokeStyle = "#ddd"//context.fillStyle
       context.stroke();
     }
+    context.restore()
   }
 }
 
 DeathRay.prototype.additional_drawing = function(context, draw_factor) {
 
+
   if(this.status_duration[1] <= 0) {
+    var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+    context.save()
+    context.globalAlpha *= (1-prog)
     if(!this.aimed && this.turret_timer > 0)
     {
       //this part takes care of the "aimer"
@@ -291,6 +316,7 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
       }
       context.restore();
     }
+    context.restore()
 
   }
 }

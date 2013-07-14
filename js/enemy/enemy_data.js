@@ -520,12 +520,13 @@ impulse_enemy_stats["orbiter"] = {
 }
 
 impulse_enemy_stats["deathray"] = {
-  color: "#111",//"#169f95",
-  density: 1.5,
+  color: "#ddd",//"#169f95",
+  interior_color: "black",
+  density: 8,
   lin_damp: 6,
   effective_radius: 1.5,
-  force: 3,
-  score_value: 5000,
+  force: 15,
+  score_value: 10000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],

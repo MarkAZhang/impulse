@@ -475,6 +475,22 @@ LevelEditorState.prototype.print_accumulated_vertices = function() {
   return JSON.stringify(temp_p)
 }
 
+LevelEditorState.prototype.reverse_all_polygon_vertices = function() {
+  for(var i = 0; i < this.polygons.length; i++) {
+    this.reverse_polygon_vertice_order(i)
+  }
+}
+
+LevelEditorState.prototype.reverse_polygon_vertice_order = function(index) {
+
+  var new_polygon = []
+  for(var j = this.polygons[index].length - 1; j >= 0 ; j--) {
+
+    new_polygon.push(this.polygons[index][j])
+  }
+  this.polygons[index] = new_polygon
+}
+
 LevelEditorState.prototype.save = function(string) {
   localStorage[string] = this.print_polygon()
 }

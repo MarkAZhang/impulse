@@ -15,6 +15,9 @@ function Mote(world, x, y, id, impulse_game_state) {
   this.spin_rate = 2000
 
   this.cautious = true
+  this.extra_adjust = true
+
+  this.adjust_position_factor = 1
 
   this.silence_duration = 3000
   if(player_data.difficulty_mode == "easy")
