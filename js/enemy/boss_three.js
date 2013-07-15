@@ -122,11 +122,11 @@ function BossThree(world, x, y, id, impulse_game_state) {
   "stunner" : 70,
    "spear" : 60,
    "tank" : 300,
-   "mote" : 6,
+   "mote" : 40,
    "goo" : 200,
-   "harpoon" : 1250,
+   "harpoon" : 1000,
    "disabler" : 300,
-   "fighter" : 700,
+   "fighter" : 500,
    "troll" : 30,
 }
 
@@ -440,7 +440,7 @@ BossThree.prototype.global_silence = function() {
   this.player.silence(Math.round(this.silence_duration))
   for(var i = 0; i < this.level.enemies.length; i++) {
     if(this.level.enemies[i].id != this.id)
-      this.level.enemies[i].silence(Math.round(this.silence_duration), true)
+      this.level.enemies[i].silence(Math.round(this.silence_duration), true, true)
   }
 }
 

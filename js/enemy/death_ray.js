@@ -55,9 +55,10 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.spin_rate = 4000
 
-  this.impulse_extra_factor = 10
+  this.impulse_extra_factor = 4
 
-
+  this.tank_force = 100
+  this.destroyable_timer = 0
 }
 
 DeathRay.prototype.additional_processing = function(dt) {
@@ -74,6 +75,10 @@ DeathRay.prototype.additional_processing = function(dt) {
   {
     this.safe = !this.safe
     this.path = null
+  }
+
+  if(this.destroyable_timer > 0) {
+    this.destroyable_timer -= dt
   }
 
   this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), draw_factor)
@@ -123,7 +128,11 @@ DeathRay.prototype.additional_processing = function(dt) {
         if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
           this.fired = true
           if(pointInPolygon(this.ray_polygon, this.player.body.GetPosition())) {
-            this.player.body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
+            var silenced_factor = 1
+            if(this.player.status_duration[5] > 0) {
+              silenced_factor = 10
+            }
+            this.player.body.ApplyImpulse(new b2Vec2(silenced_factor * this.ray_force * Math.cos(this.ray_angle), silenced_factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
             this.impulse_game_state.reset_combo()
           }
           for(var i = 0; i < this.level.enemies.length; i++) {
@@ -228,9 +237,9 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
 
     // draw the arms
 
+    context.beginPath()
     for(var i = 0; i < 8; i++) {
       var angle = this.turret_arm_angle + Math.PI * i / 4;
-      context.beginPath()
 
       var turret_arm_radius = 0.5;
 
@@ -242,14 +251,25 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
         (tp.y + this.effective_radius * (1 + prog) * Math.sin(angle)  + 0.5 * turret_arm_radius * Math.sin(angle - Math.PI/2))*draw_factor)
       context.lineTo((tp.x + this.effective_radius * (1 + prog) * Math.cos(angle) + 0.5 * turret_arm_radius * Math.cos(angle + Math.PI/2))*draw_factor,
         (tp.y + this.effective_radius * (1 + prog) * Math.sin(angle)  + 0.5 * turret_arm_radius * Math.sin(angle + Math.PI/2))*draw_factor)
-      context.closePath()
-      context.save();
-      context.globalAlpha *= 0.7;
-      context.fill()
-      context.restore();
-      context.strokeStyle = "#ddd"//context.fillStyle
-      context.stroke();
+      context.lineTo((tp.x + this.effective_radius * Math.cos(angle) + turret_arm_radius * Math.cos(angle + Math.PI/2))*draw_factor,
+        (tp.y + this.effective_radius * Math.sin(angle)  + turret_arm_radius * Math.sin(angle + Math.PI/2))*draw_factor)
     }
+    context.save();
+    context.globalAlpha *= 0.7;
+    context.fill()
+    context.restore();
+    context.strokeStyle = "#ddd"//context.fillStyle
+    context.lineWidth = 2
+    context.stroke();
+    if(this.status_duration[1] <= 0) {
+        context.beginPath()
+        context.strokeStyle = "white"
+        context.lineWidth = 2
+        context.globalAlpha *= .5
+        context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.safe_radius * draw_factor, 0, 2*Math.PI * 0.999)
+        context.stroke()
+
+      }
     context.restore()
   }
 }
@@ -321,6 +341,32 @@ DeathRay.prototype.additional_drawing = function(context, draw_factor) {
   }
 }
 
+DeathRay.prototype.silence = function(dur, color_silence, destroyable) {
+  if(color_silence) {
+    this.color_silenced = true
+  }
+  if(destroyable) {
+    this.destroyable_timer = dur
+  }
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.last_stun = this.status_duration[1]
+}
+
 DeathRay.prototype.collide_with = function(other) {
+  if(this.dying || this.activated)//ensures the collision effect only activates once
+    return
+
+  if(other === this.player) {
+
+    if(this.status_duration[1] <= 0) {
+      var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+      //this.cause_of_death = "hit_player"
+      this.impulse_game_state.reset_combo()
+    }
+    else if(this.destroyable_timer > 0) {
+      this.start_death("hit_player")
+    }
+  }
 //Death Rays do not die on collision
 }

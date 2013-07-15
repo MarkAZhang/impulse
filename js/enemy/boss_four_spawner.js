@@ -12,13 +12,9 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
   this.image_enemy_type = this.type+" "+enemy_type
 
   this.color = "black"
-
   this.interior_color = impulse_enemy_stats[this.enemy_type].color
-
   this.spawn = false
-
   this.spawn_number = enemy_spawn
-
   this.push_force = push_force
 
   this.parent = boss
@@ -26,7 +22,6 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
 }
 
 BossFourSpawner.prototype.additional_processing = function(dt) {
-  console.log(this.enemy_type)
   if(this.level.enemy_numbers[this.enemy_type] >= this.level.enemies_data[this.enemy_type][4]) {
       this.silence(100)
       this.spawn = false
@@ -71,6 +66,23 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
     this.spawn = false
     this.silence(1000)
 	}
+}
+
+BossFourSpawner.prototype.additional_drawing = function(context, draw_factor) {
+  if(this.status_duration[1] > 0 && !this.color_silenced && !this.dying) {
+    context.beginPath()
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
+    context.lineWidth = 2
+    context.strokeStyle = this.interior_color;
+    context.stroke()
+  }
+
+}
+BossFourSpawner.prototype.silence = function(dur, color_silence) {
+  if(color_silence)
+    this.color_silenced = color_silence
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.last_stun = this.status_duration[1]
 }
 
 BossFourSpawner.prototype.collide_with = function(other) {

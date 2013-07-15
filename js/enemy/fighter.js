@@ -262,7 +262,6 @@ Fighter.prototype.silence = function(dur, color_silence, destroyable) {
   this.last_stun = this.status_duration[1]
   this.shoot_duration = this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval // reset shoot duration
   this.frenzy_charge_timer = this.frenzy_charge_interval
-
 }
 
 Fighter.prototype.get_color_for_status = function(status) {

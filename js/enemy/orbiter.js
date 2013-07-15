@@ -39,7 +39,14 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.weakened_interval = 500
   this.orig_lin_damp = impulse_enemy_stats[this.type].lin_damp
   this.extra_adjust = true
-  this.adjust_position_factor = 0.5
+  this.adjust_position_factor = 0.3
+
+  this.check_in_poly_interval = 200
+  this.check_in_poly_timer = 100
+
+  this.orbit_radius = 1.2 * this.player.impulse_radius
+
+  this.no_death_on_open = true
 
 }
 
@@ -76,6 +83,21 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   } else {
     this.pathfinding_delay = this.pathfinding_delay_far;
+  }
+
+  this.check_in_poly_timer -= dt
+  if(this.check_in_poly_timer < 0) {
+    var in_poly = false
+    for(var i = 0; i < this.level.boundary_polygons.length; i++)
+    {
+      if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
+      {
+        in_poly = true
+      }
+    }
+
+    this.in_poly = in_poly
+    this.check_in_poly_timer = this.check_in_poly_interval
   }
 
 
@@ -152,7 +174,7 @@ Orbiter.prototype.get_target_path = function() {
           guesses += 1
           if(guesses >= this.max_guesses)
             break
-        } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.player.impulse_radius * 1.1)) {
+        } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.orbit_radius)) {
           //console.log("not safe from player")
           is_valid = false
           guesses += 1
@@ -171,7 +193,7 @@ Orbiter.prototype.get_target_path = function() {
 
     if(!this.impulse_game_state.is_boss_level) {
       //console.log("RETURNING escape path")
-      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.player.impulse_radius * 1.1) 
+      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius) 
         return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
       else
         return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)    
@@ -190,8 +212,10 @@ Orbiter.prototype.move = function() {
 
   if(this.status_duration[0] > 0) return //locked
 
+
   this.pathfinding_counter+=1
   if ((this.path && !this.path[0]) || /*this.pathfinding_counter % 8 == 0 ||*/ this.pathfinding_counter >= this.pathfinding_delay) {
+
     //only update path every four frames. Pretty expensive operation
     var target_path = this.get_target_path()
     if(!target_path.path) return
@@ -241,16 +265,7 @@ Orbiter.prototype.move = function() {
 }
 
 Orbiter.prototype.modify_movement_vector = function(dir) {
-  var in_poly = false
-  for(var i = 0; i < this.level.boundary_polygons.length; i++)
-  {
-    if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
-    {
-      in_poly = true
-    }
-  }
-
-  this.in_poly = in_poly
+  
   if(this.charging) {
     dir.Multiply(this.fast_factor)
     dir.Multiply(this.force)

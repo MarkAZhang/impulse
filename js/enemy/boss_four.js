@@ -44,11 +44,11 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "goo" : 2,
    "harpoon" : 3,
    "orbiter" : 5,
-   "disabler" : 2,
-   "fighterdire" : 3,
+   "disabler" : 1,
+   "fighter" : 3,
    "slingshot" : 4,
    "troll" : 4,
-   "deathraydire" : 2
+   "deathray" : 2
  }
 
  this.spawner_spawn_force = {
@@ -60,10 +60,10 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "harpoon" : 20,
    "orbiter" : 8,
    "disabler" : 20,
-   "fighterdire" : 30,
+   "fighter" : 30,
    "slingshot" : 10,
    "troll" : 10,
-   "deathraydire" : 50
+   "deathray" : 50
  }
 
 
@@ -72,14 +72,14 @@ function BossFour(world, x, y, id, impulse_game_state) {
   ["fighter", "spear"],
   ["goo", "troll"],
   ["tank", "disabler"],
-  ["stunner", "deathraydire"],
+  ["stunner", "deathray"],
   ["mote", "slingshot"],
   ["orbiter", "spear"],
   ["harpoon", "goo"]
  ]
 
   this.spawner_push_force = 500
-  this.spawner_interval = 19000
+  this.spawner_interval = 22000//19000
   this.spawner_timer = 0
 
   this.last_object_hit = null
@@ -282,6 +282,8 @@ BossFour.prototype.additional_processing = function(dt) {
       var dir = new b2Vec2(Math.cos((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI), Math.sin((.25 * (this.spawn_count % 2)+ 2*(j + this.spawn_count)/(exit_points)) * Math.PI))
       dir.Multiply(this.spawner_push_force)
       new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
+      if(this.spawn_count > 1)
+        new_enemy.silence(5000)
       this.level.enemy_counter +=1
       j+=1
     }
@@ -364,7 +366,7 @@ BossFour.prototype.additional_processing = function(dt) {
 BossFour.prototype.get_spawner_set = function() {
 
   if (this.spawn_count == 1) {
-    return ["stunner", "spear", "mote", "orbiter"]
+    return ["stunner", "spear", "harpoon", "fighter"]
   }
   else {
     return this.possible_spawn_sets[Math.floor(Math.random() * this.possible_spawn_sets.length)]

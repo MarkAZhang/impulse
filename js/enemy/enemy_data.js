@@ -484,9 +484,9 @@ impulse_enemy_stats["slingshot"] = {
 impulse_enemy_stats["orbiter"] = {
   color: "red",
   density: .3,
-  lin_damp: 10,
+  lin_damp: 15,
   effective_radius: 1,
-  force: .5,
+  force: .8,
   score_value: 8000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
@@ -522,13 +522,13 @@ impulse_enemy_stats["orbiter"] = {
 impulse_enemy_stats["deathray"] = {
   color: "#ddd",//"#169f95",
   interior_color: "black",
-  density: 8,
-  lin_damp: 6,
-  effective_radius: 1.5,
-  force: 15,
+  density: 4,
+  lin_damp: 8,
+  effective_radius: 1,
+  force: 6,
   score_value: 10000,
   attack_rating: 10,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],

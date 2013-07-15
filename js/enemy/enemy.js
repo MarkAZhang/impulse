@@ -26,6 +26,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_fadein_duration = 1000
 
+  this.destroyable_timer = 
+
   this.pointer_visibility = 0
 
   this.open_period = 1500
@@ -184,11 +186,15 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.extra_adjust = false
 
   this.hit_proc_on_silenced = false // for spears, since they cannot charge while silenced but still cause knockback
+
+  this.no_death_on_open = false
 }
 
 Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
-
+  if(this.durations["open"] <= 0 && this.no_death_on_open) {
+    return
+  }
 
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
@@ -679,7 +685,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
   context.restore()
-  if(this.adjust_position_polygon) {
+  /*if(this.adjust_position_polygon) {
     context.beginPath()
     context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, size, 0, 2 * Math.PI * 0.999)
     context.strokeStyle = "white"
@@ -688,7 +694,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.moveTo(this.body.GetPosition().x  * draw_factor, this.body.GetPosition().y * draw_factor)
     context.lineTo(this.body.GetPosition().x  * draw_factor+ Math.cos(this.adjust_position_angle) * 50, this.body.GetPosition().y  * draw_factor+ Math.sin(this.adjust_position_angle) * 50)
     context.stroke()
-  }
+  }*/
 
 
   this.additional_drawing(context, draw_factor, latest_color)
