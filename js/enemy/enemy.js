@@ -87,39 +87,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   }
     this.default_heading = true
 
-  this.shape_polar_points = []
-  this.collision_polygons = []
 
 
-  if (this.player) {
-    for(var j = 0; j < this.shape_points.length; j++) {
-      var these_polar_points = []
-      if(this.shapes[j] instanceof b2PolygonShape) {
-        var these_points = this.shape_points[j]
-        for(var i = 0; i < these_points.length; i++) {
-          var temp_r = p_dist({x: 0, y: 0}, these_points[i])
-          var temp_ang = _atan({x: 0, y: 0}, these_points[i])
-          these_polar_points.push({r: temp_r, ang: temp_ang})
-        }
-        this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
-      }
-      else if(this.shapes[j] instanceof b2CircleShape) {
-        var this_polygon = this.shape_polygons[j]
-        var these_points = [{x: this_polygon.x + Math.cos()}]
-        for(var i = 0; i < 4; i++) {
-          var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * this_polygon.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * this_polygon.r}
-          var temp_r = p_dist({x: 0, y: 0}, point)
-          var temp_ang = _atan({x: 0, y: 0}, point)
-          these_polar_points.push({r: temp_r, ang: temp_ang})
-        }
-        this.collision_polygons.push(null)
-      }
-      this.shape_polar_points.push(these_polar_points)
-
-    }
-  }
-
-
+  this.generate_collision_polygons()
 
   this.path = null
   this.path_dist = null
@@ -209,6 +179,44 @@ Enemy.prototype.check_death = function() {
 
       return
     }
+  }
+}
+
+Enemy.prototype.generate_collision_polygons = function() {
+  this.shape_polar_points = []
+  this.collision_polygons = []
+
+
+  if (this.player) {
+    var cur_fixture = this.body.GetFixtureList()
+
+    while(cur_fixture != null) {
+      var cur_shape = cur_fixture.m_shape
+      var these_polar_points = []
+      if(cur_shape instanceof b2PolygonShape) {
+        var these_points = cur_shape.m_vertices
+        for(var i = 0; i < these_points.length; i++) {
+          var temp_r = p_dist({x: 0, y: 0}, these_points[i])
+          var temp_ang = _atan({x: 0, y: 0}, these_points[i])
+          these_polar_points.push({r: temp_r, ang: temp_ang})
+        }
+        this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
+      }
+      /*else if(cur_shape instanceof b2CircleShape) {
+        var this_polygon = this.body // not actually right, but we don't have any objects where this matters
+        var these_points = [{x: this_polygon.x + Math.cos()}]
+        for(var i = 0; i < 4; i++) {
+          var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * cur_shape.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * cur_shape.r}
+          var temp_r = p_dist({x: 0, y: 0}, point)
+          var temp_ang = _atan({x: 0, y: 0}, point)
+          these_polar_points.push({r: temp_r, ang: temp_ang})
+        }
+        this.collision_polygons.push(null)
+      }*/
+      this.shape_polar_points.push(these_polar_points)
+      cur_fixture = cur_fixture.GetNext()
+    }
+
   }
 }
 

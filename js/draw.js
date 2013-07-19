@@ -136,6 +136,34 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
   context.restore()
 }
 
+function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
+
+  context.save()
+  if(rotate) {
+    context.translate(x, y);
+    context.rotate(rotate);
+    context.translate(-x, -y);
+  }
+
+
+  var draw_scale = Math.min(1/impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
+   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
+      draw_scale = 2/impulse_enemy_stats[enemy_name].effective_radius * d/2
+   }
+   for(var m = 0; m < impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
+      var this_shape = impulse_enemy_stats[enemy_name].shape_polygons[m]
+      draw_shape(context, x, y, this_shape, draw_scale, color)  
+      
+    }
+    if(impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+      for(var m = 0; m < impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
+        var this_shape = impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
+        draw_shape(context, x, y, this_shape, draw_scale, color)  
+      }
+    }
+  context.restore()
+}
+
 function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
 
   context.save()
@@ -168,12 +196,13 @@ var tessellation_logo_factor = {
     "0": 1.4,
     "1": 1,
     "2": 1.4,
-    "3": 1.4
+    "3": 1.4,
+    "4": 1.6
 }
 
 function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor, rotate) {
 
-  if(tessellation >= 4) {
+  if(tessellation > 4) {
     context.save()
     if(rotate) {
       context.translate(x, y)
@@ -216,7 +245,7 @@ function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor,
     // set rotation
     if(rotate)
       context.rotate(rotate);
-    else
+    else if(tessellation != 4)
       context.rotate(Math.PI/4)
     drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
     if(tessellation == 1) {
@@ -781,30 +810,42 @@ spriteSheetData = {
   "negligentia_aura": [559, 270, 39, 65],
   "negligentia_aura_open": [598, 270, 39, 65],
   "negligentia_arm_ring": [180, 200, 180, 180],
-  "negligentia_logo": [670, 275, 130, 130]
+  "negligentia_logo": [670, 275, 130, 130],
+
+  "adrogantia_attack_bud": [0, 0, 80, 80],
+  "adrogantia_spawner": [0, 80, 80, 80],
+  "adrogantia_body_bud": [80, 0, 80, 80],
+  "adrogantia_attack_bud_firing": [80, 80, 80, 80],
+  "adrogantia_head": [180, 0, 160, 160],
+  "adrogantia_glow": [340, 0, 135, 135],
+  "adrogantia_logo": [475, 0, 125, 125]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")
 var consumendiSprite = loadSprite("art/consumendi_sprite.png")
 var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
+var adrogantiaSprite = loadSprite("art/adrogantia_sprite.png")
 
 var tessellation_glow_map = {
   "0": "white_glow",
   "1": "immunitas_glow",
   "2": "consumendi_glow",
-  "3": "negligentia_glow"
+  "3": "negligentia_glow",
+  "4": "adrogantia_glow"
 }
 var tessellation_logo_map = {
   "0": "world_logo",
   "1": "immunitas_arm",
   "2": "consumendi_mini",
-  "3": "negligentia_logo"
+  "3": "negligentia_logo",
+  "4": "adrogantia_logo"
 }
 var tessellation_sprite_map = {
   "0": playerSprite,
   "1": immunitasSprite,
   "2": consumendiSprite,
-  "3": negligentiaSprite
+  "3": negligentiaSprite,
+  "4": adrogantiaSprite,
 }
 
 var impulse_bg_images = {}

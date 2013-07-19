@@ -20,6 +20,9 @@ var HiveNumbers = function(world_num) {
   } else if(world_num == 3){
     this.hive_name = "HIVE NEGLIGENTIA"
     this.boss_name = "NEGLIGENTIA"
+  } else if(world_num == 4){
+    this.hive_name = "HIVE ADROGANTIA"
+    this.boss_name = "ADROGANTIA"
   }
 }
 

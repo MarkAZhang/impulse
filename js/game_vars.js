@@ -40,6 +40,7 @@ var imp_vars = {
   ENEMY_BIT: 0x0004,
   BOSS_ONE_BIT: 0x0008,
   BOSS_THREE_BIT: 0x0010,
+  BOSS_FOUR_BIT: 0x0011,
   BOSS_BITS: 0x0018
 }
 
@@ -75,6 +76,7 @@ impulse_colors['world 3 bright'] = "a260a6"//"#a00cc5"
 impulse_colors['world 4'] = "600"
 impulse_colors['world 4 lite'] = "#800"
 impulse_colors['world 4 dark'] = "#200"
+impulse_colors['world 4 bright'] = "#800"
 impulse_colors["player_color"] = "rgb(32, 140, 231)"
 impulse_colors["boss"] = "red"
 impulse_colors["boss dark"] = "#900"

@@ -979,7 +979,8 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
     if(first_object.type == "harpoonhead" && first_object.harpoon.harpoon_state != "inactive") {
       var second_object = other_objects[index]
 
-      if(second_object != first_object.harpoon && second_object.type != "harpoonhead") {
+      if(second_object != first_object.harpoon && second_object.type != "harpoonhead" && !second_object.is_boss && !second.owner.is_boss) {
+        if((second_object.type == "boss four spawner" || second_object.type == "boss four attacker") && !second_object.spawned) continue
         if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
           if(second_object.is_enemy)
           {

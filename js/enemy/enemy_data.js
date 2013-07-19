@@ -706,25 +706,30 @@ impulse_enemy_stats["third boss"] = {
 }
 
 impulse_enemy_stats["fourth boss"] = {
-  color: "rgb(0, 255, 0)",
-  interior_color: "#79ff78",
-  density: 1.6,
-  lin_damp: 3,
-  effective_radius: 3,
+  color: "#ff0000",
+  density: 9,
+  lin_damp: 10,
+  effective_radius: 4,
   force: 0,
   attack_rating: 10,
   score_value: [1000000, 5000000, 15000000],
   is_boss: true,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+  categoryBits: imp_vars.BOSS_FOUR_BIT,
+  maskBits: imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 4, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
-
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}
+  ],
+  body_bud_radius: 2,
+  bud_polygon: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
+    [[Math.cos(Math.PI * 0) , Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/5) , Math.sin(Math.PI * 2/5)],
+    [Math.cos(Math.PI * 4/5) , Math.sin(Math.PI * 4/5)],
+    [Math.cos(Math.PI * 6/5) , Math.sin(Math.PI * 6/5)],
+    [Math.cos(Math.PI * 8/5) , Math.sin(Math.PI * 8/5)]]}
   ],
   dies_on_impact: "NO",
   special_ability: "Periodically spawns capsules. Has a thin laser which sweeps around the field. When the sweep laser hits a capsule, the capsule spawns a large number of enemies. The boss has two additional lasers, one which paralyzes and one which exerts massive force.",
@@ -733,23 +738,40 @@ impulse_enemy_stats["fourth boss"] = {
 
 }
 
+impulse_enemy_stats["boss four attacker"] = {
+  color: "white",
+  density: 1.5,
+  lin_damp: 1,
+  initial_radius: 0.1,
+  effective_radius: 2.2,
+  force: 300,
+  attack_rating: 10,
+  score_value: [1000000, 5000000, 15000000],
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.1, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}
+  ],
+  className: BossFourAttacker
+}
+
 impulse_enemy_stats["boss four spawner"] = {
   color: "rgb(0, 255, 0)",
-  density: 5,
-  lin_damp: 10,
-  effective_radius: .7,
+  density: 4,
+  lin_damp: 12,
+  initial_radius: 0.1,
+  effective_radius: 1,
   force: 0,
   score_value: 5000,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .6, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  description: "Has a Spawn Laser which sweeps around the boss. More info coming",
+  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
+  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
+  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
+  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}
+  ],
   className: BossFourSpawner
 }
 

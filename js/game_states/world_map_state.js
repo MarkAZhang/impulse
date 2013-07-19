@@ -18,7 +18,7 @@ function WorldMapState(world) {
   this.requirements = {
     2: "DEFEAT IGNAVIAM",
     3: "DEFEAT CONSUMENDI",
-    4: "IN DEVELOPMENT"
+    4: "DEFEAT NEGLIGENTIA"
   }
 
   this.set_up_world_map()
@@ -41,7 +41,7 @@ WorldMapState.prototype.set_up_world_map = function() {
     this.set_up_world_icon(1, levelWidth/2 - 150, levelHeight/2 - 100, "I. HIVE IGNAVIAM", true)
     this.set_up_world_icon(2, levelWidth/2 + 150, levelHeight/2 - 100, "II. HIVE CONSUMENDI", player_data.world_rankings[player_data.difficulty_mode]["world 1"])
     this.set_up_world_icon(3, levelWidth/2 - 150, levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", player_data.world_rankings[player_data.difficulty_mode]["world 2"])
-    this.set_up_world_icon(4, levelWidth/2 + 150, levelHeight/2 + 100, "IV. HIVE ADROGANTIA", false)
+    this.set_up_world_icon(4, levelWidth/2 + 150, levelHeight/2 + 100, "IV. HIVE ADROGANTIA", player_data.world_rankings[player_data.difficulty_mode]["world 3"])
 
 
 }
