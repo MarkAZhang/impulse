@@ -76,14 +76,14 @@ impulse_colors['world 3 bright'] = "a260a6"//"#a00cc5"
 impulse_colors['world 4'] = "600"
 impulse_colors['world 4 lite'] = "#800"
 impulse_colors['world 4 dark'] = "#200"
-impulse_colors['world 4 bright'] = "#800"
+impulse_colors['world 4 bright'] = "#b00"
 impulse_colors["player_color"] = "rgb(32, 140, 231)"
 impulse_colors["boss"] = "red"
 impulse_colors["boss dark"] = "#900"
 impulse_colors["boss 1"] = "#05c205"
 impulse_colors["boss 2"] = "#002eff"
 impulse_colors["boss 3"] = "#a260a6"
-impulse_colors["boss 4"] = "#800"
+impulse_colors["boss 4"] = "#f00"
 
 function set_key_bindings() {
 

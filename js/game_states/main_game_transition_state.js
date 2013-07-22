@@ -186,7 +186,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       for(var attribute in this.game_numbers)
         this.hive_numbers.game_numbers[this.last_level.level_name][attribute] = this.game_numbers[attribute]
       var stars = 0
-      while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
+      while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
       {
         stars+=1
       }

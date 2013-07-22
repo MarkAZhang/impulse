@@ -11,7 +11,7 @@ function BossFourAttacker(world, x, y, id, impulse_game_state,size) {
   this.size = size
   this.default_heading = false
   this.tank_force = 100
-  this.spawner_hit_force = 500
+  this.spawner_hit_force = 200
 
   this.dir = null
   this.firing = false
@@ -65,9 +65,12 @@ BossFourAttacker.prototype.collide_with = function(other) {
       tank_angle += Math.PI/2
     }
     other.body.ApplyImpulse(new b2Vec2(this.spawner_hit_force * Math.cos(tank_angle), this.spawner_hit_force * Math.sin(tank_angle)), other.body.GetWorldCenter())
-  } else {
+  } else if(this.dir && other.type != "fourth boss") {
     var tank_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-    other.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), other.body.GetWorldCenter())
+    var dir = new b2Vec2(this.dir.x, this.dir.y)
+    dir.Normalize()
+    dir.Multiply(20 * other.force)
+    other.body.ApplyImpulse(dir, other.body.GetWorldCenter())
     //this.cause_of_death = "hit_player"
 
   }

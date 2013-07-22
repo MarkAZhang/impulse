@@ -594,7 +594,7 @@ Enemy.prototype.collide_with = function(other) {
       this.start_death("hit_player")
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
-        if(!this.level.is_boss_level) {
+        if(!this.level.is_boss_level && this.status_duration[1] <= 0) {
           this.impulse_game_state.reset_combo()
         }
       }

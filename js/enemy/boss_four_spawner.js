@@ -23,6 +23,7 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
   this.parent = boss
 
   this.spawned = false
+  this.firing = false
 
   this.spawn_action_period = 1000
   this.spawn_action_timer = 0
@@ -34,7 +35,7 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
 }
 
 BossFourSpawner.prototype.additional_processing = function(dt) {
-  
+  if(this.dying) return
 
   if(this.spawned) {
     if(this.spawn_action_timer > 0) {
@@ -109,11 +110,11 @@ BossFourSpawner.prototype.set_size = function(size) {
 
 
 BossFourSpawner.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.status_duration[1] > 0 && !this.color_silenced && !this.dying) {
+  if(this.status_duration[1] > 0 && this.color_silenced && !this.dying) {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 1.5, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
-    context.strokeStyle = this.interior_color;
+    context.strokeStyle = "red";
     context.stroke()
   }
 
@@ -129,7 +130,7 @@ BossFourSpawner.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(this.status_duration[1] > 0) return
+  //if(this.status_duration[1] > 0) return
 
   if(other === this.player) {
 
@@ -159,7 +160,9 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.globalAlpha = 1-prog
   drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
   
-  draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
+  if(this.status_duration[1] > 0)
+    context.globalAlpha *= 0.5
+  draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), this.firing ? "white" : "black")
   /*context.beginPath()
   context.arc(this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, 0, Math.PI * 2)
   context.lineWidth = 2
@@ -167,7 +170,7 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.stroke()*/
   context.restore()
 
-
+  this.additional_drawing(context, draw_factor)
 }
 
 BossFourSpawner.prototype.move = function() {
