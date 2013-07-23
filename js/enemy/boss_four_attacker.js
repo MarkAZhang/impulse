@@ -51,12 +51,14 @@ BossFourAttacker.prototype.collide_with = function(other) {
 
   if(this.status_duration[1] > 0) return
 
+
   if(other === this.player) {
 
       var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
       //this.cause_of_death = "hit_player"
-  } else if(other.type == "boss four spawner") {
+      return
+  } else if(this.dir && other.type == "boss four spawner") {
     var tank_angle = _atan({x:0, y:0}, this.dir)
     var ref_angle = angle_closest_to(tank_angle, _atan(this.body.GetPosition(), other.body.GetPosition()))
     if(tank_angle < ref_angle) {

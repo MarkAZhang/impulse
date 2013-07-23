@@ -31,7 +31,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.victory = victory
 
   if(save_screen) {
-    this.hive_numbers = player_data.save_data[player_data.difficulty_mode]
+    this.hive_numbers = imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode]
     this.world_num = this.hive_numbers.world
     this.victory = null
   }
@@ -69,9 +69,9 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
       this.rank_color = "red"
     }
 
-    if(!this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]] ||
-      this.rank_cutoffs[this.rank] > this.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num]]) {
-      player_data.world_rankings[player_data.difficulty_mode]["world "+this.world_num] = this.rank
+    if(!this.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]] ||
+      this.rank_cutoffs[this.rank] > this.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]]) {
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] = this.rank
       save_game()
     }
   }
@@ -85,11 +85,11 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   var _this = this;
 
   if(this.save_screen && !this.just_saved) {
-    this.resume_button = new SmallButton("RESUME", 20, levelWidth - 115, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.resume_button = new SmallButton("RESUME", 20, imp_vars.levelWidth - 115, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
       _this.resume_game()
     }}(this))
     this.resume_button.shadow = false
-    if(player_data.options.control_hand == "right") {
+    if(imp_vars.player_data.options.control_hand == "right") {
       this.resume_button.underline_index = 0
     } else {
       this.resume_button.extra_text = "RIGHT ARROW"
@@ -97,12 +97,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }
     this.buttons.push(this.resume_button)
 
-    this.delete_button = new SmallButton("DELETE", 20, levelWidth/2, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.delete_button = new SmallButton("DELETE", 20, imp_vars.levelWidth/2, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
       _this.delete_game()
     }}(this))
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
-    if(player_data.options.control_hand == "right") {
+    if(imp_vars.player_data.options.control_hand == "right") {
       this.delete_button.underline_index = 0
     this.delete_button.extra_text= "SHIFT+"
     } else {
@@ -111,13 +111,13 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }
     this.delete_button.shift_enabled = true
 
-    this.return_to_main_button = new SmallButton("EXIT", 20, 100, levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.return_to_main_button = new SmallButton("EXIT", 20, 100, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
       _this.exit_game()
     }}(this))
 
     this.buttons.push(this.return_to_main_button)
     this.return_to_main_button.shadow = false
-    if(player_data.options.control_hand == "right") {
+    if(imp_vars.player_data.options.control_hand == "right") {
       this.return_to_main_button.underline_index = 0
     } else {
       this.return_to_main_button.extra_text = "LEFT ARROW"
@@ -126,7 +126,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }
   }
 
-  impulse_music.stop_bg()
+  imp_vars.impulse_music.stop_bg()
   this.star_colors = ["bronze", "silver", "gold"]
 }
 
@@ -171,7 +171,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
 
   ctx.fillStyle = this.dark_color
-  ctx.fillRect(0, 0, levelWidth, levelHeight)
+  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
@@ -186,7 +186,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   ctx.globalAlpha *= 0.3
-  draw_tessellation_sign(ctx, this.world_num, levelWidth/2, 130, 150)
+  draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 130, 150)
   ctx.globalAlpha /= 0.3
 
   ctx.shadowBlur = 20;
@@ -198,28 +198,28 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(this.victory) {
     ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText(this.victory_text , levelWidth/2, 90)
+    ctx.fillText(this.victory_text , imp_vars.levelWidth/2, 90)
   }
   else if(this.save_screen) {
     ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("GAME SAVED" , levelWidth/2, 90)
+    ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 90)
   } else {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("YOU ARE DEFEATED", levelWidth/2, 80)
+    ctx.fillText("YOU ARE DEFEATED", imp_vars.levelWidth/2, 80)
   }
 
   ctx.fillStyle = this.bright_color;
   ctx.shadowColor = ctx.fillStyle
   ctx.font = '40px Muli'
-  ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, 130)
+  ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
 
   if(this.victory && this.hive_numbers.continues) {
     ctx.fillStyle = "red";
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '10px Muli'
-    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, levelWidth/2, 255)
+    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 255)
   }
 
   if(this.victory) {
@@ -227,18 +227,18 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.bright_color
     ctx.font = '18px Muli'
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("RANK", levelWidth/2, 167)
+    ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
     ctx.fillStyle = this.rank_color
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '84px Muli'
-    ctx.fillText(this.rank, levelWidth/2, 235)
+    ctx.fillText(this.rank, imp_vars.levelWidth/2, 235)
   } else if(this.save_screen) {
-    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, levelWidth/2, 150, 16, impulse_colors["impulse_blue"])
+    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, imp_vars.levelWidth/2, 150, 16, impulse_colors["impulse_blue"])
     ctx.font = '16px Muli'
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
       ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), levelWidth/2, 213)
+      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 213)
     }
   }
 
@@ -303,13 +303,13 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = this.lite_color
   if(this.save_screen) {
     if(this.just_saved)
-      ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
+      ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   } else if(this.victory)
-    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   else if(this.level) {
-    ctx.fillText("PRESS ANY KEY TO CONTINUE", levelWidth/2, levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   } else {
-    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", levelWidth/2, levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   }
   ctx.restore()
 
@@ -341,11 +341,11 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
 
   if(this.save_screen && !this.just_saved) {
-    if(keyCode == imp_vars.keys.EXIT_GAME_KEY) {
+    if(keyCode == imp_params.keys.EXIT_GAME_KEY) {
       this.exit_game()
-    } else if(keyCode == imp_vars.keys.DELETE_GAME_KEY && this.shift_down()) {
+    } else if(keyCode == imp_params.keys.DELETE_GAME_KEY && this.shift_down()) {
       this.delete_game()
-    } else if(keyCode == imp_vars.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
+    } else if(keyCode == imp_params.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
       this.resume_game()
     }
   } else{
@@ -383,13 +383,13 @@ MainGameSummaryState.prototype.process = function(dt) {
 }
 
 MainGameSummaryState.prototype.resume_game = function() {
-  player_data.save_data[player_data.difficulty_mode] = {}
+  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
   switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
-  player_data.save_data[player_data.difficulty_mode] = {}
+  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
   switch_game_state(new WorldMapState())
 }

@@ -26,9 +26,9 @@ Boss.prototype.getLife = function() {
   if(this.dying) {
     return 0
   }
-  var dist = Math.min(775/draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/draw_factor)
-  var dist2 = Math.min(575/draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/draw_factor)
-  return Math.min(dist, dist2)/(275/draw_factor)
+  var dist = Math.min(775/imp_vars.draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/imp_vars.draw_factor)
+  var dist2 = Math.min(575/imp_vars.draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/imp_vars.draw_factor)
+  return Math.min(dist, dist2)/(275/imp_vars.draw_factor)
 
 }
 

@@ -16,9 +16,9 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
   visibility_graph_worker.postMessage({polygons: level.boundary_polygons,
     obstacle_edges: level.obstacle_edges,
-     draw_factor: draw_factor,
-     levelWidth: levelWidth,
-     levelHeight: levelHeight})
+     draw_factor: imp_vars.draw_factor,
+     levelWidth: imp_vars.levelWidth,
+     levelHeight: imp_vars.levelHeight})
 
   this.load_percentage = 0
 

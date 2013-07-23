@@ -23,7 +23,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.red_visibility = 0
 
-  this.spawn_interval = 2000
+  this.spawn_interval = 2300
   this.spawn_duration = this.spawn_interval
 
   this.spawned = false
@@ -37,8 +37,8 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.spawner_spawn_count = {
   "stunner" : 8,
    "spear" : 5,
-   "tank" : 4,
-   "mote" : 4,
+   "tank" : 6,
+   "mote" : 6,
    "goo" : 1,
    "harpoon" : 4,
    "orbiter" : 5,
@@ -65,7 +65,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
  }
 
 
- this.spawn_order = ["stunner", "spear", "harpoon", "fighter", "troll", "disabler", "orbiter", "mote", "tank", "slingshot", "goo", "deathray"]
+ this.spawn_order = ["stunner", "spear", "harpoon", "fighter", "troll", "goo", "orbiter", "deathray", "slingshot", "mote", "tank", "disabler", ]
  this.spawn_counter = 0
 
  this.possible_spawn_sets = [
@@ -144,7 +144,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.initial_spawn = false
   this.do_initial_spawn = true
-  this.body_bud_radius = impulse_enemy_stats[this.type]["body_bud_radius"]
+  this.body_bud_radius = imp_params.impulse_enemy_stats[this.type]["body_bud_radius"]
   this.create_body_buds()
 
   this.turn_rate = 4000
@@ -374,7 +374,7 @@ BossFour.prototype.additional_processing = function(dt) {
 
   if(this.spawner_timer <= this.spawner_interval - 500) {
 
-    this.lin_damp = impulse_enemy_stats["fourth boss"].lin_damp
+    this.lin_damp = imp_params.impulse_enemy_stats["fourth boss"].lin_damp
   }
 
   this.process_body_buds()
@@ -487,11 +487,14 @@ BossFour.prototype.generate_target_spawn_angle = function() {
   // get the angle to release the spawner
 
   var angle = Math.random() * 2 * Math.PI
-  var distance = 300 / draw_factor
+  var distance = 15
 
   var test_point = {x: this.body.GetPosition().x + Math.cos(angle) * distance, y: this.body.GetPosition().y + Math.sin(angle) * distance}
 
-  if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges)) {
+  var dist = Math.min(775/draw_factor - test_point.x, test_point.x - 25/draw_factor)
+  var dist2 = Math.min(575/draw_factor - test_point.y, test_point.y - 25/draw_factor)
+
+  if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 10) {
     this.target_spawn_angle = angle
   } else {
     //recursive...
@@ -570,10 +573,10 @@ BossFour.prototype.create_body_buds = function() {
   for(var index = 0; index < this.num_buds; index++) {
 
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
-    var bud_body =  create_body(this.world, impulse_enemy_stats[this.type].bud_polygon, 
+    var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon, 
       this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
        this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle), 
-      3, 10, imp_vars.BOSS_FOUR_BIT, imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT, "static", this, null)
+      3, 10, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
 
     bud_body.SetAngle(angle)
     this.buds.push({
@@ -706,7 +709,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
   var index = bud.loc
   var angle = (index)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
 
-  var offset_radius = this.effective_radius + impulse_enemy_stats["boss four "+bud.type+"er"].initial_radius * 1.5
+  var offset_radius = this.effective_radius + imp_params.impulse_enemy_stats["boss four "+bud.type+"er"].initial_radius * 1.5
   var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
     y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}
   var new_enemy = null
@@ -777,7 +780,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
           bud.type = null
           this.generate_new_attack_bud(bud)
         } else {
-          var size = Math.max(0.1, bezier_interpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * impulse_enemy_stats["boss four "+bud.type+"er"].effective_radius)
+          var size = Math.max(0.1, bezier_interpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * imp_params.impulse_enemy_stats["boss four "+bud.type+"er"].effective_radius)
           var offset_radius = this.effective_radius + size
           var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
             y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}

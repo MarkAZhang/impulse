@@ -13,9 +13,9 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
     switch_game_state(new LevelIntroState(level_name, world))
   }
   this.init(x, y, w, h, action, true, color)
-  if(impulse_level_data[level_name]) {
+  if(imp_params.impulse_level_data[level_name]) {
 
-  if(!impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].seen && !unlockall) {
+  if(!imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.dev) {
       this.set_active(false)
       this.state = "locked"
     }
@@ -83,15 +83,15 @@ LevelButton.prototype.additional_draw = function(context) {
   //draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h * .1, this.h * .4 * canvasWidth/canvasHeight, this.h * .4, "blue")
 
 
-  if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars > 0)
-    draw_star(ctx, this.x, this.y , 30, this.star_colors[impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars - 1])
+  if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars > 0)
+    draw_star(context, this.x, this.y , 30, this.star_colors[imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars - 1])
   else
-    draw_empty_star(ctx, this.x, this.y , 30)
+    draw_empty_star(context, this.x, this.y , 30)
 
   var num_row = Math.floor((this.w - this.buffer * 2) / (this.enemy_image_size))
 
   var num_enemy_type = 0
-  for(var j in impulse_level_data[this.level_name].enemies) {
+  for(var j in imp_params.impulse_level_data[this.level_name].enemies) {
     num_enemy_type += 1
   }
 
@@ -101,11 +101,11 @@ LevelButton.prototype.additional_draw = function(context) {
 
   if(this.is_boss_level) {
     drawn_enemies = {}
-    drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
+    drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
     num_enemy_type = 1
   }
   else {
-    drawn_enemies = impulse_level_data[this.level_name].enemies
+    drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
   }
 
   for(var j in drawn_enemies) {
@@ -156,7 +156,7 @@ LevelButton.prototype.additional_draw = function(context) {
     if(!this.is_boss_level) {
       for(var i = 0; i < 3; i++) {
         context.fillStyle = impulse_colors[this.star_colors[i]]
-        context.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
+        context.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
       }
       context.fill()
     }
@@ -165,13 +165,13 @@ LevelButton.prototype.additional_draw = function(context) {
 
     //draw_level_obstacles_within_rect(ctx, this.level_name, this.fx - this.fw/2 + this.fh * .6 * canvasWidth/canvasHeight, this.fy + this.fh * .15, this.fh * .5 * canvasWidth/canvasHeight, this.fh * .5, "blue")
 
-    context.fillStyle = "black" //impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[impulse_level_data[this.level_name].stars - 1]] : "black"
-    context.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score, this.fx, this.fy - this.fh/2 + this.size)
+    context.fillStyle = "black" //imp_params.impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[imp_params.impulse_level_data[this.level_name].stars - 1]] : "black"
+    context.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, this.fx, this.fy - this.fh/2 + this.size)
 
     var star_size = 30
 
     for(var i = 0; i < 3; i++) {
-      if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].stars > i) {
+      if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars > i) {
         draw_star(context, this.fx - 50 + 50 * i, this.fy + 14, 20, this.star_colors[i])
       }
       else
@@ -180,7 +180,7 @@ LevelButton.prototype.additional_draw = function(context) {
     }
   }
 
-  if(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score == 0) {
+  if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score == 0) {
     context.font = "25px Muli"
     context.textAlign = "right"
     context.fillStyle = this.is_boss_level ? "red" : impulse_colors["world "+(this.world)+" lite"]

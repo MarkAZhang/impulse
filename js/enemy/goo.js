@@ -26,7 +26,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_expand_period = 2000
 
-  if(player_data.difficulty_mode == "easy")
+  if(imp_vars.player_data.difficulty_mode == "easy")
     this.goo_expand_period = 2500
 
   this.goo_state = "small"
@@ -79,11 +79,11 @@ Goo.prototype.additional_processing = function(dt) {
   }
 
   if(this.status_duration[1] <= 0) {
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
-    this.force = impulse_enemy_stats[this.type].force
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
+    this.force = imp_params.impulse_enemy_stats[this.type].force
   } else {
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 0.3)
-    this.force = impulse_enemy_stats[this.type].force * 0.3
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 0.3)
+    this.force = imp_params.impulse_enemy_stats[this.type].force * 0.3
   }
 
   this.check_area_of_effect()
@@ -128,7 +128,7 @@ Goo.prototype.area_effect = function(obj) {
   obj.goo(100)
 }
 
-Goo.prototype.additional_drawing = function(context, draw_factor) {
+Goo.prototype.final_draw = function(context, draw_factor) {
 
   if(this.status_duration[1] > 0) {
     return

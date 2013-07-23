@@ -53,7 +53,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.spawned_harpoons = false
 
-  this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 2)
+  this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 2)
 
   //this.high_gravity_factor = 1.25//.25
   this.high_gravity_factor = 2.5//1.5
@@ -77,7 +77,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.shrink_rate = 0.025
 
   this.enemy_spawn_interval = 10000
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.enemy_spawn_interval = 11000
   }
   this.enemy_spawn_duration = 1000
@@ -151,7 +151,7 @@ BossTwo.prototype.additional_processing = function(dt) {
   else if(this.spawned == false){
     this.spawned = true
     this.visibility = 1
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
 
   }
   this.body.SetAngle(this.arm_core_angle)
@@ -284,7 +284,7 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.black_hole_timer - this.black_hole_duration/2)/(this.black_hole_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, canvasWidth, canvasHeight)
+    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
   }
   context.restore()
 }

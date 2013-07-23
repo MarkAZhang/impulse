@@ -6,7 +6,7 @@ function HowToPlayState() {
 
   this.init(0, null, null, true, null, true)
   this.ready = false
-  this.level = this.load_level(impulse_level_data["HOW TO PLAY"])
+  this.level = this.load_level(imp_params.impulse_level_data["HOW TO PLAY"])
   this.level.no_spawn = true
   this.level.check_enemy_spawn_timers = this.check_enemy_spawn_timers
   this.slide_num = 0
@@ -22,12 +22,12 @@ HowToPlayState.prototype.load_complete = function() {
   this.level_name = this.level.level_name
   this.is_boss_level = false
   this.make_player()
-  bg_canvas.setAttribute("style", "display:none")
-  bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
-  this.level.draw_bg(bg_ctx)
-  bg_ctx.translate(-sidebarWidth, 0)
+  imp_vars.bg_canvas.setAttribute("style", "display:none")
+  imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+  this.level.draw_bg(imp_vars.bg_ctx)
+  imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
 
-  impulse_music.play_bg(imp_vars.songs["Interlude"])
+  imp_vars.impulse_music.play_bg(imp_params.songs["Interlude"])
 
   this.color = "white"
   this.lite_color = "#ccc"
@@ -57,9 +57,9 @@ HowToPlayState.prototype.load_complete = function() {
 
   this.special_buttons = []
   var _this = this
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, levelWidth/2-100, 390, 200, 50, "white", "blue", function(){_this.change_mode("easy")})
+  this.easy_mode_button = new SmallButton("EASY MODE", 20, imp_vars.levelWidth/2-100, 390, 200, 50, "white", "blue", function(){_this.change_mode("easy")})
   this.special_buttons.push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
   this.special_buttons.push(this.normal_mode_button)
 
   this.exit_button = new SmallButton("EXIT TUTORIAL", 20, 400, 410, 250, 50, "white", "blue", function(){_this.exit_tutorial = true})
@@ -89,7 +89,7 @@ HowToPlayState.prototype.check_enemy_spawn_timers = function(dt) {
 
       var num_enemies_to_spawn = this.enemy_spawn_counters[k]
 
-      //if(player_data.difficulty_mode == "easy") {
+      //if(imp_vars.player_data.difficulty_mode == "easy") {
       //  num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.7)
       //}
 
@@ -103,15 +103,15 @@ HowToPlayState.prototype.check_enemy_spawn_timers = function(dt) {
 }
 
 HowToPlayState.prototype.change_mode = function(type) {
-  player_data.difficulty_mode = type;
+  imp_vars.player_data.difficulty_mode = type;
   save_game();
   this.set_difficulty_button_underline();
 }
 
 
 HowToPlayState.prototype.set_difficulty_button_underline = function() {
-  this.easy_mode_button.underline = (player_data.difficulty_mode == "easy");
-  this.normal_mode_button.underline = (player_data.difficulty_mode == "normal");
+  this.easy_mode_button.underline = (imp_vars.player_data.difficulty_mode == "easy");
+  this.normal_mode_button.underline = (imp_vars.player_data.difficulty_mode == "normal");
 }
 
 HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
@@ -119,7 +119,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     return
   }
   ctx.save()
-  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
 
 
   ctx.font = '20px Muli'
@@ -140,10 +140,10 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
   if(this.cur_page == 1) {
 
-    if(player_data.options.control_hand == "right") {
+    if(imp_vars.player_data.options.control_hand == "right") {
       draw_arrow_keys(ctx, 400, 430, 60, this.color, ["W", "A", "S", "D"])
     }
-    if(player_data.options.control_hand == "left" && player_data.options.control_scheme == "mouse") {
+    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
       draw_arrow_keys(ctx, 400, 430, 60, this.color)
     }
     ctx.fillText("MOVE", 400, 500)
@@ -153,7 +153,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   }
 
   if(this.cur_page == 2) {
-    if(player_data.options.control_scheme == "mouse") {
+    if(imp_vars.player_data.options.control_scheme == "mouse") {
       draw_mouse(ctx, 400, 400, 83, 125, this.color)
     } else {
       draw_arrow_keys(ctx, 400, 430, 60, this.color)
@@ -187,7 +187,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.stroke()
     draw_arrow(ctx, 408, 375, 20, "right", this.color, false)
 
-    var polygons = impulse_level_data["HOW TO PLAY"].obstacle_v
+    var polygons = imp_params.impulse_level_data["HOW TO PLAY"].obstacle_v
 
     ctx.beginPath()
     ctx.rect(0, 0, 800, 600)
@@ -252,7 +252,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillStyle = impulse_colors[this.score_colors[i]]
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '25px Muli';
-      ctx.fillText(impulse_level_data["HOW TO PLAY"].cutoff_scores[player_data.difficulty_mode][i], 600, 330 + 40 * i + 7)
+      ctx.fillText(imp_params.impulse_level_data["HOW TO PLAY"].cutoff_scores[imp_vars.player_data.difficulty_mode][i], 600, 330 + 40 * i + 7)
       ctx.textAlign = "left"
       ctx.font = '20px Muli';
       ctx.fillText(this.score_names[i], 200, 330 + 40 * i)
@@ -279,7 +279,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.shadowBlur = 0
     ctx.fillText("...THEN PRESS", 400, 370)
 
-    if(player_data.options.control_hand == "right") {
+    if(imp_vars.player_data.options.control_hand == "right") {
       ctx.shadowColor = this.color
       ctx.shadowBlur = 10
 
@@ -287,7 +287,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("SPACEBAR", 400, 436)
     }
 
-    if(player_data.options.control_hand == "left") {
+    if(imp_vars.player_data.options.control_hand == "left") {
       draw_rounded_rect(ctx, 400, 430, 120, 50, 10, this.color)
       ctx.fillText("ENTER", 400, 436)
     }
@@ -333,7 +333,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillText("GETTING HIT RESETS YOUR MULTIPLIER", 400, 440)
 
     ctx.beginPath()
-    ctx.arc(canvasWidth - sidebarWidth*3/2, canvasHeight/2 - 20, 70, 0, 2 * Math.PI)
+    ctx.arc(imp_vars.canvasWidth - imp_vars.sidebarWidth*3/2, imp_vars.canvasHeight/2 - 20, 70, 0, 2 * Math.PI)
     ctx.lineWidth = 8
     ctx.strokeStyle = 'red'
     ctx.stroke()
@@ -395,7 +395,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 2
 
     ctx.beginPath()
-    ctx.rect(-155, canvasHeight - 140, 120, 80)
+    ctx.rect(-155, imp_vars.canvasHeight - 140, 120, 80)
     ctx.strokeStyle = "red"
     ctx.lineWidth = 4
     ctx.stroke()
@@ -421,7 +421,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
 
     ctx.beginPath()
-    ctx.rect(-155, canvasHeight - 40, 120, 37)
+    ctx.rect(-155, imp_vars.canvasHeight - 40, 120, 37)
     ctx.strokeStyle = "red"
     ctx.lineWidth = 4
     ctx.stroke()
@@ -582,25 +582,25 @@ HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
     if(this.cur_page == 10) {
       for(var i=0; i < this.special_buttons.length; i++) {
-        this.special_buttons[i].on_mouse_move(x - sidebarWidth, y)
+        this.special_buttons[i].on_mouse_move(x - imp_vars.sidebarWidth, y)
       }
     }
     if(this.cur_page == 11) {
-      this.exit_button.on_mouse_move(x - sidebarWidth, y)
+      this.exit_button.on_mouse_move(x - imp_vars.sidebarWidth, y)
     }
-    this.player.mouseMove(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+    this.player.mouseMove(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
   }
 }
 
 HowToPlayState.prototype.on_key_down = function(keyCode) {
   if(!this.ready || this.zoom != 1) return
 
-  if(keyCode == imp_vars.keys.PAUSE) {
+  if(keyCode == imp_params.keys.PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
-  } else if(keyCode == imp_vars.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+  } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     this.victory = true
   } else {
     this.player.keyDown(keyCode)  //even if paused, must still process
@@ -615,13 +615,13 @@ HowToPlayState.prototype.setPage = function(page) {
 
   if(page == 3 && this.cur_page != 3) {
 
-    this.temp_fragments = new FragmentGroup("player", {x: 75/draw_factor, y: 75/draw_factor}, {x:0, y:0}, false)
+    this.temp_fragments = new FragmentGroup("player", {x: 75/imp_vars.draw_factor, y: 75/imp_vars.draw_factor}, {x:0, y:0}, false)
     this.temp_fragments.process(300)
   }
 
   if(page == 4 && this.cur_page != 4) {
 
-    this.temp_fragments = new FragmentGroup("stunner", {x: 110/draw_factor, y: 75/draw_factor}, {x: 5, y:0}, false)
+    this.temp_fragments = new FragmentGroup("stunner", {x: 110/imp_vars.draw_factor, y: 75/imp_vars.draw_factor}, {x: 5, y:0}, false)
     this.temp_fragments.process(300)
   }
 
@@ -631,21 +631,21 @@ HowToPlayState.prototype.setPage = function(page) {
 
 HowToPlayState.prototype.on_mouse_down = function(x, y) {
 
-  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+  if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
     return
   }
   if(!this.pause && this.ready && this.zoom == 1) {
 
-    if(x > sidebarWidth && (x < canvasWidth - sidebarWidth && y > 400 || (this.cur_page == 10 && y > 350))) {
+    if(x > imp_vars.sidebarWidth && (x < imp_vars.canvasWidth - imp_vars.sidebarWidth && y > 400 || (this.cur_page == 10 && y > 350))) {
 
       if(this.cur_page == 10) {
         for(var i=0; i < this.special_buttons.length; i++) {
-          this.special_buttons[i].on_click(x - sidebarWidth, y)
+          this.special_buttons[i].on_click(x - imp_vars.sidebarWidth, y)
         }
       }
 
       if(this.cur_page == 11) {
-        this.exit_button.on_click(x - sidebarWidth, y)
+        this.exit_button.on_click(x - imp_vars.sidebarWidth, y)
       }
 
 
@@ -667,7 +667,7 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
       }
 
     } else {
-      this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+      this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
     }
   }
 }
@@ -682,7 +682,7 @@ HowToPlayState.prototype.game_over = function() {
     this.zoom_target_scale = 1
     this.zoom = 0.1
     this.zoom_bg_switch = true;
-    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, 1000)
+    this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, 1000)
 
     this.fade_state = "in"
     this.ready = true

@@ -6,20 +6,20 @@ var MusicPlayer = function() {
   this.initialize_multisounds();
 
   this.playing = {}
-  this.mute = player_data.options.music_mute
+  this.mute = imp_vars.player_data.options.music_mute
   this.bg_music_volume = 100
   this.effects_volume = 100
-  this.effects_mute = player_data.options.effects_mute
+  this.effects_mute = imp_vars.player_data.options.effects_mute
 }
 
 MusicPlayer.prototype.initialize_multisounds = function() {
-  for(var multisound in imp_vars.multisounds) {
-    this.initialize_sound_set(imp_vars.multisounds[multisound].file, imp_vars.multisounds[multisound].maxnum);
+  for(var multisound in imp_params.multisounds) {
+    this.initialize_sound_set(imp_params.multisounds[multisound].file, imp_params.multisounds[multisound].maxnum);
   }
 }
 
 MusicPlayer.prototype.play_sound = function(sound) {
-  this.play(imp_vars.sounds[sound])
+  this.play(imp_params.sounds[sound])
 }
 
 MusicPlayer.prototype.play = function(file) {
@@ -38,7 +38,7 @@ MusicPlayer.prototype.play = function(file) {
 
 MusicPlayer.prototype.mute_effects = function(mute) {
   this.effects_mute = mute
-  player_data.options.effects_mute = mute
+  imp_vars.player_data.options.effects_mute = mute
   save_game()
 }
 
@@ -81,7 +81,7 @@ MusicPlayer.prototype.switch_bg = function(file) {
 
 MusicPlayer.prototype.mute_bg = function() {
   this.mute = true
-  player_data.options.music_mute = true
+  imp_vars.player_data.options.music_mute = true
   save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(0);
@@ -91,7 +91,7 @@ MusicPlayer.prototype.mute_bg = function() {
 
 MusicPlayer.prototype.unmute_bg = function() {
   this.mute = false
-  player_data.options.music_mute = false
+  imp_vars.player_data.options.music_mute = false
   save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(this.bg_music_volume);
@@ -133,10 +133,10 @@ MusicPlayer.prototype.play_bg = function(file) {
   }
   if(!(file in this.sounds)) {
 
-    if(file in imp_vars.song_repeats) {
+    if(file in imp_params.song_repeats) {
       this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
       this.sounds[file].bind("ended", function(e) {
-             this.setTime(imp_vars.song_repeats[file]);
+             this.setTime(imp_params.song_repeats[file]);
              this.play();
           });
 

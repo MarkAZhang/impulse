@@ -82,14 +82,14 @@ Fighter.prototype.additional_processing = function(dt) {
     this.fighter_status = "frenzy"
     this.shoot_duration = this.frenzy_shoot_interval;
     this.color = "red";
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp * 5)
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 5)
   }
 
   if(this.fighter_status == "frenzy" && this.frenzy_charge == 0) {
     this.fighter_status = "normal"
     this.shoot_duration = this.shoot_interval;
-    this.color = impulse_enemy_stats[this.type].color;
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+    this.color = imp_params.impulse_enemy_stats[this.type].color;
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
 
   if(this.destroyable_timer > 0) {
@@ -99,7 +99,7 @@ Fighter.prototype.additional_processing = function(dt) {
   if(this.shoot_duration <= 0 && this.status_duration[1] <= 0) {
     this.shoot_duration = this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval
 
-    if(check_bounds(0, this.body.GetPosition(), draw_factor)) {
+    if(check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
       var cur_bullet_loc = this.get_bullet_locations(this.bullet_alternater);
 
       var spawned_bullet = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
@@ -121,11 +121,11 @@ Fighter.prototype.additional_processing = function(dt) {
       this.bullet_alternater += 1
     }
   }
-  if(check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.shoot_duration -= dt
   }
 
-  if (this.fighter_status == "normal" && this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if (this.fighter_status == "normal" && this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.frenzy_charge_timer -= dt
     if (this.frenzy_charge_timer < 0) {
       this.frenzy_charge_timer = this.frenzy_charge_interval
@@ -140,7 +140,7 @@ Fighter.prototype.additional_processing = function(dt) {
 Fighter.prototype.player_hit_proc = function() {
 }
 
-Fighter.prototype.additional_drawing = function(context) {
+Fighter.prototype.additional_drawing = function(context, draw_factor) {
   if(!this.dying) {
     context.save();
     context.globalAlpha *= 0.7
@@ -190,7 +190,7 @@ Fighter.prototype.additional_drawing = function(context) {
     var loaded_prop = Math.max((cur_interval - this.shoot_duration)/(cur_interval), 0)
 
     draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
-      impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
 
     context.save()
     context.globalAlpha *= loaded_prop
@@ -207,7 +207,7 @@ Fighter.prototype.additional_drawing = function(context) {
     if(this.fighter_status == "frenzy") {
       var alt_bullet_loc = this.get_bullet_locations(this.bullet_alternater + 1);
       draw_shape(context, alt_bullet_loc.x * draw_factor, alt_bullet_loc.y * draw_factor,
-      impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
     }
 
 

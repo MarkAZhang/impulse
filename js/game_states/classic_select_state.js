@@ -7,18 +7,18 @@ function ClassicSelectState(world) {
   this.color = impulse_colors["impulse_blue"]
   if(!world) {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, this.color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+270, 200, 50, this.color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_world_buttons()
   }
   else {
     this.buttons = []
-    this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, this.color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+270, 200, 50, this.color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
     this.level_buttons = []
     this.set_level_buttons(world)
   }
 
-  impulse_music.play_bg(imp_vars.songs["Menu"])
+  imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
 }
 
 ClassicSelectState.prototype.process = function(  at) {
@@ -29,8 +29,8 @@ ClassicSelectState.prototype.set_world_buttons = function() {
   this.buttons = [this.buttons[0]]
   this.level_buttons = []
   var gap = 30
-  var level_button_h = (levelHeight/2 + 140 - gap)/2
-  var level_button_w = (levelWidth - 3 * gap)/2
+  var level_button_h = (imp_vars.levelHeight/2 + 140 - gap)/2
+  var level_button_w = (imp_vars.levelWidth - 3 * gap)/2
 
   for(var i = 0; i < 4; i++) {
 
@@ -40,11 +40,11 @@ ClassicSelectState.prototype.set_world_buttons = function() {
 }
 
 ClassicSelectState.prototype.set_level_buttons = function(world) {
-  this.buttons.push(new SmallButton("WORLD SELECT", 20, levelWidth/2, levelHeight/2+220, 200, 50, this.color, "blue", function(_this){return function(){_this.set_world_buttons()}}(this)))
+  this.buttons.push(new SmallButton("WORLD SELECT", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, this.color, "blue", function(_this){return function(){_this.set_world_buttons()}}(this)))
   this.level_buttons = []
   var gap = 30
-  var level_button_h = (levelHeight/2 + 200 - 3 * gap)/2
-  var level_button_w = (levelWidth - 5 * gap)/4
+  var level_button_h = (imp_vars.levelHeight/2 + 200 - 3 * gap)/2
+  var level_button_w = (imp_vars.levelWidth - 5 * gap)/4
 
   for(var i = 0; i < 8; i++) {
     var title = i == 7 ? "BOSS "+(world) : "HIVE "+world+"-"+(i+1)
@@ -68,10 +68,10 @@ ClassicSelectState.prototype.draw = function(ctx, bg_ctx) {
   ctx.beginPath()
 
   ctx.font = '20px Muli'
-  draw_empty_star(ctx, levelWidth - 20, levelHeight - 15, 15, "black")
+  draw_empty_star(ctx, imp_vars.levelWidth - 20, imp_vars.levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
   ctx.fillStyle = 'black'
-  ctx.fillText(player_data.stars[player_data.difficulty_mode], levelWidth - 40, levelHeight - 10)
+  ctx.fillText(imp_vars.player_data.stars[imp_vars.player_data.difficulty_mode], imp_vars.levelWidth - 40, imp_vars.levelHeight - 10)
 
   for(var i = 0; i < this.buttons.length; i++)
   {

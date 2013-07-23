@@ -11,7 +11,7 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.spear_force = 30 //force that the spear impulses the player
 
-  if(player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+  if(imp_vars.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
     this.spear_force = 40
 
   this.death_radius = 5
@@ -59,7 +59,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
 
 Spear.prototype.additional_processing = function(dt) {
 
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)
     this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
     this.entered_arena = true
@@ -69,7 +69,7 @@ Spear.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.entered_arena = false
   }
 

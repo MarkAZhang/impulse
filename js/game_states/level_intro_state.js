@@ -11,7 +11,7 @@ function LevelIntroState(level_name, world) {
   this.bg_drawn = false
 
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
-  this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, levelHeight - 30, 200, 50, "black", "blue", function(_this){return function(){
+  this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, imp_vars.levelHeight - 30, 200, 50, "black", "blue", function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
     }
@@ -21,25 +21,25 @@ function LevelIntroState(level_name, world) {
   }}(this)))
 
   this.star_colors = ['bronze', 'silver', 'gold']
-  this.stars = impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score.stars
+  this.stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score.stars
 
   this.drawn_enemies = null
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
-    this.drawn_enemies[impulse_level_data[this.level_name].dominant_enemy] = null
+    this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
     this.num_enemy_type = 1
   }
   else {
-    this.drawn_enemies = impulse_level_data[this.level_name].enemies
+    this.drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in impulse_level_data[this.level_name].enemies) {
+    for(var j in imp_params.impulse_level_data[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }
   this.enemy_image_size = 40
 
-  this.level = this.load_level(impulse_level_data[this.level_name])
+  this.level = this.load_level(imp_params.impulse_level_data[this.level_name])
 
   var num_row = 12
 
@@ -64,7 +64,7 @@ function LevelIntroState(level_name, world) {
 
     var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
 
-    var cur_x =  levelWidth/2 + (this.enemy_image_size+10) * diff
+    var cur_x =  imp_vars.levelWidth/2 + (this.enemy_image_size+10) * diff
     var cur_y = 525 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, "rgba(0, 0, 0, 0.3)"))
 
@@ -79,21 +79,21 @@ LevelIntroState.prototype.process = function(dt) {
 LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
-    bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
-    bg_ctx.translate(-sidebarWidth, 0)
+    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     bg_canvas.setAttribute("style", "display:none")
   }
   ctx.fillStyle = "white"
-  ctx.fillRect(0, 0, levelWidth, levelHeight)
+  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
 
   ctx.beginPath()
   ctx.fillStyle = impulse_colors['world '+ this.world_num]
   ctx.font = '30px Muli'
   ctx.textAlign = 'center'
 
-  ctx.fillText(this.level_name, levelWidth/2, 80)
+  ctx.fillText(this.level_name, imp_vars.levelWidth/2, 80)
   ctx.fill()
 
   impulse_colors['world 2']
@@ -103,19 +103,19 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  draw_level_obstacles_within_rect(ctx, this.level_name, levelWidth/2, 175, 200, 150, impulse_colors['world '+ this.world_num])
+  draw_level_obstacles_within_rect(ctx, this.level_name, imp_vars.levelWidth/2, 175, 200, 150, impulse_colors['world '+ this.world_num])
   ctx.beginPath()
-  ctx.rect(levelWidth/2 - 100, 100, 200, 150)
+  ctx.rect(imp_vars.levelWidth/2 - 100, 100, 200, 150)
 
   ctx.strokeStyle = "rgba(0, 0, 0, .3)"
   ctx.stroke()
 
   if (this.load_percentage < 1) {
     ctx.textAlign = 'center'
-    draw_progress_bar(ctx, levelWidth - 150, levelHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
+    draw_progress_bar(ctx, imp_vars.levelWidth - 150, imp_vars.levelHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
     ctx.font = '20px Muli'
     ctx.fillStyle = 'black'
-    ctx.fillText("LOADING", levelWidth - 150, levelHeight - 33)
+    ctx.fillText("LOADING", imp_vars.levelWidth - 150, imp_vars.levelHeight - 33)
   }
 
   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
@@ -125,15 +125,15 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
         ctx.textAlign = 'right'
         ctx.font = '25px Muli'
         ctx.fillStyle = impulse_colors[this.star_colors[i]]
-        ctx.fillText(impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][i],  levelWidth/2 + 100, 300 + 35 * i)
-        draw_star(ctx,  levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
+        ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i],  imp_vars.levelWidth/2 + 100, 300 + 35 * i)
+        draw_star(ctx,  imp_vars.levelWidth/2 - 80, 295 + 35 * i, 20, this.star_colors[i])
       }
     }
     score_color = 0
 
     if(!this.is_boss_level) {
 
-      while(impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score > impulse_level_data[this.level_name].cutoff_scores[player_data.difficulty_mode][score_color]) {
+      while(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][score_color]) {
         score_color+=1
       }
     }
@@ -145,11 +145,11 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       draw_star(ctx, 400, 420, 30, this.star_colors[this.stars - 1])
     else
     draw_empty_star(ctx, 400, 420, 30)*/
-    ctx.fillText("HIGH SCORE: "+impulse_level_data[this.level_name].save_state[player_data.difficulty_mode].high_score,  levelWidth/2, 420)
+    ctx.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,  imp_vars.levelWidth/2, 420)
 
     ctx.fillStyle = "black"
     ctx.font = '20px Muli'
-    ctx.fillText("ENEMIES",  levelWidth/2, 470)
+    ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 470)
 
 
 
@@ -174,5 +174,5 @@ LevelIntroState.prototype.on_click = function(x, y) {
 
 
 LevelIntroState.prototype.load_complete = function() {
-  this.buttons.push(new SmallButton("START LEVEL", 20, levelWidth - 150, levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, true))}}(this)))
+  this.buttons.push(new SmallButton("START LEVEL", 20, imp_vars.levelWidth - 150, imp_vars.levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, true))}}(this)))
 }

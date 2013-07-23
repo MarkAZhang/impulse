@@ -9,7 +9,6 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false
-  this.spawn_duration = 1000
 
   this.death_radius = 5
 
@@ -23,7 +22,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.spawned = false
 
-  this.body.SetAngle(Math.PI/16)
+  this.body.SetAngle(7 * Math.PI/16)
 
   this.dying_length = 2000
 
@@ -38,11 +37,11 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.num_arms = 16
   this.striking_arms = {}
   this.strike_duration = 2800
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.strike_duration = 3400
   }
   this.strike_interval = 1500
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.strike_interval = 1700
   }
   this.strike_timer = this.strike_interval
@@ -111,7 +110,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
    "troll" : 8,
  }
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     for(var enemy in this.spawn_count) {
       this.spawn_count[enemy] *= 0.6
       this.spawn_count[enemy] = Math.ceil(this.spawn_count[enemy])
@@ -122,9 +121,9 @@ function BossThree(world, x, y, id, impulse_game_state) {
   "stunner" : 70,
    "spear" : 60,
    "tank" : 300,
-   "mote" : 40,
+   "mote" : 20,
    "goo" : 200,
-   "harpoon" : 1000,
+   "harpoon" : 500,
    "disabler" : 300,
    "fighter" : 500,
    "troll" : 30,
@@ -136,10 +135,10 @@ function BossThree(world, x, y, id, impulse_game_state) {
    "tank" : 2000,
    "mote" : 500,
    "goo" : 0,
-   "harpoon" : 2000,
+   "harpoon" : 5000,
    "disabler" : 0,
    "fighter" : 5000,
-   "troll" : 1000,
+   "troll" : 2000,
    "frenzy": 1000
 }
 
@@ -156,7 +155,7 @@ this.rotating = false
 BossThree.prototype.generate_wheel_set = function() {
   /*var temp = []
   for(var i = 0; i < 4; i++)
-    temp.push("frenzy")
+    temp.push("harpoon")
   return temp*/
   var tough_enemies = ["tank", "fighter", "troll", "harpoon"]
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
@@ -210,7 +209,7 @@ BossThree.prototype.additional_processing = function(dt) {
   else if(this.spawned == false){
     this.spawned = true
     this.visibility = 1
-    this.body.SetLinearDamping(impulse_enemy_stats[this.type].lin_damp)
+    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
     if(this.rotating) {
       if(this.rotation_dir % 2 == 0)
@@ -481,6 +480,7 @@ BossThree.prototype.process_striking_arms = function() {
         arm_size = bezier_interpolate(0.15, 0.85, arm_size);
         if(data.max_dist == null) {
           data.max_dist = p_dist(this.body.GetPosition(), this.player.body.GetPosition()) + 5
+          if(data.max_dist < 20) data.max_dist += 10
         }
         data.cur_dist = data.max_dist * arm_size + (data.start_dist) * (1-arm_size)
 
@@ -593,7 +593,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
 
 BossThree.prototype.initialize_arms = function() {
   for(var index = 0; index < this.num_arms; index++) {
-    var arm_body =  create_body(this.world, impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 10, imp_vars.BOSS_THREE_BIT, imp_vars.PLAYER_BIT | imp_vars.ENEMY_BIT, "static", this, null)
+    var arm_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 10, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
     arm_body.SetAngle(this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
     this.striking_arms[index] = {
       interval: this.strike_duration,
@@ -687,6 +687,7 @@ BossThree.prototype.draw_glows = function(context, draw_factor) {
 
 
 BossThree.prototype.pre_draw = function(context, draw_factor) {
+
   context.save()
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
 
@@ -700,20 +701,24 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, canvasWidth, canvasHeight)
+    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
     context.restore()
   }
 
   this.draw_glows(context, draw_factor);
-  if(this.striking_state == "extend" || this.striking_state == "retract") {
-    var tp = this.body.GetPosition()
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-  } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
-    var tp = this.body.GetPosition()
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-  }
 
-   context.save()
+  if(this.spawned) {
+    if(this.striking_state == "extend" || this.striking_state == "retract") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    }  
+  }
+  
+
+  context.save()
   context.globalAlpha *= 0.4
     for(var i = 0; i < 16; i++) {
     var tp = this.body.GetPosition()
@@ -734,8 +739,8 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
 
   }
   context.restore()
-
-  for(var index in this.striking_arms) {
+  if(this.spawned) {
+    for(var index in this.striking_arms) {
     //context.beginPath()
     //var body_vertices = this.striking_arms[index].body.GetFixtureList().m_shape.m_vertices
 
@@ -757,6 +762,8 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
       context.restore()
 
     }
+  }
+  
 
 
     /*context.rotate(-Math.PI/16)
@@ -873,7 +880,7 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   new_enemy.entered_arena_timer = 0
   if(enemy_type == "harpoon") {
     new_enemy.silence(500, true)
-    setTimeout(function(){new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())}, 20)
+    //setTimeout(function(){new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())}, 20)
   }
 }
 

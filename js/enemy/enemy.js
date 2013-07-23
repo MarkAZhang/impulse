@@ -12,8 +12,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.level = impulse_game_state.level
   this.player = impulse_game_state.player
   this.world = world
-  for(i in impulse_enemy_stats[this.type]) {
-    this[i] = impulse_enemy_stats[this.type][i]
+  for(i in imp_params.impulse_enemy_stats[this.type]) {
+    this[i] = imp_params.impulse_enemy_stats[this.type][i]
   }
 
   this.pointer_vertices = []
@@ -74,8 +74,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.density = this.density;
     fixDef.friction = 0;
     fixDef.restitution = 1.0;
-    fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : imp_vars.ENEMY_BIT
-    fixDef.filter.maskBits = this.maskBits ? this.maskBits : imp_vars.ENEMY_BIT | imp_vars.PLAYER_BIT | imp_vars.BOSS_BITS
+    fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : imp_params.ENEMY_BIT
+    fixDef.filter.maskBits = this.maskBits ? this.maskBits : imp_params.ENEMY_BIT | imp_params.PLAYER_BIT | imp_params.BOSS_BITS
     fixDef.shape = this_shape
     this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
     this.shapes.push(this_shape)
@@ -298,7 +298,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         //fixtures[i].SetDensity(this.density/5)
       }
       this.body.ResetMassData()
-      this.force = impulse_enemy_stats[this.type].force/this.lighten_factor/this.lighten_factor
+      this.force = imp_params.impulse_enemy_stats[this.type].force/this.lighten_factor/this.lighten_factor
     }
   }
   else {
@@ -317,7 +317,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         //fixtures[i].SetDensity(this.density)
       }
       this.body.ResetMassData()
-      this.force = impulse_enemy_stats[this.type].force
+      this.force = imp_params.impulse_enemy_stats[this.type].force
 
     }
   }
@@ -375,7 +375,7 @@ Enemy.prototype.adjust_position = function() {
   if(this.adjust_position_angle != null) {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
-    if(this.durations["open"] > 0 && player_data.difficulty_mode == "normal" && this.extra_adjust) {
+    if(this.durations["open"] > 0 && imp_vars.player_data.difficulty_mode == "normal" && this.extra_adjust) {
       dir.Multiply(2)
     } else if((this.type == "goo" || this.type == "harpoon" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
@@ -530,13 +530,13 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
-    if(impulse_enemy_stats[this.type].proxy)
-      impulse_enemy_stats[impulse_enemy_stats[this.type].proxy].kills += 1
+    if(imp_params.impulse_enemy_stats[this.type].proxy)
+      imp_params.impulse_enemy_stats[imp_params.impulse_enemy_stats[this.type].proxy].kills += 1
     else
-      impulse_enemy_stats[this.type].kills += 1
+      imp_params.impulse_enemy_stats[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
-      if(player_data.options.score_labels)
+      if(imp_vars.player_data.options.score_labels)
         this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()
@@ -545,7 +545,7 @@ Enemy.prototype.start_death = function(death) {
   }
 
   if(this.dying != "accidental") {
-    impulse_music.play_sound("sdeath")
+    imp_vars.impulse_music.play_sound("sdeath")
   }
 
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
@@ -610,7 +610,8 @@ Enemy.prototype.player_hit_proc = function() {
   this.player.stun(500)
 }
 
-Enemy.prototype.draw_arrow = function(context, draw_factor) {
+// draw a pointer if the enemy is off-screen
+/*Enemy.prototype.draw_arrow = function(context, draw_factor) {
   if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
@@ -640,7 +641,7 @@ Enemy.prototype.draw_arrow = function(context, draw_factor) {
     return true
   }
   return false;
-}
+}*/
 
 Enemy.prototype.draw = function(context, draw_factor) {
 
@@ -829,6 +830,11 @@ Enemy.prototype.pre_draw = function(context, draw_factor) {
 
 }
 
+Enemy.prototype.final_draw = function(context, draw_factor) {
+//things that should be drawn after anything else in the world
+
+}
+
 Enemy.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
 }
@@ -951,8 +957,8 @@ Enemy.prototype.get_impulse_sensitive_pts = function() {
 
 Enemy.prototype.set_up_images = function() {
   var normal_canvas = document.createElement('canvas');
-  normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
-  normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+  normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+  normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
   normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1043,8 +1049,8 @@ Enemy.prototype.generate_images = function() {
   for(index in this.statuses) {
     var status = this.statuses[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
-    normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
     normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1057,8 +1063,8 @@ Enemy.prototype.generate_images = function() {
   for(index in this.additional_statuses) {
     var status = this.additional_statuses[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
-    normal_canvas.height = impulse_enemy_stats[this.type].effective_radius * 2 * draw_factor
+    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
     normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1073,7 +1079,7 @@ Enemy.prototype.generate_images = function() {
 Enemy.prototype.draw_enemy_image = function(context, state) {
 
   context.save()
-  var tp = {x: impulse_enemy_stats[this.type].effective_radius, y: impulse_enemy_stats[this.type].effective_radius}
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius, y: imp_params.impulse_enemy_stats[this.type].effective_radius}
   for(var k = 0; k < this.shapes.length; k++) {
 
     if(this.shape_polygons[k].visible === false) continue
@@ -1091,10 +1097,10 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
 
     if(cur_shape instanceof b2PolygonShape) {
       //draw polygon shape
-      context.moveTo((tp.x+cur_shape_points[0].x)*draw_factor, (tp.y+cur_shape_points[0].y)*draw_factor)
+      context.moveTo((tp.x+cur_shape_points[0].x)*imp_vars.draw_factor, (tp.y+cur_shape_points[0].y)*imp_vars.draw_factor)
       for(var i = 1; i < cur_shape_points.length; i++)
       {
-        context.lineTo((tp.x+cur_shape_points[i].x)*draw_factor, (tp.y+cur_shape_points[i].y)*draw_factor)
+        context.lineTo((tp.x+cur_shape_points[i].x)*imp_vars.draw_factor, (tp.y+cur_shape_points[i].y)*imp_vars.draw_factor)
       }
     }
     context.closePath()

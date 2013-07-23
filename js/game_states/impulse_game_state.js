@@ -22,7 +22,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.pause = true
   this.ready = false
   this.buttons = []
-  this.draw_factor = draw_factor
   this.last_fps_time = 0
   this.fps_counter = null
   this.fps = 0
@@ -53,12 +52,12 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
     this.make_player()
     if(this.level_name == "BOSS 4") {
-      impulse_music.play_bg(imp_vars.songs["Final Tessellation"])
+      imp_vars.impulse_music.play_bg(imp_params.songs["Final Tessellation"])
     }
     else if(this.level_name.slice(0, 4) == "BOSS")
-      impulse_music.play_bg(imp_vars.songs["Tessellation"])
+      imp_vars.impulse_music.play_bg(imp_params.songs["Tessellation"])
     else
-      impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
+      imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
   }
 
   this.visibility_graph = visibility_graph
@@ -89,23 +88,23 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
 
   this.world_visibility = 1
 
-  this.camera_center = {x: levelWidth/2, y: levelHeight/2}
+  this.camera_center = {x: imp_vars.levelWidth/2, y: imp_vars.levelHeight/2}
   //this.zoom = 0.1
 
   this.slow_zoom_transition_period = 1500;
   this.fast_zoom_transition_period = 750
   this.zoom_transition_timer = 0;
   this.zoom_state = "none";
-  this.zoom_start_pt = {x:levelWidth, y:levelHeight}
-  this.zoom_target_pt = {x:levelWidth, y:levelHeight}
+  this.zoom_start_pt = {x:imp_vars.levelWidth, y:imp_vars.levelHeight}
+  this.zoom_target_pt = {x:imp_vars.levelWidth, y:imp_vars.levelHeight}
   this.zoom_start_scale = 0.1
   this.zoom_target_scale = 1
   this.zoom = 0.1
   this.zoom_bg_switch = true;
   if(this.first_time) {
-    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, this.slow_zoom_transition_period)
+    this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
   } else {
-    this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 1, this.fast_zoom_transition_period)
+    this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.fast_zoom_transition_period)
   }
 
 
@@ -163,17 +162,17 @@ ImpulseGameState.prototype.reset = function() {
   this.victory = false
   this.level.reset()
   this.check_new_enemies()
-  bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
   this.level.draw_bg(bg_ctx)
-  bg_ctx.translate(-sidebarWidth, 0)
+  bg_ctx.translate(-imp_vars.sidebarWidth, 0)
   this.progress_bar_prop = 0
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
-  for(var enemy in impulse_level_data[this.level_name].enemies) {
-    impulse_enemy_stats[enemy].seen += 1
+  for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
+    imp_params.impulse_enemy_stats[enemy].seen += 1
     save_game()
-    if(!impulse_enemy_stats[enemy].is_boss && impulse_enemy_stats[enemy].seen <= 1) {
+    if(!imp_params.impulse_enemy_stats[enemy].is_boss && imp_params.impulse_enemy_stats[enemy].seen <= 1) {
       this.new_enemy_type = enemy
       this.new_enemy_timer = this.new_enemy_duration
       draw_new_enemy_button(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.new_enemy_type)
@@ -183,10 +182,10 @@ ImpulseGameState.prototype.check_new_enemies = function() {
 
 ImpulseGameState.prototype.make_player = function() {
   if(this.level.player_loc) {
-    this.player = new Player(this.world, this.level.player_loc.x/draw_factor, this.level.player_loc.y/draw_factor, this)
+    this.player = new Player(this.world, this.level.player_loc.x/imp_vars.draw_factor, this.level.player_loc.y/imp_vars.draw_factor, this)
   }
   else {
-    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, this.draw_factor)
+    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, imp_vars.draw_factor)
     this.player = new Player(this.world, r_p.x, r_p.y, this)
   }
 }
@@ -219,7 +218,7 @@ ImpulseGameState.prototype.loading_screen = function() {
   ctx.font = '30px Muli'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
-  ctx.fillText("LOADING", levelWidth/2, (levelHeight)/2)
+  ctx.fillText("LOADING", imp_vars.levelWidth/2, (imp_vars.levelHeight)/2)
   ctx.fill()
 }
 
@@ -267,6 +266,10 @@ ImpulseGameState.prototype.process = function(dt) {
 
     if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && this.first_time) {
       this.boss_intro_text_duration = this.boss_intro_text_interval
+      if(this.world_num == 4) {
+        this.boss_intro_text_duration /= 2
+        this.boss_intro_text_interval /= 2
+      }
       this.first_time = false
     }
 
@@ -278,7 +281,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x:levelWidth/2, y:levelHeight/2}, 0.1, this.fast_zoom_transition_period)
+        this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -288,7 +291,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0) {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_in({x:levelWidth/2, y:levelHeight/2}, 10, this.slow_zoom_transition_period)
+        this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -300,7 +303,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if(this.victory)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x: this.player.body.GetPosition().x * draw_factor, y: this.player.body.GetPosition().y * draw_factor}, 10, this.slow_zoom_transition_period)
+        this.zoom_out({x: this.player.body.GetPosition().x * imp_vars.draw_factor, y: this.player.body.GetPosition().y * imp_vars.draw_factor}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -380,35 +383,35 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   /*ctx.scale(this.zoom, this.zoom)
   ctx.translate((canvasWidth/2 - (this.camera_center.x)*this.zoom)/this.zoom, (canvasHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
-  ctx.drawImage(bg_canvas, sidebarWidth*this.zoom, 0)
+  ctx.drawImage(bg_canvas, imp_vars.sidebarWidth*this.zoom, 0)
   ctx.setTransform(1, 0, 0, 1, 0, 0);*/
 
   ctx.save();
-  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
 
   if(this.zoom_state != "none" ) {
-    ctx.rect(0, 0, levelWidth, levelHeight);
+    ctx.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
     ctx.clip()
   }
 
   ctx.fillStyle = this.dark_color
 
   ctx.scale(this.zoom, this.zoom)
-  ctx.translate((levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  ctx.translate((imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
   /*ctx.translate(this.camera_center.x * (1-this.zoom) * 2, this.camera_center.y * (1-this.zoom) * 2);*/
   /*ctx.translate(this.camera_center.x * this.zoom, this.camera_center.y * this.zoom)*/
   ctx.beginPath();
   if(this.zoom_state != "none" ) {
-    ctx.rect(2, 2, levelWidth-4, levelHeight-4);
+    ctx.rect(2, 2, imp_vars.levelWidth-4, imp_vars.levelHeight-4);
     ctx.clip();
   }
 
   this.set_zoom_transparency(ctx);
   if(this.zoom_state != "none") {
-    ctx.drawImage(bg_canvas, sidebarWidth, 0, levelWidth, levelHeight, 0, 0, levelWidth, levelHeight)
+    ctx.drawImage(bg_canvas, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   }
 
-  this.level.draw(ctx, this.draw_factor )
+  this.level.draw(ctx, imp_vars.draw_factor )
 
   if(this.level_redraw_bg) {
 
@@ -419,41 +422,42 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.beginPath()
 
   if(this.zoom_state == "none") {
-    ctx.rect(2, 2, levelWidth-4, levelHeight-4);
+    ctx.rect(2, 2, imp_vars.levelWidth-4, imp_vars.levelHeight-4);
     ctx.clip();
   }
 
   if(this.zoom != 1 && this.victory) {
     ctx.save()
 
-    ctx.translate(this.player.body.GetPosition().x * draw_factor, this.player.body.GetPosition().y * draw_factor)
+    ctx.translate(this.player.body.GetPosition().x * imp_vars.draw_factor, this.player.body.GetPosition().y * imp_vars.draw_factor)
     ctx.scale(1/this.zoom, 1/this.zoom)
-    ctx.translate(-this.player.body.GetPosition().x * draw_factor, -this.player.body.GetPosition().y * draw_factor)
+    ctx.translate(-this.player.body.GetPosition().x * imp_vars.draw_factor, -this.player.body.GetPosition().y * imp_vars.draw_factor)
     this.player.draw(ctx)
     ctx.restore();
   } else {
     this.player.draw(ctx)
   }
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1){//} && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.hive_numbers && this.zoom == 1 && this.world_num <= 4){//} && this.first_ever) {
+    this.draw_boss_text(ctx)
+  }  
+
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1 && this.world_num < 4){//} && this.first_ever) {
       this.draw_boss_hint(ctx)
   }
-  if(this.boss_intro_text_duration > 0 && this.hive_numbers && this.zoom == 1) {
-    this.draw_boss_text(ctx)
-  }
 
-  /*ctx.translate(-(levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  /*ctx.translate(-(imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
   /*ctx.translate(-this.camera_center.x * (1-this.zoom) * 2, -this.camera_center.y * (1-this.zoom) * 2);*/
   /*ctx.scale(1/this.zoom, 1/this.zoom)*/
 
-  /*ctx.translate(-sidebarWidth, 0)*/
+  /*ctx.translate(-imp_vars.sidebarWidth, 0)*/
   if(!this.is_boss_level) {
     this.draw_score_labels(ctx)
   }
   ctx.restore()
 
-  ctx.clearRect(0, 0, sidebarWidth, canvasHeight);
-  ctx.clearRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
+  ctx.clearRect(0, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
+  ctx.clearRect(imp_vars.canvasWidth - imp_vars.sidebarWidth, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
   if(this.zoom == 1 && this.zoom_state == "none") {
     if(this.draw_interface_timer < 0) {
       this.draw_interface(bg_ctx)
@@ -476,9 +480,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
-    	ctx.arc(this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor, 2, 0, 2*Math.PI, true)
+    	ctx.arc(this.visibility_graph.vertices[i].x*imp_vars.draw_factor, this.visibility_graph.vertices[i].y*imp_vars.draw_factor, 2, 0, 2*Math.PI, true)
       ctx.font = 'italic 10px sans-serif'
-      ctx.fillText(i, this.visibility_graph.vertices[i].x*this.draw_factor, this.visibility_graph.vertices[i].y*this.draw_factor)
+      ctx.fillText(i, this.visibility_graph.vertices[i].x*imp_vars.draw_factor, this.visibility_graph.vertices[i].y*imp_vars.draw_factor)
     	ctx.fill()
   }*/
 
@@ -487,8 +491,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.beginPath()
       ctx.lineWidth = 1
     	ctx.strokeStyle = '#ccc';
-      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
-      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
     	ctx.stroke()
   }
 
@@ -497,13 +501,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.beginPath()
       ctx.lineWidth = 3
     	ctx.strokeStyle = 'brown';
-      ctx.moveTo(this.level.obstacle_edges[i].p1.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p1.y*this.draw_factor)
-      ctx.lineTo(this.level.obstacle_edges[i].p2.x*this.draw_factor + sidebarWidth, this.level.obstacle_edges[i].p2.y*this.draw_factor)
+      ctx.moveTo(this.level.obstacle_edges[i].p1.x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.level.obstacle_edges[i].p1.y*imp_vars.draw_factor)
+      ctx.lineTo(this.level.obstacle_edges[i].p2.x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.level.obstacle_edges[i].p2.y*imp_vars.draw_factor)
     	ctx.stroke()
   }*/
 
   /*ctx.save()
-  ctx.translate(sidebarWidth, 0)
+  ctx.translate(imp_vars.sidebarWidth, 0)
   for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {
       ctx.beginPath()
@@ -513,7 +517,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     	ctx.stroke()
       ctx.beginPath()
       ctx.fillStyle = 'red'
-      ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*this.draw_factor+this.visibility_graph.edges[i].p2.x*this.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*this.draw_factor+this.visibility_graph.edges[i].p2.y*this.draw_factor)/2)
+      ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*imp_vars.draw_factor+this.visibility_graph.edges[i].p2.x*imp_vars.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*imp_vars.draw_factor+this.visibility_graph.edges[i].p2.y*imp_vars.draw_factor)/2)
       ctx.fill()
   }
   ctx.restore()*/
@@ -523,15 +527,15 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.save();
 
   var split_size = 50
-  ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+  ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
   ctx.beginPath()
-  for(var i = 0; i < levelWidth; i += split_size) {
+  for(var i = 0; i < imp_vars.levelWidth; i += split_size) {
     ctx.moveTo(i, 0)
-    ctx.lineTo(i, levelHeight)
+    ctx.lineTo(i, imp_vars.levelHeight)
   }
-  for(var j = 0; j < levelHeight; j += split_size) {
+  for(var j = 0; j < imp_vars.levelHeight; j += split_size) {
     ctx.moveTo(0, j)
-    ctx.lineTo(levelWidth, j)
+    ctx.lineTo(imp_vars.levelWidth, j)
   }
   ctx.lineWidth = 2
   ctx.strokeStyle = "#ccc"
@@ -563,10 +567,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.beginPath()
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 3
-        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*this.draw_factor + sidebarWidth, this.level.enemies[j].body.GetPosition().y*this.draw_factor)
+        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.level.enemies[j].body.GetPosition().y*imp_vars.draw_factor)
         for(var i = 0; i < this_path.length; i++)
         {
-            ctx.lineTo(this_path[i].x*this.draw_factor + sidebarWidth, this_path[i].y*this.draw_factor)
+            ctx.lineTo(this_path[i].x*imp_vars.draw_factor + imp_vars.sidebarWidth, this_path[i].y*imp_vars.draw_factor)
         }
         ctx.stroke()
         ctx.lineWidth = 1
@@ -594,7 +598,7 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
       ctx.globalAlpha *= prog
       ctx.fillStyle = this.score_labels[i].color
       ctx.textAlign = 'center'
-      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * this.draw_factor, this.score_labels[i].y * this.draw_factor - (1 - prog) * this.score_label_rise)
+      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
       ctx.fill()
       ctx.restore()
     }
@@ -614,7 +618,7 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
   ctx.shadowBlur = 20;
   ctx.shadowColor = "black"
 
-  ctx.fillText(this.hive_numbers.boss_name, levelWidth/2, levelHeight/2 - 150)
+  ctx.fillText(this.hive_numbers.boss_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 150)
   ctx.fill()
 
   ctx.shadowBlur = 0
@@ -622,29 +626,29 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
 }
 
 ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
+  ctx.save()
   var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval/2)
 
   ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 
-  ctx.globalAlpha /= 2
 
   ctx.beginPath()
-  ctx.moveTo(this.level.boss.body.GetPosition().x * draw_factor, (this.level.boss.body.GetPosition().y - this.level.boss.effective_radius)* draw_factor - 5)
-  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor, 2 * draw_factor + 15)
-  ctx.strokeStyle = "red"
+  ctx.moveTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor, (this.level.boss.body.GetPosition().y - this.level.boss.effective_radius)* imp_vars.draw_factor - 5)
+  ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor, 2 * imp_vars.draw_factor + 15)
+  ctx.strokeStyle = this.level.boss.color
   ctx.lineWidth = 10;
   ctx.stroke()
   ctx.beginPath()
-  ctx.arc(this.level.boss.body.GetPosition().x* draw_factor, this.level.boss.body.GetPosition().y* draw_factor,
-    this.level.boss.effective_radius * draw_factor, 0, 2* Math.PI, false)
+  ctx.arc(this.level.boss.body.GetPosition().x* imp_vars.draw_factor, this.level.boss.body.GetPosition().y* imp_vars.draw_factor,
+    this.level.boss.effective_radius * imp_vars.draw_factor, 0, 2* Math.PI, false)
   ctx.stroke()
   ctx.beginPath()
-  ctx.moveTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*3/2), 2 * draw_factor + 30 * Math.sin(Math.PI*3/2))
-  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*1/6), 2 * draw_factor + 30 * Math.sin(Math.PI*1/6))
-  ctx.lineTo(this.level.boss.body.GetPosition().x * draw_factor + 30 * Math.cos(Math.PI*5/6), 2 * draw_factor + 30 * Math.sin(Math.PI*5/6))
-  ctx.fillStyle = "red"
+  ctx.moveTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*3/2), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*3/2))
+  ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*1/6), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*1/6))
+  ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*5/6), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*5/6))
+  ctx.fillStyle = this.level.boss.color
   ctx.fill()
-  ctx.globalAlpha *= 2
+  ctx.restore()
 }
 
 ImpulseGameState.prototype.draw_interface = function(context) {
@@ -653,8 +657,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.globalAlpha = 1;
   context.beginPath()
   context.fillStyle = "black"
-  context.clearRect(0, 0, sidebarWidth, canvasHeight);
-  context.clearRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
+  context.clearRect(0, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
+  context.clearRect(imp_vars.canvasWidth - imp_vars.sidebarWidth, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
 
   this.set_zoom_transparency(context);
   // draw the level name
@@ -662,10 +666,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     context.font = "18px Muli"
     context.globalAlpha = 0.5
-    context.fillText("EASY MODE", sidebarWidth/2, 15)
+    context.fillText("EASY MODE", imp_vars.sidebarWidth/2, 15)
     context.globalAlpha = 1
   }
 
@@ -676,20 +680,20 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   type = this.level_name.split(" ")[0]
   if(type != "HOW") {
-    context.fillText(type, sidebarWidth/2, 70)
+    context.fillText(type, imp_vars.sidebarWidth/2, 70)
   } else {
     context.font = '40px Muli'
-    context.fillText("HOW TO", sidebarWidth/2, 70)
+    context.fillText("HOW TO", imp_vars.sidebarWidth/2, 70)
   }
 
   context.font = '80px Muli'
   if(type == "BOSS") {
-    context.fillText(this.world_num, sidebarWidth/2, 140)
+    context.fillText(this.world_num, imp_vars.sidebarWidth/2, 140)
   } else if(type == "HOW") {
     context.font = '60px Muli'
-    context.fillText("PLAY", sidebarWidth/2, 130)
+    context.fillText("PLAY", imp_vars.sidebarWidth/2, 130)
   } else {
-    context.fillText(this.level_name.slice(5, this.level_name.length), sidebarWidth/2, 140)
+    context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, 140)
   }
 
 
@@ -701,14 +705,14 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   a = a < 10 ? "0"+a : a
   this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
 
-  context.fillText(this.game_numbers.last_time, sidebarWidth/2, canvasHeight/2 - 80)
+  context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80)
 
 
   if(this.new_enemy_type != null) {
     var prog = this.new_enemy_timer/this.new_enemy_duration
     context.save()
     context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
-    context.drawImage(this.message_canvas, 0, 0, 120, 160, sidebarWidth/2 - 60, canvasHeight/2 - 20, 120, 160)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 20, 120, 160)
     context.restore()
   }
 
@@ -716,7 +720,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     var prog = this.score_achieve_timer/this.score_achieve_duration
     context.save()
     context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
-    context.drawImage(this.message_canvas, 0, 0, 120, 160, sidebarWidth/2 - 60, canvasHeight/2 - 20, 120, 160)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 20, 120, 160)
     context.restore()
   }
 
@@ -724,7 +728,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   if(!this.is_boss_level) {
     // draw score
     context.font = '40px Muli'
-    context.fillText(this.game_numbers.score, canvasWidth - sidebarWidth/2, 46)
+    context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 46)
 
     context.textAlign = 'center'
 
@@ -732,23 +736,23 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillStyle = impulse_colors[this.star_colors[this.stars]]
       context.shadowColor = context.fillStyle;
       context.font = '20px Muli'
-      context.fillText("GOAL",canvasWidth - sidebarWidth/2, canvasHeight - 15)
+      context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
       context.font = '40px Muli'
-      context.fillText(this.level.cutoff_scores[this.stars], canvasWidth - sidebarWidth/2, canvasHeight - 40)
+      context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
     }
     else {
       /*context.fillStyle = impulse_colors[this.star_colors[2]]
       context.shadowColor = context.fillStyle;
       context.font = '60px Muli'
-      context.fillText("WIN", canvasWidth - sidebarWidth/2, canvasHeight - 40)*/
+      context.fillText("WIN", canvasWidth - imp_vars.sidebarWidth/2, canvasHeight - 40)*/
     }
 
   } else {
     context.fillStyle = impulse_colors["boss "+this.world_num]
     context.shadowColor = context.fillStyle;
     context.font = '36px Muli'
-    context.fillText("DISTANCE",canvasWidth - sidebarWidth/2, canvasHeight - 55)
-    context.fillText("LEFT",canvasWidth - sidebarWidth/2, canvasHeight - 20)
+    context.fillText("DISTANCE",imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 55)
+    context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
     }
 
 
@@ -781,22 +785,22 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   /*context.beginPath()
   context.fillStyle = "white"
   context.font = '20px Muli'
-  context.fillText("FPS: "+this.fps, sidebarWidth/2, canvasHeight - 20)
+  context.fillText("FPS: "+this.fps, imp_vars.sidebarWidth/2, canvasHeight - 20)
   context.fill()*/
   context.shadowBlur = 0;
   context.save()
   if(this.hive_numbers) {
 
-    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, sidebarWidth/2, canvasHeight - 120, 24)
+    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 120, 24)
   } else {
 
-    draw_lives_and_sparks(context, "0", this.temp_sparks, sidebarWidth/2, canvasHeight - 120,24)
+    draw_lives_and_sparks(context, "0", this.temp_sparks, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 120,24)
   }
   context.restore()
 
-  draw_music_icon(context, sidebarWidth/2, canvasHeight - 20, 15, this.color, true)
-  draw_pause_icon(context, sidebarWidth/2 - 40, canvasHeight - 20, 15, this.color, true)
-  draw_fullscreen_icon(context, sidebarWidth/2 + 40, canvasHeight - 20, 15, this.color, true)
+  draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true)
+  draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
+  draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
 
   context.restore()
 }
@@ -805,7 +809,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
   ctx.save()
   this.set_zoom_transparency(ctx)
 
-  draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
+  draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
 
   if(!this.is_boss_level) {
     ctx.textAlign = 'center'
@@ -813,12 +817,12 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
     ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
     ctx.shadowBlur = 10;
-    ctx.fillText("x"+this.game_numbers.combo, canvasWidth - sidebarWidth/2, canvasHeight/2)
+    ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
   } else {
     if(this.level.boss)
-      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
+      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
     else
-      draw_vprogress_bar(ctx, canvasWidth - sidebarWidth/2, canvasHeight/2 - 15, 40, canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
+      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
   }
   ctx.restore()
 }
@@ -840,8 +844,8 @@ ImpulseGameState.prototype.get_combo_color = function(combo) {
 
 ImpulseGameState.prototype.transform_to_zoomed_space = function(pt) {
 
-  var new_point = {x: (pt.x - (levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
-    y: (pt.y - (levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
+  var new_point = {x: (pt.x - (imp_vars.levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
+    y: (pt.y - (imp_vars.levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
   return new_point
 }
 
@@ -851,19 +855,19 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
     this.buttons[i].on_mouse_move(x, y)
   }
   if(!this.pause) {
-    this.player.mouseMove(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+    this.player.mouseMove(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
   }
 }
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
 
-  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+  if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
     return
   }
 
   if(!this.pause) {
-    this.player.mouse_down(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
-    this.last_loc = {x: x-sidebarWidth, y: y}
+    this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+    this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
   }
 
 
@@ -871,34 +875,34 @@ ImpulseGameState.prototype.on_mouse_down = function(x, y) {
 }
 
 ImpulseGameState.prototype.reset_player_state = function() {
-  this.player.keyDown(imp_vars.keys.PAUSE)
+  this.player.keyDown(imp_params.keys.PAUSE)
   this.player.mouse_up(null)
 }
 
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(this.pause) return
 
-  if(this.new_enemy_type != null && Math.abs(x - sidebarWidth/2) < 120 && Math.abs(y - (canvasHeight/2 + 60)) < 160) {
+  if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
       var _this = this
       setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
       this.pause = true
       this.reset_player_state()
       this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
   } else {
-    this.player.mouse_up(this.transform_to_zoomed_space({x: x - sidebarWidth, y: y}))
+    this.player.mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
   }
 }
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
-  if(keyCode == imp_vars.keys.PAUSE) {
+  if(keyCode == imp_params.keys.PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
       this.reset_player_state()
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
-  } else if(keyCode == imp_vars.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
-    //if(this.game_numbers.score >= this.level.cutoff_scores[player_data.difficulty_mode]["bronze"]) {
+  } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+    //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true
@@ -920,21 +924,21 @@ ImpulseGameState.prototype.on_key_up = function(keyCode) {
 ImpulseGameState.prototype.addWalls = function() {
   var wall_dim, wall_pos;
 
-    wall_dim = [{x: levelWidth/this.draw_factor/2, y: 2},
-      {x: levelWidth/this.draw_factor/2, y: 2},
-      {x: 2, y: (levelHeight)/draw_factor/2},
-      {x: 2, y: (levelHeight)/draw_factor/2}]
+    wall_dim = [{x: imp_vars.levelWidth/imp_vars.draw_factor/2, y: 2},
+      {x: imp_vars.levelWidth/imp_vars.draw_factor/2, y: 2},
+      {x: 2, y: (imp_vars.levelHeight)/imp_vars.draw_factor/2},
+      {x: 2, y: (imp_vars.levelHeight)/imp_vars.draw_factor/2}]
 
-    wall_pos = [{x: levelWidth/this.draw_factor/2, y: -2},
-      {x: levelWidth/this.draw_factor/2, y: (levelHeight)/this.draw_factor+2},
-      {x: -2, y: (levelHeight)/this.draw_factor/2},
-      {x: levelWidth/this.draw_factor+2, y: (levelHeight)/this.draw_factor/2}]
+    wall_pos = [{x: imp_vars.levelWidth/imp_vars.draw_factor/2, y: -2},
+      {x: imp_vars.levelWidth/imp_vars.draw_factor/2, y: (imp_vars.levelHeight)/imp_vars.draw_factor+2},
+      {x: -2, y: (imp_vars.levelHeight)/imp_vars.draw_factor/2},
+      {x: imp_vars.levelWidth/imp_vars.draw_factor+2, y: (imp_vars.levelHeight)/imp_vars.draw_factor/2}]
 
 
   for(var i = 0; i < 4; i++) {
     var fixDef = new b2FixtureDef;
-    fixDef.filter.categoryBits = imp_vars.WALL_BIT
-    fixDef.filter.maskBits = imp_vars.PLAYER_BIT
+    fixDef.filter.categoryBits = imp_params.WALL_BIT
+    fixDef.filter.maskBits = imp_params.PLAYER_BIT
     var bodyDef = new b2BodyDef;
     bodyDef.type = b2Body.b2_staticBody;
     fixDef.shape = new b2PolygonShape;
@@ -1021,7 +1025,7 @@ ImpulseGameState.prototype.check_cutoffs = function() {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
 
-        //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], levelWidth/2/draw_factor, levelHeight/2/draw_factor, 24, 3000)
+        //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
         this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
       } else if(this.stars == 2) {
         if(this.hive_numbers) {
@@ -1043,7 +1047,7 @@ ImpulseGameState.prototype.check_cutoffs = function() {
       }
     }
 
-    //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], levelWidth/this.draw_factor/2, (levelHeight)/this.draw_factor/2, 40, 3000)
+    //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, 40, 3000)
   }
 }
 

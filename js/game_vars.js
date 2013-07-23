@@ -1,4 +1,4 @@
-var imp_vars = {
+var imp_params = {
   songs : {
     "Menu": "kreepor",
     "Interlude": "hall",
@@ -44,8 +44,8 @@ var imp_vars = {
   BOSS_BITS: 0x0018
 }
 
-for(var multisounds in imp_vars.multisounds) {
-  imp_vars.sounds[multisounds] = imp_vars.multisounds[multisounds].file
+for(var multisounds in imp_params.multisounds) {
+  imp_params.sounds[multisounds] = imp_params.multisounds[multisounds].file
 }
 
 impulse_colors = {}
@@ -87,10 +87,10 @@ impulse_colors["boss 4"] = "#f00"
 
 function set_key_bindings() {
 
-  var type = player_data.options.control_hand +" "+player_data.options.control_scheme
+  var type = imp_vars.player_data.options.control_hand +" "+imp_vars.player_data.options.control_scheme
 
   if(type == "left mouse") {
-    imp_vars.keys = {
+    imp_params.keys = {
       "LEFT_KEY": 37,
       "UP_KEY": 38,
       "RIGHT_KEY": 39,
@@ -109,7 +109,7 @@ function set_key_bindings() {
       "NEXT_KEY": 13
     }
   } else if(type == "right mouse") {
-    imp_vars.keys = {
+    imp_params.keys = {
       "LEFT_KEY": 65,
       "UP_KEY": 87,
       "RIGHT_KEY": 68,
@@ -128,7 +128,7 @@ function set_key_bindings() {
       "NEXT_KEY": 32
     }
   } else if(type == "right keyboard") {
-    imp_vars.keys = {
+    imp_params.keys = {
       "LEFT_KEY": 65,
       "UP_KEY": 87,
       "RIGHT_KEY": 68,

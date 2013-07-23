@@ -60,8 +60,8 @@ EnemiesInfoState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = this.color
   ctx.font = "20px Muli"
   ctx.textAlign = "center"
-  ctx.fillText("BONUS SLAYER STARS: "+player_data.kill_stars+"/12", levelWidth/2, 440)
-  draw_progress_bar(ctx ,400, 470, 400, 15, player_data.kill_stars/12, impulse_colors["gold"])
+  ctx.fillText("BONUS SLAYER STARS: "+imp_vars.player_data.kill_stars+"/12", levelWidth/2, 440)
+  draw_progress_bar(ctx ,400, 470, 400, 15, imp_vars.player_data.kill_stars/12, impulse_colors["gold"])
 
 }
 

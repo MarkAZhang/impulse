@@ -23,7 +23,7 @@ function Slingshot(world, x, y, id, impulse_game_state) {
   this.slingshot_interval = 100
   this.slingshot_multiplier = 1
   this.empowered_duration = 0
-  this.empowered_interval = 700
+  this.empowered_interval = 600
 
   this.empowered_force = 100
 
@@ -31,7 +31,7 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.additional_statuses = ["empowered"]
 
-  this.orig_lin_damp = impulse_enemy_stats[this.type].lin_damp
+  this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
   this.slingshot_lin_damp = 6
 
 }

@@ -33,13 +33,13 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.last_stun = this.entered_arena_delay
 
   this.short_troll_period = 1000
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.short_troll_period = 500
   }
 
 
   this.long_troll_period = 5000
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.long_troll_period = 2500
   }
 }
@@ -61,7 +61,7 @@ Troll.prototype.additional_processing = function(dt) {
     }
   }
 
-   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
     this.entered_arena = true
@@ -71,7 +71,7 @@ Troll.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.entered_arena = false
   }
 

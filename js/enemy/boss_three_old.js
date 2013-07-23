@@ -138,7 +138,7 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha = gray/2
     context.fillStyle = "red"
-    context.fillRect(0, 0, canvasWidth, canvasHeight)
+    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
   }
 
 }

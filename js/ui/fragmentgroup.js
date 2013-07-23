@@ -20,8 +20,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.color = "black"
 
   if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
-    this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
-    this.color = impulse_enemy_stats[enemy_type].color
+    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.color = imp_params.impulse_enemy_stats[enemy_type].color
     this.original_v_damping = 0.5
     this.num_fragments = 10
     this.burst = 5
@@ -34,8 +34,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.burst = 1
 
   } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
-    this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
-    this.color = impulse_enemy_stats[enemy_type].color
+    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.color = imp_params.impulse_enemy_stats[enemy_type].color
     this.original_v_damping = 0.3
     this.num_fragments = 2
     this.burst = 1
@@ -47,8 +47,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.shape = enemy_type
 
   } else {
-    this.shape = impulse_enemy_stats[enemy_type].shape_polygons[0]
-    this.color = impulse_enemy_stats[enemy_type].color
+    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.color = imp_params.impulse_enemy_stats[enemy_type].color
     if(enemy_type=="tanker") {
       this.color = "red"
     }
@@ -68,8 +68,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir + 2 * Math.PI/this.num_fragments * i) * this.burst_force,
       y: this.original_v_damping * velocity.y + Math.sin(dir + 2 * Math.PI/this.num_fragments * i) * this.burst_force}
 
-    this.fragments.push(new Fragment(this.shape, draw_factor/3, {x: loc.x * draw_factor, y: loc.y * draw_factor},
-     {x: new_v.x * draw_factor, y: new_v.y * draw_factor}, this.color))
+    this.fragments.push(new Fragment(this.shape, imp_vars.draw_factor/3, {x: loc.x * imp_vars.draw_factor, y: loc.y * imp_vars.draw_factor},
+     {x: new_v.x * imp_vars.draw_factor, y: new_v.y * imp_vars.draw_factor}, this.color))
   }
 
   for(var i = 0; i < this.num_fragments; i++) {
@@ -77,8 +77,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir + 2 * Math.PI/this.num_fragments * i) * 2 *this.burst_force,
       y: this.original_v_damping * velocity.y + Math.sin(dir + 2 * Math.PI/this.num_fragments * i) * 2*this.burst_force}
 
-    this.fragments.push(new Fragment(this.shape, draw_factor/3, {x: loc.x * draw_factor, y: loc.y * draw_factor},
-     {x: new_v.x * draw_factor, y: new_v.y * draw_factor}, this.color))
+    this.fragments.push(new Fragment(this.shape, imp_vars.draw_factor/3, {x: loc.x * imp_vars.draw_factor, y: loc.y * imp_vars.draw_factor},
+     {x: new_v.x * imp_vars.draw_factor, y: new_v.y * imp_vars.draw_factor}, this.color))
   }
 }
 
@@ -138,9 +138,9 @@ Fragment.prototype.draw = function(context, prog) {
     context.save()
     context.globalAlpha *= prog
     if(this.shape == "spark")
-      draw_spark_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
+      draw_spark_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor)
     else if(this.shape == "multi")
-      draw_multi_fragment(context, this.loc.x/draw_factor, this.loc.y/draw_factor)
+      draw_multi_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor)
 
     context.restore()
 

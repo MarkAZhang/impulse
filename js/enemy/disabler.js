@@ -20,7 +20,7 @@ function Disabler(world, x, y, id, impulse_game_state) {
   this.goo_change_transition = 500
 
   this.goo_expand_period = 2500
-  if(player_data.difficulty_mode == "easy")
+  if(imp_vars.player_data.difficulty_mode == "easy")
     this.goo_expand_period = 3000
 
   this.goo_state = "small"

@@ -15,16 +15,16 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
   this.v.Normalize()
   this.v.Multiply(this.force)
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.v.Multiply(0.5)
   }
   this.do_yield = false
   this.bullet_force = 100
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_force = 50
   }
   this.bullet_self_factor = 12;
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_self_factor = 24
   }
 

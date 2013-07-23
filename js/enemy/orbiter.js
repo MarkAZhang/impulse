@@ -37,7 +37,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
 
   this.weakened_duration = 0
   this.weakened_interval = 500
-  this.orig_lin_damp = impulse_enemy_stats[this.type].lin_damp
+  this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
   this.extra_adjust = true
   this.adjust_position_factor = 0.3
 
@@ -110,7 +110,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.set_heading(this.player.body.GetPosition())
 
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)
     this.entered_arena = true
   }
@@ -119,7 +119,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.entered_arena = false
   }
 

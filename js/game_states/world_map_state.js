@@ -9,7 +9,7 @@ function WorldMapState(world) {
 
   this.buttons = []
   var _this = this
-  this.buttons.push(new SmallButton("MAIN MENU", 20, levelWidth/2, levelHeight/2+270, 200, 50, this.color, "blue", function(){
+  this.buttons.push(new SmallButton("MAIN MENU", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+270, 200, 50, this.color, "blue", function(){
     if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}}))
   this.world_buttons = {
 
@@ -24,7 +24,7 @@ function WorldMapState(world) {
   this.set_up_world_map()
 
 
-  impulse_music.play_bg(imp_vars.songs["Menu"])
+  imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
 
   this.fade_out_interval = 500
   this.fade_out_duration = null
@@ -32,16 +32,16 @@ function WorldMapState(world) {
 
 WorldMapState.prototype.set_up_world_map = function() {
     var _this = this;
-    /*this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, levelWidth/2 - 150, levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
+    /*this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
      function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
       setTimeout(function(){
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})*/
 
-    this.set_up_world_icon(1, levelWidth/2 - 150, levelHeight/2 - 100, "I. HIVE IGNAVIAM", true)
-    this.set_up_world_icon(2, levelWidth/2 + 150, levelHeight/2 - 100, "II. HIVE CONSUMENDI", player_data.world_rankings[player_data.difficulty_mode]["world 1"])
-    this.set_up_world_icon(3, levelWidth/2 - 150, levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", player_data.world_rankings[player_data.difficulty_mode]["world 2"])
-    this.set_up_world_icon(4, levelWidth/2 + 150, levelHeight/2 + 100, "IV. HIVE ADROGANTIA", player_data.world_rankings[player_data.difficulty_mode]["world 3"])
+    this.set_up_world_icon(1, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 - 100, "I. HIVE IGNAVIAM", true)
+    this.set_up_world_icon(2, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 - 100, "II. HIVE CONSUMENDI", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"])
+    this.set_up_world_icon(3, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"])
+    this.set_up_world_icon(4, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 + 100, "IV. HIVE ADROGANTIA", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"])
 
 
 }
@@ -68,7 +68,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
-    ctx.fillRect(0, 0, levelWidth, levelHeight)
+    ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   }
 
   if(!this.bg_drawn) {
@@ -88,24 +88,24 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = "36px Muli"
   ctx.shadowBlur = 10
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("SELECT HIVE", levelWidth/2, 70)
+  ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, 70)
   ctx.restore()
 
   for(var index in this.world_buttons) {
 
 
-    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+    if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
       ctx.globalAlpha *= 0.2
     }
 
     draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100)
-    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+    if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
       ctx.globalAlpha *= 5
     }
 
     this.world_buttons[index].draw(ctx)
 
-    if(index > 1 && !player_data.world_rankings[player_data.difficulty_mode]["world "+(index-1)]) {
+    if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
       ctx.font = '12px Muli'
       ctx.fillStyle = this.world_buttons[index].color
       ctx.textAlign = "center"
@@ -113,17 +113,17 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     }
 
 
-    if(player_data.world_rankings[player_data.difficulty_mode].hasOwnProperty("world "+index)) {
+    if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
       ctx.save()
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["world "+index+" bright"]
       ctx.font = '12px Muli'
       ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
       ctx.font = '36px Muli'
-      ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[player_data.world_rankings[player_data.difficulty_mode]["world "+index]], index)
+      ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]], index)
       ctx.shadowColor = ctx.fillStyle
       ctx.shadowBlur = 10
-      ctx.fillText(player_data.world_rankings[player_data.difficulty_mode]["world "+index], this.world_buttons[index].x, this.world_buttons[index].y + 60)
+      ctx.fillText(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index], this.world_buttons[index].x, this.world_buttons[index].y + 60)
       ctx.restore()
     }
   }
@@ -133,11 +133,11 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     ctx.font = '12px Muli'
     ctx.textAlign = 'left'
     ctx.fillStyle = "white"
-    ctx.fillText("EASY MODE", 10, levelHeight - 10)
+    ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
   }
 }
 

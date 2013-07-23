@@ -81,7 +81,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.destroyable_timer -= dt
   }
 
-  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), draw_factor)
+  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor)
   this.special_mode = this.safe && this.within_bounds && this.status_duration[1] <= 0
 
   if(this.status_duration[1] > 0) {
@@ -181,11 +181,11 @@ DeathRay.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
     var point = get_nearest_spawn_point(this, this.player, this.impulse_game_state.level_name)
-    return {x: point.x/draw_factor, y: point.y/draw_factor}
+    return {x: point.x/imp_vars.draw_factor, y: point.y/imp_vars.draw_factor}
   }
   else {
     if(this.goalPt == null) {
-      this.goalPt = {x: this.level.player_loc.x/draw_factor, y: this.level.player_loc.y/draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
+      this.goalPt = {x: this.level.player_loc.x/imp_vars.draw_factor, y: this.level.player_loc.y/imp_vars.draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
     }
     return this.goalPt
   }

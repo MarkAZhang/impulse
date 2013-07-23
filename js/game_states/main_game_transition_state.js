@@ -27,8 +27,8 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.state = "last_level_summary"
         this.transition_timer = this.last_level_summary_interval
       } else {
-        this.state = player_data.options.show_transition_screens ? "last_level_summary" : "level_intro"
-        this.transition_timer = player_data.options.show_transition_screens ? this.last_level_summary_interval : this.level_intro_interval
+        this.state = imp_vars.player_data.options.show_transition_screens ? "last_level_summary" : "level_intro"
+        this.transition_timer = imp_vars.player_data.options.show_transition_screens ? this.last_level_summary_interval : this.level_intro_interval
       }
       this.compute_last_level_stats()
       if(!this.victory) {
@@ -81,14 +81,14 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
       this.level_loaded = false
       if(loading_game) {
-        this.level = this.load_level(impulse_level_data[this.hive_numbers.current_level])
+        this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level])
       } else {
-        this.level = this.load_level(impulse_level_data[this.get_next_level_name(this.last_level)])
+        this.level = this.load_level(imp_params.impulse_level_data[this.get_next_level_name(this.last_level)])
       }
 
-      this.first_time = !impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen
+      this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode].seen
 
-      impulse_level_data[this.level.level_name].save_state[player_data.difficulty_mode].seen = true
+      imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode].seen = true
       save_game()
 
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
@@ -108,10 +108,10 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
       this.level = this.last_level
       this.level.impulse_game_state = null
-      bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+      bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
       this.level.draw_bg(bg_ctx)
       this.bg_drawn = true
-      bg_ctx.translate(-sidebarWidth, 0)
+      bg_ctx.translate(-imp_vars.sidebarWidth, 0)
 
     }
     if(this.level.is_boss_level) {
@@ -124,11 +124,12 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 
   if(!this.last_level || !this.last_level.is_boss_level)
-    impulse_music.play_bg(imp_vars.songs["Hive "+this.world_num])
+    imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
 }
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
+      return "BOSS "+this.world_num
     return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
@@ -142,7 +143,7 @@ MainGameTransitionState.prototype.get_next_level_name = function(level) {
 MainGameTransitionState.prototype.compute_last_level_stats = function() {
   var stars = 0
   if(!this.last_level.is_boss_level) {
-    while(this.game_numbers.score > impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
+    while(this.game_numbers.score > imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
     {
       stars+=1
     }
@@ -151,29 +152,29 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
   if(!this.last_level.is_boss_level) {
     if (this.stars < 3)
-      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][this.stars]
+      this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
     else
-      this.bar_top_score = impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][2]
+      this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
   }
 
   if(!this.last_level.is_boss_level) {
-    if(this.game_numbers.score > impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score) {
+    if(this.game_numbers.score > imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score) {
 
         this.high_score = true
-        impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].high_score = this.game_numbers.score
+        imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score = this.game_numbers.score
 
         var stars = 0
-        while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
+        while(this.game_numbers.score >= imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
         {
           stars+=1
         }
-        impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].stars = stars
+        imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].stars = stars
         this.stars = stars
         save_game()
       }
 
     } else {
-      impulse_level_data[this.last_level.level_name].save_state[player_data.difficulty_mode].stars = 3
+      imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].stars = 3
       save_game()
     }
 
@@ -186,7 +187,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       for(var attribute in this.game_numbers)
         this.hive_numbers.game_numbers[this.last_level.level_name][attribute] = this.game_numbers[attribute]
       var stars = 0
-      while(this.game_numbers.score >= impulse_level_data[this.last_level.level_name].cutoff_scores[player_data.difficulty_mode][stars])
+      while(this.game_numbers.score >= imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
       {
         stars+=1
       }
@@ -257,7 +258,7 @@ MainGameTransitionState.prototype.process = function(dt) {
     } else if(this.state == "last_level_summary" && this.level_loaded) {
 
       if(this.victory && this.level.is_boss_level) {
-        impulse_music.stop_bg()
+        imp_vars.impulse_music.stop_bg()
       }
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
@@ -269,14 +270,14 @@ MainGameTransitionState.prototype.process = function(dt) {
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(0, 0, levelWidth, levelHeight)
+  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   if(!this.first_process) return
 
   if(!this.bg_drawn && this.level) {
-    bg_ctx.translate(sidebarWidth, 0)//allows us to have a topbar
+    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
-    bg_ctx.translate(-sidebarWidth, 0)
+    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
    bg_canvas.setAttribute("style", "display:none")
   }
 
@@ -295,7 +296,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = impulse_colors["impulse_blue_dark"]
     ctx.shadowColor = ctx.fillColor
-    ctx.fillText("IMPULSE", levelWidth/2, 100)*/
+    ctx.fillText("IMPULSE", imp_vars.levelWidth/2, 100)*/
 
     ctx.font = '54px Muli'
 
@@ -305,17 +306,17 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.save()
     ctx.globalAlpha *= 0.8
-    draw_tessellation_sign(ctx,this.world_num,levelWidth/2, levelHeight/2, 150)
+    draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
     ctx.restore()
-    ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2+25)
+    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
     ctx.shadowBlur = 0
     ctx.fillStyle = this.lite_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '12px Muli'
     if(!this.level_loaded) {
-      ctx.fillText("LOADING LEVEL", levelWidth/2, levelHeight/2 + 270)
+      ctx.fillText("LOADING LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
     } else {
-      ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
     }
     ctx.restore()
 
@@ -336,18 +337,18 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowColor = "black"
 
       ctx.globalAlpha *= 0.8
-      draw_tessellation_sign(ctx,this.world_num, levelWidth/2, levelHeight/2 - 100, 100)
-      ctx.fillText(this.hive_numbers.hive_name, levelWidth/2, levelHeight/2-100)
+      draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
+      ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-100)
       ctx.font = '32px Muli'
-      ctx.fillText(this.level.level_name, levelWidth/2, levelHeight/2-50)
+      ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
 
-      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2 + 180, 24)
+      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24)
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '12px Muli'
-      ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
+      ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
       ctx.restore()
 
     }
@@ -367,12 +368,12 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     if(this.victory) {
       ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("LEVEL CONQUERED", levelWidth/2, 100)
+      ctx.fillText("LEVEL CONQUERED", imp_vars.levelWidth/2, 100)
     }
     else {
       ctx.fillStyle = 'red'
       ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("LEVEL FAILED", levelWidth/2, 100)
+      ctx.fillText("LEVEL FAILED", imp_vars.levelWidth/2, 100)
     }
 
 
@@ -380,7 +381,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.bright_color;
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '40px Muli'
-    ctx.fillText(this.last_level.level_name, levelWidth/2, 150)
+    ctx.fillText(this.last_level.level_name, imp_vars.levelWidth/2, 150)
 
     ctx.font = '18px Muli'
 
@@ -388,18 +389,18 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
 
     if(!this.last_level.is_boss_level) {
-      ctx.fillText("FINAL COMBO", levelWidth/2 + 100, 190)
-      ctx.fillText("LEVEL TIME", levelWidth/2 - 100, 190)
+      ctx.fillText("FINAL COMBO", imp_vars.levelWidth/2 + 100, 190)
+      ctx.fillText("LEVEL TIME", imp_vars.levelWidth/2 - 100, 190)
     } else {
-      ctx.fillText("LEVEL TIME", levelWidth/2, 190)
+      ctx.fillText("LEVEL TIME", imp_vars.levelWidth/2, 190)
     }
     ctx.font = '54px Muli'
 
     if(!this.last_level.is_boss_level) {
-      ctx.fillText(this.game_numbers.combo, levelWidth/2 + 100, 240)
-      ctx.fillText(this.game_numbers.last_time, levelWidth/2 - 100, 240)
+      ctx.fillText(this.game_numbers.combo, imp_vars.levelWidth/2 + 100, 240)
+      ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 - 100, 240)
     } else {
-      ctx.fillText(this.game_numbers.last_time, levelWidth/2, 240)
+      ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, 240)
     }
 
     ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -407,15 +408,15 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '24px Muli'
     if(this.victory) {
       ctx.textAlign = "left"
-      ctx.fillText("+"+this.time_sparks_awarded, levelWidth/2 - 105, 275)
-      draw_spark(ctx, levelWidth/2 - 115, 267)
+      ctx.fillText("+"+this.time_sparks_awarded, imp_vars.levelWidth/2 - 105, 275)
+      draw_spark(ctx, imp_vars.levelWidth/2 - 115, 267)
 
       if(this.combo_sparks_awarded < 10) {
-        ctx.fillText("+"+this.combo_sparks_awarded, levelWidth/2 + 95, 275)
-        draw_spark(ctx, levelWidth/2 + 85, 267)
+        ctx.fillText("+"+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 95, 275)
+        draw_spark(ctx, imp_vars.levelWidth/2 + 85, 267)
       } else {
-        ctx.fillText("+"+this.combo_sparks_awarded, levelWidth/2 + 89, 275)
-        draw_spark(ctx, levelWidth/2 + 79, 267)
+        ctx.fillText("+"+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 89, 275)
+        draw_spark(ctx, imp_vars.levelWidth/2 + 79, 267)
       }
     } else {
 
@@ -428,29 +429,29 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '24px Muli'
       //ctx.fillStyle = (this.stars > 0) ? impulse_colors[this.star_colors[this.stars-1]] : this.color
-      ctx.fillText("SCORE", levelWidth/2, 320)
+      ctx.fillText("SCORE", imp_vars.levelWidth/2, 320)
       ctx.font = '72px Muli'
-      ctx.fillText(this.game_numbers.score, levelWidth/2, 390)
+      ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2, 390)
       //var color = (this.stars < 3) ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
       var color = this.bright_color
-      draw_progress_bar(ctx, levelWidth/2, 420, 300, 15,
+      draw_progress_bar(ctx, imp_vars.levelWidth/2, 420, 300, 15,
        Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
 
       if(this.high_score) {
         ctx.font = '18px Muli'
         ctx.fillStyle = impulse_colors["impulse_blue"]
         ctx.shadowColor = ctx.fillStyle
-        ctx.fillText("HIGH SCORE", levelWidth/2, 455)
+        ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 455)
       }
     }
 
-    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), levelWidth/2, levelHeight/2 + 180, 24)
+    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24)
 
     ctx.shadowBlur = 0
 
     ctx.fillStyle = this.lite_color;
     ctx.font = '12px Muli'
-    ctx.fillText("PRESS ANY KEY TO SKIP", levelWidth/2, levelHeight/2 + 270)
+    ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
 
   }
 }

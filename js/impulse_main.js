@@ -1,21 +1,23 @@
-var version_num = "1.0"
-
-var dev = true
-var unlockall = dev
-var canvasWidth, canvasHeight, sidebarWidth, boardWidth, boardHeight;
-var ctx, canvas, bg_canvas, bg_ctx
-var draw_factor = 15
-var dt = 0
-var last_time = 0
-var step_id = 0
-var cur_game_state = null
-var cur_dialog_box = null
-var save_name = "impulse_save_data"
-
-var player_data = {}
-var impulse_music = null
-
-var control_scheme = "mouse"
+var imp_vars = {
+  dev: true,
+  step_id: 0,
+  canvasWidth: 0,
+  canvasHeight: 0,
+  sidebarWidth: 0,
+  levelWidth: 0,
+  levelHeight: 0,
+  ctx: null,
+  canvas: null,
+  bg_canvas: null,
+  bg_ctx: null,
+  draw_factor: 15,
+  last_time: 0,
+  cur_game_state: null,
+  cur_dialog_box: null,
+  save_name: "impulse_save_data",
+  player_data: {},
+  impulse_music: null,
+}
 
 var impulse_main =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -32,75 +34,33 @@ var impulse_main =  function() {
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
     , b2ContactListener = Box2D.Dynamics.b2ContactListener
 
-    canvasWidth = 1200;
-    canvasHeight = 600;
+    imp_vars.canvasWidth = 1200;
+    imp_vars.canvasHeight = 600;
 
     //topbarHeight = 35
-    sidebarWidth = 200;
+    imp_vars.sidebarWidth = 200;
 
-    levelWidth = canvasWidth - 2 * sidebarWidth;
+    imp_vars.levelWidth = imp_vars.canvasWidth - 2 * imp_vars.sidebarWidth;
 
-    levelHeight = canvasHeight
-
-    /*gameWidth = 800
-    gameHeight = 660 //extra 60 for interface
-
-    arenaWidth = 800
-    arenaHeight = 600
-
-    /*var gap_h = 75
-    var gap_w = 75
-
-    var num_x = 3
-    var num_y = 4
-
-    var ph = (canvasHeight - gap_h * (num_x + 1))/num_x
-    var pw = (canvasWidth - gap_w * (num_y + 1))/num_y
-
-    var polygons = []
-    for(var i = 0; i < (num_x); i++) {
-      for(var j = 0; j < (num_y); j++) {
-        if(!(i == 1 && (j == 1 || j == 2))) {
-        var polygon = [[Math.floor(gap_w + (gap_w + pw) * j), Math.floor(gap_h + (gap_h + ph) * i)], [Math.floor(gap_w + pw + (gap_w + pw) * j), Math.floor(gap_h + (gap_h + ph) * i)], [Math.floor(gap_w + pw + (gap_w + pw) * j), Math.floor(gap_h + ph + (gap_h + ph) * i)], [Math.floor(gap_w + (gap_w + pw) * j), Math.floor(gap_h + ph + (gap_h + ph) * i)]]
-      polygons.push(polygon)
-        }
-      }
-    }
-    console.log(JSON.stringify(polygons))
-
-    var polyg = [[[29,44],[56,44],[56,260],[29,260]],[[29,340],[56,340],[56,557],[29,557]]]
-
-
-      var m = polyg.length
-    for(var i = 1; i < 8; i++) {
-      for(var k = 0; k < m; k++) {
-      var poly = []
-        for(var j = 0; j < polyg[k].length; j++) {
-            poly.push([polyg[k][j][0] + i * 103, polyg[k][j][1]])
-
-        }
-      polyg.push(poly)
-      }
-    }
-    console.log(JSON.stringify(polyg))*/
+    imp_vars.levelHeight = imp_vars.canvasHeight
 
     // screen setup
-    canvas = document.getElementById("canvas");
+    imp_vars.canvas = document.getElementById("canvas");
     canvas_container = document.getElementById("canvas_container");
-    canvas.width = canvasWidth;
-    canvas.height =  canvasHeight;
-    canvas_container.style.width = canvasWidth + 'px'
-    canvas_container.style.height = canvasHeight + 'px'
+    imp_vars.canvas.width = imp_vars.canvasWidth;
+    imp_vars.canvas.height =  imp_vars.canvasHeight;
+    canvas_container.style.width = imp_vars.canvasWidth + 'px'
+    canvas_container.style.height = imp_vars.canvasHeight + 'px'
 
-    bg_canvas = document.getElementById("bg_canvas");
+    imp_vars.bg_canvas = document.getElementById("bg_canvas");
     bg_canvas_container = document.getElementById("bg_canvas_container");
-    bg_canvas.width = canvasWidth;
-    bg_canvas.height =  canvasHeight;
-    bg_canvas_container.style.width = canvasWidth + 'px'
-    bg_canvas_container.style.height = canvasHeight + 'px'
+    imp_vars.bg_canvas.width = imp_vars.canvasWidth;
+    imp_vars.bg_canvas.height =  imp_vars.canvasHeight;
+    bg_canvas_container.style.width = imp_vars.canvasWidth + 'px'
+    bg_canvas_container.style.height = imp_vars.canvasHeight + 'px'
 
-    ctx = canvas.getContext('2d');
-    bg_ctx = bg_canvas.getContext('2d');
+    imp_vars.ctx = imp_vars.canvas.getContext('2d');
+    imp_vars.bg_ctx = imp_vars.bg_canvas.getContext('2d');
     window.addEventListener('keydown', on_key_down, false);
     window.addEventListener('keyup', on_key_up, false);
     window.addEventListener('click', on_click, false);
@@ -114,11 +74,11 @@ var impulse_main =  function() {
     centerCanvas()
     load_game()
     set_key_bindings()
-    impulse_music = new MusicPlayer()
-    if(player_data.first_time) {
-      cur_game_state = new HowToPlayState()
+    imp_vars.impulse_music = new MusicPlayer()
+    if(imp_vars.player_data.first_time) {
+      imp_vars.cur_game_state = new HowToPlayState()
     } else {
-      cur_game_state = new TitleState(false)
+      imp_vars.cur_game_state = new TitleState(false)
     }
     step()
 
@@ -151,9 +111,9 @@ function centerCanvas() {
   var dim = getWindowDimensions()
 
 
-    if(canvasWidth < dim.w)
+    if(imp_vars.canvasWidth < dim.w)
     {
-      offset_left = (dim.w-canvasWidth)/2
+      offset_left = (dim.w-imp_vars.canvasWidth)/2
       canvas_container.style.left =  Math.round(offset_left) + 'px'
       bg_canvas_container.style.left =  Math.round(offset_left) + 'px'
     }
@@ -161,9 +121,9 @@ function centerCanvas() {
     {
       offset_left = 0
     }
-    if(canvasHeight < dim.h)
+    if(imp_vars.canvasHeight < dim.h)
     {
-      offset_top = (dim.h-canvasHeight)/2
+      offset_top = (dim.h-imp_vars.canvasHeight)/2
       canvas_container.style.top = Math.round(offset_top) + 'px'
       bg_canvas_container.style.top =  Math.round(offset_top) + 'px'
     }
@@ -176,69 +136,69 @@ function centerCanvas() {
 
 function step() {
   var cur_time = (new Date()).getTime()
-  ctx.globalAlpha = 1;
-  dt = cur_time - last_time
-  cur_game_state.process(dt)
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  } else if(cur_game_state instanceof ImpulseGameState &&  cur_game_state.ready) {
-    if(cur_game_state.zoom != 1) {
-      ctx.fillStyle= cur_game_state.dark_color;
-      ctx.fillRect(sidebarWidth, 0, levelWidth, levelHeight);
+  imp_vars.ctx.globalAlpha = 1;
+  dt = cur_time - imp_vars.last_time
+  imp_vars.cur_game_state.process(dt)
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.ctx.clearRect(0, 0, canvas.width, canvas.height);
+  } else if(imp_vars.cur_game_state instanceof ImpulseGameState &&  imp_vars.cur_game_state.ready) {
+    if(imp_vars.cur_game_state.zoom != 1) {
+      imp_vars.ctx.fillStyle= imp_vars.cur_game_state.dark_color;
+      imp_vars.ctx.fillRect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
     } else {
-      ctx.clearRect(sidebarWidth, 0, levelWidth, levelHeight);
+      imp_vars.ctx.clearRect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
     }
 
   }
 
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    ctx.fillStyle = "black"
-    ctx.fillRect(0, 0, sidebarWidth, canvasHeight);
-    ctx.fillRect(canvasWidth - sidebarWidth, 0, sidebarWidth, canvasHeight);
-    ctx.translate(sidebarWidth, 0)//allows us to have a topbar
-    cur_game_state.draw(ctx, bg_ctx);
-    ctx.translate(-sidebarWidth, 0)//allows us to have a topbar
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.ctx.fillStyle = "black"
+    imp_vars.ctx.fillRect(0, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
+    imp_vars.ctx.fillRect(imp_vars.canvasWidth - imp_vars.sidebarWidth, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
+    imp_vars.ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    imp_vars.cur_game_state.draw(imp_vars.ctx, imp_vars.bg_ctx);
+    imp_vars.ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
   } else {
-    cur_game_state.draw(ctx, bg_ctx);
+    imp_vars.cur_game_state.draw(imp_vars.ctx, imp_vars.bg_ctx);
   }
 
 
 
-  if(cur_dialog_box!=null) {
-    ctx.beginPath()
-    ctx.globalAlpha = 1
-    ctx.fillStyle = cur_dialog_box.bg_color ? cur_dialog_box.bg_color : "black"
-    ctx.rect(sidebarWidth, 0, levelWidth, levelHeight)
-    ctx.fill()
-    ctx.globalAlpha = 1
-    cur_dialog_box.draw(ctx)
+  if(imp_vars.cur_dialog_box!=null) {
+    imp_vars.ctx.beginPath()
+    imp_vars.ctx.globalAlpha = 1
+    imp_vars.ctx.fillStyle = imp_vars.cur_dialog_box.bg_color ? imp_vars.cur_dialog_box.bg_color : "black"
+    imp_vars.ctx.rect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    imp_vars.ctx.fill()
+    imp_vars.ctx.globalAlpha = 1
+    imp_vars.cur_dialog_box.draw(imp_vars.ctx)
   }
 
-  last_time = cur_time
+  imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
-  step_id = setTimeout('step()', Math.max(25 - temp_dt, 1))
+  imp_vars.step_id = setTimeout('step()', Math.max(25 - temp_dt, 1))
 
 }
 
 function set_dialog_box(box) {
-  this.cur_dialog_box = box
+  this.imp_vars.cur_dialog_box = box
 }
 
 function clear_dialog_box() {
-  this.cur_dialog_box = null
+  this.imp_vars.cur_dialog_box = null
 }
 
 function on_mouse_move(event) {
 
   var mPos = getCursorPosition(event)
 
-  if(cur_dialog_box) {
-    cur_dialog_box.on_mouse_move(mPos.x, mPos.y)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_mouse_move(mPos.x, mPos.y)
   }
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    cur_game_state.on_mouse_move(mPos.x - sidebarWidth, mPos.y)
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.cur_game_state.on_mouse_move(mPos.x - imp_vars.sidebarWidth, mPos.y)
   } else {
-    cur_game_state.on_mouse_move(mPos.x, mPos.y)
+    imp_vars.cur_game_state.on_mouse_move(mPos.x, mPos.y)
   }
 }
 
@@ -247,14 +207,14 @@ function on_mouse_down(event) {
 
   var mPos = getCursorPosition(event)
 
-  if(cur_dialog_box) {
-    cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
     return
   }
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    cur_game_state.on_mouse_down(mPos.x - sidebarWidth, mPos.y)
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.cur_game_state.on_mouse_down(mPos.x - imp_vars.sidebarWidth, mPos.y)
   } else {
-    cur_game_state.on_mouse_down(mPos.x, mPos.y)
+    imp_vars.cur_game_state.on_mouse_down(mPos.x, mPos.y)
   }
 }
 
@@ -263,14 +223,14 @@ function on_mouse_up(event) {
 
   var mPos = getCursorPosition(event)
 
-  if(cur_dialog_box) {
-    cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
     return
   }
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    cur_game_state.on_mouse_up(mPos.x - sidebarWidth, mPos.y)
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.cur_game_state.on_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
   } else {
-    cur_game_state.on_mouse_up(mPos.x, mPos.y)
+    imp_vars.cur_game_state.on_mouse_up(mPos.x, mPos.y)
   }
 }
 
@@ -279,14 +239,14 @@ function on_click(event) {
   event.preventDefault()
 
   var mPos = getCursorPosition(event)
-  if(cur_dialog_box) {
-    cur_dialog_box.on_click(mPos.x, mPos.y)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_click(mPos.x, mPos.y)
     return
   }
-  if(!(cur_game_state instanceof ImpulseGameState)) {
-    cur_game_state.on_click(mPos.x - sidebarWidth, mPos.y)
+  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+    imp_vars.cur_game_state.on_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
   } else {
-    cur_game_state.on_click(mPos.x, mPos.y)
+    imp_vars.cur_game_state.on_click(mPos.x, mPos.y)
   }
 
 
@@ -307,8 +267,8 @@ function on_click(event) {
   else
       event_type = this.webkitHidden ? "hidden" : "visible";
 
-  if(cur_game_state) {
-    cur_game_state.on_visibility_change(event_type)
+  if(imp_vars.cur_game_state) {
+    imp_vars.cur_game_state.on_visibility_change(event_type)
   }
 }*/
 
@@ -347,36 +307,36 @@ function toggleFullScreen() {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
-  if(keyCode == imp_vars.keys.MUTE_KEY) { //X = mute/unmute
-    if(!impulse_music.mute) {
-      impulse_music.mute_bg()
+  if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
+    if(!imp_vars.impulse_music.mute) {
+      imp_vars.impulse_music.mute_bg()
     } else {
-      impulse_music.unmute_bg()
+      imp_vars.impulse_music.unmute_bg()
     }
   }
 
-  if(keyCode == imp_vars.keys.FULLSCREEN_KEY) {
+  if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
     toggleFullScreen()
   }
 
-  if(cur_dialog_box) {
-    cur_dialog_box.on_key_down(keyCode)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_key_down(keyCode)
     return
   }
-  cur_game_state.on_key_down(keyCode)
+  imp_vars.cur_game_state.on_key_down(keyCode)
 }
 
 function on_key_up(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
-  if(cur_dialog_box) {
-    cur_dialog_box.on_key_up(keyCode)
+  if(imp_vars.cur_dialog_box) {
+    imp_vars.cur_dialog_box.on_key_up(keyCode)
     //do not return immediately. Allows player to disengage movement
   }
-  cur_game_state.on_key_up(keyCode)
+  imp_vars.cur_game_state.on_key_up(keyCode)
 }
 
 function switch_game_state(game_state) {
-  cur_game_state = game_state
+  imp_vars.cur_game_state = game_state
 }
 
 function switch_game_state_helper(game_state) {
@@ -387,13 +347,13 @@ function switch_game_state_helper(game_state) {
 function load_game() {
 
   var load_obj = {}
-  if(localStorage[save_name]===undefined || localStorage[save_name] === null) {
-    player_data.first_time = true
+  if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
+    imp_vars.player_data.first_time = true
     load_obj.difficulty_mode = "normal"
   }
   else {
-    load_obj = JSON.parse(localStorage[save_name])
-    player_data.first_time = load_obj['first_time'] == false? false: true
+    load_obj = JSON.parse(localStorage[imp_vars.save_name])
+    imp_vars.player_data.first_time = load_obj['first_time'] == false? false: true
   }
 
   if(!load_obj['levels']) {
@@ -446,20 +406,20 @@ function load_game() {
     }
   }
 
-  player_data.save_data = load_obj['save_data']
+  imp_vars.player_data.save_data = load_obj['save_data']
 
-  player_data.difficulty_mode = load_obj['difficulty_mode'];
-  player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
-  player_data.options = load_obj.options
+  imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'];
+  imp_vars.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
+  imp_vars.player_data.options = load_obj.options
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
 
-  player_data.world_rankings = load_obj['world_rankings']
+  imp_vars.player_data.world_rankings = load_obj['world_rankings']
 
-  for(i in impulse_enemy_stats) {
+  for(i in imp_params.impulse_enemy_stats) {
     //load if enemies are seen
-    impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] ? load_obj['enemies_seen'][i] : 0
-    impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
+    imp_params.impulse_enemy_stats[i].seen = load_obj['enemies_seen'][i] ? load_obj['enemies_seen'][i] : 0
+    imp_params.impulse_enemy_stats[i].kills = load_obj['enemies_killed'][i] ? load_obj['enemies_killed'][i] : 0
   }
 
   calculate_stars('easy')
@@ -468,21 +428,21 @@ function load_game() {
 }
 
 function load_level_data(difficulty_level, load_obj) {
-  for(i in impulse_level_data) {
+  for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(!(impulse_level_data[i].hasOwnProperty("save_state"))) {
-        impulse_level_data[i].save_state = {}
+      if(!(imp_params.impulse_level_data[i].hasOwnProperty("save_state"))) {
+        imp_params.impulse_level_data[i].save_state = {}
       }
-      impulse_level_data[i].save_state[difficulty_level] = {}
+      imp_params.impulse_level_data[i].save_state[difficulty_level] = {}
       if(load_obj['levels'].hasOwnProperty(i)) {
-        impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i].save_state[difficulty_level].high_score
-        impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i].save_state[difficulty_level].stars
-        impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i].save_state[difficulty_level].seen
+        imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i].save_state[difficulty_level].high_score
+        imp_params.impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i].save_state[difficulty_level].stars
+        imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i].save_state[difficulty_level].seen
       }
       else {
-        impulse_level_data[i].save_state[difficulty_level].high_score = 0
-        impulse_level_data[i].save_state[difficulty_level].stars = 0
-        impulse_level_data[i].save_state[difficulty_level].seen = false
+        imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = 0
+        imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 0
+        imp_params.impulse_level_data[i].save_state[difficulty_level].seen = false
       }
     }
   }
@@ -495,52 +455,52 @@ function save_game() {
   save_level_data('normal', save_obj)
   save_obj['enemies_seen'] = {}
   save_obj['enemies_killed'] = {}
-  for(i in impulse_enemy_stats) {
-    save_obj['enemies_seen'][i] = impulse_enemy_stats[i].seen
-    save_obj['enemies_killed'][i] = impulse_enemy_stats[i].kills
+  for(i in imp_params.impulse_enemy_stats) {
+    save_obj['enemies_seen'][i] = imp_params.impulse_enemy_stats[i].seen
+    save_obj['enemies_killed'][i] = imp_params.impulse_enemy_stats[i].kills
   }
-  save_obj['total_kills'] = player_data.total_kills
-  save_obj['difficulty_mode'] = player_data.difficulty_mode
-  save_obj['world_rankings'] = player_data.world_rankings
-  save_obj['save_data'] = player_data.save_data
-  save_obj['options'] = player_data.options
-  save_obj['first_time'] = player_data.first_time
-  localStorage[save_name] = JSON.stringify(save_obj)
+  save_obj['total_kills'] = imp_vars.player_data.total_kills
+  save_obj['difficulty_mode'] = imp_vars.player_data.difficulty_mode
+  save_obj['world_rankings'] = imp_vars.player_data.world_rankings
+  save_obj['save_data'] = imp_vars.player_data.save_data
+  save_obj['options'] = imp_vars.player_data.options
+  save_obj['first_time'] = imp_vars.player_data.first_time
+  localStorage[imp_vars.save_name] = JSON.stringify(save_obj)
 }
 
 
 function save_level_data(difficulty_level, save_obj) {
-  for(i in impulse_level_data) {
+  for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
       if(!(save_obj['levels'].hasOwnProperty(i)))
         save_obj['levels'][i] = {save_state: {}}
 
       save_obj['levels'][i].save_state[difficulty_level] = {}
-      save_obj['levels'][i].save_state[difficulty_level].high_score = impulse_level_data[i].save_state[difficulty_level].high_score
-      save_obj['levels'][i].save_state[difficulty_level].stars = impulse_level_data[i].save_state[difficulty_level].stars
-      save_obj['levels'][i].save_state[difficulty_level].seen = impulse_level_data[i].save_state[difficulty_level].seen
+      save_obj['levels'][i].save_state[difficulty_level].high_score = imp_params.impulse_level_data[i].save_state[difficulty_level].high_score
+      save_obj['levels'][i].save_state[difficulty_level].stars = imp_params.impulse_level_data[i].save_state[difficulty_level].stars
+      save_obj['levels'][i].save_state[difficulty_level].seen = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
     }
   }
 }
 
 function calculate_stars(difficulty_mode) {
   var total_stars = 0
-  for(i in impulse_level_data) {
+  for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(impulse_level_data[i]) {
-        total_stars += impulse_level_data[i].save_state[difficulty_mode].stars
+      if(imp_params.impulse_level_data[i]) {
+        total_stars += imp_params.impulse_level_data[i].save_state[difficulty_mode].stars
       }
     }
   }
-  player_data.kill_stars = 0
+  imp_vars.player_data.kill_stars = 0
   for(i in impulse_enemy_kills_star_cutoffs)
   {
-    if(impulse_enemy_stats[i].kills >= impulse_enemy_kills_star_cutoffs[i]) {
-      player_data.kill_stars += 1
+    if(imp_params.impulse_enemy_stats[i].kills >= impulse_enemy_kills_star_cutoffs[i]) {
+      imp_vars.player_data.kill_stars += 1
     }
 
   }
-  if(!player_data.hasOwnProperty('stars'))
-    player_data.stars = {}
-  player_data.stars[difficulty_mode] = total_stars + player_data.kill_stars
+  if(!imp_vars.player_data.hasOwnProperty('stars'))
+    imp_vars.player_data.stars = {}
+  imp_vars.player_data.stars[difficulty_mode] = total_stars + imp_vars.player_data.kill_stars
 }

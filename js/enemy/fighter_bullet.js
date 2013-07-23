@@ -17,16 +17,16 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
   this.v.Normalize()
   this.v.Multiply(this.force)
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.v.Multiply(0.5)
   }
   this.do_yield = false
   this.bullet_force = 100
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_force = 50
   }
   this.bullet_self_factor = 12;
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_self_factor = 24
   }
 
@@ -145,7 +145,7 @@ FighterBullet.prototype.check_death = function()
       return
     }
   }
-  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= canvasWidth/draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= canvasWidth/draw_factor + 5)
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= imp_vars.canvasWidth/imp_vars.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= imp_vars.canvasWidth/imp_vars.draw_factor + 5)
   {
     this.start_death("kill")
   }

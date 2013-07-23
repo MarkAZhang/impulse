@@ -11,7 +11,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100 //force that the spear impulses the player
 
-  if(player_data.difficulty_mode == "easy")
+  if(imp_vars.player_data.difficulty_mode == "easy")
     this.tank_force = 80
 
   this.death_radius = 5
@@ -23,7 +23,7 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.death_delay = 200
   this.bomb_factor = 6
 
-  if(player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bomb_factor = 5
   }
 
@@ -58,7 +58,7 @@ Tank.prototype.additional_processing = function(dt) {
   /*if(this.durations["open"] > 0) {
     this.color = "red";
   } else {
-    this.color = impulse_enemy_stats[this.type].color;
+    this.color = imp_params.impulse_enemy_stats[this.type].color;
   }*/
 }
 
@@ -213,7 +213,7 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
   context.beginPath()
   context.lineWidth = 2
   context.globalAlpha *= .5
-  context.strokeStyle = impulse_enemy_stats[this.type].color
+  context.strokeStyle = imp_params.impulse_enemy_stats[this.type].color
 }
 
 Tank.prototype.bulk_draw = function(context, draw_factor, num) {
@@ -289,21 +289,21 @@ Tank.prototype.draw_enemy_image_additional = function(context, color) {
   context.strokeStyle = color
   context.lineWidth = 4;
   var this_angle = Math.PI/4
-  var tp = {x: impulse_enemy_stats[this.type].effective_radius *draw_factor , y: impulse_enemy_stats[this.type].effective_radius*draw_factor}
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius *imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius*imp_vars.draw_factor}
 
   context.beginPath()
 
-  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*draw_factor,
-  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
+  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
 
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*draw_factor,
-  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
+  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
   context.stroke()
 
   context.beginPath()
-  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*draw_factor)
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*draw_factor)
+  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
   context.stroke()
 }

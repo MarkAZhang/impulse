@@ -14,20 +14,20 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   var max_stars = 0
   var available = false
   for(var i = 1; i <= 7; i++) {
-    if(impulse_level_data["HIVE "+world+"-"+i]) {
+    if(imp_params.impulse_level_data["HIVE "+world+"-"+i]) {
       available = true
-      stars += impulse_level_data["HIVE "+world+"-"+i].save_state[player_data.difficulty_mode].stars
+      stars += imp_params.impulse_level_data["HIVE "+world+"-"+i].save_state[imp_vars.player_data.difficulty_mode].stars
       max_stars +=3
     }
   }
-  if(impulse_level_data["BOSS "+world]) {
+  if(imp_params.impulse_level_data["BOSS "+world]) {
     available = true
-    stars += impulse_level_data["BOSS "+world].save_state[player_data.difficulty_mode].stars
+    stars += imp_params.impulse_level_data["BOSS "+world].save_state[imp_vars.player_data.difficulty_mode].stars
     max_stars +=3
   }
 
   if(available) {
-    if(!impulse_level_data["HIVE "+this.world+"-1"].save_state[player_data.difficulty_mode].seen && !unlockall){
+    if(!imp_params.impulse_level_data["HIVE "+this.world+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.dev){
       this.set_active(false)
       this.state = "locked"
     }
@@ -45,11 +45,11 @@ function WorldButton(world, size, x, y, w, h, color, action) {
 
   this.new_world = true
   for(var i = 1; i <= 7; i++) {
-    if(impulse_level_data["HIVE "+world+"-"+i].save_state[player_data.difficulty_mode].high_score > 0) {
+    if(imp_params.impulse_level_data["HIVE "+world+"-"+i].save_state[imp_vars.player_data.difficulty_mode].high_score > 0) {
       this.new_world = false
     }
   }
-  if(impulse_level_data["BOSS "+world].save_state[player_data.difficulty_mode].high_score > 0) {
+  if(imp_params.impulse_level_data["BOSS "+world].save_state[imp_vars.player_data.difficulty_mode].high_score > 0) {
     this.new_world = false
   }
 
@@ -93,7 +93,7 @@ WorldButton.prototype.additional_draw = function(context) {
   }
   else {
     context.beginPath()
-    draw_empty_star(ctx, this.x + 30, this.y + 20, 15, impulse_colors["world "+this.world] + " lite")
+    draw_empty_star(context, this.x + 30, this.y + 20, 15, impulse_colors["world "+this.world] + " lite")
     context.beginPath()
     context.textAlign = "center"
     context.font = this.size +'px Muli'
