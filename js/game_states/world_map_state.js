@@ -16,9 +16,9 @@ function WorldMapState(world) {
   }
 
   this.requirements = {
-    2: "DEFEAT IGNAVIAM",
-    3: "DEFEAT CONSUMENDI",
-    4: "DEFEAT NEGLIGENTIA"
+    2: "DEFEAT "+imp_params.tessellation_names[1],
+    3: "DEFEAT "+imp_params.tessellation_names[2],
+    4: "DEFEAT "+imp_params.tessellation_names[3]
   }
 
   this.set_up_world_map()
@@ -38,10 +38,10 @@ WorldMapState.prototype.set_up_world_map = function() {
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})*/
 
-    this.set_up_world_icon(1, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 - 100, "I. HIVE IGNAVIAM", true)
-    this.set_up_world_icon(2, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 - 100, "II. HIVE CONSUMENDI", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"])
-    this.set_up_world_icon(3, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 + 100, "III. HIVE NEGLIGENTIA", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"])
-    this.set_up_world_icon(4, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 + 100, "IV. HIVE ADROGANTIA", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"])
+    this.set_up_world_icon(1, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 - 100, "I. HIVE "+imp_params.tessellation_names[1], true)
+    this.set_up_world_icon(2, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 - 100, "II. HIVE "+imp_params.tessellation_names[2], imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"])
+    this.set_up_world_icon(3, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 + 100, "III. HIVE "+imp_params.tessellation_names[3], imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"])
+    this.set_up_world_icon(4, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 + 100, "IV. HIVE "+imp_params.tessellation_names[4], imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"])
 
 
 }
@@ -121,10 +121,22 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
       ctx.font = '36px Muli'
-      ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]], index)
+      ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["rank"]], index)
       ctx.shadowColor = ctx.fillStyle
       ctx.shadowBlur = 10
-      ctx.fillText(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index], this.world_buttons[index].x, this.world_buttons[index].y + 60)
+      var rank = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["rank"]
+      ctx.fillText(rank, this.world_buttons[index].x, this.world_buttons[index].y + 60)
+      if(rank == "F") {
+        ctx.font = '11px Muli'
+        ctx.fillText("CONTINUES: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
+          , this.world_buttons[index].x, this.world_buttons[index].y + 80)
+        
+      }
+      if(rank == "S" && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"] > 0) {
+        ctx.font = '11px Muli'
+        ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
+          , this.world_buttons[index].x, this.world_buttons[index].y + 80)
+      }
       ctx.restore()
     }
   }

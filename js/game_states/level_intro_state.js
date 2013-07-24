@@ -145,7 +145,15 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       draw_star(ctx, 400, 420, 30, this.star_colors[this.stars - 1])
     else
     draw_empty_star(ctx, 400, 420, 30)*/
-    ctx.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,  imp_vars.levelWidth/2, 420)
+    if(this.is_boss_level) {
+      if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars == 3) {
+        ctx.fillText("BEST TIME: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time,  imp_vars.levelWidth/2, 420)
+      } else {
+        ctx.fillStyle = impulse_colors['boss '+ this.world_num]
+        ctx.fillText("UNDEFEATED",  imp_vars.levelWidth/2, 420)
+      }
+    } else 
+      ctx.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,  imp_vars.levelWidth/2, 420)
 
     ctx.fillStyle = "black"
     ctx.font = '20px Muli'

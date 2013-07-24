@@ -22,29 +22,9 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   this.game_numbers = final_game_numbers
 
   if(!this.level.is_boss_level) {
-    if(this.game_numbers.score > imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score) {
-      this.high_score = true
-      imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score = this.game_numbers.score
-
-      var stars = 0
-      while(this.game_numbers.score >= imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
-      {
-        stars+=1
-      }
-      imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars = stars
-      this.stars = stars
-
-    }
-    else {
-      this.high_score = false
-      var stars = 0
-      while(this.game_numbers.score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
-      {
-        stars+=1
-      }
-      this.stars = stars
-
-    }
+    var ans = update_high_score_for_level(this.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
+    this.high_score = ans.high_score
+    this.stars = ans.stars
 
     if (this.stars < 3)
         this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
@@ -52,6 +32,10 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
         this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
 
     this.stars_gained = 0
+  } else {
+    var ans = update_best_time_for_boss_level(this.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+    this.best_time = ans.best_time
+    this.stars = ans.stars
   }
 
   imp_vars.player_data.total_kills += this.game_numbers.kills
@@ -90,6 +74,13 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   }
 
   this.closest_enemy_type = closest_enemy_type
+
+
+
+  if(calculate_current_rating() > this.game_numbers.original_rating) {
+    this.higher_rating = true
+    this.rating_diff = calculate_current_rating() - this.game_numbers.original_rating
+  }
 
 
   this.star_colors = ["bronze", "silver", "gold"]
@@ -166,6 +157,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("NEW HIGH SCORE", imp_vars.levelWidth/2, first_rect_y + 160)
     else
       ctx.fillText("HIGH SCORE: "+ imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2, first_rect_y + 160)
+
   } else {
     if(this.level.boss_victory) {
       draw_star(ctx, imp_vars.levelWidth/2, first_rect_y + 50, 30, "gold")
@@ -176,10 +168,26 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       draw_progress_bar(ctx, imp_vars.levelWidth/2, first_rect_y + 90, 200, 10, 0, "gold")
       draw_star(ctx, imp_vars.levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
     }
-
+    ctx.fillText("TIME: "+this.game_numbers.seconds, imp_vars.levelWidth/2, first_rect_y + 130)
+    ctx.fillStyle = imp_params.impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[imp_params.impulse_level_data[this.level_name]['stars'] - 1]] : "black"
+    if(this.best_time)
+      ctx.fillText("NEW BEST TIME", imp_vars.levelWidth/2, first_rect_y + 160)
+    else
+      ctx.fillText("BEST TIME: "+ imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time, imp_vars.levelWidth/2, first_rect_y + 160)
+    
 
   }
-  var second_rest_y = 370
+
+  if(this.higher_rating) {
+
+    ctx.fillStyle = 'black'
+    ctx.font = "16px Muli"
+    ctx.fillText("RATING", imp_vars.levelWidth/2, 400)
+    ctx.font = "48px Muli"
+    ctx.fillText("+"+this.rating_diff, imp_vars.levelWidth/2, 450)
+  }
+
+  /*var second_rest_y = 370
 
   ctx.strokeStyle = 'black'
   ctx.rect(imp_vars.levelWidth/2 - 200, second_rest_y, 400, 110)
@@ -207,7 +215,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("FOR ENEMIES IN THIS LEVEL" , imp_vars.levelWidth/2, second_rest_y + 90)
 
 
-  }
+  }*/
 
 
   for(var i = 0; i < this.buttons.length; i++)

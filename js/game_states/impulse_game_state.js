@@ -11,10 +11,13 @@ function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbe
 
 ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
 
+  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   this.hive_numbers = hive_numbers
   if(this.hive_numbers) {
     this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
+  } else {
+    this.game_numbers.original_rating = calculate_current_rating()
   }
 
   this.first_time = first_time
@@ -30,7 +33,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.score_label_rise = 30
   this.buffer_radius = 1 //primarily for starting player location
   this.bg_drawn = false
-  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
+  
 
   this.stars = 0
   this.world_num = world

@@ -15,12 +15,12 @@ MainGameSummaryState.prototype.rank_cutoffs = {
     "A-": 20,
     "A": 21,
     "A+": 22,
-    "S": 24
+    "S": 24,
+    "S+": 25 //special
   }
 
 function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph, save_screen, just_saved) {
 
-  console.log(hive_numbers)
   this.just_saved = just_saved
   this.save_screen = save_screen
   this.buttons = []
@@ -50,6 +50,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.rank_color = "red"
 
   if(victory) {
+    this.calculate_deaths()
     this.victory_text = this.hive_numbers.boss_name+" DEFEATED"
 
     var total_stars = 0
@@ -70,9 +71,26 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
       this.rank_color = "red"
     }
 
-    if(!this.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]] ||
-      this.rank_cutoffs[this.rank] > this.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]]) {
-      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] = this.rank
+    if(this.rank == "S" && this.total_deaths == 0) {
+      this.rank = "S+"
+    }
+
+    var rank_data = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]
+
+    if(!rank_data ||
+      this.rank_cutoffs[this.rank] > this.rank_cutoffs[rank_data["rank"]] ||
+      (this.rank == rank_data["rank"] && 
+      ((this.rank == "F" && hive_numbers.continues < rank_data["continues"]) ||
+      (this.rank == "S" && this.total_deaths < rank_data["deaths"])))) {
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] = 
+      {
+        "rank": this.rank,
+        "continues": hive_numbers.continues,
+        "deaths": this.total_deaths,
+        "stars": total_stars,
+        "first_victory": rank_data === undefined
+      }
+
       save_game()
     }
   }
@@ -145,6 +163,18 @@ MainGameSummaryState.prototype.get_rank_color = function(stars, world_num) {
     return "red"
 }
 
+MainGameSummaryState.prototype.calculate_deaths = function() {
+  var deaths = 0;
+  for(var i = 0; i < 8; i++) {
+    var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
+
+    if(this.hive_numbers.game_numbers[title]) {
+      deaths += this.hive_numbers.game_numbers[title].deaths;
+    }
+  }
+  this.total_deaths = deaths
+}
+
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none" )
@@ -159,12 +189,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
     if(this.transition_state == "out") {
       if(this.victory)
-        switch_game_state(new TitleState(true))
+        switch_game_state(new RewardGameState(this.hive_numbers))
       else if(this.level) {
         this.hive_numbers.continue()
         switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
       } else {
-        switch_game_state(new TitleState(true))
+        switch_game_state(new RewardGameState(this.hive_numbers))
       }
     }
   }
@@ -209,6 +239,11 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("YOU ARE DEFEATED", imp_vars.levelWidth/2, 80)
+    if(this.hive_numbers.continues > 0) {
+      ctx.font = '12px Muli'
+      ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 175)  
+    }
+    
   }
 
   ctx.fillStyle = this.bright_color;
@@ -219,7 +254,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(this.victory && this.hive_numbers.continues) {
     ctx.fillStyle = "red";
     ctx.shadowColor = ctx.fillStyle
-    ctx.font = '10px Muli'
+    ctx.font = '12px Muli'
     ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 255)
   }
 
@@ -243,13 +278,20 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
+  /*if(calculate_current_rating() > this.hive_numbers.original_rating || true) {
+      ctx.font = '12px Muli'
+      ctx.fillText("RATING", imp_vars.levelWidth/2, 240)
+      ctx.font = '36px Muli'
+      ctx.fillText("+300", imp_vars.levelWidth/2, 280)
+  }*/
+
 
   ctx.shadowBlur = 0
 
   ctx.font = '18px Muli'
   ctx.textAlign = 'center'
 
-  var y = 290
+  var y = 310
   ctx.fillStyle = this.lite_color;
 
   ctx.fillText("LEVEL",150, y)
@@ -265,18 +307,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     if(i==7) {
       real_title = this.hive_numbers.boss_name;
     }
-    console.log(title)
-    console.log(this.hive_numbers.game_numbers)
     var gn;
     if(this.hive_numbers.game_numbers[title]) {
       gn = this.hive_numbers.game_numbers[title];
     } else {
       gn = {}
     }
-    console.log(gn)
-    console.log(gn.score != undefined)
     ctx.fillStyle = gn.visited ? this.lite_color : "#333";
-    var y = 320 + 30 * i;
+    var y = 340 + 27 * i;
     ctx.fillText(real_title,150, y)
 
     if(gn.score != undefined) {
@@ -391,6 +429,7 @@ MainGameSummaryState.prototype.process = function(dt) {
 MainGameSummaryState.prototype.resume_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
+  this.hive_numbers.original_rating = calculate_current_rating() // set to current rating when restarting game
   switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true))
 }
 

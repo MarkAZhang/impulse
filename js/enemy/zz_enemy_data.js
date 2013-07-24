@@ -6,7 +6,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   lin_damp: 3,
   effective_radius: .5,
   force: .4,
-  score_value: 100,
+  score_value: 1000000,
   attack_rating: 1,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -28,7 +28,7 @@ imp_params.impulse_enemy_stats["spear"] = {
   lin_damp: 4,
   effective_radius: .7,
   force: .2,
-  score_value: 500,
+  score_value: 500000,
   attack_rating: 7,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -55,7 +55,7 @@ imp_params.impulse_enemy_stats["tank"] = {
   lin_damp: 3,
   effective_radius: 1,
   force: 1.25,
-  score_value: 1000,
+  score_value: 1000000,
   attack_rating: 8,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
@@ -486,7 +486,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
 imp_params.impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
   density: 1,
-  lin_damp: 7,
+  lin_damp: 1,
   effective_radius: 3,
   force: 0,
   score_value: [1000000, 5000000, 15000000],

@@ -168,7 +168,16 @@ LevelButton.prototype.additional_draw = function(context) {
 
     context.fillStyle = "black" //imp_params.impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[imp_params.impulse_level_data[this.level_name].stars - 1]] : "black"
 
-    context.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, this.fx, this.fy - this.fh/2 + this.size)
+    if(this.is_boss_level) {
+       if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars == 3) {
+        context.fillText("BEST TIME: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time, this.fx, this.fy - this.fh/2 + this.size)
+      } else {
+        context.fillStyle = impulse_colors['boss '+ this.world]
+        context.fillText("UNDEFEATED",   this.fx, this.fy - this.fh/2 + this.size)
+      }
+    }
+    else 
+      context.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, this.fx, this.fy - this.fh/2 + this.size)
 
     var star_size = 30
 

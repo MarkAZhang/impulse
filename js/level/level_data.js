@@ -34,6 +34,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   spark_spawn_points: [[75, 75], [75, 525], [725, 75], [725, 525]],
   spawn_points: [[50, -100], [750, -100], [50, 700], [750, 700]],
   buffer_radius: 1,
+  max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
@@ -199,7 +200,8 @@ imp_params.impulse_level_data['BOSS 1'] = {
   obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
-  player_loc: {x: 400, y: 550}
+  player_loc: {x: 400, y: 550},
+  defeat_time: 45
 
 }
 
@@ -401,7 +403,8 @@ imp_params.impulse_level_data['BOSS 2'] = {
  // spawn_points: [[100, 700], [700, 700]],
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
-  player_loc: {x: 400, y: 500}
+  player_loc: {x: 400, y: 500},
+  defeat_time: 60
 
 }
 
@@ -651,7 +654,8 @@ imp_params.impulse_level_data['BOSS 3'] = {
   //obstacle_v: [[[0,0],[352,0],[352,21],[23,21],[23,254],[0,254]],[[0,346],[23,346],[23,579],[352,579],[352,600],[0,600]],[[800,254],[777,254],[777,21],[448,21],[448,0],[800,0]],[[800,600],[448,600],[448,579],[777,579],[777,346],[800,346]]],
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
-  player_loc: {x: 400, y: 500}
+  player_loc: {x: 400, y: 500},
+  defeat_time: 60
 
 }
 
@@ -903,7 +907,8 @@ imp_params.impulse_level_data['BOSS 4'] = {
   obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
-  player_loc: {x: 400, y: 500}
+  player_loc: {x: 400, y: 500},
+  defeat_time: 90
 
 }
 
@@ -911,6 +916,16 @@ for(i in imp_params.impulse_level_data) {
   imp_params.impulse_level_data[i].level_name = i;
   if(imp_params.impulse_level_data[i].cutoff_scores &&  (typeof imp_params.impulse_level_data[i].cutoff_scores["easy"] === "undefined"))
     imp_params.impulse_level_data[i].cutoff_scores["easy"] = imp_params.impulse_level_data[i].cutoff_scores["normal"].map(function(x){return x/2})
+
+  if(typeof(imp_params.impulse_level_data[i].max_rating) === "undefined") {
+    if(i.slice(0, 4)=="BOSS") {
+      var boss_number = parseInt(i.slice(5,6))
+      imp_params.impulse_level_data[i].max_rating = 100 * boss_number
+    } else if(i.slice(0, 4) == "HIVE") {
+      var hive_number = parseInt(i.slice(5,6))
+      imp_params.impulse_level_data[i].max_rating = 100 * hive_number
+    }
+  }
 
   // provide a get_obstacle_vertices method if none provided
   if(typeof(imp_params.impulse_level_data.get_obstacle_vertices) === "undefined") {

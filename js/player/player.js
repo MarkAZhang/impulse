@@ -574,11 +574,11 @@ Player.prototype.draw = function(context) {
       } else if(this.status_duration[1] <= 0 && imp_vars.player_data.options.control_scheme == "keyboard") {
         context.beginPath()
         context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.impulse_radius * lighten_factor *imp_vars.draw_factor, 0, 2 * Math.PI)
-        context.globalAlpha /= 10
+        context.globalAlpha /= 6
         context.lineWidth = 2
         context.strokeStyle = impulse_colors["impulse_blue"]
         context.stroke()
-        context.globalAlpha *= 10
+        context.globalAlpha *= 6
       }
     }
     if(this.attacking)

@@ -17,7 +17,7 @@ var imp_vars = {
   save_name: "impulse_save_data",
   player_data: {},
   impulse_music: null,
-  minified: true
+  minified: false
 }
 
 window["impulse_main"] =  function() {
@@ -439,11 +439,13 @@ function load_level_data(difficulty_level, load_obj) {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i]["save_state"][difficulty_level]["high_score"]
         imp_params.impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i]["save_state"][difficulty_level]["stars"]
         imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i]["save_state"][difficulty_level]["seen"]
+        imp_params.impulse_level_data[i].save_state[difficulty_level].best_time = load_obj['levels'][i]["save_state"][difficulty_level]["best_time"]
       }
       else {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = 0
         imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 0
         imp_params.impulse_level_data[i].save_state[difficulty_level].seen = false
+        imp_params.impulse_level_data[i].save_state[difficulty_level].best_time = 1000
       }
     }
   }
@@ -480,6 +482,7 @@ function save_level_data(difficulty_level, save_obj) {
 
       save_obj['levels'][i]["save_state"][difficulty_level] = {}
       save_obj['levels'][i]["save_state"][difficulty_level]["high_score"] = imp_params.impulse_level_data[i].save_state[difficulty_level].high_score
+      save_obj['levels'][i]["save_state"][difficulty_level]["best_time"] = imp_params.impulse_level_data[i].save_state[difficulty_level].best_time
       save_obj['levels'][i]["save_state"][difficulty_level]["stars"] = imp_params.impulse_level_data[i].save_state[difficulty_level].stars
       save_obj['levels'][i]["save_state"][difficulty_level]["seen"] = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
     }

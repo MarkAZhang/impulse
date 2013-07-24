@@ -129,6 +129,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
+      return "BOSS "+this.world_num
     return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
@@ -157,25 +158,15 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
   }
 
   if(!this.last_level.is_boss_level) {
-    if(this.game_numbers.score > imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score) {
+    var ans = update_high_score_for_level(this.last_level.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
+    this.high_score = ans.high_score
+    this.stars = ans.stars
 
-        this.high_score = true
-        imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score = this.game_numbers.score
-
-        var stars = 0
-        while(this.game_numbers.score >= imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
-        {
-          stars+=1
-        }
-        imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].stars = stars
-        this.stars = stars
-        save_game()
-      }
-
-    } else {
-      imp_params.impulse_level_data[this.last_level.level_name].save_state[imp_vars.player_data.difficulty_mode].stars = 3
-      save_game()
-    }
+  } else {
+    var ans = update_best_time_for_boss_level(this.last_level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+    this.best_time = ans.best_time
+    this.stars = ans.stars
+  }
 
   if(this.victory) {
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name)) {
@@ -442,6 +433,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
         ctx.shadowColor = ctx.fillStyle
         ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 455)
       }
+      
     }
 
     draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24)

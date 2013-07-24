@@ -27,6 +27,7 @@ function TitleState(start_clicked) {
     imp_vars.player_data.first_time = false
     save_game()
   }
+  this.cur_rating = calculate_current_rating()
 }
 
 TitleState.prototype.process = function(dt) {
@@ -65,6 +66,14 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
   }
+
+  ctx.font = '16px Muli'
+  ctx.textAlign = 'right'
+  ctx.fillStyle = "white"
+  ctx.fillText("RATING", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 80)
+  ctx.font = '72px Muli'
+  ctx.fillText(this.cur_rating, imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 150)
+
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
@@ -89,7 +98,7 @@ TitleState.prototype.setup_main_menu = function() {
   var button_color = "white"//impulse_colors["impulse_blue"]
 
   if(imp_vars.dev) {
-    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2-30, 200, 50, button_color, "blue",
+    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2-30, 200, 50, button_color, "blue",
     function(){
       console.log(imp_vars.player_data.save_data)
       console.log(imp_vars.player_data.difficulty_mode)
@@ -99,18 +108,18 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new WorldMapState())
       }
     }))
-    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
+    this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
     //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, imp_vars.levelWidth/2,
     //      imp_vars.levelHeight/2+70, 200, 50, function(){switch_game_state(new
     //        ImpulseGameState(ctx, "SURVIVAL"))}))
-    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
     //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
-    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
-    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
-    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
+    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
+    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
   } else {
-    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",
+    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",
     function(){
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
@@ -118,9 +127,9 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new WorldMapState())
       }
     }))
-    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
-    this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
-    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
 
   }
 
@@ -158,6 +167,8 @@ TitleState.prototype.clear_data = function() {
   this.clear_data_button.color = "red";
   var old_player_options = imp_vars.player_data.options
   load_game();
+  this.cur_rating = calculate_current_rating()
   imp_vars.player_data.options = old_player_options
+  imp_vars.player_data.first_time = false
   save_game();
 }

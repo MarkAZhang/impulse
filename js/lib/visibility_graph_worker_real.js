@@ -1,4 +1,4 @@
-console.log("START")
+//console.log("START")
 self.onmessage = function(event) {
 
 
@@ -370,4 +370,4 @@ var dijkstra = {
   }
 };
 
-console.log("END");
+//console.log("END");

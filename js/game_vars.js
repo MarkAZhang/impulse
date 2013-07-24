@@ -31,6 +31,12 @@ var imp_params = {
     "Hive 3": "bg/hive3",
     "Hive 4": "bg/hive4"
   },
+  tessellation_names: {
+    1: "IGNAVIAM",
+    2: "CONSUMENDI",
+    3: "NEGLIGENTIA",
+    4: "ADROGANTIA"
+  },
   keys: {
 
   },

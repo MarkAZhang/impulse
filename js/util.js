@@ -540,3 +540,117 @@ function create_body(world, polygons, x, y, lin_damp, density, categoryBits, mas
   return body;
 
 }
+
+function calculate_current_rating() {
+  return Math.max(calculate_rating_for_difficulty_mode("easy")/4, calculate_rating_for_difficulty_mode("normal"))
+}
+
+function calculate_rating_for_difficulty_mode(difficulty) {
+
+  var rating = 0
+  // calculate level contribution
+  for(var i in imp_params.impulse_level_data)  {
+    if(i != "HOW TO PLAY" && imp_params.impulse_level_data[i].save_state[difficulty]) {
+
+      if(i.slice(0,4) == "HIVE") {
+        var high_score = imp_params.impulse_level_data[i].save_state[difficulty].high_score
+        rating += Math.floor(calculate_rating_for_level(i, high_score, difficulty))
+      } else if(i.slice(0,4) == "BOSS" && imp_params.impulse_level_data[i].save_state[difficulty].stars == 3) {
+        var best_time = imp_params.impulse_level_data[i].save_state[difficulty].best_time
+        rating += Math.floor(calculate_rating_for_boss_level(i, best_time, difficulty))
+      }
+    }
+  }
+
+  var world_ratings = [250, 400, 600, 800]
+  // calculate world ranking contribution
+  for(var i = 1; i <= 4; i++) {
+
+    if(imp_vars.player_data.world_rankings[difficulty]["world "+i]) {
+      var data = imp_vars.player_data.world_rankings[difficulty]["world "+i]
+      rating += Math.floor(calculate_rating_for_world_ranking(world_ratings[i-1], data["rank"], data["continues"], data["deaths"], data["stars"]))
+      
+    }
+  }
+  return rating
+}
+
+function calculate_rating_for_world_ranking(max_rating, rank, continues, deaths, stars) {
+  if(rank == "F") {
+    return max_rating * 0.2 * Math.pow(0.8, continues)
+  } else if(rank == "S") {
+    return max_rating * (1 + 0.1 * Math.max(0, 10 - deaths))
+  } else if(rank == "S+") {
+    return max_rating * 2
+  } else {
+    return ((stars - 10)/(24 - 10) * 0.8 + 0.2) * max_rating        
+  }
+}
+
+function calculate_rating_for_level(level, score, difficulty) {
+
+  var data = imp_params.impulse_level_data[level]
+  if(score == 0) return 0
+  var cutoff_scores = data.cutoff_scores[difficulty]
+  if(score <= cutoff_scores[0]) { // under bronze
+    var geometric_ratio = (score/cutoff_scores[0])
+    return Math.sqrt(geometric_ratio) * data.max_rating * 0.1
+  } else if(score <= cutoff_scores[1]) { // bronze
+    var geometric_ratio = (score - cutoff_scores[0])/(cutoff_scores[1] - cutoff_scores[0])
+    return Math.sqrt(geometric_ratio) * 0.15 * data.max_rating + 0.1 * data.max_rating
+
+  } else if(score <= cutoff_scores[2]) { // silver
+    var geometric_ratio = (score - cutoff_scores[1])/(cutoff_scores[2] - cutoff_scores[1])
+    return Math.sqrt(geometric_ratio) * 0.75 * data.max_rating + 0.25 * data.max_rating
+
+  } else { // gold
+    var geometric_ratio = score/cutoff_scores[2]
+    return Math.sqrt(geometric_ratio) * data.max_rating
+  }
+}
+
+function calculate_rating_for_boss_level(level, score, difficulty) {
+  var data = imp_params.impulse_level_data[level]
+  var ratio = data.defeat_time / score
+  if(ratio > 1.2) ratio = Math.sqrt(ratio)
+  return data.max_rating * ratio
+}
+
+function update_high_score_for_level(level, score, difficulty) {
+  var ans = {}
+  if(score > imp_params.impulse_level_data[level].save_state[difficulty].high_score) {
+      ans.high_score = true
+      imp_params.impulse_level_data[level].save_state[difficulty].high_score = score
+  } else {
+    ans.high_score = false
+  }
+  var stars = 0
+  while(score>= imp_params.impulse_level_data[level].cutoff_scores[difficulty][stars])
+  {
+    stars+=1
+  }
+  imp_params.impulse_level_data[level].save_state[difficulty].stars = stars
+  ans.stars = stars
+  if(ans.high_score) {
+    save_game()
+  }
+  return ans
+ 
+}
+
+function update_best_time_for_boss_level(level, time, difficulty) {
+  var ans = {}
+  if(time < imp_params.impulse_level_data[level].save_state[difficulty].best_time) {
+      ans.best_time = true
+      imp_params.impulse_level_data[level].save_state[difficulty].best_time = time
+  } else {
+    ans.best_time = false
+  }
+  imp_params.impulse_level_data[level].save_state[difficulty].stars = 3
+  ans.stars = 3
+  if(ans.best_time) {
+    save_game()
+  }
+  return ans
+}
+
