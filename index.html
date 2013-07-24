@@ -25,37 +25,39 @@
 
         <!--<link href='http://fonts.googleapis.com/css?family=Muli:300' rel='stylesheet' type='text/css'>-->
     <!--    <link href="css/style.css" type="text/css">-->
-    <script src="js/game_vars.js"></script>
+
+    
+
+ 
+    <script src="js/impulse.min.js"></script>
+    <!--<script src="js/temp.js"> </script>-->
+
+    <!--<script src="js/game_vars.js"></script>
     <script src="js/draw.js"></script>
     <script src="js/util.js"></script>
     <script src="js/music_player.js"></script>
     <script src="js/hive_numbers.js"></script>
-
     <script src="js/vendor/Box2dWeb-2.1.a.3.min.js"></script>
     <script src="js/vendor/buzz.js"></script>
     <script src='js/player/player.js'></script>
 
-    <script src='js/enemy/enemy.js'></script>
+    <script src='js/enemy/_enemy.js'></script>
     <script src='js/enemy/stunner.js'></script>
     <script src='js/enemy/spear.js'></script>
     <script src='js/enemy/tank.js'></script>
     <script src='js/enemy/mote.js'></script>
     <script src='js/enemy/goo.js'></script>
-    <script src='js/enemy/disabler.js'></script>
+    <script src='js/enemy/z_disabler.js'></script>
     <script src='js/enemy/troll.js'></script>
     <script src='js/enemy/wisp.js'></script>
-    <script src='js/enemy/wisp_dire.js'></script>
     <script src='js/enemy/fighter.js'></script>
-    <script src='js/enemy/fighter_dire.js'></script>
     <script src='js/enemy/fighter_bullet.js'></script>
     <script src='js/enemy/piercing_fighter_bullet.js'></script>
     <script src='js/enemy/death_ray.js'></script>
-    <script src='js/enemy/death_ray_dire.js'></script>
     <script src='js/enemy/slingshot.js'></script>
     <script src='js/enemy/orbiter.js'></script>
     <script src='js/enemy/harpoon.js'></script>
     <script src='js/enemy/harpoon_head.js'></script>
-    <script src='js/enemy/harpoon_dire.js'></script>
     <script src='js/enemy/fixed_harpoon.js'></script>
     <script src='js/enemy/boss.js'></script>
     <script src='js/enemy/boss_one.js'></script>
@@ -67,13 +69,13 @@
     <script src='js/enemy/boss_four_attacker.js'></script>
 
 
-    <script src='js/enemy/enemy_data.js'></script>
+    <script src='js/enemy/zz_enemy_data.js'></script>
     <script src='js/obstacle/basic_obstacle.js'></script>
     <script src='js/lib/visibility_graph.js'></script>
 
     <script src="js/impulse_main.js"></script>
-    <script src="js/game_states/game_state.js"></script>
-    <script src="js/game_states/loader_game_state.js"></script>
+    <script src="js/game_states/_game_state.js"></script>
+    <script src="js/game_states/a_loader_game_state.js"></script>
     <script src="js/game_states/main_game_transition_state.js"></script>
     <script src="js/game_states/main_game_summary_state.js"></script>
     <script src="js/game_states/world_map_state.js"></script>
@@ -83,7 +85,7 @@
     <script src="js/game_states/credits_state.js"></script>
     <script src="js/game_states/classic_select_state.js"></script>
     <script src="js/game_states/enemies_info_state.js"></script>
-    <script src="js/game_states/how_to_play_state.js"></script>
+    <script src="js/game_states/zz_how_to_play_state.js"></script>
     <script src="js/game_states/level_editor_state.js"></script>
     <script src="js/game_states/level_intro_state.js"></script>
     <script src="js/game_states/music_player_state.js"></script>
@@ -93,19 +95,19 @@
 
     <script src="js/ui/dialog_boxes.js"></script>
     <script src='js/ui/fragmentgroup.js'></script>
-    <script src="js/ui/impulse_button.js"></script>
+    <script src="js/ui/_impulse_button.js"></script>
     <script src="js/ui/level_button.js"></script>
     <script src="js/ui/small_enemy_button.js"></script>
     <script src="js/ui/slider.js"></script>
     <script src="js/ui/enemy_button.js"></script>
     <script src="js/ui/small_button.js"></script>
-    <script src="js/ui/world_button.js"></script>
+    <script src="js/ui/world_button.js"></script>-->
 
     <script type="text/javascript">
         window.onload = function() {
             var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
             if(is_chrome) {
-                impulse_main();
+                window.impulse_main();
             } else {
                 centerMessage()
             }
@@ -141,7 +143,7 @@
         }
         function start_game() {
             message.setAttribute("style", "display: none" )
-            setTimeout(function(){impulse_main()}, 50)
+            setTimeout(function(){window.impulse_main()}, 50)
         }
 
     </script>

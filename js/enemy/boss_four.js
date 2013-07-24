@@ -144,7 +144,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.initial_spawn = false
   this.do_initial_spawn = true
-  this.body_bud_radius = imp_params.impulse_enemy_stats[this.type]["body_bud_radius"]
+  this.body_bud_radius = imp_params.impulse_enemy_stats[this.type].body_bud_radius
   this.create_body_buds()
 
   this.turn_rate = 4000
@@ -491,8 +491,8 @@ BossFour.prototype.generate_target_spawn_angle = function() {
 
   var test_point = {x: this.body.GetPosition().x + Math.cos(angle) * distance, y: this.body.GetPosition().y + Math.sin(angle) * distance}
 
-  var dist = Math.min(775/draw_factor - test_point.x, test_point.x - 25/draw_factor)
-  var dist2 = Math.min(575/draw_factor - test_point.y, test_point.y - 25/draw_factor)
+  var dist = Math.min(775/imp_vars.draw_factor - test_point.x, test_point.x - 25/imp_vars.draw_factor)
+  var dist2 = Math.min(575/imp_vars.draw_factor - test_point.y, test_point.y - 25/imp_vars.draw_factor)
 
   if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 10) {
     this.target_spawn_angle = angle
@@ -570,6 +570,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
 }
 
 BossFour.prototype.create_body_buds = function() {
+  console.log("CREATING BODY BUD")
   for(var index = 0; index < this.num_buds; index++) {
 
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
@@ -585,7 +586,10 @@ BossFour.prototype.create_body_buds = function() {
       body: bud_body,
       size: this.body_bud_radius * (0.8 + 0.2 * bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000))
     })
+    console.log(this.body_bud_radius)
+    console.log(bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000))
   }
+  console.log(this.buds)
 }
 
 BossFour.prototype.repel_enemies = function() {

@@ -12,7 +12,10 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
   console.log("BEGIN WORKER")
 
-  var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
+  if(imp_vars.minified)
+    var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
+  else
+    var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker_real.js")
 
   visibility_graph_worker.postMessage({polygons: level.boundary_polygons,
     obstacle_edges: level.obstacle_edges,
@@ -32,6 +35,7 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
       }
       else if(event.data.poly_edges) {
+        console.log(event.data)
         _this.visibility_graph = new VisibilityGraph(level.boundary_polygons, level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths, event.data.visible_vertices)
         _this.load_percentage = 1
         _this.load_complete()

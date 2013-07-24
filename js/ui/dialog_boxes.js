@@ -281,9 +281,9 @@ PauseMenu.prototype.check_redraw_icons = function(ctx) {
   if(this.redraw_icons) {
     if(this.game_state.zoom == 1 && this.game_state.zoom_state == "none") {
 
-      draw_music_icon(bg_ctx, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_pause_icon(bg_ctx, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_fullscreen_icon(bg_ctx, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
+      draw_music_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
+      draw_pause_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
+      draw_fullscreen_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
     } else {
       this.game_state.set_zoom_transparency(ctx);
       draw_music_icon(ctx, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.lite_color, true)

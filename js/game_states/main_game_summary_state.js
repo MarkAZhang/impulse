@@ -20,6 +20,7 @@ MainGameSummaryState.prototype.rank_cutoffs = {
 
 function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph, save_screen, just_saved) {
 
+  console.log(hive_numbers)
   this.just_saved = just_saved
   this.save_screen = save_screen
   this.buttons = []
@@ -264,11 +265,16 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     if(i==7) {
       real_title = this.hive_numbers.boss_name;
     }
+    console.log(title)
+    console.log(this.hive_numbers.game_numbers)
+    var gn;
     if(this.hive_numbers.game_numbers[title]) {
-      var gn = this.hive_numbers.game_numbers[title];
+      gn = this.hive_numbers.game_numbers[title];
     } else {
-      var gn = {}
+      gn = {}
     }
+    console.log(gn)
+    console.log(gn.score != undefined)
     ctx.fillStyle = gn.visited ? this.lite_color : "#333";
     var y = 320 + 30 * i;
     ctx.fillText(real_title,150, y)

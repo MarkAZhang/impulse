@@ -162,9 +162,9 @@ ImpulseGameState.prototype.reset = function() {
   this.victory = false
   this.level.reset()
   this.check_new_enemies()
-  bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-  this.level.draw_bg(bg_ctx)
-  bg_ctx.translate(-imp_vars.sidebarWidth, 0)
+  imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+  this.level.draw_bg(imp_vars.bg_ctx)
+  imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
   this.progress_bar_prop = 0
 }
 
@@ -895,6 +895,7 @@ ImpulseGameState.prototype.on_mouse_up = function(x, y) {
 
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
+
   if(keyCode == imp_params.keys.PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
@@ -956,8 +957,8 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
 
 
-  first.owner.collide_with(second.owner, first.body, second.body)
-  second.owner.collide_with(first.owner, second.body, first.body)
+  first["owner"].collide_with(second["owner"], first["body"], second["body"])
+  second["owner"].collide_with(first["owner"], second["body"], first["body"])
 
   //contact.SetEnabled(false)
 
@@ -968,8 +969,8 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
   var second = contact.GetFixtureB().GetUserData()
   if(first == null || second == null) return
 
-  var first_object = first.self
-  var second_object = second.self
+  var first_object = first["self"]
+  var second_object = second["self"]
 
   if(first_object == null || second_object == null) return
 
@@ -983,7 +984,7 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
     if(first_object.type == "harpoonhead" && first_object.harpoon.harpoon_state != "inactive") {
       var second_object = other_objects[index]
 
-      if(second_object != first_object.harpoon && second_object.type != "harpoonhead" && !second_object.is_boss && !second.owner.is_boss) {
+      if(second_object != first_object.harpoon && second_object.type != "harpoonhead" && !second_object.is_boss && !second["owner"].is_boss) {
         if((second_object.type == "boss four spawner" || second_object.type == "boss four attacker") && !second_object.spawned) continue
         if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
           if(second_object.is_enemy)

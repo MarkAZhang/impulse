@@ -59,7 +59,6 @@ Level.prototype.init = function(data, level_intro_state) {
     "orbiter": Orbiter,
     "slingshot": Slingshot,
     "deathray": DeathRay,
-    "deathraydire": DeathRayDire,
     "first boss": BossOne,
     "second boss": BossTwo,
     "third boss": BossThree,
@@ -195,9 +194,9 @@ Level.prototype.process = function(dt) {
       if(this.gateway_transition_duration > 0) {
         this.gateway_transition_duration -= dt
       } else {
-        bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-        this.draw_bg(bg_ctx)
-        bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+        imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+        this.draw_bg(imp_vars.bg_ctx)
+        imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
         this.gateway_transition_duration = null
       }
     }
@@ -224,15 +223,6 @@ Level.prototype.process = function(dt) {
     while(this.dead_enemies.length > 0)
     {
       var dead_i = this.dead_enemies.pop()
-
-      if(this.enemies[dead_i] instanceof BossTwo) {
-        for(var i = 0; i < this.enemies.length; i++) {
-          if (this.enemies[i] instanceof FixedHarpoon) {
-            this.enemies[i].start_death("self_destruct")
-          }
-        }
-      }
-
 
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
       if(this.enemies[dead_i] instanceof Harpoon) {
@@ -505,9 +495,9 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
   if(this.redraw_bg) {
-    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-    this.draw_bg(bg_ctx, true)
-    bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    this.draw_bg(imp_vars.bg_ctx, true)
+    imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.redraw_bg = false
   }
   for(var i = 0; i < this.enemies.length; i++) {

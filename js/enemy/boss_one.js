@@ -782,7 +782,7 @@ BossOne.prototype.process_move_arms_to_target = function(side) {
   }
     for(index in joints) {
       var joint = joints[index]
-      if(this.joint_target_locs[joint].hasOwnProperty("start") && this.joint_target_locs[joint].hasOwnProperty("end")) {
+      if(typeof this.joint_target_locs[joint].start !== "undefined" && typeof this.joint_target_locs[joint].end !== "undefined") {
         var prog = Math.max((this.action_timer[side])/(this.last_action_interval[side]),0)
         var end_angle = null;
         if(typeof this.joint_target_locs[joint].end == "function") {
@@ -981,12 +981,12 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
     if(this.punch_target_pts[this.lockon_display]) {
 
       var prog = (this.lockon_display_timer/this.lockon_display_interval);
-      ctx.save()
-      ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
+      context.save()
+      context.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
       var tp = this.punch_target_pts[this.lockon_display]
       drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
       0, 60, 60, "immunitas_lockon", immunitasSprite)
-      ctx.restore()
+      context.restore()
     }
   }
 

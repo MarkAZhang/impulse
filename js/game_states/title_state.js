@@ -91,6 +91,8 @@ TitleState.prototype.setup_main_menu = function() {
   if(imp_vars.dev) {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2-30, 200, 50, button_color, "blue",
     function(){
+      console.log(imp_vars.player_data.save_data)
+      console.log(imp_vars.player_data.difficulty_mode)
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
       } else {

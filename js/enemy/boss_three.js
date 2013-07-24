@@ -853,10 +853,10 @@ BossThree.prototype.draw_special_attack_timer = function(context, draw_factor) {
 BossThree.prototype.spawn_this_enemy = function(enemy_type) {
 
   var angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.25)* draw_factor,
-    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.25)* draw_factor}
+  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor,
+    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor}
 
-  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/draw_factor, spawn_loc.y/draw_factor, this.level.enemy_counter, this.impulse_game_state)
+  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_vars.draw_factor, spawn_loc.y/imp_vars.draw_factor, this.level.enemy_counter, this.impulse_game_state)
   this.level.spawned_enemies.push(new_enemy)
   this.level.enemy_counter += 1
   if(enemy_type == "stunner" && Math.random() < 0.7)

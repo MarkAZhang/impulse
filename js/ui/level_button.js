@@ -156,6 +156,7 @@ LevelButton.prototype.additional_draw = function(context) {
     if(!this.is_boss_level) {
       for(var i = 0; i < 3; i++) {
         context.fillStyle = impulse_colors[this.star_colors[i]]
+        
         context.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], this.fx + this.fw/2 - 10, this.fy - this.fh/2 + this.size + i * (this.size + 3))
       }
       context.fill()
@@ -166,6 +167,7 @@ LevelButton.prototype.additional_draw = function(context) {
     //draw_level_obstacles_within_rect(ctx, this.level_name, this.fx - this.fw/2 + this.fh * .6 * canvasWidth/canvasHeight, this.fy + this.fh * .15, this.fh * .5 * canvasWidth/canvasHeight, this.fh * .5, "blue")
 
     context.fillStyle = "black" //imp_params.impulse_level_data[this.level_name].stars > 0 ? impulse_colors[temp[imp_params.impulse_level_data[this.level_name].stars - 1]] : "black"
+
     context.fillText("HIGH SCORE: "+imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, this.fx, this.fy - this.fh/2 + this.size)
 
     var star_size = 30

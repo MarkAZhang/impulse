@@ -338,7 +338,7 @@ function get_nearest_spawn_point(object, player, level_name) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
-  var r_point = {x:Math.random()*(levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
+  var r_point = {x:Math.random()*(imp_vars.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_vars.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
   for(var k = 0; k < imp_vars.cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -360,7 +360,7 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomCentralValidLocation(testPoint) {
-  var r_point = {x:Math.random()*(levelWidth/2/imp_vars.draw_factor)+levelWidth/4/imp_vars.draw_factor, y: Math.random()*((levelHeight)/2/imp_vars.draw_factor)+(levelHeight)/4/imp_vars.draw_factor}
+  var r_point = {x:Math.random()*(imp_vars.levelWidth/2/imp_vars.draw_factor)+imp_vars.levelWidth/4/imp_vars.draw_factor, y: Math.random()*((imp_vars.levelHeight)/2/imp_vars.draw_factor)+(imp_vars.levelHeight)/4/imp_vars.draw_factor}
   var inPoly = false
   for(var k = 0; k < imp_vars.cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -384,13 +384,13 @@ function getRandomOutsideLocation(buffer, range) {
   var x_anchor, y_anchor
   if(Math.random() < .5)
   {
-    x_anchor = Math.random() < .5 ? -buffer-range : levelWidth/imp_vars.draw_factor + buffer
-    y_anchor = Math.random() * ((levelHeight)/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
+    x_anchor = Math.random() < .5 ? -buffer-range : imp_vars.levelWidth/imp_vars.draw_factor + buffer
+    y_anchor = Math.random() * ((imp_vars.levelHeight)/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
   }
   else
   {
-    y_anchor = Math.random() < .5 ? -buffer-range : (levelHeight)/imp_vars.draw_factor + buffer
-    x_anchor = Math.random() * (levelWidth/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
+    y_anchor = Math.random() < .5 ? -buffer-range : (imp_vars.levelHeight)/imp_vars.draw_factor + buffer
+    x_anchor = Math.random() * (imp_vars.levelWidth/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
   }
 
   //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay

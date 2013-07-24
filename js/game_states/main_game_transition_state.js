@@ -93,25 +93,25 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
         this.hive_numbers.game_numbers[this.level.level_name] = {}
-        this.hive_numbers.game_numbers[this.level.level_name]["visited"] = true
-        this.hive_numbers.game_numbers[this.level.level_name]["deaths"] = 0
+        this.hive_numbers.game_numbers[this.level.level_name].visited = true
+        this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
       }
       this.hive_numbers.current_level = this.level.level_name
     } else {
       // died at last level
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
         this.hive_numbers.game_numbers[this.last_level.level_name] = {}
-      if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
-        this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+      if((typeof this.hive_numbers.game_numbers[this.last_level.level_name].deaths) === undefined)
+        this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
 
-      this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] += 1
+      this.hive_numbers.game_numbers[this.last_level.level_name].deaths += 1
 
       this.level = this.last_level
       this.level.impulse_game_state = null
-      bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-      this.level.draw_bg(bg_ctx)
+      imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+      this.level.draw_bg(imp_vars.bg_ctx)
       this.bg_drawn = true
-      bg_ctx.translate(-imp_vars.sidebarWidth, 0)
+      imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
 
     }
     if(this.level.is_boss_level) {
@@ -129,7 +129,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-      return "BOSS "+this.world_num
     return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
@@ -181,7 +180,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
   if(this.victory) {
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name)) {
       this.hive_numbers.game_numbers[this.last_level.level_name] = {}
-      this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+      this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
     }
     if(!this.last_level.is_boss_level) {
       for(var attribute in this.game_numbers)
@@ -191,14 +190,14 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       {
         stars+=1
       }
-      this.hive_numbers.game_numbers[this.last_level.level_name]["stars"]  = stars
-      if(!this.hive_numbers.game_numbers[this.last_level.level_name].hasOwnProperty("deaths"))
-        this.hive_numbers.game_numbers[this.last_level.level_name]["deaths"] = 0
+      this.hive_numbers.game_numbers[this.last_level.level_name].stars  = stars
+      if((typeof this.hive_numbers.game_numbers[this.last_level.level_name].deaths) === undefined)
+        this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
 
     } else {
-      this.hive_numbers.game_numbers[this.last_level.level_name]["score"] = "WIN"
-      this.hive_numbers.game_numbers[this.last_level.level_name]["stars"] = 3
-      this.hive_numbers.game_numbers[this.last_level.level_name]["last_time"] = this.game_numbers["last_time"]
+      this.hive_numbers.game_numbers[this.last_level.level_name].score = "WIN"
+      this.hive_numbers.game_numbers[this.last_level.level_name].stars = 3
+      this.hive_numbers.game_numbers[this.last_level.level_name].last_time = this.game_numbers.last_time
     }
 
     this.time_sparks_awarded = Math.floor(this.game_numbers.seconds/5)

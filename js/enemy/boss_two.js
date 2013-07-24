@@ -135,7 +135,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.spawn_spawners = true
     var spawner_buffer = 80
     var locs = [/*[spawner_buffer, spawner_buffer], [levelWidth - spawner_buffer, spawner_buffer],*/
-      [levelWidth - spawner_buffer, levelHeight - spawner_buffer], [spawner_buffer, levelHeight - spawner_buffer]]
+      [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], [spawner_buffer, imp_vars.levelHeight - spawner_buffer]]
     for(var i = 0; i < locs.length; i++) {
       var new_spawner = new BossTwoSpawner(locs[i][0], locs[i][1], this, this.impulse_game_state)
       new_spawner.spawn_duration = i/locs.length * new_spawner.spawn_interval
@@ -183,17 +183,6 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.adjust_size()
   }
 
-  /*if(!this.spawned_harpoons) {
-    this.spawned_harpoons = true
-    var locs = [[1, 1], [levelWidth/draw_factor-1, 1], [levelWidth/draw_factor-1, (levelHeight)/draw_factor-1], [1, (levelHeight)/draw_factor-1]]
-      for(var i = 0; i < locs.length; i++) {
-        this.level.spawned_enemies.push(new FixedHarpoon(this.world, locs[i][0], locs[i][1], this.level.enemy_counter, this.impulse_game_state))
-        this.level.enemy_counter +=1
-      }
-  }*/
-
-
-
   for(var index in this.spawners) {
     this.spawners[index].process(dt)
   }
@@ -213,7 +202,7 @@ BossTwo.prototype.additional_processing = function(dt) {
   this.arm_core_angle += Math.PI * 2 * dt / (this.arm_full_rotation / this.last_growth_factor)
 
   for(var i = 0; i < this.level.enemies.length; i++) {
-    if (this.level.enemies[i].id == this.id) continue// || this.level.enemies[i] instanceof FixedHarpoon) continue
+    if (this.level.enemies[i].id == this.id) continue
     var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), this.body.GetPosition())
 
     var gravity_force = this.enemy_gravity_factor[this.level.enemies[i].type] * this.get_gravity_force(this.level.enemies[i].body.GetPosition())
@@ -431,7 +420,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
   context.save()
   context.beginPath()
-  context.rect(0, 0, levelWidth, levelHeight)
+  context.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   context.clip()
 
   for(var j = 0; j < polygons.length; j++) {

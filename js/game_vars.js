@@ -48,7 +48,7 @@ for(var multisounds in imp_params.multisounds) {
   imp_params.sounds[multisounds] = imp_params.multisounds[multisounds].file
 }
 
-impulse_colors = {}
+var impulse_colors = {}
 impulse_colors['bronze'] = "#cc8032"
 impulse_colors['silver'] = "#b0b0b0"
 //impulse_colors['impulse_silver'] = "rgba(175, 175, 175, 0.4)"
@@ -88,67 +88,68 @@ impulse_colors["boss 4"] = "#f00"
 function set_key_bindings() {
 
   var type = imp_vars.player_data.options.control_hand +" "+imp_vars.player_data.options.control_scheme
-
+  console.log("SET KEY BINDINGS")
+  console.log(imp_params.keys)
   if(type == "left mouse") {
     imp_params.keys = {
-      "LEFT_KEY": 37,
-      "UP_KEY": 38,
-      "RIGHT_KEY": 39,
-      "DOWN_KEY": 40,
-      "PAUSE": 16,
-      "GATEWAY_KEY": 13,
-      "MUTE_KEY": 77,
-      "FULLSCREEN_KEY": 78,
-      "EXIT_KEY": 39,
-      "SAVE_AND_QUIT_KEY": 37,
-      "RESTART_KEY": 37,
-      "QUIT_KEY": 39,
-      "EXIT_GAME_KEY": 37,
-      "RESUME_GAME_KEY": 39,
-      "DELETE_GAME_KEY": 40,
-      "NEXT_KEY": 13
+      LEFT_KEY: 37,
+      UP_KEY: 38,
+      RIGHT_KEY: 39,
+      DOWN_KEY: 40,
+      PAUSE: 16,
+      GATEWAY_KEY: 13,
+      MUTE_KEY: 77,
+      FULLSCREEN_KEY: 78,
+      EXIT_KEY: 39,
+      SAVE_AND_QUIT_KEY: 37,
+      RESTART_KEY: 37,
+      QUIT_KEY: 39,
+      EXIT_GAME_KEY: 37,
+      RESUME_GAME_KEY: 39,
+      DELETE_GAME_KEY: 40,
+      NEXT_KEY: 13
     }
   } else if(type == "right mouse") {
     imp_params.keys = {
-      "LEFT_KEY": 65,
-      "UP_KEY": 87,
-      "RIGHT_KEY": 68,
-      "DOWN_KEY": 83,
-      "PAUSE": 81,
-      "GATEWAY_KEY": 32,
-      "MUTE_KEY": 88,
-      "FULLSCREEN_KEY": 70,
-      "EXIT_KEY": 69,
-      "RESTART_KEY": 82,
-      "SAVE_AND_QUIT_KEY": 83,
-      "QUIT_KEY": 81,
-      "EXIT_GAME_KEY": 69,
-      "RESUME_GAME_KEY": 82,
-      "DELETE_GAME_KEY": 68,
-      "NEXT_KEY": 32
+      LEFT_KEY: 65,
+      UP_KEY: 87,
+      RIGHT_KEY: 68,
+      DOWN_KEY: 83,
+      PAUSE: 81,
+      GATEWAY_KEY: 32,
+      MUTE_KEY: 88,
+      FULLSCREEN_KEY: 70,
+      EXIT_KEY: 69,
+      RESTART_KEY: 82,
+      SAVE_AND_QUIT_KEY: 83,
+      QUIT_KEY: 81,
+      EXIT_GAME_KEY: 69,
+      RESUME_GAME_KEY: 82,
+      DELETE_GAME_KEY: 68,
+      NEXT_KEY: 32
     }
   } else if(type == "right keyboard") {
     imp_params.keys = {
-      "LEFT_KEY": 65,
-      "UP_KEY": 87,
-      "RIGHT_KEY": 68,
-      "DOWN_KEY": 83,
-      "PAUSE": 81,
-      "ILEFT_KEY": 37,
-      "IUP_KEY": 38,
-      "IRIGHT_KEY": 39,
-      "IDOWN_KEY": 40,
-      "GATEWAY_KEY": 32,
-      "MUTE_KEY": 88,
-      "FULLSCREEN_KEY": 70,
-      "EXIT_KEY": 69,
-      "RESTART_KEY": 82,
-      "SAVE_AND_QUIT_KEY": 83,
-      "QUIT_KEY": 81,
-      "EXIT_GAME_KEY": 69,
-      "RESUME_GAME_KEY": 82,
-      "DELETE_GAME_KEY": 68,
-      "NEXT_KEY": 32
+      LEFT_KEY: 65,
+      UP_KEY: 87,
+      RIGHT_KEY: 68,
+      DOWN_KEY: 83,
+      PAUSE: 81,
+      ILEFT_KEY: 37,
+      IUP_KEY: 38,
+      IRIGHT_KEY: 39,
+      IDOWN_KEY: 40,
+      GATEWAY_KEY: 32,
+      MUTE_KEY: 88,
+      FULLSCREEN_KEY: 70,
+      EXIT_KEY: 69,
+      RESTART_KEY: 82,
+      SAVE_AND_QUIT_KEY: 83,
+      QUIT_KEY: 81,
+      EXIT_GAME_KEY: 69,
+      RESUME_GAME_KEY: 82,
+      DELETE_GAME_KEY: 68,
+      NEXT_KEY: 32
     }
   }
 }

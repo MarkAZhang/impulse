@@ -20,7 +20,6 @@ var BossTwoSpawner = function(x, y, boss, impulse_game_state) {
   "goo": 1,
   "harpoon": 2
   }
-  this.draw_factor = draw_factor
 
   this.high_gravity_factor = 0.75//1.5
   this.low_gravity_factor = 1.5//3
@@ -49,8 +48,8 @@ BossTwoSpawner.prototype.draw = function(context, draw_factor, prop, next_enemy_
 BossTwoSpawner.prototype.process = function(dt) {
 
   for(var i = 0; i < this.level.enemies.length; i++) {
-      if (this.level.enemies[i].id == this.id) continue// || this.level.enemies[i] instanceof FixedHarpoon) continue
-      var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), {x: this.x/draw_factor, y: this.y/draw_factor}) + Math.PI
+      if (this.level.enemies[i].id == this.id) continue
+      var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), {x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw_factor}) + Math.PI
 
       var gravity_force = this.get_gravity_force(this.level.enemies[i].body.GetPosition())
 
@@ -58,7 +57,7 @@ BossTwoSpawner.prototype.process = function(dt) {
         this.level.enemies[i].body.ApplyImpulse(new b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
     }
 
-    var boss_angle = _atan(this.player.body.GetPosition(), {x: this.x/draw_factor, y: this.y/draw_factor}) + Math.PI
+    var boss_angle = _atan(this.player.body.GetPosition(), {x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw_factor}) + Math.PI
 
     var gravity_force = this.get_gravity_force(this.player.body.GetPosition())
 
@@ -68,13 +67,13 @@ BossTwoSpawner.prototype.process = function(dt) {
 }
 
 BossTwoSpawner.prototype.get_gravity_force = function(loc) {
-var dist =  p_dist(loc, {x: this.x/draw_factor, y: this.y/draw_factor})
+var dist =  p_dist(loc, {x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw_factor})
   var inside = false
 
-  if (dist <= this.size/draw_factor * this.high_gravity_factor) {
+  if (dist <= this.size/imp_vars.draw_factor * this.high_gravity_factor) {
     return this.high_gravity_force
   }
-  else if (dist <= this.size/draw_factor * this.low_gravity_factor) {
+  else if (dist <= this.size/imp_vars.draw_factor * this.low_gravity_factor) {
     return this.low_gravity_force
   }
 
@@ -89,10 +88,10 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
     if(this.level.enemy_numbers[enemy_type] + 1 <= this.level.enemies_data[enemy_type][4]) {
 
       for(var i = 0; i < enemy_num; i++) {
-        var ray_angle = _atan({x: this.x/this.draw_factor, y: this.y/this.draw_factor}, this.boss.body.GetPosition())
+        var ray_angle = _atan({x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw_factor}, this.boss.body.GetPosition())
 
-        var loc = [(this.x + this.size/2 * Math.cos(ray_angle))/this.draw_factor,
-        (this.y + this.size/2 * Math.sin(ray_angle))/this.draw_factor]
+        var loc = [(this.x + this.size/2 * Math.cos(ray_angle))/imp_vars.draw_factor,
+        (this.y + this.size/2 * Math.sin(ray_angle))/imp_vars.draw_factor]
 
         var temp_enemy = new (imp_params.impulse_enemy_stats[enemy_type].className)(this.world, loc[0], loc[1],
         this.level.enemy_counter, this.impulse_game_state)

@@ -255,28 +255,6 @@ imp_params.impulse_enemy_stats["wisp"] = {
 
 }
 
-imp_params.impulse_enemy_stats["wispdire"] = {
-  color: "rgb(152, 251, 152)",
-  density: 1,
-  lin_damp: 3,
-  effective_radius: .5,
-  force: .5,
-  score_value: 600,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
-  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
-  dies_on_impact: "YES",
-  special_ability: "Fades in and out of visibility. Upon impact, makes the level obstacles invisible for 5 seconds.",
-  other_notes: "The wisp may also render features of certain enemies invisible as well.",
-  className: WispDire,
-  proxy: "wisp"
-
-}
-
-
-
 imp_params.impulse_enemy_stats["fighter"] = {
   color: "#0000ec",
   density: 2,
@@ -318,25 +296,6 @@ imp_params.impulse_enemy_stats["fighter"] = {
   other_notes: "Normal bullets can be reflected to hit other enemies and even the Fighter itself.",
   className: Fighter
 }
-
-imp_params.impulse_enemy_stats["fighterdire"] = {
-  color: "rgb(30, 144, 255)",
-  density: 3,
-  lin_damp: 3,
-  effective_radius: 1,
-  force: 3,
-  score_value: 1000,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  description: "Shoots bullets, which exert a significant impulse upon any entities hit. You can reflect the bullets with your impulse.",
-  className: FighterDire,
-  proxy: "fighter"
-}
-
 
 imp_params.impulse_enemy_stats["fighter_bullet"] = {
   color: "#0000ec",
@@ -427,26 +386,6 @@ imp_params.impulse_enemy_stats["harpoonhead"] = {
 
 }
 
-imp_params.impulse_enemy_stats["harpoondire"] = {
-  color: "orange",
-  density: 3,
-  lin_damp: 3,
-  effective_radius: .7,
-  force: 1.5,
-  score_value: 1000,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
-  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
-  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
-  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: HarpoonDire,
-  proxy: "harpoon"
-
-}
-
-
 imp_params.impulse_enemy_stats["slingshot"] = {
   color: "rgb(160, 82, 45)",
   density: .2,
@@ -522,10 +461,10 @@ imp_params.impulse_enemy_stats["orbiter"] = {
 imp_params.impulse_enemy_stats["deathray"] = {
   color: "#ddd",//"#169f95",
   interior_color: "black",
-  density: 4,
+  density: 6,
   lin_damp: 8,
   effective_radius: 1,
-  force: 6,
+  force: 8,
   score_value: 10000,
   attack_rating: 10,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
@@ -544,29 +483,9 @@ imp_params.impulse_enemy_stats["deathray"] = {
 
 }
 
-imp_params.impulse_enemy_stats["deathraydire"] = {
-  color: "rgb(0, 229, 238)",
-  density: 1.5,
-  lin_damp: 6,
-  effective_radius: 1,
-  force: 4,
-  score_value: 2500,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}],
-  description: "After taking time to install itself, continuously shoots death rays at you, exerting a massive impulse on all entities within the ray.",
-  className: DeathRayDire,
-  proxy: "deathray"
-
-}
-
 imp_params.impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
-  density: 9,
+  density: 1,
   lin_damp: 7,
   effective_radius: 3,
   force: 0,
@@ -641,26 +560,6 @@ imp_params.impulse_enemy_stats["second boss"] = {
   special_ability: "Exerts a gravity on the field, pulling everything towards it. The closer to the boss, the stronger the pull. The boss has four gravity arms, inside which the gravity is doubled. The boss can also send a massive shockwave through the field.",
   other_notes: "Enemies that collide with the boss will be absorbed, increasing the boss's shockwave range. If you touch the boss, you will be flung away.",
   className: BossTwo
-
-}
-
-imp_params.impulse_enemy_stats["fixed_harpoon"] = {
-  color: "orange",
-  density: 3,
-  lin_damp: 3,
-  effective_radius: .7,
-  force: .5,
-  score_value: 1000,
-
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
-  [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
-  [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
-  [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: FixedHarpoon,
-  proxy: "harpoon"
 
 }
 
@@ -775,7 +674,7 @@ imp_params.impulse_enemy_stats["boss four spawner"] = {
   className: BossFourSpawner
 }
 
-impulse_enemy_kills_star_cutoffs = {
+var impulse_enemy_kills_star_cutoffs = {
   "stunner": 500,
   "spear": 250,
   "tank": 150,

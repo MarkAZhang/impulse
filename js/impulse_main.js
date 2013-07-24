@@ -17,20 +17,21 @@ var imp_vars = {
   save_name: "impulse_save_data",
   player_data: {},
   impulse_music: null,
+  minified: true
 }
 
-var impulse_main =  function() {
+window["impulse_main"] =  function() {
     b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2AABB = Box2D.Collision.b2AABB
-    ,	b2BodyDef = Box2D.Dynamics.b2BodyDef
-    ,	b2Body = Box2D.Dynamics.b2Body
-    ,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-    ,	b2Fixture = Box2D.Dynamics.b2Fixture
-    ,	b2World = Box2D.Dynamics.b2World
-    ,	b2MassData = Box2D.Collision.Shapes.b2MassData
-    ,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-    ,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    , b2BodyDef = Box2D.Dynamics.b2BodyDef
+    , b2Body = Box2D.Dynamics.b2Body
+    , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+    , b2Fixture = Box2D.Dynamics.b2Fixture
+    , b2World = Box2D.Dynamics.b2World
+    , b2MassData = Box2D.Collision.Shapes.b2MassData
+    , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+    , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+    , b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
     , b2ContactListener = Box2D.Dynamics.b2ContactListener
 
@@ -46,14 +47,14 @@ var impulse_main =  function() {
 
     // screen setup
     imp_vars.canvas = document.getElementById("canvas");
-    canvas_container = document.getElementById("canvas_container");
+    var canvas_container = document.getElementById("canvas_container");
     imp_vars.canvas.width = imp_vars.canvasWidth;
     imp_vars.canvas.height =  imp_vars.canvasHeight;
     canvas_container.style.width = imp_vars.canvasWidth + 'px'
     canvas_container.style.height = imp_vars.canvasHeight + 'px'
 
     imp_vars.bg_canvas = document.getElementById("bg_canvas");
-    bg_canvas_container = document.getElementById("bg_canvas_container");
+    var bg_canvas_container = document.getElementById("bg_canvas_container");
     imp_vars.bg_canvas.width = imp_vars.canvasWidth;
     imp_vars.bg_canvas.height =  imp_vars.canvasHeight;
     bg_canvas_container.style.width = imp_vars.canvasWidth + 'px'
@@ -176,16 +177,16 @@ function step() {
 
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
-  imp_vars.step_id = setTimeout('step()', Math.max(25 - temp_dt, 1))
+  imp_vars.step_id = setTimeout(step, Math.max(25 - temp_dt, 1))
 
 }
 
 function set_dialog_box(box) {
-  this.imp_vars.cur_dialog_box = box
+  imp_vars.cur_dialog_box = box
 }
 
 function clear_dialog_box() {
-  this.imp_vars.cur_dialog_box = null
+  imp_vars.cur_dialog_box = null
 }
 
 function on_mouse_move(event) {
@@ -349,7 +350,7 @@ function load_game() {
   var load_obj = {}
   if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
     imp_vars.player_data.first_time = true
-    load_obj.difficulty_mode = "normal"
+    load_obj["difficulty_mode"] = "normal"
   }
   else {
     load_obj = JSON.parse(localStorage[imp_vars.save_name])
@@ -370,22 +371,22 @@ function load_game() {
 
   if(!load_obj['world_rankings']) {
     load_obj['world_rankings'] = {
-        easy: {},
-        normal: {}
+        "easy": {},
+        "normal": {}
     }
   }
 
   var default_options = {
-      "music_mute": false,
-      "effects_mute": false,
-      'explosions': true,
-      'score_labels': true,
-      "progress_circle": false,
-      "multiplier_display": true,
-      "impulse_shadow": true,
-      "show_transition_screens": false,
-      "control_hand": "right",
-      "control_scheme": "mouse",
+      music_mute: false,
+      effects_mute: false,
+      explosions: true,
+      score_labels: true,
+      progress_circle: false,
+      multiplier_display: true,
+      impulse_shadow: true,
+      show_transition_screens: false,
+      control_hand: "right",
+      control_scheme: "mouse",
     }
 
   if(!load_obj['options']) {
@@ -401,16 +402,16 @@ function load_game() {
 
   if(!load_obj['save_data']) {
     load_obj['save_data'] = {
-      easy: {},
-      normal: {}
+      "easy": {},
+      "normal": {}
     }
   }
 
   imp_vars.player_data.save_data = load_obj['save_data']
 
-  imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'];
+  imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'] ? load_obj['difficulty_mode'] : "normal";
   imp_vars.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
-  imp_vars.player_data.options = load_obj.options
+  imp_vars.player_data.options = load_obj["options"]
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
 
@@ -430,14 +431,14 @@ function load_game() {
 function load_level_data(difficulty_level, load_obj) {
   for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(!(imp_params.impulse_level_data[i].hasOwnProperty("save_state"))) {
+      if(typeof(imp_params.impulse_level_data[i].save_state) === "undefined") {
         imp_params.impulse_level_data[i].save_state = {}
       }
       imp_params.impulse_level_data[i].save_state[difficulty_level] = {}
-      if(load_obj['levels'].hasOwnProperty(i)) {
-        imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i].save_state[difficulty_level].high_score
-        imp_params.impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i].save_state[difficulty_level].stars
-        imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i].save_state[difficulty_level].seen
+      if(load_obj['levels'].hasOwnProperty(i) && load_obj['levels'][i]["save_state"] && load_obj['levels'][i]["save_state"][difficulty_level] ) {
+        imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i]["save_state"][difficulty_level]["high_score"]
+        imp_params.impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i]["save_state"][difficulty_level]["stars"]
+        imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i]["save_state"][difficulty_level]["seen"]
       }
       else {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = 0
@@ -472,13 +473,15 @@ function save_game() {
 function save_level_data(difficulty_level, save_obj) {
   for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(!(save_obj['levels'].hasOwnProperty(i)))
-        save_obj['levels'][i] = {save_state: {}}
+      if(!(save_obj['levels'].hasOwnProperty(i))) {
+        save_obj['levels'][i] = {}
+        save_obj['levels'][i]["save_state"] = {}        
+      }
 
-      save_obj['levels'][i].save_state[difficulty_level] = {}
-      save_obj['levels'][i].save_state[difficulty_level].high_score = imp_params.impulse_level_data[i].save_state[difficulty_level].high_score
-      save_obj['levels'][i].save_state[difficulty_level].stars = imp_params.impulse_level_data[i].save_state[difficulty_level].stars
-      save_obj['levels'][i].save_state[difficulty_level].seen = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
+      save_obj['levels'][i]["save_state"][difficulty_level] = {}
+      save_obj['levels'][i]["save_state"][difficulty_level]["high_score"] = imp_params.impulse_level_data[i].save_state[difficulty_level].high_score
+      save_obj['levels'][i]["save_state"][difficulty_level]["stars"] = imp_params.impulse_level_data[i].save_state[difficulty_level].stars
+      save_obj['levels'][i]["save_state"][difficulty_level]["seen"] = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
     }
   }
 }
@@ -487,7 +490,7 @@ function calculate_stars(difficulty_mode) {
   var total_stars = 0
   for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
-      if(imp_params.impulse_level_data[i]) {
+      if(imp_params.impulse_level_data[i].save_state[difficulty_mode]) {
         total_stars += imp_params.impulse_level_data[i].save_state[difficulty_mode].stars
       }
     }
@@ -500,7 +503,7 @@ function calculate_stars(difficulty_mode) {
     }
 
   }
-  if(!imp_vars.player_data.hasOwnProperty('stars'))
+  if(typeof imp_vars.player_data.stars === "undefined")
     imp_vars.player_data.stars = {}
   imp_vars.player_data.stars[difficulty_mode] = total_stars + imp_vars.player_data.kill_stars
 }

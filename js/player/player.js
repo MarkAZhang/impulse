@@ -520,7 +520,7 @@ Player.prototype.draw = function(context) {
     {
       context.beginPath()
       var prop = Math.max(((this.confuse_duration-this.status_duration[4]) / this.confuse_duration), 0)
-      context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * prop, true)
+      context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.radius*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * prop, true)
       context.lineWidth = 2
       context.strokeStyle = "#24ac40"
       context.stroke()

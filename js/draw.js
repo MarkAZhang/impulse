@@ -123,7 +123,7 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
       }
       
     }
-    if(imp_params.impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+    if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
         if(imp_params.impulse_enemy_stats[enemy_name].interior_color) {
@@ -155,7 +155,7 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
       draw_shape(context, x, y, this_shape, draw_scale, color)  
       
     }
-    if(imp_params.impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+    if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
         draw_shape(context, x, y, this_shape, draw_scale, color)  
@@ -181,7 +181,7 @@ function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
     var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
     draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)
   }
-  if(imp_params.impulse_enemy_stats[enemy_name].hasOwnProperty("extra_rendering_polygons")) {
+  if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
     for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
       draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)

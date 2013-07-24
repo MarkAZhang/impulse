@@ -960,7 +960,7 @@ Enemy.prototype.set_up_images = function() {
   normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
   normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
-  normal_canvas_ctx = normal_canvas.getContext('2d');
+  var normal_canvas_ctx = normal_canvas.getContext('2d');
 
   this.draw_enemy_image(normal_canvas_ctx);
   this.enemy_images = {}
@@ -1052,7 +1052,7 @@ Enemy.prototype.generate_images = function() {
     normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
     normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
-    normal_canvas_ctx = normal_canvas.getContext('2d');
+    var normal_canvas_ctx = normal_canvas.getContext('2d');
 
     this.draw_enemy_image(normal_canvas_ctx, status);
     images[status] = normal_canvas
@@ -1066,7 +1066,7 @@ Enemy.prototype.generate_images = function() {
     normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
     normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
 
-    normal_canvas_ctx = normal_canvas.getContext('2d');
+    var normal_canvas_ctx = normal_canvas.getContext('2d');
 
     this.draw_enemy_image(normal_canvas_ctx, status);
     images[status] = normal_canvas

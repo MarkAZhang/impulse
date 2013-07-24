@@ -14,13 +14,13 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   var max_stars = 0
   var available = false
   for(var i = 1; i <= 7; i++) {
-    if(imp_params.impulse_level_data["HIVE "+world+"-"+i]) {
+    if(imp_params.impulse_level_data["HIVE "+world+"-"+i].save_state[imp_vars.player_data.difficulty_mode]) {
       available = true
       stars += imp_params.impulse_level_data["HIVE "+world+"-"+i].save_state[imp_vars.player_data.difficulty_mode].stars
       max_stars +=3
     }
   }
-  if(imp_params.impulse_level_data["BOSS "+world]) {
+  if(imp_params.impulse_level_data["BOSS "+world].save_state[imp_vars.player_data.difficulty_mode]) {
     available = true
     stars += imp_params.impulse_level_data["BOSS "+world].save_state[imp_vars.player_data.difficulty_mode].stars
     max_stars +=3

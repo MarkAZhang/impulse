@@ -9,7 +9,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     velocity = {x: 0, y: 0}
   }
 
-  velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y+0.01)))
+  var velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y+0.01)))
 
 
 

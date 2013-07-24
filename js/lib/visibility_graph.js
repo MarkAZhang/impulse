@@ -1,4 +1,3 @@
-
 var VisibilityGraph = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
   console.log("CREATING VISIBILITY GRAPH")
   this.init(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)

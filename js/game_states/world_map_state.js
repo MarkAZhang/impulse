@@ -88,6 +88,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = "36px Muli"
   ctx.shadowBlur = 10
   ctx.shadowColor = ctx.fillStyle
+  ctx.textAlign = "center"
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, 70)
   ctx.restore()
 
