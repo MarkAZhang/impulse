@@ -13,11 +13,13 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
 
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   this.hive_numbers = hive_numbers
+
   if(this.hive_numbers) {
     this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
   } else {
     this.game_numbers.original_rating = calculate_current_rating()
+    this.temp_ultimates = 1
   }
 
   this.first_time = first_time
@@ -150,6 +152,7 @@ ImpulseGameState.prototype.reset = function() {
   this.world = new b2World(gravity, doSleep);
   this.addWalls()
 
+  this.temp_ultimates = 1
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
@@ -715,7 +718,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     var prog = this.new_enemy_timer/this.new_enemy_duration
     context.save()
     context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
-    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 20, 120, 160)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
     context.restore()
   }
 
@@ -723,7 +726,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     var prog = this.score_achieve_timer/this.score_achieve_duration
     context.save()
     context.globalAlpha *= Math.max(0, (1 - 2*Math.abs(prog-0.5))/.5)
-    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 20, 120, 160)
+    context.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
     context.restore()
   }
 
@@ -794,10 +797,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.save()
   if(this.hive_numbers) {
 
-    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 120, 24)
+    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110, 24, true)
   } else {
 
-    draw_lives_and_sparks(context, "0", this.temp_sparks, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 120,24)
+    draw_lives_and_sparks(context, "0", this.temp_sparks, this.temp_ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110,24, true)
   }
   context.restore()
 
@@ -870,11 +873,17 @@ ImpulseGameState.prototype.on_mouse_down = function(x, y) {
 
   if(!this.pause) {
     this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
-    this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
+    //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
   }
+}
 
 
+ImpulseGameState.prototype.on_right_mouse_down = function(x, y) {
 
+  if(!this.pause) {
+    this.player.right_mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+    //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
+  }
 }
 
 ImpulseGameState.prototype.reset_player_state = function() {
@@ -893,6 +902,12 @@ ImpulseGameState.prototype.on_mouse_up = function(x, y) {
       this.new_enemy_timer = Math.min(this.new_enemy_timer, this.new_enemy_duration/4)
   } else {
     this.player.mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+  }
+}
+
+ImpulseGameState.prototype.on_right_mouse_up = function(x, y) {
+  if(!this.pause) {
+    this.player.right_mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
   }
 }
 

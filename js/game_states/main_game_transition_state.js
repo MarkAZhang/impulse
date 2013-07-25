@@ -38,6 +38,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.hive_numbers.lives -= 1
         this.hive_numbers.last_sparks = this.hive_numbers.sparks
         this.hive_numbers.last_lives = this.hive_numbers.lives
+        this.hive_numbers.ultimates = this.hive_numbers.last_ultimates
+      } else {
+        this.hive_numbers.last_ultimates = this.hive_numbers.ultimates
       }
     } else {
       //allows us to skip the last level summary if coming from main game summary state
@@ -129,7 +132,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-      return "BOSS "+this.world_num
     return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
@@ -332,7 +334,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
 
-      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24)
+      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, true)
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
@@ -429,14 +431,14 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
       if(this.high_score) {
         ctx.font = '18px Muli'
-        ctx.fillStyle = impulse_colors["impulse_blue"]
+        ctx.fillStyle = this.bright_color
         ctx.shadowColor = ctx.fillStyle
         ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 455)
       }
       
     }
 
-    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24)
+    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, true)
 
     ctx.shadowBlur = 0
 

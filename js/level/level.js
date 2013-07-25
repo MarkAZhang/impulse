@@ -163,14 +163,14 @@ Level.prototype.process = function(dt) {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
       if(p_dist(player_loc, this.spark_loc) < 25) {
         if(this.impulse_game_state.hive_numbers) {
-          this.impulse_game_state.hive_numbers.sparks += 10;
+          this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
           if(this.impulse_game_state.hive_numbers.sparks >= 100) {
             this.impulse_game_state.hive_numbers.sparks -= 100;
             this.impulse_game_state.hive_numbers.lives += 1
             this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
           }
         } else
-          this.impulse_game_state.temp_sparks += 10
+          this.impulse_game_state.temp_sparks += calculate_spark_val()
 
         this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
         this.generate_spark()

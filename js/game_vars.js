@@ -37,6 +37,28 @@ var imp_params = {
     3: "NEGLIGENTIA",
     4: "ADROGANTIA"
   },
+  life_upgrades: [
+    {life: 4, rating: 500},
+    {life: 5, rating: 1000},
+    {life: 6, rating: 2000},
+    {life: 7, rating: 5000},
+    {life: 8, rating: 7000},
+    {life: 9, rating: 10000}
+  ],
+  ult_upgrades: [
+    {ult: 1, rating: 50},
+    {ult: 2, rating: 3000},
+    {ult: 3, rating: 8000},
+  ],
+  spark_upgrades: [
+    {spark_val: 11, rating: 200},
+    {spark_val: 12, rating: 750},
+    {spark_val: 13, rating: 1500},
+    {spark_val: 14, rating: 4000},
+    {spark_val: 15, rating: 6000},
+    {spark_val: 16, rating: 9000},
+  ],
+  
   keys: {
 
   },
@@ -136,15 +158,15 @@ function set_key_bindings() {
     }
   } else if(type == "right keyboard") {
     imp_params.keys = {
-      LEFT_KEY: 65,
-      UP_KEY: 87,
-      RIGHT_KEY: 68,
-      DOWN_KEY: 83,
+      LEFT_KEY: 37,
+      UP_KEY: 38,
+      RIGHT_KEY: 39,
+      DOWN_KEY: 40,
       PAUSE: 81,
-      ILEFT_KEY: 37,
-      IUP_KEY: 38,
-      IRIGHT_KEY: 39,
-      IDOWN_KEY: 40,
+      ILEFT_KEY: 65,
+      IUP_KEY: 87,
+      IRIGHT_KEY: 68,
+      IDOWN_KEY: 83,
       GATEWAY_KEY: 32,
       MUTE_KEY: 88,
       FULLSCREEN_KEY: 70,

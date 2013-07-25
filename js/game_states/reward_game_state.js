@@ -58,6 +58,58 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.font = "72px Muli"
         ctx.fillText("+"+cur_reward.data, imp_vars.levelWidth/2, imp_vars.levelHeight/2+100)
     }
+    if(cur_reward.type == "lives") {
+      ctx.globalAlpha *= 0.5
+      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+      ctx.fillStyle = "white"
+      ctx.textAlign = "center"
+      ctx.globalAlpha *= 2
+      ctx.font = "24px Muli"
+      ctx.fillText("YOU HAVE EARNED AN UPGRADE!", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 200)
+
+      ctx.font = "24px Muli"
+      ctx.fillText("EXTRA LIFE", imp_vars.levelWidth/2, imp_vars.levelHeight/2)  
+      
+      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 60, 60, "lives_icon")
+      ctx.font = "72px Muli"
+      ctx.fillText(cur_reward.data.new_lives, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 150)
+      
+    }
+    if(cur_reward.type == "ult") {
+      ctx.globalAlpha *= 0.5
+      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+      ctx.fillStyle = "white"
+      ctx.textAlign = "center"
+      ctx.globalAlpha *= 2
+      ctx.font = "24px Muli"
+      ctx.fillText("YOU HAVE EARNED AN UPGRADE!", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 200)
+
+      ctx.font = "24px Muli"
+      ctx.fillText("EXTRA ULTIMATE", imp_vars.levelWidth/2, imp_vars.levelHeight/2)  
+      
+      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 60, 60, "ultimate_icon")
+      ctx.font = "72px Muli"
+      ctx.fillText(cur_reward.data.new_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 150)
+    }
+
+    if(cur_reward.type == "spark_val") {
+      ctx.globalAlpha *= 0.5
+      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+      ctx.fillStyle = "white"
+      ctx.textAlign = "center"
+      ctx.globalAlpha *= 2
+
+      ctx.font = "24px Muli"
+      ctx.fillText("YOU HAVE EARNED AN UPGRADE!", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 200)
+
+      ctx.font = "24px Muli"
+      ctx.fillText("BRIGHTER SPARKS", imp_vars.levelWidth/2, imp_vars.levelHeight/2)  
+      
+      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 60, 60, "spark")
+      ctx.font = "72px Muli"
+      ctx.fillText("+"+cur_reward.data.new_spark_val, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 150)
+    }
+
     ctx.font = "20px Muli"
     ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
     ctx.restore()
@@ -103,7 +155,41 @@ RewardGameState.prototype.determine_rewards = function() {
     })
     imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
   }
+  if(calculate_lives(this.hive_numbers.original_rating) < calculate_lives()) {
+    var diff = calculate_lives() - calculate_lives(this.hive_numbers.original_rating)
+    var new_lives = calculate_lives()
+    this.rewards.push({
+      type: "lives",
+      data: {
+        diff: diff,
+        new_lives: new_lives
+      }
+    })
+  }
 
+  if(calculate_ult(this.hive_numbers.original_rating) < calculate_ult()) {
+    var diff = calculate_ult() - calculate_ult(this.hive_numbers.original_rating)
+    var new_ult = calculate_ult()
+    this.rewards.push({
+      type: "ult",
+      data: {
+        diff: diff,
+        new_ult: new_ult
+      }
+    })
+  }
+
+  if(calculate_spark_val(this.hive_numbers.original_rating) < calculate_spark_val()) {
+    var diff = calculate_spark_val() - calculate_spark_val(this.hive_numbers.original_rating)
+    var new_spark_val = calculate_spark_val()
+    this.rewards.push({
+      type: "spark_val",
+      data: {
+        diff: diff,
+        new_spark_val: new_spark_val
+      }
+    })
+  }
 }
 
 RewardGameState.prototype.on_key_down = function(keyCode) {

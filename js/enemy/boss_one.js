@@ -1118,12 +1118,12 @@ BossOne.prototype.player_hit_proc = function() {
 
 BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
   return
-  if(this.state == "punching") {
+  /*if(this.state == "punching") {
     if(this.arm_states["left"] == "loading" || (this.arm_states["left"] == "punching" && this.punch_action_interval - this.action_timer["left"] < this.punch_knockback_window))
       this.check_impulse_on_hands(attack_loc, impulse_force, "left")
     if(this.arm_states["right"] == "loading" || (this.arm_states["right"] == "punching" && this.punch_action_interval - this.action_timer["right"] < this.punch_knockback_window))
       this.check_impulse_on_hands(attack_loc, impulse_force, "right")
-  }
+  }*/
 }
 
 BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, side) {

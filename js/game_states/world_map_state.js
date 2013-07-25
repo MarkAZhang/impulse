@@ -6,6 +6,10 @@ function WorldMapState(world) {
   this.bg_drawn = false
   this.color = "white"//impulse_colors["impulse_blue"]
 
+  this.cur_start_lives = calculate_lives()
+  this.cur_start_ult = calculate_ult()
+  this.cur_start_spark_val = calculate_spark_val()
+
 
   this.buttons = []
   var _this = this
@@ -145,6 +149,8 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+
+  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight - 100, 24, true, true)
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     ctx.font = '12px Muli'

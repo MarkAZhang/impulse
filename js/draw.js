@@ -647,21 +647,51 @@ function draw_logo(context, x, y, name) {
 
 }
 
-function draw_lives_and_sparks(context, lives, sparks, x, y, size, color) {
+function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, labels, starting_values) {
 
+
+  context.save()
 
   context.font = size+'px Muli'
-  context.fillStyle = color ? color : impulse_colors["impulse_blue"]
+  context.fillStyle = impulse_colors["impulse_blue"]
   context.shadowBlur = 10
   context.shadowColor = context.fillStyle
-  drawSprite(context, x - 25, y, 0, 35, 35, "lives_icon")
-  drawSprite(context, x - 25, y + size * 1.6, 0, 35, 35, "sparks_icon")
+  drawSprite(context, x - size * 1.8, y, 0, 1.5 * size, 1.5 * size, "lives_icon")
+  if(starting_values)
+    drawSprite(context, x, y, 0, 1.5 * size, 1.5 * size, "spark")
+  else 
+    drawSprite(context, x, y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
   context.textAlign = 'center'
-  context.fillText(lives, x + 31, y + 10)
-  context.fillText(sparks, x + 31, y + 10 + size * 1.6)
+  context.fillText(lives, x - size * 1.8, y + size * 1.6)
+   if(starting_values)
+    context.fillText("+"+sparks, x, y+ size * 1.6)
+  else 
+    context.fillText(sparks, x, y+ size * 1.6)
+  
+  if(labels) {
+    context.font = (size/3)+'px Muli'
+    context.fillText("LIVES", x - size * 1.8, y - size * 0.8)
+
+    if(starting_values)
+      context.fillText("SPARK VALUE", x, y - size * 0.8)  
+    else
+      context.fillText("SPARKS", x, y - size * 0.8)
+
+  }
   context.font = size+'px Muli'
-  context.fillText("x", x + 5, y + 10)
-  context.fillText("x", x + 5, y + 10+size * 1.6)
+  //context.fillText("x", x + 5, y + 10)
+  //context.fillText("x", x + 5, y + 10+size * 1.6)
+  context.fillStyle = "white"
+  context.shadowColor = context.fillStyle
+  drawSprite(context, x + size * 1.8, y, 0, 1.5 * size, 1.5 * size, "ultimate_icon")
+  //context.fillText("x", x + 5, y + 10+size * 3.2)
+  context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
+
+  if(labels) {
+    context.font = (size/3)+'px Muli'
+    context.fillText("ULT", x + size * 1.8, y - size * 0.8)
+  }
+  context.restore()
 }
 
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
@@ -773,6 +803,7 @@ spriteSheetData = {
   "world_logo": [200, 80, 100, 100],
   "lives_icon": [0, 90, 35, 35],
   "sparks_icon": [35, 90, 35, 35],
+  "ultimate_icon": [0, 125, 35, 35],
 
 
   "immunitas_arm": [0, 0, 90, 90],

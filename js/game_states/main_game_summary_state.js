@@ -269,12 +269,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '84px Muli'
     ctx.fillText(this.rank, imp_vars.levelWidth/2, 235)
   } else if(this.save_screen) {
-    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, imp_vars.levelWidth/2, 150, 16, impulse_colors["impulse_blue"])
+    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, true)
     ctx.font = '16px Muli'
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
       ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 213)
+      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 240)
     }
   }
 

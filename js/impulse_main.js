@@ -69,6 +69,10 @@ window["impulse_main"] =  function() {
     window.addEventListener('mouseup', on_mouse_up, false);
     window.addEventListener('mousemove', on_mouse_move, false)
     window.addEventListener('resize', centerCanvas, false)
+    window.oncontextmenu = function ()
+    {
+        return false;     // cancel default menu
+    }
 
     //addVisibilityListener()
 
@@ -207,15 +211,28 @@ function on_mouse_down(event) {
   event.preventDefault()
 
   var mPos = getCursorPosition(event)
+  if(event.button == 0) {
 
-  if(imp_vars.cur_dialog_box) {
-    imp_vars.cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
-    return
-  }
-  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
-    imp_vars.cur_game_state.on_mouse_down(mPos.x - imp_vars.sidebarWidth, mPos.y)
-  } else {
-    imp_vars.cur_game_state.on_mouse_down(mPos.x, mPos.y)
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_mouse_down(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_mouse_down(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_mouse_down(mPos.x, mPos.y)
+    }
+  } else if(event.button == 2) {
+
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_right_mouse_down(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_right_mouse_down(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_right_mouse_down(mPos.x, mPos.y)
+    }
   }
 }
 
@@ -224,15 +241,28 @@ function on_mouse_up(event) {
 
   var mPos = getCursorPosition(event)
 
-  if(imp_vars.cur_dialog_box) {
-    imp_vars.cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
-    return
+  if(event.button == 0) {
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_mouse_up(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_mouse_up(mPos.x, mPos.y)
+    }  
+  } else if(event.button == 2) {
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_right_mouse_up(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_right_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_right_mouse_up(mPos.x, mPos.y)
+    }  
   }
-  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
-    imp_vars.cur_game_state.on_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
-  } else {
-    imp_vars.cur_game_state.on_mouse_up(mPos.x, mPos.y)
-  }
+  
 }
 
 function on_click(event) {
@@ -240,17 +270,29 @@ function on_click(event) {
   event.preventDefault()
 
   var mPos = getCursorPosition(event)
-  if(imp_vars.cur_dialog_box) {
-    imp_vars.cur_dialog_box.on_click(mPos.x, mPos.y)
-    return
-  }
-  if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
-    imp_vars.cur_game_state.on_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
-  } else {
-    imp_vars.cur_game_state.on_click(mPos.x, mPos.y)
-  }
 
-
+  if(event.button == 0) {
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_click(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_click(mPos.x, mPos.y)
+    }  
+  } else if(event.button == 2) {
+    if(imp_vars.cur_dialog_box) {
+      imp_vars.cur_dialog_box.on_right_click(mPos.x, mPos.y)
+      return
+    }
+    if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
+      imp_vars.cur_game_state.on_right_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
+    } else {
+      imp_vars.cur_game_state.on_right_click(mPos.x, mPos.y)
+    }  
+  }
+  
 
 }
 
@@ -509,4 +551,47 @@ function calculate_stars(difficulty_mode) {
   if(typeof imp_vars.player_data.stars === "undefined")
     imp_vars.player_data.stars = {}
   imp_vars.player_data.stars[difficulty_mode] = total_stars + imp_vars.player_data.kill_stars
+}
+
+function calculate_lives(this_rating) {
+  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
+  var life = 3
+  var life_cutoffs = imp_params.life_upgrades
+  for(var i = 0; i < life_cutoffs.length; i++) {
+    if(rating >= life_cutoffs[i].rating) {
+      life = life_cutoffs[i].life
+    } else {
+      break
+    }
+  }
+  return life
+}
+
+function calculate_ult(this_rating) {
+  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
+  var ult = 0
+  var ult_cutoffs = imp_params.ult_upgrades
+  for(var i = 0; i < ult_cutoffs.length; i++) {
+    if(rating >= ult_cutoffs[i].rating) {
+      ult = ult_cutoffs[i].ult
+    } else {
+      break
+    }
+  }
+  return ult
+}
+
+
+function calculate_spark_val(this_rating) {
+  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
+  var spark_val = 10
+  var spark_val_cutoffs = imp_params.spark_upgrades
+  for(var i = 0; i < spark_val_cutoffs.length; i++) {
+    if(rating >= spark_val_cutoffs[i].rating) {
+      spark_val = spark_val_cutoffs[i].spark_val
+    } else {
+      break
+    }
+  }
+  return spark_val
 }

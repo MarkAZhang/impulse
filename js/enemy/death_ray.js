@@ -129,7 +129,7 @@ DeathRay.prototype.additional_processing = function(dt) {
           this.fired = true
           if(pointInPolygon(this.ray_polygon, this.player.body.GetPosition())) {
             var silenced_factor = 1
-            if(this.player.status_duration[5] > 0) {
+            if(this.player.status_duration[5] > 0 && !this.player.ultimate) {
               silenced_factor = 10
             }
             this.player.body.ApplyImpulse(new b2Vec2(silenced_factor * this.ray_force * Math.cos(this.ray_angle), silenced_factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())

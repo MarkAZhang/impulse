@@ -847,13 +847,13 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 
 }
 
-Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.open(this.open_period)
+Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+  if(!ultimate) 
+    this.open(this.open_period)
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   this.durations["impulsed"] += this.impulsed_duration
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
-
 }
 
 Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {

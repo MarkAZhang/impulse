@@ -61,16 +61,30 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.idown = null
   this.iup = null
   this.impulse_angle = 0
+
+  this.enemies_hit = [] //stores ids of enemies hit
+  this.ultimate_enemies_hit = [] //stores ids of enemies hit
+
   this.attacking = false
   this.attack_start = 0
-  this.enemies_hit = [] //stores ids of enemies hit
   this.attack_loc = {}
   this.attack_angle = 0
+  this.attack_length = 500
+  this.attack_duration = 0
+
+  this.ultimate = false
+  this.ultimate_start = 0
+  this.ultimate_loc = {}
+  this.ultimate_length = 500
+  this.ultimate_duration = 0
+  this.ultimate_radius = 15
+  this.ultimate_factor = 150 // multiple of the enemy's force
+  this.ultimate_width = 1/32
+
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse, bulk], time left for each status
-  this.attack_length = 500
-  this.attack_duration = 0
+  
   this.slow_factor = .3
   this.dying = false
   this.dying_length = 1000
@@ -84,7 +98,8 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
 
   this.last_mouse_down = 0
   this.mouse_pressed = false
-
+  this.last_right_mouse_down = 0
+  this.right_mouse_pressed = false
 }
 
 Player.prototype.keyDown = function(keyCode) {
@@ -213,6 +228,15 @@ Player.prototype.mouse_up= function(pos) {
   this.mouse_pressed = false
 }
 
+Player.prototype.right_mouse_down= function(pos) {
+  this.last_right_mouse_down = (new Date()).getTime()
+  this.right_mouse_pressed = true
+}
+
+Player.prototype.right_mouse_up= function(pos) {
+  this.right_mouse_pressed = false
+}
+
 Player.prototype.process = function(dt) {
  if(this.dying && this.dying_duration < 0)
   {
@@ -298,6 +322,7 @@ Player.prototype.process = function(dt) {
     this.body.ResetMassData()
     this.bulked = true
   } else if(this.bulked){
+    this.bulked = false
     var fixtures = this.body.GetFixtureList()
     if (fixtures.length === undefined) {
       fixtures = [fixtures]
@@ -308,7 +333,6 @@ Player.prototype.process = function(dt) {
     this.force = this.true_force
     this.body.ResetMassData()
   }
-
 
   cur_time = (new Date()).getTime()
 
@@ -321,6 +345,21 @@ Player.prototype.process = function(dt) {
       this.attack_duration = this.attack_length
       imp_vars.impulse_music.play_sound("impulse")
     }
+    if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
+      if((this.impulse_game_state.hive_numbers && this.impulse_game_state.hive_numbers.ultimates > 0) || (this.impulse_game_state.temp_ultimates > 0)) {
+        this.ultimate = true
+        this.ultimate_loc = this.body.GetPosition().Copy()
+        this.ultimate_duration = this.ultimate_length
+        this.bulk(this.ultimate_length)
+        if(this.impulse_game_state.hive_numbers) {
+          this.impulse_game_state.hive_numbers.ultimates -= 1
+        } else {
+          this.impulse_game_state.temp_ultimates -= 1
+        }
+      }
+      
+    }
+
 
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
@@ -401,7 +440,7 @@ Player.prototype.process = function(dt) {
 
         if(this.level.enemies[i] instanceof Slingshot && this.level.enemies[i].empowered) continue
 
-        if(this.level.enemies[i] instanceof BossOne) this.level.enemies[i].process_impulse_on_hands(this.attack_loc, this.impulse_force);
+        //if(this.level.enemies[i] instanceof BossOne) this.level.enemies[i].process_impulse_on_hands(this.attack_loc, this.impulse_force);
 
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
@@ -419,7 +458,7 @@ Player.prototype.process = function(dt) {
                 this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
                 break
               }
-              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
+              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged" && this.level.enemies[i].harpooned_target == this) {
                 this.level.enemies[i].disengage_harpoon()
               }
             }
@@ -446,6 +485,58 @@ Player.prototype.process = function(dt) {
         }
       }
       this.attack_duration -= dt
+    }
+  }
+
+  if(this.ultimate) {
+    if(this.ultimate_duration < 0)//ultimate lasts 250 ms
+    {
+      this.ultimate = false
+      this.ultimate_enemies_hit = []
+    }
+    else
+    {
+
+      for(var i = 0; i < this.level.enemies.length; i++)
+      {
+        if(this.ultimate_enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
+        {
+          var impulse_sensitive_points = this.level.enemies[i].get_impulse_sensitive_pts()
+
+          for(var j = 0; j < impulse_sensitive_points.length; j++) {
+              if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
+              {
+                var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                this.ultimate_enemies_hit.push(this.level.enemies[i].id)
+                this.level.enemies[i].silence(1000)
+                var data = imp_params.impulse_enemy_stats[this.level.enemies[i].type]
+                var prop = Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
+
+                this.level.enemies[i].process_impulse(this.ultimate_loc, prop * this.ultimate_factor * this.level.enemies[i].body.GetMass() * Math.sqrt(data.lin_damp), angle, true)
+                break
+              }
+              
+          }
+          if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged" && this.level.enemies[i].harpooned_target == this) {
+            this.level.enemies[i].disengage_harpoon()
+          }
+        }
+
+        // if Harpoon, also check the Head
+        if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state != "inactive") {
+          var this_harpoon_head = this.level.enemies[i].harpoon_head;
+          var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
+
+          for(var j = 0; j < impulse_sensitive_points.length; j++) {
+            if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
+            {
+              var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
+              this_harpoon_head.process_impulse(this.ultimate_loc, this.impulse_force * 2, angle)
+            }
+          }
+        }
+      }
+      this.ultimate_duration -= dt
     }
   }
 
@@ -499,6 +590,19 @@ Player.prototype.point_in_impulse_dist = function(pt, fast) {
   return dist >= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) - speedy_factor)
    && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + speedy_factor)
 }
+
+Player.prototype.point_in_ultimate_dist = function(pt, fast) {
+  var dist = this.ultimate_loc.Copy()
+  dist.Subtract(pt)
+  dist = dist.Normalize()
+  var speedy_factor = fast ? this.ultimate_width * 4: this.ultimate_width * 2
+  var prop = bezier_interpolate(0.15, 0.85,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length))
+
+  return dist >= this.ultimate_radius * (prop - speedy_factor)
+   && dist <= this.ultimate_radius * (prop + speedy_factor)
+}
+
+
 
 Player.prototype.draw = function(context) {
   if(this.dying) {
@@ -602,6 +706,29 @@ Player.prototype.draw = function(context) {
       //context.lineWidth = 15;
       // line color
       context.strokeStyle = this.impulse_color
+      context.lineWidth = 5
+      context.stroke();
+      context.restore();
+    }
+
+    if(this.ultimate) {
+      var cur_time = (new Date()).getTime()
+      context.beginPath();
+      context.shadowBlur = 10;
+      context.shadowColor = "#ccc";
+
+      //context.lineWidth = this.ultimate_radius* this.ultimate_width * imp_vars.draw_factor
+      var prop = bezier_interpolate(0.15, 0.85,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length));
+      context.save();
+      if(prop > 0.4) {
+        context.globalAlpha *= (1 - prop)/(0.4) < 0 ? 0 : (1-prop)/(0.4);
+      }
+
+      context.arc(this.ultimate_loc.x*imp_vars.draw_factor, this.ultimate_loc.y*imp_vars.draw_factor,
+       this.ultimate_radius * prop * imp_vars.draw_factor, 0, Math.PI*1.999);
+      //context.lineWidth = 15;
+      // line color
+      context.strokeStyle = "white"
       context.lineWidth = 5
       context.stroke();
       context.restore();

@@ -1,11 +1,14 @@
 var HiveNumbers = function(world_num) {
 
-  this.lives = 0
+  this.lives = calculate_lives()
   this.sparks = 0
+  this.ultimates = calculate_ult()
   this.continues = 0
+  this.spark_val = calculate_spark_val()
 
-  this.last_lives = 3
+  this.last_lives = this.lives
   this.last_sparks = 0
+  this.last_ultimates = this.ultimates
 
   this.current_level = null
 
@@ -18,9 +21,13 @@ var HiveNumbers = function(world_num) {
 }
 
 HiveNumbers.prototype.continue = function() {
-  this.lives = 0
+  this.lives = calculate_lives()
   this.sparks = 0
-  this.last_lives = 0
+  this.ultimates = calculate_ult()
+  this.spark_val = calculate_spark_val()
+  this.last_lives = this.lives
   this.last_sparks = 0
+  this.last_ultimates = this.ultimates
   this.continues += 1
 }
+

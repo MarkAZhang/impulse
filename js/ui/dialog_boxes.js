@@ -29,6 +29,9 @@ DialogBox.prototype.on_mouse_move = function(x, y) {}
 DialogBox.prototype.on_mouse_down = function(x, y) {}
 DialogBox.prototype.on_mouse_up = function(x, y) {}
 DialogBox.prototype.on_click = function(x, y) {}
+DialogBox.prototype.on_right_mouse_down = function(x, y) {}
+DialogBox.prototype.on_right_mouse_up = function(x, y) {}
+DialogBox.prototype.on_right_click = function(x, y) {}
 DialogBox.prototype.on_key_down = function(x, y) {}
 DialogBox.prototype.on_key_up = function(x, y) {}
 
@@ -336,6 +339,7 @@ PauseMenu.prototype.save_and_quit_main_game = function() {
 
   this.game_state.hive_numbers.sparks = this.game_state.hive_numbers.last_sparks
   this.game_state.hive_numbers.lives = this.game_state.hive_numbers.last_lives
+  this.game_state.hive_numbers.ultimates = this.game_state.hive_numbers.last_ultimates
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = this.game_state.hive_numbers
   save_game()
   switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
@@ -730,9 +734,9 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
 
   if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
     draw_arrow_keys(ctx, this.x - 180, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
-    ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
+    ctx.fillText("IMPULSE", this.x - 180, this.y - this.h/2 + 360)
     draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
-    ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
+    ctx.fillText("MOVE", this.x + 180, this.y - this.h/2 + 360)
     ctx.shadowColor = this.lite_color
     ctx.shadowBlur = 10
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
