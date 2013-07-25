@@ -182,5 +182,6 @@ LevelIntroState.prototype.on_click = function(x, y) {
 
 
 LevelIntroState.prototype.load_complete = function() {
-  this.buttons.push(new SmallButton("START LEVEL", 20, imp_vars.levelWidth - 150, imp_vars.levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, true))}}(this)))
+  var hive_numbers = new HiveNumbers(this.world_num, false)
+  this.buttons.push(new SmallButton("START LEVEL", 20, imp_vars.levelWidth - 150, imp_vars.levelHeight - 30, 300, 50, "black", "blue", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, true))}}(this)))
 }

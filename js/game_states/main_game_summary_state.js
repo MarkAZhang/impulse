@@ -30,6 +30,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.visibility_graph = visibility_graph
   this.world_num = world_num
   this.victory = victory
+  this.has_ult = has_ult()
 
   if(save_screen) {
     this.hive_numbers = imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode]
@@ -189,12 +190,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
     if(this.transition_state == "out") {
       if(this.victory)
-        switch_game_state(new RewardGameState(this.hive_numbers))
+        switch_game_state(new RewardGameState(this.hive_numbers, true))
       else if(this.level) {
         this.hive_numbers.continue()
         switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
       } else {
-        switch_game_state(new RewardGameState(this.hive_numbers))
+        switch_game_state(new RewardGameState(this.hive_numbers, true))
       }
     }
   }
@@ -269,7 +270,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '84px Muli'
     ctx.fillText(this.rank, imp_vars.levelWidth/2, 235)
   } else if(this.save_screen) {
-    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, true)
+    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, {labels: true, ult: this.has_ult})
     ctx.font = '16px Muli'
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"

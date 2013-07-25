@@ -116,8 +116,6 @@ impulse_colors["boss 4"] = "#f00"
 function set_key_bindings() {
 
   var type = imp_vars.player_data.options.control_hand +" "+imp_vars.player_data.options.control_scheme
-  console.log("SET KEY BINDINGS")
-  console.log(imp_params.keys)
   if(type == "left mouse") {
     imp_params.keys = {
       LEFT_KEY: 37,
@@ -177,7 +175,8 @@ function set_key_bindings() {
       EXIT_GAME_KEY: 69,
       RESUME_GAME_KEY: 82,
       DELETE_GAME_KEY: 68,
-      NEXT_KEY: 32
+      NEXT_KEY: 32,
+      ULTIMATE_KEY: 69
     }
   }
 }

@@ -16,6 +16,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.last_level = null
   this.high_score = false
   this.level_loaded = true
+  this.has_ult = has_ult()
 
   this.continued = false
   if(level) {
@@ -58,7 +59,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     if(loading_game) {
       this.hive_numbers = hive_numbers
     } else {
-      this.hive_numbers = new HiveNumbers(world_num)
+      this.hive_numbers = new HiveNumbers(world_num, true)
     }
     this.transition_timer = this.world_intro_interval
   }
@@ -255,7 +256,7 @@ MainGameTransitionState.prototype.process = function(dt) {
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
     } else if(this.state == "level_intro") {
-      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.victory === null ? true : this.victory, this.hive_numbers, this.first_time))
+      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
     }
   }
 }
@@ -334,7 +335,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
 
-      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, true)
+      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, {labels: true, ult: this.has_ult})
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
@@ -438,7 +439,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       
     }
 
-    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, true)
+    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, {labels: true, ult: this.has_ult})
 
     ctx.shadowBlur = 0
 

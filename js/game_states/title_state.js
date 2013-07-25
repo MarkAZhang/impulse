@@ -28,6 +28,7 @@ function TitleState(start_clicked) {
     save_game()
   }
   this.cur_rating = calculate_current_rating()
+  this.next_upgrade = calculate_next_upgrade()
 }
 
 TitleState.prototype.process = function(dt) {
@@ -67,12 +68,18 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
   }
 
-  ctx.font = '16px Muli'
+  ctx.font = '20px Muli'
   ctx.textAlign = 'right'
   ctx.fillStyle = "white"
-  ctx.fillText("RATING", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 80)
+  ctx.fillText("RATING", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 50)
   ctx.font = '72px Muli'
-  ctx.fillText(this.cur_rating, imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 150)
+  ctx.fillText(this.cur_rating, imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 120)
+  if(this.next_upgrade != null) {
+    ctx.font = '10px Muli'
+    ctx.fillText("NEXT UPGRADE IN", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 155)
+    ctx.font = '36px Muli'
+    ctx.fillText((this.next_upgrade - this.cur_rating), imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 193)
+  }
 
 }
 
@@ -113,7 +120,7 @@ TitleState.prototype.setup_main_menu = function() {
     //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, imp_vars.levelWidth/2,
     //      imp_vars.levelHeight/2+70, 200, 50, function(){switch_game_state(new
     //        ImpulseGameState(ctx, "SURVIVAL"))}))
-    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    this.buttons["menu"].push(new SmallButton("TUTORIAL", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
     //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
     this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
     this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
@@ -127,7 +134,7 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new WorldMapState())
       }
     }))
-    this.buttons["menu"].push(new SmallButton("HOW TO PLAY", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
+    this.buttons["menu"].push(new SmallButton("TUTORIAL", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState())}))
     this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
     this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
 

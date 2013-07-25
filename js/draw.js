@@ -300,14 +300,17 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
 function draw_mouse(context, x, y, w, h, color) {
   context.save()
   context.shadowColor = color
-
+  context.fillStyle = color
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  context.fillText("LEFT CLICK", x, y - w/2 - 30)
   context.shadowBlur = 10
   draw_rounded_rect(context, x, y, w, h, 10, color)
   context.clip()
   context.beginPath()
   context.rect(x - w/2, y - h/2, w/2, h/3)
   context.globalAlpha = 0.5
-  context.fillStyle = color
+  
   context.fill()
   context.restore()
   context.save()
@@ -324,7 +327,39 @@ function draw_mouse(context, x, y, w, h, color) {
   context.restore()
 }
 
+function draw_right_mouse(context, x, y, w, h, color) {
+  context.save()
+  context.shadowColor = color
+  context.fillStyle = color
+  context.font = "10px Muli"
+  context.textAlign = "center"
+  context.fillText("RIGHT CLICK", x, y - w/2 - 30)
+  context.shadowBlur = 10
+  draw_rounded_rect(context, x, y, w, h, 10, color)
+  context.clip()
+  context.beginPath()
+  context.rect(x, y - h/2, w/2, h/3)
+  context.globalAlpha *= 0.5
+  
+  context.fill()
+  context.restore()
+  context.save()
+  context.beginPath()
+  context.moveTo(x - w/2, y - h/6)
+  context.lineTo(x + w/2, y - h/6)
+  context.moveTo(x, y - h/6)
+  context.lineTo(x, y - h/2)
+
+  context.lineWidth = 2
+  context.strokeStyle = color
+  context.stroke()
+  context.restore()
+}
+
 function draw_rounded_rect(context, x, y, w, h, r, color) {
+  context.save()
+  context.shadowColor = color
+  context.shadowBlur = 10
   context.beginPath();
   context.moveTo(x - w/2 + r, y - h/2);
   context.arcTo(x+w/2, y - h/2,   x+w/2, y+h/2, r);
@@ -335,6 +370,7 @@ function draw_rounded_rect(context, x, y, w, h, r, color) {
   context.strokeStyle = color
   context.lineWidth = 2
   context.stroke()
+  context.restore()
 }
 
 function draw_pause_icon(context, x, y, scale, color, key_display) {
@@ -647,47 +683,51 @@ function draw_logo(context, x, y, name) {
 
 }
 
-function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, labels, starting_values) {
+function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, args) {
 
 
   context.save()
 
+  var x_offset = size * 0.9
+  if(args.ult) {
+    x_offset = 0
+  }
   context.font = size+'px Muli'
   context.fillStyle = impulse_colors["impulse_blue"]
   context.shadowBlur = 10
   context.shadowColor = context.fillStyle
-  drawSprite(context, x - size * 1.8, y, 0, 1.5 * size, 1.5 * size, "lives_icon")
-  if(starting_values)
-    drawSprite(context, x, y, 0, 1.5 * size, 1.5 * size, "spark")
+  drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.5 * size, 1.5 * size, "lives_icon")
+  if(args.starting_values)
+    drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "spark")
   else 
-    drawSprite(context, x, y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
+    drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
   context.textAlign = 'center'
-  context.fillText(lives, x - size * 1.8, y + size * 1.6)
-   if(starting_values)
-    context.fillText("+"+sparks, x, y+ size * 1.6)
+  context.fillText(lives, x - size * 1.8 + x_offset , y + size * 1.6)
+   if(args.starting_values)
+    context.fillText(sparks, x + x_offset , y+ size * 1.6)
   else 
-    context.fillText(sparks, x, y+ size * 1.6)
+    context.fillText(sparks, x + x_offset , y+ size * 1.6)
   
-  if(labels) {
+  if(args.labels) {
     context.font = (size/3)+'px Muli'
-    context.fillText("LIVES", x - size * 1.8, y - size * 0.8)
+    context.fillText("LIVES", x - size * 1.8 + x_offset , y - size * 0.8)
 
-    if(starting_values)
-      context.fillText("SPARK VALUE", x, y - size * 0.8)  
-    else
-      context.fillText("SPARKS", x, y - size * 0.8)
+    if(args.starting_values) {
+      context.fillText("SPARK", x + x_offset , y - size * 1.2)  
+      context.fillText("VALUE", x + x_offset , y - size * 0.8)  
+    } else
+      context.fillText("SPARKS", x + x_offset , y - size * 0.8)
 
   }
   context.font = size+'px Muli'
-  //context.fillText("x", x + 5, y + 10)
-  //context.fillText("x", x + 5, y + 10+size * 1.6)
-  context.fillStyle = "white"
-  context.shadowColor = context.fillStyle
-  drawSprite(context, x + size * 1.8, y, 0, 1.5 * size, 1.5 * size, "ultimate_icon")
-  //context.fillText("x", x + 5, y + 10+size * 3.2)
-  context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
+  if(args.ult) {
+    context.fillStyle = "white"
+    context.shadowColor = context.fillStyle
+    drawSprite(context, x + size * 1.8 , y, 0, 1.5 * size, 1.5 * size, "ultimate_icon")
+    context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
+  }
 
-  if(labels) {
+  if(args.labels && args.ult) {
     context.font = (size/3)+'px Muli'
     context.fillText("ULT", x + size * 1.8, y - size * 0.8)
   }

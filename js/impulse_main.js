@@ -553,6 +553,10 @@ function calculate_stars(difficulty_mode) {
   imp_vars.player_data.stars[difficulty_mode] = total_stars + imp_vars.player_data.kill_stars
 }
 
+function has_ult() {
+  return calculate_current_rating() >= imp_params.ult_upgrades[0].rating
+}
+
 function calculate_lives(this_rating) {
   var rating = this_rating === undefined ? calculate_current_rating() : this_rating
   var life = 3
@@ -594,4 +598,25 @@ function calculate_spark_val(this_rating) {
     }
   }
   return spark_val
+}
+
+function calculate_next_upgrade() {
+  var rating = calculate_current_rating()
+  var spark_val_cutoffs = imp_params.spark_upgrades
+  var ult_cutoffs = imp_params.ult_upgrades
+  var life_cutoffs = imp_params.life_upgrades
+  var min_upgrade = null
+  for(var i = 0; i < life_cutoffs.length; i++) {
+    if(life_cutoffs[i].rating > rating && (life_cutoffs[i].rating < min_upgrade || min_upgrade == null))
+      min_upgrade = life_cutoffs[i].rating
+  }
+  for(var i = 0; i < ult_cutoffs.length; i++) {
+    if(ult_cutoffs[i].rating > rating && (ult_cutoffs[i].rating < min_upgrade || min_upgrade == null))
+      min_upgrade = ult_cutoffs[i].rating
+  }
+  for(var i = 0; i < spark_val_cutoffs.length; i++) {
+    if(spark_val_cutoffs[i].rating > rating && (spark_val_cutoffs[i].rating < min_upgrade || min_upgrade == null))
+      min_upgrade = spark_val_cutoffs[i].rating
+  }
+  return min_upgrade
 }

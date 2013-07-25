@@ -2,14 +2,19 @@ GameOverState.prototype = new GameState
 
 GameOverState.prototype.constructor = GameOverState
 
-function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
+function GameOverState(final_game_numbers, level, world_num, visibility_graph, args) {
   this.level = level
   this.level_name = this.level.level_name
   this.buttons = []
   this.world_num = world_num
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
-  this.buttons.push(new SmallButton("ONCE AGAIN", 20, imp_vars.levelWidth - 150, imp_vars.levelHeight - 30, 300, 50, "blue", "black", function(_this){return function(){switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, false))}}(this)))
+  this.buttons.push(new SmallButton("RETRY", 20, imp_vars.levelWidth - 150, imp_vars.levelHeight - 30, 300, 50, "blue", "black", function(_this){
+    return function(){
+      var hive_numbers = new HiveNumbers(_this.world_num, false)
+      switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
+    }
+  }(this)))
   this.buttons.push(new SmallButton("LEVEL SELECT", 20, 150, imp_vars.levelHeight - 30, 200, 50, "blue", "black", function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new ClassicSelectState(_this.world_num))
@@ -22,9 +27,8 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
   this.game_numbers = final_game_numbers
 
   if(!this.level.is_boss_level) {
-    var ans = update_high_score_for_level(this.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
-    this.high_score = ans.high_score
-    this.stars = ans.stars
+    this.high_score = args.high_score
+    this.stars = args.stars
 
     if (this.stars < 3)
         this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
@@ -33,9 +37,8 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph) {
 
     this.stars_gained = 0
   } else {
-    var ans = update_best_time_for_boss_level(this.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-    this.best_time = ans.best_time
-    this.stars = ans.stars
+    this.best_time = args.best_time
+    this.stars = args.stars
   }
 
   imp_vars.player_data.total_kills += this.game_numbers.kills
@@ -94,7 +97,12 @@ GameOverState.prototype.process = function(dt) {
 
 GameOverState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
+    this.level.impulse_game_state= null
     bg_canvas.setAttribute("style", "display:none" )
+    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    this.level.draw_bg(bg_ctx)
+    this.bg_drawn = true
+    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     this.bg_drawn = true
   }
 

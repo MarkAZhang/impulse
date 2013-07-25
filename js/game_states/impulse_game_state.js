@@ -2,24 +2,22 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
+function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game, first_time, first_ever) {
 
   if(!world) return
 
-  this.init(world, level, visibility_graph, first_time, hive_numbers, first_ever)
+  this.init(world, level, visibility_graph, first_time, hive_numbers, main_game, first_ever)
 }
 
-ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, first_ever) {
+ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, main_game, first_ever) {
 
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
   this.hive_numbers = hive_numbers
 
-  if(this.hive_numbers) {
+  this.main_game = main_game
+  if(this.main_game) {
     this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
-  } else {
-    this.game_numbers.original_rating = calculate_current_rating()
-    this.temp_ultimates = 1
   }
 
   this.first_time = first_time
@@ -35,6 +33,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.score_label_rise = 30
   this.buffer_radius = 1 //primarily for starting player location
   this.bg_drawn = false
+  this.has_ult = has_ult()
   
 
   this.stars = 0
@@ -86,8 +85,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.ready = true
 
   this.bg_visible = false
-
-  this.temp_sparks = 0
 
   this.world_visible = true
 
@@ -152,7 +149,6 @@ ImpulseGameState.prototype.reset = function() {
   this.world = new b2World(gravity, doSleep);
   this.addWalls()
 
-  this.temp_ultimates = 1
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
@@ -444,11 +440,11 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.player.draw(ctx)
   }
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.hive_numbers && this.zoom == 1 && this.world_num <= 4){//} && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4){//} && this.first_ever) {
     this.draw_boss_text(ctx)
   }  
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.hive_numbers && this.zoom == 1 && this.world_num < 4){//} && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.main_game && this.zoom == 1 && this.world_num == 1 && this.first_ever) {
       this.draw_boss_hint(ctx)
   }
 
@@ -795,13 +791,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fill()*/
   context.shadowBlur = 0;
   context.save()
-  if(this.hive_numbers) {
 
-    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110, 24, true)
-  } else {
-
-    draw_lives_and_sparks(context, "0", this.temp_sparks, this.temp_ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110,24, true)
-  }
+  draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110, 24, {labels: true, ult: this.has_ult})
   context.restore()
 
   draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true)
@@ -920,7 +911,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.reset_player_state()
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
-  } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+  } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.main_game && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)
@@ -1047,13 +1038,13 @@ ImpulseGameState.prototype.check_cutoffs = function() {
         //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
         this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
       } else if(this.stars == 2) {
-        if(this.hive_numbers) {
+        if(this.main_game) {
           this.hive_numbers.lives +=1
           this.addScoreLabel("1UP", impulse_colors["silver"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
         }
         this.set_score_achieve_text("SILVER SCORE", impulse_colors["silver"], 24)
       } else if(this.stars == 3 ) {
-        if(this.hive_numbers) {
+        if(this.main_game) {
           if(this.hive_numbers.lives < 5) {
             this.addScoreLabel((5 - this.hive_numbers.lives)+"UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
             this.hive_numbers.lives = 5
@@ -1082,9 +1073,14 @@ ImpulseGameState.prototype.reset_combo = function() {
 
 ImpulseGameState.prototype.game_over = function() {
 
-  if(this.level.main_game) {
+  if(this.main_game) {
     switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory || this.level.boss_victory, this.game_numbers, this.visibility_graph, this.hive_numbers))
   } else {
-    switch_game_state(new GameOverState(this.game_numbers, this.level, this.world_num, this.visibility_graph))
+    switch_game_state(new RewardGameState(this.hive_numbers, this.main_game, {
+      game_numbers: this.game_numbers,
+      level: this.level,
+      world_num: this.world_num,
+      visibility_graph: this.visibility_graph
+    }))
   }
 }

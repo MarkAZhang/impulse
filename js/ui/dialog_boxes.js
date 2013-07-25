@@ -312,16 +312,22 @@ PauseMenu.prototype.on_click = function(x, y) {
 }
 
 PauseMenu.prototype.quit_practice = function() {
-  switch_game_state(new GameOverState(this.game_numbers, this.level, this.game_state.world_num, this.visibility_graph))
+
+  switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+      game_numbers: this.game_state.game_numbers,
+      level: this.game_state.level,
+      world_num: this.game_state.world_num,
+      visibility_graph: this.game_state.visibility_graph
+    }))
   clear_dialog_box()
 }
 PauseMenu.prototype.restart_practice = function() {
   imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-  this.level.impulse_game_state.gateway_unlocked = false
+  this.level.impulse_game_state= null
   this.level.draw_bg(imp_vars.bg_ctx)
   imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
-
-  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph))
+  var hive_numbers = new HiveNumbers(this.game_stateworld_num, false)
+  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false, false))
   clear_dialog_box()
 }
 
@@ -647,6 +653,7 @@ function ControlsMenu(previous_menu) {
     _this.redraw_icons = true
     _this.adjust_underlines()
   }}(this)))
+  this.has_ult = has_ult()
   /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "keyboard"
@@ -707,12 +714,18 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
 
   if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {
-    draw_arrow_keys(ctx, this.x - 180, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
-    ctx.fillText("MOVE", this.x - 180, this.y - this.h/2 + 360)
-    draw_mouse(ctx, this.x + 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
-    ctx.fillText("IMPULSE", this.x + 180, this.y - this.h/2 + 360)
-    ctx.shadowColor = this.lite_color
-    ctx.shadowBlur = 10
+    draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
+    ctx.fillText("MOVE", this.x - 200, this.y - this.h/2 + 360)
+    if(this.has_ult) {
+      draw_mouse(ctx, this.x, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+      ctx.fillText("IMPULSE", this.x, this.y - this.h/2 + 360)  
+      draw_right_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+      ctx.fillText("ULTIMATE", this.x + 200, this.y - this.h/2 + 360)  
+    } else {
+      draw_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+      ctx.fillText("IMPULSE", this.x + 200, this.y - this.h/2 + 360)  
+    }
+    
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
@@ -720,12 +733,19 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
 
   if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
-    draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
-    ctx.fillText("MOVE", this.x + 180, this.y - this.h/2 + 360)
-    draw_mouse(ctx, this.x - 180, this.y - this.h/2 + 270, 83, 125, this.lite_color)
-    ctx.fillText("IMPULSE", this.x - 180, this.y - this.h/2 + 360)
-    ctx.shadowColor = this.lite_color
-    ctx.shadowBlur = 10
+    if(this.has_ult) {
+      draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+    ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
+      draw_right_mouse(ctx, this.x, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+      ctx.fillText("ULTIMATE", this.x, this.y - this.h/2 + 360)  
+    } else {
+      draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270, 83, 125, this.lite_color)
+    ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
+    }
+
+    draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.lite_color)
+    ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)
+    
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 120, 40, 10, this.lite_color)
     ctx.fillText("ENTER", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
@@ -733,12 +753,19 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
 
   if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
-    draw_arrow_keys(ctx, this.x - 180, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
-    ctx.fillText("IMPULSE", this.x - 180, this.y - this.h/2 + 360)
-    draw_arrow_keys(ctx, this.x + 180, this.y - this.h/2 + 300, 50, this.lite_color)
-    ctx.fillText("MOVE", this.x + 180, this.y - this.h/2 + 360)
-    ctx.shadowColor = this.lite_color
-    ctx.shadowBlur = 10
+    draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.lite_color, ["W", "A", "S", "D"])
+    ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
+
+    if(this.has_ult) {
+      draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 280, 45, 45, 10, this.lite_color)
+      ctx.font = "18px Muli"
+      ctx.fillText("E", this.x, this.y - this.h/2 + 286)
+      ctx.fillText("ULTIMATE", this.x, this.y - this.h/2 + 360)    
+    }
+    
+
+    draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.lite_color)
+    ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.lite_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
@@ -877,6 +904,10 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
 
   draw_arrow(ctx, this.x - 300, this.y - this.h/2 + 420, 20, "left", this.lite_color)
+  ctx.font = '10px Muli'
+  ctx.fillStyle = this.color
+  ctx.fillText("NEXT", this.x + 302, this.y - this.h/2 + 450)
+  ctx.fillText("PREV", this.x - 302, this.y - this.h/2 + 450)
   draw_arrow(ctx, this.x + 300, this.y - this.h/2 + 420, 20, "right", this.lite_color)
 
   for(var i = 0; i < this.num_pages; i++) {

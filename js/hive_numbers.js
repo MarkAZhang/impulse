@@ -1,10 +1,16 @@
-var HiveNumbers = function(world_num) {
+var HiveNumbers = function(world_num, main_game) {
 
   this.lives = calculate_lives()
   this.sparks = 0
   this.ultimates = calculate_ult()
   this.continues = 0
   this.spark_val = calculate_spark_val()
+  this.main_game = main_game
+  if(!this.main_game) {
+    this.lives = 0
+    if(this.ultimates > 1) this.ultimates = 1
+    
+  }
 
   this.last_lives = this.lives
   this.last_sparks = 0

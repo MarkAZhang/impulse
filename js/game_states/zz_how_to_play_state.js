@@ -3,8 +3,8 @@ HowToPlayState.prototype = new ImpulseGameState
 HowToPlayState.prototype.constructor = HowToPlayState
 
 function HowToPlayState() {
-
-  this.init(0, null, null, true, null, true)
+  this.hive_numbers = new HiveNumbers(this.world_num, false)
+  this.init(0, null, null, true, this.hive_numbers, false)
   this.ready = false
   this.level = this.load_level(imp_params.impulse_level_data["HOW TO PLAY"])
   this.level.no_spawn = true
@@ -65,7 +65,11 @@ HowToPlayState.prototype.load_complete = function() {
   this.exit_button = new SmallButton("EXIT TUTORIAL", 20, 400, 410, 250, 50, "white", "blue", function(){_this.exit_tutorial = true})
 
   this.set_difficulty_button_underline();
-  this.hive_numbers = new HiveNumbers(this.world_num)
+
+  this.has_ult = has_ult()
+  this.ult_num = calculate_ult()
+  this.ult_page_offset = this.has_ult ? 3 : 0
+  this.num_pages += this.ult_page_offset
 
 }
 
@@ -158,7 +162,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     } else {
       draw_arrow_keys(ctx, 400, 430, 60, this.color)
     }
-    ctx.fillText("IMPULSE", 400, 500)
+    ctx.fillText("USE IMPULSE", 400, 500)
     ctx.globalAlpha *= 0.5
     ctx.font = '12px Muli'
     ctx.fillText("HOLD MOUSE TO CONTINUOUSLY IMPULSE", 400, 550)
@@ -269,31 +273,15 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.textAlign = "center"
     ctx.fillStyle = this.color
     ctx.fillText("GET THE GATEWAY SCORE...", 400, 500)
+    ctx.clearRect(345, 475, 173, 28)
+    ctx.shadowColor = "red"
+    ctx.fillStyle = "red"
+    ctx.fillText("GATEWAY SCORE", 433, 500)
   }
 
   if(this.cur_page == 6) {
 
-    ctx.font = '20px Muli'
-    ctx.textAlign = "center"
-    ctx.fillStyle = this.color
-    ctx.shadowBlur = 0
-    ctx.fillText("...THEN PRESS", 400, 370)
-
-    if(imp_vars.player_data.options.control_hand == "right") {
-      ctx.shadowColor = this.color
-      ctx.shadowBlur = 10
-
-      draw_rounded_rect(ctx, 400, 430, 300, 50, 10, this.color)
-      ctx.fillText("SPACEBAR", 400, 436)
-    }
-
-    if(imp_vars.player_data.options.control_hand == "left") {
-      draw_rounded_rect(ctx, 400, 430, 120, 50, 10, this.color)
-      ctx.fillText("ENTER", 400, 436)
-    }
-
-
-
+    // draw reticle
     draw_arrow(ctx, 355, 170, 25, "right", "red", false)
     draw_arrow(ctx, 445, 170, 25, "left", "red", false)
     draw_arrow(ctx, 400, 125, 25, "down", "red", false)
@@ -305,11 +293,31 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.strokeStyle = 'red'
     ctx.stroke()
 
+
+    ctx.font = '20px Muli'
+    ctx.textAlign = "center"
+    ctx.fillStyle = this.color
     ctx.shadowBlur = 0
-    ctx.fillText("TO ENTER THE UNLOCKED GATEWAY", 400, 500)
-    ctx.font = '12px Muli'
-    ctx.fillText("(MUST MOVE ON TOP OF GATEWAY)", 400, 515)
-    ctx.globalAlpha = 0.5
+    ctx.fillText("...THEN MOVE ONTO THE UNLOCKED GATEWAY", 400, 360)
+
+    ctx.shadowBlur = 0
+    ctx.fillText("AND PRESS", 400, 400)
+    ctx.fillText("TO ADVANCE TO THE NEXT LEVEL", 400, 510)
+    
+
+    if(imp_vars.player_data.options.control_hand == "right") {
+      ctx.shadowColor = this.color
+      ctx.shadowBlur = 10
+
+      draw_rounded_rect(ctx, 400, 445, 300, 50, 10, this.color)
+      ctx.fillText("SPACEBAR", 400, 451)
+    }
+
+    if(imp_vars.player_data.options.control_hand == "left") {
+      draw_rounded_rect(ctx, 400, 445, 120, 50, 10, this.color)
+      ctx.fillText("ENTER", 400, 451)
+    }
+
     ctx.font = '12px Muli'
     ctx.shadowBlur = 5
     ctx.globalAlpha = 1
@@ -317,8 +325,8 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.shadowColor = "red"
     ctx.fillStyle = "red"
 
-    ctx.clearRect(474, 480, 105, 25)
-    ctx.fillText("GATEWAY", 523, 500)
+    ctx.clearRect(524, 337, 105, 25)
+    ctx.fillText("GATEWAY", 576, 360)
     ctx.font = '12px Muli'
     ctx.shadowBlur = 0
     ctx.globalAlpha = 0.5
@@ -395,13 +403,59 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 2
 
     ctx.beginPath()
-    ctx.rect(-155, imp_vars.canvasHeight - 140, 120, 80)
+    ctx.rect(-160, imp_vars.canvasHeight - 140, 120, 80)
     ctx.strokeStyle = "red"
     ctx.lineWidth = 4
     ctx.stroke()
   }
+  if(this.has_ult) {
+    if(this.cur_page == 9) {
+      if(imp_vars.player_data.options.control_scheme == "mouse") {
+        draw_right_mouse(ctx, 400, 400, 83, 125, this.color)
+        ctx.fillText("USE ULTIMATE", 400, 500)
+      } else {
+        draw_rounded_rect(ctx, 400, 400, 55, 55, 10, "white")
+        ctx.fillText("E", 400, 406)
+        ctx.fillText("USE ULTIMATE", 400, 470)
+      }
+      
+      ctx.globalAlpha *= 0.5
+      ctx.font = '12px Muli'
+      ctx.fillText("THE ULTIMATE IS A WEAPON OF LAST RESORT", 400, 550)
+    }    
+    if(this.cur_page == 10) {
+      ctx.globalAlpha /= 2
+      drawSprite(ctx, 400, 450, 0, 35, 35, "lives_icon")
+      drawSprite(ctx,400, 450 , 0, 300, 300, "ultimate_icon")
+      ctx.globalAlpha *= 2
+      ctx.font = '20px Muli'
+      ctx.textAlign = "center"
+      ctx.fillStyle = this.color
+      ctx.shadowBlur = 0
+      ctx.fillText("ULTIMATE WILL BLOW AWAY ALL ENEMIES", 400, 370)
+      ctx.fillText("IN A MODERATE DISTANCE AROUND YOU", 400, 400)
+      ctx.fillText("ENEMIES KILLED BY ULTIMATE DO NOT GIVE POINTS", 400, 450)
+      ctx.fillText("WHILE ULTIMATE IS ACTIVE", 400, 500)
+      ctx.fillText("YOU WILL TEMPORARILY BECOME HEAVIER", 400, 530)
 
-  if(this.cur_page == 9) {
+    }    
+    if(this.cur_page == 11) {
+      ctx.globalAlpha /= 2
+      drawSprite(ctx, 400, 450, 0, 35, 35, "lives_icon")
+      drawSprite(ctx,400, 450 , 0, 300, 300, "ultimate_icon")
+      ctx.globalAlpha *= 2
+      ctx.font = '20px Muli'
+      ctx.textAlign = "center"
+      ctx.fillStyle = this.color
+      ctx.shadowBlur = 0
+      ctx.fillText("YOU HAVE A LIMITED NUMBER OF", 400, 395)
+      ctx.fillText("ULTIMATES PER CONTINUE (CURRENTLY "+this.ult_num+")", 400, 425)
+      ctx.fillText("IF YOU DIE AFTER USING ULTIMATE", 400, 475)
+      ctx.fillText("IT IS REFUNDED", 400, 505)
+    }
+  }
+
+  if(this.cur_page == 9 + this.ult_page_offset) {
     ctx.font = '20px Muli'
     ctx.fillStyle = "white"
     draw_rounded_rect(ctx, 250, 406, 55, 55, 10, "white")
@@ -429,7 +483,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
   }
 
-  if(this.cur_page == 10) {
+  if(this.cur_page == 10+ this.ult_page_offset) {
     for(var i=0; i < this.special_buttons.length; i++) {
       this.special_buttons[i].draw(ctx)
     }
@@ -448,7 +502,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillText("CAN BE CHANGED IN MAIN MENU OPTIONS", 400, 520)
   }
 
-  if(this.cur_page == 11) {
+  if(this.cur_page == 11+ this.ult_page_offset) {
 
     this.exit_button.draw(ctx)
 
@@ -580,12 +634,12 @@ HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
 
 HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
-    if(this.cur_page == 10) {
+    if(this.cur_page == 10+ this.ult_page_offset) {
       for(var i=0; i < this.special_buttons.length; i++) {
         this.special_buttons[i].on_mouse_move(x - imp_vars.sidebarWidth, y)
       }
     }
-    if(this.cur_page == 11) {
+    if(this.cur_page == 11+ this.ult_page_offset) {
       this.exit_button.on_mouse_move(x - imp_vars.sidebarWidth, y)
     }
     this.player.mouseMove(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
@@ -630,21 +684,22 @@ HowToPlayState.prototype.setPage = function(page) {
 }
 
 HowToPlayState.prototype.on_mouse_down = function(x, y) {
+  console.log(x+" "+ y)
 
   if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
     return
   }
   if(!this.pause && this.ready && this.zoom == 1) {
 
-    if(x > imp_vars.sidebarWidth && (x < imp_vars.canvasWidth - imp_vars.sidebarWidth && y > 400 || (this.cur_page == 10 && y > 350))) {
+    if(x > imp_vars.sidebarWidth && (x < imp_vars.canvasWidth - imp_vars.sidebarWidth && y > 400 || (this.cur_page == 10 + this.ult_page_offset && y > 350))) {
 
-      if(this.cur_page == 10) {
+      if(this.cur_page == 10+ this.ult_page_offset) {
         for(var i=0; i < this.special_buttons.length; i++) {
           this.special_buttons[i].on_click(x - imp_vars.sidebarWidth, y)
         }
       }
 
-      if(this.cur_page == 11) {
+      if(this.cur_page == 11+ this.ult_page_offset) {
         this.exit_button.on_click(x - imp_vars.sidebarWidth, y)
       }
 
@@ -686,7 +741,7 @@ HowToPlayState.prototype.game_over = function() {
 
     this.fade_state = "in"
     this.ready = true
-    this.hive_numbers = new HiveNumbers(this.world_num)
+    this.hive_numbers = new HiveNumbers(this.world_num, false)
     this.level.reset()
     this.reset()
     this.make_player()

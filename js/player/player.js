@@ -60,6 +60,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.iright = null
   this.idown = null
   this.iup = null
+  this.iultimate = null
   this.impulse_angle = 0
 
   this.enemies_hit = [] //stores ids of enemies hit
@@ -126,6 +127,7 @@ Player.prototype.keyDown = function(keyCode) {
       this.iright = null
       this.iup = null
       this.idown = null
+      this.iultimate - null
       break
     case imp_params.keys.ILEFT_KEY:
       this.ileft = (new Date()).getTime()
@@ -138,6 +140,9 @@ Player.prototype.keyDown = function(keyCode) {
       break;
     case imp_params.keys.IDOWN_KEY:
       this.idown = (new Date()).getTime()
+      break;
+    case imp_params.keys.ULTIMATE_KEY:
+      this.iultimate = (new Date()).getTime()
       break;
   }
 }
@@ -169,6 +174,9 @@ Player.prototype.keyUp = function(keyCode) {
     case imp_params.keys.IDOWN_KEY:
       this.idown = null
       break;
+    case imp_params.keys.ULTIMATE_KEY:
+      this.iultimate = null
+    break
     case imp_params.keys.PAUSE_KEY:
       this.up = false
       this.down = false
@@ -178,6 +186,7 @@ Player.prototype.keyUp = function(keyCode) {
       this.iright = null
       this.iup = null
       this.idown = null
+      this.iultimate = null
       break
   }
 }
@@ -346,16 +355,12 @@ Player.prototype.process = function(dt) {
       imp_vars.impulse_music.play_sound("impulse")
     }
     if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
-      if((this.impulse_game_state.hive_numbers && this.impulse_game_state.hive_numbers.ultimates > 0) || (this.impulse_game_state.temp_ultimates > 0)) {
+      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
         this.ultimate = true
         this.ultimate_loc = this.body.GetPosition().Copy()
         this.ultimate_duration = this.ultimate_length
         this.bulk(this.ultimate_length)
-        if(this.impulse_game_state.hive_numbers) {
-          this.impulse_game_state.hive_numbers.ultimates -= 1
-        } else {
-          this.impulse_game_state.temp_ultimates -= 1
-        }
+        this.impulse_game_state.hive_numbers.ultimates -= 1
       }
       
     }
@@ -403,6 +408,15 @@ Player.prototype.process = function(dt) {
         this.attack_loc = this.body.GetPosition().Copy()
         this.attack_duration = this.attack_length
         imp_vars.impulse_music.play_sound("impulse")
+      }
+    }
+    if(!this.ultimate) {
+      if(this.iultimate != null && this.impulse_game_state.hive_numbers.ultimates > 0) {
+        this.ultimate = true
+        this.ultimate_loc = this.body.GetPosition().Copy()
+        this.ultimate_duration = this.ultimate_length
+        this.bulk(this.ultimate_length)
+        this.impulse_game_state.hive_numbers.ultimates -= 1
       }
     }
 
