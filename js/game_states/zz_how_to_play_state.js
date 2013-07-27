@@ -3,13 +3,13 @@ HowToPlayState.prototype = new ImpulseGameState
 HowToPlayState.prototype.constructor = HowToPlayState
 
 function HowToPlayState() {
-  this.hive_numbers = new HiveNumbers(this.world_num, false)
   this.init(0, null, null, true, this.hive_numbers, false)
   this.ready = false
   this.level = this.load_level(imp_params.impulse_level_data["HOW TO PLAY"])
   this.level.no_spawn = true
   this.level.check_enemy_spawn_timers = this.check_enemy_spawn_timers
   this.slide_num = 0
+  this.hive_numbers = new HiveNumbers(0, false)
 
 }
 

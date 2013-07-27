@@ -2,6 +2,8 @@ var Enemy = function(world, x, y, id, impulse_game_state) {
   //empty constructor since Enemy should not be constructed
 }
 
+Enemy.prototype.enemy_canvas_factor = 1.5
+
 Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set this.type before calling init
 
@@ -73,7 +75,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     var fixDef = new b2FixtureDef;//make the shape
     fixDef.density = this.density;
     fixDef.friction = 0;
-    fixDef.restitution = 1.0;
+    fixDef.restitution = 0.7;
     fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : imp_params.ENEMY_BIT
     fixDef.filter.maskBits = this.maskBits ? this.maskBits : imp_params.ENEMY_BIT | imp_params.PLAYER_BIT | imp_params.BOSS_BITS
     fixDef.shape = this_shape
@@ -349,7 +351,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 Enemy.prototype.adjust_position = function() {
   this.adjust_position_counter += 1
 
-  if(!this.adjust_position_enabled) return
+  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank")) return
   if(this.adjust_position_counter > this.adjust_position_freq) {
     this.adjust_position_counter = 0
 
@@ -594,7 +596,7 @@ Enemy.prototype.collide_with = function(other) {
       this.start_death("hit_player")
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
-        if(!this.level.is_boss_level && this.status_duration[1] <= 0) {
+        if(!this.level.is_boss_level) {
           this.impulse_game_state.reset_combo()
         }
       }
@@ -659,7 +661,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.rotate(this.body.GetAngle());
     /*context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);*/
   //}
-  var latest_color = this.get_current_color_with_status()
+  //var latest_color = this.get_current_color_with_status()
 
   var size = this.level.enemy_images[this.image_enemy_type]["normal"].height;
   if (this.dying)
@@ -706,7 +708,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   }*/
 
 
-  this.additional_drawing(context, draw_factor, latest_color)
+  this.additional_drawing(context, draw_factor)
 
   // for(var k = 0; k < this.shapes.length; k++) {
 
@@ -1049,8 +1051,8 @@ Enemy.prototype.generate_images = function() {
   for(index in this.statuses) {
     var status = this.statuses[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
-    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
+    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1063,8 +1065,8 @@ Enemy.prototype.generate_images = function() {
   for(index in this.additional_statuses) {
     var status = this.additional_statuses[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
-    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
+    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1079,7 +1081,8 @@ Enemy.prototype.generate_images = function() {
 Enemy.prototype.draw_enemy_image = function(context, state) {
 
   context.save()
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius, y: imp_params.impulse_enemy_stats[this.type].effective_radius}
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * this.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * this.enemy_canvas_factor}
+  context.shadowBlur = 0
   for(var k = 0; k < this.shapes.length; k++) {
 
     if(this.shape_polygons[k].visible === false) continue
@@ -1105,9 +1108,9 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
     }
     context.closePath()
 
-    if (!this.interior_color ) {
+    /*if (!this.interior_color ) {
       context.globalAlpha *= 0.7;
-    }
+    }*/
 
     context.fillStyle =cur_color
 
@@ -1115,19 +1118,21 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
       context.fillStyle = this.interior_color
     }
 
+    context.fillStyle = "black"
+
     if(state != "lighten")
       context.fill()
 
     // revert transparency
-    if (!this.interior_color ) {
+    /*if (!this.interior_color ) {
       context.globalAlpha /= 0.7;
-    }
+    }*/
 
 
     if(this.interior_color && state == "normal")
       context.strokeStyle = cur_color
     else
-      context.strokeStyle = context.fillStyle
+      context.strokeStyle = cur_color//context.fillStyle
 
 
     context.lineWidth = this.dying ? (1 - prog) * 2 : 2

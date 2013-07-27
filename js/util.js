@@ -529,7 +529,7 @@ function create_body(world, polygons, x, y, lin_damp, density, categoryBits, mas
     var fixDef = new b2FixtureDef;//make the shape
     fixDef.density = density;
     fixDef.friction = 0;
-    fixDef.restitution = 1.0;
+    fixDef.restitution = 0.7;
     fixDef.filter.categoryBits = categoryBits
     fixDef.filter.maskBits = maskBits
     fixDef.shape = this_shape
@@ -542,7 +542,7 @@ function create_body(world, polygons, x, y, lin_damp, density, categoryBits, mas
 }
 
 function calculate_current_rating() {
-  return Math.max(calculate_rating_for_difficulty_mode("easy")/4, calculate_rating_for_difficulty_mode("normal"))
+  return Math.floor(Math.max(calculate_rating_for_difficulty_mode("easy")/4, calculate_rating_for_difficulty_mode("normal")))
 }
 
 function calculate_rating_for_difficulty_mode(difficulty) {
@@ -629,9 +629,10 @@ function update_high_score_for_level(level, score, difficulty) {
   {
     stars+=1
   }
-  imp_params.impulse_level_data[level].save_state[difficulty].stars = stars
+  
   ans.stars = stars
   if(ans.high_score) {
+    imp_params.impulse_level_data[level].save_state[difficulty].stars = stars
     save_game()
   }
   return ans

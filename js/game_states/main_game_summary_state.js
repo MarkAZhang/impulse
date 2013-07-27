@@ -23,6 +23,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   this.just_saved = just_saved
   this.save_screen = save_screen
+
   this.buttons = []
   this.bg_drawn = false
   this.hive_numbers = hive_numbers
@@ -33,7 +34,10 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.has_ult = has_ult()
 
   if(save_screen) {
-    this.hive_numbers = imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode]
+    this.hive_numbers = HiveNumbers.prototype.clone(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode])
+
+    this.hive_numbers.adjust_values()
+    save_game()
     this.world_num = this.hive_numbers.world
     this.victory = null
   }

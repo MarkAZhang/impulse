@@ -25,6 +25,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.color = impulse_colors["world "+this.level_intro_state.world_num]
   this.dark_color = impulse_colors["world "+this.level_intro_state.world_num+" dark"]
   this.lite_color = impulse_colors["world "+this.level_intro_state.world_num+" lite"]
+  this.bright_color = impulse_colors["world "+this.level_intro_state.world_num+" bright"]
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
@@ -505,9 +506,7 @@ Level.prototype.draw = function(context, draw_factor) {
   }
   //context.globalAlpha = this.obstacle_visibility
 
-  for(var i = 0; i < this.enemies.length; i++) {
-    this.enemies[i].draw(context, draw_factor)
-  }
+
 
 
   for(var type in this.bulk_draw_enemies) {
@@ -529,6 +528,9 @@ Level.prototype.draw = function(context, draw_factor) {
       }
     }
 
+  }
+  for(var i = 0; i < this.enemies.length; i++) {
+    this.enemies[i].draw(context, draw_factor)
   }
 
 

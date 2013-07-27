@@ -9,8 +9,8 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.enemy_init(world, x, y, id, impulse_game_state)
   this.spawn_interval = 1000
   this.impulse_extra_factor = 10
-  //if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
-    //this.spawn_interval = 6600
+  if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
+    this.spawn_interval = 6600
 
   this.spawn_duration = this.spawn_interval
 

@@ -324,15 +324,6 @@ RewardGameState.prototype.determine_rewards = function() {
     }
   }
 
-   this.rewards.push({
-        type: "ult_tutorial"
-      })
-      this.rewards.push({
-        type: "ult_tutorial_notice"
-      })
-
-
-
   if(calculate_spark_val(this.hive_numbers.original_rating) < calculate_spark_val()) {
     var diff = calculate_spark_val() - calculate_spark_val(this.hive_numbers.original_rating)
     var new_spark_val = calculate_spark_val()

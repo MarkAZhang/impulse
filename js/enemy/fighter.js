@@ -190,7 +190,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     var loaded_prop = Math.max((cur_interval - this.shoot_duration)/(cur_interval), 0)
 
     draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
-      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color , loaded_prop, this.body.GetAngle())
 
     context.save()
     context.globalAlpha *= loaded_prop

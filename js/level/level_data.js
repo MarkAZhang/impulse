@@ -201,15 +201,15 @@ imp_params.impulse_level_data['BOSS 1'] = {
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
   player_loc: {x: 400, y: 550},
-  defeat_time: 45
+  defeat_time: 40
 
 }
 
 imp_params.impulse_level_data['HIVE 2-1'] = {
   enemies: {
-              "stunner": [1, 3, 1, 3, 15],
+              "stunner": [1, 4, 1, 2, 15],
               "tank": [8, 8, 1, 1, 15],
-              "mote": [6, 6, 1, 3, 25]
+              "mote": [6, 6, 1.5, 2, 25]
            },
            initial_spawn_data: {
     "mote": 4,
@@ -256,8 +256,8 @@ imp_params.impulse_level_data['HIVE 2-2'] = {
 
 imp_params.impulse_level_data['HIVE 2-3'] = {
   enemies: {
-              "spear": [4, 7, 3, 4, 30],
-              "tank": [7, 7, 4, 4, 30],
+              "spear": [4, 7, 3, 3, 30],
+              "tank": [7, 7, 4, 3, 30],
               "goo": [10, 10, 1, 0, 1],
            },
   dominant_enemy: "goo",
@@ -268,6 +268,7 @@ imp_params.impulse_level_data['HIVE 2-3'] = {
   buffer_radius: 1,
    initial_spawn_data: {
     "tank": 4,
+    "spear": 3,
     "goo": 1
  },
   cutoff_scores: {

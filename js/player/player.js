@@ -774,9 +774,23 @@ Player.prototype.draw = function(context) {
 }
 
 Player.prototype.draw_player_sprite = function(ctx, name) {
+  /*ctx.beginPath()
+
+  ctx.strokeStyle = impulse_colors["impulse_blue"]
+  ctx.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.shape.GetRadius() * imp_vars.draw_factor, 0, 2 * Math.PI)
+  ctx.shadowBlur = 20
+  ctx.shadowColor = impulse_colors["impulse_blue"]
+  ctx.fillStyle = "black"
+  ctx.fill()
+  ctx.lineWidth = 3
+  ctx.stroke()
+  return*/
+
+  
+
     var lighten_factor = this.get_lighten_factor()
 
-    drawSprite(ctx, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_vars.draw_factor * 6 * lighten_factor, this.shape.GetRadius() * imp_vars.draw_factor * 6 * lighten_factor, name)
+    drawSprite(ctx, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, name)
 
 }
 

@@ -694,13 +694,15 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
   }
   context.font = size+'px Muli'
   context.fillStyle = impulse_colors["impulse_blue"]
-  context.shadowBlur = 10
-  context.shadowColor = context.fillStyle
-  drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.5 * size, 1.5 * size, "lives_icon")
+  context.shadowBlur = 0
+  
+  drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.3 * size, 1.3 * size, "lives_icon")
   if(args.starting_values)
     drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "spark")
   else 
     drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
+  context.shadowBlur = 10
+  context.shadowColor = context.fillStyle
   context.textAlign = 'center'
   context.fillText(lives, x - size * 1.8 + x_offset , y + size * 1.6)
    if(args.starting_values)
@@ -723,7 +725,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
   if(args.ult) {
     context.fillStyle = "white"
     context.shadowColor = context.fillStyle
-    drawSprite(context, x + size * 1.8 , y, 0, 1.5 * size, 1.5 * size, "ultimate_icon")
+    drawSprite(context, x + size * 1.8 , y, 0, 1.7 * size, 1.7 * size, "ultimate_icon")
     context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
   }
 
@@ -832,16 +834,17 @@ playerSprite = loadSprite("art/sprites.png")
 
 spriteSheetData = {
   //x, y, w, h
-  "player_normal": [60, 0, 60, 60],
-  "player_red": [0, 0, 60, 60],
-  "player_yellow": [120, 0, 60, 60],
-  "player_gray": [180, 0, 60, 60],
-  "player_green": [240, 0, 60, 60],
+  //"player_normal": [60, 0, 60, 60],
+  "player_normal": [0, 0, 41, 41],
+  "player_red": [40, 0, 41, 41],
+  "player_yellow": [80, 0, 41, 41],
+  "player_gray": [120, 0, 41, 41],
+  "player_green": [160, 0, 41, 41],
   "spark": [0, 60, 30, 30],
   "multi": [30, 60, 30, 30],
   "white_glow": [100, 80, 100, 100],
   "world_logo": [200, 80, 100, 100],
-  "lives_icon": [0, 90, 35, 35],
+  "lives_icon": [0, 0, 41, 41],
   "sparks_icon": [35, 90, 35, 35],
   "ultimate_icon": [0, 125, 35, 35],
 

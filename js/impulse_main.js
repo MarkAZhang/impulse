@@ -479,9 +479,22 @@ function load_level_data(difficulty_level, load_obj) {
       imp_params.impulse_level_data[i].save_state[difficulty_level] = {}
       if(load_obj['levels'].hasOwnProperty(i) && load_obj['levels'][i]["save_state"] && load_obj['levels'][i]["save_state"][difficulty_level] ) {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = load_obj['levels'][i]["save_state"][difficulty_level]["high_score"]
-        imp_params.impulse_level_data[i].save_state[difficulty_level].stars = load_obj['levels'][i]["save_state"][difficulty_level]["stars"]
         imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i]["save_state"][difficulty_level]["seen"]
         imp_params.impulse_level_data[i].save_state[difficulty_level].best_time = load_obj['levels'][i]["save_state"][difficulty_level]["best_time"]
+
+        
+        
+        if(i.slice(0, 4) == "HIVE") {
+          var stars = 0  
+          while(imp_params.impulse_level_data[i].save_state[difficulty_level].high_score >= imp_params.impulse_level_data[i].cutoff_scores[difficulty_level][stars])
+          {
+            stars+=1
+          }
+          imp_params.impulse_level_data[i].save_state[difficulty_level].stars = stars
+         } else {
+          imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 3
+         }
+        
       }
       else {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = 0
@@ -525,7 +538,6 @@ function save_level_data(difficulty_level, save_obj) {
       save_obj['levels'][i]["save_state"][difficulty_level] = {}
       save_obj['levels'][i]["save_state"][difficulty_level]["high_score"] = imp_params.impulse_level_data[i].save_state[difficulty_level].high_score
       save_obj['levels'][i]["save_state"][difficulty_level]["best_time"] = imp_params.impulse_level_data[i].save_state[difficulty_level].best_time
-      save_obj['levels'][i]["save_state"][difficulty_level]["stars"] = imp_params.impulse_level_data[i].save_state[difficulty_level].stars
       save_obj['levels'][i]["save_state"][difficulty_level]["seen"] = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
     }
   }

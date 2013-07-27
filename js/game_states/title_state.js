@@ -175,6 +175,7 @@ TitleState.prototype.clear_data = function() {
   var old_player_options = imp_vars.player_data.options
   load_game();
   this.cur_rating = calculate_current_rating()
+  this.next_upgrade = calculate_next_upgrade()
   imp_vars.player_data.options = old_player_options
   imp_vars.player_data.first_time = false
   save_game();

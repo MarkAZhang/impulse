@@ -1,5 +1,7 @@
 var HiveNumbers = function(world_num, main_game) {
 
+  if(world_num === undefined)return
+
   this.lives = calculate_lives()
   this.sparks = 0
   this.ultimates = calculate_ult()
@@ -16,6 +18,9 @@ var HiveNumbers = function(world_num, main_game) {
   this.last_sparks = 0
   this.last_ultimates = this.ultimates
 
+  this.life_max = calculate_lives()
+  this.ult_max = calculate_ult()
+
   this.current_level = null
 
   this.game_numbers = {}
@@ -24,6 +29,23 @@ var HiveNumbers = function(world_num, main_game) {
   this.boss_name = imp_params.tessellation_names[world_num]
 
   this.original_rating = calculate_current_rating()
+}
+
+HiveNumbers.prototype.clone = function(object) {
+  var new_hive_numbers = new HiveNumbers()
+
+  for(var i in object) {
+    new_hive_numbers[i] = object[i]
+  }
+  return new_hive_numbers
+}
+
+HiveNumbers.prototype.adjust_values = function() {
+  this.lives += (calculate_lives() - this.life_max)
+  this.ultimates += (calculate_ult() - this.ult_max)
+  this.spark_val = calculate_spark_val()
+  this.life_max = calculate_lives()
+  this.ult_max = calculate_ult()
 }
 
 HiveNumbers.prototype.continue = function() {

@@ -287,9 +287,9 @@ Tank.prototype.get_additional_current_status = function() {
 
 Tank.prototype.draw_enemy_image_additional = function(context, color) {
   context.strokeStyle = color
-  context.lineWidth = 4;
+  context.lineWidth = 3;
   var this_angle = Math.PI/4
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius *imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius*imp_vars.draw_factor}
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor}
 
   context.beginPath()
 
