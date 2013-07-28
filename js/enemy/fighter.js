@@ -4,12 +4,13 @@ Fighter.prototype.constructor = Fighter
 
 function Fighter(world, x, y, id, impulse_game_state) {
 
-  if(!world) return
+  if(world === undefined) return
 
   this.type = "fighter"
 
   this.init(world, x, y, id, impulse_game_state)
-
+  this.additional_statuses = ["frenzy"]
+  if(world === null) return
   this.death_radius = 5
 
   this.shoot_interval = 1500
@@ -53,7 +54,6 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.tank_force = 100 //force that the fighter impulses the player
   this.cautious = false
 
-  this.additional_statuses = ["frenzy"]
 
 }
 
@@ -189,8 +189,15 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     var cur_interval = (this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval)
     var loaded_prop = Math.max((cur_interval - this.shoot_duration)/(cur_interval), 0)
 
-    draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
-      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color , loaded_prop, this.body.GetAngle())
+    context.save()
+    context.globalAlpha *= loaded_prop
+    draw_enemy(context, "fighter_bullet", cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())   
+//function draw_enemy(context, enemy_name, x, y, d, rotate) {
+
+    context.restore()
+
+    //draw_shape(context, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor,
+      //imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color , loaded_prop, this.body.GetAngle())
 
     context.save()
     context.globalAlpha *= loaded_prop
@@ -338,3 +345,22 @@ Fighter.prototype.process_hit = function() {
   }
   this.frenzy_charge_timer = this.frenzy_charge_interval
 }
+
+/*Fighter.prototype.draw_enemy_image_additional = function(context, color) {
+  context.strokeStyle = color
+  context.lineWidth = 2;
+  //var this_angle = Math.PI/4
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor}
+  var vertices = [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 1/2) + 0.3, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 3/2) + 0.3, Math.sin(Math.PI * 7/4) * 1.1],
+  [Math.cos(Math.PI * 7/4) + 0.3, Math.sin(Math.PI * 7/4) * 1.1]]
+  context.beginPath()
+  context.moveTo(tp.x + vertices[0][0] * imp_vars.draw_factor * 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[0][1] * imp_vars.draw_factor* 0.7)
+  context.lineTo(tp.x + vertices[1][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[1][1] * imp_vars.draw_factor* 0.7)
+  context.lineTo(tp.x + vertices[2][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[2][1] * imp_vars.draw_factor* 0.7)
+  context.lineTo(tp.x + vertices[3][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[3][1] * imp_vars.draw_factor* 0.7)
+  context.closePath()
+  context.fillStyle = color
+  context.fill()
+}*/

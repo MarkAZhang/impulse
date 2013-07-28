@@ -8,6 +8,8 @@ function Stunner(world, x, y, id, impulse_game_state) {
 
   this.init(world, x, y, id, impulse_game_state)
 
+  if(!impulse_game_state) return
+
   this.do_yield = false
 
   if(this.impulse_game_state.level.level_name == "HIVE 1-1" || this.impulse_game_state.level.level_name == "HIVE 1-2") {

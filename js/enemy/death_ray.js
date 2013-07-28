@@ -3,10 +3,11 @@ DeathRay.prototype = new Enemy()
 DeathRay.prototype.constructor = DeathRay
 
 function DeathRay(world, x, y, id, impulse_game_state) {
-  if(!world) return
+  if(world === undefined) return
   this.type = "deathray"
 
   this.init(world, x, y, id, impulse_game_state)
+  if(world === null) return
 
   this.special_mode = false
 

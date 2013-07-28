@@ -3,12 +3,12 @@ FighterBullet.prototype = new Enemy()
 FighterBullet.prototype.constructor = FighterBullet
 
 function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
-
-  if(!world) return
+  if(world === undefined) return
   this.type = "fighter_bullet"
 
   this.init(world, x, y, id, impulse_game_state)
 
+  if(world === null) return
   this.special_mode = false
 
   this.death_radius = 5

@@ -6,6 +6,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.type = "orbiter"
 
   this.init(world, x, y, id, impulse_game_state)
+  if(!impulse_game_state) return
 
   this.special_mode = false
 

@@ -101,20 +101,30 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 
 
 function draw_enemy(context, enemy_name, x, y, d, rotate) {
+  // if d == null, will draw at default size
 
+  if(enemy_name.slice(enemy_name.length - 4) == "boss") return
   context.save()
+  context.translate(x, y);
   if(rotate) {
-    context.translate(x, y);
     context.rotate(rotate);
-    context.translate(-x, -y);
   }
+  var max_radius = 1.5
+  var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
+  if(d == null) {
+    var draw_scale = size/2
+  } else {
+    //var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
+    var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)  
+  }
+  
 
-
-  var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
-   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
-      draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
-   }
-   for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
+  if(enemy_name.slice(enemy_name.length - 4) == "boss") {
+     //draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
+  }   
+  context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images["normal"], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
+ 
+   /*for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
       if(imp_params.impulse_enemy_stats[enemy_name].interior_color) {
         draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, imp_params.impulse_enemy_stats[enemy_name].interior_color)  
@@ -122,14 +132,14 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
         draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)  
       }
       
-    }
+    }*/
     if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
-        if(imp_params.impulse_enemy_stats[enemy_name].interior_color) {
-          draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, imp_params.impulse_enemy_stats[enemy_name].interior_color)  
+        if(!this_shape.colored) {
+          draw_shape(context, 0, 0, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, "black")  
         } else {
-          draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)  
+          draw_shape(context, 0, 0, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)  
         }
       }
     }
@@ -538,15 +548,15 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_
   context.globalAlpha *= alpha
   
   context.fillStyle = color
-  if(interior_color) {
+  if(interior_color && interior_color != "none") {
     context.fillStyle = interior_color  
   } else {
-    context.globalAlpha /= 2
+    context.globalAlpha /= 3
   }
-
-  context.fill()
-  if(!interior_color)
-    context.globalAlpha *= 2
+  if(interior_color != "none")
+    context.fill()
+  if(!interior_color || interior_color == "none")
+    context.globalAlpha *= 3
   context.strokeStyle = color
   context.lineWidth = 2
   context.stroke()

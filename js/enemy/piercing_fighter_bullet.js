@@ -7,6 +7,8 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
 
   this.init(world, x, y, id, impulse_game_state)
 
+  if(world === null) return
+
   this.special_mode = false
 
   this.death_radius = 5

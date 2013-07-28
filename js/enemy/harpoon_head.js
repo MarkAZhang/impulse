@@ -3,6 +3,8 @@ HarpoonHead.prototype = new Enemy()
 HarpoonHead.prototype.constructor = HarpoonHead
 
 function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
+  
+  if(world === undefined) return
 
   this.harpoon = harpoon
 
@@ -12,7 +14,6 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
 
   this.require_open = false
 
-  this.additional_statuses = ["unharpoonable"]
 
 }
 

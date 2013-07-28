@@ -7,7 +7,7 @@ Goo.prototype.goo_color = [238, 232, 170]//[255, 255, 120]
 Goo.prototype.goo_color_rgb = "rgb(238, 232, 170)"
 
 function Goo(world, x, y, id, impulse_game_state) {
-  if(world == null) return  //allows others to use Goo as super-class
+  if(world === undefined) return  //allows others to use Goo as super-class
   this.type = "goo"
   this.init(world, x, y, id, impulse_game_state)
 

@@ -11,8 +11,10 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.impulse_game_state = impulse_game_state
   this.image_enemy_type = this.type
-  this.level = impulse_game_state.level
-  this.player = impulse_game_state.player
+  if(impulse_game_state) {
+    this.level = impulse_game_state.level
+    this.player = impulse_game_state.player
+  }
   this.world = world
   for(i in imp_params.impulse_enemy_stats[this.type]) {
     this[i] = imp_params.impulse_enemy_stats[this.type][i]
@@ -47,7 +49,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   if(!bodyDef.fixedRotation) {
     bodyDef.angularDamping = 50
   }
-  this.body = world.CreateBody(bodyDef)
+  if(world) {
+    this.body = world.CreateBody(bodyDef)
+  }
 
   this.shapes = []
   this.shape_points = []
@@ -79,7 +83,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     fixDef.filter.categoryBits = this.categoryBits ? this.categoryBits : imp_params.ENEMY_BIT
     fixDef.filter.maskBits = this.maskBits ? this.maskBits : imp_params.ENEMY_BIT | imp_params.PLAYER_BIT | imp_params.BOSS_BITS
     fixDef.shape = this_shape
-    this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
+    if(this.body)
+      this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
     this.shapes.push(this_shape)
     if(this_shape instanceof b2PolygonShape)
       this.shape_points.push(this_shape.m_vertices)
@@ -663,7 +668,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   //}
   //var latest_color = this.get_current_color_with_status()
 
-  var size = this.level.enemy_images[this.image_enemy_type]["normal"].height;
+  var size = imp_params.impulse_enemy_stats[this.type].images["normal"].height;
   if (this.dying)
     context.globalAlpha *= (1 - prog)
   else
@@ -690,10 +695,10 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
-  context.drawImage( this.level.enemy_images[this.image_enemy_type][this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+  context.drawImage(imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
   if(this.status_duration[3] > 0) {
-    context.drawImage( this.level.enemy_images[this.image_enemy_type]["lighten"], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+    context.drawImage( imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
   }
   context.restore()
   /*if(this.adjust_position_polygon) {
@@ -1144,6 +1149,7 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
     }
     context.stroke()
 
+
     // give enemies a tiny of the level color
     /*context.strokeStyle = this.level.color;
     context.fillStyle = this.level.color;
@@ -1171,6 +1177,20 @@ Enemy.prototype.draw_enemy_image = function(context, state) {
       context.stroke()
     }*/
   }
+
+  if(this.erase_lines) {
+    context.beginPath()
+
+    for(var i = 0; i < this.erase_lines.length; i++) {
+      context.moveTo((tp.x+this.erase_lines[i][0][0])*imp_vars.draw_factor, (tp.y+this.erase_lines[i][0][1])*imp_vars.draw_factor)
+      context.lineTo((tp.x+this.erase_lines[i][1][0])*imp_vars.draw_factor, (tp.y+this.erase_lines[i][1][1])*imp_vars.draw_factor)
+    }
+    context.strokeStyle = "black"
+    context.lineWidth = this.dying ? (1 - prog) * 3 : 3
+    context.globalAlpha = 1
+    context.stroke()  
+  }
+  
 
   context.restore()
 

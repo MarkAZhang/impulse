@@ -78,6 +78,7 @@ window["impulse_main"] =  function() {
 
     centerCanvas()
     load_game()
+    set_up_enemy_images()
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
     if(imp_vars.player_data.first_time) {

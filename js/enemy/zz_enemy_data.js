@@ -8,6 +8,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   force: .4,
   score_value: 100,
   attack_rating: 1,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
@@ -30,6 +31,7 @@ imp_params.impulse_enemy_stats["spear"] = {
   force: .2,
   score_value: 500,
   attack_rating: 7,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 5/6), Math.sin(Math.PI * 5/6)],
@@ -57,12 +59,13 @@ imp_params.impulse_enemy_stats["tank"] = {
   force: 1.25,
   score_value: 1000,
   attack_rating: 8,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
-  extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  /*extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 3/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 3/4) * 0.05],
   [Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 7/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 7/4) * 0.05],
   [Math.cos(Math.PI * 5/4)/Math.sqrt(2)+Math.cos(Math.PI * 7/4) * 0.05, Math.sin(Math.PI * 5/4)/Math.sqrt(2)+Math.sin(Math.PI * 7/4) * 0.05],
@@ -71,7 +74,7 @@ imp_params.impulse_enemy_stats["tank"] = {
   [[Math.cos(Math.PI * 3/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 3/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05],
   [Math.cos(Math.PI * 3/4)/Math.sqrt(2)+Math.cos(Math.PI * 1/4) * 0.05, Math.sin(Math.PI * 3/4)/Math.sqrt(2)+Math.sin(Math.PI * 1/4) * 0.05],
   [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 1/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 1/4) * 0.05],
-  [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05]]}],
+  [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05]]}],*/
 
   dies_on_impact: "YES",
 
@@ -95,6 +98,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   force: .15,
   score_value: 1000,
   attack_rating: .5,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -117,6 +121,7 @@ imp_params.impulse_enemy_stats["goo"] = {
   force: 3,
   score_value: 3000,
   attack_rating: .25,
+  batch_enemy_image: true,
   /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
@@ -130,7 +135,7 @@ imp_params.impulse_enemy_stats["goo"] = {
   /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
   {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
-  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1}],
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1.3, colored: true}],
   dies_on_impact: "YES",
   enemy_info: [
     "All units within its area of influence are slowed",
@@ -142,121 +147,67 @@ imp_params.impulse_enemy_stats["goo"] = {
 
 }
 
-imp_params.impulse_enemy_stats["disabler"] = {
-  color: "#ccc",
-  //interior_color: "rgb(205, 201, 201)",
-  density: 8,
-  lin_damp: 9,
-  effective_radius: .5,
-  force: 4,
-  score_value: 5000,
-  attack_rating: .25,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 3/3), Math.sin(Math.PI * 3/3)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}
-    ],
-  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1}],
-  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
-    [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
-  [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
-  dies_on_impact: "YES",
+imp_params.impulse_enemy_stats["harpoon"] = {
+  color: "#00aa00",
+  density: 5,
+  lin_damp: 6,
+  effective_radius: .7,
+  force: 3.5,
+  score_value: 3000,
+  attack_rating: 6,
+  batch_enemy_image: true,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
+  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
+  ]}],
+  extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, colored: false, vertices:
+  [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
+  [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
+  dies_on_impact: "NO",
   enemy_info: [
-    "All units within its area of effect (AOE) lose all special powers # # Specifically, you cannot Impulse",
-    "All enemies within its AOE die upon collision, even those that do not normally",
-    "Colliding with an enemy within its AOE # (excluding the disabler itself) # does not reset your multiplier # # However you do not score points",
-    "Dies upon collision # # Units immediately regain special powers",
-    "When Impulsed, dramatically expands its area of influence for 3 seconds"
-  ],
-  special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
-  other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
-  className: Disabler
-}
-
-/*imp_params.impulse_enemy_stats["crippler"] = {
-  color: "rgb(255, 20, 147)",
-  density: 0.9,
-  lin_damp: 4,
-  effective_radius: 2.5,
-  force: 1.7,
-  score_value: 2000,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2.5, vertices:
-    [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
-  [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
-  description: "Leaves a paralytic trail behind it, causing all entities that enter the trail to be completely stunned (cannot move and no special abilities) until the trail fades. Upon impact, stuns you for a long duration.",
-  className: Crippler
-
-}*/
-
-imp_params.impulse_enemy_stats["troll"] = {
-  color: "#159d31",
-  density: 1,
-  lin_damp: 3,
-  effective_radius: 1,
-  force: 0.2,
-  score_value: 5000,
-  attack_rating: 2,
-  true_name: "pinwheel",
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[0, 0],
-  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)],
-  [Math.sqrt(52)/8 * Math.cos(-0.408), Math.sqrt(52)/8 * Math.sin(-0.408)],
-  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)]]},
-  {type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[0, 0],
-  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)],
-  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*2/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*2/3)],
-  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)]]},
-  {type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[0, 0],
-  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)],
-  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3)],
-  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)]]},
+    "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
+    "The hook range is outlined around the Harpoon",
+    "While the hook is detached from the Harpoon, it cannot move",
+    "When Impulsed, the hook is disabled for 2 seconds",
+    "Can latch onto other enemies and will yank them in",
+    "Will actively try to avoid you # # Does not die on collision",
+    "Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
+    "During boss battles, can fire at any time",
 
   ],
-  enemy_info: [
-    "If Impulsed while active, # reverses your movement and Impulse controls for 1 second",
-    "All Pinwheels become inactive at regular intervals # # Inactive trolls will not reverse you and fly farther when Impulsed",
-    "Upon collision, reverses you for 5 seconds",
-  ],
-  //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
-  dies_on_impact: "YES",
-  special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
-  other_notes: "The troll alternates between active and inactive every second.",
-  className: Troll
+
+  className: Harpoon
 
 }
 
+imp_params.impulse_enemy_stats["harpoonhead"] = {
+  color: "#00dd00",
+  density: 6,
+  lin_damp: 6,
+  effective_radius: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
+  force: 1.5,
+  score_value: 1000,
+  attack_rating: 6,
+  batch_enemy_image: true,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3, vertices:
+  [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]]
+  }],
 
-imp_params.impulse_enemy_stats["wisp"] = {
-  color: "rgb(152, 251, 152)",
-  density: 2,
-  lin_damp: 3,
-  effective_radius: .5,
-  force: .4,
-  score_value: 600,
-  attack_rating: 1,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
-  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
-  dies_on_impact: "YES",
-  special_ability: "Fades in and out of visibility. Upon impact, makes the level obstacles invisible for 5 seconds.",
-  other_notes: "The wisp may also render other things invisible.",
-  className: Wisp
+  dies_on_impact: "NO",
+  special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
+  other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
+  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
+  className: HarpoonHead
 
 }
 
 imp_params.impulse_enemy_stats["fighter"] = {
-  color: "#0000ec",
+  color: "#0000ff",
   density: 2,
   lin_damp: 6,
   effective_radius: 1,
@@ -264,6 +215,7 @@ imp_params.impulse_enemy_stats["fighter"] = {
   score_value: 5000,
   attack_rating: 9,
   true_name: "hunter",
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 3/4) + 0.3, Math.sin(Math.PI * 3/4)],
@@ -304,6 +256,7 @@ imp_params.impulse_enemy_stats["fighter_bullet"] = {
   effective_radius: .3,
   force: 0.4,
   score_value: 0,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -320,6 +273,7 @@ imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
   effective_radius: .3,
   force: 5,
   score_value: 0,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -329,62 +283,84 @@ imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
   className: PiercingFighterBullet
 }
 
-imp_params.impulse_enemy_stats["harpoon"] = {
-  color: "#00aa00",
-  density: 5,
-  lin_damp: 6,
-  effective_radius: .7,
-  force: 3.5,
-  score_value: 3000,
-  attack_rating: 6,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
-  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
-  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
-  ]}],
-  extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
-  [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
-  dies_on_impact: "NO",
+
+imp_params.impulse_enemy_stats["disabler"] = {
+  color: "#ccc",
+  //interior_color: "rgb(205, 201, 201)",
+  density: 8,
+  lin_damp: 9,
+  effective_radius: .5,
+  force: 4,
+  score_value: 5000,
+  attack_rating: .25,
+  batch_enemy_image: true,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
+  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+  [Math.cos(Math.PI * 3/3), Math.sin(Math.PI * 3/3)],
+  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
+  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}
+    ],
+  extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1.3, colored: true}],
+  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
+    [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
+  dies_on_impact: "YES",
   enemy_info: [
-    "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
-    "The hook range is outlined around the Harpoon",
-    "While the hook is detached from the Harpoon, it cannot move",
-    "When Impulsed, the hook is disabled for 2 seconds",
-    "Can latch onto other enemies and will yank them in",
-    "Will actively try to avoid you # # Does not die on collision",
-    "Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
-    "During boss battles, can fire at any time",
+    "All units within its area of effect (AOE) lose all special powers # # Specifically, you cannot Impulse",
+    "All enemies within its AOE die upon collision, even those that do not normally",
+    "Colliding with an enemy within its AOE # (excluding the disabler itself) # does not reset your multiplier # # However you do not score points",
+    "Dies upon collision # # Units immediately regain special powers",
+    "When Impulsed, dramatically expands its area of influence for 3 seconds"
+  ],
+  special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
+  other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
+  className: Disabler
+}
+
+imp_params.impulse_enemy_stats["troll"] = {
+  color: "#159d31",
+  density: 1,
+  lin_damp: 3,
+  effective_radius: 1,
+  force: 0.2,
+  score_value: 5000,
+  attack_rating: 2,
+  true_name: "pinwheel",
+  batch_enemy_image: true,
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408), Math.sqrt(52)/8 * Math.sin(-0.408)],
+  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)]]},
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 1/3), 0.25 * Math.sin(Math.PI * 1/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*2/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*2/3)],
+  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)]]},
+  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3)],
+  [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)]]},
 
   ],
-
-  className: Harpoon
-
-}
-
-imp_params.impulse_enemy_stats["harpoonhead"] = {
-  color: "#00dd00",
-  density: 6,
-  lin_damp: 6,
-  effective_radius: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
-  force: 1.5,
-  score_value: 1000,
-  attack_rating: 6,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3, vertices:
-  [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]]
-  }],
-
-  dies_on_impact: "NO",
-  special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
-  other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: Harpoon
+  enemy_info: [
+    "If Impulsed while active, # reverses your movement and Impulse controls for 1 second",
+    "All Pinwheels become inactive at regular intervals # # Inactive trolls will not reverse you and fly farther when Impulsed",
+    "Upon collision, reverses you for 5 seconds",
+  ],
+  //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
+  dies_on_impact: "YES",
+  special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
+  other_notes: "The troll alternates between active and inactive every second.",
+  className: Troll
 
 }
+
 
 imp_params.impulse_enemy_stats["slingshot"] = {
   color: "rgb(160, 82, 45)",
@@ -394,10 +370,11 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   force: .45,
   score_value: 5000,
   attack_rating: 10,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4],
-  [Math.cos(Math.PI * 2/3)  * 1/4, Math.sin(Math.PI * 2/3) * 1/4],
-  [Math.cos(Math.PI * 4/3) * 1/4, Math.sin(Math.PI * 4/3) * 1/4]]},
+  [Math.cos(Math.PI * 2/3)  * 1/2, Math.sin(Math.PI * 2/3) * 1/2],
+  [Math.cos(Math.PI * 4/3) * 1/2, Math.sin(Math.PI * 4/3) * 1/2]]},
     {type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1],
   [Math.cos(Math.PI * 2/3)  * 1, Math.sin(Math.PI * 2/3) * 1],
@@ -408,6 +385,10 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   [Math.cos(Math.PI * 0)  * 1/4, Math.sin(Math.PI * 0) * 1/4],
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1/2],
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1]]}],
+  erase_lines: [
+    [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4], [Math.cos(Math.PI * 0) * 3/4, Math.sin(Math.PI*0) * 3/4]],
+    [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5]]
+  ],
   dies_on_impact: "YES",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
   other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
@@ -428,6 +409,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   force: .8,
   score_value: 8000,
   attack_rating: 10,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 0) + 0.4, Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/3) + 0.4, Math.sin(Math.PI * 2/3)],
@@ -440,7 +422,11 @@ imp_params.impulse_enemy_stats["orbiter"] = {
     [[0.4, 0],
     [-0.6, 0.3],
     [-1.6, 0],
-    [-0.6, -0.3]]}
+    [-0.6, -0.3]]},
+  ],
+  erase_lines: [
+    [[0.5, 0], [0.2, 0]]
+  ],
 
   /* {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
     [[Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2],
@@ -450,7 +436,6 @@ imp_params.impulse_enemy_stats["orbiter"] = {
     [[Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2],
     [Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2 + Math.sqrt(3)/2],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]*/
-  ],
 
   dies_on_impact: "YES",
   special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
@@ -467,6 +452,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
   force: 8,
   score_value: 10000,
   attack_rating: 10,
+  batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
@@ -681,7 +667,6 @@ var impulse_enemy_kills_star_cutoffs = {
   "mote": 150,
   "goo": 50,
   "harpoon": 50,
-  "wisp": 150,
   "disabler": 50,
   "fighter": 50,
   "slingshot": 50,
@@ -689,3 +674,16 @@ var impulse_enemy_kills_star_cutoffs = {
   "deathray": 25,
   "orbiter": 50
 }
+
+function set_up_enemy_images() {
+  for(var i in imp_params.impulse_enemy_stats) {
+    if(imp_params.impulse_enemy_stats[i].batch_enemy_image) {
+      var temp_enemy = new (imp_params.impulse_enemy_stats[i].className)(null, 0, 0, 0, null)
+      imp_params.impulse_enemy_stats[i].images = temp_enemy.generate_images()    
+    }
+    
+  }
+  
+}
+
+

@@ -54,7 +54,6 @@ Level.prototype.init = function(data, level_intro_state) {
     "goo": Goo,
     "disabler": Disabler,
     "troll": Troll,
-    "wisp": Wisp,
     "fighter": Fighter,
     "harpoon": Harpoon,
     "orbiter": Orbiter,
@@ -400,12 +399,12 @@ Level.prototype.add_enemy = function(enemy) {
 
   if(enemy.is_boss) this.boss = enemy
 
-  if(!this.enemy_images.hasOwnProperty(enemy.image_enemy_type)) {
+  /*if(!this.enemy_images.hasOwnProperty(enemy.image_enemy_type)) {
     this.enemy_images[enemy.image_enemy_type] = enemy.generate_images()
     if(enemy.image_enemy_type == "harpoon") {
       this.enemy_images["harpoonhead"] = enemy.harpoon_head.generate_images()
     }
-  }
+  }*/
 
   if(enemy.has_bulk_draw && !this.bulk_draw_enemies.hasOwnProperty(enemy.type)) {
     this.bulk_draw_enemies[enemy.type] = enemy.bulk_draw_nums
