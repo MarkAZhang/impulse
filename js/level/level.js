@@ -468,7 +468,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
         (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
       }
     ctx.restore()
-    draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, factor)
+    draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor)
 }
 
 Level.prototype.draw = function(context, draw_factor) {

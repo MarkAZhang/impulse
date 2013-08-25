@@ -165,7 +165,7 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, colored: false, vertices:
   [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}] ,
+  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}],
   dies_on_impact: "NO",
   enemy_info: [
     "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
@@ -387,7 +387,7 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1]]}],
   erase_lines: [
     [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4], [Math.cos(Math.PI * 0) * 3/4, Math.sin(Math.PI*0) * 3/4]],
-    [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5]]
+    //[[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5] ]
   ],
   dies_on_impact: "YES",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
@@ -447,13 +447,30 @@ imp_params.impulse_enemy_stats["deathray"] = {
   color: "#ddd",//"#169f95",
   interior_color: "black",
   density: 6,
-  lin_damp: 8,
-  effective_radius: 1,
-  force: 8,
+  lin_damp: 6,
+  effective_radius: 1.5,
+  force: 6,
   score_value: 10000,
   attack_rating: 10,
   batch_enemy_image: true,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+    [[0.5 * Math.cos(Math.PI * 3/4) + 0.2, 0.5 * Math.sin(Math.PI*3/4)],
+    [Math.cos(Math.PI * 3/4)+ 0.2, Math.sin(Math.PI*3/4)],
+    [Math.cos(Math.PI * 5/4)+ 0.2, Math.sin(Math.PI*5/4)],
+    [0.5 * Math.cos(Math.PI * 5/4)+ 0.2, 0.5 * Math.sin(Math.PI*5/4)]]},
+  {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+    [[0.6 * Math.cos(Math.PI * 1/3)+ 0.2, 0.6 * Math.sin(Math.PI*1/3)],
+    [Math.cos(Math.PI * 3/4)+ 0.2, Math.sin(Math.PI*3/4)],
+    [0.5 * Math.cos(Math.PI * 3/4)+ 0.2, 0.5 * Math.sin(Math.PI*3/4)],
+    [0.8 * Math.cos(Math.PI * 1/3)+ 0.2, 0.3 * Math.sin(Math.PI*1/3)]]},
+  {type: "polygon", x: 0, y: 0, r: 1.5, vertices:
+    [[0.8 * Math.cos(Math.PI * 5/3)+ 0.2, 0.3 * Math.sin(Math.PI*5/3)],
+    [0.5 * Math.cos(Math.PI * 5/4)+ 0.2, 0.5 * Math.sin(Math.PI*5/4)],
+    [Math.cos(Math.PI * 5/4)+ 0.2, Math.sin(Math.PI*5/4)],
+    [0.6 * Math.cos(Math.PI * 5/3)+ 0.2, 0.6 * Math.sin(Math.PI*5/3)]]}
+  ],
+
+/*  [{type: "polygon", x: 0, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
@@ -461,7 +478,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
   [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],*/
   dies_on_impact: "NO",
   special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
   other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",

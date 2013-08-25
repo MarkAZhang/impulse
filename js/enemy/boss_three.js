@@ -815,7 +815,7 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
             this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 15, angle + Math.PI*1/4)
         } else {
           draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
-            this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 20, 6, angle)
+            this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 20, true,angle)
 
         }
       }
@@ -824,7 +824,7 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
         if(this.current_wheel_set[this.wheel_cur_index] != "frenzy") {
           draw_enemy(context, this.current_wheel_set[this.wheel_cur_index], this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 20, angle + Math.PI*1/4)
         } else {
-          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 50, 6, angle)
+          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 50, true, angle)
         }
       }
     }

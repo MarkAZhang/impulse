@@ -38,7 +38,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    "normal": [50000, 300000, 1200000],
+    "normal": [50, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
 
@@ -776,11 +776,11 @@ imp_params.impulse_level_data['HIVE 4-5'] = {
   enemies: {
 
 
-             "stunner": [1, 8, 2, 2, 40],
-             "spear": [10, 10, 1, 1, 20],
-             "troll":[3, 15, 1, 1, 10],
-             "fighter": [2, 20, 1, 1, 10],
-             "orbiter": [15, 15, 2, 1, 10],
+             "stunner": [2, 8, 2, 2, 40],
+             "spear": [1, 10, 1, 1, 20],
+             "troll":[5, 15, 1, 1, 10],
+             "fighter": [3, 20, 1, 1, 10],
+             "orbiter": [1, 15, 2, 1, 10],
              "deathray": [30, 30, 1, 1, 3],
            },
   dominant_enemy: "deathray",
@@ -795,8 +795,6 @@ imp_params.impulse_level_data['HIVE 4-5'] = {
   },
   initial_spawn_data: {
     "deathray": 1,
-    "orbiter": 2,
-    "spear": 2
   },
   colored_interface: true,
   player_loc: {x: 400, y: 300}

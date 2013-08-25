@@ -309,7 +309,7 @@ BossTwo.prototype.draw = function(context, draw_factor) {
       0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", consumendiSprite)
     } else {
       drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura_filled", consumendiSprite)
+      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", consumendiSprite)
     }
 
 
@@ -343,12 +343,12 @@ BossTwo.prototype.draw = function(context, draw_factor) {
       context.globalAlpha *= 1.5
       drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
-      angle + Math.PI/2, 50, 32, "consumendi_small_arrow_filled", consumendiSprite)
+      angle, 30, 56, "consumendi_small_diamond_filled", consumendiSprite)
 
     } else {
       drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
-      angle + Math.PI/2, 50, 32, "consumendi_small_arrow", consumendiSprite)
+      angle, 30, 56, "consumendi_small_diamond", consumendiSprite)
     }
 
 
@@ -441,11 +441,11 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
     context.fill()*/
 
 
-    var tp = this.body.GetPosition()
+    /*var tp = this.body.GetPosition()
     var arm_angle = Math.PI * 2 * j / this.num_arms + this.arm_core_angle
     drawSprite(context, (tp.x+Math.cos(arm_angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
     (tp.y+Math.sin(arm_angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
-    arm_angle + Math.PI/2, 50, 80, "consumendi_long_arrow", consumendiSprite)
+    arm_angle + Math.PI/2, 50, 80, "consumendi_long_arrow", consumendiSprite)*/
     context.restore()
 
   }
@@ -477,19 +477,19 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
     if(this.player_gravity_force >= 0.3)
       drawSprite(context, (tp.x+Math.cos(angle)*2) * draw_factor,
       (tp.y+Math.sin(angle) * 2) * draw_factor,
-      angle - Math.PI/2, 25, 16, "consumendi_small_arrow_filled", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
     if(this.player_gravity_force >= 0.75)
       drawSprite(context, (tp.x+Math.cos(angle)*2.75) * draw_factor,
       (tp.y+Math.sin(angle) * 2.75) * draw_factor,
-      angle - Math.PI/2, 25, 16, "consumendi_small_arrow_filled", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
     if(this.player_gravity_force >= 1.2)
       drawSprite(context, (tp.x+Math.cos(angle)*3.5) * draw_factor,
       (tp.y+Math.sin(angle) * 3.5) * draw_factor,
-      angle - Math.PI/2, 25, 16, "consumendi_small_arrow_filled", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
     if(this.player_gravity_force >= 2)
       drawSprite(context, (tp.x+Math.cos(angle)*4.25) * draw_factor,
       (tp.y+Math.sin(angle) * 4.25) * draw_factor,
-      angle - Math.PI/2, 25, 16, "consumendi_small_arrow_filled", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
   }
 }
 

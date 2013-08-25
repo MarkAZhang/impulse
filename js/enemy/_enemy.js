@@ -148,7 +148,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "white"]
   this.additional_statuses = []
 
   this.adjust_position_counter = 0
@@ -366,15 +366,24 @@ Enemy.prototype.adjust_position = function() {
 
     for(var i = 0; i < polygons.length; i++) {
       if(pointInPolygon(polygons[i], this.body.GetPosition())) {
-        in_polygon = true
         var closest_edge = closestPolygonEdgeToPoint(polygons[i], this.body.GetPosition())
-        var angle = _atan({x: 0, y: 0}, {x: closest_edge.p2.x - closest_edge.p1.x, y: closest_edge.p2.y - closest_edge.p1.y})
+        if(closest_edge.dist != null) {
+          var angle = _atan({x: 0, y: 0}, {x: closest_edge.p2.x - closest_edge.p1.x, y: closest_edge.p2.y - closest_edge.p1.y})  - Math.PI/2
+          in_polygon = true
+        } else {
+          var closest_vertex = closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
+          if(closest_vertex.dist < imp_params.impulse_level_data[this.level.level_name].buffer_radius) {
+            var angle = _atan(closest_vertex.v, this.body.GetPosition())  
+            in_polygon = true
+          }
+
+        }
         break
       }
     }
     this.adjust_position_polygon = in_polygon
     if(in_polygon)
-      this.adjust_position_angle = angle - Math.PI/2
+      this.adjust_position_angle = angle
     else
       this.adjust_position_angle = null
   }
@@ -1039,6 +1048,8 @@ Enemy.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return impulse_colors["impulse_blue"]
+  } else if(status == "white") {
+    return "white"
   }
 
   return this.get_additional_color_for_status(status)

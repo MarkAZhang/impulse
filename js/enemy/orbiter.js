@@ -37,7 +37,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.max_guesses = 4
 
   this.weakened_duration = 0
-  this.weakened_interval = 500
+  this.weakened_interval = 250
   this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
   this.extra_adjust = true
   this.adjust_position_factor = 0.3
@@ -305,6 +305,10 @@ Orbiter.prototype.player_hit_proc = function() {
 }
 
 Orbiter.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-  this.weakened_duration = this.weakened_interval
+  this.weaken()
+}
 
+Orbiter.prototype.weaken = function() {
+  // makes lin_damp smaller
+  this.weakened_duration = this.weakened_interval 
 }

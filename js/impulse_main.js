@@ -79,6 +79,7 @@ window["impulse_main"] =  function() {
     centerCanvas()
     load_game()
     set_up_enemy_images()
+    set_up_title_bg()
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
     if(imp_vars.player_data.first_time) {
@@ -138,6 +139,24 @@ function centerCanvas() {
       offset_top = 0
     }
     message.style.display = ""
+}
+
+function set_up_title_bg() {
+  var title_bg_canvas = document.createElement('canvas');
+  title_bg_canvas.width = imp_vars.levelWidth;
+  title_bg_canvas.height = imp_vars.levelHeight;
+  var title_bg_ctx = title_bg_canvas.getContext('2d');
+  var row_gap = 50;
+  var col_gap = 50;
+  var enemies = ["stunner", "spear", "tank", "mote", "goo", "harpoon",
+                "fighter", "disabler", "troll", "slingshot", "orbiter", "deathray"]
+  for(var i = 0; i < title_bg_canvas.width/row_gap; i++) {
+    for(var j = 0; j < title_bg_canvas.height/col_gap; j++) {
+
+      draw_enemy(title_bg_ctx, enemies[(j+i+8)%12], (i+0.5)*row_gap, (j+0.5)*col_gap, 20, Math.PI/2, "white");
+    }
+  }
+  imp_vars.title_bg_canvas = title_bg_canvas
 }
 
 function step() {
@@ -493,7 +512,12 @@ function load_level_data(difficulty_level, load_obj) {
           }
           imp_params.impulse_level_data[i].save_state[difficulty_level].stars = stars
          } else {
-          imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 3
+            if(imp_params.impulse_level_data[i].save_state[difficulty_level].best_time < 1000) {
+              imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 3 
+            } else {
+              imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 0
+            }
+          
          }
         
       }

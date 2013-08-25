@@ -176,12 +176,12 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       draw_progress_bar(ctx, imp_vars.levelWidth/2, first_rect_y + 90, 200, 10, 0, "gold")
       draw_star(ctx, imp_vars.levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
     }
-    ctx.fillText("TIME: "+this.game_numbers.seconds, imp_vars.levelWidth/2, first_rect_y + 130)
+    ctx.fillText("TIME: "+convert_to_time_notation(this.game_numbers.seconds), imp_vars.levelWidth/2, first_rect_y + 130)
     ctx.fillStyle = imp_params.impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[imp_params.impulse_level_data[this.level_name]['stars'] - 1]] : "black"
     if(this.best_time)
       ctx.fillText("NEW BEST TIME", imp_vars.levelWidth/2, first_rect_y + 160)
     else
-      ctx.fillText("BEST TIME: "+ imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time, imp_vars.levelWidth/2, first_rect_y + 160)
+      ctx.fillText("BEST TIME: "+ convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, first_rect_y + 160)
     
 
   }

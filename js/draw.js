@@ -100,7 +100,7 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 }
 
 
-function draw_enemy(context, enemy_name, x, y, d, rotate) {
+function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
   // if d == null, will draw at default size
 
   if(enemy_name.slice(enemy_name.length - 4) == "boss") return
@@ -109,8 +109,9 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
   if(rotate) {
     context.rotate(rotate);
   }
+  if(status === undefined) status = "normal"
   var max_radius = 1.5
-  var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
+  var size = imp_params.impulse_enemy_stats[enemy_name].images[status].height
   if(d == null) {
     var draw_scale = size/2
   } else {
@@ -122,7 +123,7 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
      //draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
   }   
-  context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images["normal"], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
+  context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
  
    /*for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
@@ -133,13 +134,15 @@ function draw_enemy(context, enemy_name, x, y, d, rotate) {
       }
       
     }*/
+
+    var this_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
     if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
         if(!this_shape.colored) {
-          draw_shape(context, 0, 0, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, "black")  
+          draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")  
         } else {
-          draw_shape(context, 0, 0, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)  
+          draw_shape(context, 0, 0, this_shape, draw_scale, this_color)  
         }
       }
     }
@@ -210,67 +213,77 @@ var tessellation_logo_factor = {
     "4": 1.6
 }
 
-function draw_tessellation_sign(context, tessellation, x, y, size, extra_factor, rotate) {
+function draw_tessellation_sign(context, tessellation, x, y, size, glow, rotate) {
 
-  if(tessellation > 4) {
-    context.save()
-    if(rotate) {
-      context.translate(x, y)
-      context.rotate(rotate)
-      context.translate(-x, -y)
-    }
-    context.beginPath()
-    context.lineWidth = 2
-    context.rect(x-size/2, y-size/2, size, size)
-    context.rect(x-size/2+5, y-size/2+5, size-10, size-10)
-    context.strokeStyle = impulse_colors["world "+tessellation+" dark"]
+  // if(tessellation > 4) {
+  //   context.save()
+  //   if(rotate) {
+  //     context.translate(x, y)
+  //     context.rotate(rotate)
+  //     context.translate(-x, -y)
+  //   }
+  //   context.beginPath()
+  //   context.lineWidth = 2
+  //   context.rect(x-size/2, y-size/2, size, size)
+  //   context.rect(x-size/2+5, y-size/2+5, size-10, size-10)
+  //   context.strokeStyle = impulse_colors["world "+tessellation+" dark"]
 
-    context.stroke()
-    context.restore()
-    return
-  }
-
-
-  size *= tessellation_logo_factor[tessellation]
+  //   context.stroke()
+  //   context.restore()
+  //   return
+  // }
+    size *= tessellation_logo_factor[tessellation]
 
     context.save()
-    context.globalAlpha *= 0.5
-    if(extra_factor)
-      context.globalAlpha = Math.min(1, context.globalAlpha * extra_factor)
-
-    if(tessellation == 1) {
-      drawSprite(context, x, y, (Math.PI/4), size * 2, size * 2, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
+    if(glow) {
+      context.globalAlpha *= 0.5
+      if(tessellation == 1) {
+        drawSprite(context, x, y, (Math.PI/4), size * 2, size * 2, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
+      }
+      drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
     }
-    drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
-
-
+    
     context.restore()
     context.save()
-    context.globalAlpha /= 6
-    if(extra_factor)
-      context.globalAlpha = Math.min(1, context.globalAlpha * extra_factor)
 
     // set screen position
     context.translate(x, y);
     // set rotation
     if(rotate)
       context.rotate(rotate);
-    else if(tessellation != 4)
+    else if(tessellation != 4 && tessellation != 2)
       context.rotate(Math.PI/4)
     drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
     if(tessellation == 1) {
       context.beginPath()
-      context.rect(-size/2-10, -size/2-10, size+20, size+20)
-      context.lineWidth = 5
+      context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
+      context.lineWidth = Math.ceil(size/20)
       context.strokeStyle = impulse_colors["boss "+tessellation]
       context.stroke()
     }
     context.restore()
-
-
 }
 
+function draw_gray_tessellation_sign(context, tessellation, x, y, size, glow, rotate) {
 
+    size *= tessellation_logo_factor[tessellation]
+
+    context.save()
+
+    // set screen position
+    context.translate(x, y);
+    // set rotation
+    context.rotate(Math.PI/4)
+    drawSprite(context, 0, 0, 0, size, size, tessellation_gray_logo_map[tessellation], tessellation_sprite_map[tessellation])
+    if(tessellation == 1) {
+      context.beginPath()
+      context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
+      context.lineWidth = Math.ceil(size/20)
+      context.strokeStyle = "gray"
+      context.stroke()
+    }
+    context.restore()
+}
 
 function draw_arrow_keys(context, x, y, size, color, keysArray) {
   context.save()
@@ -406,7 +419,7 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
   context.restore()
 }
 
-function draw_gear(context, x, y, scale, color, center_color) {
+function draw_gear(context, x, y, scale, color, center_color, center_glow) {
   context.save()
   context.shadowBlur = 5
   var spokes = 6
@@ -427,10 +440,59 @@ function draw_gear(context, x, y, scale, color, center_color) {
   context.closePath()
   context.fillStyle = color
   context.fill()
-  context.globalAlpha /= 2
+  if(center_glow)
+    context.globalAlpha /= 2
   context.beginPath()
   context.arc(x, y, scale * 0.5, 0, 2 * Math.PI * 0.999)
   context.fillStyle = center_color
+  context.fill()
+  context.restore()
+}
+
+function draw_credits_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.arc(x, y - scale/3, scale/3, 0, 2 * Math.PI, true)
+  context.moveTo(x, y + scale*5/6)
+  context.arc(x, y + scale*5/6, scale * 2/3, 0, Math.PI, true)
+  context.fillStyle = color
+  context.fill()
+  context.restore()
+}
+
+function draw_tutorial_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.moveTo(x, y - scale * 1/3)
+  context.lineTo(x - scale, y - scale * 2/3)
+  context.lineTo(x - scale, y + scale * 2/3)
+  context.lineTo(x, y + scale)
+  context.moveTo(x, y + scale)
+  context.lineTo(x, y - scale * 1/3)
+  context.lineTo(x + scale, y - scale * 2/3)
+  context.lineTo(x + scale, y + scale * 2/3)
+  context.lineTo(x, y + scale)
+  //context.rect(x - scale*2/3, y - scale*5/6, scale * 4/3, scale*5/3)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+  //context.fillStyle = color
+  //context.fill()
+  context.restore()
+}
+
+function draw_back_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.arc(x, y, scale * 3/4, 3*Math.PI/2, Math.PI * 3/4)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+  context.beginPath()
+  context.moveTo(x, y - scale * 3/16)
+  context.lineTo(x, y - scale * 19/16)
+  context.lineTo(x - scale/2, y - scale * 11/16)
+  context.fillStyle = color
   context.fill()
   context.restore()
 }
@@ -675,21 +737,25 @@ function draw_multi_fragment(context, x, y) {
 }
 
 function draw_logo(context, x, y, name) {
+
+  context.save()
   context.textAlign = "center"
   context.shadowColor = impulse_colors["impulse_blue"]
-  context.shadowBlur = 20
-  context.fillStyle = impulse_colors["impulse_blue"]
+  context.shadowBlur = 0
+  context.fillStyle = "white"//impulse_colors["impulse_blue"]
 
-  context.font = '72px Muli'
-  context.fillText("IMPULSE", x, y)
+/*  context.font = '72px Muli'
+  context.fillText("IMPULSE", x, y)*/
+  var logoScale = 0.85;
+  context.drawImage(logoSprite, x - logoSprite.width/2 * logoScale, y - logoSprite.height * 0.75 * logoScale, logoSprite.width * logoScale, logoSprite.height * logoScale)
 
   if(name) {
-    context.font = '24px Muli'
-  context.globalAlpha /= 2
-  context.fillText("MARK ZHANG", x, y + 50)
-  context.globalAlpha *= 2
+    context.font = '16px Muli'
+  //context.globalAlpha /= 2
+  context.fillText("MARK ZHANG", x, y + 40)
+  //context.globalAlpha *= 2
   }
-
+  context.restore()
 
 }
 
@@ -845,11 +911,12 @@ playerSprite = loadSprite("art/sprites.png")
 spriteSheetData = {
   //x, y, w, h
   //"player_normal": [60, 0, 60, 60],
-  "player_normal": [0, 0, 41, 41],
+  "player_normal": [0, 0, 40, 40],
   "player_red": [40, 0, 41, 41],
   "player_yellow": [80, 0, 41, 41],
   "player_gray": [120, 0, 41, 41],
   "player_green": [160, 0, 41, 41],
+  "player_white": [200, 0, 40, 40],
   "spark": [0, 60, 30, 30],
   "multi": [30, 60, 30, 30],
   "white_glow": [100, 80, 100, 100],
@@ -860,9 +927,10 @@ spriteSheetData = {
 
 
   "immunitas_arm": [0, 0, 90, 90],
-  "immunitas_arm_red": [180, 135, 90, 90],
+  "immunitas_arm_red": [150, 135, 90, 90],
   "immunitas_hand": [90, 0, 90, 90],
-  "immunitas_hand_red": [270, 135, 90, 90],
+  "immunitas_hand_red": [240, 135, 90, 90],
+  "immunitas_logo_gray": [330, 135, 90, 90],
   "immunitas_head": [0, 90, 108, 108],
   "immunitas_head_red": [450, 123, 108, 108],
   "immunitas_glow": [180, 0, 135, 135],
@@ -875,12 +943,13 @@ spriteSheetData = {
   "consumendi_head": [0, 0, 180, 180],
   "consumendi_head_red": [720, 136, 135, 135],
   "consumendi_aura": [180, 0, 270, 270],
-  "consumendi_aura_filled": [450, 0, 270, 270],
-  "consumendi_mini": [0, 180, 64, 64],
-  "consumendi_small_arrow": [64, 180, 50, 32],
+  "consumendi_small_diamond": [94, 180, 30, 56],
   "consumendi_long_arrow": [64, 210, 50, 80],
-  "consumendi_small_arrow_filled": [120, 180, 50, 32],
+  "consumendi_small_diamond_filled": [64, 180, 30, 56],
+  "consumendi_small_arrow": [124, 180, 30, 16],
   "consumendi_glow": [720, 0, 135, 135],
+  "consumendi_logo": [450, 0, 120, 119],
+  "consumendi_mini": [450, 119, 120, 120],
 
   "negligentia_head": [0, 0, 180, 180],
   "negligentia_head_red": [0, 180, 180, 180],
@@ -909,6 +978,7 @@ var immunitasSprite = loadSprite("art/immunitas_sprite.png")
 var consumendiSprite = loadSprite("art/consumendi_sprite.png")
 var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
 var adrogantiaSprite = loadSprite("art/adrogantia_sprite.png")
+var logoSprite = loadSprite("art/logo.png")
 
 var tessellation_glow_map = {
   "0": "white_glow",
@@ -920,6 +990,13 @@ var tessellation_glow_map = {
 var tessellation_logo_map = {
   "0": "world_logo",
   "1": "immunitas_arm",
+  "2": "consumendi_logo",
+  "3": "negligentia_logo",
+  "4": "adrogantia_logo"
+}
+var tessellation_gray_logo_map = {
+  "0": "world_logo",
+  "1": "immunitas_logo_gray",
   "2": "consumendi_mini",
   "3": "negligentia_logo",
   "4": "adrogantia_logo"

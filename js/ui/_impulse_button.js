@@ -16,6 +16,7 @@ ImpulseButton.prototype.init = function(x, y, w, h, action, border, color) {
 }
 
 ImpulseButton.prototype.draw = function(context) {
+  context.save()
   if(this.border) {
     context.beginPath()
     context.strokeStyle = this.active ? this.color : "gray"
@@ -24,6 +25,7 @@ ImpulseButton.prototype.draw = function(context) {
     context.stroke()
   }
   this.additional_draw(context)
+  context.restore()
 }
 ImpulseButton.prototype.additional_draw = function(context) {}
 

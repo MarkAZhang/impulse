@@ -50,7 +50,7 @@ function closestPolygonEdgeToPoint(polygon, point) {
 
       var angle_one = _atan(point, polygon[j])
       var angle_two = angle_closest_to(angle_one,_atan(point, polygon[i]))
-      if(ans.dist != null && angle_two - angle_one < Math.PI/2) {
+      if(angle_two - angle_one < Math.PI/2) {
         // ensure that the edge is close to the point...necessary for CONCAVE polygons
       } else {
         ans.p1 = polygon[j]
@@ -59,6 +59,23 @@ function closestPolygonEdgeToPoint(polygon, point) {
       }
     }
     j = i
+  }
+  return ans
+}
+
+
+function closestPolygonVertexToPoint(polygon, point) {
+  var ans = {v: null, dist: null}
+
+  for(var i = 0; i < polygon.length; i++)
+  {
+
+    var dist = p_dist(polygon[i], point)
+    if(ans.dist == null || dist < ans.dist) {
+
+      ans.dist = dist
+      ans.v = polygon[i]
+    }
   }
   return ans
 }
@@ -655,3 +672,10 @@ function update_best_time_for_boss_level(level, time, difficulty) {
   return ans
 }
 
+function convert_to_time_notation(seconds) {
+  var ans = seconds%60
+  if(ans < 10) {
+    ans = "0"+ans
+  }
+  return Math.floor(seconds / 60) + ":" + ans
+}

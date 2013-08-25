@@ -977,7 +977,7 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
   if (this.dying) return
 
-  if(this.lockon_display != null) {
+  /*if(this.lockon_display != null) {
     if(this.punch_target_pts[this.lockon_display]) {
 
       var prog = (this.lockon_display_timer/this.lockon_display_interval);
@@ -988,7 +988,7 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
       0, 60, 60, "immunitas_lockon", immunitasSprite)
       context.restore()
     }
-  }
+  }*/
 
   /*if(this.punch_target_pts["right"]) {
     var tp = this.punch_target_pts["right"]

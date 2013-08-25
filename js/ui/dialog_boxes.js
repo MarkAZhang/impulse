@@ -262,8 +262,8 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     ctx.fillText("'SHIFT' TO RESUME", this.x, this.y - this.h/2 + 585)
   }
 
-  draw_gear(ctx, this.x + 60, this.y - this.h/2 + 463, 8, this.lite_color, this.bg_color)
-  draw_gear(ctx, this.x - 60, this.y - this.h/2 + 463, 8, this.lite_color, this.bg_color)
+  draw_gear(ctx, this.x + 60, this.y - this.h/2 + 463, 8, this.lite_color, this.bg_color, true)
+  draw_gear(ctx, this.x - 60, this.y - this.h/2 + 463, 8, this.lite_color, this.bg_color, true)
 
   if(this.game_numbers.seconds >= 5 && this.level.main_game) {
     ctx.font = '12px Muli'

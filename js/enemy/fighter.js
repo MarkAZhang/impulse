@@ -284,6 +284,8 @@ Fighter.prototype.get_color_for_status = function(status) {
     return "red"
   } else if(status == "impulsed") {
     return impulse_colors["impulse_blue"]
+  } else if(status == "white") {
+    return "white"
   }
 
   return this.get_additional_color_for_status(status)

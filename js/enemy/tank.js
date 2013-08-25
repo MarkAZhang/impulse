@@ -245,6 +245,8 @@ Tank.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return "red"
+  } else if(status == "white") {
+    return "white"
   }
 
   return this.get_additional_color_for_status(status)
