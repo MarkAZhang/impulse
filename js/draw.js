@@ -119,7 +119,12 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
     var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)  
   }
   
+  draw_enemy_helper(context, enemy_name, size, draw_scale, status)
+  
+  context.restore()
+}
 
+function draw_enemy_helper(context, enemy_name, size, draw_scale, status) {
   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
      //draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
   }   
@@ -136,17 +141,19 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
     }*/
 
     var this_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
+    if(!this_color) {
+      this_color = imp_params.impulse_enemy_stats[enemy_name].color
+    }
     if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
         if(!this_shape.colored) {
           draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")  
         } else {
-          draw_shape(context, 0, 0, this_shape, draw_scale, this_color)  
+          draw_shape(context, 0, 0, this_shape, draw_scale, this_color)
         }
       }
     }
-  context.restore()
 }
 
 function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
@@ -157,7 +164,6 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
     context.rotate(rotate);
     context.translate(-x, -y);
   }
-
 
   var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
    if(enemy_name.slice(enemy_name.length - 4) == "boss") {
@@ -177,29 +183,18 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
   context.restore()
 }
 
-function draw_enemy_real_size(context, enemy_name, x, y, d, rotate) {
+function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
 
   context.save()
+  context.translate(x, y);
   if(rotate) {
-    context.translate(x, y);
     context.rotate(rotate);
-    context.translate(-x, -y);
   }
 
-  var draw_scale = d/2
-  if(enemy_name.slice(enemy_name.length - 4) == "boss") {
-    draw_scale = d/2
-  }
-  for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
-    var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
-    draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)
-  }
-  if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
-    for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
-      var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
-      draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)
-    }
-  }
+
+  var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
+  
+  draw_enemy_helper(context, enemy_name, size, size * factor/2, "normal")
   context.restore()
 }
 
@@ -498,6 +493,27 @@ function draw_back_icon(context, x, y, scale, color) {
   context.restore()
 }
 
+function draw_start_icon(context, x, y, scale, hover) {
+  context.save()
+  if(hover) {
+    drawSprite(context, x, y, 0, scale, scale, "player_normal")
+  } else {
+    drawSprite(context, x, y, 0, scale, scale, "player_white")
+  }
+  
+  context.beginPath()
+  context.arc(x, y, scale * 3/4, Math.PI * 7/6, Math.PI * 11/6)
+  context.lineWidth = 2
+  if (hover) {
+    context.strokeStyle = impulse_colors["impulse_blue"]  
+  } else {
+    context.strokeStyle = "white"
+  }
+  context.stroke()
+  context.restore()
+  
+}
+
 function draw_music_icon(context, x, y, scale, color, key_display) {
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
@@ -778,8 +794,10 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
     drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "spark")
   else 
     drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
-  context.shadowBlur = 10
-  context.shadowColor = context.fillStyle
+  if(args.shadow) {
+    context.shadowBlur = 10
+    context.shadowColor = context.fillStyle
+  }
   context.textAlign = 'center'
   context.fillText(lives, x - size * 1.8 + x_offset , y + size * 1.6)
    if(args.starting_values)
@@ -788,7 +806,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
     context.fillText(sparks, x + x_offset , y+ size * 1.6)
   
   if(args.labels) {
-    context.font = (size/3)+'px Muli'
+    context.font = Math.max(8, (size/3))+'px Muli'
     context.fillText("LIVES", x - size * 1.8 + x_offset , y - size * 0.8)
 
     if(args.starting_values) {
@@ -807,7 +825,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
   }
 
   if(args.labels && args.ult) {
-    context.font = (size/3)+'px Muli'
+    context.font = Math.max(8, (size/3))+'px Muli'
     context.fillText("ULT", x + size * 1.8, y - size * 0.8)
   }
   context.restore()

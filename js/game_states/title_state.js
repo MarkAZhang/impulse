@@ -115,12 +115,14 @@ TitleState.prototype.setup_main_menu = function() {
   if(imp_vars.dev) {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2-30, 200, 50, button_color, "blue",
     function(){
-      console.log(imp_vars.player_data.save_data)
-      console.log(imp_vars.player_data.difficulty_mode)
+      var i = 1;
+      while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+        i += 1
+      }
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
       } else {
-        switch_game_state(new WorldMapState())
+        switch_game_state(new WorldMapState(i))
       }
     }))
     this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
@@ -136,10 +138,14 @@ TitleState.prototype.setup_main_menu = function() {
   } else {
     this.buttons["menu"].push(new IconButton("MAIN GAME", 24, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 130, 150, 150, button_color, impulse_colors["impulse_blue"],
     function(){
+      var i = 1;
+      while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+        i += 1
+      }
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
       } else {
-        switch_game_state(new WorldMapState())
+        switch_game_state(new WorldMapState(i))
       }
     }, "player"))
 

@@ -81,6 +81,12 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_back_icon(context, this.x, this.y - this.w/8, 13, "white", "#080808", false)   
     }
+  } else if(this.icon == "start") {
+    if(this.hover) {
+      draw_start_icon(context, this.x, this.y - this.w/8, 20, true)   
+    } else {
+      draw_start_icon(context, this.x, this.y - this.w/8, 20, false)   
+    }
   } else if(this.icon.slice(0, 5) == "world") {
     var text = ["I", "II","III", "IV"]
     var world_num = parseInt(this.icon.slice(5));
@@ -112,14 +118,14 @@ IconButton.prototype.draw_icon  = function(context) {
     var world_num = parseInt(this.icon.slice(8));
     if(!this.active) {
       context.globalAlpha *= 0.3
-      draw_gray_tessellation_sign(context, world_num, this.x, this.y, this.size)  
+      draw_gray_tessellation_sign(context, world_num, this.x, this.y, this.size * 1.4)
     } else {
       if(this.hover) {
-        context.globalAlpha *= 0.5
+        context.globalAlpha *= 0.8
       } else {
         context.globalAlpha *= 0.3
       }
-     draw_tessellation_sign(context, world_num, this.x, this.y, this.size) 
+     draw_tessellation_sign(context, world_num, this.x, this.y, this.size * 1.4) 
     }
     
   }

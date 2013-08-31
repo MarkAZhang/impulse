@@ -11,12 +11,12 @@ function WorldMapState(world) {
   this.cur_start_spark_val = calculate_spark_val()
   this.has_ult = has_ult()
 
-  this.cur_world = 2
+  this.cur_world = world
 
 
   this.buttons = []
   var _this = this
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 150, 100, this.color, impulse_colors["impulse_blue"], function(){
+  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 100, 100, this.color, impulse_colors["impulse_blue"], function(){
     if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}}, "back"))
   this.world_buttons = {
 
@@ -32,6 +32,13 @@ function WorldMapState(world) {
     2: "DEFEAT "+imp_params.tessellation_names[1] + " TO UNLOCK",
     3: "DEFEAT "+imp_params.tessellation_names[2] + " TO UNLOCK",
     4: "DEFEAT "+imp_params.tessellation_names[3] + " TO UNLOCK"  
+  }
+
+  this.offsets = {
+    1: 23,
+    2: 18,
+    3: 10,
+    4: 10
   }
 
   this.set_up_world_map()
@@ -82,11 +89,11 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
 
 WorldMapState.prototype.set_up_practice_buttons = function() {
 
-  var diff = 75
+  var diff = 85
 
   for(var i = 0; i < 4; i++) {
     this.practice_buttons[i+1] = []
-    var colors = ["world "+(i+1)+" bright", "bronze", "silver", "gold"]
+    var colors = ["world "+(i+1)+" bright", "world "+(i+1)+" bright", "silver", "gold"]
     for(var j = 0; j < 8; j++) {
 
       var level_name = "HIVE "+(i+1)+"-"+(j+1);
@@ -94,8 +101,15 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
         level_name = "BOSS "+(i+1)
       }
       var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].stars]]
-      var new_button = new IconButton(j == 7 ? "BOSS" : j+1, 20, imp_vars.levelWidth/2 + ((-3.5 + j) * diff), imp_vars.levelHeight/2+150, 150, 100,
-       this_color, impulse_colors["impulse_blue"], function(){switch_game_state(new HowToPlayState())}, "practice"+(i+1))
+      var callback = (function(level, index) {
+        return function() {
+          switch_game_state(new LevelIntroState(level, index + 1))
+        }
+
+      })(level_name, i)
+      var new_button = new IconButton(j == 7 ? "BOSS" : j+1, 20, imp_vars.levelWidth/2 + ((-3.5 + j) * diff), imp_vars.levelHeight/2+130, 50, 50,
+      this_color, this_color, callback, "practice"+(i+1))
+
       new_button.level_name = level_name
       this.practice_buttons[i+1].push(new_button)
       new_button.active = imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].seen || imp_vars.dev
@@ -152,11 +166,10 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.save()
   ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
-  ctx.font = "36px Muli"
+  ctx.font = "30px Muli"
   ctx.textAlign = "center"
   ctx.fillText("HIVE "+imp_params.tessellation_names[this.cur_world], imp_vars.levelWidth/2, 70)
   ctx.restore()
-
 
   var index = this.cur_world
 
@@ -232,8 +245,24 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
+  ctx.save()
+  ctx.globalAlpha *= 0.3
+  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
+    if(!this.practice_buttons[this.cur_world][i].active) continue
+    if(i > 0) {
+
+      ctx.beginPath()
+      ctx.moveTo(this.practice_buttons[this.cur_world][i-1].x + this.offsets[this.cur_world], this.practice_buttons[this.cur_world][i-1].y)
+      ctx.lineTo(this.practice_buttons[this.cur_world][i].x - this.offsets[this.cur_world], this.practice_buttons[this.cur_world][i].y)
+      ctx.lineWidth = 6
+      ctx.strokeStyle = impulse_colors['boss '+(this.cur_world)]
+      ctx.stroke()
+    }
+  }
+  ctx.restore()
   for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
     this.practice_buttons[this.cur_world][i].draw(ctx)
+    
   }
 
   for(var i = 0; i < this.buttons.length; i++)
@@ -243,7 +272,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = 'center'
   ctx.font = '16px Muli'
   ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
-  ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 115)
+  ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
 
   ctx.textAlign = 'center'
   ctx.font = '12px Muli'
@@ -255,8 +284,11 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '10px Muli'
     ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
   }
+  ctx.font = '12px Muli'
+  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
+  ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
 
-  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 25, 24, {labels: true, starting_values: true, ult: this.has_ult})
+  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     ctx.font = '12px Muli'
@@ -281,8 +313,8 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_mouse_move(x, y)
   }
-  for(var i = 0; i < this.practice_buttons.length; i++) {
-    this.practice_buttons[i].on_mouse_move(x, y)
+  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
+    this.practice_buttons[this.cur_world][i].on_mouse_move(x, y)
   }
 }
 
@@ -294,7 +326,7 @@ WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_click(x, y)
   }
-  for(var i = 0; i < this.practice_buttons.length; i++) {
-    this.practice_buttons[i].on_click(x, y)
+  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
+    this.practice_buttons[this.cur_world][i].on_click(x, y)
   }
 }

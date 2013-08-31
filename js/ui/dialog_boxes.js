@@ -795,12 +795,19 @@ EnemyBox.prototype.constructor = EnemyBox
 
 function EnemyBox(enemy_name, previous_menu) {
   this.init(800, 600)
-  this.game_state = previous_menu.game_state
+  
   this.solid = false;
+  if(previous_menu instanceof DialogBox){
+    this.game_state = previous_menu.game_state
+    this.bg_color = previous_menu.bg_color
+    this.lite_color = previous_menu.lite_color
+    this.world_num = this.game_state.world_num
+  } else if(previous_menu instanceof GameState) {
+    this.bg_color = impulse_colors["world "+previous_menu.world_num+" dark"]
+    this.lite_color = impulse_colors["world "+previous_menu.world_num+" lite"]
+    this.world_num = previous_menu.world_num
+  }
   this.previous_menu = previous_menu
-  this.bg_color = this.previous_menu.bg_color
-  this.lite_color = this.previous_menu.lite_color
-
 
   this.enemy_name = enemy_name
 
@@ -817,12 +824,18 @@ function EnemyBox(enemy_name, previous_menu) {
 
   this.w = 600
   this.back_button = new SmallButton("BACK", 20, this.x, this.y - this.h/2 + 560, 200, 50, this.lite_color, this.lite_color, function(_this) { return function() {
-    setTimeout(function() { set_dialog_box(_this.previous_menu) }, 50)
+    setTimeout(function() {
+      if(_this.previous_menu instanceof DialogBox) {
+        set_dialog_box(_this.previous_menu)
+      } else if(_this.previous_menu instanceof GameState) {
+        //switch_game_state(_this.previous_menu)
+        set_dialog_box(null)
+      }
+    }, 50)
   }}(this))
 
   this.buttons.push(this.back_button)
 
-  this.world_num = this.game_state.world_num
 
   this.color = impulse_colors["world "+this.world_num]
   this.text_width = 500
@@ -889,7 +902,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.globalAlpha /= 3
   draw_tessellation_sign(ctx, this.world_num, this.x, this.y - this.h/2 + 215, 80)
   ctx.globalAlpha *= 3
-  draw_enemy_real_size(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, this.max_enemy_d)
+  draw_enemy_real_size(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, 1.5)
 
   ctx.font = '12px Muli'
   ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)
