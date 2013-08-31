@@ -273,6 +273,7 @@ function draw_gray_tessellation_sign(context, tessellation, x, y, size, glow, ro
     // set screen position
     context.translate(x, y);
     // set rotation
+    if(tessellation != 4 && tessellation != 2)
     context.rotate(Math.PI/4)
     drawSprite(context, 0, 0, 0, size, size, tessellation_gray_logo_map[tessellation], tessellation_sprite_map[tessellation])
     if(tessellation == 1) {
@@ -950,6 +951,7 @@ spriteSheetData = {
   "consumendi_glow": [720, 0, 135, 135],
   "consumendi_logo": [450, 0, 120, 119],
   "consumendi_mini": [450, 119, 120, 120],
+  "consumendi_mini_gray": [570, 0, 120, 120],
 
   "negligentia_head": [0, 0, 180, 180],
   "negligentia_head_red": [0, 180, 180, 180],
@@ -958,12 +960,13 @@ spriteSheetData = {
   "negligentia_wheel": [424, 0, 134, 134],
   "negligentia_wheel_red": [424, 270, 134, 134],
   "negligentia_wheel_complete": [423, 135, 135, 135],
-  "negligentia_glow": [559, 0, 135, 135],
-  "negligentia_glow_red": [559, 135, 135, 135],
+  "negligentia_glow": [556, 0, 115, 115],
+  "negligentia_glow_red": [556, 115, 115, 115],
   "negligentia_aura": [559, 270, 39, 65],
   "negligentia_aura_open": [598, 270, 39, 65],
   "negligentia_arm_ring": [180, 200, 180, 180],
-  "negligentia_logo": [670, 275, 130, 130],
+  "negligentia_logo": [680, 0, 120, 120],
+  "negligentia_logo_gray": [680, 120, 120, 120],
 
   "adrogantia_attack_bud": [0, 0, 80, 80],
   "adrogantia_spawner": [0, 80, 80, 80],
@@ -971,7 +974,8 @@ spriteSheetData = {
   "adrogantia_attack_bud_firing": [80, 80, 80, 80],
   "adrogantia_head": [180, 0, 160, 160],
   "adrogantia_glow": [340, 0, 135, 135],
-  "adrogantia_logo": [475, 0, 125, 125]
+  "adrogantia_logo": [476, 0, 125, 125],
+  "adrogantia_logo_gray": [476, 125, 125, 125]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")
@@ -997,9 +1001,9 @@ var tessellation_logo_map = {
 var tessellation_gray_logo_map = {
   "0": "world_logo",
   "1": "immunitas_logo_gray",
-  "2": "consumendi_mini",
-  "3": "negligentia_logo",
-  "4": "adrogantia_logo"
+  "2": "consumendi_mini_gray",
+  "3": "negligentia_logo_gray",
+  "4": "adrogantia_logo_gray"
 }
 var tessellation_sprite_map = {
   "0": playerSprite,

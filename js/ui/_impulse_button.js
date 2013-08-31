@@ -30,17 +30,19 @@ ImpulseButton.prototype.draw = function(context) {
 ImpulseButton.prototype.additional_draw = function(context) {}
 
 ImpulseButton.prototype.on_mouse_move = function(x,y) {
-  if(this.active)
-  {
     if(x >= this.x - this.w/2 && x <= this.x + this.w/2 && y >= this.y - this.h/2 && y <= this.y + this.h/2)
     {
-      this.hover = true
+      if(this.active)
+      {
+        this.hover = true
+      }
+      this.mouseOver = true
     }
     else
     {
       this.hover = false
+      this.mouseOver = false
     }
-  }
 }
 
 ImpulseButton.prototype.on_click = function(x,y) {

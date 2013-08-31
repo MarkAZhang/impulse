@@ -11,7 +11,7 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
   this.hover_color = hcolor
   this.shadow = false;
   this.icon = icon
-  this.inactive = false
+  this.active = true
 }
 
 IconButton.prototype.additional_draw = function(context) {
@@ -22,6 +22,9 @@ IconButton.prototype.additional_draw = function(context) {
 
   //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
   context.font = this.size+'px Muli';
+  if(!this.active && (this.icon.slice(0, 8) == "practice")) {
+    context.globalAlpha = 0.4
+  }
   //context.fillStyle = this.hover ? this.hover_color : this.color
   context.fillStyle = this.hover ? this.hover_color : this.color
   if(this.shadow) {
@@ -82,21 +85,32 @@ IconButton.prototype.draw_icon  = function(context) {
     var text = ["I", "II","III", "IV"]
     var world_num = parseInt(this.icon.slice(5));
     context.save()
-    if(this.hover) {
+    if(this.hover && this.active) {
       context.globalAlpha *= 0.5
+    } else if (this.active) {
+      context.globalAlpha *= 0.3
     } else {
+      context.globalAlpha *= 0.15
+    }
+    if(!this.active) {
+      draw_gray_tessellation_sign(context, world_num, this.x, this.y, this.size * 2, this.hover)  
+    } else {
+      draw_tessellation_sign(context, world_num, this.x, this.y, this.size * 2, this.hover)  
+    }
+    context.restore()
+    context.save()
+    if (!this.active) {
       context.globalAlpha *= 0.3
     }
-    draw_tessellation_sign(context, world_num, this.x, this.y, this.size * 2, this.hover)
-    context.restore()
     context.textAlign = 'center'
     context.font = "32px Muli"
-    context.fillStyle = impulse_colors["world "+world_num+ " bright"]
+    context.fillStyle = this.color;
     context.fillText(text[world_num-1], this.x, this.y + 10)
+    context.restore()
   } else if(this.icon.slice(0, 8) == "practice") {
     var text = ["I", "II","III", "IV"]
     var world_num = parseInt(this.icon.slice(8));
-    if(this.inactive) {
+    if(!this.active) {
       context.globalAlpha *= 0.3
       draw_gray_tessellation_sign(context, world_num, this.x, this.y, this.size)  
     } else {
