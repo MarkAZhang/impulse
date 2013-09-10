@@ -17,7 +17,7 @@ function WorldMapState(world) {
   this.buttons = []
   var _this = this
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 100, 100, this.color, impulse_colors["impulse_blue"], function(){
-    if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}}, "back"))
+    if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(_this))}, 20)}}, "back"))
   this.world_buttons = {
 
   }
@@ -126,6 +126,8 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
   if(unlocked) {
       this.world_buttons[world_num] = new SmallButton(name, 20, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
        function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
+       var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+       _this.draw_world_bg(world_bg_ctx)
         setTimeout(function(){
           switch_game_state(new MainGameTransitionState(world_num, null, null, null, null))
         }, 500)})
@@ -134,6 +136,10 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
      function(){})
     this.world_buttons[world_num].active = false
   }
+}
+
+WorldMapState.prototype.draw_world_bg = function(ctx) {
+  draw_bg(ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.cur_world)
 }
 
 WorldMapState.prototype.draw_bg = function(ctx) {
@@ -152,6 +158,14 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
     ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.globalAlpha /= 5
+    ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.globalAlpha *= 5
+  }
+  ctx.save()
+
+  if(this.fade_out_duration != null) {
+    ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
   }
 
   if(!this.bg_drawn) {
@@ -160,10 +174,12 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
 
-  if(this.fade_out_duration != null) {
-    ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
-  }
 
+
+  ctx.save()
+  ctx.globalAlpha *= 1
+  imp_vars.background_animation.draw(ctx, "world"+this.cur_world)
+  ctx.restore()
   ctx.save()
   ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
   ctx.font = "30px Muli"
@@ -230,6 +246,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].draw(ctx)
     if(this.mode_buttons[i].mouseOver) {
+      ctx.textAlign = "center"
       ctx.font = '15px Muli'
       if(this.mode_buttons[i].active) {
         ctx.fillStyle = impulse_colors['world '+(i+1)+" bright"]
@@ -296,12 +313,14 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
   }
+  ctx.restore()
 }
 
 WorldMapState.prototype.process = function(dt) {
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }
+  imp_vars.background_animation.process(dt)
 }
 
 WorldMapState.prototype.on_mouse_move = function(x, y) {

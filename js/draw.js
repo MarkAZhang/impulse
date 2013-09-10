@@ -417,7 +417,7 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
 
 function draw_gear(context, x, y, scale, color, center_color, center_glow) {
   context.save()
-  context.shadowBlur = 5
+  //context.shadowBlur = 5
   var spokes = 6
   var unit = 2 * Math.PI / (spokes * 4)
   var offset = -0.4
@@ -511,6 +511,33 @@ function draw_start_icon(context, x, y, scale, hover) {
   }
   context.stroke()
   context.restore()
+  
+}
+
+function draw_save_icon(context, x, y, scale, color) {
+  context.save()
+  context.shadowBlur = 0
+  context.beginPath()
+  context.fillStyle = color
+  context.strokeStyle = color
+  context.moveTo(x - scale * 0.6, y - scale * 0.6)
+  context.lineTo(x - scale * 0.6, y + scale * 0.6)
+  context.lineTo(x + scale * 0.6, y + scale * 0.6)
+  context.lineTo(x + scale * 0.6, y - scale * 0.6)
+  context.lineTo(x, y - scale * 0.6)
+  context.lineTo(x, y)
+  context.lineWidth = 5
+  context.stroke()
+  context.beginPath()
+  context.moveTo(x - scale * 0.35, y - scale * 0.15)  
+  context.lineTo(x + scale * 0.35, y - scale * 0.15)
+  context.lineTo(x, y + scale * 0.2)
+  context.fill()
+  context.restore()
+  
+}
+
+function draw_quit_icon(context, x, y, scale, color) {
   
 }
 

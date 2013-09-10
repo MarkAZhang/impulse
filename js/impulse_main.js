@@ -85,8 +85,9 @@ window["impulse_main"] =  function() {
     if(imp_vars.player_data.first_time) {
       imp_vars.cur_game_state = new HowToPlayState()
     } else {
-      imp_vars.cur_game_state = new TitleState(false)
+      imp_vars.cur_game_state = new TitleState(null)
     }
+    imp_vars.last_time = (new Date()).getTime();
     step()
 
 
@@ -146,17 +147,13 @@ function set_up_title_bg() {
   title_bg_canvas.width = imp_vars.levelWidth;
   title_bg_canvas.height = imp_vars.levelHeight;
   var title_bg_ctx = title_bg_canvas.getContext('2d');
-  var row_gap = 50;
-  var col_gap = 50;
-  var enemies = ["stunner", "spear", "tank", "mote", "goo", "harpoon",
-                "fighter", "disabler", "troll", "slingshot", "orbiter", "deathray"]
-  for(var i = 0; i < title_bg_canvas.width/row_gap; i++) {
-    for(var j = 0; j < title_bg_canvas.height/col_gap; j++) {
-
-      draw_enemy(title_bg_ctx, enemies[(j+i+8)%12], (i+0.5)*row_gap, (j+0.5)*col_gap, 20, Math.PI/2, "white");
-    }
-  }
+  imp_vars.background_animation = new BackgroundAnimation(title_bg_canvas.width, title_bg_canvas.height)
+  imp_vars.background_animation.draw_title_bg(title_bg_ctx)
   imp_vars.title_bg_canvas = title_bg_canvas
+  var world_menu_bg_canvas = document.createElement('canvas');
+  world_menu_bg_canvas.width = imp_vars.levelWidth;
+  world_menu_bg_canvas.height = imp_vars.levelHeight;
+  imp_vars.world_menu_bg_canvas = world_menu_bg_canvas
 }
 
 function step() {

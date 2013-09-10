@@ -115,7 +115,7 @@ imp_params.impulse_enemy_stats["mote"] = {
 
 imp_params.impulse_enemy_stats["goo"] = {
   color: "#e6c43c",
-  density: 5,
+  density: 7,
   lin_damp: 9,
   effective_radius: .5,
   force: 3,
@@ -142,7 +142,6 @@ imp_params.impulse_enemy_stats["goo"] = {
     "Dies upon collision # # Units immediately regain speed",
     "When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
-
   className: Goo
 
 }

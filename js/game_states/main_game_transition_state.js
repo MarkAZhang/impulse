@@ -33,9 +33,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       }
       this.compute_last_level_stats()
       if(!this.victory) {
-        this.last_level_summary_interval /= 2
-        this.transition_timer /= 2
-        this.level_intro_interval /= 2
+        this.last_level_summary_interval *= 0.66
+        this.transition_timer *= 0.66
+        this.level_intro_interval *= 0.66
         this.hive_numbers.lives -= 1
         this.hive_numbers.last_sparks = this.hive_numbers.sparks
         this.hive_numbers.last_lives = this.hive_numbers.lives
@@ -264,6 +264,19 @@ MainGameTransitionState.prototype.process = function(dt) {
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+
+  ctx.save()
+  if(this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval * 3 / 4) {
+    ctx.globalAlpha = (this.last_level_summary_interval - this.transition_timer) / (this.last_level_summary_interval / 4)
+  } else if(this.state == "level_intro" && this.transition_timer <= this.level_intro_interval * 1 / 4) {
+    ctx.globalAlpha = this.transition_timer / (this.level_intro_interval / 4)
+  } else if(this.last_level && !this.victory && this.state == "level_intro" && this.transition_timer >= this.level_intro_interval * 3 / 4) {
+    ctx.globalAlpha = (this.level_intro_interval - this.transition_timer) / (this.level_intro_interval / 4)
+  }
+  
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
   if(!this.first_process) return
 
   if(!this.bg_drawn && this.level) {
@@ -271,7 +284,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
-   bg_canvas.setAttribute("style", "display:none")
+    bg_canvas.setAttribute("style", "display:none")
   }
 
   if(this.state == "world_intro") {
@@ -298,7 +311,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.save()
-    ctx.globalAlpha *= 0.8
+    ctx.globalAlpha *= 0.6
     draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
     ctx.restore()
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
@@ -329,7 +342,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowBlur = 20;
       ctx.shadowColor = "black"
 
-      ctx.globalAlpha *= 0.8
+      ctx.globalAlpha *= 0.6
       draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
       ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-100)
       ctx.font = '32px Muli'

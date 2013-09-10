@@ -50,7 +50,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = this.status_duration[1] <= 0
-  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+  //this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 
   if(this.durations["volatile"] > 0) {
     this.durations["volatile"] -= dt
@@ -234,57 +234,27 @@ Tank.prototype.get_additional_color_for_status = function(status) {
   }
 }
 
-Tank.prototype.get_color_for_status = function(status) {
-  if(status == "normal") {
-    return this.color
-  } else if(status == "stunned") {
-    return 'gray';
-  } else if(status == "silenced") {
-    return 'gray'
-  } else if(status == "gooed") {
-    return "#e6c43c"
-  } else if(status == "impulsed") {
-    return "red"
-  } else if(status == "white") {
-    return "white"
-  }
-
-  return this.get_additional_color_for_status(status)
-}
-
-Tank.prototype.get_current_color_with_status = function(orig_color) {
-  /*if (this.durations["open"] > 0) {
-        context.fillStyle = impulse_colors["impulse_blue"]
-      } else */
-    if(!this.dying) {
-      if(this.color_silenced) {
-        return 'gray'
-      }
-      if(this.durations["impulsed"] > 0) {
-        return "red"
-      }
-      if(this.status_duration[0] > 0) {
-        return 'gray';
-      } else if(this.status_duration[2] > 0) {
-        return "#e6c43c"
-      }
-    }
-    if(orig_color)
-      return orig_color
-    return this.color;
-}
-
-Tank.prototype.get_additional_current_status = function() {
+Tank.prototype.get_current_status = function() {
   if(this.dying) {
     return "volatile"
   }
 
   if(!this.dying) {
-      if(this.durations["volatile"] > 0) {
-        return "volatile";
-      }
+    if(this.status_duration[0] > 0) {
+      return 'stunned';
+    } else if(this.color_silenced) {
+      return 'silenced'
+    } if(this.durations["volatile"] > 0) {
+      return "volatile"
+    } else if(this.status_duration[2] > 0) {
+      return "gooed"
+    }
+    if(this.durations["impulsed"] > 0) {
+      return "impulsed"
+    }
   }
-  return "normal"
+
+  return this.get_additional_current_status()
 }
 
 Tank.prototype.draw_enemy_image_additional = function(context, color) {

@@ -2,8 +2,8 @@ TitleState.prototype = new GameState
 
 TitleState.prototype.constructor = TitleState
 
-function TitleState(start_clicked) {
-  this.start_clicked = true
+function TitleState(last_state) {
+  this.last_state = last_state
   this.buttons = {
     "menu" : [],
     "enter" : [],
@@ -12,11 +12,8 @@ function TitleState(start_clicked) {
   var _this = this
   this.image = new Image()
   this.bg_drawn = false
-  this.state = "enter"
 
-  if(this.start_clicked) {
-    this.state = "menu"
-  }
+  this.state = "menu"
 
   this.image.src = 'impulse_logo.png'
   this.setup_main_menu()
@@ -27,17 +24,35 @@ function TitleState(start_clicked) {
     imp_vars.player_data.first_time = false
     save_game()
   }
+  /*this.fade_in_duration = null;
+  if(last_state == null) {
+    this.fade_in_duration = -250  
+  } else if(last_state instanceof WorldMapState) {
+    this.fade_in_duration = 0
+  }
+  
+  this.fade_interval = 250
+  this.fade_out_duration = null*/
 }
+
 
 TitleState.prototype.process = function(dt) {
-
+  imp_vars.background_animation.process(dt)
+  /*if(this.fade_out_duration) {
+    this.fade_out_duration -= dt;
+  }
+  if(this.fade_in_duration != null && this.fade_in_duration < this.fade_interval) {
+    this.fade_in_duration += dt
+  } else {
+    this.fade_in_duration = null
+  }*/
 }
 
-TitleState.prototype.draw_bg = function(ctx) {
+TitleState.prototype.draw_bg = function(ctx, alpha) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#080808"
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 0.1
+  ctx.globalAlpha = alpha
   ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
   ctx.globalAlpha = 1
 }
@@ -45,21 +60,37 @@ TitleState.prototype.draw_bg = function(ctx) {
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    this.draw_bg(bg_ctx)
+    this.draw_bg(bg_ctx, 0.1)
     this.bg_drawn = true
   }
-  ctx.globalAlpha = .3
-  /*ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
-  ctx.globalAlpha = 1
+  imp_vars.background_animation.draw(ctx)
+  //ctx.globalAlpha = .3
+  //ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
+  //ctx.globalAlpha = 1
+  ctx.save()
+  /*if(this.fade_out_duration != null) {
+    ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_interval), 0)
+    this.draw_bg(bg_ctx, (ctx.globalAlpha * 0.07 + 0.03))
 
+  } else if(this.fade_in_duration != null) {
+
+    if(this.last_state == null) {
+      ctx.globalAlpha = Math.min(Math.max(this.fade_in_duration/this.fade_interval, 0), 1)
+      bg_canvas.setAttribute("style", "opacity:"+ctx.globalAlpha)  
+    } else if(this.last_state instanceof WorldMapState) {
+      ctx.globalAlpha = Math.min(Math.max(this.fade_in_duration/this.fade_interval, 0), 1)
+      this.draw_bg(bg_ctx, (ctx.globalAlpha * 0.07 + 0.03))
+    }
+    
+  }*/
   draw_logo(ctx,imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 160, true)
 
   //ctx.shadowBlur = 5
 
-    for(var i = 0; i < this.buttons[this.state].length; i++)
-    {
-      this.buttons[this.state][i].draw(ctx)
-    }
+  for(var i = 0; i < this.buttons[this.state].length; i++)
+  {
+    this.buttons[this.state][i].draw(ctx)
+  }
 
   /*ctx.font = '20px Muli'
   draw_empty_star(ctx, imp_vars.levelWidth - 20, imp_vars.levelHeight - 15, 15, "black")
@@ -87,7 +118,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText((this.next_upgrade - this.cur_rating), imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 193)
   }*/
   
-  
+  ctx.restore()
 
 }
 
@@ -138,14 +169,20 @@ TitleState.prototype.setup_main_menu = function() {
   } else {
     this.buttons["menu"].push(new IconButton("MAIN GAME", 24, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 130, 150, 150, button_color, impulse_colors["impulse_blue"],
     function(){
-      var i = 1;
-      while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
-        i += 1
-      }
+      _this.fade_out_duration = _this.fade_interval;
+      
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
-        switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+        setTimeout(function(){
+          switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+        }, _this.fade_interval)
       } else {
-        switch_game_state(new WorldMapState(i))
+        var i = 1;
+        while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+          i += 1
+        }
+        setTimeout(function(){
+          switch_game_state(new WorldMapState(i))
+        }, _this.fade_interval)
       }
     }, "player"))
 

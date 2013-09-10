@@ -23,7 +23,7 @@ IconButton.prototype.additional_draw = function(context) {
   //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
   context.font = this.size+'px Muli';
   if(!this.active && (this.icon.slice(0, 8) == "practice")) {
-    context.globalAlpha = 0.4
+    context.globalAlpha *= 0.4
   }
   //context.fillStyle = this.hover ? this.hover_color : this.color
   context.fillStyle = this.hover ? this.hover_color : this.color
@@ -86,6 +86,18 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_start_icon(context, this.x, this.y - this.w/8, 20, true)   
     } else {
       draw_start_icon(context, this.x, this.y - this.w/8, 20, false)   
+    }
+  } else if(this.icon == "save") {
+    if(this.hover) {
+      draw_save_icon(context, this.x, this.y - this.w/8, 20, this.hover_color)   
+    } else {
+      draw_save_icon(context, this.x, this.y - this.w/8, 20, this.color)   
+    }
+  } else if(this.icon == "quit") {
+    if(this.hover) {
+      draw_quit_icon(context, this.x, this.y - this.w/8, 20, this.hover_color)   
+    } else {
+      draw_quit_icon(context, this.x, this.y - this.w/8, 20, this.color)   
     }
   } else if(this.icon.slice(0, 5) == "world") {
     var text = ["I", "II","III", "IV"]

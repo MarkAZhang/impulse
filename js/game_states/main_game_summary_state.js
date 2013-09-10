@@ -36,6 +36,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   if(save_screen) {
     this.hive_numbers = HiveNumbers.prototype.clone(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode])
 
+
     this.hive_numbers.adjust_values()
     save_game()
     this.world_num = this.hive_numbers.world
@@ -184,6 +185,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none" )
     this.bg_drawn = true
+    draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
   }
 
   ctx.save()
@@ -208,6 +210,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.fillStyle = this.dark_color
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
@@ -215,6 +218,11 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = Math.max(0, prog)
   }
+
+  ctx.globalAlpha /= 5
+
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.globalAlpha *= 5
 
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -348,7 +356,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
-  ctx.font = '20px Muli'
+  ctx.font = '16px Muli'
   ctx.fillStyle = this.lite_color
   if(this.save_screen) {
     if(this.just_saved)
@@ -441,7 +449,7 @@ MainGameSummaryState.prototype.resume_game = function() {
 MainGameSummaryState.prototype.delete_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
-  switch_game_state(new WorldMapState())
+  switch_game_state(new WorldMapState(this.world_num))
 }
 
 MainGameSummaryState.prototype.exit_game = function() {

@@ -110,14 +110,19 @@ PauseMenu.prototype.add_buttons = function() {
 
     } else {
       if(this.game_numbers.seconds < 5) {
-        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 140, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+
+        /*this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 140, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
           _this.save_and_quit_main_game()
-        }}(this))
-        if(imp_vars.player_data.options.control_hand == "right") {
+        }}(this))*/
+        /*if(imp_vars.player_data.options.control_hand == "right") {
           this.save_and_quit_button.underline_index = 0
         } else {
           this.save_and_quit_button.extra_text = "LEFT ARROW"
-        }
+        }*/
+        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 140, this.y - this.h/2 + 530, 150, 100, "white", this.lite_color, function(_this) { return function() {
+          _this.save_and_quit_main_game()
+        }}(this), "save")
+
       } else {
         this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 140, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
         }}(this))
@@ -353,15 +358,15 @@ PauseMenu.prototype.save_and_quit_main_game = function() {
 }
 
 PauseMenu.prototype.on_key_down = function(keyCode) {
-   if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
     if(!this.level.main_game) {
-      if(keyCode == imp_params.keys.EXIT_KEY) { //E = EXIT
-        this.quit_practice()
-      }
+      //if(keyCode == imp_params.keys.EXIT_KEY) { //E = EXIT
+      //  this.quit_practice()
+      //}
       if(keyCode == imp_params.keys.RESTART_KEY) { //R = RESTART
         this.restart_practice()
       }
-    } else {
+    /*} else {
       if(keyCode == imp_params.keys.QUIT_KEY && this.shift_down()) { //Q = QUIT
         this.quit_main_game()
       } else if(keyCode == imp_params.keys.SAVE_AND_QUIT_KEY) { //S = SAVE AND QUIT
@@ -372,22 +377,22 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
     /*if(keyCode == 79) { // O = OPTIONS MENU
       set_dialog_box(new OptionsMenu(this))
     }*/
-  } else {
+  /*} else {
     if(keyCode == imp_params.keys.QUIT_KEY && this.shift_down()) { //Q = QUIT
-      this.quit_tutorial()
+      this.quit_tutorial()*/
     }
   }
 
-  if(keyCode == imp_params.keys.PAUSE && !this.shift_down()) {
+  if(keyCode == imp_params.keys.PAUSE) {// && !this.shift_down()) {
     clear_dialog_box()
     this.game_state.pause = false
   }
-  if(keyCode == 16) {
+  /*if(keyCode == 16) {
     this.shift_down_time = (new Date()).getTime()
   }
   if(keyCode == 17) {
     this.ctrl_down_time = (new Date()).getTime()
-  }
+  }*/
 
   if(keyCode == imp_params.keys.MUTE_KEY) {
     this.redraw_icons = true

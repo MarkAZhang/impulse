@@ -233,6 +233,20 @@ ImpulseGameState.prototype.check_pause = function() {
 
 ImpulseGameState.prototype.process = function(dt) {
   if(!this.ready) return
+  if(this.fps_counter == null)
+  {
+    this.last_fps_time = (new Date()).getTime()
+    this.fps_counter = 0
+    this.fps = "???"
+  }
+  else if(this.fps_counter == 100)
+  {
+    this.fps_counter = 0
+    var a = (new Date()).getTime()
+    this.fps = Math.round(100000/(a-this.last_fps_time))
+    this.last_fps_time = a
+  }
+  this.fps_counter+=1
   if(!this.pause)
   {
     this.check_pause()
@@ -348,7 +362,7 @@ ImpulseGameState.prototype.process = function(dt) {
       }
     }
 
-    this.world.Step(1.0/60, 1, 10, 10);
+    this.world.Step(1.0/60, 1, 10);
   } else {
 
   }
@@ -770,25 +784,12 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
 
 
-  if(this.fps_counter == null)
-  {
-    this.last_fps_time = (new Date()).getTime()
-    this.fps_counter = 0
-    this.fps = "???"
-  }
-  else if(this.fps_counter == 100)
-  {
-    this.fps_counter = 0
-    var a = (new Date()).getTime()
-    this.fps = Math.round(100000/(a-this.last_fps_time))
-    this.last_fps_time = (new Date()).getTime()
-  }
-  this.fps_counter+=1
-  /*context.beginPath()
+ 
+  context.beginPath()
   context.fillStyle = "white"
   context.font = '20px Muli'
-  context.fillText("FPS: "+this.fps, imp_vars.sidebarWidth/2, canvasHeight - 20)
-  context.fill()*/
+  context.fillText("FPS: "+this.fps, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+  context.fill()
   context.shadowBlur = 0;
   context.save()
 

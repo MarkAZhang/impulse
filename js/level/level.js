@@ -449,26 +449,26 @@ Level.prototype.generate_obstacle_edges = function() {
 
 Level.prototype.draw_gateway = function(ctx, draw_factor) {
   if(this.is_boss_level) return
-    var factor = 1
-    ctx.save()
-    ctx.globalAlpha = 1
+  ctx.save()
 
-    if(this.gateway_transition_duration != null && this.world_num <= 4) {
-      var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
-      factor = 1 * prog + 2 * (1-prog)
-      ctx.globalAlpha *= 0.5*(1-prog)
-        drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
-
-    }
-    else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 3) {
-      factor = 2
-      ctx.globalAlpha *= 0.5
-        drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-        (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
-      }
+  if(this.gateway_transition_duration != null && this.world_num <= 4) {
+    var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
+    ctx.globalAlpha *= 0.5*(1-prog)
+      drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
+      (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
     ctx.restore()
-    draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor)
+    ctx.save()
+    ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
+  }
+  else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 3) {
+    ctx.globalAlpha *= 0.5
+      drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
+      (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
+  } else {
+    ctx.globalAlpha *= 0.3 
+  }
+  draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor)
+  ctx.restore()
 }
 
 Level.prototype.draw = function(context, draw_factor) {

@@ -38,7 +38,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
 
-    "normal": [50, 300000, 1200000],
+    "normal": [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
 
@@ -256,8 +256,8 @@ imp_params.impulse_level_data['HIVE 2-2'] = {
 
 imp_params.impulse_level_data['HIVE 2-3'] = {
   enemies: {
-              "spear": [4, 7, 3, 3, 30],
-              "tank": [7, 7, 4, 3, 30],
+              "spear": [4, 7, 4, 2, 30],
+              "tank": [7, 7, 4, 2, 30],
               "goo": [10, 10, 1, 0, 1],
            },
   dominant_enemy: "goo",
@@ -267,8 +267,8 @@ imp_params.impulse_level_data['HIVE 2-3'] = {
   spark_spawn_points: [[66, 528], [66, 72], [734, 528], [66, 528]],
   buffer_radius: 1,
    initial_spawn_data: {
-    "tank": 4,
-    "spear": 3,
+    "tank": 30,
+    "spear": 30,
     "goo": 1
  },
   cutoff_scores: {

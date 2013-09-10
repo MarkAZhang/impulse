@@ -148,7 +148,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "white"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "white", "world1", "world2", "world3", "world4"]
   this.additional_statuses = []
 
   this.adjust_position_counter = 0
@@ -704,6 +704,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
+  
   context.drawImage(imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
   if(this.status_duration[3] > 0) {
@@ -1039,7 +1040,7 @@ Enemy.prototype.get_current_color_with_status = function(orig_color) {
 
 Enemy.prototype.get_color_for_status = function(status) {
   if(status == "normal") {
-    return this.color
+    return this.color ? this.color : null
   } else if(status == "stunned") {
     return 'gray';
   } else if(status == "silenced") {
@@ -1050,6 +1051,8 @@ Enemy.prototype.get_color_for_status = function(status) {
     return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
+  } else if(status.slice(0, 5) == "world") {
+    return impulse_colors["world "+status.slice(5,6)+" lite"]
   }
 
   return this.get_additional_color_for_status(status)
