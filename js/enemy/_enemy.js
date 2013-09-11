@@ -165,6 +165,10 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.hit_proc_on_silenced = false // for spears, since they cannot charge while silenced but still cause knockback
 
   this.no_death_on_open = false
+
+  this.heading_gap = 4
+  this.heading_timer = 0
+  this.actual_heading = null
 }
 
 Enemy.prototype.check_death = function() {
@@ -272,7 +276,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
     }
   }
 
-  for( status in this.durations) {
+  for(status in this.durations) {
     if(this.durations[status] > 0) {
       this.durations[status] -= dt
     }
@@ -430,8 +434,6 @@ Enemy.prototype.move = function() {
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
       var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
-
-
       if(new_path.path!=null) {
         this.path = new_path.path
         this.path_dist = new_path.dist
@@ -513,7 +515,7 @@ Enemy.prototype.move_to = function(endPt) {
 
 Enemy.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  var in_poly = false
+  /*var in_poly = false
   for(var i = 0; i < this.level.boundary_polygons.length; i++)
   {
     if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
@@ -529,14 +531,21 @@ Enemy.prototype.modify_movement_vector = function(dir) {
     dir.Multiply(this.slow_force)
   }
   else
-  {
+  {*/
     dir.Multiply(this.force)
-  }
+  //}
 }
 
 Enemy.prototype.set_heading = function(endPt) {
   var heading = _atan(this.body.GetPosition(), endPt)
-  this.body.SetAngle(heading)
+
+  this.heading_timer -= 1
+  if(this.heading_timer <= 0) {
+    this.body.SetAngle(heading)
+    this.heading_timer = this.heading_gap 
+  }
+  this.actual_heading = heading
+
 }
 
 Enemy.prototype.start_death = function(death) {
@@ -672,7 +681,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     var tp = this.body.GetPosition()
     context.save();
     context.translate(tp.x * draw_factor, tp.y * draw_factor);
-    context.rotate(this.body.GetAngle());
+    context.rotate(this.actual_heading);
     /*context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);*/
   //}
   //var latest_color = this.get_current_color_with_status()
@@ -941,7 +950,7 @@ Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
   var ans = null
   var ans_d = null
 
-  var cur_ang = this.shape_type == "polygon" ? this.body.GetAngle() : 0
+  var cur_ang = this.shape_type == "polygon" ? this.current_heading : 0
 
   for(var k = 0; k < this.shape_polar_points.length; k++) {
     var these_polar_points = this.shape_polar_points[k]

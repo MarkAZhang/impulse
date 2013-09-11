@@ -33,7 +33,7 @@ function Spear(world, x, y, id, impulse_game_state) {
 
 Spear.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  var in_poly = false
+  /*var in_poly = false
   for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
@@ -45,7 +45,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
   {
     dir.Multiply(this.slow_force)
   }
-  else {
+  else {*/
     if(this.special_mode)
     {
       dir.Multiply(this.fast_factor)
@@ -54,7 +54,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
       dir.Multiply(this.slow_factor)
     }
     dir.Multiply(this.force)
-  }
+  //}
 }
 
 Spear.prototype.additional_processing = function(dt) {
