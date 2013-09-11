@@ -6,7 +6,7 @@ var Player = function(world, x, y, impulse_game_state) {
 
 Player.prototype.lin_damp = 3.5//old = 3
 
-Player.prototype.true_force = 1//old = .5
+Player.prototype.true_force = 1.2//old = .5
 
 Player.prototype.impulse_force = 50
 
