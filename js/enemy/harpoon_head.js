@@ -24,7 +24,6 @@ HarpoonHead.prototype.collide_with = function(other) {
     else if(this.harpoon.destroyable_timer > 0) {
       this.harpoon.start_death("hit_player")
     }
-
   }
 
   /*if(other === this.player){

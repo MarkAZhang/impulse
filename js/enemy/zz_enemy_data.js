@@ -95,7 +95,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   density: .5,
   lin_damp: 3,
   effective_radius: .5,
-  force: .18,
+  force: .15,
   score_value: 1000,
   attack_rating: .5,
   batch_enemy_image: true,
@@ -487,7 +487,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
 
 imp_params.impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
-  density: 9,
+  density: 1,
   lin_damp: 7,
   effective_radius: 3,
   force: 0,

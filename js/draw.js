@@ -538,7 +538,17 @@ function draw_save_icon(context, x, y, scale, color) {
 }
 
 function draw_quit_icon(context, x, y, scale, color) {
-  
+  context.save()
+  context.shadowBlur = 0
+  context.beginPath()
+  context.moveTo(x - scale/2, y - scale/2)
+  context.lineTo(x + scale/2, y + scale/2)
+  context.moveTo(x - scale/2, y + scale/2)
+  context.lineTo(x + scale/2, y - scale/2)
+  context.strokeStyle = color
+  context.lineWidth = 5
+  context.stroke()
+  context.restore()
 }
 
 function draw_music_icon(context, x, y, scale, color, key_display) {

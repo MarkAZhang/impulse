@@ -419,6 +419,9 @@ Enemy.prototype.get_target_point = function() {
 }
 
 Enemy.prototype.move = function() {
+  if(this.type == "goo") {
+    var a = 0;
+  }
 
   if(this.player.dying) return //stop moving once player dies
 
@@ -508,7 +511,7 @@ Enemy.prototype.move_to = function(endPt) {
 
   //if(this.shape instanceof b2PolygonShape) {
   if (this.default_heading) {
-    this.set_heading(endPt)
+    this.set_heading_to(endPt)
   }
   //}
 }
@@ -536,8 +539,11 @@ Enemy.prototype.modify_movement_vector = function(dir) {
   //}
 }
 
-Enemy.prototype.set_heading = function(endPt) {
-  var heading = _atan(this.body.GetPosition(), endPt)
+Enemy.prototype.set_heading_to = function(point) {
+  this.set_heading(_atan(this.body.GetPosition(), point))
+}
+
+Enemy.prototype.set_heading = function(heading) {
 
   this.heading_timer -= 1
   if(this.heading_timer <= 0) {

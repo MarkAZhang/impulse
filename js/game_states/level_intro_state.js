@@ -10,6 +10,8 @@ function LevelIntroState(level_name, world) {
   this.world_num = world
   this.bg_drawn = false
 
+  this.color = impulse_colors['world '+ this.world_num + ' bright']
+
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 100, 100, "white", impulse_colors["impulse_blue"], function(_this){return function(){
@@ -123,7 +125,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
     draw_progress_bar(ctx, imp_vars.levelWidth - 150, imp_vars.levelHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
     ctx.font = '20px Muli'
-    ctx.fillStyle = 'black'
+    ctx.fillStyle = this.color
     ctx.fillText("LOADING", imp_vars.levelWidth - 150, imp_vars.levelHeight - 33)
   }
 
@@ -155,7 +157,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
 
-    ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : "black"
+    ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : this.color
     ctx.textAlign = 'center'
 
     /*if(this.stars > 0)

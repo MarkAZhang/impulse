@@ -239,11 +239,11 @@ Harpoon.prototype.additional_processing = function(dt) {
   }
 
   if(this.harpoon_state == "inactive") {
-    this.set_heading(this.player.body.GetPosition())
+    this.set_heading_to(this.player.body.GetPosition())
   } else if(this.harpoon_state == "engaged") {
-    this.set_heading(this.harpooned_target.body.GetPosition())
+    this.set_heading_to(this.harpooned_target.body.GetPosition())
   } else {
-    this.set_heading(this.harpoon_head.body.GetPosition())
+    this.set_heading_to(this.harpoon_head.body.GetPosition())
   }
 
   this.adjust_position_enabled = (this.harpoon_state == "inactive")
@@ -273,9 +273,9 @@ Harpoon.prototype.additional_processing = function(dt) {
 
   if(this.harpoon_state == "inactive") {
     this.harpoon_head.body.SetPosition(this.get_virtual_harpoon_loc())
-    this.harpoon_head.body.SetAngle(this.body.GetAngle())
+    this.harpoon_head.set_heading(this.body.GetAngle())
   } else if(this.harpoon_state == "fire") {
-    this.harpoon_head.body.SetAngle(this.harpoon_dir)
+    this.harpoon_head.set_heading(this.harpoon_dir)
     if(this.harpoon_head.body.m_linearVelocity.Length() < 1) {
       this.harpoon_state = "retract"
     }
@@ -285,7 +285,7 @@ Harpoon.prototype.additional_processing = function(dt) {
   } else if(this.harpoon_state == "retract") {
     var dir = _atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
     this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
-    this.harpoon_head.body.SetAngle(Math.PI + dir)
+    this.harpoon_head.set_heading(Math.PI + dir)
     if(p_dist(this.harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.harpoon_head_defaut_dist * 1.1) {
       //this.silence(this.delay_between_shots)
       //this.last_stun = Math.max(this.delay_between_shots, this.last_stun)
@@ -306,7 +306,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     pos.Subtract(dir)
     this.harpoon_head.body.SetPosition(pos)
     var dir = _atan(this.body.GetPosition(), this.harpoon_head.body.GetPosition())
-    this.harpoon_head.body.SetAngle(dir)
+    this.harpoon_head.set_heading(dir)
       this.harpoon_state = "retract"
     this.harpooned_target = null
   }
@@ -342,7 +342,7 @@ Harpoon.prototype.additional_processing = function(dt) {
         this.harpoon_state = "fire"
         this.harpoon_dir = _atan(this.harpoon_head.body.GetPosition(), this.get_harpoon_target_pt())
         this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
-        this.harpoon_head.body.SetAngle(this.harpoon_dir)
+        this.harpoon_head.set_heading(this.harpoon_dir)
       }
     }
     else {

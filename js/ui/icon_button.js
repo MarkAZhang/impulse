@@ -95,9 +95,9 @@ IconButton.prototype.draw_icon  = function(context) {
     }
   } else if(this.icon == "quit") {
     if(this.hover) {
-      draw_quit_icon(context, this.x, this.y - this.w/8, 20, this.hover_color)   
+      draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.hover_color)   
     } else {
-      draw_quit_icon(context, this.x, this.y - this.w/8, 20, this.color)   
+      draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.color)   
     }
   } else if(this.icon.slice(0, 5) == "world") {
     var text = ["I", "II","III", "IV"]

@@ -54,10 +54,10 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
 this.drawn_enemies = null
 
-  if(this.is_boss_level) {
+  if(this.level.is_boss_level) {
     this.drawn_enemies = {}
-    this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
-    this.num_enemy_type = 1
+    //this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
+    //this.num_enemy_type = 1
   }
   else {
     this.drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
@@ -219,7 +219,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
         }
 
   } else {
-    if(this.level.boss_victory) {
+    /*if(this.level.boss_victory) {
       draw_star(ctx, imp_vars.levelWidth/2, first_rect_y + 50, 30, "gold")
       draw_progress_bar(ctx, imp_vars.levelWidth/2, first_rect_y + 90, 200, 10, 1, "gold")
       draw_star(ctx, imp_vars.levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
@@ -227,15 +227,26 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       draw_empty_star(ctx, imp_vars.levelWidth/2, first_rect_y + 50, 30)
       draw_progress_bar(ctx, imp_vars.levelWidth/2, first_rect_y + 90, 200, 10, 0, "gold")
       draw_star(ctx, imp_vars.levelWidth/2 - 100, first_rect_y + 93, 15, "gold")
-    }
-    ctx.fillText("TIME: "+convert_to_time_notation(this.game_numbers.seconds), imp_vars.levelWidth/2, first_rect_y + 130)
-    ctx.fillStyle = imp_params.impulse_level_data[this.level_name]['stars'] > 0 ? impulse_colors[this.star_colors[imp_params.impulse_level_data[this.level_name]['stars'] - 1]] : "black"
-    if(this.best_time)
-      ctx.fillText("NEW BEST TIME", imp_vars.levelWidth/2, first_rect_y + 160)
-    else
-      ctx.fillText("BEST TIME: "+ convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, first_rect_y + 160)
-    
+    }*/
 
+    ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
+    ctx.font = '12px Muli'
+    ctx.fillText("TIME",imp_vars.levelWidth/2, 185)
+    ctx.font = '28px Muli'
+    ctx.fillText(convert_to_time_notation(this.game_numbers.seconds), imp_vars.levelWidth/2, 210)
+
+    if(this.best_time) {
+      ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
+      ctx.font = '24px Muli'
+      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2, 425)
+    } else {
+      var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
+      ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
+      ctx.font = '12px Muli'
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 400)
+      ctx.font = '28px Muli'
+      ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, 425)
+    }
   }
 
   if(this.higher_rating) {
@@ -247,10 +258,12 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("+"+this.rating_diff, imp_vars.levelWidth/2, 450)
   }
 
-  ctx.textAlign = 'center' 
-  ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
-  ctx.font = '12px Muli'
-  ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 460)
+  if (!this.level.is_boss_level) {
+    ctx.textAlign = 'center' 
+    ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
+    ctx.font = '12px Muli'
+    ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 460)
+  }
 
   /*var second_rest_y = 370
 

@@ -109,7 +109,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.lin_damp = this.orig_lin_damp
   }
 
-  this.set_heading(this.player.body.GetPosition())
+  this.set_heading_to(this.player.body.GetPosition())
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)

@@ -119,27 +119,27 @@ PauseMenu.prototype.add_buttons = function() {
         } else {
           this.save_and_quit_button.extra_text = "LEFT ARROW"
         }*/
-        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 140, this.y - this.h/2 + 530, 150, 100, "white", this.lite_color, function(_this) { return function() {
+        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 157, this.y - this.h/2 + 530, 150, 100, "white", this.lite_color, function(_this) { return function() {
           _this.save_and_quit_main_game()
         }}(this), "save")
 
       } else {
-        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 140, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
+        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 157, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
         }}(this))
       }
 
       this.buttons.push(this.save_and_quit_button)
 
-      this.quit_button = new SmallButton("QUIT", 24, this.x + 177, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
+      this.quit_button = new IconButton("QUIT", 16, this.x + 157, this.y - this.h/2 + 530, 60, 100, "white", this.lite_color, function(_this) { return function() {
         _this.quit_main_game()
-      }}(this))
+      }}(this), "quit")
       this.buttons.push(this.quit_button)
-      if(imp_vars.player_data.options.control_hand == "right") {
+      /*if(imp_vars.player_data.options.control_hand == "right") {
         this.quit_button.underline_index = 0
         this.quit_button.extra_text= "SHIFT+"
       } else {
         this.quit_button.extra_text = "CTRL + RIGHT ARROW"
-      }
+      }*/
     }
   } else {
     this.quit_button = new SmallButton("QUIT", 24, this.x, this.y - this.h/2 + 530, 200, 50, this.lite_color, this.level.color, function(_this) { return function() {
