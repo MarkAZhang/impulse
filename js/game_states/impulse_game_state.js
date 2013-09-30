@@ -507,10 +507,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.beginPath()
       ctx.lineWidth = 1
     	ctx.strokeStyle = '#ccc';
-      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*draw_factor +imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*draw_factor)
-      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*draw_factor + imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*draw_factor)
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*imp_vars.draw_factor +imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p1.y*imp_vars.draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.visibility_graph.poly_edges[i].p2.y*imp_vars.draw_factor)
     	ctx.stroke()
-  }
+  }*/
 
   /*for(var i = 0; i < this.level.obstacle_edges.length; i++)
   {
@@ -520,9 +520,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.moveTo(this.level.obstacle_edges[i].p1.x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.level.obstacle_edges[i].p1.y*imp_vars.draw_factor)
       ctx.lineTo(this.level.obstacle_edges[i].p2.x*imp_vars.draw_factor + imp_vars.sidebarWidth, this.level.obstacle_edges[i].p2.y*imp_vars.draw_factor)
     	ctx.stroke()
-  }*/
+  }
 
-  /*ctx.save()
+  ctx.save()
   ctx.translate(imp_vars.sidebarWidth, 0)
   for(var i = 0; i < this.visibility_graph.edges.length; i++)
   {

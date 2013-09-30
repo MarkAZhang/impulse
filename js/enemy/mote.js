@@ -34,10 +34,11 @@ Mote.prototype.additional_processing = function(dt) {
   this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 }
 
-Mote.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+Mote.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
 	if(this.status_duration[1] > 0) {
 		this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
-    this.open(this.open_period)
+    if (!ultimate)
+      this.open(this.open_period)
   }
 }

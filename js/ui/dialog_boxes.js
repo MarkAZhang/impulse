@@ -124,8 +124,8 @@ PauseMenu.prototype.add_buttons = function() {
         }}(this), "save")
 
       } else {
-        this.save_and_quit_button = new SmallButton("SAVE & QUIT", 24, this.x - 157, this.y - this.h/2 + 530, 200, 50, "gray", "gray", function(_this) { return function() {
-        }}(this))
+        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 157, this.y - this.h/2 + 530, 150, 100, "gray", "gray", function(_this) { return function() {
+        }}(this), "save")
       }
 
       this.buttons.push(this.save_and_quit_button)
@@ -271,10 +271,13 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   draw_gear(ctx, this.x - 60, this.y - this.h/2 + 463, 8, this.lite_color, this.bg_color, true)
 
   if(this.game_numbers.seconds >= 5 && this.level.main_game) {
-    ctx.font = '12px Muli'
+    ctx.font = '8px Muli'
     ctx.fillStyle = "gray"
-    ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("ONLY BEFORE 0:05", this.x - 140, this.y - this.h/2 + 548)
+    ctx.shadowBlur = 0
+    ctx.textAlign = "center"
+    ctx.fillText("ONLY BEFORE 0:05", this.x - 157, this.y - this.h/2 + 558)
+
+
   }
 
 

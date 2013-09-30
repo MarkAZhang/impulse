@@ -105,6 +105,20 @@ Tank.prototype.check_death = function()
   }
 }
 
+
+Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+  if(!ultimate) 
+    this.open(this.open_period)
+  if (this.status_duration[2] > 0) {
+    this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+  } else {
+    this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+  }
+  
+  this.durations["impulsed"] += this.impulsed_duration
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+}
+
 Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
   this.durations["volatile"] = this.volatile_interval
 }

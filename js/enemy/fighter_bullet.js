@@ -93,6 +93,8 @@ FighterBullet.prototype.collide_with = function(other) {
             factor = this.bullet_low_enemy_factor
         } else {
           factor = this.bullet_enemy_factor
+          if(this.reflected)
+            factor *= 2
         }
 
         /*if(other.id == this.parent_id) {
@@ -118,9 +120,13 @@ FighterBullet.prototype.collide_with = function(other) {
 
 FighterBullet.prototype.move = function() {
 
-  this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
-
-  this.body.SetAngle(_atan({x: 0, y: 0}, this.v))
+  if (this.status_duration[2] > 0) {
+    this.body.ApplyImpulse(new b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())  
+  } else {
+    this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())  
+  }
+  
+  this.set_heading(_atan({x: 0, y: 0}, this.v))
 }
 
 FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {

@@ -125,9 +125,11 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
   var _this = this
   if(unlocked) {
       this.world_buttons[world_num] = new SmallButton(name, 20, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
-       function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
-       var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-       _this.draw_world_bg(world_bg_ctx)
+      function(){
+        _this.fade_out_duration = _this.fade_out_interval; 
+        _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
+        var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+        _this.draw_world_bg(world_bg_ctx)
         setTimeout(function(){
           switch_game_state(new MainGameTransitionState(world_num, null, null, null, null))
         }, 500)})
@@ -154,7 +156,6 @@ WorldMapState.prototype.draw_bg = function(ctx) {
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.fade_out_color) {
-
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
     ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
@@ -338,6 +339,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
 }
 
 WorldMapState.prototype.on_click = function(x, y) {
+  if (this.fade_out_duration != null) return
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }

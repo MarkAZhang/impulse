@@ -222,7 +222,7 @@ imp_params.impulse_level_data['HIVE 2-1'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    "normal":   [150000, 500000, 2000000],
+    "normal":   [150000, 450000, 1750000],
   },
   player_loc: {x: 400, y: 235}
 
@@ -267,12 +267,12 @@ imp_params.impulse_level_data['HIVE 2-3'] = {
   buffer_radius: 1,
    initial_spawn_data: {
     "tank": 4,
-    "spear": 4,
+    "spear": 8,
     "goo": 1
  },
   cutoff_scores: {
 
-    "normal":  [200000, 700000, 2000000],
+    "normal":  [200000, 600000, 2000000],
   },
   player_loc: {x:400, y:300}
 
@@ -300,7 +300,7 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
   spark_spawn_points: [[400, 120], [180, 460], [620, 460]],
   buffer_radius: 1,
     cutoff_scores: {
-    "normal":  [200000, 500000, 2000000],
+    "normal":  [175000, 500000, 2000000],
   },
 
   player_loc: {x: 400, y: 330}
@@ -311,8 +311,8 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
 
 imp_params.impulse_level_data['HIVE 2-5'] = {
   enemies: {
-              "stunner": [6, 6, 0, 2, 15],
-              "mote": [7, 7, 0, 1, 15],
+              "stunner": [6, 6, 1, 2, 15],
+              "mote": [8, 8, 1, 1, 15],
               "harpoon": [11, 11, 1.5, 1.5, 15],
            },
   dominant_enemy: "harpoon",
@@ -327,7 +327,7 @@ imp_params.impulse_level_data['HIVE 2-5'] = {
   spawn_points: [[100, -100], [700, -100], [100, 700], [700, 700]],
   spark_spawn_points: [[100, 50], [100, 300], [100, 550],[700, 50], [700, 300],[700, 550]],
   cutoff_scores: {
-    "normal":   [200000, 600000, 1750000],
+    "normal":   [200000, 600000, 2000000],
   },
 
   player_loc: {x:400, y: 425}
@@ -371,12 +371,12 @@ enemies: {
       "harpoon": [18, 30, 4, 2, 16]
   },
   dominant_enemy: "harpoon",
-  obstacle_v: [[[830,52],[-29,52],[-29,-27],[830,-27]],[[-30,548],[829,548],[829,627],[-30,627]],[[-30,133],[307,133],[307,186],[54,186],[54,415],[307,415],[307,467],[-30,466]],[[830,466],[493,467],[493,415],[746,415],[746,186],[493,186],[493,133],[830,133]],[[229,275],[229,325],[571,325],[571,275]]],
+  obstacle_v: [[[830,52],[-29,52],[-29,-27],[830,-27]],[[-30,548],[829,548],[829,627],[-30,627]],[[-30,133],[307,133],[307,186],[54,186],[54,415],[307,415],[307,467],[-30,466]],[[830,466],[493,467],[493,415],[746,415],[746,186],[493,186],[493,133],[830,133]],[[229,275],[571,275],[571,325],[229,325]]],
   spawn_points: [[-100, 100], [900, 100], [-100, 500], [900, 500]],
   spark_spawn_points: [[200, 93], [600, 93], [200, 507], [600, 507]],
   buffer_radius: 1,
   cutoff_scores: {
-    "normal":[250000, 750000, 2250000],
+    "normal":[200000, 750000, 2250000],
   },
   initial_spawn_data: {
     "stunner": 4,
@@ -411,10 +411,10 @@ imp_params.impulse_level_data['BOSS 2'] = {
 imp_params.impulse_level_data['HIVE 3-1'] = {
   enemies: {
 
-              "stunner": [6, 6, 2, 1, 20],
+              "stunner": [6, 6, 2, 2, 20],
               "tank":[12, 12, 1, 1, 10],
               "mote": [12, 12, 1, 1, 15],
-              "fighter": [14, 14, 1, 1.5, 10]
+              "fighter": [14, 14, 1.5, 1.5, 10]
 
            },
   dominant_enemy: "fighter",
@@ -429,12 +429,12 @@ spawn_points: [[-100, 360], [-100, -100], [900, 200], [900, 700], [200, 700], [4
   spark_spawn_points: [[586, 50], [83, 88], [205, 548], [715, 515], [728, 260], [83, 330]],
   buffer_radius: 0.6,
    cutoff_scores: {
-    "normal":[250000, 600000, 1500000],
+    "normal":[250000, 750000, 2500000],
   },
   initial_spawn_data: {
-    "fighter": 1,
+    "fighter": 2,
     "tank": 1,
-    "stunner": 2,
+    "stunner": 1,
     "mote": 1
   },
 
@@ -468,7 +468,7 @@ imp_params.impulse_level_data['HIVE 3-2'] = {
   buffer_radius: 1,
      cutoff_scores: {
 
-    "normal":[200000, 500000, 1250000],
+    "normal":[300000, 600000, 2000000],
   },
   initial_spawn_data: {
     "fighter": 2,

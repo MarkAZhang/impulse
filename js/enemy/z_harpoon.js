@@ -149,6 +149,9 @@ Harpoon.prototype.move = function() {
     this.harpooned_target.body.ApplyImpulse(dir, this.body.GetWorldCenter())
     if(this.harpooned_target != this.player) {
       this.harpooned_target.open(1500)
+      if (this.harpooned_target.type == "tank") {
+        this.harpooned_target.durations["volatile"] = 1500
+      }
     }
     return
   }
@@ -606,6 +609,9 @@ Harpoon.prototype.collide_with = function(other, this_body, other_body) {
     }
     if(this.destroyable_timer > 0) {
       this.start_death("hit_player")
+    }
+    if(!this.level.is_boss_level) {
+      this.impulse_game_state.reset_combo()
     }
 
     //if(this.status_duration[1] <= 0) {

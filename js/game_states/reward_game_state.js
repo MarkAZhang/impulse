@@ -26,7 +26,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   "you have a limited number of # ultimates per continue # (currently 1)",
   "If you die after using ultimate, # it is refunded"
   ]
-
+  imp_vars.impulse_music.stop_bg()
 }
 
 RewardGameState.prototype.draw = function(ctx, bg_ctx) {
@@ -52,7 +52,10 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var cur_reward = this.rewards[this.cur_reward_index]
 
     if(cur_reward.type == "world_victory") {
+        ctx.save()
+        ctx.globalAlpha *= 0.3
         draw_tessellation_sign(ctx, cur_reward.data +1, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+        ctx.restore()
         ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
         ctx.textAlign = "center"
         ctx.font = "24px Muli"
@@ -238,7 +241,8 @@ RewardGameState.prototype.process = function(dt) {
       this.transition_state = "none"
     }
     if(this.transition_state == "out") {
-      this.cur_reward_index += 1
+      this.next_reward()
+      
       if(this.cur_reward_index >= this.rewards.length) {
         this.advance_game_state()
       } else {
@@ -248,6 +252,15 @@ RewardGameState.prototype.process = function(dt) {
     }
   }
 
+}
+
+RewardGameState.prototype.next_reward = function() {
+  this.cur_reward_index += 1
+
+  if (this.cur_reward_index < this.rewards.length) { 
+    var reward = this.reawrds[this.cur_reward_index]
+
+  }
 }
 
 RewardGameState.prototype.advance_game_state = function() {

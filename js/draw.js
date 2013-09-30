@@ -750,11 +750,14 @@ function draw_arrow(context, x, y, size, dir, color, shadowed) {
   context.restore()
 }
 
-function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder) {
+function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder, alpha) {
+  context.save()
+  if (alpha) context.globalAlpha = alpha
   context.beginPath()
   context.rect(x - w * .5, y - h * .5, w * prop, h)
   context.fillStyle = color
   context.fill()
+  context.restore()
 
   if(!noborder) {
     context.beginPath()

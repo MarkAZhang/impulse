@@ -58,9 +58,9 @@ function Fighter(world, x, y, id, impulse_game_state) {
 }
 
 Fighter.prototype.get_bullet_locations = function(side) {
-  var other_angle = this.body.GetAngle() + Math.PI/2 * ((side % 2) * 2 - 1)
-  var bullet_start_loc_x = this.body.GetPosition().x + this.shoot_loc_side_length *  Math.cos(other_angle) + this.shoot_loc_forward_length * Math.cos(this.body.GetAngle())
-  var bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.body.GetAngle())
+  var other_angle = this.actual_heading + Math.PI/2 * ((side % 2) * 2 - 1)
+  var bullet_start_loc_x = this.body.GetPosition().x + this.shoot_loc_side_length *  Math.cos(other_angle) + this.shoot_loc_forward_length * Math.cos(this.actual_heading)
+  var bullet_start_loc_y = this.body.GetPosition().y + this.shoot_loc_side_length *  Math.sin(other_angle) + this.shoot_loc_forward_length * Math.sin(this.actual_heading)
   return {x: bullet_start_loc_x, y: bullet_start_loc_y};
 
 }
@@ -191,8 +191,10 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
 
     context.save()
     context.globalAlpha *= loaded_prop
-    draw_enemy(context, "fighter_bullet", cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())   
-//function draw_enemy(context, enemy_name, x, y, d, rotate) {
+    if (this.actual_heading)
+      draw_enemy(context, "fighter_bullet", cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
+    else
+      draw_enemy(context, "fighter_bullet", cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
 
     context.restore()
 
@@ -214,7 +216,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     if(this.fighter_status == "frenzy") {
       var alt_bullet_loc = this.get_bullet_locations(this.bullet_alternater + 1);
       draw_shape(context, alt_bullet_loc.x * draw_factor, alt_bullet_loc.y * draw_factor,
-      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.body.GetAngle())
+      imp_params.impulse_enemy_stats["fighter_bullet"].shape_polygons[0], draw_factor, this.color, loaded_prop, this.actual_heading)
     }
 
 
