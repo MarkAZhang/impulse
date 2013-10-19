@@ -746,14 +746,12 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.font = '40px Muli'
     context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 46)
 
-    context.textAlign = 'center'
-
     if(this.stars < 3) {
       context.fillStyle = impulse_colors[this.star_colors[this.stars]]
       context.shadowColor = context.fillStyle;
-      context.font = '20px Muli'
+      context.font = '21px Muli'
       context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
-      context.font = '40px Muli'
+      context.font = '42px Muli'
       context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
     }
     else {
@@ -769,7 +767,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.font = '36px Muli'
     context.fillText("DISTANCE",imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 55)
     context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
-    }
+  }
 
 
   /*draw_star(context, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/

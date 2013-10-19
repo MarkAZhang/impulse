@@ -37,7 +37,7 @@ function WorldMapState(world) {
   this.offsets = {
     1: 23,
     2: 18,
-    3: 10,
+    3: 20,
     4: 10
   }
 
@@ -124,7 +124,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
 WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlocked) {
   var _this = this
   if(unlocked) {
-      this.world_buttons[world_num] = new SmallButton(name, 20, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
+      this.world_buttons[world_num] = new SmallButton(name, 21, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
       function(){
         _this.fade_out_duration = _this.fade_out_interval; 
         _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
@@ -196,9 +196,17 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }*/
   ctx.save()
   if(this.world_buttons[this.cur_world].hover) {
-    ctx.globalAlpha *= 0.7
+    if(this.cur_world == 3) {
+      ctx.globalAlpha *= 0.5  
+    } else {
+      ctx.globalAlpha *= 0.7  
+    }
   } else {
-    ctx.globalAlpha *= 0.4
+    if(this.cur_world == 3) {
+      ctx.globalAlpha *= 0.3  
+    } else {
+      ctx.globalAlpha *= 0.4
+    }
   }
   if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
     draw_gray_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100,this.world_buttons[this.cur_world].hover)
@@ -302,8 +310,8 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '10px Muli'
     ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
   }
-  ctx.font = '12px Muli'
-  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
+  ctx.font = '13px Muli'
+  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"];
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
 
   draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})

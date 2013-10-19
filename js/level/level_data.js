@@ -468,7 +468,7 @@ imp_params.impulse_level_data['HIVE 3-2'] = {
   buffer_radius: 1,
      cutoff_scores: {
 
-    "normal":[300000, 600000, 2000000],
+  "normal":[300000, 600000, 2000000],
   },
   initial_spawn_data: {
     "fighter": 2,

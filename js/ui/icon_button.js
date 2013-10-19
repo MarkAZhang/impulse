@@ -133,7 +133,11 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_gray_tessellation_sign(context, world_num, this.x, this.y, this.size * 1.4)
     } else {
       if(this.hover) {
-        context.globalAlpha *= 0.8
+        if(world_num == 3) {
+          context.globalAlpha *= 0.6
+        } else {
+          context.globalAlpha *= 0.7
+        }
       } else {
         context.globalAlpha *= 0.3
       }
