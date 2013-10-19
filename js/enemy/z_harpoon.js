@@ -108,8 +108,6 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.attack_mode = true
   this.extra_adjust = false
 
-  this.destroyable_timer = 0
-
   this.orbiter_checks = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
 
   this.has_bulk_draw = true
@@ -222,24 +220,15 @@ Harpoon.prototype.get_virtual_harpoon_loc = function() {
 }
 
 
-Harpoon.prototype.silence = function(dur, color_silence, destroyable) {
+Harpoon.prototype.silence = function(dur, color_silence) {
   if(color_silence) {
     this.color_silenced = true
-  }
-  if(destroyable) {
-    this.destroyable_timer = dur
   }
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
   this.last_stun = this.status_duration[1]
 }
 
 Harpoon.prototype.additional_processing = function(dt) {
-
-  //console.log(this.pathfinding_counter)
-
-  if(this.destroyable_timer > 0) {
-    this.destroyable_timer -= dt
-  }
 
   if(this.harpoon_state == "inactive") {
     this.set_heading_to(this.player.body.GetPosition())
@@ -604,12 +593,6 @@ Harpoon.prototype.collide_with = function(other, this_body, other_body) {
     return
 
   if(other === this.player) {
-    if(!this.level.is_boss_level) {
-      this.impulse_game_state.reset_combo()
-    }
-    if(this.destroyable_timer > 0) {
-      this.start_death("hit_player")
-    }
     if(!this.level.is_boss_level) {
       this.impulse_game_state.reset_combo()
     }

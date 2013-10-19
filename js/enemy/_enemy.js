@@ -397,8 +397,10 @@ Enemy.prototype.adjust_position = function() {
     dir.Multiply(this.force * this.adjust_position_factor)
     if(this.durations["open"] > 0 && imp_vars.player_data.difficulty_mode == "normal" && this.extra_adjust) {
       dir.Multiply(2)
-    } else if((this.type == "goo" || this.type == "harpoon" || this.type == "disabler") && this.durations["open"] > 0) {
+    } else if((this.type == "goo" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
+    } else if (this.type == "harpoon" && this.durations["open"] > 0) {
+      dir.Multiply(0.4)
     }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 

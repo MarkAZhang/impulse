@@ -28,6 +28,8 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.fast_factor = 3
 
+  this.has_sight_of_player = false
+
   this.safe = true
 
   this.shoot_loc_forward_length = this.effective_radius
@@ -37,8 +39,6 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.frenzy_charge = 0
 
   this.frenzy_charge_interval = 2500
-
-  this.frenzy_charge_timer = this.frenzy_charge_interval;
 
   this.frenzy_charge_bars = 5;
 
@@ -68,17 +68,29 @@ Fighter.prototype.get_bullet_locations = function(side) {
 Fighter.prototype.get_additional_color_for_status = function(status) {
 }
 
-Fighter.prototype.get_additional_current_status = function() {
-  if(this.fighter_status == "frenzy") {
-    return "frenzy"
-  }
-  return "normal"
-}
+Fighter.prototype.get_current_status = function() {
 
+  if(!this.dying) {
+      if(this.status_duration[0] > 0) {
+        return 'stunned';
+      } else if(this.fighter_status == "frenzy") {
+        return "frenzy"
+      } else if(this.color_silenced) {
+        return 'silenced'
+      } else if(this.status_duration[2] > 0) {
+        return "gooed"
+      }
+      if(this.durations["impulsed"] > 0) {
+        return "impulsed"
+      }
+    }
+
+    return this.get_additional_current_status()
+}
 
 Fighter.prototype.additional_processing = function(dt) {
 
-  if(this.fighter_status == "normal" && this.frenzy_charge == this.frenzy_charge_bars) {
+  if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
     this.fighter_status = "frenzy"
 
     this.shoot_durations = [this.frenzy_shoot_interval, this.frenzy_shoot_interval]
@@ -93,21 +105,19 @@ Fighter.prototype.additional_processing = function(dt) {
     this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
 
-  if(this.destroyable_timer > 0) {
-    this.destroyable_timer -= dt
-  }
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && this.status_duration[1] <= 0) {
 
       if(check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
         var cur_bullet_loc = this.get_bullet_locations(i);
-        var spawned_bullet = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
+        this.has_sight_of_player = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
+
         var target_angle = _atan(cur_bullet_loc, this.player.body.GetPosition())
-        if (spawned_bullet) {
+        if (this.has_sight_of_player) {
           this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval) : this.frenzy_shoot_interval
           if(this.fighter_status == "frenzy") {
             this.frenzy_charge -= 0.5
-            this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle + (Math.random()/6 - 1/12) * Math.PI, this.id ))
+            this.level.spawned_enemies.push(new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id ))
           }
           else {
             this.level.spawned_enemies.push(new FighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id ))
@@ -130,14 +140,7 @@ Fighter.prototype.additional_processing = function(dt) {
   
 
   if (this.fighter_status == "normal" && this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.frenzy_charge_timer -= dt
-    if (this.frenzy_charge_timer < 0) {
-      this.frenzy_charge_timer = this.frenzy_charge_interval
-      this.frenzy_charge += 1
-    }
-  }
-  else {
-    this.frenzy_charge_timer = this.frenzy_charge_interval
+    this.frenzy_charge += dt / this.frenzy_charge_interval;
   }
 }
 
@@ -149,7 +152,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     context.save();
     context.globalAlpha *= 0.7
     if(this.frenzy_charge > 0) {
-      for(var i = 0; i < this.frenzy_charge; i++) {
+      for(var i = 0; i < Math.floor(this.frenzy_charge); i++) {
         context.beginPath()
         context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
          this.effective_radius * 2 * draw_factor,
@@ -164,8 +167,8 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     }
 
     if(this.status_duration[1] <= 0 && this.frenzy_charge < this.frenzy_charge_bars) {
-      i = this.frenzy_charge
-      var prop = Math.min(1 - this.frenzy_charge_timer/this.frenzy_charge_interval,1)
+      i = Math.floor(this.frenzy_charge)
+      var prop = this.frenzy_charge - i;
       context.beginPath()
       context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
         this.effective_radius * 2 * draw_factor,
@@ -238,6 +241,7 @@ Fighter.prototype.activated_processing = function(dt) {
 }
 
 Fighter.prototype.collide_with = function(other) {
+
 //function for colliding with the player
 
   if(this.dying || this.activated)//ensures the collision effect only activates once
@@ -251,27 +255,18 @@ Fighter.prototype.collide_with = function(other) {
       //this.cause_of_death = "hit_player"
       this.impulse_game_state.reset_combo()
     }
-    else if(this.destroyable_timer > 0) {
-      this.start_death("hit_player")
-
-    }
   }
 }
 
 
-Fighter.prototype.silence = function(dur, color_silence, destroyable) {
+Fighter.prototype.silence = function(dur, color_silence) {
   if(color_silence) {
     this.color_silenced = true
   }
-  if(destroyable) {
-    this.destroyable_timer = dur
-  }
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stun = this.status_duration[1]
   for(var i = 0; i < this.shoot_durations.length; i++) {
     this.shoot_durations[i] = this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval // reset shoot duration
   }
-  this.frenzy_charge_timer = this.frenzy_charge_interval
 }
 
 Fighter.prototype.get_color_for_status = function(status) {
@@ -309,7 +304,7 @@ Fighter.prototype.modify_movement_vector = function(dir) {
     dir.Multiply(this.slow_force)
   }
   else {
-    if(this.fighter_status == "frenzy" && this.status_duration[1] <= 0) {
+    if(this.fighter_status == "frenzy" && this.status_duration[1] <= 0 && !this.has_sight_of_player) {
       dir.Multiply(this.fast_factor)
     }
 
@@ -348,7 +343,6 @@ Fighter.prototype.process_hit = function() {
   if(this.frenzy_charge > 0) {
     this.frenzy_charge -= 1;
   }
-  this.frenzy_charge_timer = this.frenzy_charge_interval
 }
 
 /*Fighter.prototype.draw_enemy_image_additional = function(context, color) {

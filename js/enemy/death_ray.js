@@ -61,12 +61,10 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.impulse_extra_factor = 3
 
   this.tank_force = 100
-  this.destroyable_timer = 0
 
   this.entered_arena = false
   this.entered_arena_delay = 1000
   this.entered_arena_timer = 1000
-  this.last_stun = this.entered_arena_delay
 }
 
 DeathRay.prototype.additional_processing = function(dt) {
@@ -86,7 +84,6 @@ DeathRay.prototype.additional_processing = function(dt) {
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)
-    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
     this.entered_arena = true
   }
 
@@ -346,15 +343,11 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
   }
 }
 
-DeathRay.prototype.silence = function(dur, color_silence, destroyable) {
+DeathRay.prototype.silence = function(dur, color_silence) {
   if(color_silence) {
     this.color_silenced = true
   }
-  if(destroyable) {
-    this.destroyable_timer = dur
-  }
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stun = this.status_duration[1]
 }
 
 DeathRay.prototype.collide_with = function(other) {
@@ -368,9 +361,6 @@ DeathRay.prototype.collide_with = function(other) {
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
       //this.cause_of_death = "hit_player"
       this.impulse_game_state.reset_combo()
-    }
-    else if(this.destroyable_timer > 0) {
-      this.start_death("hit_player")
     }
   }
 //Death Rays do not die on collision

@@ -69,7 +69,6 @@ FighterBullet.prototype.collide_with = function(other) {
   }
   else if(other.is_enemy)
   {
-
     if(other instanceof FighterBullet) return
 
     this.start_death("hit_enemy")
@@ -82,33 +81,17 @@ FighterBullet.prototype.collide_with = function(other) {
         var vel = this.body.GetLinearVelocity().Copy()
         vel.Normalize()
         //var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-        other.open(1500)
 
         var factor = 1;
 
-        if(other.type == "fighter") {
-          if(this.reflected || other.id != this.parent_id)
-            factor = this.bullet_self_factor
-          else
-            factor = this.bullet_low_enemy_factor
-        } else {
-          factor = this.bullet_enemy_factor
-          if(this.reflected)
-            factor *= 2
+        if(other.id == this.parent_id) {
+          factor *= 1.5
+        } else if (other instanceof Fighter) {
+          factor *= 0.7
         }
 
-        /*if(other.id == this.parent_id) {
-          factor = this.bullet_self_factor;
-
-        } else if(this.reflected && other.type == "fighter") {
-          factor = this.bullet_self_factor;
-
-        } else if(this.reflected) {
-          factor = this.bullet_enemy_factor
-        } else {
-          factor = this.bullet_low_enemy_factor;
-        }*/
-        vel.Multiply(this.bullet_force * factor)
+        vel.Multiply(150 * other.force * factor)
+        other.open(1500)
         //var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
 
         other.body.ApplyImpulse(vel, other.body.GetWorldCenter())

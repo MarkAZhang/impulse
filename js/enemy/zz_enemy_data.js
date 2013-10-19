@@ -148,10 +148,10 @@ imp_params.impulse_enemy_stats["goo"] = {
 
 imp_params.impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 5,
+  density: 6,
   lin_damp: 6,
   effective_radius: .7,
-  force: 4.2,
+  force: 5.4,
   score_value: 3000,
   attack_rating: 6,
   batch_enemy_image: true,
@@ -310,7 +310,6 @@ imp_params.impulse_enemy_stats["disabler"] = {
   dies_on_impact: "YES",
   enemy_info: [
     "All units within its area of effect (AOE) lose all special powers # # Specifically, you cannot Impulse",
-    "All enemies within its AOE die upon collision, even those that do not normally",
     "Colliding with an enemy within its AOE # (excluding the disabler itself) # does not reset your multiplier # # However you do not score points",
     "Dies upon collision # # Units immediately regain special powers",
     "When Impulsed, dramatically expands its area of influence for 3 seconds"

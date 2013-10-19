@@ -30,7 +30,6 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.entered_arena = false
   this.entered_arena_delay = 1000
   this.entered_arena_timer = 1000
-  this.last_stun = this.entered_arena_delay
 
   this.short_troll_period = 1000
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -63,7 +62,6 @@ Troll.prototype.additional_processing = function(dt) {
 
    if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
-    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
     this.entered_arena = true
   }
 

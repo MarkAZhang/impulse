@@ -258,7 +258,7 @@ RewardGameState.prototype.next_reward = function() {
   this.cur_reward_index += 1
 
   if (this.cur_reward_index < this.rewards.length) { 
-    var reward = this.reawrds[this.cur_reward_index]
+    var reward = this.rewards[this.cur_reward_index]
 
   }
 }

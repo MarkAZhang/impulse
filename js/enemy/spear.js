@@ -24,7 +24,8 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.entered_arena = false
   this.entered_arena_delay = 1000
   this.entered_arena_timer = 1000
-  this.last_stun = this.entered_arena_delay
+  this.recovery_interval = this.entered_arena_delay
+  this.recovery_timer = this.entered_arena_delay
 
   this.require_open = true
 
@@ -61,7 +62,8 @@ Spear.prototype.additional_processing = function(dt) {
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)
-    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
+    this.recovery_interval = this.entered_arena_delay
+    this.recovery_timer = this.entered_arena_delay
     this.entered_arena = true
   }
 
@@ -71,6 +73,13 @@ Spear.prototype.additional_processing = function(dt) {
 
   if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.entered_arena = false
+    this.silence(100, true)
+    this.recovery_timer = 0
+  }
+
+  if (this.recovery_timer > 0) {
+    this.recovery_timer -= dt;
+    this.silence(100, true)
   }
 
   this.special_mode = !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
@@ -88,7 +97,10 @@ Spear.prototype.player_hit_proc = function() {
 
 Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
   this.silence(this.stun_length)
-  this.last_stun = this.stun_length
+  if (this.stun_length > this.recovery_timer) {
+    this.recovery_interval = this.stun_length
+    this.recovery_timer = this.stun_length
+  }
 }
 
 
@@ -101,19 +113,19 @@ Spear.prototype.silence = function(dur, color_silence) {
   if(color_silence)
     this.color_silenced = color_silence
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stun = this.status_duration[1]
 }
 
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.status_duration[1] > 0 && !this.color_silenced && !this.dying && (!this.status_duration[0] > 0)) {
+  if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
     context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
     context.lineWidth = 2
-    context.strokeStyle = this.color;
+    context.strokeStyle = "gray";
     context.stroke()
   }
 
 }
+
 
 

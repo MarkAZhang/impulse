@@ -96,7 +96,6 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
         "stars": total_stars,
         "first_victory": rank_data === undefined
       }
-
       save_game()
     }
   }

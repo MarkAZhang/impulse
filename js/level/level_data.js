@@ -427,12 +427,12 @@ imp_params.impulse_level_data['HIVE 3-1'] = {
 spawn_points: [[-100, 360], [-100, -100], [900, 200], [900, 700], [200, 700], [400, 700], [360, -100], [600, -100]],
 
   spark_spawn_points: [[586, 50], [83, 88], [205, 548], [715, 515], [728, 260], [83, 330]],
-  buffer_radius: 0.6,
+  buffer_radius: 0.8,
    cutoff_scores: {
     "normal":[250000, 750000, 2500000],
   },
   initial_spawn_data: {
-    "fighter": 2,
+    "fighter": 1,
     "tank": 1,
     "stunner": 1,
     "mote": 1
@@ -445,10 +445,10 @@ spawn_points: [[-100, 360], [-100, -100], [900, 200], [900, 700], [200, 700], [4
 
 imp_params.impulse_level_data['HIVE 3-2'] = {
   enemies: {
-              "spear": [8, 8, 2, 1, 20],
+              "spear": [6, 6, 1, 1, 20],
               "goo": [1, 15, 1, 0, 1],
-              "fighter": [18, 18, 2, 1, 10],
-              "harpoon": [15, 15, 1, 1, 10]
+              "fighter": [18, 18, 2, 2, 12],
+              "harpoon": [15, 15, 1, 1, 12]
 
            },
   dominant_enemy: "fighter",
@@ -468,7 +468,7 @@ imp_params.impulse_level_data['HIVE 3-2'] = {
   buffer_radius: 1,
      cutoff_scores: {
 
-  "normal":[300000, 600000, 2000000],
+  "normal":[300000, 800000, 2000000],
   },
   initial_spawn_data: {
     "fighter": 2,
@@ -484,10 +484,10 @@ imp_params.impulse_level_data['HIVE 3-2'] = {
 
 imp_params.impulse_level_data['HIVE 3-3'] = {
   enemies: {
-              "stunner": [6, 6, 2, 1, 10],
-              "tank": [2, 10, 1, 1, 20],
-              "harpoon": [2, 15, 1, 1, 10],
-              "mote": [15, 15, 4, 1, 10],
+              "stunner": [3, 3, 1, 1, 10],
+              "tank": [2, 10, 1, 2, 20],
+              "harpoon": [1, 15, 1, 1, 10],
+              "mote": [8, 8, 2, 1, 10],
               "disabler": [0, 10, 1, 1, 1]
            },
   dominant_enemy: "disabler",
@@ -505,7 +505,7 @@ imp_params.impulse_level_data['HIVE 3-3'] = {
   initial_spawn_data: {
     "disabler": 1,
     "stunner": 4,
-    "mote": 4
+    "mote": 2
   },
 
   colored_interface: true,
