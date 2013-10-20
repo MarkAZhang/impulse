@@ -21,9 +21,10 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 2
 
-  this.harpoon_length = 15
+  // Estimated harpoon length.
+  this.harpoon_length = 17
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.harpoon_length = 15
+    this.harpoon_length = 17
   }
 
   this.goalPt = null
@@ -60,7 +61,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.pathfinding_delay = 40;
 
   this.offset_multiplier = Math.random() < 0.5 ? 1 : -1;
-  this.stun_length = 2000 //after being hit by player, becomes stunned
+  this.silence_length = 2000 //after being hit by player, becomes silenced
 
   this.harpoon_joint = null
 
@@ -94,7 +95,8 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.entered_arena = false
   this.entered_arena_delay = 1000
   this.entered_arena_timer = 1000
-  this.last_stun = this.entered_arena_delay
+  this.recovery_interval = this.entered_arena_delay
+  this.recovery_timer = this.entered_arena_delay
 
   this.harpoon_disengage_dist = 3
 
@@ -108,7 +110,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.attack_mode = true
   this.extra_adjust = false
 
-  this.orbiter_checks = [-1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
+  this.orbiter_checks = [0, -1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
 
   this.has_bulk_draw = true
   this.bulk_draw_nums = 3
@@ -116,7 +118,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
 Harpoon.prototype.add_harpoon_head = function() {
   var vloc = this.get_virtual_harpoon_loc();
-  this.harpoon_head = new HarpoonHead(this.world, vloc.x, vloc.y, 0, this.impulse_game_state, this)
+  this.harpoon_head = new HarpoonHead(this.world, vloc.x, vloc.y, this.id + 10000, this.impulse_game_state, this)
 }
 
 Harpoon.prototype.draw_harpoon_head = function(context, draw_factor, latest_color) {
@@ -156,9 +158,7 @@ Harpoon.prototype.move = function() {
 
   if(this.path == null) {
     this.pathfinding_counter = this.pathfinding_delay
-    //console.log("PATH IS NULL")
   }
-  //console.log("BEFORE ENEMY MOVE "+this.pathfinding_counter)
   this.enemy_move()
 
 }
@@ -215,8 +215,20 @@ Harpoon.prototype.can_harpoon = function() {
 }
 
 Harpoon.prototype.get_virtual_harpoon_loc = function() {
-  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.cos(this.body.GetAngle()),
-    this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.sin(this.body.GetAngle()))
+  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.cos(this.actual_heading),
+    this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.sin(this.actual_heading))
+}
+
+Harpoon.prototype.set_heading = function(heading) {
+
+  this.heading_timer -= 1
+  if(this.heading_timer <= 0) {
+    this.body.SetAngle(heading)
+    this.heading_timer = this.heading_gap 
+    this.harpoon_head.body.SetAngle(this.harpoon_head.actual_heading)
+  }
+  this.actual_heading = heading
+
 }
 
 
@@ -225,7 +237,6 @@ Harpoon.prototype.silence = function(dur, color_silence) {
     this.color_silenced = true
   }
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stun = this.status_duration[1]
 }
 
 Harpoon.prototype.additional_processing = function(dt) {
@@ -242,13 +253,26 @@ Harpoon.prototype.additional_processing = function(dt) {
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
-    this.last_stun = Math.max(this.entered_arena_delay, this.last_stun)
+    this.recovery_interval = this.entered_arena_delay
+    this.recovery_timer = this.entered_arena_delay
     this.entered_arena = true
   }
 
   if(this.entered_arena_timer > 0) {
     this.entered_arena_timer -= dt
   }
+
+  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+    this.entered_arena = false
+    this.silence(100, true)
+    this.recovery_timer = 0
+  }
+
+  if (this.recovery_timer > 0) {
+    this.recovery_timer -= dt;
+    this.silence(100, true)
+  }
+
   if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.safe_distance * 1.5) {
     this.pathfinding_delay = this.pathfinding_delay_near;
 
@@ -256,18 +280,12 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.pathfinding_delay = this.pathfinding_delay_far;
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.entered_arena = false
-  }
-
-  if(this.harpoon_state != "inactive") {
-  }
-
   if(this.harpoon_state == "inactive") {
     this.harpoon_head.body.SetPosition(this.get_virtual_harpoon_loc())
-    this.harpoon_head.set_heading(this.body.GetAngle())
+    this.harpoon_head.set_heading(this.actual_heading)
   } else if(this.harpoon_state == "fire") {
-    this.harpoon_head.set_heading(this.harpoon_dir)
+    var dir = _atan(this.body.GetPosition(), this.harpoon_head.body.GetPosition())
+    this.harpoon_head.set_heading(dir)
     if(this.harpoon_head.body.m_linearVelocity.Length() < 1) {
       this.harpoon_state = "retract"
     }
@@ -279,8 +297,6 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
     this.harpoon_head.set_heading(Math.PI + dir)
     if(p_dist(this.harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.harpoon_head_defaut_dist * 1.1) {
-      //this.silence(this.delay_between_shots)
-      //this.last_stun = Math.max(this.delay_between_shots, this.last_stun)
       this.harpoon_state = "inactive"
     }
 
@@ -299,24 +315,24 @@ Harpoon.prototype.additional_processing = function(dt) {
     this.harpoon_head.body.SetPosition(pos)
     var dir = _atan(this.body.GetPosition(), this.harpoon_head.body.GetPosition())
     this.harpoon_head.set_heading(dir)
-      this.harpoon_state = "retract"
+    this.harpoon_state = "retract"
     this.harpooned_target = null
   }
-
-
 
   if(this.check_safety_timer <= 0) {
     var cur_dist = p_dist(this.player.body.GetPosition(), this.body.GetPosition())
     var cur_vis = isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)
 
-    if((cur_dist > this.safe_distance + this.safe_distance_buffer || !cur_vis) && !this.attack_mode) {
+    this.attack_mode = false
+    // If safe or not visible, move towards
+    /*if((cur_dist > this.safe_distance + this.safe_distance_buffer || !cur_vis) && !this.attack_mode) {
       this.attack_mode = true
       this.path = null
     }
     else if ((cur_dist < this.safe_distance && cur_vis) && this.attack_mode) {
       this.attack_mode = false
       this.path = null
-    }
+    }*/
 
     this.check_safety_timer = this.check_safety_interval
   }
@@ -324,8 +340,6 @@ Harpoon.prototype.additional_processing = function(dt) {
 
   if(this.check_harpoon_timer > 0)
     this.check_harpoon_timer -= 1
-
-
 
   if(this.check_harpoon_timer <= 0) {
     if(this.no_sight() || this.impulse_game_state.is_boss_level) {
@@ -342,10 +356,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     }
 
     this.check_cancel_harpoon()
-
     this.check_harpoon_timer = this.check_harpoon_interval
-
-
   }
 
   //harpoonhead stuff
@@ -502,6 +513,23 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
   }
 
   context.restore()*/
+
+  // OFFSETS DEBUG
+  /*var offsets = this.orbiter_checks
+  var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
+  var divisions = 64;
+    context.fillStyle = "blue"
+  for(var i = 0; i < offsets.length; i++) {
+    var guess_angle = orig_angle + (Math.PI * 2) / divisions * offsets[i] * this.offset_multiplier;
+    var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
+                              this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)  
+    context.beginPath()
+    context.arc(tempPt.x * draw_factor, tempPt.y * draw_factor, 5, 0, 2 * Math.PI * 0.999)
+    context.fill()
+  }*/
+
+
+  
 }
 
 Harpoon.prototype.bulk_draw_start = function(context, draw_factor, num) {
@@ -523,6 +551,7 @@ Harpoon.prototype.bulk_draw_start = function(context, draw_factor, num) {
   }
   if(num == 3) {
     context.lineWidth = 2
+    context.strokeStyle = "gray";
   }
 
 
@@ -530,7 +559,7 @@ Harpoon.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
 Harpoon.prototype.bulk_draw = function(context, draw_factor, num) {
   if(num == 1) {
-    if(this.status_duration[1] <=0 && this.entered_arena && this.harpoon_state == "inactive") {
+    if(this.status_duration[1] <= 0 && this.entered_arena && this.harpoon_state == "inactive") {
       context.moveTo(this.body.GetPosition().x*draw_factor + this.harpoon_length * draw_factor, this.body.GetPosition().y*draw_factor)
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.harpoon_length * draw_factor, 0, 2*Math.PI * 0.999)
     }
@@ -547,9 +576,9 @@ Harpoon.prototype.bulk_draw = function(context, draw_factor, num) {
     }
   }
   if(num == 3) {
-    if(!this.dying && this.status_duration[1] > 0) {
+    if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
       context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor) * 2)
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
     }
   }
 }
@@ -560,7 +589,11 @@ Harpoon.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Harpoon.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-  this.silence(this.stun_length, true)
+  this.silence(this.silence_length, true)
+  if (this.silence_length > this.recovery_timer) {
+    this.recovery_interval = this.silence_length
+    this.recovery_timer = this.silence_length
+  }
 }
 
 Harpoon.prototype.disengage_harpoon = function() {
@@ -569,7 +602,7 @@ Harpoon.prototype.disengage_harpoon = function() {
     //this.world.DestroyJoint(this.harpoon_joint)
     this.harpoon_joint = null
     this.harpoon_state = "retract_ready"
-    this.silence(this.stun_length, true)
+    this.silence(this.silence_length, true)
   }
 }
 

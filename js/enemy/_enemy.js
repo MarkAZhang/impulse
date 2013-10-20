@@ -400,7 +400,7 @@ Enemy.prototype.adjust_position = function() {
     } else if((this.type == "goo" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
     } else if (this.type == "harpoon" && this.durations["open"] > 0) {
-      dir.Multiply(0.4)
+      dir.Multiply(0.6)
     }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
@@ -677,7 +677,6 @@ Enemy.prototype.player_hit_proc = function() {
 }*/
 
 Enemy.prototype.draw = function(context, draw_factor) {
-
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
@@ -882,6 +881,7 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+  console.log(this.type+" impulsed")
   if(!ultimate) 
     this.open(this.open_period)
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),

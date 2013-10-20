@@ -1,5 +1,5 @@
 var imp_vars = {
-  dev: false,
+  dev: true,
   step_id: 0,
   canvasWidth: 0,
   canvasHeight: 0,

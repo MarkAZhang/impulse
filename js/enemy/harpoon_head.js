@@ -42,5 +42,9 @@ HarpoonHead.prototype.additional_processing = function(other) {
 }
 
 HarpoonHead.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-  this.harpoon.silence(this.harpoon.stun_length)
+  this.harpoon.silence(this.harpoon.silence_length)
+}
+
+HarpoonHead.prototype.set_heading = function(heading) {
+  this.actual_heading = heading
 }

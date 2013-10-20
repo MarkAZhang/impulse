@@ -482,17 +482,20 @@ Player.prototype.process = function(dt) {
         // if Harpoon, also check the Head
         if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state != "inactive") {
           var this_harpoon_head = this.level.enemies[i].harpoon_head;
-          var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
+          if (this.enemies_hit.indexOf(this_harpoon_head.id) == -1) {
+            var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
 
-          for(var j = 0; j < impulse_sensitive_points.length; j++) {
+            for(var j = 0; j < impulse_sensitive_points.length; j++) {
 
-            if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
-            {
-
-              if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
+              if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
               {
-                var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
-                this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
+                if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
+                {
+                  var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                  // Impulse the harpoon head.
+                  this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force * 6, angle)
+                  this.enemies_hit.push(this_harpoon_head.id)
+                }
               }
             }
           }
