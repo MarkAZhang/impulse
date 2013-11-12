@@ -368,7 +368,7 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
-  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint, imp_vars.cur_game_state.level.boundary_polygons).path==null)
+  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
@@ -390,7 +390,7 @@ function getRandomCentralValidLocation(testPoint) {
   {
     return getRandomCentralValidLocation(testPoint)
   }
-  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint, imp_vars.cur_game_state.level.boundary_polygons).path==null)
+  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomCentralValidLocation(testPoint)
   }

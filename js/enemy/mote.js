@@ -15,7 +15,7 @@ function Mote(world, x, y, id, impulse_game_state) {
   this.spin_rate = 2000
 
   this.cautious = true
-  this.extra_adjust = true
+  this.extra_adjust = false
 
   this.adjust_position_factor = 1
 

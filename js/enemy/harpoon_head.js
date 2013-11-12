@@ -18,23 +18,14 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
 }
 
 HarpoonHead.prototype.collide_with = function(other) {
-  if(other === this.player && this.harpoon.harpoon_state == "inactive") {
-    if(!this.level.is_boss_level)
+  if(this.dying || this.activated)//ensures the collision effect only activates once
+    return
+
+  if(other === this.player && this.harpoon.status_duration[1] <= 0) {
+    if(!this.level.is_boss_level) {
       this.impulse_game_state.reset_combo()
-    else if(this.harpoon.destroyable_timer > 0) {
-      this.harpoon.start_death("hit_player")
     }
   }
-
-  /*if(other === this.player){
-    if(this.harpoon.harpoon_state == "inactive") {
-      this.harpoon.start_death("hit_player")
-      if(this.status_duration[1] <= 0) {
-        var harpoon_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-        this.player.body.ApplyImpulse(new b2Vec2(this.harpoon.harpoon_explode_force * Math.cos(harpoon_angle), this.harpoon.harpoon_explode_force * Math.sin(harpoon_angle)), this.player.body.GetWorldCenter())
-      }
-    }
-  }*/
 }
 
 HarpoonHead.prototype.additional_processing = function(other) {

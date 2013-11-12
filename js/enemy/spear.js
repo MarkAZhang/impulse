@@ -32,6 +32,18 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.hit_proc_on_silenced = true
 }
 
+Spear.prototype.enemy_move = Enemy.prototype.move
+
+Spear.prototype.move = function() {
+  if (isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
+    this.path = [this.player.body.GetPosition()]
+    this.move_to(this.player.body.GetPosition())
+  } else {
+    this.enemy_move()
+  }
+
+}
+
 Spear.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
   /*var in_poly = false

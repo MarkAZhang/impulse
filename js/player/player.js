@@ -6,6 +6,8 @@ var Player = function(world, x, y, impulse_game_state) {
 
 Player.prototype.lin_damp = 3.5//old = 3
 
+Player.prototype.id = 9999
+
 Player.prototype.true_force = 1.2//old = .5
 
 Player.prototype.impulse_force = 50
@@ -472,7 +474,7 @@ Player.prototype.process = function(dt) {
                 this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
                 break
               }
-              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged" && this.level.enemies[i].harpooned_target == this) {
+              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
                 this.level.enemies[i].disengage_harpoon()
               }
             }
@@ -489,11 +491,11 @@ Player.prototype.process = function(dt) {
 
               if(this.point_in_impulse_angle(impulse_sensitive_points[j]))
               {
-                if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
+                if (this.point_in_impulse_dist(impulse_sensitive_points[j], true))
                 {
                   var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                   // Impulse the harpoon head.
-                  this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force * 6, angle)
+                  this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
                   this.enemies_hit.push(this_harpoon_head.id)
                 }
               }

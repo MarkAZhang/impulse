@@ -2,10 +2,10 @@ imp_params.impulse_enemy_stats = {}
 
 imp_params.impulse_enemy_stats["stunner"] = {
   color: "00ffff",///"#999",
-  density: 2,
-  lin_damp: 3,
+  density: 1.5,
+  lin_damp: 4,
   effective_radius: .5,
-  force: .55,
+  force: .42,
   score_value: 100,
   attack_rating: 1,
   batch_enemy_image: true,
@@ -184,7 +184,7 @@ imp_params.impulse_enemy_stats["harpoon"] = {
 
 imp_params.impulse_enemy_stats["harpoonhead"] = {
   color: "#00dd00",
-  density: 6,
+  density: 1.2,
   lin_damp: 6,
   effective_radius: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
   force: 1.5,
@@ -207,24 +207,24 @@ imp_params.impulse_enemy_stats["harpoonhead"] = {
 
 imp_params.impulse_enemy_stats["fighter"] = {
   color: "#0000ff",
-  density: 2,
+  density: 3,
   lin_damp: 6,
-  effective_radius: 1,
-  force: 4,
-  score_value: 5000,
+  effective_radius: 0.75,
+  force: 2.5,
+  score_value: 4000,
   attack_rating: 9,
   true_name: "hunter",
   batch_enemy_image: true,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.75, vertices:
   [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 3/4) + 0.3, Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4) + 0.3, Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4) + 0.3, Math.sin(Math.PI * 7/4)]]},
-  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  {type: "polygon", x: 0, y: 0, r: 0.75, vertices:
   [[Math.cos(Math.PI * 3/4)  + 0.3, Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 1/4)  + 0.3, Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, Math.sqrt(2)]]},
-  {type: "polygon", x: 0, y: 0, r: 1, vertices:
+  {type: "polygon", x: 0, y: 0, r: 0.75, vertices:
   [[Math.cos(Math.PI * 7/4)  + 0.3, Math.sin(Math.PI * 7/4)],
   [Math.cos(Math.PI * 5/4)  + 0.3, Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, -Math.sqrt(2)]]}
@@ -267,10 +267,10 @@ imp_params.impulse_enemy_stats["fighter_bullet"] = {
 
 imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
   color: "#ff0000",
-  density: 5,
+  density: 1,
   lin_damp: 3,
   effective_radius: .3,
-  force: 6,
+  force: 1,
   score_value: 0,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .3, vertices:
@@ -325,7 +325,7 @@ imp_params.impulse_enemy_stats["troll"] = {
   lin_damp: 3,
   effective_radius: 1,
   force: 0.24,
-  score_value: 5000,
+  score_value: 4000,
   attack_rating: 2,
   true_name: "pinwheel",
   batch_enemy_image: true,
@@ -405,7 +405,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   lin_damp: 15,
   effective_radius: 1,
   force: .96,
-  score_value: 8000,
+  score_value: 5000,
   attack_rating: 10,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:

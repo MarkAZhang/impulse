@@ -25,17 +25,13 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_force = 50
   }
-  this.bullet_self_factor = 12;
-  if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.bullet_self_factor = 24
-  }
-
 
   this.reflected = false
   this.body.SetBullet(true)
 
   this.bullet_goo_factor = 0.33
 
+  this.bullet_enemy_factor = 150;
 
   this.do_yield = false
   this.bullet_enemy_factor = 1.5

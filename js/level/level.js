@@ -15,6 +15,8 @@ Level.prototype.init = function(data, level_intro_state) {
   this.level_name = data.level_name
   this.spark_spawn_points = data.spark_spawn_points
 
+  this.pick_alt_path = data.pick_alt_path
+
   this.player_loc = data.player_loc
 
   this.spawn_points = data.spawn_points

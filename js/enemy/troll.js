@@ -36,6 +36,7 @@ function Troll(world, x, y, id, impulse_game_state) {
     this.short_troll_period = 500
   }
 
+  this.extra_adjust = true
 
   this.long_troll_period = 5000
   if(imp_vars.player_data.difficulty_mode == "easy") {

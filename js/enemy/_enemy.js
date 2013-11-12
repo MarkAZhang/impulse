@@ -40,6 +40,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.lighten_factor = 1.5
 
+  this.impulsed_color = impulse_colors["impulse_blue"]
+
   var bodyDef = new b2BodyDef;
   bodyDef.type = b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
@@ -360,7 +362,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 Enemy.prototype.adjust_position = function() {
   this.adjust_position_counter += 1
 
-  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank")) return
+  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank") || this.status_duration[1] > 0 && this.type == "fighter") return
   if(this.adjust_position_counter > this.adjust_position_freq) {
     this.adjust_position_counter = 0
 
@@ -380,7 +382,6 @@ Enemy.prototype.adjust_position = function() {
             var angle = _atan(closest_vertex.v, this.body.GetPosition())  
             in_polygon = true
           }
-
         }
         break
       }
@@ -396,7 +397,7 @@ Enemy.prototype.adjust_position = function() {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
     if(this.durations["open"] > 0 && imp_vars.player_data.difficulty_mode == "normal" && this.extra_adjust) {
-      dir.Multiply(2)
+      dir.Multiply(1.5)
     } else if((this.type == "goo" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
     } else if (this.type == "harpoon" && this.durations["open"] > 0) {
@@ -417,7 +418,6 @@ Enemy.prototype.activated_processing = function(dt) {
 
 Enemy.prototype.get_target_point = function() {
   return this.player.body.GetPosition()
-
 }
 
 Enemy.prototype.move = function() {
@@ -438,7 +438,7 @@ Enemy.prototype.move = function() {
     if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
-      var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.level.boundary_polygons, this)
+      var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.impulse_game_state.level.pick_alt_path)
       if(new_path.path!=null) {
         this.path = new_path.path
         this.path_dist = new_path.dist
@@ -471,7 +471,7 @@ Enemy.prototype.move = function() {
       return
     }
 
-    if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
+    if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.visibility_graph.poly_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
       this.path = [this.player.body.GetPosition()]
       endPt = this.path[0]
     }
@@ -627,7 +627,7 @@ Enemy.prototype.collide_with = function(other) {
       this.start_death("hit_player")
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
-        if(!this.level.is_boss_level) {
+        if(!this.level.is_boss_level && this.status_duration[1] <= 0) {
           this.impulse_game_state.reset_combo()
         }
       }
@@ -881,7 +881,6 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
-  console.log(this.type+" impulsed")
   if(!ultimate) 
     this.open(this.open_period)
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
@@ -1065,7 +1064,7 @@ Enemy.prototype.get_color_for_status = function(status) {
   } else if(status == "gooed") {
     return "#e6c43c"
   } else if(status == "impulsed") {
-    return impulse_colors["impulse_blue"]
+    return this.impulsed_color
   } else if(status == "white") {
     return "white"
   } else if(status.slice(0, 5) == "world") {
@@ -1074,8 +1073,6 @@ Enemy.prototype.get_color_for_status = function(status) {
 
   return this.get_additional_color_for_status(status)
 }
-
-
 
 Enemy.prototype.get_additional_color_for_status = function(status) {
 

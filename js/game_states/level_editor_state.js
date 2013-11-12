@@ -149,6 +149,57 @@ LevelEditorState.prototype.rotate_world = function(angle, center_point) {
   this.polygons = new_polygons
 }
 
+LevelEditorState.prototype.scale_world = function(sx, sy, center_point) {
+  var new_polygons = []
+  if(center_point === undefined)
+    center_point = {x: 400, y: 300}
+
+  for(var i = 0; i < this.polygons.length; i++) {
+    var new_polygon = []
+    for(var j = 0; j < this.polygons[i].length; j++) {
+      var pt = this.polygons[i][j]
+      var r = p_dist(pt, center_point)
+      var theta = _atan(center_point, pt)
+      var new_pt = {x: center_point.x + sx*r*Math.cos(theta), y: center_point.y + sy*r*Math.sin(theta)}
+      new_polygon.push(new_pt)
+    }
+    new_polygons.push(new_polygon)
+
+  }
+  this.polygons = new_polygons
+}
+
+LevelEditorState.prototype.scale_polygon = function(polygon, sx, sy, center_point) {
+  if(center_point === undefined)
+    center_point = {x: 400, y: 300}
+
+  var new_polygon = []
+  for(var j = 0; j < this.polygons[polygon].length; j++) {
+    var pt = this.polygons[polygon][j]
+    var r = p_dist(pt, center_point)
+    var theta = _atan(center_point, pt)
+    var new_pt = {x: center_point.x + sx*r*Math.cos(theta), y: center_point.y + sy*r*Math.sin(theta)}
+    new_polygon.push(new_pt)
+  }
+  this.polygons.push(new_polygon);
+}
+
+LevelEditorState.prototype.translate_world = function(dx, dy) {
+  var new_polygons = []
+
+  for(var i = 0; i < this.polygons.length; i++) {
+    var new_polygon = []
+    for(var j = 0; j < this.polygons[i].length; j++) {
+      var pt = this.polygons[i][j]
+      var new_pt = {x: pt.x + dx, y: pt.y + dy}
+      new_polygon.push(new_pt)
+    }
+    new_polygons.push(new_polygon)
+
+  }
+  this.polygons = new_polygons
+}
+
 LevelEditorState.prototype.duplicate_polygon = function(index, translation) {
   var new_polygon = []
     for(var j = 0; j < this.polygons[index].length; j++) {
@@ -159,6 +210,23 @@ LevelEditorState.prototype.duplicate_polygon = function(index, translation) {
   this.polygons.push(new_polygon)
 
 }
+
+LevelEditorState.prototype.duplicate_translate_world = function(dx, dy) {
+  var new_polygons = []
+
+  for(var i = 0; i < this.polygons.length; i++) {
+    var new_polygon = []
+    for(var j = 0; j < this.polygons[i].length; j++) {
+      var pt = this.polygons[i][j]
+      var new_pt = {x: pt.x + dx, y: pt.y + dy}
+      new_polygon.push(new_pt)
+    }
+    new_polygons.push(new_polygon)
+
+  }
+  this.polygons = this.polygons.concat(new_polygons)
+}
+
 
 LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point) {
   if(center_point === undefined)

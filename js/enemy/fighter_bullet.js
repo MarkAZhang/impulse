@@ -25,13 +25,9 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.bullet_force = 50
   }
-  this.bullet_self_factor = 12;
-  if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.bullet_self_factor = 24
-  }
 
-  this.bullet_enemy_factor = 1.5;
-  this.bullet_low_enemy_factor= 0.3;
+
+  this.bullet_enemy_factor = 150;
 
   this.parent_id = parent_id
 
@@ -75,7 +71,7 @@ FighterBullet.prototype.collide_with = function(other) {
     if(other.id != this.parent_id || this.reflected) {
 
       if(other instanceof Fighter) {
-        other.process_hit();
+        other.frenzy_charge = 0
       }
       if(this.status_duration[1] <= 0) {
         var vel = this.body.GetLinearVelocity().Copy()
@@ -90,7 +86,7 @@ FighterBullet.prototype.collide_with = function(other) {
           factor *= 0.7
         }
 
-        vel.Multiply(150 * other.force * factor)
+        vel.Multiply(this.bullet_enemy_factor * other.force * factor)
         other.open(1500)
         //var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
 

@@ -167,7 +167,7 @@ Orbiter.prototype.get_target_path = function() {
       }
 
       if(is_valid) {
-        this_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), tempPt, this.level.boundary_polygons, this)
+        this_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), tempPt, this.impulse_game_state.level.pick_alt_path)
 
         if(!this_path.path) {
           //console.log("no path to loc")
@@ -193,17 +193,15 @@ Orbiter.prototype.get_target_path = function() {
 
 
     if(!this.impulse_game_state.is_boss_level) {
-      //console.log("RETURNING escape path")
       if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius) 
-        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name), this.level.boundary_polygons, this)
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name, this.impulse_game_state.level.pick_alt_path))
       else
-        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)    
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.level.pick_alt_path)    
     } else {
-      //console.log("null path")
       return {path: null, dist: null}
     }
   } else {
-    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.level.boundary_polygons, this)
+    return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.level.pick_alt_path)
   }
 }
 
@@ -214,10 +212,11 @@ Orbiter.prototype.move = function() {
   if(this.status_duration[0] > 0) return //locked
 
 
-  this.pathfinding_counter+=1
-  if ((this.path && !this.path[0]) || /*this.pathfinding_counter % 8 == 0 ||*/ this.pathfinding_counter >= this.pathfinding_delay) {
+  this.pathfinding_counter += 1
+  if ((this.path == null) || /*this.pathfinding_counter % 8 == 0 ||*/ this.pathfinding_counter >= this.pathfinding_delay) {
 
     //only update path every four frames. Pretty expensive operation
+    console.log("GETTING ORBITER TARGET PATH")
     var target_path = this.get_target_path()
     if(!target_path.path) return
 

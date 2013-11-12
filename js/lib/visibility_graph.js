@@ -124,43 +124,16 @@ VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices,
 
 }
 
-VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
+VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
 //start point, end point, list of bad polygons
 //returns the shortest path from point1 to VISIBILITY_GRAPH to point2
 {
 
   //if it is possible to go from current location to player, always go there directly
-  if(isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
+  if(isVisible(point1, point2, this.poly_edges))//if visible, go there directly
   {
     return {path: [point2], dist: p_dist(point1, point2)}
   }
-
-  /*var cur_time = (new Date()).getTime()
-  console.log("QUERY "+(cur_time - this.last_time) +" "+temp.id)
-  console.log(temp)
-  this.last_time = cur_time*/
-
-  /*//if start point is inside a bad polygon (but we aren't dead...)
-  //get out of there ASAP
-  for(var k = 0; k < bad_polygons.length; k++)
-  {
-    if(i != k && pointInPolygon(bad_polygons[k], point1))
-    {
-      inPoly = true
-    }
-  }
-
-  for(var k = 0; k < bad_polygons.length; k++)
-  {
-    if(i != k && pointInPolygon(bad_polygons[k], point2))
-    {
-      inPoly = true
-    }
-  }
-  if(inPoly)
-  {
-    return null
-  }*/
 
   var min_distance = null
   var min_path = null
@@ -174,7 +147,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
      var actual_point1_adj = []
     for(var i = 0; i < point1_adj.length; i++)
     {
-      if(isVisible(point1, this.vertices[point1_adj[i]], this.level.obstacle_edges))//  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
+      if(isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))//  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
       {
         actual_point1_adj.push(point1_adj[i])
       }
@@ -186,7 +159,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     point1_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point1, this.vertices[i], this.level.obstacle_edges))// && isVisible(point1, this.vertices[i], this.poly_edges) )
+      if(isVisible(point1, this.vertices[i], this.poly_edges))// && isVisible(point1, this.vertices[i], this.poly_edges) )
       {
         point1_adj.push(i)
       }
@@ -197,7 +170,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     var actual_point2_adj = []
     for(var i = 0; i < point2_adj.length; i++)
     {
-      if(isVisible(point2, this.vertices[point2_adj[i]], this.level.obstacle_edges))//  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
+      if(isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))//  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
       {
         actual_point2_adj.push(point2_adj[i])
       }
@@ -209,7 +182,7 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
     point2_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point2, this.vertices[i], this.level.obstacle_edges))//   && isVisible(point2, this.vertices[i], this.poly_edges))
+      if(isVisible(point2, this.vertices[i], this.poly_edges))//   && isVisible(point2, this.vertices[i], this.poly_edges))
       {
         point2_adj.push(i)
       }
@@ -253,54 +226,60 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
       }
     }
   }
-
-  var random_path_index = Math.floor(Math.random() * point1_adj.length * point2_adj.length)
-
-  var i = Math.floor(random_path_index / point2_adj.length)
-  var j = random_path_index % point2_adj.length
-
   if(!min_path) return {path: null, dist: null}//it's possible that player is inside an open-space that is surrouded by triangle edges.
+  if(pick_alt_path) {
+    var random_path_index = Math.floor(Math.random() * point1_adj.length * point2_adj.length)
 
-  if(p_dist(point1, this.vertices[min_path[0]] < 5)) {
-    i = point1_adj.indexOf(min_path[0])
-  }
+    var i = Math.floor(random_path_index / point2_adj.length)
+    var j = random_path_index % point2_adj.length
 
-  var v_dist;
-  if(point1_adj.length * point2_adj.length != 0) {
-    if(point1_adj[i] == point2_adj[j])//same point
-    {
-      v_dist = 0
+
+    if(p_dist(point1, this.vertices[min_path[0]] < 5)) {
+      i = point1_adj.indexOf(min_path[0])
     }
-    else
-    {
-      v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
-    }
-    if(v_dist != null) {
-      var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
-      + p_dist(this.vertices[point2_adj[j]], point2);
-      var orig_angle = _atan(point1, this.vertices[min_path[0]])
-      var new_angle = _atan(point1, this.vertices[point1_adj[i]])
 
-
-      if(dist < 1.2 * min_distance && small_angle_between(orig_angle, new_angle) < Math.PI*3/8)
+    var v_dist;
+    if(point1_adj.length * point2_adj.length != 0) {
+      if(point1_adj[i] == point2_adj[j])//same point
       {
-        min_distance = dist
-        if(point1_adj[i] == point2_adj[j])
-        {
-          min_path = [point1_adj[i]]
-          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-          //console.log("NEW MIN PATH with "+dist)
-          //console.log(min_path)
-        }
-        else
-        {
-          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-          min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
-          //console.log("NEW MIN PATH with "+dist)
-          //console.log(min_path)
-        }
+        v_dist = 0
       }
+      else
+      {
+        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
+      }
+      if(v_dist != null) {
+        var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
+        + p_dist(this.vertices[point2_adj[j]], point2);
+        var orig_angle = _atan(point1, this.vertices[min_path[0]])
+        var new_angle = _atan(point1, this.vertices[point1_adj[i]])
 
+        // Choose an alternate path.
+        // The path cannot be much worse.
+        // The path cannot lead in the other direction.
+        // The path must lead into another corridor.
+
+        if(dist < 1.2 * min_distance && small_angle_between(orig_angle, new_angle) < Math.PI*3/8 &&
+          !isVisible(this.vertices[min_path[0]], this.vertices[point1_adj[i]]))
+        {
+          min_distance = dist
+          if(point1_adj[i] == point2_adj[j])
+          {
+            min_path = [point1_adj[i]]
+            //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+            //console.log("NEW MIN PATH with "+dist)
+            //console.log(min_path)
+          }
+          else
+          {
+            //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
+            min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
+            //console.log("NEW MIN PATH with "+dist)
+            //console.log(min_path)
+          }
+        }
+
+      }
     }
   }
 
@@ -317,5 +296,11 @@ VisibilityGraph.prototype.query = function(point1, point2, bad_polygons, temp)
   ans.push(point2)
   //console.log("ANSWER ")
   //console.log(ans)
+
+  // covers some edge cases.
+  if (ans.length == 2 && isVisible(point1, point2, this.level.obstacle_edges)) {
+    return {path: [point2], dist: p_dist(point1, point2)}
+  }
+
   return {path: ans, dist: min_distance}
 }
