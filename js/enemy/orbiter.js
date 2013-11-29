@@ -27,10 +27,12 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.attack_mode = false;
 
   this.entered_arena = false;
-  this.entered_arena_delay = 1000;
+  this.entered_arena_delay = 250;
+  this.entered_arena_timer = 250;
 
   this.orbiter_force = 50;
   this.twitch = true
+  this.goo_extra_force_factor = 3;
 
   this.orbiter_checks = [-1, 1, -4, 4, -8, 8, -12, 12, -16, 16]
 
@@ -49,13 +51,12 @@ function Orbiter(world, x, y, id, impulse_game_state) {
 
   this.no_death_on_open = true
 
-}
+  this.gooed_lin_damp_factor = 2;
 
-Orbiter.prototype.player_hit_proc = function() {
-  this.player.silence(2000)
 }
 
 Orbiter.prototype.additional_drawing = function(context, draw_factor) {
+
   return
   context.beginPath()
   var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
@@ -112,7 +113,7 @@ Orbiter.prototype.additional_processing = function(dt) {
   this.set_heading_to(this.player.body.GetPosition())
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.silence(this.entered_arena_delay)
+    this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
 
@@ -122,6 +123,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.entered_arena = false
+    this.silence(100, true)
   }
 
   this.attack_mode = (this.player.attacking && !this.player.point_in_impulse_angle(this.body.GetPosition())) || this.player.status_duration[0]  > 0 || this.player.status_duration[1] > 0 || this.player.status_duration[4] > 0
@@ -216,7 +218,6 @@ Orbiter.prototype.move = function() {
   if ((this.path == null) || /*this.pathfinding_counter % 8 == 0 ||*/ this.pathfinding_counter >= this.pathfinding_delay) {
 
     //only update path every four frames. Pretty expensive operation
-    console.log("GETTING ORBITER TARGET PATH")
     var target_path = this.get_target_path()
     if(!target_path.path) return
 
@@ -276,6 +277,10 @@ Orbiter.prototype.modify_movement_vector = function(dir) {
     }
     else
     {
+      if (this.status_duration[2] > 0) {
+        dir.Multiply(this.goo_extra_force_factor)
+
+      }
       dir.Multiply(this.force)
     }
   }

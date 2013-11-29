@@ -530,8 +530,9 @@ Player.prototype.process = function(dt) {
                 this.level.enemies[i].silence(1000)
                 var data = imp_params.impulse_enemy_stats[this.level.enemies[i].type]
                 var prop = Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
+                var boss_factor =  this.level.enemies[i].is_boss ? 0.05/this.level.enemies[i].impulse_extra_factor : 1;
 
-                this.level.enemies[i].process_impulse(this.ultimate_loc, prop * this.ultimate_factor * this.level.enemies[i].body.GetMass() * Math.sqrt(data.lin_damp), angle, true)
+                this.level.enemies[i].process_impulse(this.ultimate_loc, prop * this.ultimate_factor * this.level.enemies[i].body.GetMass() * Math.sqrt(data.lin_damp) * boss_factor, angle, true)
                 break
               }
               

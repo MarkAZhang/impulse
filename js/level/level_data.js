@@ -715,7 +715,7 @@ imp_params.impulse_level_data['HIVE 4-1'] = {
   buffer_radius: 0.5,
       cutoff_scores: {
 
-    "normal": [500000, 1000000, 2000000],
+    "normal": [500000, 1250000, 3000000],
   },
   initial_spawn_data: {
     "harpoon": 1
@@ -731,10 +731,10 @@ imp_params.impulse_level_data['HIVE 4-1'] = {
 imp_params.impulse_level_data['HIVE 4-2'] = {
   enemies: {
 
+             "stunner": [6, 6, 2, 1, 15],
              "mote": [4, 8, 1, 1, 10],
-             "fighter": [15, 15, 1, 1, 12],
-             "troll": [2, 12, 1, 1, 12],
-             "slingshot": [10, 10, 2, 1, 15],
+             "fighter": [15, 15, 1, 1, 8],
+             "slingshot": [5, 5, 1, 1, 15],
              "goo": [1, 15, 1, 0, 1]
 
            },
@@ -748,9 +748,11 @@ imp_params.impulse_level_data['HIVE 4-2'] = {
   buffer_radius: 1,
         cutoff_scores: {
 
-    "normal": [400000, 800000, 2000000],
+    "normal": [500000, 1500000, 3000000],
   },
   initial_spawn_data: {
+    "stunner": 2,
+    "mote": 2,
     "slingshot": 2,
     "fighter": 1,
   },
@@ -765,8 +767,8 @@ imp_params.impulse_level_data['HIVE 4-3'] = {
              "spear": [6, 12, 1, 1, 10],
              "tank": [4, 12, 1, 1, 15],
              "mote": [2, 12, 1, 1, 10],
-             "harpoon": [4, 12, 1, 1, 10],
-             "orbiter": [10, 10, 2, 1, 15]
+             "harpoon": [4, 15, 1, 1, 10],
+             "orbiter": [12, 12, 2, 1, 15]
            },
   dominant_enemy: "orbiter",
   spark_spawn_points: [[159,301],[641,301],[208,94],[208,507],[592,94],[592,507]],
@@ -774,7 +776,7 @@ imp_params.impulse_level_data['HIVE 4-3'] = {
   spawn_points: [[-100,-100],[-100,700],[900,700],[900,-100]],
   buffer_radius: 1.3,
   cutoff_scores: {
-    "normal":  [500000, 1200000, 2500000],
+    "normal":  [400000, 1200000, 2500000],
   },
   initial_spawn_data: {
     "orbiter": 2,
@@ -787,7 +789,7 @@ imp_params.impulse_level_data['HIVE 4-3'] = {
 imp_params.impulse_level_data['HIVE 4-4'] = {
   enemies: {
             "goo":  [2, 30, 1, 0, 1],
-            "troll": [4, 15, 2, 0, 1],
+            "troll": [4, 12, 2, 0, 1],
             "fighter": [2, 15, 1, 1, 5],
             "slingshot": [0, 12, 1, 1, 5],
             "orbiter": [12, 12, 2, 2, 15]

@@ -33,11 +33,6 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
 
   this.bullet_enemy_factor = 150;
 
-  this.do_yield = false
-  this.bullet_enemy_factor = 1.5
-
-  this.parent_id = parent_id
-  this.bullet_low_enemy_factor= 0.3;
 
   this.bullet_goo_factor = 0.33
 

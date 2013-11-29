@@ -34,6 +34,8 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
   this.reflected = false
   this.body.SetBullet(true)
 
+  this.do_yield = false
+
   this.bullet_goo_factor = 0.33
 
 }
@@ -84,6 +86,8 @@ FighterBullet.prototype.collide_with = function(other) {
           factor *= 1.5
         } else if (other instanceof Fighter) {
           factor *= 0.7
+        } else if (other instanceof Orbiter) {
+          other.weaken()
         }
 
         vel.Multiply(this.bullet_enemy_factor * other.force * factor)

@@ -182,7 +182,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.require_open = false
 
-  this.impulse_extra_factor = 10
   this.impulse_hand_force = 0.1
 
   this.lockon_display_interval = 1000
@@ -1114,16 +1113,6 @@ BossOne.prototype.global_lighten = function() {
 BossOne.prototype.player_hit_proc = function() {
   var boss_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
-}
-
-BossOne.prototype.process_impulse_on_hands = function(attack_loc, impulse_force) {
-  return
-  /*if(this.state == "punching") {
-    if(this.arm_states["left"] == "loading" || (this.arm_states["left"] == "punching" && this.punch_action_interval - this.action_timer["left"] < this.punch_knockback_window))
-      this.check_impulse_on_hands(attack_loc, impulse_force, "left")
-    if(this.arm_states["right"] == "loading" || (this.arm_states["right"] == "punching" && this.punch_action_interval - this.action_timer["right"] < this.punch_knockback_window))
-      this.check_impulse_on_hands(attack_loc, impulse_force, "right")
-  }*/
 }
 
 BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, side) {

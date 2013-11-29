@@ -23,7 +23,7 @@ function Slingshot(world, x, y, id, impulse_game_state) {
   this.slingshot_interval = 100
   this.slingshot_multiplier = 1
   this.empowered_duration = 0
-  this.empowered_interval = 600
+  this.empowered_interval = 750
 
   this.empowered_force = 100
 

@@ -365,7 +365,7 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   density: .2,
   lin_damp: 7,
   effective_radius: 1,
-  force: .55,
+  force: .65,
   score_value: 5000,
   attack_rating: 10,
   batch_enemy_image: true,
@@ -403,7 +403,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   color: "red",
   density: .3,
   lin_damp: 15,
-  effective_radius: 1,
+  effective_radius: 0.5,
   force: .96,
   score_value: 5000,
   attack_rating: 10,
@@ -486,8 +486,8 @@ imp_params.impulse_enemy_stats["deathray"] = {
 
 imp_params.impulse_enemy_stats["first boss"] = {
   color: impulse_colors["boss 1"],
-  density: 9,
-  lin_damp: 7,
+  density: 4.5,
+  lin_damp: 8,
   effective_radius: 3,
   force: 0,
   score_value: [1000000, 5000000, 15000000],
@@ -566,7 +566,7 @@ imp_params.impulse_enemy_stats["second boss"] = {
 
 imp_params.impulse_enemy_stats["third boss"] = {
   color: "#a260a6",//"rgb(244, 164, 96)",
-  density: 1.5,
+  density: 1.7,
   lin_damp: 8,
   effective_radius: 4.5,
   force: 0,

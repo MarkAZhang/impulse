@@ -36,9 +36,9 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.boss_force = 100
   this.num_arms = 16
   this.striking_arms = {}
-  this.strike_duration = 2800
+  this.strike_duration = 2200
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.strike_duration = 3400
+    this.strike_duration = 2900
   }
   this.strike_interval = 1500
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -72,7 +72,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.strike_frenzy_duration = 4500
   this.strike_frenzy_timer = this.strike_frenzy_duration
-  this.strike_frenzy_speedup = 0.6
+  this.strike_frenzy_speedup = 0.75
 
   this.extra_gap = 0
 
@@ -99,7 +99,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.wheel_effect_activated = false
 
   this.spawn_count = {
-   "stunner" : 8,
+   "stunner" : 12,
    "spear" : 8,
    "tank" : 5,
    "mote" : 8,
@@ -118,32 +118,32 @@ function BossThree(world, x, y, id, impulse_game_state) {
   }
 
  this.spawn_force = {
-  "stunner" : 70,
-   "spear" : 60,
-   "tank" : 300,
-   "mote" : 20,
+  "stunner" : 25,
+   "spear" : 18,
+   "tank" : 200,
+   "mote" : 10,
    "goo" : 200,
-   "harpoon" : 500,
+   "harpoon" : 400,
    "disabler" : 300,
-   "fighter" : 500,
-   "troll" : 30,
+   "fighter" : 400,
+   "troll" : 20,
 }
 
  this.spawn_gap = {
   "stunner" : 500,
-   "spear" : 1000,
-   "tank" : 2000,
-   "mote" : 500,
-   "goo" : 0,
-   "harpoon" : 5000,
-   "disabler" : 0,
-   "fighter" : 5000,
-   "troll" : 2000,
-   "frenzy": 1000
+  "spear" : 1000,
+  "tank" : 2000,
+  "mote" : 500,
+  "goo" : 0,
+  "harpoon" : 5000,
+  "disabler" : 0,
+  "fighter" : 5000,
+  "troll" : 2000,
+  "frenzy": 1000
 }
 
 this.silence_interval = 30000//13400//20000
-this.silence_timer = this.silence_interval-1
+this.silence_timer = this.silence_interval - 1
 this.silence_duration = 7000
 this.silenced = false
 this.rotation_dir = -1
@@ -155,7 +155,7 @@ this.rotating = false
 BossThree.prototype.generate_wheel_set = function() {
   /*var temp = []
   for(var i = 0; i < 4; i++)
-    temp.push("harpoon")
+    temp.push("fighter")
   return temp*/
   var tough_enemies = ["tank", "fighter", "troll", "harpoon"]
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
@@ -218,16 +218,19 @@ BossThree.prototype.additional_processing = function(dt) {
         this.body.SetAngle(this.body.GetAngle() - 2*Math.PI * dt/this.spin_rate)
     }
 
-  if(this.silence_timer < 0 && !this.silenced) {
+  if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
+    this.silence_timer = 0;
     this.silenced = true
     this.global_silence()
     this.force_frenzy()
   }
 
-  if(this.silence_timer < -this.silence_duration) {
-    this.silenced = false
-    this.silence_timer = this.silence_interval
+
+  if(this.silenced && this.silence_timer < -this.silence_duration) {
+      this.silenced = false
+      this.silence_timer = this.silence_interval
   }
+
   this.silence_timer -= dt
 
   if(this.striking_state == "extend") {
@@ -242,7 +245,6 @@ BossThree.prototype.additional_processing = function(dt) {
         this.striking_state = "frenzy"
         this.strike_frenzy_timer = this.silence_timer + this.silence_duration
         this.strike_timer = 0
-
       } else {
         this.striking_state = "striking"
         this.rotating = true
@@ -250,8 +252,6 @@ BossThree.prototype.additional_processing = function(dt) {
         this.strike_timer = 0
       }
     }
-
-
   } else if(this.striking_state == "striking") {
     this.process_striking_arms()
     if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= 15) {
@@ -437,10 +437,10 @@ BossThree.prototype.force_frenzy = function() {
 
 BossThree.prototype.global_silence = function() {
   this.player.silence(Math.round(this.silence_duration))
-  for(var i = 0; i < this.level.enemies.length; i++) {
+  /*for(var i = 0; i < this.level.enemies.length; i++) {
     if(this.level.enemies[i].id != this.id)
       this.level.enemies[i].silence(Math.round(this.silence_duration), true, true)
-  }
+  }*/
 }
 
 BossThree.prototype.process_arm_polygons = function() {
@@ -696,7 +696,7 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     else
       context.globalAlpha *= this.visibility != null ? this.visibility : 1
 
-  if(this.silence_timer < 0 && this.silence_timer >= -this.silence_duration) {
+  if(this.silenced && this.silence_timer < 0 && this.silence_timer >= -this.silence_duration) {
     context.save()
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha *= gray/2
@@ -706,6 +706,29 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
   }
 
   this.draw_glows(context, draw_factor);
+
+  context.save()
+  if (!this.silenced)
+    context.globalAlpha *= 0.4
+  for(var i = 0; i < 16; i++) {
+    var tp = this.body.GetPosition()
+    var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
+
+    if(1 - this.silence_timer/this.silence_interval > 1-i/16 && (i != 0 || this.silenced)) {
+      context.globalAlpha *= 2
+      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
+      (tp.y+Math.sin(angle) *this.effective_radius * 1.8) * draw_factor,
+      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
+      context.globalAlpha /= 2
+
+    } else {
+      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
+      (tp.y+Math.sin(angle) *this.effective_radius * 1.8) * draw_factor,
+      angle + Math.PI/2, 30, 50, "negligentia_aura_open", negligentiaSprite)
+    }
+
+  }
+  context.restore()
 
   if(this.spawned) {
     if(this.striking_state == "extend" || this.striking_state == "retract") {
@@ -718,27 +741,6 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
   }
   
 
-  context.save()
-  context.globalAlpha *= 0.4
-    for(var i = 0; i < 16; i++) {
-    var tp = this.body.GetPosition()
-    var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
-
-    if(1 - this.silence_timer/this.silence_interval > 1-i/16) {
-      context.globalAlpha *= 2
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
-      context.globalAlpha /= 2
-
-    } else {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura_open", negligentiaSprite)
-    }
-
-  }
-  context.restore()
   if(this.spawned) {
     for(var index in this.striking_arms) {
     //context.beginPath()
@@ -864,9 +866,9 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   if(enemy_type == "spear" && Math.random() < 0.7)
     angle += Math.random()*Math.PI/4 - Math.PI/8
   if((enemy_type == "tank") && Math.random() < 0.7)
-    angle += Math.random()*Math.PI/3 - Math.PI/6
-  if((enemy_type == "mote") && Math.random() < 0.7)
     angle += Math.random()*Math.PI * 0.7 - Math.PI * 0.35
+  if((enemy_type == "mote") && Math.random() < 0.7)
+    angle += Math.random()*Math.PI - Math.PI * 0.5
   if((enemy_type == "troll") && Math.random() < 0.7)
     angle += Math.random()*Math.PI * 0.8 - Math.PI * 0.4
   if((enemy_type == "harpoon"))
@@ -875,6 +877,8 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
   new_enemy.body.SetAngle(angle)
+  
+  
   new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
   new_enemy.entered_arena_delay = 0
   new_enemy.entered_arena_timer = 0
@@ -894,15 +898,22 @@ BossThree.prototype.collide_with = function(other, body) {
       var data = this.striking_arms[index]
       var prog = 1 - data.duration/data.interval
       if(data.body == body) {
-        if((prog > data.charging_prop && prog < data.charging_prop + (1-data.charging_prop) * 0.3) || prog >= 1) {
+        if((prog > data.charging_prop && prog < data.charging_prop + (1-data.charging_prop) * 0.3) || prog >= 1 || prog < data.charging_prop) {
           var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-          if(other === this.player)
-            other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
-          else if(other.type == "harpoonhead") {
+          if(other === this.player) {
+            var _this = this;
+            other.body.ApplyImpulse(new b2Vec2(2 * _this.boss_force * Math.cos(boss_angle), 2 * _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+          } else if(other.type == "harpoonhead") {
             other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {
             if(this.spawn_force[other.type] != undefined)
-              other.body.ApplyImpulse(new b2Vec2(this.spawn_force[other.type] * Math.cos(boss_angle), this.spawn_force[other.type] * Math.sin(boss_angle)), other.body.GetWorldCenter())
+              var enemy_data = imp_params.impulse_enemy_stats[other.type]
+              if (enemy_data) {
+                var force = other.body.GetMass() * Math.sqrt(enemy_data.lin_damp) * this.boss_force
+                console.log(other.type+" "+force)
+                other.body.ApplyImpulse(new b2Vec2(force * Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+
+              }
           }
         } /*else {
           var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
@@ -926,8 +937,6 @@ BossThree.prototype.collide_with = function(other, body) {
 }
 
 BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
-
-
   this.knockback_red_duration = this.knockback_red_interval
   if(this.wheel_state == "spinning") {
     this.wheel_state = "activate"

@@ -9,6 +9,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 //need to set effective_radius if do_yield = true
 
+this.original_spawn_point = new b2Vec2(x, y);
+
   this.impulse_game_state = impulse_game_state
   this.image_enemy_type = this.type
   if(impulse_game_state) {
@@ -29,6 +31,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.pointer_max_radius = .7
 
   this.pointer_fadein_duration = 1000
+
+  this.gooed_lin_damp_factor = 3
 
   this.destroyable_timer = 
 
@@ -174,16 +178,19 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 }
 
 Enemy.prototype.check_death = function() {
+  
+  // if the enemy does not die on open, return it to its original spawn point.
+  
   //check if enemy has intersected polygon, if so die
-  if(this.durations["open"] <= 0 && this.no_death_on_open) {
-    return
-  }
-
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
 
+      if(this.durations["open"] <= 0 && this.no_death_on_open) {
+        this.body.SetPosition(this.original_spawn_point)
+        return
+      }
       if (this.durations["open"] <= 0 && this.require_open) {
         this.start_death("accident")
       } else {
@@ -286,7 +293,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
-    this.body.SetLinearDamping(this.lin_damp * 3)
+    this.body.SetLinearDamping(this.lin_damp * this.gooed_lin_damp_factor)
   } else {
     this.body.SetLinearDamping(this.lin_damp)
   }
