@@ -5,6 +5,8 @@ Tank.prototype.constructor = Tank
 function Tank(world, x, y, id, impulse_game_state) {
   this.type = "tank"
 
+  this.silence_outside_arena = false
+
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false

@@ -15,6 +15,9 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
   this.harpoon_shape = h_vertices
 
+  this.silence_outside_arena = true
+  this.entered_arena_delay = 1000
+
   this.init(world, x, y, id, impulse_game_state)
 
   if(world == null) return
@@ -93,12 +96,6 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.add_harpoon_head()
 
   this.require_open = true
-
-  this.entered_arena = false
-  this.entered_arena_delay = 1000
-  this.entered_arena_timer = 1000
-  this.recovery_interval = this.entered_arena_delay
-  this.recovery_timer = this.entered_arena_delay
 
   this.harpoon_disengage_dist = 3
   this.harpoon_disengage_id = null
@@ -253,28 +250,6 @@ Harpoon.prototype.additional_processing = function(dt) {
   }
 
   this.adjust_position_enabled = (this.harpoon_state == "inactive")
-
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.silence(this.entered_arena_delay, true)
-    this.recovery_interval = this.entered_arena_delay
-    this.recovery_timer = this.entered_arena_delay
-    this.entered_arena = true
-  }
-
-  if(this.entered_arena_timer > 0) {
-    this.entered_arena_timer -= dt
-  }
-
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.entered_arena = false
-    this.silence(100, true)
-    this.recovery_timer = 0
-  }
-
-  if (this.recovery_timer > 0) {
-    this.recovery_timer -= dt;
-    this.silence(100, true)
-  }
 
   if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.safe_distance * 1.5) {
     this.pathfinding_delay = this.pathfinding_delay_near;

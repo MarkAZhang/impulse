@@ -98,9 +98,7 @@ this.original_spawn_point = new b2Vec2(x, y);
       this.shape_points.push(null)
 
   }
-    this.default_heading = true
-
-
+  this.default_heading = true
 
   this.generate_collision_polygons()
 
@@ -175,6 +173,13 @@ this.original_spawn_point = new b2Vec2(x, y);
   this.heading_gap = 4
   this.heading_timer = 0
   this.actual_heading = null
+
+  if (this.silence_outside_arena) {
+    this.entered_arena = false
+    this.entered_arena_timer = this.entered_arena_delay
+    this.recovery_interval = this.entered_arena_delay
+    this.recovery_timer = this.entered_arena_delay
+  }
 }
 
 Enemy.prototype.check_death = function() {
@@ -361,9 +366,38 @@ Enemy.prototype.process = function(enemy_index, dt) {
 
   this.adjust_position()
 
+  this.process_entered_arena()
+
   this.move()
 
   this.additional_processing(dt)
+}
+
+Enemy.prototype.process_entered_arena = function() {
+
+  if(!this.silence_outside_arena) return
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+    this.silence(this.entered_arena_delay)
+    this.recovery_interval = this.entered_arena_delay
+    this.recovery_timer = this.entered_arena_delay
+    this.entered_arena = true
+  }
+
+  if(this.entered_arena_timer > 0) {
+    this.entered_arena_timer -= dt
+  }
+
+  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+    this.entered_arena = false
+    this.silence(100, true)
+    this.recovery_timer = 0
+  }
+
+  if (this.recovery_timer > 0) {
+    this.recovery_timer -= dt;
+    this.silence(100, true)
+  }
+
 }
 
 Enemy.prototype.adjust_position = function() {
@@ -478,7 +512,8 @@ Enemy.prototype.move = function() {
       return
     }
 
-    if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.visibility_graph.poly_edges) && target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
+    if(target_point == this.player.body.GetPosition() &&
+       isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
       this.path = [this.player.body.GetPosition()]
       endPt = this.path[0]
     }
@@ -553,14 +588,12 @@ Enemy.prototype.set_heading_to = function(point) {
 }
 
 Enemy.prototype.set_heading = function(heading) {
-
   this.heading_timer -= 1
   if(this.heading_timer <= 0) {
     this.body.SetAngle(heading)
     this.heading_timer = this.heading_gap 
   }
   this.actual_heading = heading
-
 }
 
 Enemy.prototype.start_death = function(death) {
@@ -744,7 +777,6 @@ Enemy.prototype.draw = function(context, draw_factor) {
     context.lineTo(this.body.GetPosition().x  * draw_factor+ Math.cos(this.adjust_position_angle) * 50, this.body.GetPosition().y  * draw_factor+ Math.sin(this.adjust_position_angle) * 50)
     context.stroke()
   }*/
-
 
   this.additional_drawing(context, draw_factor)
 

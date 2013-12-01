@@ -2,15 +2,35 @@ var eq = function(a, b) {
   return a.x == b.x && a.y == b.y
 }
 
-function isVisible(v_i, v_j, edges)
+function isVisibleThroughPolygon(v_i, v_j, polygon) {
+  var j = polygon.length - 1
+  var ans = false
+
+  for( var i = 0; i < polygon.length; i++)
+  {
+    if(segIntersection(v_i, v_j, polygon[i], polygon[j])) {
+      return false
+    }
+    
+    j = i
+  }
+  return true
+
+}
+
+function isVisible(v_i, v_j, edges, ignore_polygon)
 {
+  // ignore_polygon ignores edges of a certain polygon. Only works with boundary polygons.
+
+  // prevents an obstacle polygon with no p_n from equally ignore_polygon
+  if(ignore_polygon === undefined) ignore_polygon = null;
   for(var k = 0; k < edges.length; k++)
   {
 
     if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
       continue
     }
-  if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
+  if(edges[k].p1.p_n !== ignore_polygon && segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
     {
       return false
     }
@@ -297,20 +317,20 @@ function get_safest_spawn_point(object, player, level_name) {
   var spawn_points = imp_params.impulse_level_data[level_name].spawn_points
 
   var best_point = null
-  var best_value = 2 * Math.PI
+  var best_value = 0
 
   var angle_to_player = _atan(object.body.GetPosition(), player.body.GetPosition())
 
   for(var i = 0; i < spawn_points.length; i++){
     var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_vars.draw_factor, y: spawn_points[i][1]/imp_vars.draw_factor}))
-    var diff = Math.abs(angle, angle_to_player)
-    if(diff < best_value) {
+    var diff = Math.abs(angle - angle_to_player)
+    if(diff > best_value) {
       best_value = diff
       best_point = spawn_points[i]
     }
   }
 
-  return {x: best_point[0], y: best_point[1]}
+  return {x: best_point[0]/imp_vars.draw_factor, y: best_point[1]/imp_vars.draw_factor}
 
 }
 

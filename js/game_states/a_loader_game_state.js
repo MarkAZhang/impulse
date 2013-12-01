@@ -36,7 +36,7 @@ LoaderGameState.prototype.load_level = function(level_data) {
       }
       else if(event.data.poly_edges) {
         console.log(event.data)
-        _this.visibility_graph = new VisibilityGraph(level.boundary_polygons, level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths, event.data.visible_vertices)
+        _this.visibility_graph = new VisibilityGraph(level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths, event.data.visible_vertices)
         _this.load_percentage = 1
         _this.load_complete()
       }

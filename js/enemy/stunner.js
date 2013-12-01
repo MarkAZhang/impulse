@@ -6,6 +6,8 @@ function Stunner(world, x, y, id, impulse_game_state) {
 
   this.type = "stunner"
 
+  this.silence_outside_arena = false
+
   this.init(world, x, y, id, impulse_game_state)
 
   if(!impulse_game_state) return

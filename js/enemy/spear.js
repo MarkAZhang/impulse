@@ -4,7 +4,8 @@ Spear.prototype.constructor = Spear
 
 function Spear(world, x, y, id, impulse_game_state) {
   this.type = "spear"
-
+  this.silence_outside_arena = true
+  this.entered_arena_delay = 1000
   this.init(world, x, y, id, impulse_game_state)
 
   this.fast_factor = 5
@@ -17,15 +18,10 @@ function Spear(world, x, y, id, impulse_game_state) {
   this.death_radius = 5
 
   this.stun_length = 3000 //after being hit by player, becomes stunned
-
+  this.has_bulk_draw = true
+  this.bulk_draw_nums = 1
 
   this.do_yield = false
-
-  this.entered_arena = false
-  this.entered_arena_delay = 1000
-  this.entered_arena_timer = 1000
-  this.recovery_interval = this.entered_arena_delay
-  this.recovery_timer = this.entered_arena_delay
 
   this.require_open = true
 
@@ -71,31 +67,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.silence(this.entered_arena_delay)
-    this.recovery_interval = this.entered_arena_delay
-    this.recovery_timer = this.entered_arena_delay
-    this.entered_arena = true
-  }
-
-  if(this.entered_arena_timer > 0) {
-    this.entered_arena_timer -= dt
-  }
-
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.entered_arena = false
-    this.silence(100, true)
-    this.recovery_timer = 0
-  }
-
-  if (this.recovery_timer > 0) {
-    this.recovery_timer -= dt;
-    this.silence(100, true)
-  }
-
   this.special_mode = !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
-
 }
 
 Spear.prototype.player_hit_proc = function() {
@@ -129,15 +101,34 @@ Spear.prototype.silence = function(dur, color_silence) {
 
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
-    context.lineWidth = 2
-    context.strokeStyle = "gray";
-    context.stroke()
-  }
-
+  
 }
 
+Spear.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
+  context.save()
+  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
+  if(this.dying) {
+    context.globalAlpha *= prog;
+  }
+  context.beginPath()
+  context.strokeStyle = this.color
+  if(num == 1) {
+    context.lineWidth = 2
+    context.strokeStyle = "gray";
+  }
+}
 
+Spear.prototype.bulk_draw = function(context, draw_factor, num) {
+  if(num == 1) {
+    if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
+      context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor) * 2)
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+    }
+  }
+}
+
+Spear.prototype.bulk_draw_end = function(context, draw_factor, num) {
+  context.stroke()
+  context.restore()
+}

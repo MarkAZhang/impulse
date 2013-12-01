@@ -5,6 +5,8 @@ Troll.prototype.constructor = Troll
 function Troll(world, x, y, id, impulse_game_state) {
 
   this.type = "troll"
+  this.silence_outside_arena = true
+  this.entered_arena_delay = 1000
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -27,9 +29,8 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.confused_targets = []
   this.confused_duration = 250
 
-  this.entered_arena = false
-  this.entered_arena_delay = 1000
-  this.entered_arena_timer = 1000
+  this.has_bulk_draw = true
+  this.bulk_draw_nums = 1
 
   this.short_troll_period = 1000
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -128,4 +129,33 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
 Troll.prototype.player_hit_proc = function() {
   if(this.status_duration[1] <= 0)
     this.player.confuse(this.long_troll_period)
+}
+
+Troll.prototype.bulk_draw_start = function(context, draw_factor, num) {
+
+  context.save()
+  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
+  if(this.dying) {
+    context.globalAlpha *= prog;
+  }
+  context.beginPath()
+  context.strokeStyle = this.color
+  if(num == 1) {
+    context.lineWidth = 2
+    context.strokeStyle = "gray";
+  }
+}
+
+Troll.prototype.bulk_draw = function(context, draw_factor, num) {
+  if(num == 1) {
+    if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
+      context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor) * 2)
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+    }
+  }
+}
+
+Troll.prototype.bulk_draw_end = function(context, draw_factor, num) {
+  context.stroke()
+  context.restore()
 }

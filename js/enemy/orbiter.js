@@ -5,6 +5,8 @@ Orbiter.prototype.constructor = Orbiter
 function Orbiter(world, x, y, id, impulse_game_state) {
   this.type = "orbiter"
 
+  this.silence_outside_arena = true
+  this.entered_arena_delay = 250
   this.init(world, x, y, id, impulse_game_state)
   if(!impulse_game_state) return
 
@@ -17,18 +19,16 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.offset_multiplier = 1;
 
   this.pathfinding_delay = 18;
+  this.has_bulk_draw = true
+  this.bulk_draw_nums = 1
 
   this.pathfinding_delay_far = 18;
   this.pathfinding_delay_near = 9;
 
-  this.cautious = false;
+  this.cautious = true;
   this.fast_factor = 2;
 
   this.attack_mode = false;
-
-  this.entered_arena = false;
-  this.entered_arena_delay = 250;
-  this.entered_arena_timer = 250;
 
   this.orbiter_force = 50;
   this.twitch = true
@@ -42,17 +42,16 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.weakened_interval = 250
   this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
   this.extra_adjust = true
-  this.adjust_position_factor = 0.3
+  this.adjust_position_factor = 0.5
 
   this.check_in_poly_interval = 200
   this.check_in_poly_timer = 100
 
   this.orbit_radius = 1.2 * this.player.impulse_radius
 
-  this.no_death_on_open = true
+  this.no_death_on_open = false
 
   this.gooed_lin_damp_factor = 2;
-
 }
 
 Orbiter.prototype.additional_drawing = function(context, draw_factor) {
@@ -128,6 +127,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.attack_mode = (this.player.attacking && !this.player.point_in_impulse_angle(this.body.GetPosition())) || this.player.status_duration[0]  > 0 || this.player.status_duration[1] > 0 || this.player.status_duration[4] > 0
   this.charging = this.attack_mode && !this.dying && this.path && this.path.length == 1 && this.path[0] == this.player.body.GetPosition() && (this.status_duration[1] <= 0) && this.entered_arena
+  this.cautious = !this.charging
 }
 
 Orbiter.prototype.get_target_path = function() {
@@ -315,4 +315,33 @@ Orbiter.prototype.process_impulse_specific = function(attack_loc, impulse_force,
 Orbiter.prototype.weaken = function() {
   // makes lin_damp smaller
   this.weakened_duration = this.weakened_interval 
+}
+
+Orbiter.prototype.bulk_draw_start = function(context, draw_factor, num) {
+
+  context.save()
+  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
+  if(this.dying) {
+    context.globalAlpha *= prog;
+  }
+  context.beginPath()
+  context.strokeStyle = this.color
+  if(num == 1) {
+    context.lineWidth = 2
+    context.strokeStyle = "gray";
+  }
+}
+
+Orbiter.prototype.bulk_draw = function(context, draw_factor, num) {
+  if(num == 1) {
+    if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
+      context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor) * 2)
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+    }
+  }
+}
+
+Orbiter.prototype.bulk_draw_end = function(context, draw_factor, num) {
+  context.stroke()
+  context.restore()
 }

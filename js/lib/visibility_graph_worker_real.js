@@ -1,4 +1,3 @@
-//console.log("START")
 self.onmessage = function(event) {
 
 
@@ -29,12 +28,12 @@ self.onmessage = function(event) {
           inPoly = true
         }
       }
+      vertex.p_n = i  //number of polygon
+      vertex.p_v = polygon.length // numbe of vertices in polygon
+      vertex.p_i = j  //index of vertex in polygon
 
       if(!inPoly && check_bounds(0, vertex, draw_factor, levelWidth, levelHeight))
       {
-        vertex.p_n = i  //number of polygon
-        vertex.p_v = polygon.length
-        vertex.p_i = j  //index of vertex in polygon
         vertices.push(vertex)
 
       }

@@ -5,6 +5,7 @@ Mote.prototype.constructor = Mote
 function Mote(world, x, y, id, impulse_game_state) {
   this.type = "mote"
 
+  this.silence_outside_arena = false
   this.init(world, x, y, id, impulse_game_state)
 
   this.special_mode = false

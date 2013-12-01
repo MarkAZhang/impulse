@@ -1,12 +1,14 @@
-var VisibilityGraph = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
+var VisibilityGraph = function(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
   console.log("CREATING VISIBILITY GRAPH")
-  this.init(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)
+  this.init(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)
 }
 
-VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices) {
-//polygons is an array of array of vertices
+VisibilityGraph.prototype.init = function(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices) {
+//buffer_polygons is an array of array of vertices
   this.level = level
-  this.polygons = polygons
+  this.buffer_polygons = level.boundary_polygons
+  this.obstacle_polygons = level.obstacle_polygons
+
   if(poly_edges) {
     this.poly_edges = poly_edges
     this.vertices = vertices
@@ -17,7 +19,7 @@ VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices,
     this.shortest_paths = shortest_paths
     this.visible_vertices = visible_vertices
   }
-  else {
+  /*else {
     poly_edges = []
     vertices = []
     edges = []
@@ -116,23 +118,49 @@ VisibilityGraph.prototype.init = function(polygons, level, poly_edges, vertices,
     //edge_list uses the indices according to this.vertices
     this.edge_list = edge_list
     this.shortest_paths = shortest_paths
-  }
-
-
+  }*/
   this.last_time = (new Date()).getTime()
+}
 
-
+VisibilityGraph.prototype.is_valid_visible_vertice = function(point, vertex, polygonContainingPoint, passThroughPolygonContainingPoint) {
+  if (passThroughPolygonContainingPoint) {
+    return isVisible(point, vertex, this.poly_edges, polygonContainingPoint/*ignore_polygon*/) && (vertex.p_n != polygonContainingPoint ||
+         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex.p_n]))
+       
+  } else {
+    if (polygonContainingPoint) {
+      return (vertex.p_n == polygonContainingPoint &&
+         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex.p_n]))
+    } else {
+      return isVisible(point, vertex, this.poly_edges)
+    }
+  }
+  
 }
 
 VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
-//start point, end point, list of bad polygons
+//start point, end point, whether to try to pick a different path so enemies don't all go to the same place
 //returns the shortest path from point1 to VISIBILITY_GRAPH to point2
 {
 
   //if it is possible to go from current location to player, always go there directly
-  if(isVisible(point1, point2, this.poly_edges))//if visible, go there directly
+  if(isVisible(point1, point2, this.poly_edges) && isVisible(point1, point2, this.level.obstacle_edges))//if visible, go there directly
   {
     return {path: [point2], dist: p_dist(point1, point2)}
+  }
+
+  // Detect whether point1 or point2 is inside a boundary polygon.
+  // If so, make sure points on that boundary polygon are isVisible through the obstacle polygon before considering.
+  // This is necessary because we use obstacle polygon for most of our calculations.
+  var point1polygon = null;
+  var point2polygon = null;
+  for(var i = 0; i < this.buffer_polygons.length; i++) {
+    if (pointInPolygon(this.buffer_polygons[i], point1)) {
+      point1polygon = i;
+    }
+    if (pointInPolygon(this.buffer_polygons[i], point2)) {
+      point2polygon = i;
+    }
   }
 
   var min_distance = null
@@ -144,10 +172,10 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
   var inPoly = false
 
   if(point1_adj) {
-     var actual_point1_adj = []
+    var actual_point1_adj = []
     for(var i = 0; i < point1_adj.length; i++)
     {
-      if(isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))//  && isVisible(point1, this.vertices[point1_adj[i]], this.poly_edges))
+      if(this.is_valid_visible_vertice(point1, this.vertices[point1_adj[i]], point1polygon, true /* passThroughPolygonContainingPoint*/))
       {
         actual_point1_adj.push(point1_adj[i])
       }
@@ -159,7 +187,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
     point1_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point1, this.vertices[i], this.poly_edges))// && isVisible(point1, this.vertices[i], this.poly_edges) )
+      if(this.is_valid_visible_vertice(point1, this.vertices[i], point1polygon, true))
       {
         point1_adj.push(i)
       }
@@ -170,7 +198,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
     var actual_point2_adj = []
     for(var i = 0; i < point2_adj.length; i++)
     {
-      if(isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))//  && isVisible(point2, this.vertices[point2_adj[i]], this.poly_edges))
+      if(this.is_valid_visible_vertice(point2, this.vertices[point2_adj[i]], point2polygon, true))
       {
         actual_point2_adj.push(point2_adj[i])
       }
@@ -182,7 +210,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
     point2_adj = []
     for(var i = 0; i < this.vertices.length; i++)
     {
-      if(isVisible(point2, this.vertices[i], this.poly_edges))//   && isVisible(point2, this.vertices[i], this.poly_edges))
+      if(this.is_valid_visible_vertice(point2, this.vertices[i], point2polygon, true))
       {
         point2_adj.push(i)
       }
@@ -297,7 +325,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
   //console.log("ANSWER ")
   //console.log(ans)
 
-  // covers some edge cases.
+  // covers some edge cases. For example, if the player is inside a boundary polygon, this will prevent enemy from going through a boundary polygon vertex first.
   if (ans.length == 2 && isVisible(point1, point2, this.level.obstacle_edges)) {
     return {path: [point2], dist: p_dist(point1, point2)}
   }

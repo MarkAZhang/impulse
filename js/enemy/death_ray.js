@@ -78,9 +78,9 @@ DeathRay.prototype.additional_processing = function(dt) {
   //}
 
   if(this.aimed) {
-    this.body.SetAngle(this.ray_angle)
+    this.set_heading(this.ray_angle)
   } else 
-    this.body.SetAngle(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
+    this.set_heading(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
 
   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.silence(this.entered_arena_delay)

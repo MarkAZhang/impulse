@@ -9,6 +9,7 @@ Goo.prototype.goo_color_rgb = "rgb(238, 232, 170)"
 function Goo(world, x, y, id, impulse_game_state) {
   if(world === undefined) return  //allows others to use Goo as super-class
   this.type = "goo"
+  this.silence_outside_arena = false
   this.init(world, x, y, id, impulse_game_state)
 
   this.death_radius = 2
@@ -102,7 +103,6 @@ Goo.prototype.check_area_of_effect = function() {
     }
   }
 }
-
 
 Goo.prototype.collide_with = function(other) {
 //function for colliding with the player
