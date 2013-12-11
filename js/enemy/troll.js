@@ -30,7 +30,7 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.confused_duration = 250
 
   this.has_bulk_draw = true
-  this.bulk_draw_nums = 1
+  this.bulk_draw_nums = 2
 
   this.short_troll_period = 1000
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -95,17 +95,6 @@ Troll.prototype.additional_drawing = function(context, draw_factor, latest_color
     context.stroke()
     context.globalAlpha /= Math.max(0, (1 - 2*Math.abs(prop-0.5))/.5)
   }
-    var time = (new Date()).getTime()
-  if(time % (this.trolling_time_factor * this.troll_switch_interval) > this.troll_switch_interval) {
-    var troll_prop = (time % (this.trolling_time_factor * this.troll_switch_interval) - this.troll_switch_interval)/ ((this.trolling_time_factor-1)*this.troll_switch_interval)
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,
-     (this.effective_radius*draw_factor) * 1.5, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * troll_prop * 0.999, true)
-    context.lineWidth = 2
-    context.strokeStyle = this.color
-    context.stroke()
-  }
-
   context.restore()
 }
 
@@ -144,13 +133,23 @@ Troll.prototype.bulk_draw_start = function(context, draw_factor, num) {
     context.lineWidth = 2
     context.strokeStyle = "gray";
   }
+  if(num == 2) {
+    context.lineWidth = 2
+    context.strokeStyle = this.color
+  }
 }
 
 Troll.prototype.bulk_draw = function(context, draw_factor, num) {
   if(num == 1) {
     if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
-      context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor))
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) , -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+      bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
+    }
+  }
+  if(num == 2) {
+    var time = (new Date()).getTime()
+    if(this.status_duration[1] <= 0 && time % (this.trolling_time_factor * this.troll_switch_interval) > this.troll_switch_interval) {
+      var troll_prop = (time % (this.trolling_time_factor * this.troll_switch_interval) - this.troll_switch_interval)/ ((this.trolling_time_factor-1)*this.troll_switch_interval)
+      bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, troll_prop)
     }
   }
 }

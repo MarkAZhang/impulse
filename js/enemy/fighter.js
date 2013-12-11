@@ -179,7 +179,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         context.beginPath()
         context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
          this.effective_radius * 2 * draw_factor,
-          Math.PI * 2 * (i+1) / this.frenzy_charge_bars - Math.PI/24, Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
+          -Math.PI/2 + Math.PI * 2 * (i+1) / this.frenzy_charge_bars - Math.PI/24, -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
         /*context.arc((this.body.GetPosition().x + this.effective_radius * 2 * Math.cos(Math.PI * 2 * i / this.frenzy_charge_bars)) * draw_factor,
          (this.body.GetPosition().y + this.effective_radius * 2 * Math.sin(Math.PI * 2 * i / this.frenzy_charge_bars))*draw_factor,
        4, 0, 2 * Math.PI, true)*/
@@ -193,7 +193,8 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         context.beginPath()
         context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
           this.effective_radius * 2 * draw_factor,
-          Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24 + (2 * Math.PI/this.frenzy_charge_bars - Math.PI/12) * prop, Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
+          -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24 + (2 * Math.PI/this.frenzy_charge_bars - Math.PI/12) * prop, 
+          -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
         context.lineWidth = 5
         context.strokeStyle = "red"
         context.stroke()

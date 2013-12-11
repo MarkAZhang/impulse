@@ -148,11 +148,7 @@ Goo.prototype.final_draw = function(context, draw_factor) {
     context.restore();
   }
   if(this.goo_state == "big") {
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.goo_state_timer / this.goo_expand_period), true)
-    context.lineWidth = 2
-    context.strokeStyle = this.color
-    context.stroke()
+    draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.goo_state_timer / this.goo_expand_period)
   }
 }
 

@@ -28,6 +28,22 @@ function draw_empty_star(context, x, y, r, color) {
   context.stroke()
 }
 
+function draw_prog_circle(context, x, y, r, prog, color) {
+  context.beginPath()
+  context.arc(x*imp_vars.draw_factor, y*imp_vars.draw_factor, (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
+  context.lineWidth = 2
+  context.strokeStyle = color
+  context.stroke()
+}
+
+function bulk_draw_prog_circle(context, x, y, r, prog) {
+  context.moveTo(x*imp_vars.draw_factor, y*imp_vars.draw_factor - (r*imp_vars.draw_factor) * 2)
+  context.arc(x*imp_vars.draw_factor,
+              y*imp_vars.draw_factor, 
+              (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
+}
+
+
 function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
 
   context.save()
@@ -516,11 +532,7 @@ function draw_start_icon(context, x, y, scale, hover) {
 
 function draw_loading_icon(context, x, y, scale, prog) {
   context.save()
-  
   drawSprite(context, x, y, 0, scale, scale, "player_gray")
-  
-  
-  
   context.beginPath()
   context.arc(x, y, scale * 3/4, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 * prog)
   context.lineWidth = 2

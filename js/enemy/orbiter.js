@@ -335,8 +335,7 @@ Orbiter.prototype.bulk_draw_start = function(context, draw_factor, num) {
 Orbiter.prototype.bulk_draw = function(context, draw_factor, num) {
   if(num == 1) {
     if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
-      context.moveTo(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor - (this.effective_radius*draw_factor) * 2)
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+      bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
     }
   }
 }
