@@ -129,7 +129,7 @@ LevelEditorState.prototype.draw = function(context, bg_ctx) {
 
 }
 
-LevelEditorState.prototype.rotate_world = function(angle, center_point) {
+LevelEditorState.prototype.rotate_world = function(angle, center_point, duplicate) {
   var new_polygons = []
   if(center_point === undefined)
     center_point = {x: 400, y: 300}
@@ -146,7 +146,11 @@ LevelEditorState.prototype.rotate_world = function(angle, center_point) {
     new_polygons.push(new_polygon)
 
   }
-  this.polygons = new_polygons
+  if (duplicate) {
+    this.polygons = this.polygons.concat(new_polygons)
+  } else {
+    this.polygons = new_polygons  
+  }
 }
 
 LevelEditorState.prototype.scale_world = function(sx, sy, center_point) {

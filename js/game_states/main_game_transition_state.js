@@ -312,7 +312,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.save()
     ctx.globalAlpha *= 0.6
-    draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+    draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 130)
     ctx.restore()
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
     ctx.shadowBlur = 0
@@ -342,8 +342,10 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowBlur = 20;
       ctx.shadowColor = "black"
 
+      ctx.save()
       ctx.globalAlpha *= 0.6
       draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
+      ctx.restore()
       ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-100)
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)

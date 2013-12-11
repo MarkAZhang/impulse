@@ -681,10 +681,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_vars.player_data.difficulty_mode == "normal") {
     context.font = "18px Muli"
-    context.globalAlpha = 0.5
-    context.fillText("EASY MODE", imp_vars.sidebarWidth/2, 15)
+    context.globalAlpha = 0.8
+    context.fillText("CHALLENGE MODE", imp_vars.sidebarWidth/2, 15)
     context.globalAlpha = 1
   }
 

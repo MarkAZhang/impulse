@@ -41,7 +41,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.weakened_duration = 0
   this.weakened_interval = 250
   this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
-  this.extra_adjust = true
+  this.extra_adjust = false
   this.adjust_position_factor = 0.5
 
   this.check_in_poly_interval = 200

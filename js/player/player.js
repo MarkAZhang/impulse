@@ -84,6 +84,12 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.ultimate_factor = 150 // multiple of the enemy's force
   this.ultimate_width = 1/32
 
+  // used for status timers
+  this.confuse_duration = 0
+  this.confuse_interval = 0
+  this.silence_duration = 0
+  this.silence_interval = 0
+
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse, bulk], time left for each status
@@ -202,7 +208,11 @@ Player.prototype.stun = function(dur) {
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
-Player.prototype.silence = function(dur) {
+Player.prototype.silence = function(dur, single_silence) {
+  if (single_silence) {
+    this.silence_duration = Math.max(dur, this.status_duration[1])
+    this.silence_interval = Math.max(dur, this.status_duration[1])
+  }
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
@@ -226,7 +236,8 @@ Player.prototype.bulk = function(dur) {
 }
 
 Player.prototype.confuse= function(dur) {
-  this.confuse_duration = dur;
+  this.confuse_duration = Math.max(dur, this.status_duration[4])
+  this.confuse_interval = Math.max(dur, this.status_duration[4])
   this.status_duration[4] = Math.max(dur, this.status_duration[4])
 }
 
@@ -267,6 +278,12 @@ Player.prototype.process = function(dt) {
     return
   }
 
+  if (this.silence_duration > 0) {
+    this.silence_duration -= dt
+  }
+  if (this.confuse_duration > 0) {
+    this.confuse_duration -= dt
+  }
 
   if(this.status_duration[0] > 0) {
     this.status_duration[0] -= dt
@@ -640,18 +657,28 @@ Player.prototype.draw = function(context) {
     context.fillStyle = this.color
     context.fill()*/
     context.save()
-    if(this.status_duration[4] > 0)
-    {
+    if(this.confuse_duration > 0) {
       context.beginPath()
-      var prop = Math.max(((this.confuse_duration-this.status_duration[4]) / this.confuse_duration), 0)
+      var prop = Math.max(((this.confuse_interval-this.confuse_duration) / this.confuse_interval), 0)
       context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.radius*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * prop, true)
       context.lineWidth = 2
       context.strokeStyle = "#24ac40"
+      context.stroke()
+    } else if(this.silence_duration > 0) {
+      context.beginPath()
+      var prop = Math.max(((this.silence_interval-this.silence_duration) / this.silence_interval), 0)
+      context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.radius*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * prop, true)
+      context.lineWidth = 2
+      context.strokeStyle = "gray"
       context.stroke()
     }
     if(this.status_duration[0] > 0)
     {
       this.draw_player_sprite(context, "player_red");
+    }
+    else if(this.status_duration[4] > 0)
+    {
+      this.draw_player_sprite(context, "player_green");
     }
     else if(this.status_duration[1] > 0)
     {
@@ -661,10 +688,7 @@ Player.prototype.draw = function(context) {
     {
       this.draw_player_sprite(context, "player_yellow");
     }
-    else if(this.status_duration[4] > 0)
-    {
-      this.draw_player_sprite(context, "player_green");
-    } else {
+     else {
       //normal
       /*context.beginPath()
       context.shadowBlur = 10;
@@ -755,7 +779,7 @@ Player.prototype.draw = function(context) {
     }
 
 
-    if(imp_vars.player_data.options.progress_circle) {
+    /*if(imp_vars.player_data.options.progress_circle) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.radius * 1.5 * imp_vars.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
       context.strokeStyle = impulse_colors["impulse_blue"]
@@ -764,7 +788,7 @@ Player.prototype.draw = function(context) {
       }
       context.lineWidth = 2
       context.stroke()
-    }
+    }*/
     if(imp_vars.player_data.options.multiplier_display && !this.impulse_game_state.is_boss_level) {
       context.font = "16px Muli"
       context.fillStyle = impulse_colors["impulse_blue"]

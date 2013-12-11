@@ -466,22 +466,22 @@ function OptionsMenu(previous_menu) {
     save_game()
   }, imp_vars.player_data.options.score_labels))
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 288, 20, 20, this.lite_color, function() {
+  /*this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 288, 20, 20, this.lite_color, function() {
     imp_vars.player_data.options.progress_circle = !imp_vars.player_data.options.progress_circle
     save_game()
-  }, imp_vars.player_data.options.progress_circle))
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 318, 20, 20, this.lite_color, function() {
+  }, imp_vars.player_data.options.progress_circle))*/
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 288, 20, 20, this.lite_color, function() {
   imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
     save_game()
   }, imp_vars.player_data.options.multiplier_display))
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 348, 20, 20, this.lite_color, function() {
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 318, 20, 20, this.lite_color, function() {
   imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
     save_game()
   }, imp_vars.player_data.options.impulse_shadow))
 
   if(this.game_state.level.main_game) {
-    this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 378, 20, 20, this.lite_color, function() {
+    this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 348, 20, 20, this.lite_color, function() {
     imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
       save_game()
     }, imp_vars.player_data.options.show_transition_screens))
@@ -507,11 +507,11 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.fillText("SOUND EFFECTS", this.x - 130, this.y - this.h/2 + 205)
   ctx.fillText("PARTICLE EFFECTS", this.x - 130, this.y - this.h/2 + 235)
   ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2 + 265)
-  ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
-  ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 325)
-  ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 355)
+  //ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
+  ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 295)
+  ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 325)
   if(this.game_state.level.main_game)
-    ctx.fillText("SHOW DEFEAT SCREENS", this.x - 130, this.y - this.h/2 + 385)
+    ctx.fillText("SHOW DEFEAT SCREENS", this.x - 130, this.y - this.h/2 + 355)
 
   ctx.font = '12px Muli';
   ctx.textAlign = "center"

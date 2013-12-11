@@ -57,9 +57,9 @@ HowToPlayState.prototype.load_complete = function() {
 
   this.special_buttons = []
   var _this = this
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, imp_vars.levelWidth/2-100, 390, 200, 50, "white", "blue", function(){_this.change_mode("easy")})
+  this.easy_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2-100, 390, 200, 50, "white", "blue", function(){_this.change_mode("easy")})
   this.special_buttons.push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
   this.special_buttons.push(this.normal_mode_button)
 
   this.exit_button = new SmallButton("EXIT TUTORIAL", 20, 400, 410, 250, 50, "white", "blue", function(){_this.exit_tutorial = true})

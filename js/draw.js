@@ -514,6 +514,22 @@ function draw_start_icon(context, x, y, scale, hover) {
   
 }
 
+function draw_loading_icon(context, x, y, scale, prog) {
+  context.save()
+  
+  drawSprite(context, x, y, 0, scale, scale, "player_gray")
+  
+  
+  
+  context.beginPath()
+  context.arc(x, y, scale * 3/4, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 * prog)
+  context.lineWidth = 2
+  context.strokeStyle = "gray"  
+  context.stroke()
+  context.restore()
+  
+}
+
 function draw_save_icon(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0

@@ -25,8 +25,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.turret_timer = 0 //1 indicates ready to fire, 0 indicates ready to move
   this.turret_duration = 2500*/
 
-  
-
   this.shoot_interval = 1600
 
   this.shoot_duration = this.shoot_interval
@@ -42,9 +40,11 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.ray_radius = 0.8
   this.ray_buffer_radius = -0.5
 
-  this.ray_force = 200
+  this.ray_force = 400
 
   this.turret_arm_angle = 0
+
+  this.stun_length = 1000
 
   this.aimed = false
   this.fired = false
@@ -56,15 +56,16 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.default_heading = false
 
-  this.spin_rate = 4000
-
   this.impulse_extra_factor = 3
 
   this.tank_force = 100
+}
 
-  this.entered_arena = false
-  this.entered_arena_delay = 1000
-  this.entered_arena_timer = 1000
+DeathRay.prototype.stun = function(dur) {
+  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.recovery_timer = dur
+  this.recovery_interval = dur
 }
 
 DeathRay.prototype.additional_processing = function(dt) {
@@ -82,19 +83,6 @@ DeathRay.prototype.additional_processing = function(dt) {
   } else 
     this.set_heading(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
 
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.silence(this.entered_arena_delay)
-    this.entered_arena = true
-  }
-
-  if(this.entered_arena_timer > 0) {
-    this.entered_arena_timer -= dt
-  }
-
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
-    this.entered_arena = false
-  }
-
   if(this.safe != p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
   {
     this.safe = !this.safe
@@ -107,10 +95,14 @@ DeathRay.prototype.additional_processing = function(dt) {
   this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor)
   //this.special_mode = this.safe && this.within_bounds && this.status_duration[1] <= 0
 
+  if (this.recovery_timer > 0) {
+    this.recovery_timer -= dt
+  }
   if(this.status_duration[1] > 0) {
     this.reset_ray()
     return
   }
+
 
   //this.turret_mode = this.safe && this.within_bounds
 
@@ -130,52 +122,59 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.turret_timer = Math.max(this.turret_timer - dt/this.turret_duration, 0)
   }*/
 
-  //if(this.turret_timer == 1) {
-  if(this.status_duration[1] <= 0) {
-    //ready to shoot
-    if(this.shoot_duration <= 0) {
+  //ready to shoot
+  if(this.shoot_duration <= 0) {
 
-      if(this.fire_duration <= 0) {
-        //reset everything
-        this.reset_ray()
-      }
-      else {
-        this.fire_duration = Math.max(this.fire_duration - dt, 0)
-        //fire the ray
-        if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
-          var ray_polygon = this.get_ray_polygon()
-          this.fired = true
-          if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
-            var silenced_factor = 1
-            if(this.player.status_duration[5] > 0 && !this.player.ultimate) {
-              silenced_factor = 10
-            }
-            this.player.body.ApplyImpulse(new b2Vec2(silenced_factor * this.ray_force * Math.cos(this.ray_angle), silenced_factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
-            this.impulse_game_state.reset_combo()
+    if(this.fire_duration <= 0) {
+      //reset everything
+      this.reset_ray()
+      this.stun(this.stun_length)
+    }
+    else {
+      this.fire_duration = Math.max(this.fire_duration - dt, 0)
+      //fire the ray
+      if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
+        var ray_polygon = this.get_ray_polygon()
+        this.fired = true
+        if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
+          var silenced_factor = 1
+          if(this.player.status_duration[5] > 0 && !this.player.ultimate) {
+            silenced_factor = 10
           }
-          for(var i = 0; i < this.level.enemies.length; i++) {
-            if(this.level.enemies[i] != this && pointInPolygon(ray_polygon, this.level.enemies[i].body.GetPosition())) {
-              if(this.level.enemies[i].type == "orbiter") {
-                this.level.enemies[i].weaken()
-              }
-              this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter())
-              this.level.enemies[i].open(1500)
+          this.player.body.ApplyImpulse(new b2Vec2(silenced_factor * this.ray_force * Math.cos(this.ray_angle), silenced_factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
+          this.impulse_game_state.reset_combo()
+        }
+        for(var i = 0; i < this.level.enemies.length; i++) {
+          if(this.level.enemies[i] != this && pointInPolygon(ray_polygon, this.level.enemies[i].body.GetPosition())) {
+            if(this.level.enemies[i].type == "orbiter") {
+              this.level.enemies[i].weaken()
             }
+            this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter())
+            this.level.enemies[i].open(2500)
           }
         }
       }
-
     }
-    else {
 
-      this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
-      if(this.shoot_duration <= this.shoot_interval* this.aim_proportion && this.within_bounds  && !this.moving && !this.aimed) {//if it hasn't been aimed, aim it now
-        this.aim_ray()
-        
-      }
+  }
+  else if(this.within_bounds && !this.moving) {
+    this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
+    if(this.shoot_duration <= this.shoot_interval* this.aim_proportion && !this.aimed) {//if it hasn't been aimed, aim it now
+      this.aim_ray()
     }
   }
 }
+
+DeathRay.prototype.additional_drawing = function(context, draw_factor) {
+  if(this.recovery_timer > 0 && !this.dying) {
+    context.beginPath()
+    context.lineWidth = 2
+    context.strokeStyle = "#444444";
+    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 1, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.recovery_timer/this.recovery_interval), true)
+    context.stroke()
+  }
+}
+
 
 DeathRay.prototype.reset_ray = function() {
   this.shoot_duration = this.shoot_interval
@@ -341,6 +340,26 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
     context.restore()
 
   }
+}
+
+DeathRay.prototype.get_color_for_status = function(status) {
+  if(status == "normal") {
+    return this.color ? this.color : null
+  } else if(status == "stunned") {
+    return '#444444';
+  } else if(status == "silenced") {
+    return 'gray'
+  } else if(status == "gooed") {
+    return "#e6c43c"
+  } else if(status == "impulsed") {
+    return this.impulsed_color
+  } else if(status == "white") {
+    return "white"
+  } else if(status.slice(0, 5) == "world") {
+    return impulse_colors["world "+status.slice(5,6)+" lite"]
+  }
+
+  return this.get_additional_color_for_status(status)
 }
 
 DeathRay.prototype.silence = function(dur, color_silence) {

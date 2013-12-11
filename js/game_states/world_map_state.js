@@ -311,16 +311,17 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
   }
   ctx.font = '13px Muli'
-  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"];
+  ctx.fillStyle = "white"
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
 
   draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
-    ctx.font = '12px Muli'
-    ctx.textAlign = 'left'
+  if(imp_vars.player_data.difficulty_mode == "normal") {
+    ctx.font = '15px Muli'
+    ctx.globalAlpha = 0.9
+    ctx.textAlign = 'center'
     ctx.fillStyle = "white"
-    ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
+    ctx.fillText("CHALLENGE MODE", imp_vars.levelWidth/2, 30)
   }
   ctx.restore()
 }

@@ -98,11 +98,12 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = 'black'
   ctx.fillText(imp_vars.player_data.stars[imp_vars.player_data.difficulty_mode], imp_vars.levelWidth - 40, imp_vars.levelHeight - 10)*/
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
-    ctx.font = '12px Muli'
-    ctx.textAlign = 'left'
-    ctx.fillStyle = "white"
-    ctx.fillText("EASY MODE", 10, imp_vars.levelHeight - 10)
+  if(imp_vars.player_data.difficulty_mode == "normal") {
+    ctx.font = '15px Muli'
+    ctx.globalAlpha = 0.9
+    ctx.textAlign = 'center'
+    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.fillText("CHALLENGE MODE", imp_vars.levelWidth/2, 30)
   }
 
   /*ctx.font = '20px Muli'
@@ -195,10 +196,10 @@ TitleState.prototype.setup_main_menu = function() {
 
   
   this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
-  this.easy_mode_button = new SmallButton("EASY MODE", 20, imp_vars.levelWidth/2-100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
+  this.easy_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2-100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
 
   this.buttons["options"].push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2+100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
   this.buttons["options"].push(this.normal_mode_button)
   this.set_difficulty_button_underline();
   this.clear_data_button = new SmallButton("CLEAR DATA", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){_this.clear_data()})

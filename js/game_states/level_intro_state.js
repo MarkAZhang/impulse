@@ -125,11 +125,12 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.stroke()
 
     if (this.load_percentage < 1) {
+
       ctx.textAlign = 'center'
-      draw_progress_bar(ctx, imp_vars.levelWidth - 150, imp_vars.levelHeight - 40, 200, 25, this.load_percentage, impulse_colors['world '+ this.world_num])
-      ctx.font = '20px Muli'
-      ctx.fillStyle = this.color
-      ctx.fillText("LOADING", imp_vars.levelWidth - 150, imp_vars.levelHeight - 33)
+      draw_loading_icon(ctx, imp_vars.levelWidth - 70, imp_vars.levelHeight - 63, 20, this.load_percentage)
+      ctx.font = '16px Muli'
+      ctx.fillStyle = "gray"
+      ctx.fillText("LOADING", imp_vars.levelWidth - 70, imp_vars.levelHeight - 34)
     }
 
     if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
