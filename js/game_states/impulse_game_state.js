@@ -427,6 +427,18 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.drawImage(bg_canvas, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   }
 
+  if(this.zoom != 1 && this.victory) {
+    ctx.save()
+
+    ctx.translate(this.player.body.GetPosition().x * imp_vars.draw_factor, this.player.body.GetPosition().y * imp_vars.draw_factor)
+    ctx.scale(1/this.zoom, 1/this.zoom)
+    ctx.translate(-this.player.body.GetPosition().x * imp_vars.draw_factor, -this.player.body.GetPosition().y * imp_vars.draw_factor)
+    this.player.draw(ctx)
+    ctx.restore();
+  } else {
+    this.player.draw(ctx)
+  }
+
   this.level.draw(ctx, imp_vars.draw_factor )
 
   if(this.level_redraw_bg) {
@@ -442,17 +454,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.clip();
   }
 
-  if(this.zoom != 1 && this.victory) {
-    ctx.save()
 
-    ctx.translate(this.player.body.GetPosition().x * imp_vars.draw_factor, this.player.body.GetPosition().y * imp_vars.draw_factor)
-    ctx.scale(1/this.zoom, 1/this.zoom)
-    ctx.translate(-this.player.body.GetPosition().x * imp_vars.draw_factor, -this.player.body.GetPosition().y * imp_vars.draw_factor)
-    this.player.draw(ctx)
-    ctx.restore();
-  } else {
-    this.player.draw(ctx)
-  }
 
   if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4){//} && this.first_ever) {
     this.draw_boss_text(ctx)
@@ -1065,6 +1067,7 @@ ImpulseGameState.prototype.increment_combo = function() {
 }
 
 ImpulseGameState.prototype.reset_combo = function() {
+  if (this.player.ultimate) return
   this.game_numbers.base_combo = 1
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 }

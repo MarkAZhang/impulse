@@ -10,11 +10,12 @@ function LevelIntroState(level_name, world) {
   this.world_num = world
   this.bg_drawn = false
 
-  this.color = impulse_colors['world '+ this.world_num + ' bright']
+  this.color = impulse_colors['world '+ this.world_num + ' lite']
+  this.bright_color = impulse_colors['world '+ this.world_num + ' bright']
 
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 100, 100, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.bright_color, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new WorldMapState(_this.world_num))
     }
@@ -117,7 +118,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[i].draw(ctx)
     }
 
-    draw_level_obstacles_within_rect(ctx, this.level_name, imp_vars.levelWidth/2, 175, 200, 150, impulse_colors['world '+ this.world_num])
+    draw_level_obstacles_within_rect(ctx, this.level_name, imp_vars.levelWidth/2, 175, 200, 150, impulse_colors['world '+ this.world_num + ' lite'])
     ctx.beginPath()
     ctx.rect(imp_vars.levelWidth/2 - 100, 100, 200, 150)
 
@@ -127,10 +128,10 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     if (this.load_percentage < 1) {
 
       ctx.textAlign = 'center'
-      draw_loading_icon(ctx, imp_vars.levelWidth - 70, imp_vars.levelHeight - 63, 20, this.load_percentage)
+      draw_loading_icon(ctx, imp_vars.levelWidth - 70, imp_vars.levelHeight - 53, 20, "gray", this.load_percentage)
       ctx.font = '16px Muli'
       ctx.fillStyle = "gray"
-      ctx.fillText("LOADING", imp_vars.levelWidth - 70, imp_vars.levelHeight - 34)
+      ctx.fillText("LOADING", imp_vars.levelWidth - 70, imp_vars.levelHeight - 19)
     }
 
     if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
@@ -156,7 +157,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
         score_color+=1
       }
 
-      ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : this.color
+      ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : this.bright_color
       ctx.textAlign = 'center'
 
       ctx.font = '12px Muli'
@@ -201,14 +202,9 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[i].draw(ctx)
     }
 
-  
   }
-
 }
-
   
-
-
 LevelIntroState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -216,18 +212,15 @@ LevelIntroState.prototype.on_mouse_move = function(x, y) {
   }
 }
 
-
 LevelIntroState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
 }
 
-
-
 LevelIntroState.prototype.load_complete = function() {
   var hive_numbers = new HiveNumbers(this.world_num, false)
-  this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 50, 100, 100, "white", impulse_colors["impulse_blue"], function(_this){
+  this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight/2 + 260, 100, 65, this.color, this.bright_color, function(_this){
     return function(){
       switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, true))
     }

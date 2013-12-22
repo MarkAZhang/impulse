@@ -97,24 +97,6 @@ Slingshot.prototype.player_hit_proc = function() {
 
 }
 
-Slingshot.prototype.check_death = function() {
-
-  if (this.durations["open"] <= 0) {
-    return
-  }
-  //check if enemy has intersected polygon, if so die
-  for(var k = 0; k < this.level.obstacle_polygons.length; k++)
-  {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
-    {
-      this.start_death("kill")
-      this.lin_damp = this.orig_lin_damp
-      return
-    }
-  }
-
-}
-
 Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
 
   if(this.status_duration[1] <= 0) {

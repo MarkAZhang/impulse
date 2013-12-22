@@ -8,6 +8,7 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
   this.size = size
   this.real_size = size
   this.init(x, y, w, h, action, false, color)
+  this.bg_color = null
   this.hover_color = hcolor
   this.shadow = false;
   this.icon = icon
@@ -33,7 +34,17 @@ IconButton.prototype.additional_draw = function(context) {
   } else {
     context.shadowBlur = 0
   }
-  context.fillText(this.text, this.x, this.y + this.h/6)
+  if (this.icon.slice(0, 8) == "practice") {
+    context.fillText(this.text, this.x, this.y + this.h/6)  
+  } else {
+    context.fillText(this.text, this.x, this.y + this.h/3)
+  }
+
+  if (this.extra_text) {
+    context.font = this.size * 0.7 +'px Muli';
+    context.fillText(this.extra_text, this.x, this.y + this.h/3 + 0.9 * this.size)
+  }
+  
   context.fill()
   /*if(this.hover) {
     context.beginPath();
@@ -52,52 +63,86 @@ IconButton.prototype.draw_icon  = function(context) {
 	context.save()
 	if(this.icon == "player") {
 		if(this.hover) {
-		  drawSprite(context, this.x, this.y - this.w/5, 0, 40, 40, "player_normal")
+		  drawSprite(context, this.x, this.y - this.h/8, 0, 40, 40, "player_normal")
 		} else {
-		  drawSprite(context, this.x, this.y - this.w/5, 0, 40, 40, "player_white")
+		  drawSprite(context, this.x, this.y - this.h/8, 0, 40, 40, "player_white")
 		}
 	} else if(this.icon == "gear") {
 
 		if(this.hover) {
-			draw_gear(context, this.x, this.y - this.w/8, 15, impulse_colors["impulse_blue"], "#080808", false)	
+			draw_gear(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)	
 		} else {
-			draw_gear(context, this.x, this.y - this.w/8, 15, "white", "#080808", false)	
+			draw_gear(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)	
 		} 
 	} else if(this.icon == "credit") {
     if(this.hover) {
-      draw_credits_icon(context, this.x, this.y - this.w/8, 15, impulse_colors["impulse_blue"], "#080808", false)   
+      draw_credits_icon(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)   
     } else {
-      draw_credits_icon(context, this.x, this.y - this.w/8, 15, "white", "#080808", false)   
+      draw_credits_icon(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)   
     }
   } else if(this.icon == "tutorial") {
     if(this.hover) {
-      draw_tutorial_icon(context, this.x, this.y - this.w/8, 13, impulse_colors["impulse_blue"], "#080808", false)   
+      draw_tutorial_icon(context, this.x, this.y - this.h/8, 13, impulse_colors["impulse_blue"], "#080808", false)   
     } else {
-      draw_tutorial_icon(context, this.x, this.y - this.w/8, 13, "white", "#080808", false)   
+      draw_tutorial_icon(context, this.x, this.y - this.h/8, 13, "white", "#080808", false)   
     }
   } else if(this.icon == "back") {
     if(this.hover) {
-      draw_back_icon(context, this.x, this.y - this.w/8, 13, impulse_colors["impulse_blue"], "#080808", false)   
+      draw_back_icon(context, this.x, this.y - this.h/8, 13, this.hover_color, "#080808", false)   
     } else {
-      draw_back_icon(context, this.x, this.y - this.w/8, 13, "white", "#080808", false)   
+      draw_back_icon(context, this.x, this.y - this.h/8, 13, this.color, "#080808", false)   
     }
   } else if(this.icon == "start") {
     if(this.hover) {
-      draw_start_icon(context, this.x, this.y - this.w/8, 20, true)   
+      draw_start_icon(context, this.x, this.y - this.h/8, 20, this.hover_color)   
     } else {
-      draw_start_icon(context, this.x, this.y - this.w/8, 20, false)   
+      draw_start_icon(context, this.x, this.y - this.h/8, 20, this.color)   
+    }
+  } else if(this.icon == "retry") {
+    if(this.hover) {
+      draw_retry_icon(context, this.x, this.y - this.h/8, 13, this.hover_color)   
+    } else {
+      draw_retry_icon(context, this.x, this.y - this.h/8, 13, this.color)   
+    }
+  } else if(this.icon == "options") {
+    if(this.hover) {
+      draw_gear(context, this.x, this.y - this.h/8, 15, this.hover_color, this.bg_color)
+    } else {
+      draw_gear(context, this.x, this.y - this.h/8, 15, this.color, this.bg_color)
     }
   } else if(this.icon == "save") {
     if(this.hover) {
-      draw_save_icon(context, this.x, this.y - this.w/8, 20, this.hover_color)   
+      draw_save_icon(context, this.x, this.y - this.h/8, 20, this.hover_color)   
     } else {
-      draw_save_icon(context, this.x, this.y - this.w/8, 20, this.color)   
+      draw_save_icon(context, this.x, this.y - this.h/8, 20, this.color)   
     }
   } else if(this.icon == "quit") {
     if(this.hover) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.hover_color)   
     } else {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.color)   
+    }
+  } else if(this.icon == "left_mouse") {
+    draw_bare_mouse(context, this.x - this.w * 0.23, this.y - this.h * 0.1, this.w * 0.17, this.h * 0.4, this.hover ? this.hover_color : this.color)
+    draw_arrow_keys(context, this.x + this.w * 0.17, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+  } else if(this.icon == "keyboard") {
+    draw_arrow_keys(context, this.x - this.w * 0.23, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+    draw_arrow_keys(context, this.x + this.w * 0.23, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+  } else if(this.icon == "right_mouse") {
+    draw_arrow_keys(context, this.x - this.w * 0.17, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+    draw_bare_mouse(context, this.x + this.w * 0.23, this.y - this.h * 0.1, this.w * 0.17, this.h * 0.4, this.hover ? this.hover_color : this.color)
+  } else if(this.icon == "controls") {
+    if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {
+      draw_arrow_keys(context, this.x - this.w * 0.3, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_bare_mouse(context, this.x + this.w * 0.4, this.y - this.h * 0.1, this.w * 0.3, this.h * 0.4, this.hover ? this.hover_color : this.color)
+    }
+    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+      draw_bare_mouse(context, this.x - this.w * 0.4, this.y - this.h * 0.1, this.w * 0.3, this.h * 0.4, this.hover ? this.hover_color : this.color)
+      draw_arrow_keys(context, this.x + this.w * 0.3, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+    }
+    if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
+      draw_arrow_keys(context, this.x - this.w * 0.4, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_arrow_keys(context, this.x + this.w * 0.4, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }
   } else if(this.icon.slice(0, 5) == "world") {
     var text = ["I", "II","III", "IV"]

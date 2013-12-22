@@ -13,8 +13,6 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
   this.init(world, x, y, id, impulse_game_state)
 
   this.require_open = false
-
-
 }
 
 HarpoonHead.prototype.collide_with = function(other) {
@@ -39,3 +37,6 @@ HarpoonHead.prototype.process_impulse_specific = function(attack_loc, impulse_fo
 HarpoonHead.prototype.set_heading = function(heading) {
   this.actual_heading = heading
 }
+
+// HarpoonHead's durations is set to Harpoon's durations so that the two will be the same color. This means we must disable things like "open"
+HarpoonHead.prototype.open = function() {}

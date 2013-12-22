@@ -137,11 +137,14 @@ DeathRay.prototype.additional_processing = function(dt) {
         var ray_polygon = this.get_ray_polygon()
         this.fired = true
         if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
-          var silenced_factor = 1
+          var factor = 1
           if(this.player.status_duration[5] > 0 && !this.player.ultimate) {
-            silenced_factor = 10
+            factor *= 10
           }
-          this.player.body.ApplyImpulse(new b2Vec2(silenced_factor * this.ray_force * Math.cos(this.ray_angle), silenced_factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
+          if(this.player.status_duration[2] > 0) {
+            factor *= 0.25
+          }
+          this.player.body.ApplyImpulse(new b2Vec2(factor * this.ray_force * Math.cos(this.ray_angle), factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
           this.impulse_game_state.reset_combo()
         }
         for(var i = 0; i < this.level.enemies.length; i++) {
@@ -210,8 +213,9 @@ DeathRay.prototype.get_ray_polygon = function() {
 DeathRay.prototype.player_hit_proc = function() {
 }
 
-DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  this.open(this.open_period)
+DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+  if (this.ultimate)
+    this.open(this.open_period)
   this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   this.durations["impulsed"] += this.impulsed_duration

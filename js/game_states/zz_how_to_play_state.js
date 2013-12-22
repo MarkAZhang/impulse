@@ -29,9 +29,10 @@ HowToPlayState.prototype.load_complete = function() {
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Interlude"])
 
-  this.color = "white"
-  this.lite_color = "#ccc"
-  this.dark_color = "black"
+  this.color = this.is_boss_level ? impulse_colors["boss "+this.world_num] : impulse_colors["world "+this.world_num+" lite"]
+  this.dark_color = impulse_colors["world "+this.world_num +" dark"];
+  this.lite_color = impulse_colors["world "+this.world_num +" lite"];
+  this.bright_color = impulse_colors["world "+this.world_num +" bright"];
   this.check_new_enemies()
   this.num_pages = 12
   this.cur_page = 0
@@ -315,7 +316,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     if(imp_vars.player_data.options.control_hand == "left") {
       draw_rounded_rect(ctx, 400, 445, 120, 50, 10, this.color)
-      ctx.fillText("ENTER", 400, 451)
+      ctx.fillText("SHIFT", 400, 451)
     }
 
     ctx.font = '12px Muli'

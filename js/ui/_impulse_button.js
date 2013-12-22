@@ -60,3 +60,8 @@ ImpulseButton.prototype.set_active = function(active) {
   if(!this.active) this.color = "gray"
 }
 
+ImpulseButton.prototype.on_key_down = function(keyCode) {
+  if (this.active && this.keyCode && this.keyCode == keyCode) {
+    this.action()
+  }
+}

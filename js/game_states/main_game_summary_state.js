@@ -109,45 +109,45 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   var _this = this;
 
   if(this.save_screen && !this.just_saved) {
-    this.resume_button = new SmallButton("RESUME", 20, imp_vars.levelWidth - 115, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.resume_button = new IconButton("RESUME", 16, 730, imp_vars.levelHeight/2+260, 100, 65, this.lite_color, this.bright_color, function(_this){return function(){
       _this.resume_game()
-    }}(this))
+    }}(this), "start")
     this.resume_button.shadow = false
-    if(imp_vars.player_data.options.control_hand == "right") {
+    /*if(imp_vars.player_data.options.control_hand == "right") {
       this.resume_button.underline_index = 0
     } else {
       this.resume_button.extra_text = "RIGHT ARROW"
       this.resume_button.dim_extra_text = true
-    }
+    }*/
     this.buttons.push(this.resume_button)
 
-    this.delete_button = new SmallButton("DELETE", 20, imp_vars.levelWidth/2, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.delete_button = new IconButton("DELETE", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 65, this.lite_color, this.bright_color, function(_this){return function(){
       _this.delete_game()
-    }}(this))
+    }}(this), "quit")
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
-    if(imp_vars.player_data.options.control_hand == "right") {
+    /*if(imp_vars.player_data.options.control_hand == "right") {
       this.delete_button.underline_index = 0
     this.delete_button.extra_text= "SHIFT+"
     } else {
       this.delete_button.extra_text = "SHIFT + DOWN ARROW"
       this.delete_button.dim_extra_text = true
     }
-    this.delete_button.shift_enabled = true
+    this.delete_button.shift_enabled = true*/
 
-    this.return_to_main_button = new SmallButton("EXIT", 20, 100, imp_vars.levelHeight - 30, 200, 50, this.bright_color, this.color, function(_this) { return function() {
+    this.return_to_main_button = new IconButton("EXIT", 16, 70, imp_vars.levelHeight/2 + 260, 60, 65, this.lite_color, this.bright_color, function(_this) { return function() {
       _this.exit_game()
-    }}(this))
+    }}(this), "back")
 
     this.buttons.push(this.return_to_main_button)
-    this.return_to_main_button.shadow = false
+    /*this.return_to_main_button.shadow = false
     if(imp_vars.player_data.options.control_hand == "right") {
       this.return_to_main_button.underline_index = 0
     } else {
       this.return_to_main_button.extra_text = "LEFT ARROW"
       this.return_to_main_button.dim_extra_text = true
 
-    }
+    }*/
   }
 
   imp_vars.impulse_music.stop_bg()
@@ -303,14 +303,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '18px Muli'
   ctx.textAlign = 'center'
 
-  var y = 310
+  var start_y = 290
   ctx.fillStyle = this.lite_color;
 
-  ctx.fillText("LEVEL",150, y)
-  ctx.fillText("SCORE", 270, y)
-  ctx.fillText("TIME", 390, y)
-  ctx.fillText("COMBO", 510, y)
-  ctx.fillText("DEATHS", 630, y)
+  ctx.fillText("LEVEL",150, start_y)
+  ctx.fillText("SCORE", 270, start_y)
+  ctx.fillText("TIME", 390, start_y)
+  ctx.fillText("COMBO", 510, start_y)
+  ctx.fillText("DEATHS", 630, start_y)
 
   for(var i = 0; i < 8; i++) {
     var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
@@ -326,7 +326,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       gn = {}
     }
     ctx.fillStyle = gn.visited ? this.lite_color : "#333";
-    var y = 340 + 27 * i;
+    var y = start_y + 30 + 27 * i;
     ctx.fillText(real_title,150, y)
 
     if(gn.score != undefined) {
@@ -396,7 +396,7 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
 
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
 
-  if(this.save_screen && !this.just_saved) {
+  /*if(this.save_screen && !this.just_saved) {
     if(keyCode == imp_params.keys.EXIT_GAME_KEY) {
       this.exit_game()
     } else if(keyCode == imp_params.keys.DELETE_GAME_KEY && this.shift_down()) {
@@ -404,18 +404,18 @@ MainGameSummaryState.prototype.on_key_down = function(keyCode) {
     } else if(keyCode == imp_params.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
       this.resume_game()
     }
-  } else{
+  } else{*/
     if(this.transition_state=="none") {
       this.transition_state="out";
       this.transition_timer = this.transition_interval
     }
-  }
+  /*}
   if(keyCode == 16) {
     this.shift_down_time = (new Date()).getTime()
   }
   if(keyCode == 17) {
     this.ctrl_down_time = (new Date()).getTime()
-  }
+  }*/
 }
 MainGameSummaryState.prototype.on_key_up = function(keyCode) {
   if(keyCode == 16) {

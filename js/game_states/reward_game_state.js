@@ -10,6 +10,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.args = args
   this.rewards = []
   this.determine_rewards()
+  this.debug()
   this.cur_reward_index = 0
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
@@ -50,12 +51,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha = Math.max(0, prog)
     }
     var cur_reward = this.rewards[this.cur_reward_index]
+    var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 100)
+    ctx.restore()
 
     if(cur_reward.type == "world_victory") {
-        ctx.save()
-        ctx.globalAlpha *= 0.3
-        draw_tessellation_sign(ctx, cur_reward.data +1, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
-        ctx.restore()
         ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
         ctx.textAlign = "center"
         ctx.font = "24px Muli"
@@ -63,57 +65,74 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.font = "48px Muli"
         ctx.fillText("HIVE "+imp_params.tessellation_names[cur_reward.data+1], imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 30)
     }
+    var main_message = ""
+    var main_message_teaser = ""
+    var main_reward_text_y = 250
+    var new_values_text_y = 400
 
     if(cur_reward.type == "rating") {
-        ctx.globalAlpha *= 0.5
-        draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
-        ctx.fillStyle = "white"
-        ctx.textAlign = "center"
-        ctx.globalAlpha *= 2
 
-        ctx.font = "24px Muli"
-        ctx.fillText("YOUR RATING HAS INCREASED!", imp_vars.levelWidth/2, imp_vars.levelHeight/2)
-        ctx.font = "72px Muli"
-        ctx.fillText("+"+cur_reward.data, imp_vars.levelWidth/2, imp_vars.levelHeight/2+100)
-    }
+      main_message = "YOUR SKILL RATING WENT UP"
+      main_message_teaser = "CONGRATULATIONS!"
+      ctx.fillStyle = "white"
+      ctx.font = "60px Muli"
+      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2, main_reward_text_y + 20)
+
+      ctx.textAlign = 'center'
+      ctx.font = '12px Muli'
+      ctx.fillStyle = 'white'
+      ctx.fillText("CURRENT SKILL RATING", imp_vars.levelWidth/2, new_values_text_y - 25)
+      ctx.font = '48px Muli'
+      ctx.fillText(cur_reward.data.new_rating, imp_vars.levelWidth/2, new_values_text_y + 25)
+    } 
+
     if(cur_reward.type == "lives") {
-      ctx.globalAlpha *= 0.5
-      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
+      main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
+      main_message = "EXTRA LIFE"
       ctx.fillStyle = "white"
-      ctx.textAlign = "center"
-      ctx.globalAlpha *= 2
-      ctx.font = "24px Muli"
-      ctx.fillText("YOU HAVE EARNED AN UPGRADE!", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 200)
-
-      ctx.font = "24px Muli"
-      ctx.fillText("EXTRA LIFE", imp_vars.levelWidth/2, imp_vars.levelHeight/2)  
+      ctx.font = "60px Muli"
+      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
       
-      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 60, 60, "lives_icon")
+      drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "lives_icon")
       ctx.font = "72px Muli"
-      ctx.fillText(cur_reward.data.new_lives, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 150)
-      
+
+      ctx.textAlign = 'center'
+      ctx.font = '12px Muli'
+      ctx.fillStyle = 'white'
+      ctx.fillText("NEW LIVES", imp_vars.levelWidth/2, new_values_text_y - 30)
+      drawSprite(ctx, imp_vars.levelWidth/2, new_values_text_y - 8, 0, 30, 30, "lives_icon")
+      ctx.font = '36px Muli'
+      ctx.fillText(cur_reward.data.new_lives, imp_vars.levelWidth/2, new_values_text_y + 40)
     }
+
     if(cur_reward.type == "ult") {
-      ctx.globalAlpha *= 0.5
-      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
-      ctx.fillStyle = "white"
-      ctx.textAlign = "center"
-      ctx.globalAlpha *= 2
-      ctx.font = "24px Muli"
-      ctx.fillText("YOU HAVE EARNED AN UPGRADE!", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 200)
-
-      ctx.font = "24px Muli"
-      ctx.fillText("EXTRA ULTIMATE", imp_vars.levelWidth/2, imp_vars.levelHeight/2)  
+      main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
+      main_message = "EXTRA ULTIMATE"
       
-      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 35, 35, "lives_icon")
-      drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50 , 0, 150, 150, "ultimate_icon")
-      ctx.font = "72px Muli"
-      ctx.fillText(cur_reward.data.new_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 150)
+      drawSprite(ctx, imp_vars.levelWidth/2, main_reward_text_y, 0, 35, 35, "lives_icon")
+      drawSprite(ctx, imp_vars.levelWidth/2, main_reward_text_y, 0, 150, 150, "ultimate_icon")
+
+      ctx.textAlign = 'center'
+      ctx.font = '12px Muli'
+      ctx.fillStyle = 'white'
+      ctx.fillText("NEW ULTIMATES", imp_vars.levelWidth/2, new_values_text_y - 30)
+      drawSprite(ctx, imp_vars.levelWidth/2, new_values_text_y - 8, 0, 30, 30, "lives_icon")
+      ctx.font = '36px Muli'
+      ctx.fillText(cur_reward.data.new_ult, imp_vars.levelWidth/2, new_values_text_y + 40)
+
     }
+
+    ctx.fillStyle = "white"
+    ctx.textAlign = "center"
+    ctx.font = "16px Muli"
+    ctx.fillText(main_message_teaser, imp_vars.levelWidth/2, 100)
+    ctx.font = "36px Muli"
+    ctx.fillStyle = impulse_colors["impulse_blue"]
+    ctx.fillText(main_message, imp_vars.levelWidth/2, 150)
+    
+
 
     if(cur_reward.type == "spark_val") {
-      ctx.globalAlpha *= 0.5
-      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 150)
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.globalAlpha *= 2
@@ -134,8 +153,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
         this.current_lines = getLines(ctx, this.pages[this.ult_cur_page].toUpperCase(), this.text_width, '20px Muli')
       }
 
-      ctx.globalAlpha *= 0.3
-      draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.globalAlpha /= 0.3
@@ -144,9 +161,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
       drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100 , 0, 35, 35, "lives_icon")
       drawSprite(ctx, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100 , 0, 150, 150, "ultimate_icon")
-
-      
-      
 
       draw_arrow(ctx, imp_vars.levelWidth/2 - 300, 420, 20, "left", "white")
       draw_arrow(ctx, imp_vars.levelWidth/2 + 300, 420, 20, "right", "white")
@@ -198,8 +212,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "ult_tutorial_notice") {
-        ctx.globalAlpha *= 0.3
-        draw_tessellation_sign(ctx, 0, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
         ctx.fillStyle = "white"
         ctx.textAlign = "center"
         ctx.globalAlpha /= 0.3
@@ -216,15 +228,61 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type != "ult_tutorial") {
-      ctx.font = "20px Muli"
+      ctx.font = "16px Muli"
       ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
       ctx.restore()  
     } else {
-      ctx.font = "20px Muli"
+      ctx.font = "16px Muli"
       ctx.fillText("PRESS ENTER TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
       ctx.restore()  
     }
+}
+
+RewardGameState.prototype.debug = function() {
+  if (true) {
+     this.rewards.push({
+      type: "rating",
+      data: {
+        diff: 500,
+        new_rating: 1000
+      }
+    })
+     this.rewards.push({
+      type: "lives",
+      data: {
+        diff: 2,
+        new_lives: 5
+      }
+    })
+        this.rewards.push({
+      type: "ult",
+      data: {
+        diff: 1,
+        new_ult: 2
+      }
+    })
+    this.rewards.push({
+      type: "spark_val",
+      data: {
+        diff: 1,
+        new_spark_val: 15
+      }
+    })
+    this.rewards.push({
+        type: "ult_tutorial"
+    })
+    this.rewards.push({
+      type: "ult_tutorial_notice"
+    })
+    for (var i = 1; i < 4; i++) {
+      this.rewards.push({
+        type: "world_victory",
+        data: i
+      })  
+    }
     
+  }
+
 
 }
 
@@ -295,7 +353,10 @@ RewardGameState.prototype.determine_rewards = function() {
   if(rating > this.hive_numbers.original_rating) {
     this.rewards.push({
       type: "rating",
-      data: rating - this.hive_numbers.original_rating 
+      data: {
+        diff: rating - this.hive_numbers.original_rating,
+        new_rating: rating
+      }
     })
   }
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
@@ -362,8 +423,6 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
       this.transition_timer = this.transition_interval
     }  
   }
-  
-  
 }
 
 RewardGameState.prototype.on_click = function(x, y) {

@@ -95,8 +95,6 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.add_harpoon_head()
 
-  this.require_open = true
-
   this.harpoon_disengage_dist = 3
   this.harpoon_disengage_id = null
 
@@ -429,7 +427,7 @@ Harpoon.prototype.check_cancel_harpoon = function() {
 
 Harpoon.prototype.pre_draw = function(context, draw_factor) {
   var latest_color = this.get_current_color_with_status()
-  if(latest_color != this.color) {
+  if(latest_color != this.color || this.dying) {
       context.save()
       context.strokeStyle = latest_color
       context.lineWidth = 3
@@ -523,10 +521,6 @@ Harpoon.prototype.additional_drawing = function(context, draw_factor) {
 Harpoon.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
   context.save()
-  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
-  if(this.dying) {
-    context.globalAlpha *= prog;
-  }
   context.beginPath()
   context.strokeStyle = this.color
   if(num == 1) {
@@ -552,7 +546,7 @@ Harpoon.prototype.bulk_draw = function(context, draw_factor, num) {
 
   }
   if(num == 2) {
-    if(this.get_current_color_with_status() != this.color) return
+    if(this.get_current_color_with_status() != this.color || this.dying) return
     if(this.harpoon_state != "engaged" && this.harpoon_state != "retract_ready") {
       context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
       context.lineTo(this.harpoon_head.body.GetPosition().x * draw_factor, this.harpoon_head.body.GetPosition().y * draw_factor)

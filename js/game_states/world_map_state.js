@@ -13,10 +13,10 @@ function WorldMapState(world) {
 
   this.cur_world = world
 
-
   this.buttons = []
   var _this = this
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+250, 100, 100, this.color, impulse_colors["impulse_blue"], function(){
+
+  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
     if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(_this))}, 20)}}, "back"))
   this.world_buttons = {
 
@@ -303,7 +303,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = 'center'
   ctx.font = '12px Muli'
   ctx.fillStyle = 'white'
-  ctx.fillText("PLAYER SKILL LEVEL", imp_vars.levelWidth - 90, imp_vars.levelHeight - 85)
+  ctx.fillText("PLAYER SKILL RATING", imp_vars.levelWidth - 90, imp_vars.levelHeight - 85)
   ctx.font = '48px Muli'
   ctx.fillText(this.cur_rating, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 40)
   if(this.next_upgrade != null) {

@@ -306,10 +306,10 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
   //drawSprite(context, x - size, y, 0, size, size, "key")
   //drawSprite(context, x, y , 0, size, size, "key")
   //drawSprite(context, x + size, y , 0, size, size, "key")
-  draw_rounded_rect(context, x, y-size, size-5, size-5, 10, color)
-  draw_rounded_rect(context, x - size, y, size-5, size-5, 10, color)
-  draw_rounded_rect(context, x, y, size-5, size-5, 10, color)
-  draw_rounded_rect(context, x + size, y, size-5, size-5, 10, color)
+  draw_rounded_rect(context, x, y-size, size * 0.9, size * 0.9, size * 0.2, color)
+  draw_rounded_rect(context, x - size, y, size * 0.9, size * 0.9, size * 0.2, color)
+  draw_rounded_rect(context, x, y, size * 0.9, size * 0.9, size * 0.2, color)
+  draw_rounded_rect(context, x + size, y, size * 0.9, size * 0.9, size * 0.2, color)
 
   context.fillStyle = color;
   context.font = '20px Muli'
@@ -319,16 +319,35 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
     context.fillText(keysArray[1], x - size, y + size * 1/3)
     context.fillText(keysArray[2], x, y + size * 1/3)
     context.fillText(keysArray[3], x + size, y + size * 1/3)
-    draw_arrow(context, x, y - size - 8, 20, "up", color)
-    draw_arrow(context, x - size, y - 8, 20, "left", color)
-    draw_arrow(context, x, y - 10, 20, "down", color)
-    draw_arrow(context, x + size, y - 8, 20, "right", color)
+    draw_arrow(context, x, y - size * 1.1, size * 0.3, "up", color)
+    draw_arrow(context, x - size, y - size * 0.1, size * 0.3, "left", color)
+    draw_arrow(context, x, y - size * 0.13, size * 0.3, "down", color)
+    draw_arrow(context, x + size, y - size * 0.1, size * 0.3, "right", color)
   } else {
-    draw_arrow(context, x, y - size , 20, "up", color)
-    draw_arrow(context, x - size, y , 20, "left", color)
-    draw_arrow(context, x, y - 2, 20, "down", color)
-    draw_arrow(context, x + size, y, 20, "right", color)
+    draw_arrow(context, x, y - size , size * 0.5, "up", color)
+    draw_arrow(context, x - size, y , size * 0.5, "left", color)
+    draw_arrow(context, x, y - 2, size * 0.5, "down", color)
+    draw_arrow(context, x + size, y, size * 0.5, "right", color)
   }
+  context.restore()
+}
+
+function draw_bare_mouse(context, x, y, w, h, color) {
+  context.save()
+  
+  context.fillStyle = color
+  draw_rounded_rect(context, x, y, w, h, h*0.25, color)
+  
+  context.globalAlpha = 1
+  context.beginPath()
+  context.moveTo(x - w/2, y - h/6)
+  context.lineTo(x + w/2, y - h/6)
+  context.moveTo(x, y - h/6)
+  context.lineTo(x, y - h/2)
+
+  context.lineWidth = 2
+  context.strokeStyle = color
+  context.stroke()
   context.restore()
 }
 
@@ -336,11 +355,11 @@ function draw_mouse(context, x, y, w, h, color) {
   context.save()
   context.shadowColor = color
   context.fillStyle = color
-  context.font = "10px Muli"
+  /*context.font = "10px Muli"
   context.textAlign = "center"
-  context.fillText("LEFT CLICK", x, y - w/2 - 30)
+  context.fillText("LEFT CLICK", x, y - w/2 - 30)*/
   context.shadowBlur = 10
-  draw_rounded_rect(context, x, y, w, h, 10, color)
+  draw_rounded_rect(context, x, y, w, h, h*0.2, color)
   context.clip()
   context.beginPath()
   context.rect(x - w/2, y - h/2, w/2, h/3)
@@ -366,11 +385,11 @@ function draw_right_mouse(context, x, y, w, h, color) {
   context.save()
   context.shadowColor = color
   context.fillStyle = color
-  context.font = "10px Muli"
+  /*context.font = "10px Muli"
   context.textAlign = "center"
-  context.fillText("RIGHT CLICK", x, y - w/2 - 30)
+  context.fillText("RIGHT CLICK", x, y - w/2 - 30)*/
   context.shadowBlur = 10
-  draw_rounded_rect(context, x, y, w, h, 10, color)
+  draw_rounded_rect(context, x, y, w, h, h * 0.2, color)
   context.clip()
   context.beginPath()
   context.rect(x, y - h/2, w/2, h/3)
@@ -422,7 +441,7 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
     if(imp_vars.player_data.options.control_hand == "left") {
-      context.fillText("SHIFT", x+scale, y+scale)
+      context.fillText("ENTER", x+scale, y+scale)
     } else {
       context.fillText("Q", x+scale, y+scale)
     }
@@ -493,6 +512,31 @@ function draw_tutorial_icon(context, x, y, scale, color) {
   context.restore()
 }
 
+function draw_retry_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.arc(x, y, scale * 3/4,  Math.PI * 2/5, Math.PI)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+  context.beginPath()
+  context.arc(x, y, scale * 3/4, Math.PI * 7/5, Math.PI * 2)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+
+  context.beginPath()
+  context.moveTo(x - scale * 3/16, y)
+  context.lineTo(x - scale * 19/16, y)
+  context.lineTo(x - scale * 11/16, y - scale/2)
+  context.moveTo(x + scale * 3/16, y)
+  context.lineTo(x + scale * 19/16, y)
+  context.lineTo(x + scale * 11/16, y + scale/2)
+  context.fillStyle = color
+  context.fill()
+  context.restore()
+}
+
 function draw_back_icon(context, x, y, scale, color) {
   context.save()
   context.beginPath()
@@ -509,34 +553,42 @@ function draw_back_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_start_icon(context, x, y, scale, hover) {
+function draw_start_icon(context, x, y, scale, color) {
   context.save()
-  if(hover) {
-    drawSprite(context, x, y, 0, scale, scale, "player_normal")
-  } else {
-    drawSprite(context, x, y, 0, scale, scale, "player_white")
-  }
+  draw_player_icon(context, x, y, scale/2, color)
+    
   
   context.beginPath()
   context.arc(x, y, scale * 3/4, Math.PI * 7/6, Math.PI * 11/6)
   context.lineWidth = 2
-  if (hover) {
-    context.strokeStyle = impulse_colors["impulse_blue"]  
-  } else {
-    context.strokeStyle = "white"
-  }
+  context.strokeStyle = color
   context.stroke()
   context.restore()
   
 }
 
-function draw_loading_icon(context, x, y, scale, prog) {
+function draw_player_icon(context, x, y, scale, color) {
+  context.beginPath()
+  context.arc(x, y, scale, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999)
+  context.fillStyle = color
+  context.fill()
+  context.beginPath()
+  context.arc(x, y, scale * 4/5, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 )
+  context.fillStyle = "black"
+  context.fill()
+  context.beginPath()
+  context.arc(x, y, scale * 11/20, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999)
+  context.fillStyle = color
+  context.fill()
+}
+
+function draw_loading_icon(context, x, y, scale, color, prog) {
   context.save()
-  drawSprite(context, x, y, 0, scale, scale, "player_gray")
+  draw_player_icon(context, x, y, scale/2, color)
   context.beginPath()
   context.arc(x, y, scale * 3/4, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 * prog)
   context.lineWidth = 2
-  context.strokeStyle = "gray"  
+  context.strokeStyle = color
   context.stroke()
   context.restore()
   
@@ -613,11 +665,7 @@ function draw_music_icon(context, x, y, scale, color, key_display) {
   if(key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
-    if(imp_vars.player_data.options.control_hand == "left") {
-      context.fillText("M", x+scale, y+scale)
-    } else {
-      context.fillText("X", x+scale, y+scale)
-    }
+    context.fillText("X", x+scale, y+scale)
   }
   context.restore()
 }
@@ -652,11 +700,7 @@ function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
   if(key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
-    if(imp_vars.player_data.options.control_hand == "left") {
-      context.fillText("N", x+scale, y+scale)
-    } else {
-      context.fillText("F", x+scale, y+scale)
-    }
+    context.fillText("C", x+scale, y+scale)
   }
   context.restore()
 }
@@ -1008,10 +1052,10 @@ spriteSheetData = {
   "multi": [30, 60, 30, 30],
   "white_glow": [100, 80, 100, 100],
   "world_logo": [200, 80, 100, 100],
-  "lives_icon": [0, 0, 41, 41],
+  "lives_icon": [0, 0, 40, 40],
   "sparks_icon": [35, 90, 35, 35],
   "ultimate_icon": [0, 125, 35, 35],
-
+  "ultimate": [0, 180, 120, 120],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],

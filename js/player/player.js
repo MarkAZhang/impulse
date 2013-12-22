@@ -62,7 +62,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.iright = null
   this.idown = null
   this.iup = null
-  this.iultimate = null
+  this.ultimate = null
   this.impulse_angle = 0
 
   this.enemies_hit = [] //stores ids of enemies hit
@@ -78,10 +78,10 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.ultimate = false
   this.ultimate_start = 0
   this.ultimate_loc = {}
-  this.ultimate_length = 500
+  this.ultimate_length = 1000
   this.ultimate_duration = 0
-  this.ultimate_radius = 15
-  this.ultimate_factor = 150 // multiple of the enemy's force
+  this.ultimate_radius = 20
+  this.ultimate_factor = 250 // multiple of the enemy's force
   this.ultimate_width = 1/32
 
   // used for status timers
@@ -100,7 +100,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying_duration = 0
   this.color = impulse_colors["player_color"]
   this.force = this.true_force
-  this.bulk_factor = 10
+  this.bulk_factor = 100
   this.bulked = false
 
   this.lighten_factor = 1.5
@@ -374,13 +374,11 @@ Player.prototype.process = function(dt) {
       imp_vars.impulse_music.play_sound("impulse")
     }
     if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
-      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
-        this.ultimate = true
-        this.ultimate_loc = this.body.GetPosition().Copy()
-        this.ultimate_duration = this.ultimate_length
-        this.bulk(this.ultimate_length)
-        this.impulse_game_state.hive_numbers.ultimates -= 1
-      }
+      //if(this.impulse_game_state.hive_numbers.ultimates > 0) {
+        this.initiate_ultimate()
+        
+      //  this.impulse_game_state.hive_numbers.ultimates -= 1
+      //}
       
     }
 
@@ -430,13 +428,11 @@ Player.prototype.process = function(dt) {
       }
     }
     if(!this.ultimate) {
-      if(this.iultimate != null && this.impulse_game_state.hive_numbers.ultimates > 0) {
-        this.ultimate = true
-        this.ultimate_loc = this.body.GetPosition().Copy()
-        this.ultimate_duration = this.ultimate_length
-        this.bulk(this.ultimate_length)
-        this.impulse_game_state.hive_numbers.ultimates -= 1
-      }
+
+      //if(this.iultimate != null && this.impulse_game_state.hive_numbers.ultimates > 0) {
+        this.initiate_ultimate()
+      //  this.impulse_game_state.hive_numbers.ultimates -= 1
+      //}
     }
 
 
@@ -525,54 +521,15 @@ Player.prototype.process = function(dt) {
   }
 
   if(this.ultimate) {
-    if(this.ultimate_duration < 0)//ultimate lasts 250 ms
+    if(this.ultimate_duration < 0)
     {
-      this.ultimate = false
-      this.ultimate_enemies_hit = []
+      this.process_ultimate(true)
+      this.finish_ultimate()
     }
     else
     {
-
-      for(var i = 0; i < this.level.enemies.length; i++)
-      {
-        if(this.ultimate_enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
-        {
-          var impulse_sensitive_points = this.level.enemies[i].get_impulse_sensitive_pts()
-
-          for(var j = 0; j < impulse_sensitive_points.length; j++) {
-              if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
-              {
-                var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-                this.ultimate_enemies_hit.push(this.level.enemies[i].id)
-                this.level.enemies[i].silence(1000)
-                var data = imp_params.impulse_enemy_stats[this.level.enemies[i].type]
-                var prop = Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
-                var boss_factor =  this.level.enemies[i].is_boss ? 0.05/this.level.enemies[i].impulse_extra_factor : 1;
-
-                this.level.enemies[i].process_impulse(this.ultimate_loc, prop * this.ultimate_factor * this.level.enemies[i].body.GetMass() * Math.sqrt(data.lin_damp) * boss_factor, angle, true)
-                break
-              }
-              
-          }
-          if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged" && this.level.enemies[i].harpooned_target == this) {
-            this.level.enemies[i].disengage_harpoon()
-          }
-        }
-
-        // if Harpoon, also check the Head
-        if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state != "inactive") {
-          var this_harpoon_head = this.level.enemies[i].harpoon_head;
-          var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
-
-          for(var j = 0; j < impulse_sensitive_points.length; j++) {
-            if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
-            {
-              var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-              this_harpoon_head.process_impulse(this.ultimate_loc, this.impulse_force * 2, angle)
-            }
-          }
-        }
-      }
+      this.process_ultimate(false)
+      
       this.ultimate_duration -= dt
     }
   }
@@ -596,6 +553,78 @@ Player.prototype.process = function(dt) {
     }
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
   }
+}
+
+Player.prototype.initiate_ultimate = function() {
+  this.ultimate = true
+  this.ultimate_loc = this.body.GetPosition().Copy()
+  this.ultimate_duration = this.ultimate_length
+  this.bulk(this.ultimate_length)
+  this.stun(this.ultimate_length)
+  this.body.SetLinearVelocity(new b2Vec2(0, 0))
+}
+
+Player.prototype.process_ultimate = function(final_strike) {
+
+var final_strike_factor = final_strike ? 1 : 0.002
+  var ultimate_force = final_strike_factor * this.ultimate_factor
+  for(var i = 0; i < this.level.enemies.length; i++)
+    {
+      var this_enemy = this.level.enemies[i]
+      if(!this_enemy.dying)//enemy has not been hit
+      {
+        var impulse_sensitive_points = this_enemy.get_impulse_sensitive_pts()
+
+        for(var j = 0; j < impulse_sensitive_points.length; j++) {
+            if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
+            {
+              var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
+              this_enemy.stun(1000)
+              if (this.ultimate_enemies_hit.indexOf(this_enemy.id) == -1) {
+                this.ultimate_enemies_hit.push(this_enemy.id)
+                this_enemy.body.SetLinearVelocity(new b2Vec2(0, 0));
+              }
+              var data = imp_params.impulse_enemy_stats[this_enemy.type]
+              var prop = 1 //Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
+
+              // Less for bosses.
+              var enemy_factor =  this_enemy.is_boss ? 0.05/this_enemy.impulse_extra_factor : 1;
+
+              // Slightly more for Slingshots. Lighter enemies tend to not get thrown as far.
+              if (this_enemy.type == "slingshot") {
+                enemy_factor *= 2
+              }
+              this_enemy.process_impulse(this.ultimate_loc, 
+                prop * ultimate_force * enemy_factor * this_enemy.body.GetMass() * (data.lin_damp), angle, true)
+
+              break
+            }
+            
+        }
+        if(this_enemy instanceof Harpoon && this_enemy.harpoon_state == "engaged" && this_enemy.harpooned_target == this) {
+          this_enemy.disengage_harpoon()
+        }
+      }
+
+      // if Harpoon, also check the Head
+      if(this_enemy instanceof Harpoon && this_enemy.harpoon_state != "inactive") {
+        var this_harpoon_head = this_enemy.harpoon_head;
+        var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
+
+        for(var j = 0; j < impulse_sensitive_points.length; j++) {
+          if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
+          {
+            var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
+            this_harpoon_head.process_impulse(this.ultimate_loc, ultimate_force * 2, angle)
+          }
+        }
+      }
+    }
+}
+
+Player.prototype.finish_ultimate = function() {
+  this.ultimate = false
+  this.ultimate_enemies_hit = []
 }
 
 Player.prototype.point_in_impulse_angle = function(pt) {
@@ -628,24 +657,59 @@ Player.prototype.point_in_impulse_dist = function(pt, fast) {
    && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + speedy_factor)
 }
 
-Player.prototype.point_in_ultimate_dist = function(pt, fast) {
+Player.prototype.point_in_ultimate_dist = function(pt) {
   var dist = this.ultimate_loc.Copy()
   dist.Subtract(pt)
   dist = dist.Normalize()
-  var speedy_factor = fast ? this.ultimate_width * 4: this.ultimate_width * 2
-  var prop = bezier_interpolate(0.15, 0.85,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length))
+  var prop = bezier_interpolate(0.15, 0.5,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length))
 
-  return dist >= this.ultimate_radius * (prop - speedy_factor)
-   && dist <= this.ultimate_radius * (prop + speedy_factor)
+  return dist <= this.ultimate_radius * prop
 }
 
+Player.prototype.draw_ultimate = function(context) {
 
+  context.save()
+  if (this.dying) {
+      var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+      context.globalAlpha *= (1 - prog)
+  }
+
+  if(this.ultimate && this.ultimate_duration > 0) {
+    context.save()
+    context.globalAlpha *= 0.3;
+    var gray = Math.min(2 - Math.abs((this.ultimate_duration - this.ultimate_length/2)/(this.ultimate_length/4)), 1)
+    context.globalAlpha *= gray/2
+    context.fillStyle = "white"
+    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
+
+    context.restore()
+      var cur_time = (new Date()).getTime()
+      context.shadowBlur = 10;
+      context.shadowColor = "#ccc";
+      context.globalAlpha *= 0.5
+      var prop = //Math.pow(((this.ultimate_length - this.ultimate_duration)/this.ultimate_length),3)//
+      bezier_interpolate(0.1, 0.5,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length));
+
+      if(prop > 0.4) {
+        context.globalAlpha *= (1 - prop)/(0.4) < 0 ? 0 : (1-prop)/(0.4);
+      }
+      drawSprite(context, 
+        this.ultimate_loc.x * imp_vars.draw_factor, 
+        this.ultimate_loc.y * imp_vars.draw_factor,  0,
+        this.ultimate_radius * prop * imp_vars.draw_factor * 2, this.ultimate_radius * prop * imp_vars.draw_factor * 2,
+        "ultimate")
+  }
+
+  context.restore()
+}
 
 Player.prototype.draw = function(context) {
   if(this.dying) {
 
   }
   else {
+
+    this.draw_ultimate(context);
 
     /*context.beginPath()
 
@@ -664,7 +728,18 @@ Player.prototype.draw = function(context) {
       var prop = Math.max(((this.silence_interval-this.silence_duration) / this.silence_interval), 0)
       draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "gray") 
     }
-    if(this.status_duration[0] > 0)
+    if(this.ultimate) {
+
+      var lighten_factor = this.get_lighten_factor()
+      drawSprite(
+        context, 
+        this.ultimate_loc.x*imp_vars.draw_factor, 
+        this.ultimate_loc.y*imp_vars.draw_factor, 
+        (this.body.GetAngle()), 
+        this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
+        this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, 
+        "player_gray")
+    } else if(this.status_duration[0] > 0)
     {
       this.draw_player_sprite(context, "player_red");
     }
@@ -691,7 +766,7 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 0;*/
         this.draw_player_sprite(context, "player_normal");
       }
-      var lighten_factor = this.get_lighten_factor()
+    var lighten_factor = this.get_lighten_factor()
 
     if(this.status_duration[3] > 0) {
       context.beginPath()
@@ -747,30 +822,6 @@ Player.prototype.draw = function(context) {
       context.restore();
     }
 
-    if(this.ultimate) {
-      var cur_time = (new Date()).getTime()
-      context.beginPath();
-      context.shadowBlur = 10;
-      context.shadowColor = "#ccc";
-
-      //context.lineWidth = this.ultimate_radius* this.ultimate_width * imp_vars.draw_factor
-      var prop = bezier_interpolate(0.15, 0.85,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length));
-      context.save();
-      if(prop > 0.4) {
-        context.globalAlpha *= (1 - prop)/(0.4) < 0 ? 0 : (1-prop)/(0.4);
-      }
-
-      context.arc(this.ultimate_loc.x*imp_vars.draw_factor, this.ultimate_loc.y*imp_vars.draw_factor,
-       this.ultimate_radius * prop * imp_vars.draw_factor, 0, Math.PI*1.999);
-      //context.lineWidth = 15;
-      // line color
-      context.strokeStyle = "white"
-      context.lineWidth = 5
-      context.stroke();
-      context.restore();
-    }
-
-
     /*if(imp_vars.player_data.options.progress_circle) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.radius * 1.5 * imp_vars.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
@@ -807,13 +858,8 @@ Player.prototype.draw_player_sprite = function(ctx, name) {
   ctx.lineWidth = 3
   ctx.stroke()
   return*/
-
-  
-
-    var lighten_factor = this.get_lighten_factor()
-
-    drawSprite(ctx, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, name)
-
+  var lighten_factor = this.get_lighten_factor()
+  drawSprite(ctx, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, name)
 }
 
 Player.prototype.get_lighten_factor = function() {

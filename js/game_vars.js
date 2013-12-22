@@ -87,7 +87,7 @@ impulse_colors['gold'] = "#edb900"
 
 
 impulse_colors['world 0'] = "#333"
-impulse_colors['world 0 lite'] = "#555"
+impulse_colors['world 0 lite'] = "#999"
 impulse_colors['world 0 bright'] = "#aaa"
 impulse_colors['world 0 dark'] = "#080808"
 impulse_colors['world 1'] = "#034903"
@@ -102,9 +102,9 @@ impulse_colors['world 3'] = "#450555"
 impulse_colors['world 3 lite'] = "#5f0775"
 impulse_colors['world 3 dark'] = "#0f0013"
 impulse_colors['world 3 bright'] = "a260a6"//"#a00cc5"
-impulse_colors['world 4'] = "600"
+impulse_colors['world 4'] = "#600"
 impulse_colors['world 4 lite'] = "#a00"
-impulse_colors['world 4 dark'] = "#200"
+impulse_colors['world 4 dark'] = "#180000"
 impulse_colors['world 4 bright'] = "#f00"
 impulse_colors["player_color"] = "rgb(32, 140, 231)"
 impulse_colors["boss"] = "red"
@@ -123,13 +123,13 @@ function set_key_bindings() {
       UP_KEY: 38,
       RIGHT_KEY: 39,
       DOWN_KEY: 40,
-      PAUSE: 16,
-      GATEWAY_KEY: 13,
-      MUTE_KEY: 77,
-      FULLSCREEN_KEY: 78,
+      PAUSE: 13,
+      GATEWAY_KEY: 16,
+      MUTE_KEY: 88,
+      FULLSCREEN_KEY: 67,
       EXIT_KEY: 39,
       SAVE_AND_QUIT_KEY: 37,
-      RESTART_KEY: 37,
+      RESTART_KEY: 16,
       QUIT_KEY: 39,
       EXIT_GAME_KEY: 37,
       RESUME_GAME_KEY: 39,
@@ -145,7 +145,7 @@ function set_key_bindings() {
       PAUSE: 81,
       GATEWAY_KEY: 32,
       MUTE_KEY: 88,
-      FULLSCREEN_KEY: 70,
+      FULLSCREEN_KEY: 67,
       EXIT_KEY: 69,
       RESTART_KEY: 82,
       SAVE_AND_QUIT_KEY: 83,
@@ -168,7 +168,7 @@ function set_key_bindings() {
       IDOWN_KEY: 83,
       GATEWAY_KEY: 32,
       MUTE_KEY: 88,
-      FULLSCREEN_KEY: 70,
+      FULLSCREEN_KEY: 67,
       EXIT_KEY: 69,
       RESTART_KEY: 82,
       SAVE_AND_QUIT_KEY: 83,
@@ -177,7 +177,7 @@ function set_key_bindings() {
       RESUME_GAME_KEY: 82,
       DELETE_GAME_KEY: 68,
       NEXT_KEY: 32,
-      ULTIMATE_KEY: 69
+      ULTIMATE_KEY: 70
     }
   }
 }

@@ -10,15 +10,22 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
   this.color = impulse_colors['world '+ this.world_num + ' bright']
-  this.buttons.push(new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 50, 100, 100, "white", impulse_colors["impulse_blue"], function(_this){
+  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
     }
-  }(this), "start"))
+  }(this), "start")
+  this.buttons.push(this.restart_button);
 
+  this.restart_button.keyCode = imp_params.keys.RESTART_KEY;
+  if(imp_vars.player_data.options.control_hand == "right") {
+    this.restart_button.extra_text = "R KEY"
+  } else {
+    this.restart_button.extra_text = "SHIFT KEY"
+  }
 
- this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+250, 100, 100, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+ this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new WorldMapState(_this.world_num))
     }
@@ -277,5 +284,11 @@ GameOverState.prototype.on_mouse_move = function(x, y) {
 GameOverState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
+  }
+}
+
+GameOverState.prototype.on_key_down = function(keyCode) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_key_down(keyCode)
   }
 }
