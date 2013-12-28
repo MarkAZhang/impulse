@@ -88,7 +88,7 @@ impulse_colors['gold'] = "#edb900"
 
 impulse_colors['world 0'] = "#333"
 impulse_colors['world 0 lite'] = "#999"
-impulse_colors['world 0 bright'] = "#aaa"
+impulse_colors['world 0 bright'] = "#fff"
 impulse_colors['world 0 dark'] = "#080808"
 impulse_colors['world 1'] = "#034903"
 impulse_colors['world 1 lite'] = "#046a04"

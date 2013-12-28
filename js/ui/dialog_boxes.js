@@ -53,10 +53,11 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.visibility_graph = visibility_graph
   this.init(800, 600)
   this.solid = false;
-  this.bg_color = impulse_colors["world "+this.world_num +" dark"]
+  this.bg_color = "black"//impulse_colors["world "+this.world_num +" dark"]
   this.bright_color = impulse_colors["world "+this.world_num +" bright"]
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = this.game_state.lite_color
+  this.bg_drawn = false
 
   this.drawn_enemies = null
 
@@ -187,6 +188,18 @@ PauseMenu.prototype.add_buttons = function() {
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
+
+  if(!this.bg_drawn) {
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+    this.bg_drawn = true
+    imp_vars.world_menu_bg_canvas.setAttribute("style", "")
+  } 
+  ctx.save()
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
+
   ctx.save()
   ctx.beginPath()
   ctx.textAlign = "center";
@@ -409,6 +422,10 @@ function OptionsMenu(previous_menu) {
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.save()
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
+  ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
   ctx.shadowBlur = 10;
@@ -626,6 +643,10 @@ ControlsMenu.prototype.adjust_colors = function() {
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
   ctx.save()
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
+  ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
   //ctx.shadowBlur = 10;
@@ -747,7 +768,7 @@ function EnemyBox(enemy_name, previous_menu) {
     this.bright_color = previous_menu.bright_color
     this.world_num = this.game_state.world_num
   } else if(previous_menu instanceof GameState) {
-    this.bg_color = impulse_colors["world "+previous_menu.world_num+" dark"]
+    this.bg_color = "black"//impulse_colors["world "+previous_menu.world_num+" dark"]
     this.lite_color = impulse_colors["world "+previous_menu.world_num+" lite"]
     this.bright_color = impulse_colors["world "+previous_menu.world_num +" bright"]
     this.color = impulse_colors["world "+previous_menu.world_num]
@@ -812,7 +833,11 @@ function EnemyBox(enemy_name, previous_menu) {
 
 EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.save()
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
 
+  ctx.save()
   if(this.current_lines == null) {
     this.current_lines = getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
   }

@@ -31,30 +31,39 @@ function RewardGameState(hive_numbers, main_game, args) {
 }
 
 RewardGameState.prototype.draw = function(ctx, bg_ctx) {
+
+
+  if(this.rewards.length == 0) {
+    return
+  }
+  var cur_reward = this.rewards[this.cur_reward_index]
   if(!this.bg_drawn) {
-    bg_canvas.setAttribute("style", "")
-    bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bg_ctx.fillStyle = "#080808"
-    bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    bg_canvas.setAttribute("style", "display:none")
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    if (cur_reward.type == "world_victory") {
+      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+(cur_reward.data+1))
+    } else {
+      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+    }
     this.bg_drawn = true
   }
 
-
-
-    if(this.rewards.length == 0) return
-    ctx.save()
-    if(this.transition_state == "in") {
-      var prog = (this.transition_timer/this.transition_interval);
-      ctx.globalAlpha = 1 - prog
-    } else if(this.transition_state == "out") {
-      var prog = (this.transition_timer/this.transition_interval);
-      ctx.globalAlpha = Math.max(0, prog)
-    }
-    var cur_reward = this.rewards[this.cur_reward_index]
-    var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
-    ctx.save()
-    ctx.globalAlpha *= 0.2
-    draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 100)
+  ctx.save()
+  ctx.globalAlpha /= 5
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
+  ctx.save()
+  if(this.transition_state == "in") {
+    var prog = (this.transition_timer/this.transition_interval);
+    ctx.globalAlpha = 1 - prog
+  } else if(this.transition_state == "out") {
+    var prog = (this.transition_timer/this.transition_interval);
+    ctx.globalAlpha = Math.max(0, prog)
+  }
+  var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
+  ctx.save()
+  ctx.globalAlpha *= 0.2
+  draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 100)
     ctx.restore()
 
     if(cur_reward.type == "world_victory") {
@@ -109,8 +118,12 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
       main_message = "EXTRA ULTIMATE"
       
-      drawSprite(ctx, imp_vars.levelWidth/2, main_reward_text_y, 0, 35, 35, "lives_icon")
-      drawSprite(ctx, imp_vars.levelWidth/2, main_reward_text_y, 0, 150, 150, "ultimate_icon")
+      ctx.fillStyle = "white"
+      ctx.font = "60px Muli"
+      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
+      
+      drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate")
+      ctx.font = "72px Muli"
 
       ctx.textAlign = 'center'
       ctx.font = '12px Muli'
@@ -306,6 +319,7 @@ RewardGameState.prototype.process = function(dt) {
       } else {
         this.transition_state="in";
         this.transition_timer = this.transition_interval
+        this.bg_drawn = false
       }
     }
   }

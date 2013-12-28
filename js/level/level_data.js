@@ -93,7 +93,7 @@ imp_params.impulse_level_data['HIVE 1-3'] = {
 
 imp_params.impulse_level_data['HIVE 1-4'] = {
   enemies: {
-              "spear": [3, 3, 1.5, 3, 40],
+              "spear": [3, 3, 0, 0, 1],//1.5, 3, 40],
 
            },
   initial_spawn_data: {

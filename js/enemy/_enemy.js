@@ -199,7 +199,6 @@ Enemy.prototype.check_death = function() {
       if (this.durations["open"] <= 0 && this.require_open) {
         this.start_death("accident")
       } else {
-        console.log(this.type)
         this.start_death("kill")
       }
 
@@ -923,12 +922,12 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
   if(!ultimate) {
     this.open(this.open_period)
-    console.log(this.type)
+    this.durations["impulsed"] += this.impulsed_duration
   }
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
-  this.durations["impulsed"] += this.impulsed_duration
-  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+  if (!ultimate || this.is_boss)
+    this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 }
 
 Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
@@ -937,8 +936,8 @@ Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, h
 
 
 Enemy.prototype.stun = function(dur) {
-this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-this.status_duration[1] = Math.max(dur, this.status_duration[1])
+  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
+  this.status_duration[1] = Math.max(dur, this.status_duration[1])
 }
 
 Enemy.prototype.silence = function(dur, color_silence) {

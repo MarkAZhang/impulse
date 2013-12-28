@@ -840,28 +840,28 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder, a
   }
 }
 
-function draw_spark(context, x, y) {
+function draw_spark(context, x, y, angle) {
 
-  drawSprite(context, x, y, 0, 30, 30, "spark")
-
-}
-
-function draw_spark_fragment(context, x, y) {
-
-  drawSprite(context, x, y, 0, 15, 15, "spark")
+  drawSprite(context, x, y, angle, 25, 25, "spark")
 
 }
 
+function draw_spark_fragment(context, x, y, angle) {
 
-function draw_multi(context, x, y) {
-
-  drawSprite(context, x, y, 0, 30, 30, "multi")
+  drawSprite(context, x, y, angle, 12, 12, "spark")
 
 }
 
-function draw_multi_fragment(context, x, y) {
 
-  drawSprite(context, x, y, 0, 15, 15, "multi")
+function draw_multi(context, x, y, angle) {
+
+  drawSprite(context, x, y, angle, 25, 25, "multi")
+
+}
+
+function draw_multi_fragment(context, x, y, angle) {
+
+  drawSprite(context, x, y, angle, 12, 12, "multi")
 
 }
 
@@ -902,10 +902,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
   context.shadowBlur = 0
   
   drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.3 * size, 1.3 * size, "lives_icon")
-  if(args.starting_values)
-    drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "spark")
-  else 
-    drawSprite(context, x + x_offset , y, 0, 1.5 * size, 1.5 * size, "sparks_icon")
+  drawSprite(context, x + x_offset, y, 0, 1.1 * size, 1.1 * size, "spark")
   if(args.shadow) {
     context.shadowBlur = 10
     context.shadowColor = context.fillStyle

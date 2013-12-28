@@ -579,7 +579,9 @@ var final_strike_factor = final_strike ? 1 : 0.002
             if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
             {
               var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-              this_enemy.stun(1000)
+              this_enemy.stun(2000)
+              // reset open duration since you should not score points
+              this_enemy.durations["open"] = 0
               if (this.ultimate_enemies_hit.indexOf(this_enemy.id) == -1) {
                 this.ultimate_enemies_hit.push(this_enemy.id)
                 this_enemy.body.SetLinearVelocity(new b2Vec2(0, 0));

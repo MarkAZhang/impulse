@@ -85,7 +85,6 @@ LevelIntroState.prototype.process = function(dt) {
 }
 
 LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
-
   if(!this.bg_drawn) {
     var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
     draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)

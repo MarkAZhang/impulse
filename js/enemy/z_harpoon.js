@@ -556,7 +556,7 @@ Harpoon.prototype.bulk_draw = function(context, draw_factor, num) {
     }
   }
   if(num == 3) {
-    if(this.recovery_timer > 0 && !this.dying && (!this.status_duration[0] > 0)) {
+    if(this.recovery_timer > 0 && !this.dying && !(this.status_duration[0] > 0)) {
       bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
     }
   }
