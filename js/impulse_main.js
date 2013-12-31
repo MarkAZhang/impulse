@@ -79,7 +79,9 @@ window["impulse_main"] =  function() {
     centerCanvas()
     load_game()
     set_up_enemy_images()
+    set_up_player_images()
     set_up_title_bg()
+    set_up_game_buttons()
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
     if(imp_vars.player_data.first_time) {
@@ -89,8 +91,32 @@ window["impulse_main"] =  function() {
     }
     imp_vars.last_time = (new Date()).getTime();
     step()
+}
 
+function set_up_game_buttons() {
+  imp_params.game_buttons = []
+  imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
+    toggle_mute()
+  }, "mute_in_game"))
 
+  imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
+    toggle_pause() 
+  }, "pause_in_game"))
+
+  imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
+    toggleFullScreen()
+  }, "fullscreen_in_game"))
+
+}
+
+function toggle_pause() {
+  if (imp_vars.cur_game_state instanceof ImpulseGameState) {
+    imp_vars.cur_game_state.toggle_pause()
+  }
+}
+
+function set_up_player_images() {
+  imp_params.ultimate_image = get_ultimate_canvas()
 }
 
 /*function addVisibilityListener() {
@@ -182,6 +208,12 @@ function step() {
     imp_vars.ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
   } else {
     imp_vars.cur_game_state.draw(imp_vars.ctx, imp_vars.bg_ctx);
+    imp_vars.ctx.save()
+    imp_vars.cur_game_state.set_zoom_transparency(imp_vars.ctx)
+    for(var i = 0; i < imp_params.game_buttons.length; i++) {
+      imp_params.game_buttons[i].draw(imp_vars.ctx)
+    }
+    imp_vars.ctx.restore()
   }
 
 
@@ -221,6 +253,9 @@ function on_mouse_move(event) {
     imp_vars.cur_game_state.on_mouse_move(mPos.x - imp_vars.sidebarWidth, mPos.y)
   } else {
     imp_vars.cur_game_state.on_mouse_move(mPos.x, mPos.y)
+    for(var i = 0; i < imp_params.game_buttons.length; i++) {
+      imp_params.game_buttons[i].on_mouse_move(mPos.x, mPos.y)
+    }
   }
 }
 
@@ -291,11 +326,19 @@ function on_click(event) {
   if(event.button == 0) {
     if(imp_vars.cur_dialog_box) {
       imp_vars.cur_dialog_box.on_click(mPos.x, mPos.y)
+      if (imp_vars.cur_game_state instanceof ImpulseGameState) {
+        for(var i = 0; i < imp_params.game_buttons.length; i++) {
+          imp_params.game_buttons[i].on_click(mPos.x, mPos.y)
+        }
+      }
       return
     }
     if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
       imp_vars.cur_game_state.on_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
     } else {
+      for(var i = 0; i < imp_params.game_buttons.length; i++) {
+        imp_params.game_buttons[i].on_click(mPos.x, mPos.y)
+      }
       imp_vars.cur_game_state.on_click(mPos.x, mPos.y)
     }  
   } else if(event.button == 2) {
@@ -364,15 +407,19 @@ function toggleFullScreen() {
     }
 }
 
+function toggle_mute() {
+  if(!imp_vars.impulse_music.mute) {
+    imp_vars.impulse_music.mute_bg()
+  } else {
+    imp_vars.impulse_music.unmute_bg()
+  }
+}
+
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
   if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
-    if(!imp_vars.impulse_music.mute) {
-      imp_vars.impulse_music.mute_bg()
-    } else {
-      imp_vars.impulse_music.unmute_bg()
-    }
+    toggle_mute()    
   }
 
   if(keyCode == imp_params.keys.FULLSCREEN_KEY) {

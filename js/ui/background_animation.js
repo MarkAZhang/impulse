@@ -23,8 +23,7 @@ BackgroundAnimation.prototype.draw_title_bg = function(ctx) {
 }
 
 BackgroundAnimation.prototype.draw = function(ctx, style) {
-
-  var cur_style = style ? style : "impulsed"
+  var cur_style = style ? style : "ulted"
   for(var i = 0; i < this.impulse_centers.length; i++) {
     ctx.save()
     ctx.globalAlpha *= 0.2

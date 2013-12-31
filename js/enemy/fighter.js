@@ -376,21 +376,3 @@ Fighter.prototype.process_hit = function() {
   }
 }
 
-/*Fighter.prototype.draw_enemy_image_additional = function(context, color) {
-  context.strokeStyle = color
-  context.lineWidth = 2;
-  //var this_angle = Math.PI/4
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor}
-  var vertices = [[Math.cos(Math.PI * 1/4) + 0.3, Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 1/2) + 0.3, Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 3/2) + 0.3, Math.sin(Math.PI * 7/4) * 1.1],
-  [Math.cos(Math.PI * 7/4) + 0.3, Math.sin(Math.PI * 7/4) * 1.1]]
-  context.beginPath()
-  context.moveTo(tp.x + vertices[0][0] * imp_vars.draw_factor * 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[0][1] * imp_vars.draw_factor* 0.7)
-  context.lineTo(tp.x + vertices[1][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[1][1] * imp_vars.draw_factor* 0.7)
-  context.lineTo(tp.x + vertices[2][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[2][1] * imp_vars.draw_factor* 0.7)
-  context.lineTo(tp.x + vertices[3][0] * imp_vars.draw_factor* 0.7, tp.y + Math.sin(Math.PI * 1/4) + vertices[3][1] * imp_vars.draw_factor* 0.7)
-  context.closePath()
-  context.fillStyle = color
-  context.fill()
-}*/

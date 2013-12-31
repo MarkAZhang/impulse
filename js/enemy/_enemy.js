@@ -152,7 +152,7 @@ this.original_spawn_point = new b2Vec2(x, y);
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "white", "world1", "world2", "world3", "world4"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "ulted", "white", "world1", "world2", "world3", "world4"]
   this.additional_statuses = []
 
   this.adjust_position_counter = 0
@@ -199,6 +199,9 @@ Enemy.prototype.check_death = function() {
       if (this.durations["open"] <= 0 && this.require_open) {
         this.start_death("accident")
       } else {
+        if (this.impulse_game_state instanceof HowToPlayState) {
+          this.impulse_game_state.enemy_killed()
+        }
         this.start_death("kill")
       }
 
@@ -934,6 +937,14 @@ Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, h
 
 }
 
+Enemy.prototype.ulted = function(first_ult_call) {
+  this.stun(2000)
+  this.durations["open"] = 0
+  this.durations["ulted"] = 2000
+  if (first_ult_call) {
+    this.body.SetLinearVelocity(new b2Vec2(0, 0));
+  }
+}
 
 Enemy.prototype.stun = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
@@ -1048,6 +1059,9 @@ Enemy.prototype.draw_additional_image = function(context, color) {
 Enemy.prototype.get_current_status = function() {
 
   if(!this.dying) {
+      if (this.durations["ulted"] > 0) {
+        return "ulted"
+      }
       if(this.status_duration[0] > 0) {
         return 'stunned';
       } else if(this.color_silenced) {
@@ -1106,6 +1120,8 @@ Enemy.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return this.impulsed_color
+  } else if(status == "ulted") {
+    return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
   } else if(status.slice(0, 5) == "world") {
@@ -1122,150 +1138,30 @@ Enemy.prototype.get_additional_color_for_status = function(status) {
 Enemy.prototype.generate_images = function() {
 
   var images = {};
-  for(index in this.statuses) {
-    var status = this.statuses[index]
+  var draw_polygons = this.shape_polygons
+  var all_status = this.statuses.concat(this.additional_statuses)
+  for(index in all_status) {
+    var status = all_status[index]
     var normal_canvas = document.createElement('canvas');
     normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
     normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
-    this.draw_enemy_image(normal_canvas_ctx, status);
+    var cur_color = this.get_color_for_status(status) 
+    if (!cur_color) cur_color = this.color
+
+    var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
+    normal_canvas_ctx.translate(tp.x * imp_vars.draw_factor, tp.y * imp_vars.draw_factor)
+
+    draw_enemy_image(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);
+    normal_canvas_ctx.translate(-tp.x * imp_vars.draw_factor, -tp.y * imp_vars.draw_factor)
     images[status] = normal_canvas
 
   }
 
 
-  for(index in this.additional_statuses) {
-    var status = this.additional_statuses[index]
-    var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
-    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
-
-    var normal_canvas_ctx = normal_canvas.getContext('2d');
-
-    this.draw_enemy_image(normal_canvas_ctx, status);
-    images[status] = normal_canvas
-
-  }
   return images
 
 }
 
-Enemy.prototype.draw_enemy_image = function(context, state) {
-
-  context.save()
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * this.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * this.enemy_canvas_factor}
-  context.shadowBlur = 0
-  for(var k = 0; k < this.shapes.length; k++) {
-
-    if(this.shape_polygons[k].visible === false) continue
-
-    var cur_shape = this.shapes[k]
-    var cur_shape_points = this.shape_points[k]
-    var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
-
-    if(state) {
-      cur_color = this.get_color_for_status(state)
-    }
-
-    // draw the shape
-    context.beginPath()
-
-    if(cur_shape instanceof b2PolygonShape) {
-      //draw polygon shape
-      context.moveTo((tp.x+cur_shape_points[0].x)*imp_vars.draw_factor, (tp.y+cur_shape_points[0].y)*imp_vars.draw_factor)
-      for(var i = 1; i < cur_shape_points.length; i++)
-      {
-        context.lineTo((tp.x+cur_shape_points[i].x)*imp_vars.draw_factor, (tp.y+cur_shape_points[i].y)*imp_vars.draw_factor)
-      }
-    }
-    context.closePath()
-
-    /*if (!this.interior_color ) {
-      context.globalAlpha *= 0.7;
-    }*/
-
-    context.fillStyle =cur_color
-
-    if(state == "normal" && this.interior_color) {
-      context.fillStyle = this.interior_color
-    }
-
-    context.fillStyle = "black"
-
-    if(state != "lighten")
-      context.fill()
-
-    // revert transparency
-    /*if (!this.interior_color ) {
-      context.globalAlpha /= 0.7;
-    }*/
-
-
-    if(this.interior_color && state == "normal")
-      context.strokeStyle = cur_color
-    else
-      context.strokeStyle = cur_color//context.fillStyle
-
-
-    context.lineWidth = this.dying ? (1 - prog) * 2 : 2
-
-
-    if(state == "lighten") {
-      context.strokeStyle = "black"
-      context.lineWidth = 4
-    }
-    context.stroke()
-
-
-    // give enemies a tiny of the level color
-    /*context.strokeStyle = this.level.color;
-    context.fillStyle = this.level.color;
-    context.globalAlpha = .3;
-    context.stroke();
-    context.fill();
-    context.globalAlpha = 1;*/
-
-    /*if(this.special_mode && !this.dying) {
-      context.globalAlpha = this.sp_visibility
-      context.beginPath()
-      if(this.shape instanceof b2CircleShape) {
-        context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
-      }
-
-      if(this.shape instanceof b2PolygonShape) {
-        context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
-        for(var i = 1; i < cur_shape_points.length; i++) {
-          context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
-        }
-        context.closePath()
-      }
-      context.lineWidth = 1
-      context.strokeStyle = cur_color
-      context.stroke()
-    }*/
-  }
-
-  if(this.erase_lines) {
-    context.beginPath()
-
-    for(var i = 0; i < this.erase_lines.length; i++) {
-      context.moveTo((tp.x+this.erase_lines[i][0][0])*imp_vars.draw_factor, (tp.y+this.erase_lines[i][0][1])*imp_vars.draw_factor)
-      context.lineTo((tp.x+this.erase_lines[i][1][0])*imp_vars.draw_factor, (tp.y+this.erase_lines[i][1][1])*imp_vars.draw_factor)
-    }
-    context.strokeStyle = "black"
-    context.lineWidth = this.dying ? (1 - prog) * 3 : 3
-    context.globalAlpha = 1
-    context.stroke()  
-  }
-  
-
-  context.restore()
-
-  this.draw_enemy_image_additional(context, cur_color)
-}
-
-Enemy.prototype.draw_enemy_image_additional = function(context, color) {
-
-}

@@ -18,8 +18,6 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 5
 
-
-
   this.detonate_timer = 200
   this.detonate_duration = 200
   this.death_delay = 200

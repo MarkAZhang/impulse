@@ -13,15 +13,16 @@ ImpulseButton.prototype.init = function(x, y, w, h, action, border, color) {
   this.border = border
   this.color = color
   this.hover = false
+  this.hover_color = null
 }
 
 ImpulseButton.prototype.draw = function(context) {
   context.save()
   if(this.border) {
     context.beginPath()
-    context.strokeStyle = this.active ? this.color : "gray"
+    context.strokeStyle = this.active ? (this.hover && this.hover_color ? this.hover_color : this.color) : "gray"
     context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-    context.lineWidth = 2
+    context.lineWidth = this.w * 0.03
     context.stroke()
   }
   this.additional_draw(context)
@@ -51,8 +52,10 @@ ImpulseButton.prototype.on_click = function(x,y) {
     if(x >= this.x -this.w/2 && x <= this.x + this.w/2 && y >= this.y - this.h/2 && y <= this.y + this.h/2)
     {
       this.action()
+      return true
     }
   }
+  return false
 }
 
 ImpulseButton.prototype.set_active = function(active) {

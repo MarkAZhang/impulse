@@ -115,8 +115,98 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 
 }
 
+function draw_enemy_image(context, state, draw_polygons, type, default_color, scale) {
 
-function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
+  if (scale === undefined) {
+    scale = 1
+  }
+
+  context.save()
+  context.shadowBlur = 0
+
+  for(var k = 0; k < draw_polygons.length; k++) {
+
+    if(draw_polygons[k].visible === false) continue
+
+    var cur_shape = draw_polygons[k]
+    var cur_shape_points = draw_polygons[k].vertices
+    var cur_color = draw_polygons[k].color ? draw_polygons[k].color : default_color
+
+    // draw the shape
+    context.beginPath()
+
+    if(cur_shape.type == "polygon") {
+      //draw polygon shape
+      context.moveTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[0][0])*imp_vars.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[0][1])*imp_vars.draw_factor)
+      for(var i = 1; i < cur_shape_points.length; i++)
+      {
+        context.lineTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[i][0])*imp_vars.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[i][1])*imp_vars.draw_factor)
+      }
+    }
+    context.closePath()
+    var interior_color = imp_params.impulse_enemy_stats[type].interior_color
+
+    context.fillStyle = cur_color
+
+    if(state == "normal" && interior_color) {
+      context.fillStyle = interior_color
+    }
+
+    context.fillStyle = "black"
+
+    if(state != "lighten")
+      context.fill()
+
+
+    if(interior_color && state == "normal")
+      context.strokeStyle = cur_color
+    else
+      context.strokeStyle = cur_color//context.fillStyle
+
+    context.lineWidth = 2 * Math.sqrt(scale)
+
+    if(state == "lighten") {
+      context.strokeStyle = "black"
+      context.lineWidth = 4 * Math.sqrt(scale)
+    }
+    context.stroke()
+
+  }
+  var erase_lines =  imp_params.impulse_enemy_stats[type].erase_lines
+
+  if(erase_lines) {
+    context.beginPath()
+    for(var i = 0; i < erase_lines.length; i++) {
+      context.moveTo(scale*(erase_lines[i][0][0])*imp_vars.draw_factor, scale*(erase_lines[i][0][1])*imp_vars.draw_factor)
+      context.lineTo(scale*(erase_lines[i][1][0])*imp_vars.draw_factor, scale*(erase_lines[i][1][1])*imp_vars.draw_factor)
+    }
+    context.strokeStyle = "black"
+    context.lineWidth = 3
+    context.globalAlpha = 1
+    context.stroke()  
+  }
+
+  var extra_lines =  imp_params.impulse_enemy_stats[type].extra_rendering_lines
+  var r =  imp_params.impulse_enemy_stats[type].effective_radius
+
+  if(!(typeof extra_lines === "undefined")) {
+      for(var m = 0; m < extra_lines.length; m++) {
+        context.beginPath()
+        var line = extra_lines[m]
+        context.moveTo(scale*(r * line["x1"]) * imp_vars.draw_factor, scale*(r * line["y1"]) * imp_vars.draw_factor)
+        context.lineTo(scale*(r * line["x2"]) * imp_vars.draw_factor, scale*(r * line["y2"]) * imp_vars.draw_factor)
+        context.lineWidth = 2
+        context.strokeStyle = cur_color
+        context.stroke()
+      }
+    }
+
+  context.restore()
+}
+
+
+
+function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   // if d == null, will draw at default size
 
   if(enemy_name.slice(enemy_name.length - 4) == "boss") return
@@ -127,7 +217,7 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
   }
   if(status === undefined) status = "normal"
   var max_radius = 1.5
-  var size = imp_params.impulse_enemy_stats[enemy_name].images[status].height
+  var size = imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_vars.draw_factor * Enemy.prototype.enemy_canvas_factor
   if(d == null) {
     var draw_scale = size/2
   } else {
@@ -135,16 +225,35 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status) {
     var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)  
   }
   
-  draw_enemy_helper(context, enemy_name, size, draw_scale, status)
+  draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
   
   context.restore()
 }
 
-function draw_enemy_helper(context, enemy_name, size, draw_scale, status) {
+function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color) {
   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
      //draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
-  }   
-  context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
+  }
+
+  if (enemy_color === undefined) {
+    var enemy_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
+    if(!enemy_color) {
+      enemy_color = imp_params.impulse_enemy_stats[enemy_name].color
+    }
+  }
+
+  //context.translate(-draw_scale, -draw_scale)
+  var draw_polygons = imp_params.impulse_enemy_stats[enemy_name].draw_polygons
+
+  if(!draw_polygons) {
+    draw_polygons = imp_params.impulse_enemy_stats[enemy_name].shape_polygons
+  }
+
+  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_vars.draw_factor)
+  draw_enemy_image(context, status, draw_polygons, enemy_name, enemy_color, scale)
+
+  //context.translate(draw_scale, draw_scale)
+  //context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
  
    /*for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
@@ -210,7 +319,7 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
 
   var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
   
-  draw_enemy_helper(context, enemy_name, size, size * factor/2, "normal")
+  draw_enemy_helper(context, enemy_name, size * factor/2, "normal")
   context.restore()
 }
 
@@ -363,12 +472,11 @@ function draw_mouse(context, x, y, w, h, color) {
   context.clip()
   context.beginPath()
   context.rect(x - w/2, y - h/2, w/2, h/3)
-  context.globalAlpha = 0.5
+  context.globalAlpha *= 0.5
   
   context.fill()
   context.restore()
   context.save()
-  context.globalAlpha = 1
   context.beginPath()
   context.moveTo(x - w/2, y - h/6)
   context.lineTo(x + w/2, y - h/6)
@@ -898,11 +1006,11 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
     x_offset = 0
   }
   context.font = size+'px Muli'
-  context.fillStyle = impulse_colors["impulse_blue"]
+  context.fillStyle = "white"
   context.shadowBlur = 0
   
   drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.3 * size, 1.3 * size, "lives_icon")
-  drawSprite(context, x + x_offset, y, 0, 1.1 * size, 1.1 * size, "spark")
+  drawSprite(context, x + x_offset + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")
   if(args.shadow) {
     context.shadowBlur = 10
     context.shadowColor = context.fillStyle
@@ -929,7 +1037,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
   if(args.ult) {
     context.fillStyle = "white"
     context.shadowColor = context.fillStyle
-    drawSprite(context, x + size * 1.8 , y, 0, 1.7 * size, 1.7 * size, "ultimate_icon")
+    drawSprite(context, x + size * 1.8 , y, 0, 1.2 * size, 1.2 * size, "ultimate_icon")
     context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
   }
 
@@ -978,6 +1086,41 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.strokeStyle = border_color
   context.stroke()
   context.restore()
+}
+
+function get_ultimate_canvas() {
+  var ult_canvas = document.createElement('canvas');
+  ult_canvas.width = 400
+  ult_canvas.height = 400
+
+  var ult_canvas_ctx = ult_canvas.getContext('2d');
+  ult_canvas_ctx.globalAlpha = 0.2
+  drawSprite(ult_canvas_ctx, ult_canvas.width/2, ult_canvas.height/2, 0, ult_canvas.width * 0.7, ult_canvas.height * 0.7, "ultimate")
+  ult_canvas_ctx.globalAlpha = 1
+  // Commented out section is a more intricate Ultimate design which seems out of place in the art style.
+  /*for ( var i = 0; i < 16; i++) {
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.25 * Math.cos(i * Math.PI * 2 / 16), 
+                               ult_canvas.height/2 + ult_canvas.width * 0.25 * Math.sin(i * Math.PI * 2 / 16),
+                               Math.PI * 2 / 16 * i, 18, 32, "ultimate")    
+  }*/
+  var number_shards = 48
+  for ( var i = 0; i < number_shards; i++) {
+    var radius = i % 2 ? ult_canvas.width * 0.4 : ult_canvas.width * 0.42
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + radius * Math.cos(i * Math.PI * 2 / number_shards), 
+                               ult_canvas.height/2 + radius * Math.sin(i * Math.PI * 2 / number_shards),
+                               Math.PI * 2 / number_shards * i, 32, 18, "ultimate_shard")
+    /*drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.33 * Math.cos(i * Math.PI * 2 / 32), 
+                               ult_canvas.height/2 + ult_canvas.width * 0.33 * Math.sin(i * Math.PI * 2 / 32),
+                               Math.PI * 2 / 32 * i, 18, 32, "ultimate_shard")    */
+  }
+
+  /*for ( var i = 0; i < 32; i++) {
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.4 * Math.cos(i * Math.PI * 2 / 32), 
+                               ult_canvas.height/2 + ult_canvas.width * 0.4 * Math.sin(i * Math.PI * 2 / 32),
+                               Math.PI * 2 / 32 * i, 36, 64, "ultimate")    
+  }*/
+  return ult_canvas
+
 }
 
 function draw_agents_within_rect(context, player, level, x, y, w, h, border_color) {
@@ -1045,14 +1188,15 @@ spriteSheetData = {
   "player_gray": [120, 0, 41, 41],
   "player_green": [160, 0, 41, 41],
   "player_white": [200, 0, 40, 40],
-  "spark": [0, 60, 30, 30],
-  "multi": [30, 60, 30, 30],
-  "white_glow": [100, 80, 100, 100],
-  "world_logo": [200, 80, 100, 100],
+  "spark": [0, 41, 40, 40],
+  "multi": [0, 81, 40, 40],
+  "white_glow": [48, 40, 100, 100],
+  "ultimate": [148, 41, 150, 150],
   "lives_icon": [0, 0, 40, 40],
-  "sparks_icon": [35, 90, 35, 35],
-  "ultimate_icon": [0, 125, 35, 35],
-  "ultimate": [0, 180, 120, 120],
+  "sparks_icon": [0, 41, 40, 40],
+  "ultimate_icon": [0, 155, 42, 42],
+  "ultimate_icon_blue": [43, 155, 42, 42],
+  "ultimate_shard": [0, 121, 18, 32],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],
@@ -1102,7 +1246,9 @@ spriteSheetData = {
   "adrogantia_head": [180, 0, 160, 160],
   "adrogantia_glow": [340, 0, 135, 135],
   "adrogantia_logo": [476, 0, 125, 125],
-  "adrogantia_logo_gray": [476, 125, 125, 125]
+  "adrogantia_logo_gray": [476, 125, 125, 125],
+
+  "generated_ultimate": [0, 0, 400, 400]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")
@@ -1119,7 +1265,7 @@ var tessellation_glow_map = {
   "4": "adrogantia_glow"
 }
 var tessellation_logo_map = {
-  "0": "world_logo",
+  "0": "ultimate",
   "1": "immunitas_arm",
   "2": "consumendi_logo",
   "3": "negligentia_logo",

@@ -134,8 +134,8 @@ PauseMenu.prototype.add_buttons = function() {
 
   // resume button.
   this.resume_button = new IconButton("RESUME", 16, resume_x_location, this.y - this.h/2 + 530, 100, 65, this.lite_color, this.bright_color, function(_this) { return function() {
-    clear_dialog_box()
-    _this.game_state.pause = false
+
+    _this.game_state.toggle_pause()
   }}(this), "start")
   this.resume_button.keyCode = imp_params.keys.PAUSE;
 
@@ -265,25 +265,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
-  this.check_redraw_icons(ctx)
   ctx.restore()
-}
-
-PauseMenu.prototype.check_redraw_icons = function(ctx) {
-  if(this.redraw_icons) {
-    if(this.game_state.zoom == 1 && this.game_state.zoom_state == "none") {
-
-      draw_music_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_pause_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_fullscreen_icon(imp_vars.bg_ctx, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-    } else {
-      this.game_state.set_zoom_transparency(ctx);
-      draw_music_icon(ctx, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_pause_icon(ctx, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-      draw_fullscreen_icon(ctx, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.lite_color, true)
-    }
-    this.redraw_icons = false
-  }
 }
 
 PauseMenu.prototype.on_mouse_move = function(x, y) {
@@ -326,8 +308,15 @@ PauseMenu.prototype.quit_main_game = function() {
 }
 
 PauseMenu.prototype.quit_tutorial = function() {
-  switch_game_state(new TitleState(true))
-  clear_dialog_box()
+   switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+      game_numbers: this.game_state.game_numbers,
+      level: this.game_state.level, 
+      world_num: this.game_state.world_num,
+      visibility_graph: this.game_state.visibility_graph,
+      is_tutorial: true,
+      tutorial_first_time: this.game_state.mode == "first_time_tutorial"
+    }))
+   clear_dialog_box()
 }
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
@@ -345,9 +334,6 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
     this.buttons[i].on_key_down(keyCode)
   }
 
-  if(keyCode == imp_params.keys.MUTE_KEY) {
-    this.redraw_icons = true
-  }
 }
 
 OptionsMenu.prototype = new DialogBox()
@@ -462,7 +448,6 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   for(var index in this.checkboxes) {
     this.checkboxes[index].draw(ctx)
   }
-  this.check_redraw_icons(ctx)
   ctx.restore()
 }
 
@@ -500,8 +485,6 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
   //this.effects_volume_slider.on_mouse_move(x,y)
 }
 
-OptionsMenu.prototype.check_redraw_icons = PauseMenu.prototype.check_redraw_icons
-
 OptionsMenu.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x,y)
@@ -517,9 +500,6 @@ OptionsMenu.prototype.on_key_down = function(keyCode) {
   /*if(keyCode == 66 || keyCode == 79) {
     set_dialog_box(this.previous_menu)
   }*/
-  if(keyCode == imp_params.keys.MUTE_KEY) {
-    this.redraw_icons = true
-  }
 }
 
 OptionsMenu.prototype.on_mouse_down = function(x, y) {
@@ -562,28 +542,25 @@ function ControlsMenu(previous_menu) {
 
   this.control_buttons = {}
 
-  this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 170, 100, this.color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 100, this.color, this.bright_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "left"
     imp_vars.player_data.options.control_scheme = "mouse"
     save_game()
     set_key_bindings()
-    _this.redraw_icons = true
   }}(this), "left_mouse")
 
-  this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 170, 100, this.color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.color, this.bright_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "keyboard"
     save_game()
     set_key_bindings()
-    _this.redraw_icons = true
   }}(this), "keyboard")
 
-  this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 170, 100, this.color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.color, this.bright_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "mouse"
     save_game()
     set_key_bindings()
-    _this.redraw_icons = true
   }}(this), "right_mouse")
 
   this.buttons.push(this.control_buttons["left mouse"])
@@ -634,7 +611,6 @@ ControlsMenu.prototype.adjust_colors = function() {
   }
   if (this.current_hover) {
     this.control_buttons[this.current_hover].color = this.bright_color
-    this.control_buttons[imp_vars.player_data.options.control_hand +" "+imp_vars.player_data.options.control_scheme].border = true
   } else {
     this.control_buttons[imp_vars.player_data.options.control_hand +" "+imp_vars.player_data.options.control_scheme].color = this.bright_color
   }
@@ -735,21 +711,14 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
 
   ctx.restore()
-  this.check_redraw_icons(ctx)
-
 }
 
 ControlsMenu.prototype.on_key_down = function(keyCode) {
   /*if(keyCode == 66 || keyCode == 79) {
     set_dialog_box(this.previous_menu)
   }*/
-  if(keyCode == imp_params.keys.MUTE_KEY) {
-    this.redraw_icons = true
-  }
 }
 
-
-ControlsMenu.prototype.check_redraw_icons = PauseMenu.prototype.check_redraw_icons
 
 EnemyBox.prototype = new DialogBox()
 

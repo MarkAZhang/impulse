@@ -25,6 +25,8 @@ Player.prototype.radius = .66
 Player.prototype.effective_radius = .66
 
 Player.prototype.init = function(world, x, y, impulse_game_state) {
+  if (world == null) return
+
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.density *= 1.5;
     this.true_force *= 1.5;
@@ -372,6 +374,10 @@ Player.prototype.process = function(dt) {
       this.attack_angle = this.impulse_angle
       this.attack_duration = this.attack_length
       imp_vars.impulse_music.play_sound("impulse")
+      if (this.impulse_game_state instanceof HowToPlayState) {
+        this.impulse_game_state.player_impulsed()  
+      }
+      
     }
     if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
       //if(this.impulse_game_state.hive_numbers.ultimates > 0) {
@@ -381,8 +387,6 @@ Player.prototype.process = function(dt) {
       //}
       
     }
-
-
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
     if(!this.attacking && this.status_duration[1] <= 0) {
@@ -552,6 +556,10 @@ Player.prototype.process = function(dt) {
       f_y *= -1
     }
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
+
+    if (this.impulse_game_state instanceof HowToPlayState && (f_x != 0 || f_y != 0)) {
+      this.impulse_game_state.player_moved()
+    }
   }
 }
 
@@ -579,12 +587,12 @@ var final_strike_factor = final_strike ? 1 : 0.002
             if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
             {
               var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-              this_enemy.stun(2000)
               // reset open duration since you should not score points
-              this_enemy.durations["open"] = 0
               if (this.ultimate_enemies_hit.indexOf(this_enemy.id) == -1) {
                 this.ultimate_enemies_hit.push(this_enemy.id)
-                this_enemy.body.SetLinearVelocity(new b2Vec2(0, 0));
+                this_enemy.ulted(true /*first_ult_call*/)
+              } else {
+                this_enemy.ulted(false /*first_ult_call*/)
               }
               var data = imp_params.impulse_enemy_stats[this_enemy.type]
               var prop = 1 //Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
@@ -699,7 +707,7 @@ Player.prototype.draw_ultimate = function(context) {
         this.ultimate_loc.x * imp_vars.draw_factor, 
         this.ultimate_loc.y * imp_vars.draw_factor,  0,
         this.ultimate_radius * prop * imp_vars.draw_factor * 2, this.ultimate_radius * prop * imp_vars.draw_factor * 2,
-        "ultimate")
+        "generated_ultimate", imp_params.ultimate_image)
   }
 
   context.restore()

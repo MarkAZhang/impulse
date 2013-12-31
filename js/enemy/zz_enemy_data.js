@@ -13,6 +13,10 @@ imp_params.impulse_enemy_stats["stunner"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
+  draw_polygons: [{type: "polygon", x: -0.1, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+    [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
   enemy_info: [
     "Upon collision, stuns you for 0.5 seconds # (you cannot move or impulse)",
@@ -65,6 +69,9 @@ imp_params.impulse_enemy_stats["tank"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
+  extra_rendering_lines: [{"x1": 0.5, "y1": 0.5, "x2": -0.5, "y2": -0.5},
+    {"x1": 0.5, "y1": -0.5, "x2": -0.5, "y2": 0.5},
+  ],
   /*extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
   [[Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 3/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 3/4) * 0.05],
   [Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 7/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 7/4) * 0.05],
@@ -150,7 +157,7 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
   density: 6,
   lin_damp: 6,
-  effective_radius: .7,
+  effective_radius: 0.7,
   force: 5.4,
   score_value: 3000,
   attack_rating: 6,
@@ -161,10 +168,23 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
   [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   ]}],
-  extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: .7, colored: false, vertices:
+  /*{type: "polygon", x: -0.2, y: 0, r: .7, vertices:
+  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
+  ]}*/
+  extra_rendering_polygons: [{type: "polygon", x: -0.1, y: 0, r: .7, colored: false, vertices:
   [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
-  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]}],
+  [Math.cos(Math.PI * 1/4)  - 0.4, Math.sin(Math.PI * 1/4)]]},
+    {type: "polygon", x: -0.1, y: 0, r: .7, vertices:
+  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
+  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
+  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
+  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
+  ]}],
+  draw_polygons: [],
   dies_on_impact: "NO",
   enemy_info: [
     "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
@@ -344,7 +364,22 @@ imp_params.impulse_enemy_stats["troll"] = {
   [0.25 * Math.cos(Math.PI * 3/3), 0.25 * Math.sin(Math.PI * 3/3)],
   [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3)],
   [0.25 * Math.cos(Math.PI * 5/3), 0.25 * Math.sin(Math.PI * 5/3)]]},
-
+  ],
+  draw_polygons: [{type: "polygon", x: -0.2, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 5/3 + 0.36), 0.25 * Math.sin(Math.PI * 5/3+ 0.36)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408+ 0.36), Math.sqrt(52)/8 * Math.sin(-0.408+ 0.36)],
+  [0.25 * Math.cos(Math.PI * 1/3+ 0.36), 0.25 * Math.sin(Math.PI * 1/3+ 0.36)]]},
+  {type: "polygon", x: -0.2, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 1/3+ 0.36), 0.25 * Math.sin(Math.PI * 1/3+ 0.36)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*2/3+ 0.36), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*2/3+ 0.36)],
+  [0.25 * Math.cos(Math.PI * 3/3+ 0.36), 0.25 * Math.sin(Math.PI * 3/3+ 0.36)]]},
+  {type: "polygon", x: -0.2, y: 0, r: 1, vertices:
+  [[0, 0],
+  [0.25 * Math.cos(Math.PI * 3/3+ 0.36), 0.25 * Math.sin(Math.PI * 3/3+ 0.36)],
+  [Math.sqrt(52)/8 * Math.cos(-0.408 + Math.PI*4/3+ 0.36), Math.sqrt(52)/8 * Math.sin(-0.408 + Math.PI*4/3+ 0.36)],
+  [0.25 * Math.cos(Math.PI * 5/3+ 0.22), 0.25 * Math.sin(Math.PI * 5/3+ 0.22)]]},
   ],
   enemy_info: [
     "If Impulsed while active, # reverses your movement and Impulse controls for 1 second",
@@ -369,22 +404,22 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   score_value: 5000,
   attack_rating: 10,
   batch_enemy_image: true,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
+  shape_polygons: [{type: "polygon", x: -0.25, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4],
   [Math.cos(Math.PI * 2/3)  * 1/2, Math.sin(Math.PI * 2/3) * 1/2],
   [Math.cos(Math.PI * 4/3) * 1/2, Math.sin(Math.PI * 4/3) * 1/2]]},
-    {type: "polygon", x: 0, y: 0, r: 1, vertices:
+    {type: "polygon", x: -0.25, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1],
   [Math.cos(Math.PI * 2/3)  * 1, Math.sin(Math.PI * 2/3) * 1],
   [Math.cos(Math.PI * 2/3)  * 1, Math.sin(Math.PI * 2/3) * 1/2],
   [Math.cos(Math.PI * 0)  * 1/4, Math.sin(Math.PI * 0) * 1/4]]},
-    {type: "polygon", x: 0, y: 0, r: 1, vertices:
+    {type: "polygon", x: -0.25, y: 0, r: 1, vertices:
     [[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1],
   [Math.cos(Math.PI * 0)  * 1/4, Math.sin(Math.PI * 0) * 1/4],
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1/2],
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1]]}],
   erase_lines: [
-    [[Math.cos(Math.PI * 0) * 1/4, Math.sin(Math.PI*0) * 1/4], [Math.cos(Math.PI * 0) * 3/4, Math.sin(Math.PI*0) * 3/4]],
+    [[Math.cos(Math.PI * 0) * 1/4-0.25, Math.sin(Math.PI*0) * 1/4], [Math.cos(Math.PI * 0) * .75-0.25, Math.sin(Math.PI*0) * 3/4]],
     //[[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5] ]
   ],
   dies_on_impact: "YES",
@@ -696,9 +731,7 @@ function set_up_enemy_images() {
       var temp_enemy = new (imp_params.impulse_enemy_stats[i].className)(null, 0, 0, 0, null)
       imp_params.impulse_enemy_stats[i].images = temp_enemy.generate_images()    
     }
-    
   }
-  
 }
 
 

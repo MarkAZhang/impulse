@@ -353,6 +353,8 @@ DeathRay.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return this.impulsed_color
+  } else if(status == "ulted") {
+    return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
   } else if(status.slice(0, 5) == "world") {

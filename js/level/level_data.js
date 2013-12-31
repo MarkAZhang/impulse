@@ -4,7 +4,7 @@ imp_params.impulse_level_data = {}
 
 imp_params.impulse_level_data['HOW TO PLAY'] = {
   enemies: {
-              "stunner": [0, 1, 1, 0, 1]
+              "stunner": [0, 4, 1, 0, 5]
 
            },
   dominant_enemy: "stunner",
@@ -14,8 +14,8 @@ imp_params.impulse_level_data['HOW TO PLAY'] = {
   buffer_radius: 1,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "normal": [500, 2000, 10000],
-    "easy": [500, 2000, 10000],
+    "normal": [2000, 5000, 10000],
+    "easy": [2000, 5000, 10000],
   },
   player_loc: {x: 400, y: 170},
   buffer_radius: 1
