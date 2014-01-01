@@ -137,7 +137,7 @@ Player.prototype.keyDown = function(keyCode) {
       this.iright = null
       this.iup = null
       this.idown = null
-      this.iultimate - null
+      this.iultimate = null
       break
     case imp_params.keys.ILEFT_KEY:
       this.ileft = (new Date()).getTime()
@@ -380,11 +380,12 @@ Player.prototype.process = function(dt) {
       
     }
     if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
-      //if(this.impulse_game_state.hive_numbers.ultimates > 0) {
+      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
         this.initiate_ultimate()
-        
-      //  this.impulse_game_state.hive_numbers.ultimates -= 1
-      //}
+        if (!(this.impulse_game_state instanceof HowToPlayState)) {
+          this.impulse_game_state.hive_numbers.ultimates -= 1
+        }
+      }
       
     }
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
@@ -433,10 +434,14 @@ Player.prototype.process = function(dt) {
     }
     if(!this.ultimate) {
 
-      //if(this.iultimate != null && this.impulse_game_state.hive_numbers.ultimates > 0) {
-        this.initiate_ultimate()
-      //  this.impulse_game_state.hive_numbers.ultimates -= 1
-      //}
+      if(this.iultimate != null) {
+        if(this.impulse_game_state.hive_numbers.ultimates > 0) {
+          this.initiate_ultimate()
+          if (!(this.impulse_game_state instanceof HowToPlayState)) {
+            this.impulse_game_state.hive_numbers.ultimates -= 1
+          }
+        }
+      }
     }
 
 
@@ -635,6 +640,9 @@ var final_strike_factor = final_strike ? 1 : 0.002
 Player.prototype.finish_ultimate = function() {
   this.ultimate = false
   this.ultimate_enemies_hit = []
+  if (this.impulse_game_state instanceof HowToPlayState) {
+    this.impulse_game_state.player_ulted()
+  }
 }
 
 Player.prototype.point_in_impulse_angle = function(pt) {

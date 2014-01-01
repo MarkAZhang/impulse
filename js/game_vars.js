@@ -177,7 +177,7 @@ function set_key_bindings() {
       RESUME_GAME_KEY: 82,
       DELETE_GAME_KEY: 68,
       NEXT_KEY: 32,
-      ULTIMATE_KEY: 70
+      ULTIMATE_KEY: 69
     }
   }
 }

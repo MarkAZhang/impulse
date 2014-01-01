@@ -130,9 +130,13 @@ IconButton.prototype.draw_icon  = function(context) {
     draw_fullscreen_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true)
   } else if (this.icon == "easy_mode") {
 
-    draw_start_icon(context, this.x, this.y - this.h/8, 20, this.hover ? this.hover_color : this.color)   
+    draw_enemy(context, "goo", this.x, this.y - this.h/8, 30, Math.PI/2, this.hover ? "ulted" : "white", this.hover ? impulse_colors["impulse_blue"] : "white")
+
+    //draw_start_icon(context, this.x, this.y - this.h/8, 20, this.hover ? this.hover_color : this.color)   
   } else if (this.icon == "normal_mode") {
-    drawSprite(context, this.x, this.y - this.h/5, 0, 35, 35, this.hover ? "ultimate_icon_blue" : "ultimate_icon")
+
+    //draw_enemy(context, "deathray", this.x, this.y - this.h/8, 30, Math.PI/2, this.hover ? "ulted" : "white", this.hover ? impulse_colors["impulse_blue"] : "white")
+    drawSprite(context, this.x, this.y - this.h/8, 0, 40, 40, this.hover ? "ultimate_icon_blue" : "ultimate_icon")
 
   } else if(this.icon == "left_mouse") {
     draw_bare_mouse(context, this.x - this.w * 0.23, this.y - this.h * 0.1, this.w * 0.17, this.h * 0.4, this.hover ? this.hover_color : this.color)

@@ -344,20 +344,44 @@ function OptionsMenu(previous_menu) {
   this.init(800, 600)
   this.game_state = previous_menu.game_state
   this.solid = false;
+
   this.previous_menu = previous_menu
-  this.bg_color = this.previous_menu.bg_color
-  this.color = this.previous_menu.color
-  this.lite_color = this.previous_menu.lite_color
-  this.bright_color = this.previous_menu.bright_color
+  if (this.previous_menu instanceof PauseMenu) {
+    this.bg_color = this.previous_menu.bg_color
+    this.color = this.previous_menu.color
+    this.lite_color = this.previous_menu.lite_color
+    this.bright_color = this.previous_menu.bright_color  
+    this.bg_drawn = true
+  } else {
+    this.bg_color = impulse_colors["world 0 dark"]
+    this.color = impulse_colors["world 0"]
+    this.lite_color = impulse_colors["world 0 lite"]
+    this.bright_color = impulse_colors["world 0 bright"]
+    this.bg_drawn = false
+  }
+  
+  
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.lite_color, this.bright_color, function(_this) { return function() {
+  if(_this.previous_menu instanceof PauseMenu)    {
     _this.previous_menu.add_buttons()
-    set_dialog_box(_this.previous_menu)
+    set_dialog_box(_this.previous_menu)  
+  } else {
+    clear_dialog_box()
+  }
+  
   }}(this), "back")
   this.buttons.push(this.back_button)
   this.controls_button = new IconButton("CONTROLS", 20, this.x, this.y - this.h/2 + 125, 100, 100, this.lite_color, this.bright_color, function(_this) { return function() {
     set_dialog_box(new ControlsMenu(_this))
   }}(this), "controls")
   this.buttons.push(this.controls_button)
+
+  if (this.previous_menu instanceof TitleState) {
+    this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y + 150, 200, 80, this.lite_color, "red", function(_this) { return function() {
+      set_dialog_box(new DeleteDataDialog(_this))
+    }}(this), "quit")
+    this.buttons.push(this.delete_button)
+  }
 
   this.current_help_text = ""
 
@@ -397,16 +421,23 @@ function OptionsMenu(previous_menu) {
     save_game()
   }, imp_vars.player_data.options.impulse_shadow))
 
-  if(this.game_state.level.main_game) {
+  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game) {
     this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 348, 20, 20, this.bright_color, function() {
     imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
       save_game()
     }, imp_vars.player_data.options.show_transition_screens))
   }
 
+
+
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
+  if(!this.bg_drawn) {
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+    this.bg_drawn = true
+  }
   ctx.save()
   ctx.globalAlpha /= 5
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
@@ -431,14 +462,14 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   //ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
   ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + 295)
   ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + 325)
-  if(this.game_state.level.main_game)
+  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game )
     ctx.fillText("SHOW DEFEAT SCREENS", this.x - 130, this.y - this.h/2 + 355)
 
   ctx.textAlign = 'center'
   if(this.current_help_text) {
     ctx.font = '14px Muli'
     ctx.globalAlpha = 1
-    ctx.fillText(this.current_help_text, this.x, this.y + 150)
+    ctx.fillText(this.current_help_text, this.x, this.y + 70)
   }
 
   ctx.globalAlpha = 1
@@ -476,7 +507,7 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
   else if(Math.abs(y - (this.y - this.h/2 + 355)) < 15) {
     this.current_help_text = "DISPLAYS AIMING SHADOW FOR IMPULSE"
   }
-  else if(this.game_state.level.main_game && Math.abs(y - (this.y - this.h/2 + 385)) < 15) {
+  else if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && Math.abs(y - (this.y - this.h/2 + 385)) < 15) {
     this.current_help_text = "SHOWS DEFEAT SCREEN ON DEATH"
   } else {
     this.current_help_text = ""
@@ -959,3 +990,91 @@ EnemyBox.prototype.on_key_down = function(keyCode) {
 
 }
 
+DeleteDataDialog.prototype = new DialogBox()
+
+DeleteDataDialog.prototype.constructor = DeleteDataDialog
+
+function DeleteDataDialog(previous_menu) {
+  this.init(800, 600)
+  this.previous_menu = previous_menu
+  this.solid = false;
+  this.lite_color = previous_menu.lite_color
+  this.bright_color = previous_menu.bright_color
+
+  this.deleted = false
+
+  this.buttons = []
+  this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y, 200, 80, impulse_colors["world 4 lite"], "red", function(_this) { return function() {
+    _this.clear_data()
+    _this.deleted = true
+  }}(this), "quit")
+
+  this.buttons.push(this.delete_button)
+
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.lite_color, this.bright_color, function(_this) { return function() {
+  set_dialog_box(_this.previous_menu)
+  
+  }}(this), "back")
+  this.buttons.push(this.back_button)
+
+  if(!this.bg_drawn) {
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 4")
+    this.bg_drawn = true
+    this.previous_menu.bg_drawn = false
+  }
+
+}
+
+DeleteDataDialog.prototype.additional_draw = function(ctx) {
+
+  ctx.save()
+  ctx.globalAlpha *= .6
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
+
+  if (!this.deleted) {
+    ctx.fillStyle = "red"
+    ctx.textAlign = "center"
+    ctx.font = "40px Muli"
+        
+    ctx.fillText("ARE YOU SURE", this.x, 100)
+    ctx.font = "24px Muli"
+    ctx.fillText(" YOU WANT TO DELETE ALL YOUR GAME DATA?", this.x, 140)
+    ctx.font = "16px Muli"
+    ctx.fillText("THIS ACTION CANNOT BE UNDONE.", this.x, 200)
+    for(var i = 0; i < this.buttons.length; i++) {
+      this.buttons[i].draw(ctx)
+    }
+
+  } else {
+    ctx.fillStyle = "red"
+    ctx.textAlign = "center"
+    ctx.font = "32px Muli"
+    ctx.fillText("ALL GAME DATA HAS BEEN DELETED", this.x, 120)    
+    this.back_button.draw(ctx)
+  }
+  
+  
+}
+
+DeleteDataDialog.prototype.on_mouse_move = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_move(x,y)
+  }
+}
+
+DeleteDataDialog.prototype.on_click = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_click(x,y)
+  }
+}
+
+DeleteDataDialog.prototype.clear_data = function() {
+  localStorage.removeItem(imp_vars.save_name);
+  var old_player_options = imp_vars.player_data.options
+  load_game();
+  imp_vars.player_data.options = old_player_options
+  imp_vars.player_data.first_time = false
+  save_game();
+}

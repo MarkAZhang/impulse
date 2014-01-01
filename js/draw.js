@@ -209,6 +209,7 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
 function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   // if d == null, will draw at default size
 
+
   if(enemy_name.slice(enemy_name.length - 4) == "boss") return
   context.save()
   context.translate(x, y);

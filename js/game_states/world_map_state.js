@@ -62,10 +62,10 @@ WorldMapState.prototype.set_up_world_map = function() {
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})*/
 
-    this.set_up_world_icon(1, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "ENTER HIVE", true)
-    this.set_up_world_icon(2, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "ENTER HIVE", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"])
-    this.set_up_world_icon(3, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "ENTER HIVE", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"])
-    this.set_up_world_icon(4, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "ENTER HIVE", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"])
+    this.set_up_world_icon(1, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "START", true)
+    this.set_up_world_icon(2, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "START", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"])
+    this.set_up_world_icon(3, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "START", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"])
+    this.set_up_world_icon(4, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 125, "START", imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"])
 
 
 }
@@ -124,7 +124,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
 WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlocked) {
   var _this = this
   if(unlocked) {
-      this.world_buttons[world_num] = new SmallButton(name, 21, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
+      this.world_buttons[world_num] = new SmallButton(name, 24, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
       function(){
         _this.fade_out_duration = _this.fade_out_interval; 
         _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
@@ -316,13 +316,10 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
 
-  if(imp_vars.player_data.difficulty_mode == "normal") {
     ctx.font = '15px Muli'
-    ctx.globalAlpha = 0.9
     ctx.textAlign = 'center'
     ctx.fillStyle = "white"
-    ctx.fillText("CHALLENGE MODE", imp_vars.levelWidth/2, 30)
-  }
+    ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.levelWidth/2, 30)
   ctx.restore()
 }
 

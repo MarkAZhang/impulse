@@ -84,7 +84,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     }
     
   }*/
-  draw_logo(ctx,imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 160, true)
+  draw_logo(ctx,imp_vars.levelWidth/2, 200, true)
 
   //ctx.shadowBlur = 5
 
@@ -99,14 +99,6 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = 'black'
   ctx.fillText(imp_vars.player_data.stars[imp_vars.player_data.difficulty_mode], imp_vars.levelWidth - 40, imp_vars.levelHeight - 10)*/
 
-  if(imp_vars.player_data.difficulty_mode == "normal") {
-    ctx.font = '15px Muli'
-    ctx.globalAlpha = 0.9
-    ctx.textAlign = 'center'
-    ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.fillText("CHALLENGE MODE", imp_vars.levelWidth/2, 30)
-  }
-
   /*ctx.font = '20px Muli'
   ctx.textAlign = 'right'
   ctx.fillStyle = "white"
@@ -119,6 +111,12 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '36px Muli'
     ctx.fillText((this.next_upgrade - this.cur_rating), imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 193)
   }*/
+
+  /*ctx.font = '15px Muli'
+  ctx.globalAlpha = 0.9
+  ctx.textAlign = 'center'
+  ctx.fillStyle = "white"
+  ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "NORMAL MODE", imp_vars.levelWidth/2, 70)*/
   
   ctx.restore()
 
@@ -169,29 +167,53 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
   } else {
-    this.buttons["menu"].push(new IconButton("MAIN GAME", 24, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 130, 150, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("STANDARD MODE", 20, imp_vars.levelWidth/2 - 130, imp_vars.levelHeight/2 + 100, 150, 100, button_color, impulse_colors["impulse_blue"],
     function(){
-      _this.fade_out_duration = _this.fade_interval;
+      //_this.fade_out_duration = _this.fade_interval;
+      imp_vars.player_data.difficulty_mode = "easy"
+      save_game()
       
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
-        setTimeout(function(){
+        //setTimeout(function(){
           switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
-        }, _this.fade_interval)
+        //}, _this.fade_interval)
       } else {
         var i = 1;
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
-        setTimeout(function(){
+        //setTimeout(function(){
           switch_game_state(new WorldMapState(i))
-        }, _this.fade_interval)
+        //}, _this.fade_interval)
       }
     }, "player"))
 
+    this.buttons["menu"].push(new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2 + 130, imp_vars.levelHeight/2 + 100, 150, 100, button_color, impulse_colors["impulse_blue"],
+    function(){
+      //_this.fade_out_duration = _this.fade_interval;
+      imp_vars.player_data.difficulty_mode = "normal"
+      save_game()
+      
+      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
+        //setTimeout(function(){
+          switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+        //}, _this.fade_interval)
+      } else {
+        var i = 1;
+        while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+          i += 1
+        }
+        //setTimeout(function(){
+          switch_game_state(new WorldMapState(i))
+        //}, _this.fade_interval)
+      }
+    }, "normal_mode"))
+
+
     //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2+260, 100, 70, button_color, impulse_colors["impulse_blue"], function(){switch_game_state(new HowToPlayState("first_time_tutorial"))}, "tutorial"))
-    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 70, button_color, impulse_colors["impulse_blue"],function(){switch_game_state(new CreditsState())}, "credit"))
-    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 200, imp_vars.levelHeight/2+260, 100, 70, button_color, impulse_colors["impulse_blue"],function(){setTimeout(function(){_this.state = "options"}, 50)}, "gear"))
+    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 185, imp_vars.levelHeight/2+230, 100, 70, button_color, impulse_colors["impulse_blue"], function(){switch_game_state(new HowToPlayState("normal_tutorial"))}, "tutorial"))
+    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+230, 100, 70, button_color, impulse_colors["impulse_blue"],function(){switch_game_state(new CreditsState())}, "credit"))
+    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 185, imp_vars.levelHeight/2+230, 100, 70, button_color, impulse_colors["impulse_blue"],function(){setTimeout(function(){ set_dialog_box(new OptionsMenu(_this))}, 50)}, "gear"))
 
   }
 
@@ -207,7 +229,17 @@ TitleState.prototype.setup_main_menu = function() {
   this.buttons["options"].push(this.clear_data_button)
   this.buttons["options"].push(new SmallButton("BACK", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
 
+  /*if (imp_vars.player_data.difficulty_mode == "easy") {
+    var difficulty_change_button = new IconButton("NORMAL MODE", 16, imp_vars.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
+    }, "normal_mode")  
+  } else {
+    var difficulty_change_button = new IconButton("CHALLENGE MODE", 16, imp_vars.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
+
+    }, "challenge_mode")  
+  }
+  
+  this.buttons["menu"].push(difficulty_change_button)*/
 }
 
 TitleState.prototype.change_mode = function(type) {
@@ -223,13 +255,3 @@ TitleState.prototype.set_difficulty_button_underline = function() {
   this.normal_mode_button.underline = (imp_vars.player_data.difficulty_mode == "normal");
 }
 
-TitleState.prototype.clear_data = function() {
-  localStorage.removeItem(imp_vars.save_name);
-  this.clear_data_button.text = "DATA CLEARED";
-  this.clear_data_button.color = "red";
-  var old_player_options = imp_vars.player_data.options
-  load_game();
-  imp_vars.player_data.options = old_player_options
-  imp_vars.player_data.first_time = false
-  save_game();
-}

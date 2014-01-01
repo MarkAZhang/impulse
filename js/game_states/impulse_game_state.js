@@ -134,8 +134,9 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.message_canvas.height = 160
   this.message_ctx = this.message_canvas.getContext('2d');
 
-  if(level)
+  if(level && !(this instanceof HowToPlayState)) {
     this.check_new_enemies()
+  }
 
   // Manually set the current colors for the game button.
   for( var i = 0; i < imp_params.game_buttons.length; i++) {
@@ -169,7 +170,9 @@ ImpulseGameState.prototype.reset = function() {
   this.gateway_unlocked = false
   this.victory = false
   this.level.reset()
-  this.check_new_enemies()
+  if(this.level && !(this instanceof HowToPlayState)) {
+    this.check_new_enemies()
+  }
   imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
   this.level.draw_bg(imp_vars.bg_ctx)
   imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
@@ -698,11 +701,11 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  if(imp_vars.player_data.difficulty_mode == "normal") {
-    context.font = "18px Muli"
+  if (!(this instanceof HowToPlayState)) {
+    context.font = "14px Muli"
     context.save()
-    context.globalAlpha *= 0.8
-    context.fillText("CHALLENGE MODE", imp_vars.sidebarWidth/2, 15)
+    context.globalAlpha *= 1
+    context.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.sidebarWidth/2, 15)
     context.restore()
   }
 

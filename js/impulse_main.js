@@ -85,7 +85,7 @@ window["impulse_main"] =  function() {
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
     if(imp_vars.player_data.first_time) {
-      imp_vars.cur_game_state = new HowToPlayState()
+      imp_vars.cur_game_state = new HowToPlayState("first_time_tutorial")
     } else {
       imp_vars.cur_game_state = new TitleState(null)
     }

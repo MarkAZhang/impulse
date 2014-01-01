@@ -35,11 +35,14 @@ function RewardGameState(hive_numbers, main_game, args) {
 }
 
 RewardGameState.prototype.change_mode = function(type) {
-  imp_vars.player_data.difficulty_mode = type;
-  save_game();
-  this.adjust_difficulty_button_border()
-  this.transition_state="out";
-  this.transition_timer = this.transition_interval * 4
+  if (this.transition_state == "none") {
+    imp_vars.player_data.difficulty_mode = type;
+    save_game();
+    this.adjust_difficulty_button_border()
+    this.transition_state="out";
+    this.transition_timer = this.transition_interval * 4  
+  }
+  
 }
 
 RewardGameState.prototype.draw = function(ctx, bg_ctx) {
@@ -119,6 +122,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     if(cur_reward.type == "lives") {
       main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
       main_message = "EXTRA LIFE"
+
+      ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
       ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
@@ -126,7 +131,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "lives_icon")
       ctx.font = "72px Muli"
 
-      ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = "white"
       var x_separation = 50
@@ -143,6 +147,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "ult") {
+      ctx.textAlign = "center"
       main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
       main_message = "EXTRA ULTIMATE"
       
@@ -153,7 +158,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate_icon")
       ctx.font = "72px Muli"
 
-      ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = 'white'
       var x_separation = 50
@@ -173,6 +177,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
       main_message = "SPARK VALUE INCREASED"
 
+      ctx.textAlign = 'center'
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
       ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
@@ -180,7 +185,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "sparks_icon")
       ctx.font = "72px Muli"
 
-      ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = 'white'
       var x_separation = 50
@@ -251,8 +255,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
-      ctx.fillStyle = "white"
-      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN", imp_vars.levelWidth/2, imp_vars.levelHeight - 75)
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 75)
     }
 }
 
@@ -263,12 +267,13 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 
 RewardGameState.prototype.debug = function() {
   if (false) {
+
      this.rewards.push({
       type: "first_time_tutorial"
      })
-     this.rewards.push({
+     /*this.rewards.push({
       type: "select_difficulty"
-     })
+     })*/
      this.rewards.push({
       type: "rating",
       data: {
@@ -346,7 +351,7 @@ RewardGameState.prototype.next_reward = function() {
 
 RewardGameState.prototype.advance_game_state = function() {
   if(this.to_tutorial) {
-    switch_game_state(new HowToPlayState())
+    switch_game_state(new HowToPlayState("ult_tutorial"))
   }
   else if(this.main_game || this.args.is_tutorial)
       switch_game_state(new TitleState(true))
@@ -367,9 +372,9 @@ RewardGameState.prototype.determine_rewards = function() {
       this.rewards.push({
         type: "first_time_tutorial"
       })
-      this.rewards.push({
+      /*this.rewards.push({
         type: "select_difficulty"
-      })
+      })*/
     }
     return
   }

@@ -24,8 +24,8 @@ SmallButton.prototype.additional_draw = function(context) {
 
   //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
   context.font = this.size+'px Muli';
-  context.fillStyle = this.color;
-  //context.fillStyle = this.hover ? this.hover_color : this.color
+  //context.fillStyle = this.color;
+  context.fillStyle = this.hover ? this.hover_color : this.color
   if(this.shadow) {
     context.shadowBlur = 5
     context.shadowColor = this.shadowColor
