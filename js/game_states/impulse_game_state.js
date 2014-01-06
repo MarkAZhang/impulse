@@ -333,6 +333,8 @@ ImpulseGameState.prototype.process = function(dt) {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
+        this.victory = true
+        this.level.boss_victory = true
       } else if(this.zoom_state == "none"){
         this.ready = false
         this.game_over();

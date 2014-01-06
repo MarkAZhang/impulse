@@ -339,7 +339,7 @@ Level.prototype.initial_spawn = function() {
         spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
-      if(!this.is_boss_level && this.imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
+      if(!this.is_boss_level && imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
         num_enemies_to_spawn = Math.max( 1, 0.5 * num_enemies_to_spawn)
       }
 

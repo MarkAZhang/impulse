@@ -7,7 +7,6 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.main_game = main_game
   this.args = args
   this.rewards = []
-  this.determine_rewards()
   this.debug()
   this.cur_reward_index = 0
   this.transition_interval = 250
@@ -30,6 +29,8 @@ function RewardGameState(hive_numbers, main_game, args) {
     "you have a limited number of # ultimates per continue # (currently 1)",
     "If you die after using ultimate, # it is refunded"
   ]
+  
+  this.determine_rewards()
   imp_vars.impulse_music.stop_bg()
 }
 

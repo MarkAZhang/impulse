@@ -187,6 +187,7 @@ imp_params.impulse_enemy_stats["harpoon"] = {
     "Fires its hook at you and # attempts to yank you in # # Can only fire through walls.",
     "The hook range is outlined # around the Harpoon",
     "While the hook is detached from the Harpoon, it cannot move",
+    "If you are hooked, # impulse the harpoon and it will let you go",
     //"When Impulsed, the hook is disabled for 2 seconds",
     //"Can latch onto other enemies and will yank them in",
     //"Will actively try to avoid you # # Does not die on collision",
