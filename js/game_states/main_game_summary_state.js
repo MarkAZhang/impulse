@@ -250,7 +250,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   } else {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("YOU ARE DEFEATED", imp_vars.levelWidth/2, 80)
+    ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 80)
     if(this.hive_numbers.continues > 0) {
       ctx.font = '12px Muli'
       ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 175)  
@@ -386,12 +386,10 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-}
-
-MainGameSummaryState.prototype.on_click = function(x, y) {
-  for(var i = 0; i < this.buttons.length; i++) {
-    this.buttons[i].on_click(x, y)
-  }
+  if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
+      this.transition_state="out";
+      this.transition_timer = this.transition_interval
+    }
 }
 
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
@@ -405,10 +403,10 @@ MainGameSummaryState.prototype.on_key_down = function(keyCode) {
       this.resume_game()
     }
   } else{*/
-    if(this.transition_state=="none") {
-      this.transition_state="out";
-      this.transition_timer = this.transition_interval
-    }
+  if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
+    this.transition_state="out";
+    this.transition_timer = this.transition_interval
+  }
   /*}
   if(keyCode == 16) {
     this.shift_down_time = (new Date()).getTime()

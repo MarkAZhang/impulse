@@ -26,13 +26,13 @@ EnemyButton.prototype.additional_draw = function(context) {
   context.font = this.size +'px Muli'
   if(this.seen) {
     context.fillText(this.enemy_name.toUpperCase(), this.x, this.y - this.h/2 + this.size + 5)
-    if((imp_params.impulse_enemy_stats[this.enemy_name].kills < 5 && !imp_params.impulse_enemy_stats[this.enemy_name].is_boss) ||
+    /*if((imp_params.impulse_enemy_stats[this.enemy_name].kills < 5 && !imp_params.impulse_enemy_stats[this.enemy_name].is_boss) ||
       (imp_params.impulse_enemy_stats[this.enemy_name].kills < 1 && imp_params.impulse_enemy_stats[this.enemy_name].is_boss)) {
       context.font = "25px Muli"
       context.textAlign = "left"
       context.fillStyle = "white"
       context.fillText("NEW", this.x - this.w/2 - 10, this.y - this.h/2 + 5)
-    }
+    }*/
     if (impulse_enemy_kills_star_cutoffs[this.enemy_name]) {
       if (this.kill_prop < 1) {
         draw_progress_bar(context, this.x, this.y + this.h * .4, this.w * 2/3, 10, this.kill_prop, imp_params.impulse_enemy_stats[this.enemy_name].color, imp_params.impulse_enemy_stats[this.enemy_name].color)

@@ -66,11 +66,13 @@ function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
   context.fillStyle = imp_params.impulse_enemy_stats[enemy_name].color
   context.fillText(enemy_name.toUpperCase(), x, y - h * 0.25)
 
-  draw_enemy(context, enemy_name, x, y, 30)
+  draw_enemy(context, enemy_name, x, y , 30)
 
-  context.font = "10px MUli"
-  context.fillStyle =color
-  context.fillText("CLICK FOR INFO", x, y + h * 0.4)
+  context.fillStyle = color
+  context.font = "20px MUli"
+  context.fillText("CLICK", x, y + h * 0.3)
+  context.font = "16px MUli"
+  context.fillText("FOR INFO", x, y + h * 0.42)
   context.restore()
 
 }
@@ -82,8 +84,8 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 
   context.clearRect(x - w/2, y - h/2, w, h)
 
-  context.shadowBlur = 10
-  context.shadowColor = text_color
+  context.shadowBlur = 0
+  //context.shadowColor = text_color
   context.beginPath()
   context.rect(x - w/2, y - h/2, w, h)
   context.lineWidth = 4
@@ -95,7 +97,7 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
 
   context.globalAlpha *= 10
   context.save()
-  context.globalAlpha *= 0.5
+  context.globalAlpha *= 0.4
   if(world_num == 0) {
     context.globalAlpha *= 0.5
   }
@@ -106,10 +108,8 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
   context.font = text_size+"px Muli"
   context.fillStyle = text_color
   context.shadowColor = text_color
-  context.fillText(text.split(" ")[0].toUpperCase(), x, y - 10)
-  context.fillText(text.split(" ")[1].toUpperCase(), x, y + 10)
-
-
+  context.fillText(text.split(" ")[0].toUpperCase(), x, y - 15)
+  context.fillText(text.split(" ")[1].toUpperCase(), x, y + 15)
 
   context.restore()
 

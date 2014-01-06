@@ -1015,14 +1015,14 @@ function DeleteDataDialog(previous_menu) {
   this.deleted = false
 
   this.buttons = []
-  this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y, 200, 80, impulse_colors["world 4 lite"], "red", function(_this) { return function() {
+  this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y, 200, 80, "red", "red", function(_this) { return function() {
     _this.clear_data()
     _this.deleted = true
   }}(this), "quit")
 
   this.buttons.push(this.delete_button)
 
-  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.lite_color, this.bright_color, function(_this) { return function() {
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, "red", "red",function(_this) { return function() {
   set_dialog_box(_this.previous_menu)
   
   }}(this), "back")
@@ -1086,6 +1086,22 @@ DeleteDataDialog.prototype.clear_data = function() {
   var old_player_options = imp_vars.player_data.options
   load_game();
   imp_vars.player_data.options = old_player_options
-  //imp_vars.player_data.first_time = false
+  imp_vars.player_data.first_time = false
   save_game();
+}
+
+NewEnemyDialog.prototype = new DialogBox()
+
+NewEnemyDialog.prototype.constructor = NewEnemyDialog
+
+function NewEnemyDialog(previous_menu) {
+  this.init(400, 300)
+}
+
+NewEnemyDialog.prototype.additional_draw = function(ctx) {
+  ctx.font = "28px Muli" 
+  ctx.fillStyle = "red"
+  ctx.textAlign = 'center'
+  ctx.fillText("WOULD YOU LIKE TO SEE ENEMY INFO?", this.x, this.y)
+
 }

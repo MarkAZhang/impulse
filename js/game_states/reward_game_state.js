@@ -2,8 +2,6 @@ RewardGameState.prototype = new GameState
 
 RewardGameState.prototype.constructor = RewardGameState
 
-
-
 function RewardGameState(hive_numbers, main_game, args) {
   this.hive_numbers = hive_numbers
   this.main_game = main_game
@@ -15,6 +13,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
+  this.victory = args.victory
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
@@ -359,7 +358,8 @@ RewardGameState.prototype.advance_game_state = function() {
     switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
       best_time: this.best_time,
       high_score: this.high_score,
-      stars: this.stars
+      stars: this.stars,
+      victory: this.victory
     }))
   }
 
@@ -381,14 +381,25 @@ RewardGameState.prototype.determine_rewards = function() {
 
   if(!this.main_game) {
     if(!this.args.level.is_boss_level) {
-      var ans = update_high_score_for_level(this.args.level.level_name, this.args.game_numbers.score, imp_vars.player_data.difficulty_mode)
-      this.high_score = ans.high_score
-      this.stars = ans.stars
+      if(this.victory) {
+        var ans = update_high_score_for_level(this.args.level.level_name, this.args.game_numbers.score, imp_vars.player_data.difficulty_mode)
+        this.high_score = ans.high_score
+        this.stars = ans.stars
+      } else {
+        this.stars = get_stars_for_score_on_level(this.args.level.level_name, this.args.game_numbers.score, imp_vars.player_data.difficulty_mode)
+        this.high_score = false
+      }
       
     } else if(this.args.level.boss_victory){
-      var ans = update_best_time_for_boss_level(this.args.level.level_name, this.args.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-      this.best_time = ans.best_time
-      this.stars = ans.stars
+      if (this.victory) {
+        var ans = update_best_time_for_boss_level(this.args.level.level_name, this.args.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+        this.best_time = ans.best_time
+        this.stars = ans.stars  
+      } else {
+        this.best_time = false
+        this.stars = 0
+      }
+      
     }
   }
 
@@ -461,6 +472,11 @@ RewardGameState.prototype.on_click = function(x, y) {
     this.normal_mode_button.on_click(x, y)
     this.challenge_mode_button.on_click(x, y)
   }
+
+  if(this.transition_state=="none" && this.rewards[this.cur_reward_index].type != "select_difficulty") {
+    this.transition_state="out";
+    this.transition_timer = this.transition_interval
+  }  
 }
 
 

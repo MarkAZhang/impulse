@@ -104,12 +104,12 @@ WorldButton.prototype.additional_draw = function(context) {
 
     draw_progress_bar(context,this.x, this.y +this.h * .25 - 5, this.w * 2/3, 10, this.stars/this.max_stars, impulse_colors["world "+this.world], impulse_colors["world "+this.world+" lite"])
 
-    if(this.new_world) {
+    /*if(this.new_world) {
       context.font = "25px Muli"
       context.textAlign = "right"
       context.fillStyle = impulse_colors["world "+(this.world)+ " lite"]
       context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
-    }
+    }*/
 
   }
 }

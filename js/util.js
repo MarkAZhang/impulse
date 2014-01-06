@@ -661,19 +661,22 @@ function update_high_score_for_level(level, score, difficulty) {
   } else {
     ans.high_score = false
   }
+  
+  ans.stars = get_stars_for_score_on_level(level, score, difficulty)
+  if(ans.high_score) {
+    imp_params.impulse_level_data[level].save_state[difficulty].stars = ans.stars
+    save_game()
+  }
+  return ans
+}
+
+function get_stars_for_score_on_level(level, score, difficulty) {
   var stars = 0
   while(score>= imp_params.impulse_level_data[level].cutoff_scores[difficulty][stars])
   {
     stars+=1
   }
-  
-  ans.stars = stars
-  if(ans.high_score) {
-    imp_params.impulse_level_data[level].save_state[difficulty].stars = stars
-    save_game()
-  }
-  return ans
- 
+  return stars
 }
 
 function update_best_time_for_boss_level(level, time, difficulty) {

@@ -9,6 +9,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.world_num = world_num
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
+  this.victory = args.victory
   this.color = impulse_colors['world '+ this.world_num + ' bright']
   this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, this.color, function(_this){
     return function(){
@@ -38,7 +39,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
   if(!this.level.is_boss_level) {
     this.high_score = args.high_score
-    this.stars = args.stars
+    this.stars = args.stars ? args.stars : 0
 
     if (this.stars < 3)
         this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
@@ -47,8 +48,8 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
     this.stars_gained = 0
   } else {
-    this.best_time = args.best_time
-    this.stars = args.stars
+    this.best_time = args.best_time ? args.best_time : 0
+    this.stars = args.stars ? args.stars : 0
   }
 
   imp_vars.player_data.total_kills += this.game_numbers.kills
@@ -156,11 +157,11 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(this.level_name, imp_vars.levelWidth/2, 70)
     ctx.fill() 
     ctx.font = '20px Muli'
-    if(this.stars > 0) {
+    if(this.stars > 0 && this.victory) {
       ctx.fillStyle = impulse_colors[this.star_colors[this.stars - 1]]
       ctx.fillText(this.star_text[this.stars - 1] + " SCORE ACHIEVED", imp_vars.levelWidth/2, 110)
     } else {
-      ctx.fillStyle = this.color
+      ctx.fillStyle = "red"
       ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 110)
     }
 

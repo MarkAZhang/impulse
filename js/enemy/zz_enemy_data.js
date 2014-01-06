@@ -6,7 +6,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   lin_damp: 4,
   effective_radius: .5,
   force: .42,
-  score_value: 10000,
+  score_value: 100,
   attack_rating: 1,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -99,7 +99,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   lin_damp: 3,
   effective_radius: .5,
   force: .15,
-  score_value: 100000,
+  score_value: 1000,
   attack_rating: .5,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -442,7 +442,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   lin_damp: 15,
   effective_radius: 0.5,
   force: .96,
-  score_value: 500000,
+  score_value: 5000,
   attack_rating: 10,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:

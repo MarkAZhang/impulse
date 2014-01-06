@@ -189,12 +189,12 @@ LevelButton.prototype.additional_draw = function(context) {
     }
   }
 
-  if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score == 0) {
+  /*if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score == 0) {
     context.font = "25px Muli"
     context.textAlign = "right"
     context.fillStyle = this.is_boss_level ? "red" : impulse_colors["world "+(this.world)+" lite"]
     context.fillText("NEW", this.x + this.w/2 - 5, this.y + this.h/2 - 5)
 
-  }
+  }*/
 }
 

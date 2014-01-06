@@ -339,7 +339,7 @@ Level.prototype.initial_spawn = function() {
         spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
-      if(imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
+      if(!this.is_boss_level && this.imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
         num_enemies_to_spawn = Math.max( 1, 0.5 * num_enemies_to_spawn)
       }
 
@@ -369,13 +369,11 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
       var num_enemies_to_spawn = this.enemy_spawn_counters[k]
 
-      if(imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
+      if(!this.is_boss_level && imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
-      console.log("PUSHING SPAWN QUEUE FOR " + k + num_enemies_to_spawn + " times")
       for(var j = 0; j < Math.floor(num_enemies_to_spawn); j++) {
-        console.log("ADDED TO SPAWN QUEUE " + k + " " + j)
         this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
         spawn_point_index+=1;
 
@@ -396,18 +394,15 @@ if(enemy_type == "player" || enemy_type == "spark" || enemy_type == "multi" || e
 
 Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
 
-  console.log ("SPAWNING THIS ENEMY " + enemy_type)
   var this_enemy = imp_params.impulse_enemy_stats[enemy_type].className
 
   if(this_enemy.prototype.is_boss && this.boss_spawned) {
-    console.log("BOSS")
     return;
 
   }
 
   //if at the cap, don't spawn more
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) {
-    console.log("REACHED CAP")
     return
   }
 
@@ -517,6 +512,12 @@ Level.prototype.pre_draw = function(context, draw_factor) {
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].pre_draw(context, draw_factor)
   }
+
+  if(this.gateway_transition_duration != null) {
+    if(this.gateway_loc) {
+      this.draw_gateway(context, draw_factor)
+    }
+  }
 }
 
 Level.prototype.draw = function(context, draw_factor) {
@@ -550,9 +551,6 @@ Level.prototype.draw = function(context, draw_factor) {
   }
   
   //context.globalAlpha = this.obstacle_visibility
-
-
-
 
   for(var type in this.bulk_draw_enemies) {
     var num_bulks = this.bulk_draw_enemies[type]
@@ -599,11 +597,7 @@ Level.prototype.draw = function(context, draw_factor) {
 
     context.globalAlpha = 1
   }
-  if(this.gateway_transition_duration != null) {
-    if(this.gateway_loc) {
-      this.draw_gateway(context, draw_factor)
-    }
-  }
+
   context.restore()
 }
 

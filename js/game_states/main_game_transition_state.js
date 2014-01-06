@@ -415,17 +415,26 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '24px Muli'
     if(this.victory) {
+
       ctx.textAlign = "left"
-      ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 105, 275)
-      drawSprite(ctx, imp_vars.levelWidth/2 - 115, 267, 0, 20, 20, "spark")
+      
 
       if(this.combo_sparks_awarded < 10) {
-        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 95, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 + 85, 267, 0, 20, 20, "spark")
+        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 85, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 + 75, 267, 0, 20, 20, "spark")
       } else {
-        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 89, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 + 79, 267, 0, 20, 20, "spark")
+        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 79, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 + 69, 267, 0, 20, 20, "spark")
       }
+
+      if(this.time_sparks_awarded < 10) {
+        ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 108, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 - 118, 267, 0, 20, 20, "spark")
+      } else {
+        ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 114, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 - 124, 267, 0, 20, 20, "spark")
+      }
+
     } else {
 
     }
@@ -466,6 +475,15 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 }
 
 MainGameTransitionState.prototype.on_key_down = function(keyCode) {
+    if(this.level_loaded) {
+      this.world_intro_interval /=4
+      this.level_intro_interval /=4
+      this.last_level_summary_interval /=4
+      this.transition_timer /=4
+    }
+}
+
+MainGameTransitionState.prototype.on_click = function(keyCode) {
     if(this.level_loaded) {
       this.world_intro_interval /=4
       this.level_intro_interval /=4
