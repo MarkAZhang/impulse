@@ -142,7 +142,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   "frenzy": 1000
 }
 
-this.silence_interval = 30000//13400//20000
+this.silence_interval = 3000//13400//20000
 this.silence_timer = this.silence_interval - 1
 this.silence_duration = 7000
 this.silenced = false
@@ -254,7 +254,7 @@ BossThree.prototype.additional_processing = function(dt) {
     }
   } else if(this.striking_state == "striking") {
     this.process_striking_arms()
-    if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= 15) {
+    if(p_dist(this.body.GetPosition(), this.player.get_current_position()) <= 15) {
       this.strike_timer -= dt
       if(this.strike_timer <= 0 && !(this.wheel_activate_timer > 0 && this.current_wheel_set[this.wheel_cur_index] == "frenzy")) {
         this.strike_timer = this.strike_interval
@@ -479,7 +479,7 @@ BossThree.prototype.process_striking_arms = function() {
       if(arm_size > 0) {
         arm_size = bezier_interpolate(0.15, 0.85, arm_size);
         if(data.max_dist == null) {
-          data.max_dist = p_dist(this.body.GetPosition(), this.player.body.GetPosition()) + 5
+          data.max_dist = p_dist(this.body.GetPosition(), this.player.get_current_position()) + 5
           if(data.max_dist < 20) data.max_dist += 10
         }
         data.cur_dist = data.max_dist * arm_size + (data.start_dist) * (1-arm_size)
@@ -519,7 +519,7 @@ BossThree.prototype.cancel_strikes = function() {
 BossThree.prototype.strike_at_player = function() {
 
   if(this.striking_state == "striking") {
-    var boss_angle = _atan(this.body.GetPosition(),this.player.body.GetPosition())
+    var boss_angle = _atan(this.body.GetPosition(),this.player.get_current_position())
     var arm = Math.floor((boss_angle - this.body.GetAngle())/(Math.PI/8))
     while(arm < 0) {
       arm += this.num_arms
@@ -539,7 +539,7 @@ BossThree.prototype.strike_at_player = function() {
     var index = Math.floor(Math.random() * choices.length)
     this.strike_with_arm(choices[index], dist, this.strike_duration)
   } else if(this.striking_state == "frenzy") {
-    var boss_angle = _atan(this.body.GetPosition(),this.player.body.GetPosition())
+    var boss_angle = _atan(this.body.GetPosition(),this.player.get_current_position())
     var arm = Math.floor((boss_angle - this.body.GetAngle())/(Math.PI/8))
     while(arm < 0) {
       arm += this.num_arms
@@ -619,26 +619,51 @@ BossThree.prototype.get_impulse_sensitive_pts = function() {
 
 
 BossThree.prototype.draw = function(context, draw_factor) {
-
-  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
-
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) {
+    return
+  }
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
   context.save()
   if (this.dying)
-      context.globalAlpha *= (1 - prog)
-    else
-      context.globalAlpha *= this.visibility != null ? this.visibility : 1
-
-
-  /*if(this.lighten_timer >= 0) {
-    this.draw_special_attack_timer(context, draw_factor)
-  }*/
-  //this.draw_aura(context, draw_factor)
-
-
+    context.globalAlpha *= (1 - prog)
+  else
+    context.globalAlpha *= this.visibility != null ? this.visibility : 1
 
   var tp = this.body.GetPosition()
+
+
+   if(this.spawned) {
+    if(this.striking_state == "extend" || this.striking_state == "retract") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    }  
+  }
+  
+
+  if(this.spawned) {
+    for(var index in this.striking_arms) {
+
+      if(this.striking_arms[index].duration > 0) {
+        var tp = this.striking_arms[index].body.GetPosition()
+        var angle = this.striking_arms[index].body.GetAngle()
+        context.save()
+        context.translate(tp.x * draw_factor, tp.y * draw_factor)
+        context.rotate(angle + Math.PI/16)
+        var v_dist = this.striking_arms[index].cur_dist * Math.sin(Math.PI/16) * 2
+        var h_dist = this.striking_arms[index].cur_dist * Math.cos(Math.PI/16)
+        var armSpriteName = this.knockback_red_duration > 0 ? "negligentia_arm_striking_red" : "negligentia_arm_striking"
+        drawSprite(context, h_dist/2 * draw_factor, 0, 0,
+                  h_dist * draw_factor,v_dist * draw_factor, armSpriteName, negligentiaSprite)
+        context.restore()
+
+      }
+    }
+  }
+
 
   if(this.knockback_red_duration > 0) {
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head_red", negligentiaSprite)
@@ -665,7 +690,7 @@ BossThree.prototype.draw = function(context, draw_factor) {
     }
   }
   context.restore()*/
-  this.additional_drawing(context, draw_factor)
+  //this.additional_drawing(context, draw_factor)
 
   context.restore()
 }
@@ -687,14 +712,17 @@ BossThree.prototype.draw_glows = function(context, draw_factor) {
 
 
 BossThree.prototype.pre_draw = function(context, draw_factor) {
-
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) {
+    return
+  }
   context.save()
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
 
-  if (this.dying)
+  if (this.dying) {
       context.globalAlpha *= (1 - prog)
-    else
-      context.globalAlpha *= this.visibility != null ? this.visibility : 1
+  } else {
+    context.globalAlpha *= this.visibility != null ? this.visibility : 1
+  }
 
   if(this.silenced && this.silence_timer < 0 && this.silence_timer >= -this.silence_duration) {
     context.save()
@@ -707,7 +735,6 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
 
   this.draw_glows(context, draw_factor);
 
-  context.save()
   if (!this.silenced)
     context.globalAlpha *= 0.4
   for(var i = 0; i < 16; i++) {
@@ -728,45 +755,6 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     }
 
   }
-  context.restore()
-
-  if(this.spawned) {
-    if(this.striking_state == "extend" || this.striking_state == "retract") {
-      var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-    } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
-      var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-    }  
-  }
-  
-
-  if(this.spawned) {
-    for(var index in this.striking_arms) {
-    //context.beginPath()
-    //var body_vertices = this.striking_arms[index].body.GetFixtureList().m_shape.m_vertices
-
-
-    //var armSpriteName = this.knockback_red_duration > 0 ? "negligentia_arm_normal_red" : "negligentia_arm_normal"
-
-
-    if(this.striking_arms[index].duration > 0) {
-      var tp = this.striking_arms[index].body.GetPosition()
-      var angle = this.striking_arms[index].body.GetAngle()
-      context.save()
-      context.translate(tp.x * draw_factor, tp.y * draw_factor)
-      context.rotate(angle + Math.PI/16)
-      var v_dist = this.striking_arms[index].cur_dist * Math.sin(Math.PI/16) * 2
-      var h_dist = this.striking_arms[index].cur_dist * Math.cos(Math.PI/16)
-      var armSpriteName = this.knockback_red_duration > 0 ? "negligentia_arm_striking_red" : "negligentia_arm_striking"
-      drawSprite(context, h_dist/2 * draw_factor, 0, 0,
-      h_dist * draw_factor,v_dist * draw_factor, armSpriteName, negligentiaSprite)
-      context.restore()
-
-    }
-  }
-  
-
 
     /*context.rotate(-Math.PI/16)
     context.moveTo(body_vertices[0].x * draw_factor, body_vertices[0].y * draw_factor)
@@ -784,7 +772,6 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
       context.fillStyle = this.color
       context.fill()
     }*/
-  }
   context.restore()
 
 
@@ -854,7 +841,7 @@ BossThree.prototype.draw_special_attack_timer = function(context, draw_factor) {
 
 BossThree.prototype.spawn_this_enemy = function(enemy_type) {
 
-  var angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  var angle = _atan(this.body.GetPosition(), this.player.get_current_position())
   var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor,
     y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor}
 

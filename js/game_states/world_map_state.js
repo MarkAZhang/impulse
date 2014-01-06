@@ -109,7 +109,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
       })(level_name, i)
       var new_button = new IconButton(j == 7 ? "BOSS" : j+1, 20, imp_vars.levelWidth/2 + ((-3.5 + j) * diff), imp_vars.levelHeight/2+130, 50, 50,
       this_color, this_color, callback, "practice"+(i+1))
-
+      new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[i+1].push(new_button)
       new_button.active = imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].seen || imp_vars.dev

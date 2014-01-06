@@ -6,7 +6,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   lin_damp: 4,
   effective_radius: .5,
   force: .42,
-  score_value: 100,
+  score_value: 10000,
   attack_rating: 1,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -19,9 +19,9 @@ imp_params.impulse_enemy_stats["stunner"] = {
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Upon collision, stuns you for 0.5 seconds # (you cannot move or impulse)",
-    "If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
-    "Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
+    "Upon collision, stuns you for a short period",
+    //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
+    //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
 
   className: Stunner
@@ -43,11 +43,10 @@ imp_params.impulse_enemy_stats["spear"] = {
   dies_on_impact: "YES",
 
   enemy_info: [
-    "Charges at you # # Upon collision, causes significant knockback",
-    "Will only charge if it has line of sight",
-    "Cannot charge for 1 second after entering the screen # # Cannot charge from off-screen",
-    "When Impulsed, cannot charge for 5 seconds",
-    "Will cause some knockback upon collision even if not charging",
+    "Will dive at you if it has line of sight",
+    //"Cannot charge for 1 second after entering the screen # # Cannot charge from off-screen",
+    "When Impulsed, cannot dive for a few moments",
+    //"Will cause some knockback upon collision even if not charging",
   ],
 
   special_ability: "Charges you on sight. Hurls you backward on impact.",
@@ -86,12 +85,9 @@ imp_params.impulse_enemy_stats["tank"] = {
   dies_on_impact: "YES",
 
   enemy_info: [
-    "Explodes upon collision, # causing huge knockback to all nearby units",
-    "The blast radius is outlined around the Tank",
-    "When Impulsed, becomes volatile for 1 second # # Collision with another Tank will cause a volatile Tank to explode and die",
-    "Explodes upon death if volatile # # Therefore Will explode upon death when Impulsed into the Hiveline",
-    "Due to its mass, other enemies easily bounce off of the tank # # be wary of hitting smaller enemies directly into tanks"
-
+    "Explodes upon death or collision with player",
+    "The explosion radius is outlined around the tank",
+    "Will explode upon collision with another Tank if it has been recently Impulsed",
   ],
 
   className: Tank
@@ -103,7 +99,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   lin_damp: 3,
   effective_radius: .5,
   force: .15,
-  score_value: 1000,
+  score_value: 100000,
   attack_rating: .5,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
@@ -113,8 +109,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Cannot be Impulsed # # Upon impact, silences you for 3 seconds # (You cannot impulse)",
-    "The Mote is not immune to any other effect, # including collision with other enemies",
+    "Cannot be Impulsed # # Upon collision, disarms you for a few moments",
   ],
   className: Mote
 
@@ -146,8 +141,9 @@ imp_params.impulse_enemy_stats["goo"] = {
   dies_on_impact: "YES",
   enemy_info: [
     "All units within its area of influence are slowed",
-    "Dies upon collision # # Units immediately regain speed",
-    "When Impulsed, dramatically expands its area of influence for 2 seconds",
+    "When Impulsed, expands its area of influence for a few moments",
+    //"Dies upon collision # # Units immediately regain speed",
+    //"When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
   className: Goo
 
@@ -187,13 +183,15 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   draw_polygons: [],
   dies_on_impact: "NO",
   enemy_info: [
-    "Fires its hook at you # and attempts to yank you in # # Can only fire through walls.",
-    "The hook range is outlined around the Harpoon",
+
+    "Fires its hook at you and # attempts to yank you in # # Can only fire through walls.",
+    "The hook range is outlined # around the Harpoon",
     "While the hook is detached from the Harpoon, it cannot move",
-    "When Impulsed, the hook is disabled for 2 seconds",
-    "Can latch onto other enemies and will yank them in",
-    "Will actively try to avoid you # # Does not die on collision",
-    "Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
+    //"When Impulsed, the hook is disabled for 2 seconds",
+    //"Can latch onto other enemies and will yank them in",
+    //"Will actively try to avoid you # # Does not die on collision",
+    "Does not die on collision",
+    //"Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
     "During boss battles, can fire at any time",
 
   ],
@@ -251,13 +249,15 @@ imp_params.impulse_enemy_stats["fighter"] = {
   ],
 
   enemy_info: [
-    "Launches deadly bullets that blow away anything they hit # # Impulse can reflect the bullets",
-    "Very resistant to Impulse # # Very weak against the force of its own bullets",
-    "If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
-    "Every two seconds, charges up a Frenzy bar # # When the Hunter has five Frenzy bars, it will activate Frenzy mode",
-    "During Frenzy mode, the Hunter moves faster and fires more rapidly # # Additionally, its bullets move faster and cannot be Impulsed",
-    "While in Frenzy mode, loses a Frenzy bar whenever it fires # # When the Frenzy bars are depleted, the Hunter exits Frenzy mode",
-    "Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
+    "Fires bullets at you on sight # # Impulse can reflect the bullets",
+    //"Very resistant to Impulse # # Very weak against the force of its own bullets",
+    //"If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
+    "Periodically charges up a Frenzy bar # # When the Hunter has five Frenzy bars, # it will enter Frenzy mode",
+    "During Frenzy mode, moves faster and fires bullets that cannot be Impulsed",
+    "During Frenzy mode, # loses a Frenzy bar whenever it fires # # When the Frenzy bars are depleted, # the Hunter exits Frenzy mode",
+    "Loses one frenzy bar every time it is Impulsed",
+    "Does not die on collision"
+    //"Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
 
@@ -329,10 +329,12 @@ imp_params.impulse_enemy_stats["disabler"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
   dies_on_impact: "YES",
   enemy_info: [
-    "All units within its area of effect (AOE) lose all special powers # # Specifically, you cannot Impulse",
-    "Colliding with an enemy within its AOE # (excluding the disabler itself) # does not reset your multiplier # # However you do not score points",
-    "Dies upon collision # # Units immediately regain special powers",
-    "When Impulsed, dramatically expands its area of influence for 3 seconds"
+    //"All units within its area of influence are slowed",
+    "Disables all units within its area of influence",
+    "When Impulsed, expands its area of influence for a few moments",
+    "Colliding with a disabled enemy will not reset your multiplier # # However you will not score points",
+  //  "Dies upon collision # # Units immediately regain special powers",
+  //  "When Impulsed, dramatically expands its area of influence for 3 seconds"
   ],
   special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
@@ -382,9 +384,11 @@ imp_params.impulse_enemy_stats["troll"] = {
   [0.25 * Math.cos(Math.PI * 5/3+ 0.22), 0.25 * Math.sin(Math.PI * 5/3+ 0.22)]]},
   ],
   enemy_info: [
-    "If Impulsed while active, # reverses your movement and Impulse controls for 1 second",
-    "All Pinwheels become inactive at regular intervals # # Inactive trolls will not reverse you and fly farther when Impulsed",
-    "Upon collision, reverses you for 5 seconds",
+    "Upon collision, # reverses your controls for a few moments",
+    "If Impulsed while active, # reverses your controls for a short period",
+    //"If Impulsed while active, # reverses your movement and Impulse controls for a short period",
+    "Periodically becomes inactive # # Inactive pinwheels will not reverse you and fly farther when Impulsed",
+    //"Upon collision, reverses you for a few moments",
   ],
   //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
   dies_on_impact: "YES",
@@ -427,10 +431,8 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
   className: Slingshot,
   enemy_info: [
-    "Upon Impulse, latches onto its current position and slingshots.",
-    "While in slingshot mode, turns red and cannot be Impulsed.",
-    "Upon collision in slingshot mode, hurls you backward.",
-    "Upon collision outside of slingshot mode, still knocks you back a significant amount"
+    "When Impulsed, latches onto its current position # and slingshots back at you",
+    "While slingshotting, cannot be impulsed",
   ],
 }
 
@@ -440,7 +442,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   lin_damp: 15,
   effective_radius: 0.5,
   force: .96,
-  score_value: 5000,
+  score_value: 500000,
   attack_rating: 10,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 0.5, vertices:
@@ -469,6 +471,9 @@ imp_params.impulse_enemy_stats["orbiter"] = {
     [[Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2],
     [Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2 + Math.sqrt(3)/2],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]*/
+  enemy_info: [
+    "Intelligently avoids your Impulse # # Will charge at you opportunistically",
+  ],
 
   dies_on_impact: "YES",
   special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
@@ -512,6 +517,11 @@ imp_params.impulse_enemy_stats["deathray"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],*/
+  enemy_info: [
+    "Fires an enormous ray that destroys everything in its path # # The ray has infinite range",
+    "After firing, must recharge for a short period # # During this time, the death ray cannot move",
+    "DOes not die on collision"
+  ],
   dies_on_impact: "NO",
   special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
   other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",

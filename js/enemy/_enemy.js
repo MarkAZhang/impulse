@@ -465,10 +465,6 @@ Enemy.prototype.get_target_point = function() {
 }
 
 Enemy.prototype.move = function() {
-  if(this.type == "goo") {
-    var a = 0;
-  }
-
   if(this.player.dying) return //stop moving once player dies
 
   if(this.status_duration[0] > 0) return //locked
@@ -683,7 +679,12 @@ Enemy.prototype.collide_with = function(other) {
 
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
-  this.player.stun(500)
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    this.player.stun(300)  
+  }
+  if(imp_vars.player_data.difficulty_mode == "normal") {
+    this.player.stun(500)  
+  }
 }
 
 // draw a pointer if the enemy is off-screen

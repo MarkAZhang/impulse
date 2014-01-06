@@ -167,6 +167,10 @@ HowToPlayState.prototype.additional_processing = function(dt) {
         this.advancing = true
         this.advance_page_timer = this.delay_during_player_dying_page
       }
+      if (this.cur_page == 4 && this.mode == "first_time_tutorial" && this.stars > 0) {
+        this.advancing = true
+        this.advance_page_timer = this.delay_during_player_dying_page/2
+      }
       if (this.cur_page == 2 && this.mode == "ult_tutorial") {
         this.exit_button.y = 550
       }
@@ -236,7 +240,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     if (this.cur_page == 4) {
       ctx.beginPath()
-      ctx.rect(850, 515, 100, 80)
+      ctx.rect(825, 515, 150, 80)
       ctx.strokeStyle = "red"
       ctx.lineWidth = 6
       ctx.stroke()
@@ -245,7 +249,16 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.fillText("GET THE GATEWAY SCORE TO BEAT THE LEVEL", 400, 420)
 
-      ctx.clearRect(265, 435, 163, 28)
+      ctx.beginPath()
+      ctx.moveTo(700, 555)
+      ctx.lineTo(730, 555)
+      ctx.lineWidth = 16
+      ctx.strokeStyle = "red"
+      ctx.stroke()
+
+      draw_arrow(ctx, 750, 555, 40, "right", "red", false)
+
+      ctx.clearRect(265, 405, 163, 28)
       ctx.shadowColor = "red"
       ctx.fillStyle = "red"
       ctx.fillText("GATEWAY SCORE", 350, 420)
@@ -910,6 +923,7 @@ HowToPlayState.prototype.setPage = function(page) {
 
   if((this.mode == "normal_tutorial" && page == 3 && this.cur_page != 3) ||
       (this.mode == "first_time_tutorial" && page == 2)) {
+  
     this.temp_fragments = new FragmentGroup("player", {x: 77/imp_vars.draw_factor, y: 75/imp_vars.draw_factor}, {x:0, y:0}, false)
     this.temp_fragments.process(300)
   }

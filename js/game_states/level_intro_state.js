@@ -15,7 +15,7 @@ function LevelIntroState(level_name, world) {
 
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.bright_color, function(_this){return function(){
+  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.bright_color, this.bright_color, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new WorldMapState(_this.world_num))
     }
@@ -219,7 +219,7 @@ LevelIntroState.prototype.on_click = function(x, y) {
 
 LevelIntroState.prototype.load_complete = function() {
   var hive_numbers = new HiveNumbers(this.world_num, false)
-  this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight/2 + 260, 100, 65, this.color, this.bright_color, function(_this){
+  this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight/2 + 260, 100, 65, this.bright_color, this.bright_color, function(_this){
     return function(){
       switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, true))
     }

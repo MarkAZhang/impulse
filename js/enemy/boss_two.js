@@ -212,9 +212,9 @@ BossTwo.prototype.additional_processing = function(dt) {
   }
 
   this.player_gravity_force = 0
-  var boss_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition())
+  var boss_angle = _atan(this.player.get_current_position(), this.body.GetPosition())
 
-  var gravity_force = this.get_gravity_force(this.player.body.GetPosition())
+  var gravity_force = this.get_gravity_force(this.player.get_current_position())
 
   if(gravity_force > 0) {
     this.player_gravity_force += gravity_force
@@ -261,6 +261,7 @@ var polygons = this.get_arm_polygons()
 
 }
 BossTwo.prototype.pre_draw = function(context, draw_factor) {
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
   context.save()
   if (this.dying) {
       var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
@@ -268,38 +269,14 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
   } else
       context.globalAlpha *= this.visibility ? this.visibility : 1
 
-  context.globalAlpha *= 0.5;
   if(this.black_hole_timer < 0 && this.black_hole_timer >= -this.black_hole_duration) {
+    context.globalAlpha *= 0.5;
     var gray = Math.min(5 - Math.abs((-this.black_hole_timer - this.black_hole_duration/2)/(this.black_hole_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
     context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
+    context.globalAlpha *= 2
   }
-  context.restore()
-}
-
-BossTwo.prototype.draw = function(context, draw_factor) {
-
-  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
-
-
-  var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
-  context.save()
-  if (this.dying)
-      context.globalAlpha *= (1 - prog)
-    else
-      context.globalAlpha *= this.visibility != null ? this.visibility : 1
-
-
-  /*this.draw_glows(context, draw_factor);
-  /*if(this.lighten_timer >= 0) {
-    this.draw_special_attack_timer(context, draw_factor)
-  }*/
-  //this.draw_aura(context, draw_factor)
-
-
-
-  context.save()
 
   if(this.black_hole_timer < 0 && this.black_hole_timer >= -this.black_hole_duration) {
     var tp = this.body.GetPosition()
@@ -320,7 +297,6 @@ BossTwo.prototype.draw = function(context, draw_factor) {
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.black_hole_radius * draw_factor, 0, 2*Math.PI, true)
     context.stroke()*/
   }
-  context.globalAlpha *= 0.5
 
   var aura_factor = 1
   if(this.black_hole_timer >= this.black_hole_interval  - this.black_hole_switch_time) {
@@ -335,12 +311,12 @@ BossTwo.prototype.draw = function(context, draw_factor) {
     0, 90 * aura_factor * this.last_growth_factor * this.high_gravity_factor, 90 * aura_factor *this.last_growth_factor * this.high_gravity_factor, "consumendi_aura", consumendiSprite)
   }
 
+  context.save()
+
+  context.globalAlpha *= 0.7
   for(var i = 0; i < 16; i++) {
     var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
-
-
-    if(1 - this.black_hole_timer/ this.black_hole_interval > 1-i/16) {
-      context.globalAlpha *= 1.5
+    if(this.spawned && 1 - this.black_hole_timer/ this.black_hole_interval > 1-i/16) {
       drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       angle, 30, 56, "consumendi_small_diamond_filled", consumendiSprite)
@@ -350,18 +326,36 @@ BossTwo.prototype.draw = function(context, draw_factor) {
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       angle, 30, 56, "consumendi_small_diamond", consumendiSprite)
     }
-
-
   }
   context.restore()
-      /*if(this.knockback_red_duration > 0) {
-      drawSprite(context, tp.x*draw_factor,
-      tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head_red", immunitasSprite)
-
-    } else*/
 
   this.draw_glows(context, draw_factor)
+
+  context.restore()
+}
+
+
+BossTwo.prototype.draw = function(context, draw_factor) {
+
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
+
+
+  var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
+  context.save()
+  if (this.dying)
+      context.globalAlpha *= (1 - prog)
+    else
+      context.globalAlpha *= this.visibility != null ? this.visibility : 1
+
+  var tp = this.body.GetPosition()
+
+  /*this.draw_glows(context, draw_factor);
+  /*if(this.lighten_timer >= 0) {
+    this.draw_special_attack_timer(context, draw_factor)
+  }*/
+  //this.draw_aura(context, draw_factor)
+
+
 
   if(this.knockback_red_duration > 0) {
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head_red", consumendiSprite)
@@ -467,7 +461,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
     context.stroke()
   }*/
 
-  var tp = this.player.body.GetPosition()
+  var tp = this.player.get_current_position()
   var angle = _atan(tp, this.body.GetPosition())
 
 
@@ -564,13 +558,13 @@ BossTwo.prototype.black_hole = function() {
   var black_hole_force = 0
 
   if(!this.player_struck) {
-    if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.black_hole_radius)
+    if(p_dist(this.body.GetPosition(), this.player.get_current_position()) <= this.black_hole_radius)
     {
       black_hole_force = this.black_hole_force * black_hole_factor * this.black_hole_player_factor
     } else {
       black_hole_force = this.boss_low_gravity_force
     }
-    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition()) + Math.PI
+    var tank_angle = _atan(this.body.GetPosition(), this.player.get_current_position()) + Math.PI
 
     this.player_gravity_force += black_hole_force
 

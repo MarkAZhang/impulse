@@ -10,7 +10,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.visibility_graph = visibility_graph
   this.bg_drawn = false
   this.color = impulse_colors['world '+ this.world_num + ' bright']
-  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){
+  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, this.color, function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
@@ -25,7 +25,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     this.restart_button.extra_text = "SHIFT KEY"
   }
 
- this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+ this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.color, function(_this){return function(){
     if(_this.world_num) {
       switch_game_state(new WorldMapState(_this.world_num))
     }
@@ -128,8 +128,11 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     this.level.impulse_game_state= null
     bg_canvas.setAttribute("style", "display:none" )
+
     bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
     this.bg_drawn = true
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     this.bg_drawn = true
@@ -235,7 +238,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
     ctx.font = '12px Muli'
-    ctx.fillText("TIME",imp_vars.levelWidth/2, 355)
+    ctx.fillText("GAME TIME",imp_vars.levelWidth/2, 355)
     ctx.font = '28px Muli'
     ctx.fillText(convert_to_time_notation(this.game_numbers.seconds), imp_vars.levelWidth/2, 380)
 
@@ -244,12 +247,21 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2, 400)
     } else {
-      var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
-      ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
-      ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
-      ctx.font = '28px Muli'
-      ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, 430)
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars == 3) {
+        var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
+        ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
+        ctx.font = '12px Muli'
+        ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
+        ctx.font = '28px Muli'
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, 430)
+      } else {
+        ctx.fillStyle = this.color
+        ctx.font = '12px Muli'
+        ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
+        ctx.font = '28px Muli'
+        ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2, 430)
+
+      }
     }
   }
 

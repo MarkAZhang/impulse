@@ -50,7 +50,7 @@ TitleState.prototype.process = function(dt) {
 
 TitleState.prototype.draw_bg = function(ctx, alpha) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#080808"
+  ctx.fillStyle = "#000"
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.globalAlpha = alpha
   ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
@@ -167,7 +167,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
   } else {
-    this.buttons["menu"].push(new IconButton("STANDARD MODE", 20, imp_vars.levelWidth/2 - 130, imp_vars.levelHeight/2 + 100, 150, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("STANDARD MODE", 20, imp_vars.levelWidth/2 - 130, imp_vars.levelHeight/2 + 100, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "easy"
@@ -188,7 +188,7 @@ TitleState.prototype.setup_main_menu = function() {
       }
     }, "player"))
 
-    this.buttons["menu"].push(new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2 + 130, imp_vars.levelHeight/2 + 100, 150, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2 + 130, imp_vars.levelHeight/2 + 100, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "normal"

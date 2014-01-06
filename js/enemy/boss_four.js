@@ -324,7 +324,7 @@ BossFour.prototype.additional_processing = function(dt) {
       var cur_angle = this.body.GetAngle();
       if(this.ready_attack_bud.type == "attack") {
         
-        var target_angle =  angle_closest_to(cur_angle,_atan(this.body.GetPosition(), this.player.body.GetPosition()) - this.attack_bud_angle);
+        var target_angle =  angle_closest_to(cur_angle,_atan(this.body.GetPosition(), this.player.get_current_position()) - this.attack_bud_angle);
 
       } else if(this.ready_attack_bud.type == "spawn") {
 
@@ -433,7 +433,7 @@ BossFour.prototype.additional_processing = function(dt) {
         if(this.fire_durations[m] <= this.fire_interval/2 && !this.fired[m]) {
           this.fired[m] = true
 
-          if(pointInPolygon(this.ray_polygons[m], this.player.body.GetPosition())) {
+          if(pointInPolygon(this.ray_polygons[m], this.player.get_current_position())) {
             if(m == 1) {
               this.player.stun(1500)
               this.impulse_game_state.reset_combo()
@@ -463,7 +463,7 @@ BossFour.prototype.additional_processing = function(dt) {
       this.shoot_durations[m] = Math.max(this.shoot_durations[m] - dt, 0)
       if(this.shoot_durations[m] <= this.shoot_interval* this.aim_proportion && !this.aimed[m]) {//if it hasn't been aimed, aim it now
         var laser_loc = this.get_two_laser_locs()[m]
-        this.ray_angles[m] = _atan(laser_loc, this.player.body.GetPosition())
+        this.ray_angles[m] = _atan(laser_loc, this.player.get_current_position())
         this.fire_angles[m] = this.body.GetAngle()
         this.ray_polygons[m] = []
         this.ray_polygons[m].push({x: laser_loc.x + this.ray_buffer_radius * Math.cos(this.ray_angles[m]) + this.ray_radius * Math.cos(this.ray_angles[m] + Math.PI/2),
@@ -593,7 +593,7 @@ BossFour.prototype.create_body_buds = function() {
 }
 
 BossFour.prototype.repel_enemies = function() {
-  var ref_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  var ref_angle = _atan(this.body.GetPosition(), this.player.get_current_position())
   for(var index in this.level.enemies) {
     var enemy = this.level.enemies[index]
     if(enemy.dying) continue
@@ -889,6 +889,7 @@ BossFour.prototype.get_two_laser_locs = function() {
 }
 
 BossFour.prototype.pre_draw = function(context, draw_factor) {
+  if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
 
     context.save()
     var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
@@ -941,7 +942,7 @@ BossFour.prototype.draw_glows = function(context, draw_factor) {
 }
 
 BossFour.prototype.move = function() {
-  //this.set_heading(this.player.body.GetPosition())
+  //this.set_heading(this.player.get_current_position())
 }
 
 BossFour.prototype.collide_with = function(other) {
@@ -950,7 +951,7 @@ BossFour.prototype.collide_with = function(other) {
 
   if(other === this.player) {
 
-    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    var tank_angle = _atan(this.body.GetPosition(), this.player.get_current_position())
     this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     //this.cause_of_death = "hit_player"
   }

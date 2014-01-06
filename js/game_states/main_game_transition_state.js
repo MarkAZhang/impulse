@@ -416,15 +416,15 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '24px Muli'
     if(this.victory) {
       ctx.textAlign = "left"
-      ctx.fillText("+"+this.time_sparks_awarded, imp_vars.levelWidth/2 - 105, 275)
-      draw_spark(ctx, imp_vars.levelWidth/2 - 115, 267)
+      ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 105, 275)
+      drawSprite(ctx, imp_vars.levelWidth/2 - 115, 267, 0, 20, 20, "spark")
 
       if(this.combo_sparks_awarded < 10) {
-        ctx.fillText("+"+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 95, 275)
-        draw_spark(ctx, imp_vars.levelWidth/2 + 85, 267)
+        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 95, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 + 85, 267, 0, 20, 20, "spark")
       } else {
-        ctx.fillText("+"+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 89, 275)
-        draw_spark(ctx, imp_vars.levelWidth/2 + 79, 267)
+        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 89, 275)
+        drawSprite(ctx, imp_vars.levelWidth/2 + 79, 267, 0, 20, 20, "spark")
       }
     } else {
 

@@ -445,6 +445,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.drawImage(bg_canvas, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   }
 
+  this.level.pre_draw(ctx, imp_vars.draw_factor )
+
   if(this.zoom != 1 && this.victory) {
     ctx.save()
 
@@ -803,13 +805,13 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
 
  
-  context.beginPath()
+  /*context.beginPath()
   context.fillStyle = "white"
   context.font = '20px Muli'
   context.fillText("FPS: "+this.fps, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
   context.fill()
   context.shadowBlur = 0;
-  context.save()
+  context.save()*/
 
   draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110, 24, {labels: true, ult: this.has_ult})
   context.restore()
@@ -1056,9 +1058,6 @@ ImpulseGameState.prototype.check_cutoffs = function() {
       if(this.stars == 1) {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
-        if (this instanceof HowToPlayState) {
-          this.gateway_opened()
-        }
         //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
         this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
       } else if(this.stars == 2) {
@@ -1077,9 +1076,16 @@ ImpulseGameState.prototype.check_cutoffs = function() {
             this.addScoreLabel("1UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
           }
         }
+
         this.set_score_achieve_text("GOLD SCORE", impulse_colors["gold"], 24)
       }
-    }
+
+      if (this.stars > 0) {
+        if (this instanceof HowToPlayState) {
+          this.gateway_opened()
+        }
+      }
+  }
 
     //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, 40, 3000)
   }

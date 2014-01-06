@@ -31,6 +31,11 @@ function Spear(world, x, y, id, impulse_game_state) {
 Spear.prototype.enemy_move = Enemy.prototype.move
 
 Spear.prototype.move = function() {
+
+  if(this.player.dying) return //stop moving once player dies
+
+  if(this.status_duration[0] > 0) return //locked
+    
   if (isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.path = [this.player.body.GetPosition()]
     this.move_to(this.player.body.GetPosition())

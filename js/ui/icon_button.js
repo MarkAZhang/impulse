@@ -8,11 +8,14 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
   this.size = size
   this.real_size = size
   this.init(x, y, w, h, action, false, color)
-  this.bg_color = null
+  
   this.hover_color = hcolor
   this.shadow = false;
   this.icon = icon
   this.active = true
+  this.bg_color = null//"black"
+  this.underline_on_hover = true
+  //this.border = true
 }
 
 IconButton.prototype.additional_draw = function(context) {
@@ -20,9 +23,19 @@ IconButton.prototype.additional_draw = function(context) {
   this.draw_icon(context)
   context.beginPath()
   context.textAlign = 'center'
+  context.font = this.size+'px Muli';
+  if (this.hover && this.underline_on_hover) {
+    context.beginPath();
+    var textWidth = context.measureText(this.text).width;
+    context.moveTo(this.x - textWidth/2, this.y + this.h * 0.4);
+    context.lineTo(this.x + textWidth/2, this.y + this.h * 0.4);
+    context.strokeStyle = this.hover_color ? this.hover_color : this.color
+    context.lineWidth = 2;
+    context.stroke();
+  }
 
   //context.font = this.hover ? (1.25 * this.size)+'px Muli' : this.size+'px Muli'
-  context.font = this.size+'px Muli';
+  
   if(!this.active && (this.icon.slice(0, 8) == "practice")) {
     context.globalAlpha *= 0.4
   }
@@ -61,6 +74,7 @@ IconButton.prototype.additional_draw = function(context) {
 IconButton.prototype.draw_icon  = function(context) {
   if(!this.icon) return
 	context.save()
+  context.shadowBlur = 0
 	if(this.icon == "player") {
 		if(this.hover) {
 		  drawSprite(context, this.x, this.y - this.h/8, 0, 40, 40, "player_normal")
@@ -148,17 +162,19 @@ IconButton.prototype.draw_icon  = function(context) {
     draw_arrow_keys(context, this.x - this.w * 0.17, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     draw_bare_mouse(context, this.x + this.w * 0.23, this.y - this.h * 0.1, this.w * 0.17, this.h * 0.4, this.hover ? this.hover_color : this.color)
   } else if(this.icon == "controls") {
+    context.shadowBlur = 0
     if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {
-      draw_arrow_keys(context, this.x - this.w * 0.3, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
-      draw_bare_mouse(context, this.x + this.w * 0.4, this.y - this.h * 0.1, this.w * 0.3, this.h * 0.4, this.hover ? this.hover_color : this.color)
+      
+      draw_arrow_keys(context, this.x - this.w * 0.15, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_bare_mouse(context, this.x + this.w * 0.2, this.y - this.h * 0.1, this.w * 0.15, this.h * 0.4, this.hover ? this.hover_color : this.color)
     }
     if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
-      draw_bare_mouse(context, this.x - this.w * 0.4, this.y - this.h * 0.1, this.w * 0.3, this.h * 0.4, this.hover ? this.hover_color : this.color)
-      draw_arrow_keys(context, this.x + this.w * 0.3, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_bare_mouse(context, this.x - this.w * 0.2, this.y - this.h * 0.1, this.w * 0.15, this.h * 0.4, this.hover ? this.hover_color : this.color)
+      draw_arrow_keys(context, this.x + this.w * 0.15, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }
     if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
-      draw_arrow_keys(context, this.x - this.w * 0.4, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
-      draw_arrow_keys(context, this.x + this.w * 0.4, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_arrow_keys(context, this.x - this.w * 0.2, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
+      draw_arrow_keys(context, this.x + this.w * 0.2, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }
   } else if(this.icon.slice(0, 5) == "world") {
     var text = ["I", "II","III", "IV"]

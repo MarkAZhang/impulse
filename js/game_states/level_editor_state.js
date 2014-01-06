@@ -580,7 +580,13 @@ LevelEditorState.prototype.load = function(string) {
 }
 
 LevelEditorState.prototype.load_level = function(string) {
-  var polygon_ans = imp_params.impulse_level_data[string].obstacle_v
+  var polygon_ans = null
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    polygon_ans = imp_params.impulse_level_data[string].obstacle_v_easy
+  }
+  if (!polygon_ans) {
+    polygon_ans = imp_params.impulse_level_data[string].obstacle_v
+  }
   this.polygons = []
   for(var i = 0; i < polygon_ans.length; i++) {
     var temp_p = []
@@ -593,7 +599,13 @@ LevelEditorState.prototype.load_level = function(string) {
 }
 
 LevelEditorState.prototype.add_level = function(string) {
-  var polygon_ans = imp_params.impulse_level_data[string].obstacle_v
+  var polygon_ans = null
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    polygon_ans = imp_params.impulse_level_data[string].obstacle_v_easy
+  }
+  if (!polygon_ans) {
+    polygon_ans = imp_params.impulse_level_data[string].obstacle_v
+  }
   for(var i = 0; i < polygon_ans.length; i++) {
     var temp_p = []
     for(var j = 0; j < polygon_ans[i].length; j++) {

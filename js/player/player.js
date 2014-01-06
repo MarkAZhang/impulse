@@ -313,7 +313,7 @@ Player.prototype.process = function(dt) {
         //fixtures[i].SetDensity(this.density/3)
       }
       this.body.ResetMassData()
-      this.force = this.true_force/this.lighten_factor/this.lighten_factor
+      this.readjust_force()
     }
   }
   else {
@@ -328,9 +328,7 @@ Player.prototype.process = function(dt) {
         //fixtures[i].SetDensity(this.density)
       }
       this.body.ResetMassData()
-      this.force = this.true_force
-      this.body.SetLinearDamping(this.lin_damp)
-
+      this.readjust_force()
     }
   }
 
@@ -348,7 +346,7 @@ Player.prototype.process = function(dt) {
 
       fixtures[i].SetDensity(this.density*this.bulk_factor)
     }
-    this.force = this.true_force * this.bulk_factor
+    this.readjust_force()
     this.body.ResetMassData()
     this.bulked = true
   } else if(this.bulked){
@@ -360,7 +358,7 @@ Player.prototype.process = function(dt) {
     for(var i = 0; i < fixtures.length; i++) {
       fixtures[i].SetDensity(this.density)
     }
-    this.force = this.true_force
+    this.readjust_force()
     this.body.ResetMassData()
   }
 
@@ -383,7 +381,7 @@ Player.prototype.process = function(dt) {
       if(this.impulse_game_state.hive_numbers.ultimates > 0) {
         this.initiate_ultimate()
         if (!(this.impulse_game_state instanceof HowToPlayState)) {
-          this.impulse_game_state.hive_numbers.ultimates -= 1
+          //this.impulse_game_state.hive_numbers.ultimates -= 1
         }
       }
       
@@ -438,7 +436,7 @@ Player.prototype.process = function(dt) {
         if(this.impulse_game_state.hive_numbers.ultimates > 0) {
           this.initiate_ultimate()
           if (!(this.impulse_game_state instanceof HowToPlayState)) {
-            this.impulse_game_state.hive_numbers.ultimates -= 1
+            //this.impulse_game_state.hive_numbers.ultimates -= 1
           }
         }
       }
@@ -568,6 +566,19 @@ Player.prototype.process = function(dt) {
   }
 }
 
+Player.prototype.readjust_force = function() {
+
+
+  if(this.status_duration[5] > 0) {
+    this.force = this.true_force * this.bulk_factor
+  } else if (this.status_duration[3] > 0){
+      this.force = this.true_force/this.lighten_factor/this.lighten_factor
+  }
+  else {
+    this.force = this.true_force
+  }
+}
+
 Player.prototype.initiate_ultimate = function() {
   this.ultimate = true
   this.ultimate_loc = this.body.GetPosition().Copy()
@@ -575,18 +586,21 @@ Player.prototype.initiate_ultimate = function() {
   this.bulk(this.ultimate_length)
   this.stun(this.ultimate_length)
   this.body.SetLinearVelocity(new b2Vec2(0, 0))
+  if (this.level.is_boss_level) {
+    this.body.SetPosition(new b2Vec2(-1000, -1000))
+  }
 }
 
 Player.prototype.process_ultimate = function(final_strike) {
 
-var final_strike_factor = final_strike ? 1 : 0.002
-  var ultimate_force = final_strike_factor * this.ultimate_factor
   for(var i = 0; i < this.level.enemies.length; i++)
     {
       var this_enemy = this.level.enemies[i]
       if(!this_enemy.dying)//enemy has not been hit
       {
         var impulse_sensitive_points = this_enemy.get_impulse_sensitive_pts()
+        var final_strike_factor = final_strike ? 1 : 0.002
+        var ultimate_force = final_strike_factor * this.ultimate_factor
 
         for(var j = 0; j < impulse_sensitive_points.length; j++) {
             if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
@@ -603,7 +617,7 @@ var final_strike_factor = final_strike ? 1 : 0.002
               var prop = 1 //Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
 
               // Less for bosses.
-              var enemy_factor =  this_enemy.is_boss ? 0.05/this_enemy.impulse_extra_factor : 1;
+              var enemy_factor =  this_enemy.is_boss ? 0.02/this_enemy.impulse_extra_factor : 1;
 
               // Slightly more for Slingshots. Lighter enemies tend to not get thrown as far.
               if (this_enemy.type == "slingshot") {
@@ -643,6 +657,18 @@ Player.prototype.finish_ultimate = function() {
   if (this.impulse_game_state instanceof HowToPlayState) {
     this.impulse_game_state.player_ulted()
   }
+  if (this.level.is_boss_level) {
+    this.body.SetPosition(this.ultimate_loc)    
+  }
+}
+
+Player.prototype.get_current_position = function() {
+  if (!this.ultimate) {
+    return this.body.GetPosition()
+  } else {
+    return this.ultimate_loc
+  }
+
 }
 
 Player.prototype.point_in_impulse_angle = function(pt) {

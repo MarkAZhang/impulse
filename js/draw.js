@@ -411,7 +411,7 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
   context.save()
 
   context.shadowColor = color
-  context.shadowBlur = 10
+  context.shadowBlur = 0
   //drawSprite(context, x, y - size, 0, size, size, "key")
   //drawSprite(context, x - size, y, 0, size, size, "key")
   //drawSprite(context, x, y , 0, size, size, "key")
@@ -468,7 +468,7 @@ function draw_mouse(context, x, y, w, h, color) {
   /*context.font = "10px Muli"
   context.textAlign = "center"
   context.fillText("LEFT CLICK", x, y - w/2 - 30)*/
-  context.shadowBlur = 10
+  context.shadowBlur = 0
   draw_rounded_rect(context, x, y, w, h, h*0.2, color)
   context.clip()
   context.beginPath()
@@ -497,7 +497,7 @@ function draw_right_mouse(context, x, y, w, h, color) {
   /*context.font = "10px Muli"
   context.textAlign = "center"
   context.fillText("RIGHT CLICK", x, y - w/2 - 30)*/
-  context.shadowBlur = 10
+  context.shadowBlur = 0
   draw_rounded_rect(context, x, y, w, h, h * 0.2, color)
   context.clip()
   context.beginPath()
@@ -522,7 +522,7 @@ function draw_right_mouse(context, x, y, w, h, color) {
 function draw_rounded_rect(context, x, y, w, h, r, color) {
   context.save()
   context.shadowColor = color
-  context.shadowBlur = 10
+  context.shadowBlur = 0
   context.beginPath();
   context.moveTo(x - w/2 + r, y - h/2);
   context.arcTo(x+w/2, y - h/2,   x+w/2, y+h/2, r);
@@ -902,7 +902,7 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
 
 function draw_arrow(context, x, y, size, dir, color, shadowed) {
 
-  shadowed = shadowed == undefined ? true : shadowed
+  shadowed = shadowed == undefined ? false : shadowed
   context.save();
   context.translate(x, y);
 
@@ -1062,7 +1062,14 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.fillStyle = border_color
   context.fill()
   context.globalAlpha = 1
-  var polygons = imp_params.impulse_level_data[level_name].obstacle_v
+  var polygons = null
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    polygons = imp_params.impulse_level_data[level_name].obstacle_v_easy
+  }
+  if (!polygons) {
+    polygons = imp_params.impulse_level_data[level_name].obstacle_v
+  }
+  
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
@@ -1215,7 +1222,7 @@ spriteSheetData = {
 
   "consumendi_head": [0, 0, 180, 180],
   "consumendi_head_red": [720, 136, 135, 135],
-  "consumendi_aura": [180, 0, 270, 270],
+  "consumendi_aura": [181, 0, 269, 269],
   "consumendi_small_diamond": [94, 180, 30, 56],
   "consumendi_long_arrow": [64, 210, 50, 80],
   "consumendi_small_diamond_filled": [64, 180, 30, 56],

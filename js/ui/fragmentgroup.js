@@ -137,10 +137,11 @@ Fragment.prototype.draw = function(context, prog) {
   if(this.shape == "spark" || this.shape == "multi") {
     context.save()
     context.globalAlpha *= prog
+    var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
     if(this.shape == "spark")
-      draw_spark_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor)
+      draw_spark_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor, pointer_angle)
     else if(this.shape == "multi")
-      draw_multi_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor)
+      draw_multi_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor, pointer_angle)
 
     context.restore()
 
