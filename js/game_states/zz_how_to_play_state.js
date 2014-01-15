@@ -13,9 +13,9 @@ function HowToPlayState(mode) {
   this.hive_numbers = new HiveNumbers(0, false)
   this.advancing = false
   this.advance_page_timer = 0
-  this.delay_after_player_moved = 2000
-  this.delay_during_player_dying_page = 7500
-  this.title_screen_delay = 6000
+  this.delay_after_player_moved = 100
+  this.delay_during_player_dying_page = 750
+  this.title_screen_delay = 400
   this.transition_interval = 500
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
@@ -143,7 +143,7 @@ HowToPlayState.prototype.set_difficulty_button_underline = function() {
 }
 
 HowToPlayState.prototype.additional_processing = function(dt) {
-  if(this.pause) return
+  if(this.pause || this.zoom != 1) return
 
   this.player.bulk(1000)
   if (this.advancing) {
@@ -163,14 +163,7 @@ HowToPlayState.prototype.additional_processing = function(dt) {
     }
     else if(this.transition_state == "out") {
       this.setPage(this.cur_page + 1)
-      if (this.cur_page == 2 && this.mode == "first_time_tutorial") {
-        this.advancing = true
-        this.advance_page_timer = this.delay_during_player_dying_page
-      }
-      if (this.cur_page == 4 && this.mode == "first_time_tutorial" && this.stars > 0) {
-        this.advancing = true
-        this.advance_page_timer = this.delay_during_player_dying_page/2
-      }
+     
       if (this.cur_page == 2 && this.mode == "ult_tutorial") {
         this.exit_button.y = 550
       }
@@ -239,33 +232,35 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
 
     if (this.cur_page == 4) {
-      ctx.beginPath()
-      ctx.rect(825, 515, 150, 80)
-      ctx.strokeStyle = "red"
-      ctx.lineWidth = 6
-      ctx.stroke()
-      ctx.font = '20px Muli'
-      ctx.textAlign = "center"
-      ctx.fillStyle = "white"
-      ctx.fillText("GET THE GATEWAY SCORE TO BEAT THE LEVEL", 400, 420)
-
-      ctx.beginPath()
-      ctx.moveTo(700, 555)
-      ctx.lineTo(730, 555)
-      ctx.lineWidth = 16
-      ctx.strokeStyle = "red"
-      ctx.stroke()
-
-      draw_arrow(ctx, 750, 555, 40, "right", "red", false)
-
-      ctx.clearRect(265, 405, 163, 28)
-      ctx.shadowColor = "red"
-      ctx.fillStyle = "red"
-      ctx.fillText("GATEWAY SCORE", 350, 420)
+      this.draw_score_points_page(ctx)
     }
 
     if (this.cur_page == 5) {
+      this.draw_multiplier_page(ctx)
+    }
+    if (this.cur_page == 6) {
+      this.draw_multiplier_page_two(ctx)
+    }
+
+    if (this.cur_page == 7) {
+      this.draw_sparks_page(ctx)
+    }
+
+    if (this.cur_page == 8) {
+      this.draw_score_points_page(ctx)
+    }
+
+    if (this.cur_page == 9) {
       this.draw_enter_gateway_page(ctx)
+    }
+
+    if([2, 5, 6, 7].indexOf(this.cur_page) != -1) {
+      ctx.save()
+      ctx.fillStyle = "white"
+      ctx.globalAlpha *= 0.5
+      ctx.font = "16px Muli"
+      ctx.fillText("PRESS SPACEBAR TO CONTINUE", 400, 580)
+      ctx.restore()
     }
   }
 
@@ -319,8 +314,6 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
 
      if(this.cur_page == 4) {
-
-     
       this.draw_enemies_dying_page(ctx)
     }
 
@@ -366,86 +359,12 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
 
     if(this.cur_page == 7 + this.ult_page_offset) {
-
-      ctx.font = '72px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.textAlign = 'center'
-      ctx.fillText('x100', 400, 350)
-      ctx.font = '16px Muli'
-      ctx.fillStyle = "white"
-      ctx.fillText("YOUR MULTIPLIER INCREASES YOUR SCORE", 400, 400)
-      ctx.fillText("KILLING ENEMIES INCREASES YOUR MULTIPLIER", 400, 430)
-      ctx.fillText("TOUCHING ENEMIES RESETS YOUR MULTIPLIER", 400, 460)
-
-      ctx.beginPath()
-      ctx.arc(imp_vars.canvasWidth - imp_vars.sidebarWidth*3/2, imp_vars.canvasHeight/2 - 20, 70, 0, 2 * Math.PI)
-      ctx.lineWidth = 8
-      ctx.strokeStyle = 'red'
-      ctx.stroke()
-
-      ctx.globalAlpha = 1
-      ctx.font = '16px Muli'
-      ctx.shadowColor = "red"
-      ctx.fillStyle = "red"
-      ctx.clearRect(280, 380, 90, 25)
-      ctx.fillText("MULTIPLIER", 326, 400)
-
-
- //     ctx.clearRect(515, 380, 115, 25)
-   //   ctx.fillText("MULTIPLIER", 568, 400)
-      ctx.font = '12px Muli'
-      ctx.fillStyle = "white"
-      ctx.globalAlpha /= 2
-      ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 530)
+      this.draw_multiplier_page(ctx)
     }
 
     if(this.cur_page == 8 + this.ult_page_offset) {
 
-      ctx.beginPath()
-      ctx.arc(this.level.spark_loc.x, this.level.spark_loc.y, 25, 0, 2 * Math.PI)
-      ctx.lineWidth = 4
-      ctx.strokeStyle = 'red'
-      ctx.stroke()
-      ctx.beginPath()
-      ctx.arc(this.level.multi_loc.x, this.level.multi_loc.y, 25, 0, 2 * Math.PI)
-      ctx.stroke()
-
-      draw_spark(ctx, 300, 380)
-      ctx.font = '12px Muli'
-      ctx.shadowColor = impulse_colors["impulse_blue"]
-      ctx.shadowBlur = 10
-      ctx.fillStyle = ctx.shadowColor
-
-
-      ctx.fillText("+10 SPARKS", 300, 410)
-      ctx.shadowBlur = 0
-      draw_multi(ctx, 500, 380)
-      ctx.font = '12px Muli'
-      ctx.shadowBlur = 10
-      ctx.shadowColor = "white"
-      ctx.fillStyle = ctx.shadowColor
-
-      ctx.fillText("+5 MULTIPLIER", 500, 410)
-
-      ctx.font = '20px Muli'
-      ctx.shadowBlur = 0
-      ctx.fillText("COLLECT SPARKS", 400, 500)
-      ctx.globalAlpha = 1
-      ctx.font = '20px Muli'
-      ctx.shadowColor = "red"
-      ctx.fillStyle = "red"
-      ctx.clearRect(410, 480, 115, 25)
-      ctx.fillText("SPARKS", 446, 500)
-
-      ctx.font = '12px Muli'
-      ctx.fillStyle = "white"
-      ctx.fillText("100 SPARKS = 1UP", 400, 530)
-
-      ctx.beginPath()
-      ctx.rect(-160, imp_vars.canvasHeight - 140, 120, 80)
-      ctx.strokeStyle = "red"
-      ctx.lineWidth = 4
-      ctx.stroke()
+      this.draw_sparks_page(ctx) 
     }
     if(this.has_ult) {
 
@@ -625,6 +544,175 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   ctx.restore()
 }
 
+HowToPlayState.prototype.draw_score_points_page = function(ctx) {
+  ctx.beginPath()
+      ctx.rect(825, 515, 150, 80)
+      ctx.strokeStyle = "red"
+      ctx.lineWidth = 6
+      ctx.stroke()
+      ctx.font = '24px Muli'
+      ctx.textAlign = "center"
+      ctx.fillStyle = "white"
+      ctx.fillText("GET THE GATEWAY SCORE TO BEAT THE LEVEL", 400, 420)
+
+      ctx.beginPath()
+      ctx.moveTo(710, 555)
+      ctx.lineTo(740, 555)
+      ctx.lineWidth = 16
+      ctx.strokeStyle = "red"
+      ctx.stroke()
+      draw_arrow(ctx, 750, 555, 40, "right", "red", false)
+
+      ctx.clearRect(235, 400, 210, 28)
+      ctx.shadowColor = "red"
+      ctx.fillStyle = "red"
+      ctx.fillText("GATEWAY SCORE", 340, 420)
+}
+
+HowToPlayState.prototype.draw_arrow_with_base = function(ctx, x, y, size, color) {
+  ctx.beginPath()
+  ctx.moveTo(x - size/2, y)
+  ctx.lineTo(x + size * 0.4, y)
+  ctx.lineWidth = size/5
+  ctx.strokeStyle = color
+  ctx.stroke()
+  draw_arrow(ctx, x + size/2, y, size * 0.6, "right", "white", false)
+}
+
+HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
+  
+  ctx.font = '24px Muli'
+  ctx.fillStyle = "white"
+  ctx.fillText("YOUR MULTIPLIER INCREASES THE POINTS", 400, 340)
+  ctx.fillText("YOU GET FROM KILLING ENEMIES", 400, 375)
+
+  
+  ctx.font = '24px Muli'
+  ctx.shadowColor = "red"
+  ctx.fillStyle = "red"
+  ctx.clearRect(240, 320, 125, 25)
+  ctx.fillText("MULTIPLIER", 303, 340)
+
+
+  var y_value = 500
+
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.font = '72px Muli'  
+  ctx.fillText('100', 150, y_value)
+
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText('BASE POINT VALUE', 150, y_value + 40)
+  ctx.font = '16px Muli'
+  ctx.fillText('OF ENEMY', 150, y_value + 60)
+
+  this.draw_arrow_with_base(ctx, 275, y_value - 25, 50, "white")
+
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.font = '72px Muli'
+  ctx.textAlign = 'center'
+  ctx.fillText('x5', 400, y_value)
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText("YOUR CURRENT", 400, y_value + 40)
+  ctx.fillText("MULTIPLIER", 400, y_value + 60)
+
+  this.draw_arrow_with_base(ctx, 525, y_value - 25, 50, "white")
+
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.font = '72px Muli'
+  ctx.fillText('+500', 675, y_value)
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText("TOTAL POINTS", 675, y_value + 40)
+  ctx.fillText("GAINED", 675, y_value + 60)
+
+  // Mark the multiplier.
+  ctx.beginPath()
+  ctx.rect(825, 225, 150, 100)
+  ctx.strokeStyle = "red"
+  ctx.lineWidth = 6
+  ctx.stroke()
+
+
+  this.draw_arrow_with_base(ctx, 735, 280, 50, "red")
+}
+
+HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
+
+  ctx.font = '24px Muli'
+  ctx.fillStyle = "white"
+  ctx.fillText("KILLING ENEMIES INCREASES YOUR MULTIPLIER", 400, 400)
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.clearRect(335, 380, 125, 25)
+  ctx.fillText("INCREASES", 397, 400)
+
+  ctx.fillStyle = "white"
+  ctx.fillText("COLLIDING WITH ENEMIES RESETS YOUR MULTIPLIER", 400, 450)
+  ctx.fillStyle = "red"
+  ctx.clearRect(410, 430, 80, 25)
+  ctx.fillText("RESETS", 450, 450)
+
+  ctx.beginPath()
+  ctx.arc(imp_vars.canvasWidth - imp_vars.sidebarWidth*3/2, imp_vars.canvasHeight/2 - 20, 70, 0, 2 * Math.PI)
+  ctx.lineWidth = 8
+  ctx.strokeStyle = 'red'
+  ctx.stroke()
+
+
+  ctx.font = '12px Muli'
+  ctx.fillStyle = "white"
+  ctx.globalAlpha /= 2
+  ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 550)
+}
+
+HowToPlayState.prototype.draw_sparks_page = function(ctx) {
+  ctx.beginPath()
+  ctx.arc(this.level.spark_loc.x, this.level.spark_loc.y, 25, 0, 2 * Math.PI)
+  ctx.lineWidth = 4
+  ctx.strokeStyle = 'red'
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.arc(this.level.multi_loc.x, this.level.multi_loc.y, 25, 0, 2 * Math.PI)
+  ctx.stroke()
+
+  draw_spark(ctx, 300, 380)
+  ctx.font = '16px Muli'
+  ctx.shadowColor = impulse_colors["impulse_blue"]
+  ctx.shadowBlur = 10
+  ctx.fillStyle = ctx.shadowColor
+
+
+  ctx.fillText("+10 SPARKS", 300, 415)
+  ctx.shadowBlur = 0
+  draw_multi(ctx, 500, 380)
+  ctx.font = '16px Muli'
+  ctx.shadowBlur = 10
+  ctx.shadowColor = "white"
+  ctx.fillStyle = ctx.shadowColor
+
+  ctx.fillText("+5 MULTIPLIER", 500, 415)
+
+  ctx.font = '24px Muli'
+  ctx.shadowBlur = 0
+  ctx.fillText("COLLECT SPARKS", 400, 500)
+  ctx.font = '24px Muli'
+  ctx.shadowColor = "red"
+  ctx.fillStyle = "red"
+  ctx.clearRect(415, 480, 115, 25)
+  ctx.fillText("SPARKS", 458, 500)
+
+  ctx.font = '12px Muli'
+  ctx.fillStyle = "white"
+  ctx.fillText("100 SPARKS = 1UP", 400, 530)
+
+  ctx.beginPath()
+  ctx.rect(-160, imp_vars.canvasHeight - 140, 120, 80)
+  ctx.strokeStyle = "red"
+  ctx.lineWidth = 4
+  ctx.stroke()
+}
+
 HowToPlayState.prototype.draw_first_ult_page = function(ctx) {
   if(imp_vars.player_data.options.control_scheme == "mouse") {
     draw_right_mouse(ctx, 400, 400, 83, 125, "white")
@@ -692,13 +780,7 @@ HowToPlayState.prototype.draw_player_dying_page = function(ctx) {
   ctx.stroke()
   ctx.shadowBlur = 0
 
-  ctx.beginPath()
-  ctx.moveTo(385, 375)
-  ctx.lineTo(400, 375)
-  ctx.lineWidth = 8
-  ctx.strokeStyle = "white"
-  ctx.stroke()
-  draw_arrow(ctx, 408, 375, 20, "right", "white", false)
+  this.draw_arrow_with_base(ctx, 400, 375, 25, "white")
 
   var polygons = imp_params.impulse_level_data["HOW TO PLAY"].obstacle_v
 
@@ -802,6 +884,14 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.draw_picture_bg_on_canvas(this.secondary_ctx)
 
     drawSprite(this.primary_ctx, 75, 75, 0, 30, 30, "player_normal")
+    this.primary_ctx.beginPath()
+    this.primary_ctx.moveTo(75, 55)
+    this.primary_ctx.lineTo(75, 40)
+    this.primary_ctx.lineWidth = 4
+    this.primary_ctx.strokeStyle = "white"
+    this.primary_ctx.stroke()
+    draw_arrow(this.primary_ctx, 75, 40, 13, "up", "white", false)
+
     this.temp_fragments.draw(this.secondary_ctx)
   }
   if((this.mode == "normal_tutorial" && this.cur_page == 4) ||
@@ -824,6 +914,14 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.primary_ctx.stroke()
     draw_enemy_real_size(this.primary_ctx, "stunner", 77, 75, 1, Math.PI)
 
+    this.primary_ctx.beginPath()
+    this.primary_ctx.moveTo(92, 75)
+    this.primary_ctx.lineTo(107, 75)
+    this.primary_ctx.lineWidth = 4
+    this.primary_ctx.strokeStyle = "white"
+    this.primary_ctx.stroke()
+    draw_arrow(this.primary_ctx, 107, 75, 13, "right", "white", false)
+
     drawSprite(this.secondary_ctx, 30, 75, 0, 30, 30, "player_normal")
 
     this.secondary_ctx.globalAlpha = 0.5
@@ -844,22 +942,20 @@ HowToPlayState.prototype.draw_contexts = function() {
 }
 
 HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
-  var boundary_x = 75
+  var boundary_y = 75
   ctx.save()
-  draw_bg(ctx, 0, 0, boundary_x, 150, "Hive 0") 
-
+  
   ctx.beginPath()
-  ctx.moveTo(boundary_x, 0)
-  ctx.lineTo(boundary_x, 150)
+  ctx.rect(0, 0, 150, boundary_y)
+  ctx.fillStyle = this.dark_color
+  ctx.fill()
+  draw_bg(ctx, 0, boundary_y, 150, 150, "Hive 0") 
+  ctx.beginPath()
+  ctx.moveTo(0, boundary_y)
+  ctx.lineTo(150, boundary_y)
   ctx.lineWidth = 6
   ctx.strokeStyle = impulse_colors['world 0 lite']
   ctx.stroke()
-  ctx.beginPath()
-  ctx.rect(boundary_x, 0, 150-boundary_x, 150)
-  ctx.fillStyle = this.dark_color
-  ctx.shadowColor = "white"
-  ctx.shadowBlur = 20
-  ctx.fill()
   
   ctx.restore()
 }
@@ -899,6 +995,11 @@ HowToPlayState.prototype.on_key_down = function(keyCode) {
   } else {
     this.player.keyDown(keyCode)  //even if paused, must still process
   }
+  // SPACEBAR
+  if(keyCode == 32 && [2, 5, 6, 7].indexOf(this.cur_page) != -1 && this.mode == "first_time_tutorial" && this.advancing == false && this.transition_state == "none") {
+    this.advance_page_timer = 0
+    this.advancing = true
+  }
 }
 
 HowToPlayState.prototype.setPage = function(page) {
@@ -909,7 +1010,6 @@ HowToPlayState.prototype.setPage = function(page) {
 
   if(this.mode == "first_time_tutorial" && page == 4) {
     this.level.no_spawn = false
-    this.level.double_spawn = true
   }
 
   if (this.mode == "ult_tutorial" && page == 1) {
@@ -919,6 +1019,10 @@ HowToPlayState.prototype.setPage = function(page) {
 
   if(this.mode == "first_time_tutorial" && page == 5) {
     this.level.no_spawn = true
+  }
+  if(this.mode == "first_time_tutorial" && page == 8) {
+    this.level.no_spawn = false
+    this.level.double_spawn = true
   }
 
   if((this.mode == "normal_tutorial" && page == 3 && this.cur_page != 3) ||
@@ -1043,11 +1147,15 @@ HowToPlayState.prototype.enemy_killed = function() {
     this.advance_page_timer = this.delay_after_player_moved
     this.advancing = true
   }
+  if (this.cur_page == 4 && this.mode == "first_time_tutorial" && this.advancing == false && this.transition_state == "none") {
+    this.advance_page_timer = this.delay_after_player_moved
+    this.advancing = true
+  }
 }
 
 HowToPlayState.prototype.gateway_opened = function() {
   // If we don't have transition_state = "none", it's possible for the page to be advanced again while the transition is happening
-  if (this.cur_page == 4 && this.mode == "first_time_tutorial" && this.advancing == false && this.transition_state == "none") {
+  if (this.cur_page == 8 && this.mode == "first_time_tutorial" && this.advancing == false && this.transition_state == "none") {
     this.advance_page_timer = this.delay_after_player_moved
     this.advancing = true
   }

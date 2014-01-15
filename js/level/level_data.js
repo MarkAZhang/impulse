@@ -14,8 +14,8 @@ imp_params.impulse_level_data['HOW TO PLAY'] = {
   buffer_radius: 1,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "normal": [2000, 5000, 10000],
-    "easy": [2000, 5000, 10000],
+    "normal": [5000, 10000, 20000],
+    "easy": [5000, 10000, 20000],
   },
   player_loc: {x: 400, y: 170},
   buffer_radius: 1
@@ -202,6 +202,11 @@ imp_params.impulse_level_data['HIVE 1-6'] = {
 }
 
 imp_params.impulse_level_data['HIVE 1-7'] = {
+  enemies_easy: {
+    "stunner": [4, 4, 2, 1, 30],
+    "spear": [5, 5, 1, 1, 15],
+    "tank": [8, 8, 1, 1, 15]
+  },
   enemies: {
     "stunner": [4, 4, 2, 1, 30],
     "spear": [5, 5, 2, 1, 15],

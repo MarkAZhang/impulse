@@ -488,7 +488,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
 
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4){//} && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4 && this.first_ever) {
     this.draw_boss_text(ctx)
   }  
 
@@ -705,7 +705,7 @@ ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
   ctx.beginPath()
   ctx.moveTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor, (this.level.boss.body.GetPosition().y - this.level.boss.effective_radius)* imp_vars.draw_factor - 5)
   ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor, 2 * imp_vars.draw_factor + 15)
-  ctx.strokeStyle = this.level.boss.color
+  ctx.strokeStyle = impulse_colors["impulse_blue"]//this.level.boss.color
   ctx.lineWidth = 10;
   ctx.stroke()
   ctx.beginPath()
@@ -716,7 +716,7 @@ ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
   ctx.moveTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*3/2), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*3/2))
   ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*1/6), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*1/6))
   ctx.lineTo(this.level.boss.body.GetPosition().x * imp_vars.draw_factor + 30 * Math.cos(Math.PI*5/6), 2 * imp_vars.draw_factor + 30 * Math.sin(Math.PI*5/6))
-  ctx.fillStyle = this.level.boss.color
+  ctx.fillStyle = impulse_colors["impulse_blue"]//this.level.boss.color
   ctx.fill()
   ctx.restore()
 }

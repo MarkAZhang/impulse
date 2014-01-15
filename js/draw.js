@@ -370,10 +370,9 @@ function draw_tessellation_sign(context, tessellation, x, y, size, glow, rotate)
     // set screen position
     context.translate(x, y);
     // set rotation
-    if(rotate)
-      context.rotate(rotate);
-    else if(tessellation != 4 && tessellation != 2)
-      context.rotate(Math.PI/4)
+    var offset = (tessellation != 4 && tessellation != 2) ? Math.PI/4 : 0
+    var angle = rotate ? rotate : 0
+    context.rotate(angle + offset)
     drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
     if(tessellation == 1) {
       context.beginPath()

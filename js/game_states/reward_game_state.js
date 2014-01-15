@@ -93,9 +93,9 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var message_size = 48
 
     if(cur_reward.type == "world_victory") {
+      ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       message_size = 24
       main_message = "NEW HIVE UNLOCKED"
-      ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
       ctx.fillText("HIVE "+imp_params.tessellation_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
@@ -212,7 +212,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "24px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("REVISIT THE TUTORIAL FOR MORE ADVANCED TIPS", imp_vars.levelWidth/2, new_values_text_y)
+      ctx.fillText("CHECK OUT THE MAIN TUTORIAL FOR ADVANCED TIPS", imp_vars.levelWidth/2, new_values_text_y)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -248,7 +248,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
     if (cur_reward.type != "select_difficulty") {
       ctx.textAlign = "center"
-      ctx.fillStyle = "white"
+      ctx.fillStyle = cur_reward.type == "world_victory" ? impulse_colors["world "+(cur_reward.data+1)+ " bright"] : "white"
       ctx.font = "16px Muli"
       ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
       ctx.restore()  

@@ -647,32 +647,36 @@ BossOne.prototype.additional_processing = function(dt) {
     }
   }
 
-  if(this.lighten_timer < 0 && !this.lightened) {
-    this.lightened = true
-    if(this.shoot_duration > this.shoot_interval/this.shoot_speedup_factor) {
-      this.shoot_duration = this.shoot_interval/this.shoot_speedup_factor
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    if(this.lighten_timer < 0 && !this.lightened) {
+      this.lightened = true
+      if(this.shoot_duration > this.shoot_interval/this.shoot_speedup_factor) {
+        this.shoot_duration = this.shoot_interval/this.shoot_speedup_factor
+      }
+      this.global_lighten()
     }
-    this.global_lighten()
+
+    if(this.lighten_timer < -this.lighten_duration) {
+      this.lightened = false
+      this.lighten_timer = this.lighten_interval
+    }
+    this.lighten_timer -= dt
+
+    if(this.lighten_timer > .9 * this.lighten_interval) {
+      this.red_visibility = (this.lighten_timer - .9 * this.lighten_interval)/(.1 * this.lighten_interval)
+    }
+    else if(this.lighten_timer < .175 * this.lighten_interval && this.lighten_timer >= 0) {
+      var temp = this.lighten_timer
+      while(temp > .05 * this.lighten_interval) {temp -= .05 * this.lighten_interval}
+
+      this.red_visibility = temp > 0.025 * this.lighten_interval ? (temp - 0.025 * this.lighten_interval)/(0.025 * this.lighten_interval) : (0.025*this.lighten_interval - temp)/(0.025 * this.lighten_interval)
+    }
+    else if(this.lighten_timer < 0) {
+      this.red_visibility = 1
+    }  
   }
 
-  if(this.lighten_timer < -this.lighten_duration) {
-    this.lightened = false
-    this.lighten_timer = this.lighten_interval
-  }
-  this.lighten_timer -= dt
-
-  if(this.lighten_timer > .9 * this.lighten_interval) {
-    this.red_visibility = (this.lighten_timer - .9 * this.lighten_interval)/(.1 * this.lighten_interval)
-  }
-  else if(this.lighten_timer < .175 * this.lighten_interval && this.lighten_timer >= 0) {
-    var temp = this.lighten_timer
-    while(temp > .05 * this.lighten_interval) {temp -= .05 * this.lighten_interval}
-
-    this.red_visibility = temp > 0.025 * this.lighten_interval ? (temp - 0.025 * this.lighten_interval)/(0.025 * this.lighten_interval) : (0.025*this.lighten_interval - temp)/(0.025 * this.lighten_interval)
-  }
-  else if(this.lighten_timer < 0) {
-    this.red_visibility = 1
-  }
+  
 }
 
 BossOne.prototype.process_punching = function(arm) {

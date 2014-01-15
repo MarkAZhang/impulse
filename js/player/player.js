@@ -381,7 +381,7 @@ Player.prototype.process = function(dt) {
       if(this.impulse_game_state.hive_numbers.ultimates > 0) {
         this.initiate_ultimate()
         if (!(this.impulse_game_state instanceof HowToPlayState)) {
-          //this.impulse_game_state.hive_numbers.ultimates -= 1
+          this.impulse_game_state.hive_numbers.ultimates -= 1
         }
       }
       
@@ -436,7 +436,7 @@ Player.prototype.process = function(dt) {
         if(this.impulse_game_state.hive_numbers.ultimates > 0) {
           this.initiate_ultimate()
           if (!(this.impulse_game_state instanceof HowToPlayState)) {
-            //this.impulse_game_state.hive_numbers.ultimates -= 1
+            this.impulse_game_state.hive_numbers.ultimates -= 1
           }
         }
       }

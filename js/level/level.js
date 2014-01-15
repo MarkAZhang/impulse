@@ -80,6 +80,11 @@ Level.prototype.init = function(data, level_intro_state) {
   this.total_fragments = 0
   this.max_fragments = 20
 
+  this.gateway_opened = false
+
+  this.tessellation_angle = 0
+  this.tessellation_rotate_rate = 12000
+
   this.enemy_map = {
     "stunner": Stunner,
     "spear": Spear,
@@ -127,11 +132,13 @@ Level.prototype.reset = function() {
   this.spawn_interval = 200
   this.spawn_timer = this.spawn_interval
   this.obstacle_visibility = 1 //for Wisp
+  this.gateway_opened = false
   this.obstacles_visible_timer = 0
   this.boss_radius = 3
   this.boss = null
   this.boss_spawned = false
   this.boss_victory = false
+  this.tessellation_angle = 0
   for(i in this.enemies_data) {
     this.enemy_spawn_timers[i] = this.enemies_data[i][1]
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
@@ -187,8 +194,11 @@ Level.prototype.generate_multi = function() {
 
 Level.prototype.process = function(dt) {
 
-  //handle obstacle visibility
+  if (this.impulse_game_state.gateway_unlocked) {
+    this.tessellation_angle += dt / this.tessellation_rotate_rate * 2 * Math.PI
+  }
 
+  //handle obstacle visibility
     this.spark_duration -= dt
     if(!this.is_boss_level && (this.spark_loc == null || this.spark_duration < 0)) {
       this.generate_spark()
@@ -495,16 +505,17 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     //  (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
     //ctx.restore()
     //ctx.save()
-    ctx.globalAlpha *= 0.3 + 0.7 * (1-prog)
+    ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
   }
-  else if(this.impulse_game_state && this.impulse_game_state.gateway_unlocked && this.world_num <= 3) {
+  else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 3) {
+    ctx.globalAlpha *= 0.5
     //ctx.globalAlpha *= 1
     //drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
     //  (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
   } else {
     ctx.globalAlpha *= 0.3
   }
-  draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor)
+  draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, this.gateway_opened, this.tessellation_angle)
   ctx.restore()
 }
 
@@ -513,11 +524,9 @@ Level.prototype.pre_draw = function(context, draw_factor) {
     this.enemies[i].pre_draw(context, draw_factor)
   }
 
-  if(this.gateway_transition_duration != null) {
     if(this.gateway_loc) {
       this.draw_gateway(context, draw_factor)
     }
-  }
 }
 
 Level.prototype.draw = function(context, draw_factor) {
@@ -604,7 +613,7 @@ Level.prototype.draw = function(context, draw_factor) {
 Level.prototype.open_gateway = function() {
 
   this.gateway_transition_duration = this.gateway_transition_interval
-  this.redraw_bg = true
+  this.gateway_opened = true
 }
 
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
@@ -624,9 +633,9 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     this.obstacles[i].draw(bg_ctx, imp_vars.draw_factor)
   }
 
-  if(this.gateway_loc && !omit_gateway) {
-    this.draw_gateway(bg_ctx, imp_vars.draw_factor)
-  }
+  //if(this.gateway_loc && !omit_gateway) {
+  //  this.draw_gateway(bg_ctx, imp_vars.draw_factor)
+  //}
   bg_ctx.restore()
   //bg_ctx.clearRect(-100, 0, 100, imp_vars.levelHeight)
   //bg_ctx.clearRect(imp_vars.levelWidth, 0, 100, imp_vars.levelHeight)

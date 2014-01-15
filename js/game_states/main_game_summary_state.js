@@ -57,7 +57,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   if(victory) {
     this.calculate_deaths()
-    this.victory_text = this.hive_numbers.boss_name+" DEFEATED"
+    this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED"
 
     var total_stars = 0
     for(level in hive_numbers.game_numbers) {
@@ -81,7 +81,14 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
       this.rank = "S+"
     }
 
+
+
     var rank_data = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]
+
+    // don't  make the player feel bad if this is their first play-through
+    if (rank_data === undefined && this.rank_color == "red") {
+      this.rank_color = impulse_colors["world "+world_num+" bright"]
+    }
 
     if(!rank_data ||
       this.rank_cutoffs[this.rank] > this.rank_cutoffs[rank_data["rank"]] ||
@@ -241,12 +248,17 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(this.victory) {
     ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText(this.victory_text , imp_vars.levelWidth/2, 90)
+    ctx.font = '40px Muli'
+    ctx.fillText(this.victory_text, imp_vars.levelWidth/2, 130)
   }
   else if(this.save_screen) {
     ctx.fillStyle = impulse_colors["impulse_blue"]
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 90)
+    ctx.fillStyle = this.bright_color;
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '40px Muli'
+    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
   } else {
     ctx.fillStyle = 'red'
     ctx.shadowColor = ctx.fillStyle
@@ -255,13 +267,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 175)  
     }
-    
+    ctx.fillStyle = this.bright_color;
+    ctx.shadowColor = ctx.fillStyle
+    ctx.font = '40px Muli'
+    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
   }
 
-  ctx.fillStyle = this.bright_color;
-  ctx.shadowColor = ctx.fillStyle
-  ctx.font = '40px Muli'
-  ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
 
   if(this.victory && this.hive_numbers.continues) {
     ctx.fillStyle = "red";
