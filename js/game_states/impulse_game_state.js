@@ -486,8 +486,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.clip();
   }
 
-
-
   if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4 && this.first_ever) {
     this.draw_boss_text(ctx)
   }  

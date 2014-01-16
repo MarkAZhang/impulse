@@ -1223,7 +1223,6 @@ spriteSheetData = {
   "consumendi_head_red": [720, 136, 135, 135],
   "consumendi_aura": [181, 0, 269, 269],
   "consumendi_small_diamond": [94, 180, 30, 56],
-  "consumendi_long_arrow": [64, 210, 50, 80],
   "consumendi_small_diamond_filled": [64, 180, 30, 56],
   "consumendi_small_arrow": [124, 180, 30, 16],
   "consumendi_glow": [720, 0, 135, 135],

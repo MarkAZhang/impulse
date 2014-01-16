@@ -27,7 +27,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   // Estimated harpoon length.
   this.harpoon_length = 17
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.harpoon_length = 17
+    this.harpoon_length = 13
   }
 
   this.goalPt = null
@@ -44,7 +44,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.harpoonhead_force = 400
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.harpoonhead_force = 250
+    this.harpoonhead_force = 50
   }
   this.harpoonhead_retract_force = 1.2
   if(imp_vars.player_data.difficulty_mode == "easy") {

@@ -221,22 +221,25 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.player.body.ApplyImpulse(new b2Vec2(gravity_force *  Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
   }
 
-  if(this.black_hole_timer < 0) {
-    var prop = -this.black_hole_timer/this.black_hole_duration
-    if(prop < this.black_hole_expand_prop)
-      this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (prop/this.black_hole_expand_prop))
-    else
-      this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (1 - (prop-this.black_hole_expand_prop)/(1-this.black_hole_expand_prop)))
 
-    this.black_hole()
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    if(this.black_hole_timer < 0) {
+      var prop = -this.black_hole_timer/this.black_hole_duration
+      if(prop < this.black_hole_expand_prop)
+        this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (prop/this.black_hole_expand_prop))
+      else
+        this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (1 - (prop-this.black_hole_expand_prop)/(1-this.black_hole_expand_prop)))
+
+      this.black_hole()
+    }
+    if(this.black_hole_timer < -this.black_hole_duration) {
+      this.black_hole_timer = this.black_hole_interval
+      this.black_hole_radius = 0
+      this.player_struck = false
+      this.enemies_struck = []
+    }
+    this.black_hole_timer -= dt
   }
-  if(this.black_hole_timer < -this.black_hole_duration) {
-    this.black_hole_timer = this.black_hole_interval
-    this.black_hole_radius = 0
-    this.player_struck = false
-    this.enemies_struck = []
-  }
-  this.black_hole_timer -= dt
 }
 
 BossTwo.prototype.get_gravity_force = function(loc) {
@@ -435,11 +438,11 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
     context.fill()*/
 
 
-    /*var tp = this.body.GetPosition()
+    var tp = this.body.GetPosition()
     var arm_angle = Math.PI * 2 * j / this.num_arms + this.arm_core_angle
     drawSprite(context, (tp.x+Math.cos(arm_angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
     (tp.y+Math.sin(arm_angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
-    arm_angle + Math.PI/2, 50, 80, "consumendi_long_arrow", consumendiSprite)*/
+    arm_angle + Math.PI/2, 50, 80, "consumendi_small_arrow", consumendiSprite)
     context.restore()
 
   }

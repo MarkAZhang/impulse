@@ -255,9 +255,9 @@ imp_params.impulse_level_data['BOSS 1'] = {
 
 imp_params.impulse_level_data['HIVE 2-1'] = {
   enemies_easy: {
-    "stunner": [4, 4, 1, 1, 15],
-    "tank": [8, 8, 1, 1, 15],
-    "mote": [8, 8, 1, 1, 25]
+    "stunner": [5, 5, 1, 1, 15],
+    "tank": [15, 12, 1, 1, 15],
+    "mote": [10, 10, 2, 1, 25]
   },
   enemies: {
     "stunner": [1, 4, 1, 2, 15],
@@ -279,7 +279,7 @@ imp_params.impulse_level_data['HIVE 2-1'] = {
   spawn_points: [[100, 700], [700, 700]],
   buffer_radius: 1,
   cutoff_scores: {
-
+    "easy": [60000, 200000, 750000],
     "normal":   [150000, 450000, 1750000],
   },
   player_loc: {x: 400, y: 235}
@@ -292,9 +292,9 @@ imp_params.impulse_level_data['HIVE 2-2'] = {
               "spear": [10, 10, 4, 4, 20],
               "mote": [5, 5, 1, 1, 20]
            },
-           enemies: {
-              "stunner": [4, 4, 2, 1, 30],
-              "spear": [10, 10, 4, 4, 20],
+           enemies_easy: {
+              "stunner": [4, 4, 1, 1, 30],
+              "spear": [12, 12, 2, 1, 20],
               "mote": [7, 7, 1, 1, 20]
            },
   initial_spawn_data: {
@@ -358,6 +358,12 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
               "mote": [4, 6, 1, 2, 15],
               "goo": [10, 10, 1, 0, 1],
            },
+  enemies_easy: {
+    "stunner": [8, 8, 2, 1, 10],
+    "spear": [6, 6, 1.5, 1, 20],
+    "mote": [8, 8, 1, 1, 15],
+    "goo": [10, 10, 1, 0, 1],
+  },
   dominant_enemy: "goo",
    initial_spawn_data: {
     "spear": 3,
@@ -373,7 +379,7 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
   spark_spawn_points: [[400, 120], [180, 460], [620, 460]],
   buffer_radius: 1,
     cutoff_scores: {
-    "normal":  [75000, 250000, 1000000],
+    "easy":  [60000, 200000, 800000],
     "normal":  [175000, 500000, 2000000],
   },
 
@@ -385,8 +391,8 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
 
 imp_params.impulse_level_data['HIVE 2-5'] = {
   enemies_easy: {
-    "stunner": [6, 6, 1, 2, 15],
-    "mote": [8, 8, 1, 1, 15],
+    "stunner": [10, 6, 1, 1, 15],
+    "mote": [10, 8, 1, 1, 15],
     "harpoon": [15, 15, 1.5, 1.5, 15],
   },
   enemies: {
@@ -409,6 +415,7 @@ imp_params.impulse_level_data['HIVE 2-5'] = {
   spawn_points: [[100, -100], [700, -100], [100, 700], [700, 700]],
   spark_spawn_points: [[100, 50], [100, 300], [100, 550],[700, 50], [700, 300],[700, 550]],
   cutoff_scores: {
+    "easy":   [80000, 300000, 1000000],
     "normal":   [200000, 600000, 2000000],
   },
 
@@ -435,8 +442,8 @@ imp_params.impulse_level_data['HIVE 2-6'] = {
     "goo": 1
   },
   buffer_radius: 1,
-      cutoff_scores: {
-
+  cutoff_scores: {
+    "easy":    [90000, 250000, 600000],        
     "normal":    [200000, 500000, 1250000],
   },
 
@@ -458,6 +465,7 @@ enemies: {
   spark_spawn_points: [[200, 93], [600, 93], [200, 507], [600, 507]],
   buffer_radius: 1,
   cutoff_scores: {
+    "easy":[100000, 300000, 1000000],
     "normal":[200000, 750000, 2250000],
   },
   initial_spawn_data: {
@@ -487,7 +495,6 @@ imp_params.impulse_level_data['BOSS 2'] = {
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
   defeat_time: 60
-
 }
 
 imp_params.impulse_level_data['HIVE 3-1'] = {
