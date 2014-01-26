@@ -15,10 +15,14 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.trolling = false
 
   this.troll_switch_interval = 400
+  this.trolling_time_factor = 4
 
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.troll_switch_interval = 600
+    this.trolling_time_factor = 3    
+  }
   this.troll_switch_timer = this.troll_switch_interval
 
-  this.trolling_time_factor = 4
 
   this.cautious = false
 

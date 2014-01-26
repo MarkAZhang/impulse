@@ -33,16 +33,20 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.knockback_red_duration = 0
   this.knockback_red_interval = 150
 
-  this.boss_force = 100
+  this.boss_force = 200
+
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.boss_force = 120
+  }
   this.num_arms = 16
   this.striking_arms = {}
   this.strike_duration = 2200
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.strike_duration = 2900
+    this.strike_duration = 3500
   }
   this.strike_interval = 1500
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.strike_interval = 1700
+    this.strike_interval = 2500
   }
   this.strike_timer = this.strike_interval
   this.strike_charging_prop = 0.7
@@ -51,6 +55,9 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.spin_rate = 16*this.strike_duration * (1 - this.strike_charging_prop)
 
   this.wheel_spinning_duration = 4000
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.wheel_spinning_duration = 5000 // spin one more round on easy-mode
+  }
   this.wheel_spinning_timer = this.wheel_spinning_duration
   this.wheel_default_skips = 16
   this.wheel_switch = 250
@@ -80,7 +87,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.strike_transition_interval = 500
   this.strike_transition_timer = this.strike_transition_interval
   this.default_strike_position = this.effective_radius + 2
-  this.default_strike_range = 15
+  this.default_strike_range = 18
   this.target_arm_length = this.effective_radius
 
   this.wheel_visibility = 0
@@ -112,7 +119,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     for(var enemy in this.spawn_count) {
-      this.spawn_count[enemy] *= 0.6
+      this.spawn_count[enemy] *= 0.5
       this.spawn_count[enemy] = Math.ceil(this.spawn_count[enemy])
     }
   }
@@ -142,7 +149,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   "frenzy": 1000
 }
 
-this.silence_interval = 3000//13400//20000
+this.silence_interval = 20000
 this.silence_timer = this.silence_interval - 1
 this.silence_duration = 7000
 this.silenced = false
@@ -218,20 +225,22 @@ BossThree.prototype.additional_processing = function(dt) {
         this.body.SetAngle(this.body.GetAngle() - 2*Math.PI * dt/this.spin_rate)
     }
 
-  if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
-    this.silence_timer = 0;
-    this.silenced = true
-    this.global_silence()
-    this.force_frenzy()
+  if(imp_vars.player_data.difficulty_mode == "normal") {
+    if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
+      this.silence_timer = 0;
+      this.silenced = true
+      this.global_silence()
+      this.force_frenzy()
+    }
+
+
+    if(this.silenced && this.silence_timer < -this.silence_duration) {
+        this.silenced = false
+        this.silence_timer = this.silence_interval
+    }
+
+    this.silence_timer -= dt
   }
-
-
-  if(this.silenced && this.silence_timer < -this.silence_duration) {
-      this.silenced = false
-      this.silence_timer = this.silence_interval
-  }
-
-  this.silence_timer -= dt
 
   if(this.striking_state == "extend") {
     this.strike_transition_timer -= dt
@@ -294,7 +303,6 @@ BossThree.prototype.additional_processing = function(dt) {
       this.strike_timer = this.strike_interval
     }
   }
-
 
   if(this.wheel_state == "fadein") {
     this.wheel_cur_index = 0
@@ -457,6 +465,8 @@ BossThree.prototype.process_arm_polygons = function() {
 }
 
 BossThree.prototype.process_striking_arms = function() {
+  if(this.striking_index)
+    console.log(this.striking_arms[this.striking_index].duration + " " + this.striking_index)
   for(var index in this.striking_arms) {
     var data = this.striking_arms[index]
     if(data.duration > 0) {
@@ -504,14 +514,13 @@ BossThree.prototype.cancel_strikes = function() {
   for(var index in this.striking_arms) {
     var data = this.striking_arms[index]
     if(data.duration > 0) {
-
       var prog = 1 - data.duration/data.interval
       if(prog < data.charging_prop)
         data.duration = 0
-      else if(prog > data.charging_prop && prog < data.charging_prop + (1 - data.charging_prop) * 0.5) {
-        data.duration = data.charging_prop * data.interval - data.duration
+      else if(prog > data.charging_prop && prog < 0.5 * data.charging_prop + 0.5) {
+        var mid_value = data.interval * (0.5 - data.charging_prop * 0.5)
+        data.duration = 2 * mid_value - data.duration
       }
-
     }
   }
 }
@@ -559,7 +568,6 @@ BossThree.prototype.strike_at_player = function() {
       choices.splice(choices.indexOf(arm+banned_index), 1)
     }
 
-
     var index = Math.floor(Math.random() * choices.length)
     this.strike_with_arm(choices[index], dist, this.strike_duration * this.strike_frenzy_speedup)
     choices.splice(index, 1)
@@ -578,6 +586,9 @@ BossThree.prototype.adjust_arm_index = function(index) {
 }
 
 BossThree.prototype.strike_with_arm = function(index, dist, duration) {
+
+  if(!this.striking_index)
+  this.striking_index = index
 
   index = this.adjust_arm_index(index)
   if(this.striking_arms[index].duration <= 0) {
@@ -611,7 +622,7 @@ BossThree.prototype.get_impulse_sensitive_pts = function() {
   var ans = []
   for(var i = 0; i < this.shape_points[0].length; i++) {
     var temp = this.body.GetPosition().Copy()
-    temp.Add({x: this.shape_points[0][i].x * 0.6, y: this.shape_points[0][i].y * 0.6})
+    temp.Add({x: this.shape_points[0][i].x, y: this.shape_points[0][i].y})
     ans.push(temp)
   }
   return ans
@@ -690,7 +701,7 @@ BossThree.prototype.draw = function(context, draw_factor) {
     }
   }
   context.restore()*/
-  //this.additional_drawing(context, draw_factor)
+  this.additional_drawing(context, draw_factor)
 
   context.restore()
 }
@@ -889,7 +900,7 @@ BossThree.prototype.collide_with = function(other, body) {
           var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
           if(other === this.player) {
             var _this = this;
-            other.body.ApplyImpulse(new b2Vec2(2 * _this.boss_force * Math.cos(boss_angle), 2 * _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+            other.body.ApplyImpulse(new b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else if(other.type == "harpoonhead") {
             other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {
@@ -897,7 +908,6 @@ BossThree.prototype.collide_with = function(other, body) {
               var enemy_data = imp_params.impulse_enemy_stats[other.type]
               if (enemy_data) {
                 var force = other.body.GetMass() * Math.sqrt(enemy_data.lin_damp) * this.boss_force
-                console.log(other.type+" "+force)
                 other.body.ApplyImpulse(new b2Vec2(force * Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
 
               }
@@ -913,13 +923,15 @@ BossThree.prototype.collide_with = function(other, body) {
             other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(attack_angle), this.boss_force * Math.sin(attack_angle)), other.body.GetWorldCenter())
           }
         }*/
-
       }
     }
-
   } else {
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
-    other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+    var factor = 1
+    if(other === this.player && imp_vars.player_data.difficulty_mode == "easy") {
+      factor = 0.5
+    }
+    other.body.ApplyImpulse(new b2Vec2(this.boss_force * factor * Math.cos(boss_angle), this.boss_force * factor * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
 }
 

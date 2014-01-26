@@ -102,7 +102,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying_duration = 0
   this.color = impulse_colors["player_color"]
   this.force = this.true_force
-  this.bulk_factor = 100
+  this.bulk_factor = 5
   this.bulked = false
 
   this.lighten_factor = 1.5
@@ -567,8 +567,6 @@ Player.prototype.process = function(dt) {
 }
 
 Player.prototype.readjust_force = function() {
-
-
   if(this.status_duration[5] > 0) {
     this.force = this.true_force * this.bulk_factor
   } else if (this.status_duration[3] > 0){
@@ -745,6 +743,12 @@ Player.prototype.draw_ultimate = function(context) {
   }
 
   context.restore()
+}
+
+Player.prototype.pre_draw = function(context) {
+  if(!this.dying) {
+    this.draw_ultimate(context);    
+  }
 }
 
 Player.prototype.draw = function(context) {

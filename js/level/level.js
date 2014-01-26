@@ -139,8 +139,15 @@ Level.prototype.reset = function() {
   this.boss_spawned = false
   this.boss_victory = false
   this.tessellation_angle = 0
+
+
   for(i in this.enemies_data) {
-    this.enemy_spawn_timers[i] = this.enemies_data[i][1]
+    if (!this.is_boss_level && i in this.initial_spawn_data) {
+      this.enemy_spawn_timers[i] = 0
+    } else {
+      this.enemy_spawn_timers[i] = this.enemies_data[i][1]
+    }
+    
     this.enemy_spawn_counters[i] = this.enemies_data[i][2]
     this.enemy_numbers[i] = 0
   }
@@ -365,6 +372,8 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
   for(var k in this.enemy_spawn_timers) {
       //if we haven't reached the initial spawn time
     if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
+
+
     //increment the spawn_counters
     this.enemy_spawn_counters[k] += dt/1000/60 * this.enemies_data[k][3]
 
@@ -390,32 +399,50 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
       }
     }
   }
+  if (this.enemies.length == 0 && this.spawn_queue.length == 0) {
+    this.skip_enemy_spawn_timers()
+  }
+}
+
+Level.prototype.skip_enemy_spawn_timers = function() {
+  var min_timer = 1000
+  // find the minimum time to next enemy spawn
+  for(var k in this.enemy_spawn_timers) {
+    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
+    var value = this.enemies_data[k][1] - this.enemy_spawn_timers[k]
+    if (min_timer > value) {
+      min_timer = value
+    }
+  }
+
+  // adjust all enemy timers accordingly, but skip those that haven't spawned yet
+  for(var k in this.enemy_spawn_timers) {
+    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
+    this.enemy_spawn_counters[k] += min_timer/60 * this.enemies_data[k][3]
+    this.enemy_spawn_timers[k] += min_timer
+  }
 }
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-if(enemy_type == "player" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
-  || (this.total_fragments < this.max_fragments && imp_vars.player_data.options.explosions)) {
-    this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
-    this.total_fragments += 4;
-}
-
+  if(enemy_type == "player" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
+    || (this.total_fragments < this.max_fragments && imp_vars.player_data.options.explosions)) {
+      this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
+      this.total_fragments += 4;
+  }
 }
 
 Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
-
   var this_enemy = imp_params.impulse_enemy_stats[enemy_type].className
 
   if(this_enemy.prototype.is_boss && this.boss_spawned) {
     return;
-
   }
 
   //if at the cap, don't spawn more
   if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) {
     return
   }
-
 
   if(this_enemy.prototype.is_boss) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, this.enemy_counter, this.impulse_game_state)
@@ -433,8 +460,6 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   this.add_enemy(temp_enemy)
-
-
 }
 
 Level.prototype.add_enemy = function(enemy) {
@@ -520,9 +545,6 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
 }
 
 Level.prototype.pre_draw = function(context, draw_factor) {
-  for(var i = 0; i < this.enemies.length; i++) {
-    this.enemies[i].pre_draw(context, draw_factor)
-  }
 
     if(this.gateway_loc) {
       this.draw_gateway(context, draw_factor)
@@ -531,6 +553,10 @@ Level.prototype.pre_draw = function(context, draw_factor) {
 
 Level.prototype.draw = function(context, draw_factor) {
   context.save()
+
+  for(var i = 0; i < this.enemies.length; i++) {
+    this.enemies[i].pre_draw(context, draw_factor)
+  }
 
   if(this.spark_loc) {
     var prog = this.spark_duration/this.spark_life;

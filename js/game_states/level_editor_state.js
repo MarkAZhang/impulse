@@ -188,6 +188,38 @@ LevelEditorState.prototype.scale_polygon = function(polygon, sx, sy, center_poin
   this.polygons.push(new_polygon);
 }
 
+LevelEditorState.prototype.scale_polygon_around_centroid = function(polygon, s) {
+  var centroid = {x: 0, y: 0}
+  for(var j = 0; j < this.polygons[polygon].length; j++) {
+    centroid.x += this.polygons[polygon][j].x
+    centroid.y += this.polygons[polygon][j].y
+  }
+  centroid.x /= this.polygons[polygon].length
+  centroid.y /= this.polygons[polygon].length
+
+  var new_polygon = []
+  for(var j = 0; j < this.polygons[polygon].length; j++) {
+    var pt = this.polygons[polygon][j]
+    var r = p_dist(pt, centroid)
+    var theta = _atan(centroid, pt)
+    var new_pt = {x: centroid.x + s*r*Math.cos(theta), y: centroid.y + s*r*Math.sin(theta)}
+    new_polygon.push(new_pt)
+  }
+  this.polygons[polygon] = new_polygon
+}
+
+LevelEditorState.prototype.scale_all_polygons_around_centroid = function(s) {
+  for(var j = 0; j < this.polygons.length; j++) {
+    this.scale_polygon_around_centroid(j, s)
+  }
+}
+
+LevelEditorState.prototype.scale_these_polygons_around_centroid = function(arr, s) {
+  for(var j = 0; j < arr.length; j++) {
+    this.scale_polygon_around_centroid(arr[j], s)
+  } 
+}
+
 LevelEditorState.prototype.translate_world = function(dx, dy) {
   var new_polygons = []
 
@@ -562,6 +594,7 @@ LevelEditorState.prototype.reverse_polygon_vertice_order = function(index) {
   this.polygons[index] = new_polygon
 }
 
+
 LevelEditorState.prototype.save = function(string) {
   localStorage[string] = this.print_polygon()
 }
@@ -579,9 +612,11 @@ LevelEditorState.prototype.load = function(string) {
   }
 }
 
-LevelEditorState.prototype.load_level = function(string) {
+LevelEditorState.prototype.load_level = function(string, mode) {
   var polygon_ans = null
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  var difficulty_mode = mode ? mode : imp_vars.player_data.difficulty_mode
+
+  if (difficulty_mode == "easy") {
     polygon_ans = imp_params.impulse_level_data[string].obstacle_v_easy
   }
   if (!polygon_ans) {

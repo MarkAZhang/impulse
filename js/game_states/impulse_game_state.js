@@ -34,6 +34,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.buffer_radius = 1 //primarily for starting player location
   this.bg_drawn = false
   this.has_ult = has_ult()
+  this.boss_intro_text_activated = false
   
 
   this.stars = 0
@@ -304,13 +305,13 @@ ImpulseGameState.prototype.process = function(dt) {
       }
     }
 
-    if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && this.first_time) {
+    if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && this.first_time && !this.boss_intro_text_activated) {
       this.boss_intro_text_duration = this.boss_intro_text_interval
       if(this.world_num == 4) {
         this.boss_intro_text_duration /= 2
         this.boss_intro_text_interval /= 2
       }
-      this.first_time = false
+      this.boss_intro_text_activated = true
     }
 
     if(this.boss_intro_text_duration > 0) {
@@ -458,6 +459,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   this.level.pre_draw(ctx, imp_vars.draw_factor )
+  this.player.pre_draw(ctx)
+
+  this.level.draw(ctx, imp_vars.draw_factor )
 
   if(this.zoom != 1 && this.victory) {
     ctx.save()
@@ -471,7 +475,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.player.draw(ctx)
   }
 
-  this.level.draw(ctx, imp_vars.draw_factor )
 
   if(this.level_redraw_bg) {
 
@@ -486,7 +489,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.clip();
   }
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4 && this.first_ever) {
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && this.main_game && this.zoom == 1 && this.world_num <= 4 && this.first_time) {
     this.draw_boss_text(ctx)
   }  
 
@@ -516,6 +519,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }
   if(this.new_enemy_type != null) {
     ctx.save()
+    this.set_zoom_transparency(ctx)
     if (this.new_enemy_timer < 500) {
       ctx.globalAlpha *= Math.max(0, this.new_enemy_timer / 500) 
     } else if (this.new_enemy_timer > this.new_enemy_duration - 500) {
@@ -527,6 +531,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.score_achieve_text != null) {
     ctx.save()
+    this.set_zoom_transparency(ctx)
     if (this.score_achieve_timer < 500) {
       ctx.globalAlpha *= Math.max(0, this.score_achieve_timer / 500) 
     } else if (this.score_achieve_timer > this.score_achieve_duration - 500) {
@@ -645,7 +650,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
   }*/
-  ctx.globalAlpha = 1
 
   this.additional_draw(ctx, bg_ctx)
 

@@ -974,7 +974,7 @@ Enemy.prototype.lighten = function(dur) {
 }
 
 Enemy.prototype.open = function(dur) {
-this.durations["open"] = Math.max(dur, this.durations["open"])
+  this.durations["open"] = Math.max(dur, this.durations["open"])
 }
 
 /*Enemy.prototype.check_player_intersection = function(other) {

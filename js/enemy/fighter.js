@@ -22,7 +22,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.shield_animate_interval = 400
   this.shield_animate_duration = 0
-  this.shield_radius = this.effective_radius * 1.2
+  this.shield_radius = this.effective_radius * 2.5
 
   this.impulsed_color = this.color
 
@@ -46,6 +46,9 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.frenzy_charge_interval = 2500
 
+  if(imp_vars.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+    this.frenzy_charge_interval = 3500
+
   this.frenzy_charge_bars = 5;
 
   this.fighter_status = "normal"
@@ -56,7 +59,12 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.activated = false
 
   this.tank_force = 100 //force that the fighter impulses the player
+  if(imp_vars.player_data.difficulty_mode == "easy")
+    this.tank_force = 80
   this.cautious = false
+
+  this.player_collision_buffer_interval = 200 // minimum period between player collisions, so we don't accidentally apply tank_force twice
+  this.player_collision_buffer_timer = 0
 }
 
 Fighter.prototype.get_bullet_locations = function(side) {
@@ -103,10 +111,24 @@ Fighter.prototype.additional_processing = function(dt) {
     this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 5)
   }
 
+  if(this.status_duration[1] <= 0 && this.player_collision_buffer_timer <= 0 &&
+      p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.shield_radius) {
+    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    //this.cause_of_death = "hit_player"
+    this.impulse_game_state.reset_combo()
+    this.shield_animate_duration = this.shield_animate_interval;
+    this.player_collision_buffer_timer = this.player_collision_buffer_interval
+  }
+
   if (this.status_duration[1] > 0) {
     this.body.SetLinearDamping(this.lin_damp * 0.5)
   } else {
     this.body.SetLinearDamping(this.lin_damp)
+  }
+
+  if (this.player_collision_buffer_timer > 0) {
+    this.player_collision_buffer_timer -= dt
   }
 
   if(this.fighter_status == "frenzy" && this.frenzy_charge <= 0) {
@@ -253,7 +275,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
       context.globalAlpha *= bezier_interpolate(0.15, 0.85, shield_prog);
       context.beginPath()
       context.strokeStyle = this.color;
-      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shield_radius) *draw_factor * 2
+      context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shield_radius) *draw_factor
         , -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999)
       context.lineWidth = 3
       context.stroke()
@@ -268,6 +290,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
 
 Fighter.prototype.activated_processing = function(dt) {
 
+
 }
 
 Fighter.prototype.collide_with = function(other) {
@@ -279,13 +302,7 @@ Fighter.prototype.collide_with = function(other) {
 
   if(other === this.player) {
 
-    if(this.status_duration[1] <= 0) {
-      var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
-      //this.cause_of_death = "hit_player"
-      this.impulse_game_state.reset_combo()
-      this.shield_animate_duration = this.shield_animate_interval;
-    }
+
   }
 }
 
@@ -302,6 +319,11 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
+
+  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+    dir.Multiply(this.fast_factor)
+  }
+
   var in_poly = false
   for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {

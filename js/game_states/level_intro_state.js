@@ -221,7 +221,7 @@ LevelIntroState.prototype.load_complete = function() {
   var hive_numbers = new HiveNumbers(this.world_num, false)
   this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight/2 + 260, 100, 65, this.bright_color, this.bright_color, function(_this){
     return function(){
-      switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, true))
+      switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false /*is_main_game*/, true /*first_time*/))
     }
   }(this), "start"))
 }

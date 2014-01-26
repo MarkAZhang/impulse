@@ -220,7 +220,7 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   var max_radius = 1.5
   var size = imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_vars.draw_factor * Enemy.prototype.enemy_canvas_factor
   if(d == null) {
-    var draw_scale = size/2
+    var draw_scale = size
   } else {
     //var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
     var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)  

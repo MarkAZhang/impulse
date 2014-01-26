@@ -238,7 +238,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(main_message_teaser, imp_vars.levelWidth/2, 70)
       ctx.font = message_size + "px Muli"
       if (cur_reward.type == "world_victory") {
-        ctx.fillStyle = "white"
+        ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       } else {
         ctx.fillStyle = impulse_colors["impulse_blue"]  
       }

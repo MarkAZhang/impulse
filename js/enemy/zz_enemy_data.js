@@ -251,13 +251,14 @@ imp_params.impulse_enemy_stats["fighter"] = {
 
   enemy_info: [
     "Fires bullets at you on sight # # Impulse can reflect the bullets",
+    "Has a force-field which resists impulse. # # Touching this force-field will knock you back.",
     //"Very resistant to Impulse # # Very weak against the force of its own bullets",
     //"If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
     "Periodically charges up a Frenzy bar # # When the Hunter has five Frenzy bars, # it will enter Frenzy mode",
     "During Frenzy mode, moves faster and fires bullets that cannot be Impulsed",
     "During Frenzy mode, # loses a Frenzy bar whenever it fires # # When the Frenzy bars are depleted, # the Hunter exits Frenzy mode",
     "Loses one frenzy bar every time it is Impulsed",
-    "Does not die on collision"
+
     //"Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
@@ -612,7 +613,7 @@ imp_params.impulse_enemy_stats["second boss"] = {
 
 imp_params.impulse_enemy_stats["third boss"] = {
   color: "#a260a6",//"rgb(244, 164, 96)",
-  density: 1.7,
+  density: 2,
   lin_damp: 8,
   effective_radius: 4.5,
   force: 0,

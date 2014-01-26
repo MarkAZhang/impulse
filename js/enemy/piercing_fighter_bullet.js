@@ -31,6 +31,8 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
   this.reflected = false
   this.body.SetBullet(true)
 
+  this.adjust_position_enabled = false
+
   this.bullet_goo_factor = 0.33
 
   this.bullet_enemy_factor = 150;

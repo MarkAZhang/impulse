@@ -5,7 +5,7 @@ Spear.prototype.constructor = Spear
 function Spear(world, x, y, id, impulse_game_state) {
   this.type = "spear"
   this.silence_outside_arena = true
-  this.entered_arena_delay = 1000
+  this.entered_arena_delay = 0
   this.init(world, x, y, id, impulse_game_state)
 
   this.fast_factor = 5
@@ -77,7 +77,7 @@ Spear.prototype.additional_processing = function(dt) {
 
 Spear.prototype.player_hit_proc = function() {
 
-  if(this.status_duration[0] <= 0) {
+  if(this.status_duration[1] <= 0) {
     var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
     this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())

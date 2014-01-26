@@ -15,13 +15,16 @@ function Disabler(world, x, y, id, impulse_game_state) {
   this.goo_radius_small = 3;
   this.goo_radius_big = 9;
 
+  if(imp_vars.player_data.difficulty_mode == "easy") 
+    this.goo_radius_big = 8
+
   this.goo_radius = this.goo_radius_small
 
   this.goo_change_transition = 500
 
   this.goo_expand_period = 2500
   if(imp_vars.player_data.difficulty_mode == "easy")
-    this.goo_expand_period = 3000
+    this.goo_expand_period = 3500
 
   this.goo_state = "small"
 

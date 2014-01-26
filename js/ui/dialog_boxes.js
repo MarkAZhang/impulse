@@ -298,7 +298,7 @@ PauseMenu.prototype.restart_practice = function() {
   this.level.draw_bg(imp_vars.bg_ctx)
   imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
   var hive_numbers = new HiveNumbers(this.game_state.world_num, false)
-  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false, false))
+  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false /*is_main_game*/, false /*first_time*/))
   clear_dialog_box()
 }
 
