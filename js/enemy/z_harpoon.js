@@ -112,6 +112,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.has_bulk_draw = true
   this.bulk_draw_nums = 3
+  this.die_on_player_collision = false
 }
 
 Harpoon.prototype.add_harpoon_head = function() {
@@ -133,6 +134,8 @@ Harpoon.prototype.draw_harpoon_head = function(context, draw_factor, latest_colo
 Harpoon.prototype.get_target_path = Orbiter.prototype.get_target_path
 
 Harpoon.prototype.enemy_move = Orbiter.prototype.move
+
+Harpoon.prototype.player_hit_proc = function() {}
 
 Harpoon.prototype.move = function() {
   if(this.harpoon_state != "inactive" && this.harpoon_state != "engaged") {return}//do not move if harpooning
@@ -594,17 +597,6 @@ Harpoon.prototype.engage_harpoon = function(target) {
     this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)*/
     this.harpooned_target = target
     if(this.harpooned_target == this.player) {
-      this.impulse_game_state.reset_combo()
-    }
-  }
-}
-
-Harpoon.prototype.collide_with = function(other, this_body, other_body) {
-  if(this.dying || this.activated)//ensures the collision effect only activates once
-    return
-
-  if(other === this.player && this.status_duration[1] <= 0) {
-    if(!this.level.is_boss_level) {
       this.impulse_game_state.reset_combo()
     }
   }

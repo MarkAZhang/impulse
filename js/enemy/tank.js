@@ -167,7 +167,11 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
     else {
       this.start_death("hit_player")
     }
-  }
+  } else if(other instanceof Enemy) {
+    if(other.durations["open"] > 0) {
+      this.open(other.durations["open"])
+    }
+}
 }
 
 Tank.prototype.explode = function() {

@@ -32,6 +32,10 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.spawn_laser_revolution = 20000
 
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.spawn_laser_revolution = 30000    
+  }
+
   this.spawn_laser_radius = .2
 
   this.spawner_spawn_count = {
@@ -47,6 +51,21 @@ function BossFour(world, x, y, id, impulse_game_state) {
    "slingshot" : 4,
    "troll" : 6,
    "deathray" : 2
+ }
+
+ this.spawner_spawn_count_easy = {
+  "stunner" : 4,
+   "spear" : 3,
+   "tank" : 3,
+   "mote" : 3,
+   "goo" : 1,
+   "harpoon" : 2,
+   "orbiter" : 3,
+   "disabler" : 1,
+   "fighter" : 2,
+   "slingshot" : 2,
+   "troll" : 3,
+   "deathray" : 1
  }
 
  this.spawner_spawn_force = {
@@ -93,7 +112,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.shoot_durations = [this.shoot_interval,this.shoot_interval/2]
 
- this.aim_proportion = .25
+  this.aim_proportion = .25
 
   this.fire_interval = 200
 
@@ -721,7 +740,8 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
     new_enemy = new BossFourAttacker(this.world, new_position.x, new_position.y, this.level.enemy_counter, this.impulse_game_state, 0.1)
   else {
     var spawn_type = this.get_next_enemy_type()
-    new_enemy = new BossFourSpawner(this.world, new_position.x, new_position.y, this.level.enemy_counter, this.impulse_game_state, spawn_type, this.spawner_spawn_count[spawn_type], this.spawner_spawn_force[spawn_type], this, 0.1)
+    var spawn_count = imp_vars.player_data.difficulty_mode == "easy" ? this.spawner_spawn_count_easy[spawn_type] : this.spawner_spawn_count[spawn_type];
+    new_enemy = new BossFourSpawner(this.world, new_position.x, new_position.y, this.level.enemy_counter, this.impulse_game_state, spawn_type, spawn_count, this.spawner_spawn_force[spawn_type], this, 0.1)
   }
   bud.body = new_enemy.body
   bud.enemy = new_enemy

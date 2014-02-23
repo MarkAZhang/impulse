@@ -9,6 +9,10 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.special_mode = false
 
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.force *= 0.8
+  }
+
   this.slingshot_force = 50 //force that the spear impulses the player
 
   this.death_radius = 5

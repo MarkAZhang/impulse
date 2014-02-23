@@ -203,8 +203,8 @@ ImpulseGameState.prototype.check_new_enemies = function() {
 }
 
 ImpulseGameState.prototype.make_player = function() {
-  if(this.level.player_loc) {
-    this.player = new Player(this.world, this.level.player_loc.x/imp_vars.draw_factor, this.level.player_loc.y/imp_vars.draw_factor, this)
+  if(this.level.get_starting_loc()) {
+    this.player = new Player(this.world, this.level.get_starting_loc().x/imp_vars.draw_factor, this.level.get_starting_loc().y/imp_vars.draw_factor, this)
   }
   else {
     var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, imp_vars.draw_factor)

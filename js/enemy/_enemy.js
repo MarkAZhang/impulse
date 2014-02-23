@@ -127,8 +127,11 @@ this.original_spawn_point = new b2Vec2(x, y);
   this.sp_visibility = 0
 
 
+
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
+
+  this.die_on_player_collision = true
   this.pathfinding_delay = 40
   this.pathfinding_counter =  this.pathfinding_delay  //pathfinding_delay and yield are defined in enemy
 
@@ -662,8 +665,9 @@ Enemy.prototype.collide_with = function(other) {
           this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
         }
       }
-
-      this.start_death("hit_player")
+      if (this.die_on_player_collision) {
+        this.start_death("hit_player")
+      }
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
         if(!this.level.is_boss_level && this.status_duration[1] <= 0) {
@@ -1063,15 +1067,15 @@ Enemy.prototype.get_current_status = function() {
       if (this.durations["ulted"] > 0) {
         return "ulted"
       }
+      if(this.durations["impulsed"] > 0) {
+        return "impulsed"
+      }
       if(this.status_duration[0] > 0) {
         return 'stunned';
       } else if(this.color_silenced) {
         return 'silenced'
       } else if(this.status_duration[2] > 0) {
         return "gooed"
-      }
-      if(this.durations["impulsed"] > 0) {
-        return "impulsed"
       }
     }
 

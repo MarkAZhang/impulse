@@ -65,6 +65,8 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.player_collision_buffer_interval = 200 // minimum period between player collisions, so we don't accidentally apply tank_force twice
   this.player_collision_buffer_timer = 0
+
+  this.die_on_player_collision = false
 }
 
 Fighter.prototype.get_bullet_locations = function(side) {
@@ -292,20 +294,6 @@ Fighter.prototype.activated_processing = function(dt) {
 
 
 }
-
-Fighter.prototype.collide_with = function(other) {
-
-//function for colliding with the player
-
-  if(this.dying || this.activated)//ensures the collision effect only activates once
-    return
-
-  if(other === this.player) {
-
-
-  }
-}
-
 
 Fighter.prototype.silence = function(dur, color_silence) {
   if(color_silence) {

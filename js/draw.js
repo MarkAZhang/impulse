@@ -28,10 +28,10 @@ function draw_empty_star(context, x, y, r, color) {
   context.stroke()
 }
 
-function draw_prog_circle(context, x, y, r, prog, color) {
+function draw_prog_circle(context, x, y, r, prog, color, width) {
   context.beginPath()
   context.arc(x*imp_vars.draw_factor, y*imp_vars.draw_factor, (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
-  context.lineWidth = 2
+  context.lineWidth = width ? width : 2 
   context.strokeStyle = color
   context.stroke()
 }

@@ -37,6 +37,9 @@ BossFourAttacker.prototype.additional_processing = function(dt) {
     var dir = new b2Vec2(this.dir.x, this.dir.y)
     dir.Normalize()
     dir.Multiply(this.force)
+    if (imp_vars.player_data.difficulty_mode == "easy") {
+      dir.Multiply(0.5)
+    }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
   }
 }

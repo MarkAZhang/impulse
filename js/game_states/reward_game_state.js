@@ -462,6 +462,9 @@ RewardGameState.prototype.determine_rewards = function() {
 }
 
 RewardGameState.prototype.on_key_down = function(keyCode) {
+  if(this.rewards.length == 0) {
+    return
+  }
   if(this.transition_state=="none" && this.rewards[this.cur_reward_index].type != "select_difficulty") {
     this.transition_state="out";
     this.transition_timer = this.transition_interval
@@ -469,6 +472,9 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
 }
 
 RewardGameState.prototype.on_click = function(x, y) {
+  if(this.rewards.length == 0) {
+    return
+  }
   if (this.rewards[this.cur_reward_index].type == "select_difficulty") {
     this.normal_mode_button.on_click(x, y)
     this.challenge_mode_button.on_click(x, y)
@@ -482,6 +488,9 @@ RewardGameState.prototype.on_click = function(x, y) {
 
 
 RewardGameState.prototype.on_mouse_move = function(x, y) {
+  if(this.rewards.length == 0) {
+    return
+  }
   if (this.rewards[this.cur_reward_index].type == "select_difficulty") {
     this.normal_mode_button.on_mouse_move(x, y)
     this.challenge_mode_button.on_mouse_move(x, y)

@@ -42,7 +42,11 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.pick_alt_path = data.pick_alt_path
 
-  this.player_loc = data.player_loc
+  this.starting_loc = data.player_loc
+  if (imp_vars.player_data.difficulty_mode == "easy" && data.player_loc_easy) {
+    this.starting_loc = data.player_loc_easy
+  }
+  this.player_loc = this.get_starting_loc()
 
   this.spawn_points = data.spawn_points
 
@@ -104,7 +108,7 @@ Level.prototype.init = function(data, level_intro_state) {
     "fourth boss": BossFour,
     "boss four spawner": BossFourSpawner,
   }
-  this.gateway_loc = {x: data.player_loc.x/imp_vars.draw_factor, y: data.player_loc.y/imp_vars.draw_factor}
+  this.gateway_loc = {x: this.get_starting_loc().x/imp_vars.draw_factor, y: this.get_starting_loc().y/imp_vars.draw_factor}
   this.gateway_size = 4
 
   this.gateway_transition_interval = 500
@@ -118,6 +122,10 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.bulk_draw_enemies = {} // allows us to use a single beginPath/stroke to draw the same characteristics for many enemies
 
+}
+
+Level.prototype.get_starting_loc = function() {
+  return this.starting_loc
 }
 
 Level.prototype.reset = function() {
