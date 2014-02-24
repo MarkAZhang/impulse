@@ -8,6 +8,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.level_intro_state = level_intro_state
   this.impulse_game_state = null
 
+  // Retrieve enemy data. Use easy mode if necessary but default to normal.
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.enemies_data = data.enemies_easy
   }
@@ -25,8 +26,6 @@ Level.prototype.init = function(data, level_intro_state) {
   } else {
     this.using_initial_spawn_data_easy = true
   }
-  this.enemy_spawn_timers = {}
-  this.enemy_spawn_counters = {}
   this.enemy_numbers = {}
   this.level_name = data.level_name
 
@@ -148,18 +147,22 @@ Level.prototype.reset = function() {
   this.boss_victory = false
   this.tessellation_angle = 0
 
+  this.enemy_spawners = {};
 
-  for(i in this.enemies_data) {
-    if (!this.is_boss_level && i in this.initial_spawn_data) {
-      this.enemy_spawn_timers[i] = 0
-    } else {
-      this.enemy_spawn_timers[i] = this.enemies_data[i][1]
-    }
-    
-    this.enemy_spawn_counters[i] = this.enemies_data[i][2]
-    this.enemy_numbers[i] = 0
+  for (i in this.enemies_data) {
+    var enemy_data = this.enemies_data[i];
+    this.enemy_spawners[i] = new EnemySpawner(
+      i, /* type */
+      enemy_data[0], /* first_spawn_time */
+      enemy_data[1], /* spawn_period_init */
+      enemy_data[2], /* spawn_period_decr_per_minute */
+      enemy_data[3], /* spawn_period_min */
+      enemy_data[4], /* num_per_spawn_init */
+      enemy_data[5], /* num_per_spawn_incr_per_minute */
+      enemy_data[6]  /* max_enemies */
+    );
   }
-
+  
   this.dead_enemies = []
   this.expired_enemies = []
   this.spawned_enemies = []
@@ -310,7 +313,7 @@ Level.prototype.process = function(dt) {
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
 
       if(this.enemies[dead_i].type == "goo" || this.enemies[dead_i].type == "disabler") { // if goo or disabler died, reset the death timer
-        this.enemy_spawn_timers[this.enemies[dead_i].type] = 0
+        this.enemy_spawners[this.enemies[dead_i].type].reset_spawn_period();
       }
 
       this.enemies.splice(dead_i, 1)
@@ -377,33 +380,29 @@ Level.prototype.initial_spawn = function() {
 }
 
 Level.prototype.check_enemy_spawn_timers = function(dt) {
-  for(var k in this.enemy_spawn_timers) {
-      //if we haven't reached the initial spawn time
-    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
+  if (this.is_boss_level) return
 
+  for(var enemy_type in this.enemy_spawners) {
+    var enemy_spawner = this.enemy_spawners[enemy_type]
 
-    //increment the spawn_counters
-    this.enemy_spawn_counters[k] += dt/1000/60 * this.enemies_data[k][3]
+    enemy_spawner.process(dt, this.impulse_game_state.game_numbers.seconds);
 
-    this.enemy_spawn_timers[k] += dt/1000
-    if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
-      this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
+    var num_enemies_to_spawn = enemy_spawner.get_spawn_number(this.impulse_game_state.game_numbers.seconds);
+
+    if(num_enemies_to_spawn > 0) {
+
+      if(imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
+        num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
+      }
 
       // re-seed for each type of enemy
       var spawn_point_index = 0;
       if(this.spawn_points)
         spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
 
-      var num_enemies_to_spawn = this.enemy_spawn_counters[k]
-
-      if(!this.is_boss_level && imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
-        num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
-      }
-
       for(var j = 0; j < Math.floor(num_enemies_to_spawn); j++) {
-        this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
+        this.spawn_queue.push({type: enemy_type, spawn_point: spawn_point_index})
         spawn_point_index+=1;
-
       }
     }
   }
@@ -415,19 +414,15 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 Level.prototype.skip_enemy_spawn_timers = function() {
   var min_timer = 1000
   // find the minimum time to next enemy spawn
-  for(var k in this.enemy_spawn_timers) {
-    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
-    var value = this.enemies_data[k][1] - this.enemy_spawn_timers[k]
-    if (min_timer > value) {
-      min_timer = value
-    }
+  for(var enemy_type in this.enemy_spawners) {
+    var enemy_spawner = this.enemy_spawners[enemy_type];
+    min_timer = Math.min(min_timer, enemy_spawner.spawn_period)
   }
 
   // adjust all enemy timers accordingly, but skip those that haven't spawned yet
-  for(var k in this.enemy_spawn_timers) {
-    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
-    this.enemy_spawn_counters[k] += min_timer/60 * this.enemies_data[k][3]
-    this.enemy_spawn_timers[k] += min_timer
+  for(var enemy_type in this.enemy_spawners) {
+    var enemy_spawner = this.enemy_spawners[enemy_type];
+    enemy_spawner.process(min_timer, this.impulse_game_state.game_numbers.seconds)
   }
 }
 
@@ -448,7 +443,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   //if at the cap, don't spawn more
-  if(this.enemy_numbers[enemy_type] >= this.enemies_data[enemy_type][4]) {
+  if(this.enemy_numbers[enemy_type] >= this.enemy_spawners[enemy_type].get_max_enemies()) {
     return
   }
 
