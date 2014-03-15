@@ -1,5 +1,5 @@
 var imp_vars = {
-  dev: true,
+  dev: false,
   step_id: 0,
   canvasWidth: 0,
   canvasHeight: 0,
@@ -173,8 +173,7 @@ function set_up_title_bg() {
   title_bg_canvas.width = imp_vars.levelWidth;
   title_bg_canvas.height = imp_vars.levelHeight;
   var title_bg_ctx = title_bg_canvas.getContext('2d');
-  imp_vars.background_animation = new BackgroundAnimation(title_bg_canvas.width, title_bg_canvas.height)
-  imp_vars.background_animation.draw_title_bg(title_bg_ctx)
+  draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
   imp_vars.title_bg_canvas = title_bg_canvas
   var world_menu_bg_canvas = document.createElement('canvas');
   world_menu_bg_canvas.width = imp_vars.levelWidth;

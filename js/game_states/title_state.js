@@ -37,7 +37,6 @@ function TitleState(last_state) {
 
 
 TitleState.prototype.process = function(dt) {
-  imp_vars.background_animation.process(dt)
   /*if(this.fade_out_duration) {
     this.fade_out_duration -= dt;
   }
@@ -48,23 +47,15 @@ TitleState.prototype.process = function(dt) {
   }*/
 }
 
-TitleState.prototype.draw_bg = function(ctx, alpha) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#000"
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = alpha
-  ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
-  ctx.globalAlpha = 1
-}
+
 
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    this.draw_bg(bg_ctx, 0.1)
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.1)
     this.bg_drawn = true
   }
 
-  imp_vars.background_animation.draw(ctx)
   //ctx.globalAlpha = .3
   //ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
   //ctx.globalAlpha = 1

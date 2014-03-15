@@ -194,11 +194,9 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
     this.bg_drawn = true
     imp_vars.world_menu_bg_canvas.setAttribute("style", "")
-  } 
-  ctx.save()
-  ctx.globalAlpha /= 5
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+  }
+
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num == 0 ? 0.1 : 0.2)
 
   ctx.save()
   ctx.beginPath()
@@ -442,10 +440,10 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
     draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
     this.bg_drawn = true
   }
-  ctx.save()
-  ctx.globalAlpha /= 5
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+
+  // if world_num is 0 or undefined, draw the background less transparent, since it's white.
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
+  
   ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';

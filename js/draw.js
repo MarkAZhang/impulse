@@ -1338,3 +1338,12 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   ctx.restore()
 
 }
+
+function draw_image_on_bg_ctx(bg_ctx, image, alpha) {
+  bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bg_ctx.fillStyle = "#000"
+  bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+  bg_ctx.globalAlpha = alpha
+  bg_ctx.drawImage(image, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+  bg_ctx.globalAlpha = 1
+}

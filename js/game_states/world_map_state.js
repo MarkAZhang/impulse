@@ -144,15 +144,6 @@ WorldMapState.prototype.draw_world_bg = function(ctx) {
   draw_bg(ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.cur_world)
 }
 
-WorldMapState.prototype.draw_bg = function(ctx) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#080808"
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 0.03
-  ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
-  ctx.globalAlpha = 1
-}
-
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.fade_out_color) {
@@ -171,15 +162,12 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    this.draw_bg(bg_ctx)
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.1)
     this.bg_drawn = true
   }
 
-
-
   ctx.save()
   ctx.globalAlpha *= 1
-  imp_vars.background_animation.draw(ctx, "world"+this.cur_world)
   ctx.restore()
   ctx.save()
   ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
@@ -327,7 +315,6 @@ WorldMapState.prototype.process = function(dt) {
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }
-  imp_vars.background_animation.process(dt)
 }
 
 WorldMapState.prototype.on_mouse_move = function(x, y) {

@@ -8,7 +8,6 @@ function HowToPlayState(mode) {
   this.ready = false
   this.level = this.load_level(imp_params.impulse_level_data["HOW TO PLAY"])
   this.level.no_spawn = true
-  this.level.check_enemy_spawn_timers = this.check_enemy_spawn_timers
   this.slide_num = 0
   this.hive_numbers = new HiveNumbers(0, false)
   this.advancing = false
