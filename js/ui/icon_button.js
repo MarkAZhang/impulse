@@ -55,7 +55,7 @@ IconButton.prototype.additional_draw = function(context) {
 
   if (this.extra_text) {
     context.font = this.size * 0.7 +'px Muli';
-    context.fillText(this.extra_text, this.x, this.y + this.h/3 + 0.9 * this.size)
+    context.fillText(this.extra_text, this.x, this.y + this.h/3 + 1.2 * this.size)
   }
   
   context.fill()
@@ -100,6 +100,30 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_tutorial_icon(context, this.x, this.y - this.h/8, 13, "white", "#080808", false)   
     }
+  } else if(this.icon == "note") {
+    if(this.hover) {
+      draw_note_icon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"], "#080808")   
+    } else {
+      draw_note_icon(context, this.x, this.y - this.h/6, 20, "white", "#080808")   
+    }
+  } else if(this.icon == "texture") {
+    if(this.hover) {
+      draw_texture_icon(context, this.x, this.y - this.h/4, 20, impulse_colors["impulse_blue"])   
+    } else {
+      draw_texture_icon(context, this.x, this.y - this.h/4, 20, "white")   
+    }
+  } else if(this.icon == "physics_engine") {
+    if(this.hover) {
+      draw_physics_icon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"])   
+    } else {
+      draw_physics_icon(context, this.x, this.y - this.h/6, 20, "white")   
+    }
+  } else if(this.icon == "audio") {
+    if(this.hover) {
+      draw_music_icon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"], false, false)
+    } else {
+      draw_music_icon(context, this.x, this.y - this.h/6, 20, "white", false, false)
+    }
   } else if(this.icon == "back") {
     if(this.hover) {
       draw_back_icon(context, this.x, this.y - this.h/8, 13, this.hover_color, "#080808", false)   
@@ -137,7 +161,7 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.color)   
     }
   } else if (this.icon == "mute_in_game") {
-    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true)
+    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, imp_vars.player_data.options.music_mute)
   } else if (this.icon == "pause_in_game") {
     draw_pause_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true)
   } else if (this.icon == "fullscreen_in_game") {

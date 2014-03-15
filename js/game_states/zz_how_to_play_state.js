@@ -158,7 +158,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.textAlign = "center"
     ctx.fillStyle = "white"
     if(this.cur_page == -1) {
-      draw_logo(ctx, 400, 380, true)
+      draw_logo(ctx, 400, 380, "MARK ZHANG")
       /*ctx.font = '72px Muli'
       ctx.shadowColor = impulse_colors["impulse_blue"]
       ctx.shadowBlur = 20
@@ -234,7 +234,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.textAlign = "center"
     ctx.fillStyle = "white"
     if(this.cur_page == 0) {
-      draw_logo(ctx, 400, 380, true)
+      draw_logo(ctx, 400, 380, "MARK ZHANG")
       /*ctx.font = '72px Muli'
       ctx.shadowColor = impulse_colors["impulse_blue"]
       ctx.shadowBlur = 20
@@ -489,7 +489,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.textAlign = 'center'
     if (this.cur_page == 0) {
-       draw_logo(ctx, 400, 380, true)
+       draw_logo(ctx, 400, 380, "MARK ZHANG")
       /*ctx.font = '72px Muli'
       ctx.shadowColor = impulse_colors["impulse_blue"]
       ctx.shadowBlur = 20

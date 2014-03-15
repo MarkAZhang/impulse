@@ -342,6 +342,7 @@ function OptionsMenu(previous_menu) {
   this.init(800, 600)
   this.game_state = previous_menu.game_state
   this.solid = false;
+  this.world_num = previous_menu.world_num
 
   this.options_y_line_up = 170
 
@@ -570,6 +571,8 @@ function ControlsMenu(previous_menu) {
   this.bright_color = this.previous_menu.bright_color
   this.color = this.previous_menu.color
 
+  this.world_num = previous_menu.world_num
+
   this.current_hand = imp_vars.player_data.options.control_hand
   this.current_scheme = imp_vars.player_data.options.control_scheme
 
@@ -656,10 +659,8 @@ ControlsMenu.prototype.adjust_colors = function() {
 }
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
-  ctx.save()
-  ctx.globalAlpha /= 5
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
   ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
@@ -839,10 +840,8 @@ function EnemyBox(enemy_name, previous_menu) {
 }
 
 EnemyBox.prototype.additional_draw = function(ctx) {
-  ctx.save()
-  ctx.globalAlpha /= 5
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
 
   ctx.save()
   if(this.current_lines == null) {
@@ -1037,10 +1036,7 @@ function DeleteDataDialog(previous_menu) {
 
 DeleteDataDialog.prototype.additional_draw = function(ctx) {
 
-  ctx.save()
-  ctx.globalAlpha *= .6
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.3)
 
   if (!this.deleted) {
     ctx.fillStyle = "red"

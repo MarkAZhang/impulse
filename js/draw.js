@@ -739,7 +739,78 @@ function draw_quit_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_music_icon(context, x, y, scale, color, key_display) {
+function draw_texture_icon(context, x, y, scale, color) {
+  context.save()
+  context.translate(x, y)
+  context.transform(1,-0.35,0,1,0,0);
+  context.translate(-x, -y)
+  context.beginPath()
+  context.moveTo(x - scale/2, y)
+  context.lineTo(x + scale/2, y)
+  context.moveTo(x - scale/2, y + scale/2)
+  context.lineTo(x + scale/2, y + scale/2)
+  context.lineWidth = 6
+  context.strokeStyle = color
+  context.stroke()
+  context.restore()
+}
+
+function draw_physics_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.rect(x - scale/4, y - scale/2, scale/2, scale/2)
+  context.rect(x - scale/2, y, scale/2, scale/2)
+  context.rect(x, y, scale/2, scale/2)
+  context.strokeStyle = color
+  context.lineWidth = 4
+  context.stroke()
+  context.restore()
+}
+
+function draw_note_icon(context, x, y, scale, color) {
+  context.save()
+  context.translate(scale/3, 0)
+  context.beginPath()
+  context.moveTo(x - scale/3, y + scale/2)
+  context.lineTo(x - scale/3, y - scale * 1/6)
+  context.lineTo(x + scale/3, y - scale * 2/6)
+  context.lineTo(x + scale/3, y + scale * 2/6)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+  //context.beginPath()
+  //context.moveTo(x + scale/2, y + scale * 2/3)
+  //context.lineTo(x + scale/2, y - scale * 2/3)
+  //context.stroke()
+
+  var x1 = x - scale/2
+  var y1 = y + scale/2
+  context.save();
+  context.translate(x1, y1)
+  context.scale(1.3, 1);
+  context.translate(-x1, -y1)
+  context.beginPath()
+  context.arc(x1, y1, scale/6, 0, 2 * Math.PI, true)
+  context.fillStyle = color
+  context.fill()
+
+  context.restore()
+
+  var x2 = x + scale/6
+  var y2 = y + scale/3
+  context.save();
+  context.translate(x2, y2)
+  context.scale(1.3, 1);
+  context.translate(-x2, -y2)
+  context.beginPath()
+  context.arc(x2, y2, scale/6, 0, 2 * Math.PI, true)
+  context.fillStyle = color
+  context.fill()
+  context.restore()
+  context.restore()
+}
+
+function draw_music_icon(context, x, y, scale, color, key_display, mute) {
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
 
@@ -752,7 +823,7 @@ function draw_music_icon(context, x, y, scale, color, key_display) {
   context.lineTo(x- scale * 0.3 - scale/2 * 0.75, y + scale/2  * 0.6)
   context.fillStyle = color
   context.fill()
-  if(imp_vars.player_data.options.music_mute) {
+  if(mute) {
     context.beginPath()
     context.arc(x - scale * 0.3+ scale * 0.75, y, scale/2 * 0.45, 0, 2 * Math.PI, true)
     context.moveTo(x - scale * 0.3+ scale  * 0.75- Math.cos(Math.PI/4) * scale/2 * 0.45, y - Math.cos(Math.PI/4) * scale/2 * 0.45)
@@ -973,7 +1044,7 @@ function draw_multi_fragment(context, x, y, angle) {
 
 }
 
-function draw_logo(context, x, y, name) {
+function draw_logo(context, x, y, text) {
 
   context.save()
   context.textAlign = "center"
@@ -986,10 +1057,10 @@ function draw_logo(context, x, y, name) {
   var logoScale = 0.85;
   context.drawImage(logoSprite, x - logoSprite.width/2 * logoScale, y - logoSprite.height * 0.75 * logoScale, logoSprite.width * logoScale, logoSprite.height * logoScale)
 
-  if(name) {
+  if(text) {
     context.font = '16px Muli'
   //context.globalAlpha /= 2
-  context.fillText("MARK ZHANG", x, y + 40)
+  context.fillText(text, x, y + 40)
   //context.globalAlpha *= 2
   }
   context.restore()
