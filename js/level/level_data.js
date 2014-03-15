@@ -81,7 +81,7 @@ imp_params.impulse_level_data['HIVE 1-2'] = {
 
 imp_params.impulse_level_data['HIVE 1-3'] = {
   enemies_easy: {
-    "stunner": [0, 3, 0.6, 1.8, 2, 0, 40],
+    "stunner": [0, 4, 0.8, 1.6, 2, 0, 40],
     "spear": [30, 6, 1.5, 1.5, 1, 0, 15],
   },
   enemies: {
@@ -475,13 +475,16 @@ enemies: {
 
 imp_params.impulse_level_data['BOSS 2'] = {
   enemies: {
-    "second boss": [0, 1, 0, 1, 1, 0, 1],
+    "second boss": [0, 1, 0, 1, 0, 0, 1],
     "stunner": [0, 10, 0, 10, 0, 0, 12],
     "spear": [0, 10, 0, 10, 0, 0, 8],
     "tank": [0, 10, 0, 10, 0, 0, 8],
     "mote": [0, 10, 0, 10, 0, 0, 8],
     "goo": [0, 10, 0, 10, 0, 0, 1],
     "harpoon": [0, 10, 0, 10, 0, 0, 8],
+  },
+  initial_spawn_data: {
+    "second boss": 1
   },
   dominant_enemy: "second boss",
   //obstacle_v: [[[134,599],[50,599],[0,550],[-1,52],[50,2],[749,2],[800,49],[800,551],[750,599],[666,599],[666,552],[700,550],[750,508],[750,93],[700,49],[100,49],[50,93],[49,508],[100,550],[134,552]],[[237,550],[560,550],[560,599],[237,599]]],
@@ -838,7 +841,10 @@ imp_params.impulse_level_data['BOSS 3'] = {
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
-  defeat_time: 60
+  defeat_time: 60,
+  initial_spawn_data: {
+    "third boss": 1
+  },
 
 }
 
@@ -1155,7 +1161,10 @@ imp_params.impulse_level_data['BOSS 4'] = {
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
-  defeat_time: 90
+  defeat_time: 90,
+  initial_spawn_data: {
+    "fourth boss": 1
+  },
 
 }
 

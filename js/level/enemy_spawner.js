@@ -31,13 +31,11 @@ EnemySpawner.prototype.get_spawn_number = function(game_seconds) {
 	// TODO (account for the cap)
 	if (this.spawn_period <= 0) {
 		this.spawn_period += this.calculate_current_spawn_period_(game_seconds);
-		console.log("SPAWNING " + this.calculate_current_num_spawn_(game_seconds) + " " + this.type)
-		console.log("SPAWN PERIOD IS NOW " + this.calculate_current_spawn_period_(game_seconds));
 		return this.calculate_current_num_spawn_(game_seconds);
 	}
 }
 
-EnemySpawner.prototype.reset_spawn_period = function() {
+EnemySpawner.prototype.reset_spawn_period = function(game_seconds) {
 	this.spawn_period = this.calculate_current_spawn_period_(game_seconds);
 }
 

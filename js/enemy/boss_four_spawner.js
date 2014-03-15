@@ -57,7 +57,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
     var exit_points = Math.max(this.spawn_number, 4)
     for(var i = 0; i < this.spawn_number; i++) {
 
-      if(this.level.enemy_numbers[this.enemy_type] + i >= this.level.enemies_data[this.enemy_type][4]) {
+      if(this.level.enemy_numbers[this.enemy_type] + i >= this.level.enemies_data[this.enemy_type][6]) {
         //prevents over_spawn
         this.silence(500)
         this.spawn = false
@@ -132,11 +132,11 @@ BossFourSpawner.prototype.collide_with = function(other) {
 
   //if(this.status_duration[1] > 0) return
 
-  if(other === this.player) {
+  /*if(other === this.player) {
 
       var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
-  }  
+  }*/ 
 }
 
 BossFourSpawner.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {

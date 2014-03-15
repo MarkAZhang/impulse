@@ -74,7 +74,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
     var tank_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
     var dir = new b2Vec2(this.dir.x, this.dir.y)
     dir.Normalize()
-    dir.Multiply(20 * other.force)
+    dir.Multiply(100 * other.force)
     other.body.ApplyImpulse(dir, other.body.GetWorldCenter())
     //this.cause_of_death = "hit_player"
 

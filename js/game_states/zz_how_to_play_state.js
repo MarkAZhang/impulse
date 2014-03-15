@@ -96,40 +96,6 @@ HowToPlayState.prototype.load_complete = function() {
   }
 }
 
-//replaces the check_enemy_spawn_timers in Level
-HowToPlayState.prototype.check_enemy_spawn_timers = function(dt) {
-  if(this.no_spawn) return
-  for(var k in this.enemy_spawn_timers) {
-      //if we haven't reached the initial spawn time
-    if(this.impulse_game_state.game_numbers.seconds < this.enemies_data[k][0]) continue
-    //increment the spawn_counters
-    this.enemy_spawn_counters[k] += dt/1000/60 * this.enemies_data[k][3]
-
-    this.enemy_spawn_timers[k] += dt/1000
-    if(this.enemy_spawn_timers[k] >= this.enemies_data[k][1]) {
-      this.enemy_spawn_timers[k] -= this.enemies_data[k][1]
-      // re-seed for each type of enemy
-      var spawn_point_index = 0;
-      if(this.spawn_points)
-        spawn_point_index = Math.floor(Math.random() * this.spawn_points.length)
-
-      var num_enemies_to_spawn = this.enemy_spawn_counters[k]
-
-      if (this.double_spawn) num_enemies_to_spawn *= 2
-
-      //if(imp_vars.player_data.difficulty_mode == "easy") {
-      //  num_enemies_to_spawn = Math.max(1, num_enemies_to_spawn * 0.7)
-      //}
-
-      for(var j = 1; j <= num_enemies_to_spawn; j++) {
-        this.spawn_queue.push({type: k, spawn_point: spawn_point_index})
-        spawn_point_index+=1;
-
-      }
-    }
-  }
-}
-
 HowToPlayState.prototype.change_mode = function(type) {
   imp_vars.player_data.difficulty_mode = type;
   save_game();

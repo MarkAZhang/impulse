@@ -161,6 +161,7 @@ Level.prototype.reset = function() {
       enemy_data[5], /* num_per_spawn_incr_per_minute */
       enemy_data[6]  /* max_enemies */
     );
+    this.enemy_numbers[i] = 0
   }
   
   this.dead_enemies = []
@@ -313,7 +314,7 @@ Level.prototype.process = function(dt) {
       this.enemy_numbers[this.enemies[dead_i].type] -= 1
 
       if(this.enemies[dead_i].type == "goo" || this.enemies[dead_i].type == "disabler") { // if goo or disabler died, reset the death timer
-        this.enemy_spawners[this.enemies[dead_i].type].reset_spawn_period();
+        this.enemy_spawners[this.enemies[dead_i].type].reset_spawn_period(this.impulse_game_state.game_numbers.seconds);
       }
 
       this.enemies.splice(dead_i, 1)
@@ -393,6 +394,10 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
       if(imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
+      }
+
+      if (this instanceof HowToPlayState && this.double_spawn) {
+        num_enemies_to_spawn *= 2
       }
 
       // re-seed for each type of enemy
@@ -660,6 +665,14 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
 
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(bg_ctx, imp_vars.draw_factor)
+  }
+
+  if (this.is_boss_level) {
+    bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
+    bg_ctx.fillRect(375, 0, 50, 25);
+    bg_ctx.fillRect(375, 575, 50, 25);
+    bg_ctx.fillRect(0, 275, 25, 50);
+    bg_ctx.fillRect(775, 275, 25, 50);
   }
 
   //if(this.gateway_loc && !omit_gateway) {
