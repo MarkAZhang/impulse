@@ -31,7 +31,10 @@ function RewardGameState(hive_numbers, main_game, args) {
   ]
   
   this.determine_rewards()
-  imp_vars.impulse_music.stop_bg()
+  if(this.rewards.length > 0) {
+    imp_vars.impulse_music.stop_bg()  
+  }
+  
 }
 
 RewardGameState.prototype.change_mode = function(type) {

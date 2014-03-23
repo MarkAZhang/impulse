@@ -115,40 +115,48 @@ MusicPlayer.prototype.bg_is_playing = function() {
 }
 
 MusicPlayer.prototype.play_bg = function(file) {
-
-
-  if(this.cur_song!= null && this.cur_song != file) {
+  // if a song is playing and it is different from 'file'
+  if(this.cur_song != null && this.cur_song != file) {
     var _this = this;
+
+    // if the song is already paused, just switch it immediately
     if(this.sounds[this.cur_song].isPaused()) {
       this.switch_bg(file)
       return
-
     }
+
     this.playing[this.cur_song] = false
     this.playing[file] = true
+
+    // switch the song after fading out for 500ms
     this.sounds[this.cur_song].fadeOut(500, function() {
        _this.switch_bg(file)
     })
     return
   }
+
+  // if the file is not loaded yet, load the sound
   if(!(file in this.sounds)) {
 
+    // if the file needs to loop from mid-way through the song, add a listener
     if(file in imp_params.song_repeats) {
       this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
       this.sounds[file].bind("ended", function(e) {
              this.setTime(imp_params.song_repeats[file]);
              this.play();
           });
-
+    // otherwise, just loop it.
     } else {
       this.sounds[file] = new buzz.sound("audio/"+file+".ogg",{
-          loop: true
-        });
+        loop: true
+      });
     }
   }
-  if(!this.playing[file]) {
-    this.sounds[file].stop()
-  }
+
+  // stop the file if it is already playing
+  //if(!this.playing[file]) {
+  //  this.sounds[file].stop()
+  //}
   if(!this.mute) {
     this.sounds[file].setVolume(this.bg_music_volume);
   } else {
@@ -172,11 +180,15 @@ MusicPlayer.prototype.stop_bg = function() {
   if(this.cur_song) {
     this.playing[this.cur_song] = false
     var _this = this;
+    var current_song = this.cur_song
     _this.sounds[_this.cur_song].fadeOut(300, function() {
-        if(!_this.playing[_this.cur_song]) {
-
+        if(_this.cur_song && !_this.playing[_this.cur_song]) {
           _this.sounds[_this.cur_song].stop();
          _this.cur_song = null;
+        // in this case, start_bg was called again on the same song before the fade_out happened.
+        // in this case, set the volume back to full.
+        } else if (_this.cur_song == current_song && _this.playing[_this.cur_song]) {
+          _this.sounds[_this.cur_song].setVolume(_this.bg_music_volume)
         }
     })
   }
