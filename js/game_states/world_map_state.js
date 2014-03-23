@@ -38,7 +38,7 @@ function WorldMapState(world) {
     1: 23,
     2: 18,
     3: 20,
-    4: 10
+    // 4: 20
   }
 
   this.set_up_world_map()
@@ -112,7 +112,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
       new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[i+1].push(new_button)
-      new_button.active = imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].seen || imp_vars.dev
+      new_button.active = imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].seen || j == 0 || imp_vars.dev
       if(!new_button.active) {
         new_button.color = "gray"
       }
@@ -124,7 +124,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
 WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlocked) {
   var _this = this
   if(unlocked) {
-      this.world_buttons[world_num] = new SmallButton(name, 24, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
+      this.world_buttons[world_num] = new SmallButton(name, 32, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
       function(){
         _this.fade_out_duration = _this.fade_out_interval; 
         _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
@@ -162,7 +162,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.1)
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.2)
     this.bg_drawn = true
   }
 
@@ -287,6 +287,8 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '16px Muli'
   ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
   ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
+  ctx.font = '10px Muli'
+  ctx.fillText("SELECT A LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 95)
 
   ctx.textAlign = 'center'
   ctx.font = '12px Muli'

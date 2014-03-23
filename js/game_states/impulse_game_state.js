@@ -959,10 +959,13 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     this.toggle_pause()    
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
+    if (this instanceof HowToPlayState && this.mode == "first_time_tutorial" && this.cur_page < 9) {
+      // Prevent entering gateway in this specific instance
+      return
+    }
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true
-    //}
   } else
     this.player.keyDown(keyCode)  //even if paused, must still process
 }

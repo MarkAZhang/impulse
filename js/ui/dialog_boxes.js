@@ -196,7 +196,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     imp_vars.world_menu_bg_canvas.setAttribute("style", "")
   }
 
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num == 0 ? 0.1 : 0.2)
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
 
   ctx.save()
   ctx.beginPath()
@@ -443,7 +443,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   }
 
   // if world_num is 0 or undefined, draw the background less transparent, since it's white.
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
   
   ctx.save()
   ctx.textAlign = "center"
@@ -660,7 +660,7 @@ ControlsMenu.prototype.adjust_colors = function() {
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
 
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
   ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
@@ -841,7 +841,7 @@ function EnemyBox(enemy_name, previous_menu) {
 
 EnemyBox.prototype.additional_draw = function(ctx) {
 
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, this.world_num ? 0.2 : 0.1)
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
 
   ctx.save()
   if(this.current_lines == null) {

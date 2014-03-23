@@ -1401,11 +1401,17 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
 
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
   ctx.clip()
+
+  
   for(var x = xLow; x < xHigh; x+=w) {
     for(var y = yLow; y < yHigh; y+=h) {
       ctx.drawImage(bg, 0, 0, w, h, x, y, w, h)
     }
   }
+  /*ctx.rect(xLow + 5, yLow + 5, xHigh - xLow - 10, yHigh - yLow - 10)
+  ctx.strokeStyle = "white"
+  ctx.lineWidth = 10
+  ctx.stroke();*/
   ctx.restore()
 
 }

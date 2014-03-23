@@ -559,7 +559,7 @@ HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   ctx.fillText("MULTIPLIER", 303, 340)
 
 
-  var y_value = 500
+  var y_value = 450
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.font = '72px Muli'  
@@ -625,10 +625,9 @@ HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
   ctx.stroke()
 
 
-  ctx.font = '12px Muli'
+  ctx.font = '16px Muli'
   ctx.fillStyle = "white"
-  ctx.globalAlpha /= 2
-  ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 550)
+  ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 500)
 }
 
 HowToPlayState.prototype.draw_sparks_page = function(ctx) {
@@ -641,35 +640,35 @@ HowToPlayState.prototype.draw_sparks_page = function(ctx) {
   ctx.arc(this.level.multi_loc.x, this.level.multi_loc.y, 25, 0, 2 * Math.PI)
   ctx.stroke()
 
-  draw_spark(ctx, 300, 380)
+  draw_spark(ctx, 300, 440)
   ctx.font = '16px Muli'
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 10
   ctx.fillStyle = ctx.shadowColor
 
 
-  ctx.fillText("+10 SPARKS", 300, 415)
+  ctx.fillText("+10 SPARKS", 300, 475)
   ctx.shadowBlur = 0
-  draw_multi(ctx, 500, 380)
+  draw_multi(ctx, 500, 440)
   ctx.font = '16px Muli'
   ctx.shadowBlur = 10
   ctx.shadowColor = "white"
   ctx.fillStyle = ctx.shadowColor
 
-  ctx.fillText("+5 MULTIPLIER", 500, 415)
+  ctx.fillText("+5 MULTIPLIER", 500, 475)
 
   ctx.font = '24px Muli'
   ctx.shadowBlur = 0
-  ctx.fillText("COLLECT SPARKS", 400, 500)
-  ctx.font = '24px Muli'
+  ctx.fillText("POWERUPS", 400, 350)
+  /*ctx.font = '24px Muli'
   ctx.shadowColor = "red"
   ctx.fillStyle = "red"
   ctx.clearRect(415, 480, 115, 25)
-  ctx.fillText("SPARKS", 458, 500)
+  ctx.fillText("SPARKS", 458, 500)*/
 
   ctx.font = '12px Muli'
-  ctx.fillStyle = "white"
-  ctx.fillText("100 SPARKS = 1UP", 400, 530)
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.fillText("100 SPARKS = 1UP", 300, 495)
 
   ctx.beginPath()
   ctx.rect(-160, imp_vars.canvasHeight - 140, 120, 80)
@@ -729,7 +728,7 @@ HowToPlayState.prototype.draw_enemies_dying_page = function(ctx) {
  ctx.font = "20px Muli"
  ctx.fillStyle = "white"
  ctx.textAlign = "center"
- ctx.fillText("IMPULSE ENEMIES INTO THE VOID", 400, 500)
+ ctx.fillText("IMPULSE ENEMIES INTO THE VOID TO KILL THEM", 400, 500)
 }
 
 HowToPlayState.prototype.draw_player_dying_page = function(ctx) {
@@ -866,7 +865,7 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.draw_picture_bg_on_canvas(this.primary_ctx)
     this.draw_picture_bg_on_canvas(this.secondary_ctx)
 
-    drawSprite(this.primary_ctx, 30, 75, 0, 30, 30, "player_normal")
+    drawSprite(this.primary_ctx, 75, 120, 0, 30, 30, "player_normal")
     this.primary_ctx.beginPath();
     this.primary_ctx.shadowOffsetX = 0;
     this.primary_ctx.shadowOffsetY = 0;
@@ -874,20 +873,20 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.primary_ctx.shadowColor = impulse_colors["impulse_blue"];
     this.primary_ctx.lineWidth = 5
     this.primary_ctx.strokeStyle = this.primary_ctx.shadowColor
-    this.primary_ctx.arc(30, 75, 40, - Math.PI/3,  Math.PI/3);
+    this.primary_ctx.arc(75, 120, 40, 7*Math.PI/6,  11*Math.PI/6);
     this.primary_ctx.shadowBlur = 0
     this.primary_ctx.stroke()
-    draw_enemy_real_size(this.primary_ctx, "stunner", 77, 75, 1, Math.PI)
+    draw_enemy_real_size(this.primary_ctx, "stunner", 77, 75, 1, Math.PI/2)
 
     this.primary_ctx.beginPath()
-    this.primary_ctx.moveTo(92, 75)
-    this.primary_ctx.lineTo(107, 75)
+    this.primary_ctx.moveTo(75, 58)
+    this.primary_ctx.lineTo(75, 43)
     this.primary_ctx.lineWidth = 4
     this.primary_ctx.strokeStyle = "white"
     this.primary_ctx.stroke()
-    draw_arrow(this.primary_ctx, 107, 75, 13, "right", "white", false)
+    draw_arrow(this.primary_ctx, 75, 40, 13, "up", "white", false)
 
-    drawSprite(this.secondary_ctx, 30, 75, 0, 30, 30, "player_normal")
+    drawSprite(this.secondary_ctx, 75, 120, 0, 30, 30, "player_normal")
 
     this.secondary_ctx.globalAlpha = 0.5
     this.secondary_ctx.globalAlpha = 1
@@ -898,7 +897,7 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.secondary_ctx.shadowColor = impulse_colors["impulse_blue"];
     this.secondary_ctx.lineWidth = 5
     this.secondary_ctx.strokeStyle = this.secondary_ctx.shadowColor
-    this.secondary_ctx.arc(30, 75, 50, - Math.PI/3,  Math.PI/3);
+    this.secondary_ctx.arc(75, 120, 50, 7*Math.PI/6,  11*Math.PI/6);
     this.secondary_ctx.shadowBlur = 0
     this.secondary_ctx.stroke()
     this.temp_fragments.draw(this.secondary_ctx)
@@ -988,20 +987,25 @@ HowToPlayState.prototype.setPage = function(page) {
   if(this.mode == "first_time_tutorial" && page == 8) {
     this.level.no_spawn = false
     this.level.double_spawn = true
+    if (this.gateway_unlocked) {
+      // Set the page to the next one.
+      this.setPage(page + 1)
+      return
+    }
   }
 
   if((this.mode == "normal_tutorial" && page == 3 && this.cur_page != 3) ||
       (this.mode == "first_time_tutorial" && page == 2)) {
   
-    this.temp_fragments = new FragmentGroup("player", {x: 77/imp_vars.draw_factor, y: 75/imp_vars.draw_factor}, {x:0, y:0}, false)
+    this.temp_fragments = new FragmentGroup("player", {x: 75/imp_vars.draw_factor, y: 73/imp_vars.draw_factor}, {x:0, y:0}, false)
     this.temp_fragments.process(300)
   }
 
   if((this.mode == "normal_tutorial" && page == 4 && this.cur_page != 4) ||
       (this.mode == "first_time_tutorial" && page == 3)) {
 
-    this.temp_fragments = new FragmentGroup("stunner", {x: 90/imp_vars.draw_factor, y: 75/imp_vars.draw_factor}, {x: 5, y:0}, false)
-    this.temp_fragments.process(300)
+    this.temp_fragments = new FragmentGroup("stunner", {x: 75/imp_vars.draw_factor, y: 60/imp_vars.draw_factor}, {x: 0, y: -5}, false)
+    this.temp_fragments.process(100)
   }
 
   this.cur_page = page

@@ -52,7 +52,7 @@ TitleState.prototype.process = function(dt) {
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.1)
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.2)
     this.bg_drawn = true
   }
 
@@ -75,6 +75,8 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     }
     
   }*/
+  ctx.shadowColor = impulse_colors["impulse_blue"]
+  ctx.shadowBlur = 20
   draw_logo(ctx,imp_vars.levelWidth/2, 150, "MARK ZHANG")
 
   //ctx.shadowBlur = 5
@@ -159,7 +161,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
   } else {
     var button_y = imp_vars.levelHeight/2 + 50
-    this.buttons["menu"].push(new IconButton("STANDARD MODE", 20, imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("START GAME", 20, imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "easy"
@@ -180,7 +182,7 @@ TitleState.prototype.setup_main_menu = function() {
       }
     }, "player"))
 
-    this.buttons["menu"].push(new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("CHALLENGE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "normal"
@@ -200,7 +202,6 @@ TitleState.prototype.setup_main_menu = function() {
         //}, _this.fade_interval)
       }
     }, "normal_mode"))
-
 
     //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
     this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){switch_game_state(new HowToPlayState("normal_tutorial"))}, "tutorial"))
