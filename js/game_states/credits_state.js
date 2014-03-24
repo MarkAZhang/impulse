@@ -12,14 +12,16 @@ function CreditsState() {
   this.image = new Image()
 
   this.image.src = 'impulse_logo.png'
-  this.buttons.push(new IconButton("MATT MCFARLAND", 16, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
-  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
+  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, imp_vars.levelWidth/2 - 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
+  this.buttons.push(new IconButton("MATT MCFARLAND", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
+  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, imp_vars.levelWidth/2 + 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
   this.buttons.push(new IconButton("JAY SALVAT", 16, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
   this.buttons.push(new IconButton("ERIN CATTO", 16, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
-  this.buttons[1].extra_text = "MUSIC"
-  this.buttons[2].extra_text = "TEXTURES"
-  this.buttons[3].extra_text = "AUDIO API"
-  this.buttons[4].extra_text = "PHYSICS ENGINE"
+  this.buttons[1].extra_text = "MAIN MENU MUSIC"
+  this.buttons[2].extra_text = "ALL OTHER MUSIC"
+  this.buttons[3].extra_text = "TEXTURES"
+  this.buttons[4].extra_text = "AUDIO API"
+  this.buttons[5].extra_text = "PHYSICS ENGINE"
 }
 
 CreditsState.prototype.process = function(dt) {
@@ -29,7 +31,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.1)
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.2)
     this.bg_drawn = true
   }
   /*ctx.globalAlpha = .3
