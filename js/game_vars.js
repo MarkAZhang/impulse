@@ -30,7 +30,6 @@ var imp_params = {
     "Hive 2": "bg/hive2",
     "Hive 3": "bg/hive3",
     "Hive 4": "bg/hive4",
-    "Title": "bg/titlebg"
   },
   tessellation_names: {
     1: "IGNAVIAM",
