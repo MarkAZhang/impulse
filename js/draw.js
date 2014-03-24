@@ -64,7 +64,11 @@ function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
   context.fillText("NEW ENEMY", x, y - h * 0.4)
   context.font = "18px MUli"
   context.fillStyle = imp_params.impulse_enemy_stats[enemy_name].color
-  context.fillText(enemy_name.toUpperCase(), x, y - h * 0.25)
+  var true_name = enemy_name
+  if(imp_params.impulse_enemy_stats[enemy_name].true_name) {
+    true_name = imp_params.impulse_enemy_stats[enemy_name].true_name
+  }
+  context.fillText(true_name.toUpperCase(), x, y - h * 0.25)
 
   draw_enemy(context, enemy_name, x, y , 30)
 
@@ -1261,7 +1265,8 @@ spriteSheetData = {
   //x, y, w, h
   //"player_normal": [60, 0, 60, 60],
   "player_normal": [0, 0, 40, 40],
-  "player_red": [40, 0, 41, 41],
+  // not sure why this offset is necessary...
+  "player_red": [40, -1, 40, 40],
   "player_yellow": [80, 0, 41, 41],
   "player_gray": [120, 0, 41, 41],
   "player_green": [160, 0, 41, 41],

@@ -29,5 +29,7 @@ HarpoonHead.prototype.set_heading = function(heading) {
   this.actual_heading = heading
 }
 
+HarpoonHead.prototype.player_hit_proc = function() {}
+
 // HarpoonHead's durations is set to Harpoon's durations so that the two will be the same color. This means we must disable things like "open"
 HarpoonHead.prototype.open = function() {}

@@ -14,7 +14,7 @@ function HowToPlayState(mode) {
   this.advance_page_timer = 0
   this.delay_after_player_moved = 100
   this.delay_during_player_dying_page = 750
-  this.title_screen_delay = 400
+  this.title_screen_delay = 4000
   this.transition_interval = 500
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
@@ -40,7 +40,7 @@ HowToPlayState.prototype.load_complete = function() {
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
-  this.num_pages = 13
+  this.num_pages = 14
   if (this.mode == "normal_tutorial") {
     this.cur_page = 0  
   } else if (this.mode == "first_time_tutorial") {
@@ -186,6 +186,9 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
         draw_arrow_keys(ctx, 400, 430, 60, "white")
       }
       ctx.fillText("IMPULSE", 400, 500)
+      ctx.globalAlpha *= 0.5
+      ctx.font = '12px Muli'
+      ctx.fillText("HOLD MOUSE TO CONTINUOUSLY IMPULSE", 400, 550)
     }
 
     if(this.cur_page == 2) {
@@ -328,6 +331,10 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
 
     if(this.cur_page == 8 + this.ult_page_offset) {
+      this.draw_multiplier_page_two(ctx)
+    }
+
+    if(this.cur_page == 9 + this.ult_page_offset) {
 
       this.draw_sparks_page(ctx) 
     }
@@ -344,7 +351,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       }    
     }
 
-    if(this.cur_page == 9 + this.ult_page_offset) {
+    if(this.cur_page == 10 + this.ult_page_offset) {
       ctx.font = '20px Muli'
       ctx.fillStyle = "white"
       if(imp_vars.player_data.options.control_hand == "right") {
@@ -370,7 +377,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     }
 
-    if(this.cur_page == 10+ this.ult_page_offset) {
+    if(this.cur_page == 11 + this.ult_page_offset) {
 
       ctx.font = '24px Muli'
       ctx.fillStyle = "white"
@@ -382,10 +389,11 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("STRONGER ENEMIES", 400, 400)
       ctx.fillText("MORE NUMEROUS ENEMIES", 400, 430)
       ctx.fillText("HIGHER GATEWAY SCORES", 400, 460)
-      ctx.globalAlpha /= 2
+      /*ctx.globalAlpha /= 2
       ctx.font = '12px Muli'
       ctx.fillText("SPECIAL MODES CAN ONLY BE UNLOCKED IN CHALLENGE MODE!", 400, 530)
-      ctx.globalAlpha *= 2
+      ctx.globalAlpha *= 2*/
+
       /*for(var i=0; i < this.special_buttons.length; i++) {
         this.special_buttons[i].draw(ctx)
       }
@@ -403,7 +411,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.globalAlpha /= 2
       ctx.fillText("CAN BE CHANGED IN MAIN MENU OPTIONS", 400, 520)*/
     }
-    if (this.cur_page == 11 + this.ult_page_offset) {
+    if (this.cur_page == 12 + this.ult_page_offset) {
       ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.font = '18px Muli'
       ctx.shadowColor = ctx.fillStyle
@@ -434,12 +442,12 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("NUMBER OF CONTINUES", 400, 440)
       ctx.fillText("NUMBER OF GOLD AND SILVER SCORES", 400, 470)
       ctx.fillText("NUMBER OF DEATHS", 400, 500)
-      ctx.font = '12px Muli'
-      ctx.fillText("GET GOOD RANKS TO UNLOCK SPECIAL MODES!", 400, 550)
+      // ctx.font = '12px Muli'
+      // ctx.fillText("GET GOOD RANKS TO UNLOCK SPECIAL MODES!", 400, 550)
 
     }
 
-    if(this.cur_page == 12 + this.ult_page_offset) {
+    if(this.cur_page == 13 + this.ult_page_offset) {
 
       this.exit_button.draw(ctx)
       ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -541,7 +549,7 @@ HowToPlayState.prototype.draw_arrow_with_base = function(ctx, x, y, size, color)
   ctx.lineWidth = size/5
   ctx.strokeStyle = color
   ctx.stroke()
-  draw_arrow(ctx, x + size/2, y, size * 0.6, "right", "white", false)
+  draw_arrow(ctx, x + size/2, y, size * 0.6, "right", color, false)
 }
 
 HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
@@ -562,35 +570,34 @@ HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   var y_value = 450
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.font = '72px Muli'  
-  ctx.fillText('100', 150, y_value)
+  ctx.font = '48px Muli'  
+  ctx.fillText('100', 250, y_value)
 
   ctx.fillStyle = "white"
-  ctx.font = '16px Muli'
-  ctx.fillText('BASE POINT VALUE', 150, y_value + 40)
-  ctx.font = '16px Muli'
-  ctx.fillText('OF ENEMY', 150, y_value + 60)
+  ctx.font = '12px Muli'
+  ctx.fillText('BASE POINT VALUE', 250, y_value + 30)
+  ctx.fillText('OF ENEMY', 250, y_value + 50)
 
-  this.draw_arrow_with_base(ctx, 275, y_value - 25, 50, "white")
+  this.draw_arrow_with_base(ctx, 325, y_value - 15, 30, "white")
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.font = '72px Muli'
+  ctx.font = '48px Muli'
   ctx.textAlign = 'center'
   ctx.fillText('x5', 400, y_value)
   ctx.fillStyle = "white"
-  ctx.font = '16px Muli'
-  ctx.fillText("YOUR CURRENT", 400, y_value + 40)
-  ctx.fillText("MULTIPLIER", 400, y_value + 60)
+  ctx.font = '12px Muli'
+  ctx.fillText("YOUR CURRENT", 400, y_value + 30)
+  ctx.fillText("MULTIPLIER", 400, y_value + 50)
 
-  this.draw_arrow_with_base(ctx, 525, y_value - 25, 50, "white")
+  this.draw_arrow_with_base(ctx, 475, y_value - 15, 30, "white")
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.font = '72px Muli'
-  ctx.fillText('+500', 675, y_value)
+  ctx.font = '48px Muli'
+  ctx.fillText('+500', 565, y_value)
   ctx.fillStyle = "white"
-  ctx.font = '16px Muli'
-  ctx.fillText("TOTAL POINTS", 675, y_value + 40)
-  ctx.fillText("GAINED", 675, y_value + 60)
+  ctx.font = '12px Muli'
+  ctx.fillText("TOTAL POINTS", 565, y_value + 30)
+  ctx.fillText("GAINED", 565, y_value + 50)
 
   // Mark the multiplier.
   ctx.beginPath()
@@ -599,13 +606,31 @@ HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   ctx.lineWidth = 6
   ctx.stroke()
 
-
   this.draw_arrow_with_base(ctx, 735, 280, 50, "red")
 }
 
 HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
 
-  ctx.font = '24px Muli'
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText("KILLING ENEMIES", 250, 360)
+  ctx.fillStyle = impulse_colors["impulse_blue"]  
+  ctx.font = '36px Muli'
+  ctx.fillText("INCREASES", 250, 400)
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText("YOUR MULTIPLIER", 250, 430)
+
+  
+  ctx.fillText("TOUCHING ENEMIES", 550, 360)
+  ctx.fillStyle = "red"
+  ctx.font = '36px Muli'
+  ctx.fillText("RESETS", 550, 400)
+  ctx.fillStyle = "white"
+  ctx.font = '16px Muli'
+  ctx.fillText("YOUR MULTIPLIER", 550, 430)
+
+  /* ctx.font = '20px Muli'
   ctx.fillStyle = "white"
   ctx.fillText("KILLING ENEMIES INCREASES YOUR MULTIPLIER", 400, 400)
   ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -622,12 +647,13 @@ HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
   ctx.arc(imp_vars.canvasWidth - imp_vars.sidebarWidth*3/2, imp_vars.canvasHeight/2 - 20, 70, 0, 2 * Math.PI)
   ctx.lineWidth = 8
   ctx.strokeStyle = 'red'
-  ctx.stroke()
+  ctx.stroke() */
 
 
-  ctx.font = '16px Muli'
   ctx.fillStyle = "white"
-  ctx.fillText("YOUR MINIMUM MULTIPLIER INCREASES BY 1 EVERY 10 SECONDS", 400, 500)
+  ctx.globalAlpha *= 0.5
+  ctx.font = '12px Muli'
+  ctx.fillText("MINIMUM MULTIPLIER +1 EVERY 10 SECONDS", 400, 500)
 }
 
 HowToPlayState.prototype.draw_sparks_page = function(ctx) {
@@ -852,9 +878,9 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.primary_ctx.moveTo(75, 55)
     this.primary_ctx.lineTo(75, 40)
     this.primary_ctx.lineWidth = 4
-    this.primary_ctx.strokeStyle = "white"
+    this.primary_ctx.strokeStyle = impulse_colors["impulse_blue"]
     this.primary_ctx.stroke()
-    draw_arrow(this.primary_ctx, 75, 40, 13, "up", "white", false)
+    draw_arrow(this.primary_ctx, 75, 40, 13, "up", impulse_colors["impulse_blue"], false)
 
     this.temp_fragments.draw(this.secondary_ctx)
   }
@@ -876,15 +902,15 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.primary_ctx.arc(75, 120, 40, 7*Math.PI/6,  11*Math.PI/6);
     this.primary_ctx.shadowBlur = 0
     this.primary_ctx.stroke()
-    draw_enemy_real_size(this.primary_ctx, "stunner", 77, 75, 1, Math.PI/2)
+    draw_enemy_real_size(this.primary_ctx, "stunner", 75, 77, 1, Math.PI/2)
 
     this.primary_ctx.beginPath()
     this.primary_ctx.moveTo(75, 58)
     this.primary_ctx.lineTo(75, 43)
     this.primary_ctx.lineWidth = 4
-    this.primary_ctx.strokeStyle = "white"
+    this.primary_ctx.strokeStyle = "cyan"
     this.primary_ctx.stroke()
-    draw_arrow(this.primary_ctx, 75, 40, 13, "up", "white", false)
+    draw_arrow(this.primary_ctx, 75, 40, 13, "up", "cyan", false)
 
     drawSprite(this.secondary_ctx, 75, 120, 0, 30, 30, "player_normal")
 
@@ -955,6 +981,10 @@ HowToPlayState.prototype.on_key_down = function(keyCode) {
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
     }
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+    if (this.mode == "first_time_tutorial" && this.cur_page < 9) {
+      // Prevent entering gateway in this specific instance
+      return
+    }
     this.victory = true
   } else {
     this.player.keyDown(keyCode)  //even if paused, must still process

@@ -884,7 +884,7 @@ Player.prototype.draw = function(context) {
       context.font = "16px Muli"
       context.fillStyle = impulse_colors["impulse_blue"]
       if(this.impulse_game_state.world_num == 0) {
-        context.fillStyle = impulse_colors["impulse_blue_dark"]
+        context.fillStyle = impulse_colors["impulse_blue"]
       }
       context.textAlign = "center"
       context.shadowBlur = 0

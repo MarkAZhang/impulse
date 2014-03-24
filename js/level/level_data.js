@@ -450,7 +450,15 @@ imp_params.impulse_level_data['HIVE 2-6'] = {
 }
 
 imp_params.impulse_level_data['HIVE 2-7'] = {
-enemies: {
+  enemies_easy: {
+    "stunner": [0, 30, 0, 30, 2, 1, 16],
+    "spear": [2, 30, 0, 30, 2, 1, 16],
+    "tank": [12, 30, 0, 30, 2, 1, 16],
+    "mote": [6, 30, 0, 30, 2, 1, 16],
+    "goo": [18, 30, 0, 30, 1, 0, 1],
+    "harpoon": [20, 30, 0, 30, 2, 1, 16]
+  },
+  enemies: {
     "stunner": [0, 30, 0, 30, 4, 2, 16],
     "spear": [2, 30, 0, 30, 4, 2, 16],
     "tank": [12, 30, 0, 30, 4, 2, 16],
@@ -468,6 +476,7 @@ enemies: {
     "normal":[200000, 750000, 2250000],
   },
   initial_spawn_data: {
+    "stunner": 4
   },
   player_loc: {x: 400, y: 400}
 
@@ -718,7 +727,7 @@ imp_params.impulse_level_data['HIVE 3-5'] = {
   enemies_easy: {
     "spear": [6, 10, 2, 4, 1, 0, 8],
     "tank": [8, 12, 2.5, 4, 1, 0, 8],
-    "harpoon": [10, 15, 3, 6, 1, 0, 8],
+    "harpoon": [10, 20, 4, 8, 1, 0, 8],
     "troll": [0, 10, 2, 4, 1, 0, 10],
   },
   dominant_enemy: "troll",

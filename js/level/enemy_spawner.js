@@ -16,7 +16,8 @@ var EnemySpawner = function(
   this.num_per_spawn_incr_per_minute = num_per_spawn_incr_per_minute;
   this.max_enemies = max_enemies;
 
-  this.spawn_period = this.spawn_period_init * 1000;
+  // if the first_spawn is 0, then it will be in the initial_spawn, so set spawn_period to full. Otherwise 0 so it spawns immediately
+  this.spawn_period = this.first_spawn_time == 0 ? this.spawn_period_init * 1000 : 1;
 };
 
 // Decrement the spawn period if applicable
@@ -28,7 +29,6 @@ EnemySpawner.prototype.process = function(dt, game_seconds) {
 
 // Get the number of enemies to spawn in this iteration. 
 EnemySpawner.prototype.get_spawn_number = function(game_seconds) {
-	// TODO (account for the cap)
 	if (this.spawn_period <= 0) {
 		this.spawn_period += this.calculate_current_spawn_period_(game_seconds);
 		return this.calculate_current_num_spawn_(game_seconds);

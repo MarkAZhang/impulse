@@ -396,8 +396,12 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
-      if (this instanceof HowToPlayState && this.double_spawn) {
+      if (this.impulse_game_state instanceof HowToPlayState && this.double_spawn) {
         num_enemies_to_spawn *= 2
+      }
+
+      if (this.impulse_game_state instanceof HowToPlayState && this.no_spawn) {
+        num_enemies_to_spawn = 0
       }
 
       // re-seed for each type of enemy
@@ -421,7 +425,9 @@ Level.prototype.skip_enemy_spawn_timers = function() {
   // find the minimum time to next enemy spawn
   for(var enemy_type in this.enemy_spawners) {
     var enemy_spawner = this.enemy_spawners[enemy_type];
-    min_timer = Math.min(min_timer, enemy_spawner.spawn_period)
+    if (this.impulse_game_state.game_numbers.seconds > enemy_spawner.first_spawn_time) {
+      min_timer = Math.min(min_timer, enemy_spawner.spawn_period)
+    }
   }
 
   // adjust all enemy timers accordingly, but skip those that haven't spawned yet

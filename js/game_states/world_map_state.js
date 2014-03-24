@@ -38,7 +38,7 @@ function WorldMapState(world) {
     1: 23,
     2: 18,
     3: 20,
-    // 4: 20
+    4: 20
   }
 
   this.set_up_world_map()
