@@ -863,7 +863,7 @@ imp_params.impulse_level_data['HIVE 4-1'] = {
     "troll": [8, 16, 0, 16, 2, 1, 10],
     "tank": [12, 16, 0, 16, 2, 1, 10],
     "harpoon": [16, 16, 0, 16, 2, 1, 10],
-    "slingshot": [0, 8, 2, 1, 20]
+    "slingshot": [0, 8, 0, 8, 2, 1, 20]
   },
   enemies_easy: {
     "spear": [14, 28, 0, 28, 2, 1, 10],
