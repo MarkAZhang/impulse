@@ -523,15 +523,17 @@ function load_game() {
   imp_vars.player_data.world_rankings = load_obj['world_rankings']
 
   // for backwards-compatibility. Previously, we stored rank as simply the letter value instead of an object.
-  for (i in imp_vars.player_data.world_rankings) {
-    var value = imp_vars.player_data.world_rankings[i]
-    if (typeof value === "string") {
-      imp_vars.player_data.world_rankings[i] = {
-        "rank": value,
-        "continues": value == "F" ? 1 : 0,
-        "deaths": 9,
-        "stars": MainGameSummaryState.prototype.rank_cutoffs[value],
-        "first_victory": true 
+  for(difficulty in imp_vars.player_data.world_rankings) {
+    for (world in imp_vars.player_data.world_rankings[difficulty]) {
+      var value = imp_vars.player_data.world_rankings[difficulty][world]
+      if (typeof value === "string") {
+        imp_vars.player_data.world_rankings[difficulty][world] = {
+          "rank": value,
+          "continues": value == "F" ? 1 : 0,
+          "deaths": 9,
+          "stars": MainGameSummaryState.prototype.rank_cutoffs[value],
+          "first_victory": true 
+        }
       }
     }
   }
