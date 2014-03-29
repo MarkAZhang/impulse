@@ -85,8 +85,8 @@ imp_params.impulse_level_data['HIVE 1-3'] = {
     "spear": [30, 6, 1.5, 1.5, 1, 0, 15],
   },
   enemies: {
-    "stunner": [0, 1, 2, 2, 40],
-    "spear": [20, 5, 1, 3, 15],
+    "stunner": [0, 1, 0, 1, 2, 2, 40],
+    "spear": [20, 5, 0, 5, 1, 3, 15],
   },
   initial_spawn_data_easy: {
     "stunner": 6
@@ -113,7 +113,7 @@ imp_params.impulse_level_data['HIVE 1-4'] = {
     "spear": [0, 4, 1, 1, 1, 0, 40],
   },
   enemies: {
-    "spear": [0, 3, 2, 3, 40],
+    "spear": [0, 3, 0, 3, 2, 3, 40],
   },
   initial_spawn_data: {
     "spear": 2
