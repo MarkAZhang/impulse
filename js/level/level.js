@@ -214,7 +214,7 @@ Level.prototype.generate_multi = function() {
 Level.prototype.process = function(dt) {
 
   if (this.impulse_game_state.gateway_unlocked) {
-    this.tessellation_angle += dt / this.tessellation_rotate_rate * 2 * Math.PI
+    //this.tessellation_angle += dt / this.tessellation_rotate_rate * 2 * Math.PI
   }
 
   //handle obstacle visibility
@@ -547,14 +547,20 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
   }
   else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 3) {
-    ctx.globalAlpha *= 0.5
+    ctx.globalAlpha *= 0.7
     //ctx.globalAlpha *= 1
     //drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
     //  (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
   } else {
     ctx.globalAlpha *= 0.3
   }
-  draw_tessellation_sign(ctx, this.world_num, this.gateway_loc.x * draw_factor, this.gateway_loc.y * draw_factor, this.gateway_size * draw_factor, this.gateway_opened, this.tessellation_angle)
+  draw_tessellation_sign(ctx, 
+                         this.world_num,
+                         this.gateway_loc.x * draw_factor,
+                         this.gateway_loc.y * draw_factor,
+                         this.gateway_size * draw_factor,
+                         this.gateway_opened,
+                         0)//this.tessellation_angle)
   ctx.restore()
 }
 

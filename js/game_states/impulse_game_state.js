@@ -687,13 +687,13 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
   ctx.textAlign = 'center'
 
   ctx.font = '42px Muli'
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = "black"
+  //ctx.shadowBlur = 20;
+  //ctx.shadowColor = "black"
 
   ctx.fillText(this.hive_numbers.boss_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 150)
   ctx.fill()
 
-  ctx.shadowBlur = 0
+  //ctx.shadowBlur = 0
 
 }
 
@@ -747,8 +747,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   }
 
   context.font = '64px Muli'
-  context.shadowBlur = 10;
-  context.shadowColor = context.fillStyle;
+  //context.shadowBlur = 10;
+  //context.shadowColor = context.fillStyle;
 
 
   type = this.level_name.split(" ")[0]
@@ -791,7 +791,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
     if(this.stars < 3) {
       context.fillStyle = impulse_colors[this.star_colors[this.stars]]
-      context.shadowColor = context.fillStyle;
+      //context.shadowColor = context.fillStyle;
       context.font = '21px Muli'
       context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
       context.font = '42px Muli'
@@ -806,7 +806,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   } else {
     context.fillStyle = impulse_colors["boss "+this.world_num]
-    context.shadowColor = context.fillStyle;
+    //context.shadowColor = context.fillStyle;
     context.font = '36px Muli'
     context.fillText("DISTANCE",imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 55)
     context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
@@ -851,8 +851,8 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
     ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
-    ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
-    ctx.shadowBlur = 10;
+    //ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
+    //ctx.shadowBlur = 10;
     ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
   } else {
     if(this.level.boss)
