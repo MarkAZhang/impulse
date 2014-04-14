@@ -113,6 +113,13 @@ Level.prototype.init = function(data, level_intro_state) {
   this.gateway_transition_interval = 500
   this.gateway_transition_duration = null
 
+  // structure:
+  // start_x, start_y
+  // prop
+  this.gateway_particles = []
+  this.gateway_particle_gen_interval = 1000
+  this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
+  this.gateway_particle_duration = 2000
 
   this.spawn_point_counter = 0;
   this.reset();
@@ -213,9 +220,6 @@ Level.prototype.generate_multi = function() {
 
 Level.prototype.process = function(dt) {
 
-  if (this.impulse_game_state.gateway_unlocked) {
-    //this.tessellation_angle += dt / this.tessellation_rotate_rate * 2 * Math.PI
-  }
 
   //handle obstacle visibility
     this.spark_duration -= dt
@@ -263,6 +267,35 @@ Level.prototype.process = function(dt) {
         imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
         this.gateway_transition_duration = null
       }
+    }
+
+    // if the gateway is opened, process the particles
+    if (this.gateway_opened) {
+      
+      for (var i = 0; i < this.gateway_particles.length; i++) {
+        var particle = this.gateway_particles[i];
+        particle.prop += dt / this.gateway_particle_duration;
+        // remove the particle
+        if (particle.prop > 1) {
+          this.gateway_particles.splice(i, 1);
+        }
+      }
+
+      this.gateway_particle_gen_timer -= dt
+
+      if (this.gateway_particle_gen_timer < 0) {
+        this.gateway_particle_gen_timer += this.gateway_particle_gen_interval
+        var num_particles = 5
+        for (var i = 0; i < num_particles; i++) {
+          var angle = Math.random() * Math.PI * 2;
+          this.gateway_particles.push({
+            start_x: Math.cos(angle) * 1.5 * this.gateway_size + this.gateway_loc.x,
+            start_y: Math.sin(angle) * 1.4 * this.gateway_size + this.gateway_loc.y,
+            prop: 0
+          });
+        }
+      }
+
     }
 
 
@@ -546,7 +579,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     //ctx.save()
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
   }
-  else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 3) {
+  else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 4) {
     ctx.globalAlpha *= 0.7
     //ctx.globalAlpha *= 1
     //drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
@@ -561,6 +594,28 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
                          this.gateway_size * draw_factor,
                          this.gateway_opened,
                          0)//this.tessellation_angle)
+
+
+  if (this.gateway_opened) {
+    for(var i = 0; i < this.gateway_particles.length; i++) {
+      var particle = this.gateway_particles[i];
+      ctx.save()
+      if (particle.prop < 0.25) {
+        ctx.globalAlpha *= particle.prop * 4
+      } else { 
+        var temp = (1 - particle.prop) / (0.75)
+        ctx.globalAlpha *= temp
+      }
+      ctx.beginPath()
+      ctx.rect(draw_factor * (particle.start_x * (1 - particle.prop) + this.gateway_loc.x * particle.prop) - 3,
+               draw_factor * (particle.start_y * (1 - particle.prop) + this.gateway_loc.y * particle.prop) - 3,
+               6,
+               6)
+      ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
+      ctx.fill()
+      ctx.restore()
+    }
+  }
   ctx.restore()
 }
 

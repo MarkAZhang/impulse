@@ -6,7 +6,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   lin_damp: 4,
   effective_radius: .5,
   force: .42,
-  score_value: 10000,
+  score_value: 100,
   attack_rating: 1,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
