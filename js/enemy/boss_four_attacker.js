@@ -24,7 +24,7 @@ BossFourAttacker.prototype.draw = function(context, draw_factor) {
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
   context.save()
-  context.globalAlpha = 1-prog
+  context.globalAlpha *= 1-prog
   if(this.firing)
     drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_attack_bud_firing", adrogantiaSprite)
   else

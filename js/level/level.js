@@ -145,7 +145,7 @@ Level.prototype.reset = function() {
   this.enemy_counter = 0
   this.spawn_interval = 200
   this.spawn_timer = this.spawn_interval
-  this.obstacle_visibility = 1 //for Wisp
+  this.enemy_visibility = 1 // for boss four
   this.gateway_opened = false
   this.obstacles_visible_timer = 0
   this.boss_radius = 3
@@ -629,9 +629,6 @@ Level.prototype.pre_draw = function(context, draw_factor) {
 Level.prototype.draw = function(context, draw_factor) {
   context.save()
 
-  for(var i = 0; i < this.enemies.length; i++) {
-    this.enemies[i].pre_draw(context, draw_factor)
-  }
 
   if(this.spark_loc) {
     var prog = this.spark_duration/this.spark_life;
@@ -659,8 +656,15 @@ Level.prototype.draw = function(context, draw_factor) {
     imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.redraw_bg = false
   }
-  
-  //context.globalAlpha = this.obstacle_visibility
+
+  if (this.enemy_visibility != 1) {
+    context.save();
+    context.globalAlpha *= this.enemy_visibility;
+  }
+
+  for(var i = 0; i < this.enemies.length; i++) {
+    this.enemies[i].pre_draw(context, draw_factor)
+  }
 
   for(var type in this.bulk_draw_enemies) {
     var num_bulks = this.bulk_draw_enemies[type]
@@ -694,6 +698,9 @@ Level.prototype.draw = function(context, draw_factor) {
 
   for(var i = 0; i < this.fragments.length; i++) {
     this.fragments[i].draw(context, draw_factor)
+  }
+  if (this.enemy_visibility != 1) {
+    context.restore();
   }
 
   if(this.boss_delay_timer >= 0) {

@@ -1325,7 +1325,7 @@ spriteSheetData = {
   "adrogantia_spawner": [0, 80, 80, 80],
   "adrogantia_body_bud": [80, 0, 80, 80],
   "adrogantia_attack_bud_firing": [80, 80, 80, 80],
-  "adrogantia_head": [180, 0, 160, 160],
+  "adrogantia_head": [181, 1, 160, 160],
   "adrogantia_glow": [340, 0, 135, 135],
   "adrogantia_logo": [476, 0, 125, 125],
   "adrogantia_logo_gray": [476, 125, 125, 125],

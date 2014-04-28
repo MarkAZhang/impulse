@@ -465,8 +465,6 @@ BossThree.prototype.process_arm_polygons = function() {
 }
 
 BossThree.prototype.process_striking_arms = function() {
-  if(this.striking_index)
-    console.log(this.striking_arms[this.striking_index].duration + " " + this.striking_index)
   for(var index in this.striking_arms) {
     var data = this.striking_arms[index]
     if(data.duration > 0) {

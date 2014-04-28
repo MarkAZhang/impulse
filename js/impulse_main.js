@@ -215,8 +215,6 @@ function step() {
     imp_vars.ctx.restore()
   }
 
-
-
   if(imp_vars.cur_dialog_box!=null) {
     imp_vars.ctx.beginPath()
     imp_vars.ctx.globalAlpha = 1
@@ -230,7 +228,7 @@ function step() {
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   imp_vars.step_id = setTimeout(step, Math.max(33 - temp_dt, 1))
-
+  //imp_vars.step_id = requestAnimationFrame(step);
 }
 
 function set_dialog_box(box) {
