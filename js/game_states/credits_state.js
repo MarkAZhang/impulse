@@ -8,7 +8,10 @@ function CreditsState() {
   this.buttons = []
   var _this = this
   this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
-    if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(_this))}, 20)}}, "back"))
+    _this.fader.set_animation("fade_out", function() {
+      switch_game_state(new TitleState(_this));
+    });
+  }, "back"))
   this.image = new Image()
 
   this.image.src = 'impulse_logo.png'
@@ -22,10 +25,16 @@ function CreditsState() {
   this.buttons[3].extra_text = "TEXTURES"
   this.buttons[4].extra_text = "AUDIO API"
   this.buttons[5].extra_text = "PHYSICS ENGINE"
+
+  this.fader = new Fader({
+    "fade_in": 250,
+    "fade_out": 250
+  });
+  this.fader.set_animation("fade_in");
 }
 
 CreditsState.prototype.process = function(dt) {
-
+  this.fader.process(dt);
 }
 
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
@@ -37,6 +46,14 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   /*ctx.globalAlpha = .3
   /*ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
   //ctx.globalAlpha = 1
+  
+  ctx.save()
+
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
 
   draw_logo(ctx,imp_vars.levelWidth/2, 150, "CREDITS")
   
@@ -57,6 +74,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+  ctx.restore();
 }
 
 CreditsState.prototype.on_mouse_move = function(x, y) {

@@ -955,6 +955,14 @@ ImpulseGameState.prototype.toggle_pause = function() {
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
 
+  if(keyCode == 90) {//Z
+    this.victory = true
+    if(this.is_boss_level) {
+      this.level.boss_victory = true
+    } else {
+      this.game_numbers.score = this.level.cutoff_scores[0];
+    }
+  }
   if(keyCode == imp_params.keys.PAUSE) {
     this.toggle_pause()    
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
