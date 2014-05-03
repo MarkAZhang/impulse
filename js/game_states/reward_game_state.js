@@ -99,9 +99,26 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       message_size = 24
       main_message = "NEW HIVE UNLOCKED"
+      main_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
       ctx.fillText("HIVE "+imp_params.tessellation_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
+    }
+
+    if(cur_reward.type == "final_victory") {
+      ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
+      message_size = 32
+      main_message = imp_vars.player_data.difficulty_mode == "easy" ? "YOU'VE CLEARED STANDARD MODE" : "YOU'VE CLEARED CHALLENGE MODE"
+      main_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "WELL DONE!" : "INCREDIBLE!"
+      ctx.textAlign = "center"
+      ctx.font = "24px Muli"
+      ctx.fillStyle = "white"
+      if (imp_vars.player_data.difficulty_mode == "easy") {
+        ctx.fillText("NOW TRY CHALLENGE MODE!", imp_vars.levelWidth/2, 270)
+      } else {
+        ctx.fillText("THANKS FOR PLAYING IMPULSE!", imp_vars.levelWidth/2, 270)
+        // TODO: add sharing
+      }
     }
 
 
@@ -418,10 +435,19 @@ RewardGameState.prototype.determine_rewards = function() {
     })
   }
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
-    this.rewards.push({
-      type: "world_victory",
-      data: this.hive_numbers.world
-    })
+    if (this.hive_numbers.world < 4) {
+      this.rewards.push({
+        type: "world_victory",
+        data: this.hive_numbers.world
+      })  
+    }
+
+    if (this.hive_numbers.world == 4) {
+      this.rewards.push({
+        type: "final_victory",
+      })
+    }
+    
     imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
   }
   if(calculate_lives(this.hive_numbers.original_rating) < calculate_lives()) {
