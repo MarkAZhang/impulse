@@ -23,7 +23,7 @@ Fader.prototype.process = function(dt) {
   if (this.animation != null && this.timer > 0) {
     this.timer -= dt;
   }
-  if (this.animation != null && this.timer < 0) {
+  if (this.animation != null && this.timer <= 0) {
     if (this.callback) {
       this.callback();
     }
