@@ -30,10 +30,11 @@ DialogBox.prototype.draw = function(ctx) {
 
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
+    console.log(ctx.globalAlpha)
   } else if (this.fader.get_current_animation() == "fade_out") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
-  window.console.log("progress: " + this.fader.get_animation_progress());
+
 
 
   if(this.solid) {
@@ -211,7 +212,9 @@ PauseMenu.prototype.add_buttons = function() {
     var cur_y = this.y - this.h/2 + 250 + this.enemy_image_size * h_diff
     var _this = this
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color, function() {
-      set_dialog_box(new EnemyBox(this.enemy_name, _this))
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new EnemyBox(j, _this))
+      });
 
     }))
 
@@ -792,6 +795,7 @@ EnemyBox.prototype = new DialogBox()
 EnemyBox.prototype.constructor = EnemyBox
 
 function EnemyBox(enemy_name, previous_menu) {
+  window.console.log("NEW ENEMY BOX")
   this.init(800, 600)
   
   this.solid = false;
@@ -835,6 +839,7 @@ function EnemyBox(enemy_name, previous_menu) {
       } else if(_this.previous_menu instanceof GameState) {
         //switch_game_state(_this.previous_menu)
         clear_dialog_box()
+        _this.previous_menu.fader.set_animation("fade_in");
       }
     });
   }}(this), "back")
@@ -896,9 +901,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.textAlign = "center"
   ctx.fillStyle = this.bright_color
   ctx.font = '12px Muli'
-  ctx.globalAlpha /= 0.5
   ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 70)
-  ctx.globalAlpha *= 2
   ctx.font = '30px Muli'
 
   ctx.fillText(this.true_name.toUpperCase(), this.x, this.y - this.h/2 + 120)
@@ -943,7 +946,6 @@ EnemyBox.prototype.additional_draw = function(ctx) {
         ctx.fill()
         ctx.globalAlpha *= 2
       }
-
     }
   }
 

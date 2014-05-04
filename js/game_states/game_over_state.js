@@ -14,7 +14,9 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, this.color, function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
-      switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
+      });
     }
   }(this), "start")
   this.buttons.push(this.restart_button);
@@ -28,10 +30,14 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
  this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.color, function(_this){return function(){
     if(_this.world_num) {
-      switch_game_state(new WorldMapState(_this.world_num))
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new WorldMapState(_this.world_num))
+      });
     }
     else {
-      switch_game_state(new TitleState(true))
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new TitleState(true))
+      });
     }
   }}(this), "back"))
 
@@ -103,7 +109,9 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     var cur_y = 490 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
-        set_dialog_box(new EnemyBox(enemy, _this))
+        _this.fader.set_animation("fade_out", function() {
+          set_dialog_box(new EnemyBox(enemy, _this))
+        });
       }})(j, this)
       ))
 
@@ -119,9 +127,16 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.star_text = ["GATEWAY", "SILVER", "GOLD"]
 
   imp_vars.impulse_music.stop_bg()
+
+  this.fader = new Fader({
+    "fade_in": 500,
+    "fade_out": 250
+  });
+  this.fader.set_animation("fade_in");
 }
 
 GameOverState.prototype.process = function(dt) {
+  this.fader.process(dt);
 }
 
 GameOverState.prototype.draw = function(ctx, bg_ctx) {
@@ -138,12 +153,18 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     this.bg_drawn = true
   }
-
   ctx.save()
   ctx.globalAlpha /= 5
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   
+  ctx.save();
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
+
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
     draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 60, 40, true)
@@ -285,6 +306,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+  ctx.restore();
 }
 
 GameOverState.prototype.on_mouse_move = function(x, y) {

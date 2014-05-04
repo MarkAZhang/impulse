@@ -75,7 +75,9 @@ function LevelIntroState(level_name, world) {
     var cur_y = 490 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
-        set_dialog_box(new EnemyBox(enemy, _this))
+        _this.fader.set_animation("fade_out", function() {
+          set_dialog_box(new EnemyBox(enemy, _this))
+        });
       }})(j, this)
       ))
 
@@ -103,17 +105,17 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     bg_canvas.setAttribute("style", "display:none")
   }
+
+  ctx.save()
+  ctx.globalAlpha *= imp_vars.bg_opacity;
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore()
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
   } else if (this.fader.get_current_animation() == "fade_out") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
-  ctx.save()
-  ctx.globalAlpha *= imp_vars.bg_opacity;
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
-
   if (!this.is_boss_level) {
     ctx.globalAlpha /= 3
     draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 60, 40, true)
@@ -215,9 +217,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     {
       this.buttons[i].draw(ctx)
     }
-
   }
-
   ctx.restore();
 }
   
@@ -238,7 +238,9 @@ LevelIntroState.prototype.load_complete = function() {
   var hive_numbers = new HiveNumbers(this.world_num, false)
   this.buttons.push(new IconButton("START", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight/2 + 260, 100, 65, this.bright_color, this.bright_color, function(_this){
     return function(){
-      switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false /*is_main_game*/, true /*first_time*/))
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false /*is_main_game*/, true /*first_time*/))
+      });
     }
   }(this), "start"))
 }
