@@ -451,7 +451,6 @@ function draw_bare_mouse(context, x, y, w, h, color) {
   context.fillStyle = color
   draw_rounded_rect(context, x, y, w, h, h*0.25, color)
   
-  context.globalAlpha = 1
   context.beginPath()
   context.moveTo(x - w/2, y - h/6)
   context.lineTo(x + w/2, y - h/6)
@@ -940,7 +939,6 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.save();
   context.shadowBlur = 0
 
-  context.globalAlpha = 1
   context.beginPath()
   context.rect(x - w * .5 - 60, y - h * .5 - 20, w+120 , h+40)
   context.fillStyle ="black"
@@ -1132,10 +1130,11 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.clip()
   context.beginPath()
   context.rect(x - w/2, y - h/2, w, h)
-  context.globalAlpha = 0.3
+  context.save();
+  context.globalAlpha *= 0.3
   context.fillStyle = border_color
   context.fill()
-  context.globalAlpha = 1
+  context.restore();
   var polygons = null
   if (imp_vars.player_data.difficulty_mode == "easy") {
     polygons = imp_params.impulse_level_data[level_name].obstacle_v_easy
@@ -1325,7 +1324,7 @@ spriteSheetData = {
   "adrogantia_spawner": [0, 80, 80, 80],
   "adrogantia_body_bud": [80, 0, 80, 80],
   "adrogantia_attack_bud_firing": [80, 80, 80, 80],
-  "adrogantia_head": [180, 0, 160, 160],
+  "adrogantia_head": [181, 1, 160, 160],
   "adrogantia_glow": [340, 0, 135, 135],
   "adrogantia_logo": [476, 0, 125, 125],
   "adrogantia_logo_gray": [476, 125, 125, 125],

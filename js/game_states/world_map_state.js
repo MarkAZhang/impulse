@@ -12,12 +12,16 @@ function WorldMapState(world) {
   this.has_ult = has_ult()
 
   this.cur_world = world
+  this.next_world = null;
 
   this.buttons = []
   var _this = this
 
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
-    if(_this.fade_out_duration == null) {setTimeout(function(){switch_game_state(new TitleState(_this))}, 20)}}, "back"))
+    _this.fader.set_animation("fade_out", function() {
+      switch_game_state(new TitleState(_this));
+    }); 
+  }, "back"));
   this.world_buttons = {
 
   }
@@ -52,6 +56,14 @@ function WorldMapState(world) {
 
   this.cur_rating = calculate_current_rating()
   this.next_upgrade = calculate_next_upgrade()
+
+  this.fader = new Fader({
+    "fade_in": 250,
+    "fade_across": 250,
+    "fade_out": 250
+  });
+
+  this.fader.set_animation("fade_in");
 }
 
 WorldMapState.prototype.set_up_world_map = function() {
@@ -77,10 +89,17 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
   for(var i = 1; i <= 4; i++) {
     var _this = this;
     var callback = (function(index) {
-      return function() {_this.cur_world = index;}
+      return function() {
+        if (_this.cur_world != index) {
+          _this.fader.set_animation("fade_across", function() {
+            _this.cur_world = index;
+          }); 
+          _this.next_world = index;
+        }
+      };
     })(i)
     this.mode_buttons.push(new IconButton("", 16, cur_x + (i-1)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))  
-    if(i > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(i-1)]) {
+    if(i > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(i-1)] && !imp_vars.dev) {
       this.mode_buttons[i-1].active = false
       this.mode_buttons[i-1].color = "gray"
     }
@@ -100,10 +119,14 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
       if(j == 7) {
         level_name = "BOSS "+(i+1)
       }
+      var _this = this;
       var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].stars]]
       var callback = (function(level, index) {
         return function() {
-          switch_game_state(new LevelIntroState(level, index + 1))
+
+          _this.fader.set_animation("fade_out", function() {
+            switch_game_state(new LevelIntroState(level, index + 1))
+          });
         }
 
       })(level_name, i)
@@ -160,59 +183,106 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
   }
 
-  if(!this.bg_drawn) {
-    bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.2)
-    this.bg_drawn = true
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  ctx.save()
-  ctx.globalAlpha *= 1
+
+  if(!this.bg_drawn) {
+    bg_canvas.setAttribute("style", "")
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
+    this.bg_drawn = true
+  }
+  
+  if (this.fader.get_current_animation() == "fade_across") {
+    ctx.save();
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+    this.draw_world(ctx, this.cur_world);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+    this.draw_world(ctx, this.next_world);
+    ctx.restore();
+  } else {
+    this.draw_world(ctx, this.cur_world);
+  }
+
+  for(var i = 0; i < this.mode_buttons.length; i++) {
+    this.mode_buttons[i].draw(ctx)
+    if(this.mode_buttons[i].mouseOver) {
+      ctx.textAlign = "center"
+      ctx.font = '15px Muli'
+      if(this.mode_buttons[i].active) {
+        ctx.fillStyle = impulse_colors['world '+(i+1)+" bright"]
+        ctx.fillText("HIVE "+imp_params.tessellation_names[i+1], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+      } else if(this.mode_buttons[i-1].active) {
+        ctx.fillStyle = "gray"
+        ctx.fillText(this.requirements[i+1], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+      } else {
+        ctx.fillStyle = "gray"
+        ctx.fillText("???", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+      }
+      
+    }
+  }
+
+ 
+  for(var i = 0; i < this.buttons.length; i++)
+  {
+    this.buttons[i].draw(ctx)
+  }
+  ctx.textAlign = 'center'
+  ctx.font = '12px Muli'
+  ctx.fillStyle = 'white'
+  ctx.fillText("PLAYER SKILL RATING", imp_vars.levelWidth - 90, imp_vars.levelHeight - 85)
+  ctx.font = '48px Muli'
+  ctx.fillText(this.cur_rating, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 40)
+  if(this.next_upgrade != null) {
+    ctx.font = '10px Muli'
+    ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
+  }
+  ctx.font = '13px Muli'
+  ctx.fillStyle = "white"
+  ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
+
+  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
+
+  
+
+  ctx.font = '15px Muli'
+  ctx.textAlign = 'center'
+  ctx.fillStyle = "white"
+  ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.levelWidth/2, 30)
   ctx.restore()
+}
+
+// Draw everything associated with a particular hive.
+WorldMapState.prototype.draw_world = function(ctx, index) {
+
   ctx.save()
-  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
-  ctx.font = "30px Muli"
-  ctx.textAlign = "center"
-  ctx.fillText("HIVE "+imp_params.tessellation_names[this.cur_world], imp_vars.levelWidth/2, 70)
-  ctx.restore()
-
-  var index = this.cur_world
-
-
-  /*if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
-    ctx.globalAlpha *= 0.2
-  }*/
-  ctx.save()
-  if(this.world_buttons[this.cur_world].hover) {
-    if(this.cur_world == 3) {
+  if(this.world_buttons[index].hover) {
+    if(index == 3) {
       ctx.globalAlpha *= 0.5  
     } else {
       ctx.globalAlpha *= 0.7  
     }
   } else {
-    if(this.cur_world == 3) {
+    if(index == 3) {
       ctx.globalAlpha *= 0.3  
     } else {
       ctx.globalAlpha *= 0.4
     }
   }
   if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
-    draw_gray_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100,this.world_buttons[this.cur_world].hover)
+    draw_gray_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100,this.world_buttons[index].hover)
   } else {
-    draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100,this.world_buttons[this.cur_world].hover)
+    draw_tessellation_sign(ctx, index, this.world_buttons[index].x, this.world_buttons[index].y - 10, 100,this.world_buttons[index].hover)
   }
-  /*if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
-    ctx.globalAlpha *= 5
-  }*/
+
   ctx.restore()
   this.world_buttons[index].draw(ctx)
-
-  /*if(index > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(index-1)]) {
-    ctx.font = '12px Muli'
-    ctx.fillStyle = this.world_buttons[index].color
-    ctx.textAlign = "center"
-    ctx.fillText(this.requirements[index], this.world_buttons[index].x, this.world_buttons[index].y + 20)
-  }*/
 
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
     ctx.save()
@@ -240,83 +310,46 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.restore()
   }
 
-  for(var i = 0; i < this.mode_buttons.length; i++) {
-    this.mode_buttons[i].draw(ctx)
-    if(this.mode_buttons[i].mouseOver) {
-      ctx.textAlign = "center"
-      ctx.font = '15px Muli'
-      if(this.mode_buttons[i].active) {
-        ctx.fillStyle = impulse_colors['world '+(i+1)+" bright"]
-        ctx.fillText("HIVE "+imp_params.tessellation_names[i+1], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      } else if(this.mode_buttons[i-1].active) {
-        ctx.fillStyle = "gray"
-        ctx.fillText(this.requirements[i+1], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      } else {
-        ctx.fillStyle = "gray"
-        ctx.fillText("???", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      }
-      
-    }
-  }
-
   ctx.save()
   ctx.globalAlpha *= 0.3
-  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
-    if(!this.practice_buttons[this.cur_world][i].active) continue
+  for(var i = 0; i < this.practice_buttons[index].length; i++) {
+    if(!this.practice_buttons[index][i].active) continue
     if(i > 0) {
 
       ctx.beginPath()
-      ctx.moveTo(this.practice_buttons[this.cur_world][i-1].x + this.offsets[this.cur_world], this.practice_buttons[this.cur_world][i-1].y)
-      ctx.lineTo(this.practice_buttons[this.cur_world][i].x - this.offsets[this.cur_world], this.practice_buttons[this.cur_world][i].y)
+      ctx.moveTo(this.practice_buttons[index][i-1].x + this.offsets[index], this.practice_buttons[index][i-1].y)
+      ctx.lineTo(this.practice_buttons[index][i].x - this.offsets[index], this.practice_buttons[index][i].y)
       ctx.lineWidth = 6
-      ctx.strokeStyle = impulse_colors['boss '+(this.cur_world)]
+      ctx.strokeStyle = impulse_colors['boss '+(index)]
       ctx.stroke()
     }
   }
   ctx.restore()
-  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
-    this.practice_buttons[this.cur_world][i].draw(ctx)
-    
+  for(var i = 0; i < this.practice_buttons[index].length; i++) {
+    this.practice_buttons[index][i].draw(ctx)
   }
 
-  for(var i = 0; i < this.buttons.length; i++)
-  {
-    this.buttons[i].draw(ctx)
-  }
   ctx.textAlign = 'center'
   ctx.font = '16px Muli'
-  ctx.fillStyle = impulse_colors["world "+this.cur_world+" bright"]
+  ctx.fillStyle = impulse_colors["world "+index+" bright"]
   ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
   ctx.font = '10px Muli'
   ctx.fillText("SELECT A LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 95)
 
-  ctx.textAlign = 'center'
-  ctx.font = '12px Muli'
-  ctx.fillStyle = 'white'
-  ctx.fillText("PLAYER SKILL RATING", imp_vars.levelWidth - 90, imp_vars.levelHeight - 85)
-  ctx.font = '48px Muli'
-  ctx.fillText(this.cur_rating, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 40)
-  if(this.next_upgrade != null) {
-    ctx.font = '10px Muli'
-    ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
-  }
-  ctx.font = '13px Muli'
-  ctx.fillStyle = "white"
-  ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
-
-  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
-
-    ctx.font = '15px Muli'
-    ctx.textAlign = 'center'
-    ctx.fillStyle = "white"
-    ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.levelWidth/2, 30)
+  ctx.save()
+  ctx.fillStyle = impulse_colors["world "+index+" bright"]
+  ctx.font = "30px Muli"
+  ctx.textAlign = "center"
+  ctx.fillText("HIVE "+imp_params.tessellation_names[index], imp_vars.levelWidth/2, 70)
   ctx.restore()
-}
+
+};
 
 WorldMapState.prototype.process = function(dt) {
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }
+  this.fader.process(dt);
 }
 
 WorldMapState.prototype.on_mouse_move = function(x, y) {

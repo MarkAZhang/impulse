@@ -1,3 +1,5 @@
+// ENEMY BOX BUG IS NOT RESOLVED...
+
 var DialogBox = function() {
 
 }
@@ -9,8 +11,31 @@ DialogBox.prototype.init = function(w, h) {
   this.y = imp_vars.canvasHeight/2
   this.buttons = []
   this.solid = true;
+
+  this.fader = new Fader({
+    "fade_in": 500,
+    "fade_out": 250
+  });
+
 }
+
+DialogBox.prototype.process = function(dt) {
+  this.fader.process(dt);
+}
+
 DialogBox.prototype.draw = function(ctx) {
+
+  ctx.save();
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, imp_vars.bg_opacity)
+
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
+  window.console.log("progress: " + this.fader.get_animation_progress());
+
+
   if(this.solid) {
     ctx.beginPath()
     ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
@@ -21,7 +46,11 @@ DialogBox.prototype.draw = function(ctx) {
     ctx.stroke()
   }
   this.additional_draw(ctx)
+
+  ctx.restore();
 }
+
+DialogBox.prototype.draw_bg = function() {}
 
 DialogBox.prototype.additional_draw = function(ctx) {}
 
@@ -34,10 +63,6 @@ DialogBox.prototype.on_right_mouse_up = function(x, y) {}
 DialogBox.prototype.on_right_click = function(x, y) {}
 DialogBox.prototype.on_key_down = function(x, y) {}
 DialogBox.prototype.on_key_up = function(x, y) {}
-
-
-
-
 
 PauseMenu.prototype = new DialogBox()
 
@@ -57,7 +82,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.bright_color = impulse_colors["world "+this.world_num +" bright"]
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = this.game_state.lite_color
-  this.bg_drawn = false
 
   this.drawn_enemies = null
 
@@ -75,7 +99,13 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   }
   this.enemy_image_size = 40
   this.add_buttons()
+  this.draw_bg();
+}
 
+PauseMenu.prototype.draw_bg = function() {
+  var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+  draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+  imp_vars.world_menu_bg_canvas.setAttribute("style", "")
 }
 
 PauseMenu.prototype.add_buttons = function() {
@@ -147,7 +177,9 @@ PauseMenu.prototype.add_buttons = function() {
   this.buttons.push(this.resume_button)
 
   this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + 460, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
-    set_dialog_box(new OptionsMenu(_this))
+    _this.fader.set_animation("fade_out", function() {
+      set_dialog_box(new OptionsMenu(_this))
+    });
   }}(this), "options")
   this.options_button.bg_color = this.bg_color
   this.buttons.push(this.options_button)
@@ -188,15 +220,6 @@ PauseMenu.prototype.add_buttons = function() {
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
-
-  if(!this.bg_drawn) {
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
-    this.bg_drawn = true
-    imp_vars.world_menu_bg_canvas.setAttribute("style", "")
-  }
-
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
 
   ctx.save()
   ctx.beginPath()
@@ -352,37 +375,45 @@ function OptionsMenu(previous_menu) {
     this.color = this.previous_menu.color
     this.lite_color = this.previous_menu.lite_color
     this.bright_color = this.previous_menu.bright_color  
-    this.bg_drawn = true
   } else {
     this.bg_color = impulse_colors["world 0 dark"]
     this.color = impulse_colors["world 0"]
     this.lite_color = impulse_colors["world 0 lite"]
     this.bright_color = impulse_colors["world 0 bright"]
-    this.bg_drawn = false
+    this.draw_bg();
   }
-  
   
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
-  if(_this.previous_menu instanceof PauseMenu)    {
-    _this.previous_menu.add_buttons()
-    set_dialog_box(_this.previous_menu)  
-  } else {
-    clear_dialog_box()
-  }
+  _this.fader.set_animation("fade_out", function() {
+    if(_this.previous_menu instanceof PauseMenu) {
+      _this.previous_menu.add_buttons()
+      set_dialog_box(_this.previous_menu)  
+      _this.previous_menu.fader.set_animation("fade_in");
+    } else {
+      if (_this.previous_menu instanceof TitleState) {
+        _this.previous_menu.fader.set_animation("fade_in");
+      }
+      clear_dialog_box()
+    }
+  });
   
-  }}(this), "back")
+  }}(this), "back");
 
   var controls_x_value = this.x
   if (this.previous_menu instanceof TitleState) {
     this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x + 150, this.y + 120, 200, 80, this.bright_color, "red", function(_this) { return function() {
-      set_dialog_box(new DeleteDataDialog(_this))
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new DeleteDataDialog(_this))
+      });
     }}(this), "quit")
     this.buttons.push(this.delete_button)
     controls_x_value = this.x - 150
   }
   this.buttons.push(this.back_button)
   this.controls_button = new IconButton("CHANGE CONTROLS", 20, controls_x_value, this.y + 120, 200, 100, this.bright_color, this.bright_color, function(_this) { return function() {
-    set_dialog_box(new ControlsMenu(_this))
+    _this.fader.set_animation("fade_out", function() {
+      set_dialog_box(new ControlsMenu(_this))
+    });
   }}(this), "controls")
   this.buttons.push(this.controls_button)
 
@@ -430,21 +461,16 @@ function OptionsMenu(previous_menu) {
       save_game()
     }, imp_vars.player_data.options.show_transition_screens))
   }
+  this.fader.set_animation("fade_in");
+}
 
-
-
+OptionsMenu.prototype.draw_bg = function() {
+  var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+  draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
-  if(!this.bg_drawn) {
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
-    this.bg_drawn = true
-  }
 
-  // if world_num is 0 or undefined, draw the background less transparent, since it's white.
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
-  
   ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
@@ -471,7 +497,6 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.textAlign = 'center'
   if(this.current_help_text) {
     ctx.font = '14px Muli'
-    ctx.globalAlpha = 1
     if (this.game_state instanceof ImpulseGameState && this.game_state.level.main_game ) {
       ctx.fillText(this.current_help_text, this.x, this.y - this.h/2 + this.options_y_line_up + 180)  
     } else {
@@ -480,7 +505,6 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
     
   }
 
-  ctx.globalAlpha = 1
   //this.music_volume_slider.draw(ctx)
   //this.effects_volume_slider.draw(ctx)
 
@@ -575,9 +599,12 @@ function ControlsMenu(previous_menu) {
 
   this.current_hand = imp_vars.player_data.options.control_hand
   this.current_scheme = imp_vars.player_data.options.control_scheme
-
+  var _this = this;
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
-    set_dialog_box(_this.previous_menu)
+    _this.fader.set_animation("fade_out", function() {
+      set_dialog_box(_this.previous_menu)
+      _this.previous_menu.fader.set_animation("fade_in");
+    });
   }}(this), "back")
 
 
@@ -624,6 +651,8 @@ function ControlsMenu(previous_menu) {
   this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
   this.effects_volume_slider.value = Math.log(imp_vars.impulse_music.effects_volume)/Math.log(100.0)*/
   this.adjust_colors()
+
+  this.fader.set_animation("fade_in");
 }
 
 
@@ -660,7 +689,6 @@ ControlsMenu.prototype.adjust_colors = function() {
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
 
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
   ctx.save()
   ctx.textAlign = "center"
   ctx.font = '32px Muli';
@@ -800,14 +828,15 @@ function EnemyBox(enemy_name, previous_menu) {
 
   this.w = 600
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
-    setTimeout(function() {
+    _this.fader.set_animation("fade_out", function() {
       if(_this.previous_menu instanceof DialogBox) {
         set_dialog_box(_this.previous_menu)
+        _this.previous_menu.fader.set_animation("fade_in");
       } else if(_this.previous_menu instanceof GameState) {
         //switch_game_state(_this.previous_menu)
-        set_dialog_box(null)
+        clear_dialog_box()
       }
-    }, 50)
+    });
   }}(this), "back")
 
   this.buttons.push(this.back_button)
@@ -837,11 +866,10 @@ function EnemyBox(enemy_name, previous_menu) {
 
   if(this.enemy_name == "spear") this.spd_value = 1
 
+  this.fader.set_animation("fade_in");
 }
 
 EnemyBox.prototype.additional_draw = function(ctx) {
-
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.2)
 
   ctx.save()
   if(this.current_lines == null) {
@@ -1020,23 +1048,24 @@ function DeleteDataDialog(previous_menu) {
   this.buttons.push(this.delete_button)
 
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, "red", "red",function(_this) { return function() {
-  set_dialog_box(_this.previous_menu)
-  
+    _this.fader.set_animation("fade_out", function() {
+      set_dialog_box(_this.previous_menu)
+      _this.previous_menu.draw_bg(); 
+      _this.previous_menu.fader.set_animation("fade_in");
+    });
   }}(this), "back")
   this.buttons.push(this.back_button)
+  this.draw_bg();
 
-  if(!this.bg_drawn) {
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 4")
-    this.bg_drawn = true
-    this.previous_menu.bg_drawn = false
-  }
+  this.fader.set_animation("fade_in");
+}
 
+DeleteDataDialog.prototype.draw_bg = function() {
+  var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+  draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 4")
 }
 
 DeleteDataDialog.prototype.additional_draw = function(ctx) {
-
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, 0.3)
 
   if (!this.deleted) {
     ctx.fillStyle = "red"

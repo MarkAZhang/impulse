@@ -173,6 +173,34 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.bud_count = 0
 
   this.tank_force = 100
+
+  this.darkness_interval = 25000
+  this.darkness_timer = this.darkness_interval - 1
+  // The time it takes for the darkness to spread.
+  this.darkness_spreading_duration = 1000
+  // How long the darkness stays.
+  this.darkness_duration = 1000
+  // How long the darkness takes to vanish.
+  this.darkness_vanish_duration = 1000
+
+  this.darkness_canvas = document.createElement('canvas');
+  this.darkness_canvas_ctx = this.darkness_canvas.getContext('2d');
+  this.darkness_canvas.width = 200;
+  this.darkness_canvas.height = 200;
+  // The angle at which to draw the darkness. When the darkness spreads, it should no longer rotate with the boss.
+  this.darkness_angle = 0; 
+
+  this.darkness_canvas_ctx.beginPath()
+
+  this.darkness_canvas_ctx.moveTo(100 + 100 * Math.cos(Math.PI * 2 * 4 / 5),
+                  100 + 100 * Math.sin(Math.PI * 2 * 4 / 5));
+  for (var i = 0; i < 5; i++) {
+    this.darkness_canvas_ctx.lineTo(100 + 100 * Math.cos(Math.PI * 2 * i / 5),
+                    100 + 100 * Math.sin(Math.PI * 2 * i / 5));
+  }
+  this.darkness_canvas_ctx.closePath();
+  this.darkness_canvas_ctx.fillStyle = "black";
+  this.darkness_canvas_ctx.fill()
 }
 
 
@@ -194,10 +222,58 @@ BossFour.prototype.draw = function(context, draw_factor) {
   //} else {
   //  drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", negligentiaSprite)
   //}
-
   this.additional_drawing(context, draw_factor)
 
   context.restore()
+}
+
+BossFour.prototype.final_draw = function(context, draw_factor) {
+  context.save();
+  context.globalAlpha = 1;
+  this.draw_blindness_overlay(context, draw_factor);
+  context.restore();
+}
+
+BossFour.prototype.draw_blindness_overlay = function(context, draw_factor) {
+  var tp = this.body.GetPosition()
+  if (this.darkness_timer > 0) {
+    // Draw blindness indicator.
+    var prog = 1 - (this.darkness_timer / this.darkness_interval);
+    var r = this.effective_radius * prog * draw_factor;
+    this.darkness_angle = this.body.GetAngle();
+    context.save();
+    context.globalAlpha *= 0.5
+    context.translate(tp.x * draw_factor, tp.y * draw_factor);
+    context.rotate(this.darkness_angle)
+    context.drawImage(this.darkness_canvas, 0, 0, this.darkness_canvas.width, this.darkness_canvas.height, -r, -r, 2 * r, 2 * r);
+    context.restore();
+  } else if (this.darkness_timer > -this.darkness_spreading_duration) {
+    var prog = (this.darkness_timer / -this.darkness_spreading_duration);
+    var r = (this.effective_radius * (1 - prog) + 60 * prog) * draw_factor;
+    context.save();
+    context.globalAlpha *= 0.5
+    context.translate(tp.x * draw_factor, tp.y * draw_factor);
+    context.rotate(this.darkness_angle)
+    context.drawImage(this.darkness_canvas, 0, 0, this.darkness_canvas.width, this.darkness_canvas.height, -r, -r, 2 * r, 2 * r);
+    context.restore();
+  } else if (this.darkness_timer > -(this.darkness_spreading_duration + this.darkness_duration)) {
+    var r = 60 * draw_factor;
+    context.save();
+    context.globalAlpha *= 0.5;
+    context.translate(tp.x * draw_factor, tp.y * draw_factor);
+    context.rotate(this.darkness_angle)
+    context.drawImage(this.darkness_canvas, 0, 0, this.darkness_canvas.width, this.darkness_canvas.height, -r, -r, 2 * r, 2 * r);
+    context.restore();
+  } else if (this.darkness_timer > -(this.darkness_spreading_duration + this.darkness_duration + this.darkness_vanish_duration)) {
+    var prog = 1 - (this.darkness_timer + this.darkness_spreading_duration + this.darkness_duration) / -this.darkness_vanish_duration;
+    var r = 60 * draw_factor;
+    context.save();
+    context.globalAlpha *= 0.5 * prog;
+    context.translate(tp.x * draw_factor, tp.y * draw_factor);
+    context.rotate(this.darkness_angle)
+    context.drawImage(this.darkness_canvas, 0, 0, this.darkness_canvas.width, this.darkness_canvas.height, -r, -r, 2 * r, 2 * r);
+    context.restore();
+  }
 }
 
 
@@ -328,7 +404,16 @@ BossFour.prototype.additional_processing = function(dt) {
   this.process_attack_buds(dt)
 
   this.repel_enemies()
-
+  
+  if (this.darkness_timer < 0 && this.darkness_timer > -this.darkness_spreading_duration) {
+    var prog = (this.darkness_timer / -this.darkness_spreading_duration);
+    this.level.enemy_visibility = 1 - prog;
+  } else if (this.darkness_timer < -(this.darkness_spreading_duration + this.darkness_duration) && this.darkness_timer > -(this.darkness_spreading_duration + this.darkness_duration + this.darkness_vanish_duration)) {
+    var prog = (this.darkness_timer + this.darkness_spreading_duration + this.darkness_duration) / -this.darkness_vanish_duration;
+    this.level.enemy_visibility = prog;
+  } else if (this.darkness_timer >= 0) {
+    this.level.enemy_visibility = 1;
+  }
 
   if(this.ready_attack_bud) {
 
@@ -433,6 +518,18 @@ BossFour.prototype.additional_processing = function(dt) {
   this.spawn_laser_angle += dt / this.spawn_laser_revolution * Math.PI * 2
 
   this.get_object_hit()
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    this.darkness_timer -= dt;
+
+    if (this.darkness_timer < 0) {
+      
+
+      if (this.darkness_timer < -(this.darkness_spreading_duration + this.darkness_duration + this.darkness_vanish_duration)) {
+        this.darkness_timer = this.darkness_interval;
+      }
+
+    }
+  }
 
   /*for(var m = 0; m < 2; m++) {
 
@@ -589,7 +686,6 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
 }
 
 BossFour.prototype.create_body_buds = function() {
-  console.log("CREATING BODY BUD")
   for(var index = 0; index < this.num_buds; index++) {
 
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
@@ -605,10 +701,7 @@ BossFour.prototype.create_body_buds = function() {
       body: bud_body,
       size: this.body_bud_radius * (0.8 + 0.2 * bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000))
     })
-    console.log(this.body_bud_radius)
-    console.log(bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000))
   }
-  console.log(this.buds)
 }
 
 BossFour.prototype.repel_enemies = function() {

@@ -1165,7 +1165,6 @@ Enemy.prototype.generate_images = function() {
 
   }
 
-
   return images
 
 }

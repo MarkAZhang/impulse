@@ -18,11 +18,13 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   context.fillStyle = this.color
   context.font = this.size +'px Muli'
   context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-  context.globalAlpha = 0.3
-  if(this.hover)
-    context.globalAlpha = 0.5
-  context.fill()
-  context.globalAlpha = 1
+  context.save();
+  if(this.hover) {
+    context.globalAlpha *= 0.5;
+  } else {
+    context.globalAlpha *= 0.3
+  }
+  context.restore();
 
   var cur_x = this.x
   var cur_y = this.y

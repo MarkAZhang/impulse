@@ -157,7 +157,7 @@ BossFourSpawner.prototype.spawn_enemy = function() {
 BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
   context.save()
-  context.globalAlpha = 1-prog
+  context.globalAlpha *= 1-prog
   drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
   
   if(this.status_duration[1] > 0)

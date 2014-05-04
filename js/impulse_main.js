@@ -17,7 +17,8 @@ var imp_vars = {
   save_name: "impulse_save_data",
   player_data: {},
   impulse_music: null,
-  minified: false
+  minified: false,
+  bg_opacity: 0.3
 }
 
 window["impulse_main"] =  function() {
@@ -186,6 +187,9 @@ function step() {
   imp_vars.ctx.globalAlpha = 1;
   dt = cur_time - imp_vars.last_time
   imp_vars.cur_game_state.process(dt)
+  if (imp_vars.cur_dialog_box != null) {
+    imp_vars.cur_dialog_box.process(dt);
+  }
   if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
     imp_vars.ctx.clearRect(0, 0, canvas.width, canvas.height);
   } else if(imp_vars.cur_game_state instanceof ImpulseGameState &&  imp_vars.cur_game_state.ready) {
@@ -215,8 +219,6 @@ function step() {
     imp_vars.ctx.restore()
   }
 
-
-
   if(imp_vars.cur_dialog_box!=null) {
     imp_vars.ctx.beginPath()
     imp_vars.ctx.globalAlpha = 1
@@ -230,7 +232,7 @@ function step() {
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   imp_vars.step_id = setTimeout(step, Math.max(33 - temp_dt, 1))
-
+  //imp_vars.step_id = requestAnimationFrame(step);
 }
 
 function set_dialog_box(box) {

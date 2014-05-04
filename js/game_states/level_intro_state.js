@@ -16,12 +16,15 @@ function LevelIntroState(level_name, world) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.bright_color, this.bright_color, function(_this){return function(){
-    if(_this.world_num) {
-      switch_game_state(new WorldMapState(_this.world_num))
-    }
-    else {
-      switch_game_state(new TitleState(true))
-    }
+
+    _this.fader.set_animation("fade_out", function() {
+      if(_this.world_num) {
+        switch_game_state(new WorldMapState(_this.world_num))
+      }
+      else {
+        switch_game_state(new TitleState(true))
+      }
+    });
   }}(this), "back"))
 
   this.star_colors = ['bronze', 'silver', 'gold']
@@ -78,10 +81,16 @@ function LevelIntroState(level_name, world) {
 
     i+=1
   }
+
+  this.fader = new Fader({
+    "fade_in": 500,
+    "fade_out": 250
+  });
+  this.fader.set_animation("fade_in");
 }
 
 LevelIntroState.prototype.process = function(dt) {
-
+  this.fader.process(dt);
 }
 
 LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
@@ -94,8 +103,14 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     bg_canvas.setAttribute("style", "display:none")
   }
+  ctx.save();
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
   ctx.save()
-  ctx.globalAlpha /= 5
+  ctx.globalAlpha *= imp_vars.bg_opacity;
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
 
@@ -202,6 +217,8 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     }
 
   }
+
+  ctx.restore();
 }
   
 LevelIntroState.prototype.on_mouse_move = function(x, y) {

@@ -307,7 +307,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.stroke()
 
       ctx.beginPath()
-      ctx.rect(850, 515, 100, 80)
+      ctx.rect(825, 515, 150, 80)
       ctx.strokeStyle = "red"
       ctx.lineWidth = 6
       ctx.stroke()
@@ -315,8 +315,8 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.font = '20px Muli'
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("GET THE GATEWAY SCORE...", 400, 500)
-      ctx.clearRect(345, 475, 173, 28)
+      ctx.fillText("GET THE", 300, 500)
+      ctx.fillText("...", 530, 500)
       ctx.shadowColor = "red"
       ctx.fillStyle = "red"
       ctx.fillText("GATEWAY SCORE", 433, 500)
@@ -454,7 +454,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.font = '16px Muli'
       ctx.fillText("THANKS FOR PLAYING IMPULSE!", 400, 335)
       ctx.font = '12px Muli'
-      ctx.fillText("- MARK", 400, 360)
+      ctx.fillText("- MARK -", 400, 360)
 
     }
 
@@ -477,7 +477,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     for(var i = 0; i < this.num_pages; i++) {
       var offset = (this.num_pages-1)/2 - i
       ctx.beginPath()
-      ctx.shadowBlur = 5
+      //ctx.shadowBlur = 5
       ctx.arc(400 - 25 * offset, 580, 4, 0, 2*Math.PI, true)
       ctx.fillStyle = "white"
       if(this.cur_page == i) {
@@ -526,17 +526,11 @@ HowToPlayState.prototype.draw_score_points_page = function(ctx) {
       ctx.font = '24px Muli'
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("GET THE GATEWAY SCORE TO BEAT THE LEVEL", 400, 420)
+      ctx.fillText("GET THE", 177, 420)
+      ctx.fillText("TO BEAT THE LEVEL", 565, 420)
 
-      ctx.beginPath()
-      ctx.moveTo(710, 555)
-      ctx.lineTo(740, 555)
-      ctx.lineWidth = 16
-      ctx.strokeStyle = "red"
-      ctx.stroke()
-      draw_arrow(ctx, 750, 555, 40, "right", "red", false)
+      this.draw_arrow_with_base(ctx, 735, 555, 50, "red")
 
-      ctx.clearRect(235, 400, 210, 28)
       ctx.shadowColor = "red"
       ctx.fillStyle = "red"
       ctx.fillText("GATEWAY SCORE", 340, 420)
@@ -556,15 +550,14 @@ HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   
   ctx.font = '24px Muli'
   ctx.fillStyle = "white"
-  ctx.fillText("YOUR MULTIPLIER INCREASES THE POINTS", 400, 340)
+  ctx.fillText("YOUR", 188, 340)
+  ctx.fillText("INCREASES THE POINTS", 505, 340)
   ctx.fillText("YOU GET FROM KILLING ENEMIES", 400, 375)
 
   
   ctx.font = '24px Muli'
-  ctx.shadowColor = "red"
   ctx.fillStyle = "red"
-  ctx.clearRect(240, 320, 125, 25)
-  ctx.fillText("MULTIPLIER", 303, 340)
+  ctx.fillText("MULTIPLIER", 295, 340)
 
 
   var y_value = 450
@@ -668,23 +661,23 @@ HowToPlayState.prototype.draw_sparks_page = function(ctx) {
 
   draw_spark(ctx, 300, 440)
   ctx.font = '16px Muli'
-  ctx.shadowColor = impulse_colors["impulse_blue"]
-  ctx.shadowBlur = 10
-  ctx.fillStyle = ctx.shadowColor
+  //ctx.shadowColor = impulse_colors["impulse_blue"]
+  //ctx.shadowBlur = 10
+  ctx.fillStyle = impulse_colors["impulse_blue"]
 
 
   ctx.fillText("+10 SPARKS", 300, 475)
-  ctx.shadowBlur = 0
+  //ctx.shadowBlur = 0
   draw_multi(ctx, 500, 440)
   ctx.font = '16px Muli'
-  ctx.shadowBlur = 10
-  ctx.shadowColor = "white"
-  ctx.fillStyle = ctx.shadowColor
+  //ctx.shadowBlur = 10
+  //ctx.shadowColor = "white"
+  ctx.fillStyle = "white"
 
   ctx.fillText("+5 MULTIPLIER", 500, 475)
 
   ctx.font = '24px Muli'
-  ctx.shadowBlur = 0
+  //ctx.shadowBlur = 0
   ctx.fillText("POWERUPS", 400, 350)
   /*ctx.font = '24px Muli'
   ctx.shadowColor = "red"
@@ -817,7 +810,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.textAlign = "center"
         ctx.fillStyle = "white"
         ctx.shadowBlur = 0
-        ctx.fillText("MOVE ONTO THE UNLOCKED GATEWAY", 400, 360)
+        ctx.fillText("MOVE ONTO THE UNLOCKED", 340, 360)
 
         ctx.shadowBlur = 0
         ctx.fillText("AND PRESS", 400, 400)
@@ -826,7 +819,6 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.shadowColor = "red"
         ctx.fillStyle = "red"
 
-        ctx.clearRect(489, 337, 105, 25)
         ctx.fillText("GATEWAY", 541, 360)  
       }
       
@@ -835,7 +827,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.textAlign = "center"
         ctx.fillStyle = "white"
         ctx.shadowBlur = 0
-        ctx.fillText("...THEN MOVE ONTO THE UNLOCKED GATEWAY", 400, 360)
+        ctx.fillText("...THEN MOVE ONTO THE UNLOCKED", 340, 360)
 
         ctx.shadowBlur = 0
         ctx.fillText("AND PRESS", 400, 400)
@@ -844,13 +836,12 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.shadowColor = "red"
         ctx.fillStyle = "red"
 
-        ctx.clearRect(529, 337, 105, 25)
         ctx.fillText("GATEWAY", 578, 360)   
       }
       
       ctx.fillStyle = "white"
-      ctx.shadowColor = "white"
-      ctx.shadowBlur = 10
+      //ctx.shadowColor = "white"
+      //ctx.shadowBlur = 10
       if(imp_vars.player_data.options.control_hand == "right") {
         draw_rounded_rect(ctx, 400, 445, 300, 50, 10, "white")
         ctx.fillText("SPACEBAR", 400, 451)
@@ -895,8 +886,8 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.primary_ctx.beginPath();
     this.primary_ctx.shadowOffsetX = 0;
     this.primary_ctx.shadowOffsetY = 0;
-    this.primary_ctx.shadowBlur = 10;
-    this.primary_ctx.shadowColor = impulse_colors["impulse_blue"];
+    //this.primary_ctx.shadowBlur = 10;
+    //this.primary_ctx.shadowColor = impulse_colors["impulse_blue"];
     this.primary_ctx.lineWidth = 5
     this.primary_ctx.strokeStyle = this.primary_ctx.shadowColor
     this.primary_ctx.arc(75, 120, 40, 7*Math.PI/6,  11*Math.PI/6);
@@ -919,8 +910,8 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.secondary_ctx.beginPath();
     this.secondary_ctx.shadowOffsetX = 0;
     this.secondary_ctx.shadowOffsetY = 0;
-    this.secondary_ctx.shadowBlur = 10;
-    this.secondary_ctx.shadowColor = impulse_colors["impulse_blue"];
+    //this.secondary_ctx.shadowBlur = 10;
+    //this.secondary_ctx.shadowColor = impulse_colors["impulse_blue"];
     this.secondary_ctx.lineWidth = 5
     this.secondary_ctx.strokeStyle = this.secondary_ctx.shadowColor
     this.secondary_ctx.arc(75, 120, 50, 7*Math.PI/6,  11*Math.PI/6);
@@ -958,7 +949,7 @@ HowToPlayState.prototype.on_mouse_move = function(x, y) {
           this.special_buttons[i].on_mouse_move(x - imp_vars.sidebarWidth, y)
         }
       }
-      if(this.cur_page == 12+ this.ult_page_offset) {
+      if(this.cur_page == 13+ this.ult_page_offset) {
         this.exit_button.on_mouse_move(x - imp_vars.sidebarWidth, y)
       }
     }
@@ -1057,7 +1048,7 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
         }
       }
 
-      if(this.cur_page == 12+ this.ult_page_offset) {
+      if(this.cur_page == 13+ this.ult_page_offset) {
         this.exit_button.on_click(x - imp_vars.sidebarWidth, y)
       }
 

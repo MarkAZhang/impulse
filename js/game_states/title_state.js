@@ -1,5 +1,6 @@
 TitleState.prototype = new GameState
 
+
 TitleState.prototype.constructor = TitleState
 
 function TitleState(last_state) {
@@ -12,6 +13,7 @@ function TitleState(last_state) {
   var _this = this
   this.image = new Image()
   this.bg_drawn = false
+  this.visibility = 0;
 
   this.state = "menu"
 
@@ -24,35 +26,25 @@ function TitleState(last_state) {
     imp_vars.player_data.first_time = false
     save_game()
   }
-  /*this.fade_in_duration = null;
-  if(last_state == null) {
-    this.fade_in_duration = -250  
-  } else if(last_state instanceof WorldMapState) {
-    this.fade_in_duration = 0
-  }
-  
-  this.fade_interval = 250
-  this.fade_out_duration = null*/
+
+  this.fader = new Fader({
+    "fade_in": 500,
+    "fade_out": 250
+  });
+  this.fader.set_animation("fade_in");
 }
 
 
 TitleState.prototype.process = function(dt) {
-  /*if(this.fade_out_duration) {
-    this.fade_out_duration -= dt;
-  }
-  if(this.fade_in_duration != null && this.fade_in_duration < this.fade_interval) {
-    this.fade_in_duration += dt
-  } else {
-    this.fade_in_duration = null
-  }*/
+  this.fader.process(dt);
 }
 
 
 
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, 0.2)
+    imp_vars.bg_canvas.setAttribute("style", "")
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
     this.bg_drawn = true
   }
 
@@ -60,6 +52,12 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   //ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
   //ctx.globalAlpha = 1
   ctx.save()
+
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
   /*if(this.fade_out_duration != null) {
     ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_interval), 0)
     this.draw_bg(bg_ctx, (ctx.globalAlpha * 0.07 + 0.03))
@@ -161,6 +159,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
   } else {
     var button_y = imp_vars.levelHeight/2 + 50
+    var _this = this;
     this.buttons["menu"].push(new IconButton("START GAME", 20, imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       //_this.fade_out_duration = _this.fade_interval;
@@ -169,16 +168,18 @@ TitleState.prototype.setup_main_menu = function() {
       
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         //setTimeout(function(){
-          switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+          _this.fader.set_animation("fade_out", function() {
+            switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+          });
         //}, _this.fade_interval)
       } else {
         var i = 1;
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
-        //setTimeout(function(){
+        _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i))
-        //}, _this.fade_interval)
+        });
       }
     }, "player"))
 
@@ -189,24 +190,36 @@ TitleState.prototype.setup_main_menu = function() {
       save_game()
       
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
-        //setTimeout(function(){
+        _this.fader.set_animation("fade_out", function() {
           switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
-        //}, _this.fade_interval)
+        });
       } else {
         var i = 1;
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
-        //setTimeout(function(){
+        _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i))
-        //}, _this.fade_interval)
+        });
       }
     }, "normal_mode"))
 
     //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){switch_game_state(new HowToPlayState("normal_tutorial"))}, "tutorial"))
-    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){switch_game_state(new CreditsState())}, "credit"))
-    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){setTimeout(function(){ set_dialog_box(new OptionsMenu(_this))}, 50)}, "gear"))
+    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){
+        _this.fader.set_animation("fade_out", function() {
+          switch_game_state(new HowToPlayState("normal_tutorial"))
+        });
+    }, "tutorial"))
+    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new CreditsState())
+      });
+    }, "credit"))
+    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new OptionsMenu(_this))
+      });
+    }, "gear"))
 
   }
 
