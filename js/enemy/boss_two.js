@@ -16,7 +16,10 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.safe = true
 
   this.arm_core_angle = Math.PI * 3/4
-  this.arm_width_angle = Math.PI/8
+  this.arm_width_angle_min = Math.PI * 1/8
+  this.arm_width_angle_max = Math.PI * 3/8
+  this.arm_width_angle = Math.PI * 1/8
+  this.arm_width_angle_transition_rate = Math.PI * 1/8
   this.arm_length = 50
   this.arm_taper = .9
   this.num_arms = 4
@@ -62,6 +65,13 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.boss_high_gravity_force = .75
   this.boss_low_gravity_force = .3
   this.boss_beam_gravity_force = 1.2
+  // In easy mode, the player is heavier. Need to make boss stronger, else it's just too easy.
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.boss_high_gravity_force *= 1.5
+    this.boss_low_gravity_force *= 1.5
+    this.boss_beam_gravity_force *= 1.5
+  }
+
 
   this.spawn_spawners = false
   this.spawners = []
@@ -77,9 +87,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.shrink_rate = 0.025
 
   this.enemy_spawn_interval = 10000
-  if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.enemy_spawn_interval = 11000
-  }
   this.enemy_spawn_duration = 1000
 
   this.spawn_sets = [
@@ -183,6 +190,15 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.adjust_size()
   }
 
+  var target_arm_width_angle = this.get_target_arm_width_angle()
+  if(this.arm_width_angle != target_arm_width_angle) {
+    if(this.arm_width_angle < target_arm_width_angle) {
+      this.arm_width_angle = Math.min(this.arm_width_angle + this.arm_width_angle_transition_rate * dt/1000, target_arm_width_angle)
+    } else {
+      this.arm_width_angle = Math.max(this.arm_width_angle - this.arm_width_angle_transition_rate * dt/1000, target_arm_width_angle)
+    }
+  }
+
   for(var index in this.spawners) {
     this.spawners[index].process(dt)
   }
@@ -240,6 +256,11 @@ BossTwo.prototype.additional_processing = function(dt) {
     }
     this.black_hole_timer -= dt
   }
+}
+
+// Returns the target arm_width_angle. Since we transition, the actual arm_width_angle may be off slightly.
+BossTwo.prototype.get_target_arm_width_angle = function() {
+  return this.arm_width_angle_min + Math.min(1, (this.growth_factor - 1) / 2) * (this.arm_width_angle_max - this.arm_width_angle_min);
 }
 
 BossTwo.prototype.get_gravity_force = function(loc) {
@@ -495,9 +516,16 @@ BossTwo.prototype.get_arm_polygons = function() {
   for(var i = 0; i < this.num_arms; i++) {
     var polygon = []
     polygon.push({x: this.body.GetPosition().x, y: this.body.GetPosition().y})
-    polygon.push({x: this.body.GetPosition().x + this.arm_length * this.arm_taper * Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2), y: this.body.GetPosition().y + this.arm_length * this.arm_taper * Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2)})
-    polygon.push({x: this.body.GetPosition().x + this.arm_length * Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle), y: this.body.GetPosition().y + this.arm_length * Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle)})
-    polygon.push({x: this.body.GetPosition().x + this.arm_length * this.arm_taper * Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2), y: this.body.GetPosition().y + this.arm_length * this.arm_taper * Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2)})
+    polygon.push({x: this.body.GetPosition().x + this.arm_length * this.arm_taper * 
+      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2), 
+      y: this.body.GetPosition().y + this.arm_length * this.arm_taper *
+      Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2)})
+
+    polygon.push({x: this.body.GetPosition().x + this.arm_length * 
+      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2), 
+      y: this.body.GetPosition().y + this.arm_length * 
+      Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2)})
+
     polygons.push(polygon)
   }
   return polygons

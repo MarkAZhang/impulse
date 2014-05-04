@@ -237,10 +237,10 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.shadowBlur = 0;
-
+    ctx.save()
     ctx.globalAlpha *= 0.3
     draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 50, 100)
-    ctx.globalAlpha = 1
+    ctx.restore()
 
     ctx.font = '24px Muli'
     if (this.level.boss_victory) {

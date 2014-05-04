@@ -193,10 +193,10 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.font = '42px Muli'
     ctx.shadowBlur = 0;
-
+    ctx.save();
     ctx.globalAlpha *= 0.3
     draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 50, 100)
-    ctx.globalAlpha = 1
+    ctx.restore();
     ctx.font = '16px Muli'
     ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 60)
     ctx.font = '40px Muli'
