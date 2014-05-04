@@ -578,38 +578,103 @@ function create_body(world, polygons, x, y, lin_damp, density, categoryBits, mas
 
 }
 
-function calculate_current_rating() {
+/*function calculate_current_rating() {
   return Math.floor(Math.max(calculate_rating_for_difficulty_mode("easy")/4, calculate_rating_for_difficulty_mode("normal")))
 }
-
 function calculate_rating_for_difficulty_mode(difficulty) {
 
   var rating = 0
   // calculate level contribution
   for(var i in imp_params.impulse_level_data)  {
-    if(i != "HOW TO PLAY" && imp_params.impulse_level_data[i].save_state[difficulty]) {
-
-      if(i.slice(0,4) == "HIVE") {
-        var high_score = imp_params.impulse_level_data[i].save_state[difficulty].high_score
-        rating += Math.floor(calculate_rating_for_level(i, high_score, difficulty))
-      } else if(i.slice(0,4) == "BOSS" && imp_params.impulse_level_data[i].save_state[difficulty].stars == 3) {
-        var best_time = imp_params.impulse_level_data[i].save_state[difficulty].best_time
-        rating += Math.floor(calculate_rating_for_boss_level(i, best_time, difficulty))
+      if(i != "HOW TO PLAY" && imp_params.impulse_level_data[i].save_state[difficulty]) {
+        if(i.slice(0,4) == "HIVE") {
+          var high_score = imp_params.impulse_level_data[i].save_state[difficulty].high_score
+          var temp_rating = Math.floor(calculate_rating_for_level(i, high_score, difficulty))
+           rating += temp_rating
+           console.log(i + " " + difficulty + " " + temp_rating)
+        } else if(i.slice(0,4) == "BOSS" && imp_params.impulse_level_data[i].save_state[difficulty].stars == 3) {
+          var best_time = imp_params.impulse_level_data[i].save_state[difficulty].best_time
+          
+          var temp_rating = Math.floor(calculate_rating_for_boss_level(i, best_time, difficulty))
+          rating += temp_rating
+          console.log(i + " " + difficulty + " " + temp_rating)
+        }
       }
-    }
   }
 
   var world_ratings = [250, 400, 600, 800]
   // calculate world ranking contribution
   for(var i = 1; i <= 4; i++) {
-
-    if(imp_vars.player_data.world_rankings[difficulty]["world "+i]) {
-      var data = imp_vars.player_data.world_rankings[difficulty]["world "+i]
-      rating += Math.floor(calculate_rating_for_world_ranking(world_ratings[i-1], data["rank"], data["continues"], data["deaths"], data["stars"]))
-      
-    }
+      if(imp_vars.player_data.world_rankings[difficulty]["world "+i]) {
+        var data = imp_vars.player_data.world_rankings[difficulty]["world "+i]
+        
+          var temp_rating = Math.floor(calculate_rating_for_world_ranking(world_ratings[i-1], data["rank"], data["continues"], data["deaths"], data["stars"]))
+          rating += temp_rating
+          console.log("world " + i + " " + difficulty + " " + temp_rating)
+      }
   }
   return rating
+}*/
+
+function calculate_current_rating(difficulty) {
+
+  var rating = 0
+  // calculate level contribution
+  for(var i in imp_params.impulse_level_data)  {
+    var this_level_rating = 0;
+    // check both difficulties
+    var difficulties = ["easy", "normal"];
+    for (var d in difficulties) {
+      var difficulty = difficulties[d];
+      if(i != "HOW TO PLAY" && imp_params.impulse_level_data[i].save_state[difficulty]) {
+        var temp_rating = 0;
+        // get the rating for this level
+        if(i.slice(0,4) == "HIVE") {
+          var high_score = imp_params.impulse_level_data[i].save_state[difficulty].high_score
+          temp_rating += Math.floor(calculate_rating_for_level(i, high_score, difficulty))
+        } else if(i.slice(0,4) == "BOSS" && imp_params.impulse_level_data[i].save_state[difficulty].stars == 3) {
+          var best_time = imp_params.impulse_level_data[i].save_state[difficulty].best_time
+          temp_rating += Math.floor(calculate_rating_for_boss_level(i, best_time, difficulty))
+        }
+        // divide by 4 if easy
+        if (difficulty == "easy") {
+          temp_rating /= 4;
+        }
+        // take the max of the two difficulties
+        if (temp_rating > this_level_rating) {
+          this_level_rating = temp_rating;
+        }
+      }
+    }
+    rating += this_level_rating;
+  }
+
+  var world_ratings = [250, 400, 600, 800]
+  // calculate world ranking contribution
+  for(var i = 1; i <= 4; i++) {
+    var this_world_rating = 0;
+    // check both difficulties
+    var difficulties = ["easy", "normal"];
+    for (var d in difficulties) {
+      var difficulty = difficulties[d];
+      var temp_rating = 0;
+      // get the rating for this world.
+      if(imp_vars.player_data.world_rankings[difficulty]["world "+i]) {
+        var data = imp_vars.player_data.world_rankings[difficulty]["world "+i]
+        temp_rating += Math.floor(calculate_rating_for_world_ranking(world_ratings[i-1], data["rank"], data["continues"], data["deaths"], data["stars"]))
+      }
+      // divide by 4 if easy
+      if (difficulty == "easy") {
+        temp_rating /= 4;
+      }
+      // take the max of the two difficulties
+      if (temp_rating > this_world_rating) {
+        this_world_rating = temp_rating;
+      }
+    }
+    rating += this_world_rating;
+  }
+  return Math.floor(rating)
 }
 
 function calculate_rating_for_world_ranking(max_rating, rank, continues, deaths, stars) {

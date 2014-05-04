@@ -18,6 +18,7 @@ function HowToPlayState(mode) {
   this.transition_interval = 500
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
+  this.cur_rating = calculate_current_rating()
 }
 
 HowToPlayState.prototype.load_level = LoaderGameState.prototype.load_level
@@ -40,9 +41,9 @@ HowToPlayState.prototype.load_complete = function() {
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
-  this.num_pages = 14
+  this.num_pages = 15
   if (this.mode == "normal_tutorial") {
-    this.cur_page = 0  
+    this.cur_page = 0
   } else if (this.mode == "first_time_tutorial") {
     this.cur_page = -1
     this.advance_page_timer = this.title_screen_delay
@@ -52,8 +53,6 @@ HowToPlayState.prototype.load_complete = function() {
     this.advance_page_timer = this.title_screen_delay * 0.5
     this.advancing = true
   }
-
-  
 
   this.temp_fragments = null
   this.primary_picture = null
@@ -225,7 +224,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     if([2, 5, 6, 7].indexOf(this.cur_page) != -1) {
       ctx.save()
       ctx.fillStyle = "white"
-      ctx.globalAlpha *= 0.5
+      ctx.globalAlpha *= 0.8 * this.get_flashing_prop()
       ctx.font = "16px Muli"
       ctx.fillText("PRESS SPACEBAR TO CONTINUE", 400, 580)
       ctx.restore()
@@ -315,11 +314,9 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.font = '20px Muli'
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("GET THE", 300, 500)
-      ctx.fillText("...", 530, 500)
+      ctx.fillText("GET THE GATEWAY SCORE...", 400, 500)
       ctx.shadowColor = "red"
       ctx.fillStyle = "red"
-      ctx.fillText("GATEWAY SCORE", 433, 500)
     }
 
     if(this.cur_page == 6) {
@@ -386,9 +383,14 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
 
       ctx.font = '16px Muli'
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("STRONGER ENEMIES", 400, 400)
+      ctx.fillStyle = "white"
       ctx.fillText("MORE NUMEROUS ENEMIES", 400, 430)
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("HIGHER GATEWAY SCORES", 400, 460)
+      ctx.fillStyle = "white"
+      ctx.fillText("BOSSES HAVE SPECIAL ABILITIES", 400, 490)
       /*ctx.globalAlpha /= 2
       ctx.font = '12px Muli'
       ctx.fillText("SPECIAL MODES CAN ONLY BE UNLOCKED IN CHALLENGE MODE!", 400, 530)
@@ -439,15 +441,42 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("(IN ORDER OF IMPORTANCE)", 400, 400)
       ctx.globalAlpha *= 2
       ctx.font = '16px Muli'
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("NUMBER OF CONTINUES", 400, 440)
+      ctx.fillStyle = "white"
       ctx.fillText("NUMBER OF GOLD AND SILVER SCORES", 400, 470)
+      ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("NUMBER OF DEATHS", 400, 500)
       // ctx.font = '12px Muli'
       // ctx.fillText("GET GOOD RANKS TO UNLOCK SPECIAL MODES!", 400, 550)
-
     }
 
+
     if(this.cur_page == 13 + this.ult_page_offset) {
+
+      ctx.textAlign = 'center'
+      ctx.font = '12px Muli'
+      ctx.fillStyle = 'white'
+      ctx.fillText("PLAYER SKILL RATING", 400, 300)
+      ctx.font = '48px Muli'
+      ctx.fillText(this.cur_rating, 400, 345)
+
+      ctx.font = '16px Muli'
+      ctx.fillText("YOUR PLAYER SKILL RATING IS BASED ON", 400, 400)
+      
+      ctx.font = '16px Muli'
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("HIGH SCORES ON EACH LEVEL", 400, 440)
+      ctx.fillStyle = "white"
+      ctx.fillText("BEST RANKS ON EACH HIVE", 400, 470)
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("CHALLENGE MODE > STANDARD MODE", 400, 500)
+      ctx.fillStyle = "white"
+      ctx.font = '12px Muli'
+      ctx.fillText("INCREASE YOUR RATING TO UNLOCK EXTRA LIVES AND MORE!", 400, 550)
+    }
+
+    if(this.cur_page == 14 + this.ult_page_offset) {
 
       this.exit_button.draw(ctx)
       ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -455,9 +484,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("THANKS FOR PLAYING IMPULSE!", 400, 335)
       ctx.font = '12px Muli'
       ctx.fillText("- MARK -", 400, 360)
-
     }
-
 
     ctx.globalAlpha = 1
 
@@ -519,47 +546,57 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
 HowToPlayState.prototype.draw_score_points_page = function(ctx) {
   ctx.beginPath()
-      ctx.rect(825, 515, 150, 80)
-      ctx.strokeStyle = "red"
-      ctx.lineWidth = 6
-      ctx.stroke()
-      ctx.font = '24px Muli'
-      ctx.textAlign = "center"
-      ctx.fillStyle = "white"
-      ctx.fillText("GET THE", 177, 420)
-      ctx.fillText("TO BEAT THE LEVEL", 565, 420)
+  ctx.rect(825, 515, 150, 80)
+  ctx.strokeStyle = "red"
+  ctx.lineWidth = 6
+  ctx.stroke()
+  ctx.font = '24px Muli'
+  ctx.textAlign = "center"
+  ctx.fillStyle = "white"
+  ctx.fillText("GET THE GATEWAY SCORE TO BEAT THE LEVEL", 400, 420)
 
-      this.draw_arrow_with_base(ctx, 735, 555, 50, "red")
+  ctx.save()
+  ctx.globalAlpha *= this.get_flashing_prop();
+  this.draw_arrow_with_base(ctx, 735, 555, 50, "red")
+  ctx.restore()
 
-      ctx.shadowColor = "red"
-      ctx.fillStyle = "red"
-      ctx.fillText("GATEWAY SCORE", 340, 420)
 }
 
-HowToPlayState.prototype.draw_arrow_with_base = function(ctx, x, y, size, color) {
+HowToPlayState.prototype.draw_arrow_with_base = function(ctx, x, y, size, color, orient) {
+  ctx.save()
+  if (orient) {
+    ctx.translate(x, y);
+    if (orient == "left") {
+      ctx.rotate(Math.PI);
+    }
+    if (orient == "up") {
+      ctx.rotate(3 * Math.PI/2);
+    }
+    if (orient == "down") {
+      ctx.rotate(Math.PI/2);
+    }
+    ctx.translate(-x, -y);
+  }
+
   ctx.beginPath()
   ctx.moveTo(x - size/2, y)
-  ctx.lineTo(x + size * 0.4, y)
+  // This is some random number that doesn't cause the arrow stem to overlap with the head.
+  ctx.lineTo(x + size * 0.355, y)
   ctx.lineWidth = size/5
   ctx.strokeStyle = color
   ctx.stroke()
   draw_arrow(ctx, x + size/2, y, size * 0.6, "right", color, false)
+  ctx.restore();
 }
 
 HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   
   ctx.font = '24px Muli'
   ctx.fillStyle = "white"
-  ctx.fillText("YOUR", 188, 340)
-  ctx.fillText("INCREASES THE POINTS", 505, 340)
+  ctx.fillText("YOUR MULTIPLIER INCREASES THE POINTS", 400, 340)
   ctx.fillText("YOU GET FROM KILLING ENEMIES", 400, 375)
 
   
-  ctx.font = '24px Muli'
-  ctx.fillStyle = "red"
-  ctx.fillText("MULTIPLIER", 295, 340)
-
-
   var y_value = 450
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -598,8 +635,10 @@ HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
   ctx.strokeStyle = "red"
   ctx.lineWidth = 6
   ctx.stroke()
-
+  ctx.save();
+  ctx.globalAlpha *= this.get_flashing_prop();
   this.draw_arrow_with_base(ctx, 735, 280, 50, "red")
+  ctx.restore();
 }
 
 HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
@@ -646,7 +685,7 @@ HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
   ctx.fillStyle = "white"
   ctx.globalAlpha *= 0.5
   ctx.font = '12px Muli'
-  ctx.fillText("MINIMUM MULTIPLIER +1 EVERY 10 SECONDS", 400, 500)
+  ctx.fillText("MULTIPLIER PERMANENTLY +1 EVERY 10 SECONDS", 400, 500)
 }
 
 HowToPlayState.prototype.draw_sparks_page = function(ctx) {
@@ -721,6 +760,10 @@ HowToPlayState.prototype.draw_second_ult_page = function(ctx) {
     this.exit_button.draw(ctx)
 }
 
+HowToPlayState.prototype.get_flashing_prop = function() {
+  return Math.abs(((new Date()).getTime() % 2000 - 1000) / 1000)
+
+}
 
 HowToPlayState.prototype.draw_enemies_dying_page = function(ctx) {
  ctx.drawImage(this.primary_canvas, 0, 0, 150, 150, 225, 300, 150, 150);
@@ -748,6 +791,27 @@ HowToPlayState.prototype.draw_enemies_dying_page = function(ctx) {
  ctx.fillStyle = "white"
  ctx.textAlign = "center"
  ctx.fillText("IMPULSE ENEMIES INTO THE VOID TO KILL THEM", 400, 500)
+
+ // draw circle around first enemy
+ if (this.level.enemies.length > 0) {
+    ctx.save();
+    ctx.globalAlpha *= this.get_flashing_prop();
+    ctx.beginPath()
+    ctx.arc(this.level.enemies[0].body.GetPosition().x * imp_vars.draw_factor,
+            this.level.enemies[0].body.GetPosition().y * imp_vars.draw_factor, 25, 0, 2 * Math.PI)
+    ctx.lineWidth = 6
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke()
+    ctx.beginPath();
+    ctx.moveTo(this.level.enemies[0].body.GetPosition().x * imp_vars.draw_factor,
+      this.level.enemies[0].body.GetPosition().y * imp_vars.draw_factor - 25);
+    ctx.lineTo(this.level.enemies[0].body.GetPosition().x * imp_vars.draw_factor,
+      66);
+    ctx.lineWidth = 6
+    ctx.stroke();
+    draw_arrow(ctx, this.level.enemies[0].body.GetPosition().x * imp_vars.draw_factor, 60, 25, "up", impulse_colors["impulse_blue"], false)
+    ctx.restore();
+  }
 }
 
 HowToPlayState.prototype.draw_player_dying_page = function(ctx) {
@@ -786,8 +850,13 @@ HowToPlayState.prototype.draw_player_dying_page = function(ctx) {
   ctx.font = "20px Muli"
 
   ctx.fillText("TOUCHING THE BLACK VOID WILL KILL YOU", 400, 500)
-  //ctx.globalAlpha /= 2
 
+  for ( var i = 0; i < 6; i ++) {
+
+    this.draw_arrow_with_base(ctx, 150 + i * 100, 220, 35,  "red", "down")
+    this.draw_arrow_with_base(ctx, 150 + i * 100, 120, 35,  "red", "up")
+  }
+  //ctx.globalAlpha /= 2
   ctx.restore()
 }
 
@@ -810,7 +879,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.textAlign = "center"
         ctx.fillStyle = "white"
         ctx.shadowBlur = 0
-        ctx.fillText("MOVE ONTO THE UNLOCKED", 340, 360)
+        ctx.fillText("MOVE ONTO THE UNLOCKED GATEWAY", 400, 360)
 
         ctx.shadowBlur = 0
         ctx.fillText("AND PRESS", 400, 400)
@@ -818,8 +887,6 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.font = '20px Muli'
         ctx.shadowColor = "red"
         ctx.fillStyle = "red"
-
-        ctx.fillText("GATEWAY", 541, 360)  
       }
       
       if (this.mode == "normal_tutorial") {
@@ -827,7 +894,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.textAlign = "center"
         ctx.fillStyle = "white"
         ctx.shadowBlur = 0
-        ctx.fillText("...THEN MOVE ONTO THE UNLOCKED", 340, 360)
+        ctx.fillText("...THEN MOVE ONTO THE UNLOCKED GATEWAY", 400, 360)
 
         ctx.shadowBlur = 0
         ctx.fillText("AND PRESS", 400, 400)
@@ -836,7 +903,6 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.shadowColor = "red"
         ctx.fillStyle = "red"
 
-        ctx.fillText("GATEWAY", 578, 360)   
       }
       
       ctx.fillStyle = "white"
@@ -851,11 +917,9 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         draw_rounded_rect(ctx, 400, 445, 120, 50, 10, "white")
         ctx.fillText("SHIFT", 400, 451)
       }
-
-      
-
 }
 
+// Draw anything that needs to be on the contexts.
 HowToPlayState.prototype.draw_contexts = function() {
   if((this.mode == "normal_tutorial" && this.cur_page == 3) ||
       (this.mode == "first_time_tutorial" && this.cur_page == 2)) {
@@ -863,6 +927,11 @@ HowToPlayState.prototype.draw_contexts = function() {
     this.secondary_ctx.clearRect(0, 0, 150, 150)
     this.draw_picture_bg_on_canvas(this.primary_ctx)
     this.draw_picture_bg_on_canvas(this.secondary_ctx)
+
+    this.draw_arrow_with_base(this.primary_ctx, 30, 110, 35,  "red", "up")
+    this.draw_arrow_with_base(this.primary_ctx, 120, 110, 35,  "red", "up")
+    this.draw_arrow_with_base(this.secondary_ctx, 30, 110, 35,  "red", "up")
+    this.draw_arrow_with_base(this.secondary_ctx, 120, 110, 35,  "red", "up")
 
     drawSprite(this.primary_ctx, 75, 75, 0, 30, 30, "player_normal")
     this.primary_ctx.beginPath()
@@ -889,7 +958,7 @@ HowToPlayState.prototype.draw_contexts = function() {
     //this.primary_ctx.shadowBlur = 10;
     //this.primary_ctx.shadowColor = impulse_colors["impulse_blue"];
     this.primary_ctx.lineWidth = 5
-    this.primary_ctx.strokeStyle = this.primary_ctx.shadowColor
+    this.primary_ctx.strokeStyle = impulse_colors["impulse_blue"]
     this.primary_ctx.arc(75, 120, 40, 7*Math.PI/6,  11*Math.PI/6);
     this.primary_ctx.shadowBlur = 0
     this.primary_ctx.stroke()

@@ -433,6 +433,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.drawImage(bg_canvas, imp_vars.sidebarWidth*this.zoom, 0)
   ctx.setTransform(1, 0, 0, 1, 0, 0);*/
 
+  this.additional_draw(ctx, bg_ctx)
   ctx.save();
   ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
 
@@ -651,7 +652,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     }
   }*/
 
-  this.additional_draw(ctx, bg_ctx)
 
 }
 
