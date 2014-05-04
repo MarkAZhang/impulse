@@ -391,7 +391,7 @@ imp_params.impulse_level_data['HIVE 2-5'] = {
   enemies: {
     "stunner": [0, 6, 0, 6, 1, 2, 15],
     "mote": [0, 8, 1.6, 3.2, 1, 0, 15],
-    "harpoon": [0, 12, 2.4, 4.8, 1, 1, 15],
+    "harpoon": [0, 20, 4, 8, 2, 0, 15],
   },
   dominant_enemy: "harpoon",
   initial_spawn_data: {

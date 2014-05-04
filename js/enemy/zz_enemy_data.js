@@ -1,7 +1,7 @@
 imp_params.impulse_enemy_stats = {}
 
 imp_params.impulse_enemy_stats["stunner"] = {
-  color: "00ffff",///"#999",
+  color: "#00ffff",///"#999",
   density: 1.5,
   lin_damp: 4,
   effective_radius: .5,
@@ -306,7 +306,7 @@ imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
 
 
 imp_params.impulse_enemy_stats["disabler"] = {
-  color: "#ccc",
+  color: "#cccccc",
   //interior_color: "rgb(205, 201, 201)",
   density: 8,
   lin_damp: 9,
@@ -402,7 +402,7 @@ imp_params.impulse_enemy_stats["troll"] = {
 
 
 imp_params.impulse_enemy_stats["slingshot"] = {
-  color: "rgb(160, 82, 45)",
+  color: "#a0522d",
   density: .2,
   lin_damp: 7,
   effective_radius: 1,
@@ -484,7 +484,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
 }
 
 imp_params.impulse_enemy_stats["deathray"] = {
-  color: "#ddd",//"#169f95",
+  color: "#dddddd",//"#169f95",
   interior_color: "black",
   density: 6,
   lin_damp: 6,
