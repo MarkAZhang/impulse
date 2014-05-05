@@ -720,8 +720,11 @@ function calculate_next_upgrade() {
 }
 
 function get_bg_opacity(world) {
-  if (world != 2) {
-    return imp_vars.bg_opacity;
+  if (world == 2) {
+    return 0.5;
   }
-  return 0.5;// imp_vars.bg_opacity * 1.5;
+  if (world == 3) {
+    return 0.4;
+  }
+  return imp_vars.bg_opacity;
 }

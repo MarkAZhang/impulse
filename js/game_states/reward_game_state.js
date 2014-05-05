@@ -68,7 +68,11 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
   ctx.save()
-  ctx.globalAlpha /= 5
+  if (cur_reward.type == "world_victory") {
+    ctx.globalAlpha *= get_bg_opacity(cur_reward.data + 1);
+  } else {
+    ctx.globalAlpha *= get_bg_opacity(0);
+  }
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   ctx.save()
@@ -127,6 +131,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message = "YOUR SKILL RATING WENT UP"
       main_message_teaser = "CONGRATULATIONS!"
       message_size = 40
+      ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
       ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2, main_reward_text_y + 20)

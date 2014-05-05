@@ -409,7 +409,7 @@ Enemy.prototype.process_entered_arena = function() {
 Enemy.prototype.adjust_position = function() {
   this.adjust_position_counter += 1
 
-  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank") || this.status_duration[1] > 0 && this.type == "fighter") return
+  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank") || this.status_duration[1] > 0) return
   if(this.adjust_position_counter > this.adjust_position_freq) {
     this.adjust_position_counter = 0
 

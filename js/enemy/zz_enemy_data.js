@@ -110,6 +110,7 @@ imp_params.impulse_enemy_stats["mote"] = {
   dies_on_impact: "YES",
   enemy_info: [
     "Cannot be Impulsed # # Upon collision, disarms you for a few moments",
+    "To defeat, impulse other enemies into it."
   ],
   className: Mote
 
@@ -184,10 +185,11 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   dies_on_impact: "NO",
   enemy_info: [
 
-    "Fires its hook at you and # attempts to yank you in # # Can only fire through walls.",
+    "Fires its hook at you and # attempts to yank you in # # Can only fire through the void.",
     "The hook range is outlined # around the Harpoon",
-    "While the hook is detached from the Harpoon, it cannot move",
     "If you are hooked, # impulse the harpoon and it will let you go",
+    "Will attempt to avoid you and also avoid the void.",
+    "While the hook is detached from the Harpoon, it cannot move",
     //"When Impulsed, the hook is disabled for 2 seconds",
     //"Can latch onto other enemies and will yank them in",
     //"Will actively try to avoid you # # Does not die on collision",
@@ -250,8 +252,8 @@ imp_params.impulse_enemy_stats["fighter"] = {
   ],
 
   enemy_info: [
-    "Fires bullets at you on sight # # Impulse can reflect the bullets",
-    "Has a force-field which resists impulse. # # Touching this force-field will knock you back.",
+    "Fires bullets at you on sight # # Has a force-field which resists impulse. # Touching this force-field will knock you back.",
+    "To defeat, reflect the bullets back at the hunter with impulse.",
     //"Very resistant to Impulse # # Very weak against the force of its own bullets",
     //"If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
     "Periodically charges up a Frenzy bar # # When the Hunter has five Frenzy bars, # it will enter Frenzy mode",

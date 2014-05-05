@@ -6,7 +6,7 @@ function Orbiter(world, x, y, id, impulse_game_state) {
   this.type = "orbiter"
 
   this.silence_outside_arena = true
-  this.entered_arena_delay = 250
+  this.entered_arena_delay = 500
   this.init(world, x, y, id, impulse_game_state)
   if(!impulse_game_state) return
 

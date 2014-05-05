@@ -32,9 +32,14 @@ Boss.prototype.getLife = function() {
 
 }
 
+Boss.prototype.get_impulse_extra_factor = function() {
+  console.log(this.impulse_extra_factor);
+  return this.impulse_extra_factor;
+}
+
 Boss.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   if(this.spawned)  {
-    this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new b2Vec2(this.get_impulse_extra_factor() * impulse_force * Math.cos(hit_angle), this.get_impulse_extra_factor() * impulse_force * Math.sin(hit_angle)),
       this.body.GetWorldCenter())
     this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   }

@@ -107,6 +107,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.dire_harpoon = false
   this.attack_mode = true
   this.extra_adjust = false
+  this.adjust_position_factor = 1;
 
   this.orbiter_checks = [0, -1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
 

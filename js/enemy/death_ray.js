@@ -28,6 +28,9 @@ function DeathRay(world, x, y, id, impulse_game_state) {
     this.shoot_interval = 2000
   }
 
+  this.extra_adjust = false
+  this.adjust_position_factor = 1;
+
   this.shoot_duration = this.shoot_interval
 
   this.aim_proportion = .56
@@ -169,7 +172,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     }
 
   }
-  else if(this.within_bounds && !this.moving) {
+  else if(this.aimed || (!this.aimed && this.within_bounds && !this.moving)) {
     this.shoot_duration = Math.max(this.shoot_duration - dt, 0)
     if(this.shoot_duration <= this.shoot_interval* this.aim_proportion && !this.aimed) {//if it hasn't been aimed, aim it now
       this.aim_ray()

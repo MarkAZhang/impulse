@@ -107,14 +107,14 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.spawn_count = {
    "stunner" : 12,
-   "spear" : 8,
+   "spear" : 9,
    "tank" : 5,
-   "mote" : 8,
+   "mote" : 9,
    "goo" : 1,
-   "harpoon" : 4,
+   "harpoon" : 5,
    "disabler" : 1,
    "fighter" : 3,
-   "troll" : 8,
+   "troll" : 9,
  }
 
   if(imp_vars.player_data.difficulty_mode == "easy") {

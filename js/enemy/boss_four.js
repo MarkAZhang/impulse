@@ -39,7 +39,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.spawn_laser_radius = .2
 
   this.spawner_spawn_count = {
-  "stunner" : 8,
+   "stunner" : 8,
    "spear" : 5,
    "tank" : 6,
    "mote" : 6,
@@ -54,17 +54,17 @@ function BossFour(world, x, y, id, impulse_game_state) {
  }
 
  this.spawner_spawn_count_easy = {
-  "stunner" : 4,
-   "spear" : 3,
-   "tank" : 3,
-   "mote" : 3,
+   "stunner" : 6,
+   "spear" : 4,
+   "tank" : 4,
+   "mote" : 4,
    "goo" : 1,
-   "harpoon" : 2,
+   "harpoon" : 3,
    "orbiter" : 3,
    "disabler" : 1,
    "fighter" : 2,
    "slingshot" : 2,
-   "troll" : 3,
+   "troll" : 4,
    "deathray" : 1
  }
 
@@ -168,11 +168,18 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.turn_rate = 4000
   this.spawner_force = 2000
-  this.impulse_extra_factor = 30
 
   this.bud_count = 0
 
   this.tank_force = 100
+
+  this.impulse_extra_factor_min = 5;
+  this.impulse_extra_factor_max = 30;
+  this.impulse_extra_factor_time_to_max = 120000;
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.impulse_extra_factor_time_to_max = 90000;
+  }
+  this.impulse_extra_factor = this.impulse_extra_factor_min;
 
   this.darkness_interval = 25000
   this.darkness_timer = this.darkness_interval - 1
@@ -396,6 +403,12 @@ BossFour.prototype.additional_processing = function(dt) {
     this.spawned = true
     this.visibility = 1
   }
+
+  if (this.impulse_extra_factor < this.impulse_extra_factor_max) {
+    this.impulse_extra_factor += (this.impulse_extra_factor_max - this.impulse_extra_factor_min) * dt / this.impulse_extra_factor_time_to_max
+    this.impulse_extra_factor = Math.min(this.impulse_extra_factor, this.impulse_extra_factor_max);
+  }
+
 
   if(this.do_initial_spawn) {
     this.create_initial_attack_buds()
