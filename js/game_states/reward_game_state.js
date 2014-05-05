@@ -232,7 +232,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "24px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("CHECK OUT THE MAIN TUTORIAL FOR ADVANCED TIPS", imp_vars.levelWidth/2, new_values_text_y)
+      ctx.fillText("CHECK OUT THE MAIN TUTORIAL FOR MORE INFO", imp_vars.levelWidth/2, new_values_text_y)
     }
 
     if(cur_reward.type == "select_difficulty") {
