@@ -446,7 +446,7 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
   if(enemy_type == "stunner")
     new_enemy.open(1500)
   new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
-  new_enemy.body.SetAngle(this.body.GetAngle())
+  new_enemy.set_heading(this.body.GetAngle());
   if(this.lighten_timer < 0) {
     new_enemy.lighten((this.lighten_timer + this.lighten_duration))
   }
