@@ -133,7 +133,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-    return "HIVE "+this.world_num+"-1";
+    return "HIVE "+this.world_num+"-7";
   } else {
     if(level.level_number < 7) {
       return "HIVE "+this.world_num+"-"+(level.level_number+1)
@@ -221,6 +221,11 @@ MainGameTransitionState.prototype.process = function(dt) {
     return
   }
 
+  if(this.last_level && this.last_level.is_boss_level && !this.last_level.boss_victory) {
+    switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
+    return
+  }
+
   // adjust sparks based on prog
   var prog = (this.transition_timer/this.last_level_summary_interval);
 
@@ -267,13 +272,13 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
 
   ctx.save()
-  if(this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval * 3 / 4) {
+  /*if(this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval * 3 / 4) {
     ctx.globalAlpha = (this.last_level_summary_interval - this.transition_timer) / (this.last_level_summary_interval / 4)
   } else if(this.state == "level_intro" && this.transition_timer <= this.level_intro_interval * 1 / 4) {
     ctx.globalAlpha = this.transition_timer / (this.level_intro_interval / 4)
   } else if(this.last_level && !this.victory && this.state == "level_intro" && this.transition_timer >= this.level_intro_interval * 3 / 4) {
     ctx.globalAlpha = (this.level_intro_interval - this.transition_timer) / (this.level_intro_interval / 4)
-  }
+  }*/
   
   ctx.globalAlpha /= 5
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
