@@ -169,6 +169,7 @@ PauseMenu.prototype.add_buttons = function() {
     _this.game_state.toggle_pause()
   }}(this), "start")
   this.resume_button.keyCode = imp_params.keys.PAUSE;
+  this.resume_button.sKeyCode = imp_params.keys.SECONDARY_PAUSE;
 
   if(imp_vars.player_data.options.control_hand == "right") {
     this.resume_button.extra_text = "Q KEY"

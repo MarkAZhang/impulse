@@ -1035,7 +1035,7 @@ HowToPlayState.prototype.on_mouse_move = function(x, y) {
 HowToPlayState.prototype.on_key_down = function(keyCode) {
   if(!this.ready || this.zoom != 1) return
 
-  if(keyCode == imp_params.keys.PAUSE) {
+  if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
     this.pause = !this.pause
     if(this.pause) {
       set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))

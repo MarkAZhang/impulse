@@ -129,6 +129,7 @@ Player.prototype.keyDown = function(keyCode) {
       this.up = true
       break;
     case imp_params.keys.PAUSE:
+    case imp_params.keys.SECONDARY_PAUSE:
       this.up = false
       this.down = false
       this.left = false
@@ -187,7 +188,8 @@ Player.prototype.keyUp = function(keyCode) {
     case imp_params.keys.ULTIMATE_KEY:
       this.iultimate = null
     break
-    case imp_params.keys.PAUSE_KEY:
+    case imp_params.keys.PAUSE:
+    case imp_params.keys.SECONDARY_PAUSE:
       this.up = false
       this.down = false
       this.left = false

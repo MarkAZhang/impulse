@@ -970,7 +970,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.game_numbers.score = this.level.cutoff_scores[0];
     }
   }
-  if(keyCode == imp_params.keys.PAUSE) {
+  if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
     this.toggle_pause()    
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {

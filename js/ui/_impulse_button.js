@@ -70,7 +70,7 @@ ImpulseButton.prototype.set_active = function(active) {
 }
 
 ImpulseButton.prototype.on_key_down = function(keyCode) {
-  if (this.active && this.keyCode && this.keyCode == keyCode) {
+  if (this.active && (this.keyCode && this.keyCode == keyCode) || (this.sKeyCode && this.sKeyCode == keyCode)) {
     this.action()
   }
 }
