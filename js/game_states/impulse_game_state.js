@@ -178,7 +178,7 @@ ImpulseGameState.prototype.reset = function() {
   this.level.draw_bg(imp_vars.bg_ctx)
   imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
   this.progress_bar_prop = 0
-
+  this.boss_intro_text_activated = false
   
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
@@ -305,7 +305,7 @@ ImpulseGameState.prototype.process = function(dt) {
       }
     }
 
-    if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && this.first_time && !this.boss_intro_text_activated) {
+    if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && !this.boss_intro_text_activated) {
       this.boss_intro_text_duration = this.boss_intro_text_interval
       if(this.world_num == 4) {
         this.boss_intro_text_duration /= 2
@@ -316,7 +316,6 @@ ImpulseGameState.prototype.process = function(dt) {
 
     if(this.boss_intro_text_duration > 0) {
       this.boss_intro_text_duration -= dt
-
     }
 
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
@@ -494,7 +493,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.draw_boss_text(ctx)
   }  
 
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2 && this.main_game && this.zoom == 1 && this.world_num == 1 && this.first_ever) {
+  // if it's the first boss and they've never beaten it, show the arrow.
+  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && 
+    this.main_game && this.zoom == 1 && this.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
+    imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
       this.draw_boss_hint(ctx)
   }
 
@@ -699,7 +701,12 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
 
 ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
   ctx.save()
-  var prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval/2)
+  var prog = 0
+  if (this.first_time && this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2) {
+    prog = (this.boss_intro_text_duration)/(this.boss_intro_text_interval/2)  
+  } else if (!this.first_time && this.boss_intro_text_duration > this.boss_intro_text_interval/2 && this.boss_intro_text_duration < this.boss_intro_text_interval) {
+    prog = (this.boss_intro_text_duration - this.boss_intro_text_interval/2)/(this.boss_intro_text_interval/2)
+  }
 
   ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 

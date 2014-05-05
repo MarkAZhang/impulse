@@ -5,7 +5,7 @@ Spear.prototype.constructor = Spear
 function Spear(world, x, y, id, impulse_game_state) {
   this.type = "spear"
   this.silence_outside_arena = true
-  this.entered_arena_delay = 0
+  this.entered_arena_delay = 500
   this.init(world, x, y, id, impulse_game_state)
 
   this.fast_factor = 5

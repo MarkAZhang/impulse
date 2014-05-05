@@ -160,18 +160,19 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
   }
 
-  if(!this.last_level.is_boss_level) {
-    var ans = update_high_score_for_level(this.last_level.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
-    this.high_score = ans.high_score
-    this.stars = ans.stars
-
-  } else {
-    var ans = update_best_time_for_boss_level(this.last_level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-    this.best_time = ans.best_time
-    this.stars = ans.stars
-  }
+  
 
   if(this.victory) {
+    if(!this.last_level.is_boss_level) {
+      var ans = update_high_score_for_level(this.last_level.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
+      this.high_score = ans.high_score
+      this.stars = ans.stars
+
+    } else {
+      var ans = update_best_time_for_boss_level(this.last_level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+      this.best_time = ans.best_time
+      this.stars = ans.stars
+    }
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name)) {
       this.hive_numbers.game_numbers[this.last_level.level_name] = {}
       this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
@@ -360,9 +361,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.restore()
 
     }
-
   }
-
    else if(this.state == "last_level_summary") {
     var prog = (this.transition_timer/this.last_level_summary_interval);
 
