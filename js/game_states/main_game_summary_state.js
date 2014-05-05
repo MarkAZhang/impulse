@@ -225,11 +225,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = Math.max(0, prog)
   }
 
-  ctx.globalAlpha /= 5
+  ctx.save()
+  ctx.globalAlpha *= get_bg_opacity(this.world_num);
 
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.globalAlpha *= 5
 
+  ctx.restore();
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
@@ -239,7 +240,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 130, 150)
   ctx.globalAlpha /= 0.3
 
-  ctx.shadowBlur = 20;
+  ctx.shadowBlur = 0;
 
   ctx.textAlign = 'center'
 

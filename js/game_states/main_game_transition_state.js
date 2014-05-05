@@ -133,7 +133,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-    return "HIVE "+this.world_num+"-7";
+    return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
       return "HIVE "+this.world_num+"-"+(level.level_number+1)
@@ -280,7 +280,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = (this.level_intro_interval - this.transition_timer) / (this.level_intro_interval / 4)
   }*/
   
-  ctx.globalAlpha /= 5
+  ctx.globalAlpha *= get_bg_opacity(this.world_num);
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   if(!this.first_process) return
@@ -302,7 +302,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.textAlign = 'center'
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = 0;
 
     /*ctx.font = '24px Muli'
 
@@ -345,7 +345,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = 'center'
 
       ctx.font = '42px Muli'
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = 0;
       ctx.shadowColor = "black"
 
       ctx.save()
@@ -372,7 +372,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = 0;
 
     ctx.textAlign = 'center'
 

@@ -154,7 +154,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
   ctx.save()
-  ctx.globalAlpha /= 5
+  ctx.globalAlpha *= get_bg_opacity(this.world_num);
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   

@@ -26,7 +26,7 @@ DialogBox.prototype.process = function(dt) {
 DialogBox.prototype.draw = function(ctx) {
 
   ctx.save();
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, imp_vars.bg_opacity)
+  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, get_bg_opacity(this.world_num ? this.world_num : 0));
 
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
@@ -211,13 +211,12 @@ PauseMenu.prototype.add_buttons = function() {
     var cur_x =  this.x + (this.enemy_image_size+10) * diff
     var cur_y = this.y - this.h/2 + 250 + this.enemy_image_size * h_diff
     var _this = this
-    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color, function() {
-      _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new EnemyBox(j, _this))
-      });
-
-    }))
-
+    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color, (function(enemy, _this) { return function() {
+        _this.fader.set_animation("fade_out", function() {
+          set_dialog_box(new EnemyBox(enemy, _this))
+        });
+      }})(j, this)
+    ))
     i+=1
   }
 }

@@ -107,7 +107,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   ctx.save()
-  ctx.globalAlpha *= imp_vars.bg_opacity;
+  ctx.globalAlpha *= get_bg_opacity(this.world_num);
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   ctx.save();

@@ -718,3 +718,10 @@ function calculate_next_upgrade() {
   }
   return min_upgrade
 }
+
+function get_bg_opacity(world) {
+  if (world != 2) {
+    return imp_vars.bg_opacity;
+  }
+  return 0.5;// imp_vars.bg_opacity * 1.5;
+}
