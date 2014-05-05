@@ -10,8 +10,6 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
   level.generate_obstacles()
 
-  console.log("BEGIN WORKER")
-
   if(imp_vars.minified)
     var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
   else
@@ -27,15 +25,11 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
   visibility_graph_worker.onmessage = function(_this) {
     return function(event) {
-      if(event.data.print) {
-        console.log(event.data.print)
-      }
-      else if (event.data.percentage) {
+      if (event.data.percentage) {
         _this.load_percentage = event.data.percentage
 
       }
       else if(event.data.poly_edges) {
-        console.log(event.data)
         _this.visibility_graph = new VisibilityGraph(level, event.data.poly_edges, event.data.vertices, event.data.edges, event.data.edge_list, event.data.shortest_paths, event.data.visible_vertices)
         _this.load_percentage = 1
         _this.load_complete()

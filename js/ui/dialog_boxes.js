@@ -30,7 +30,6 @@ DialogBox.prototype.draw = function(ctx) {
 
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
-    console.log(ctx.globalAlpha)
   } else if (this.fader.get_current_animation() == "fade_out") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
