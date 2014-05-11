@@ -798,7 +798,6 @@ EnemyBox.prototype = new DialogBox()
 EnemyBox.prototype.constructor = EnemyBox
 
 function EnemyBox(enemy_name, previous_menu) {
-  window.console.log("NEW ENEMY BOX")
   this.init(800, 600)
   
   this.solid = false;

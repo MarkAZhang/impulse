@@ -383,8 +383,6 @@ Harpoon.prototype.start_death = function(death) {
 
   this.disengage_harpoon();
 
-  console.log(death)
-
   this.dying = death
   this.dying_duration = this.dying_length
   this.died = true
