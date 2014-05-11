@@ -16,7 +16,7 @@
         fileref.setAttribute("href", "css/style.css");
         document.getElementsByTagName("head")[0].insertBefore(fileref,document.getElementsByTagName("head")[0].firstChild);
     </script>
-    
+
     <!-- AddThis Smart Layers BEGIN -->
     <!-- Go to http://www.addthis.com/get/smart-layers to customize -->
     <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-536f09a114fefc83"></script>
@@ -30,6 +30,7 @@
       });
     </script>
     <!-- AddThis Smart Layers END -->
+    <!-- Google Analytics -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -42,7 +43,6 @@
     </script>
  
     <script src="js/impulse.min.js"></script>
-   
 
     <script type="text/javascript">
         window.onload = function() {
@@ -86,9 +86,25 @@
             message.setAttribute("style", "display: none" )
             setTimeout(function(){window.impulse_main()}, 50)
         }
-
+        function getWindowDimensions() {
+          var winW = 800, winH = 600;
+          if (document.body && document.body.offsetWidth) {
+           winW = document.body.offsetWidth;
+           winH = document.body.offsetHeight;
+          }
+          if (document.compatMode=='CSS1Compat' &&
+              document.documentElement &&
+              document.documentElement.offsetWidth ) {
+           winW = document.documentElement.offsetWidth;
+           winH = document.documentElement.offsetHeight;
+          }
+          if (window.innerWidth && window.innerHeight) {
+           winW = window.innerWidth;
+           winH = window.innerHeight;
+          }
+          return {w: winW, h: winH}
+        }
     </script>
-
 </head>
 <!-- Html -->
 <body>
@@ -112,10 +128,14 @@
     </div>
     <div id = "message">
         <div id = "banner">
-            IMPULSE
+            <img src="art/logo.png">
+            </img>
         </div>
         <div id="warning">
             Impulse is best played with the Chrome web browser.
+        </div>
+        <div id="warning2">
+            Other browsers may experience significant lag and bugs.
         </div>
         <br />
         <div id = "continue" class="button" onclick="start_game()">
