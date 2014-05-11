@@ -51,7 +51,9 @@ function WorldMapState(world) {
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
 
-  this.fade_out_interval = 500
+  this.fade_out_interval_main = 500
+  this.fade_out_interval_practice = 250
+  this.fade_out_interval = null
   this.fade_out_duration = null
 
   this.cur_rating = calculate_current_rating()
@@ -123,10 +125,14 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
       var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].stars]]
       var callback = (function(level, index) {
         return function() {
-
-          _this.fader.set_animation("fade_out", function() {
-            switch_game_state(new LevelIntroState(level, index + 1))
-          });
+          _this.fade_out_interval = _this.fade_out_interval_practice
+          _this.fade_out_duration = _this.fade_out_interval; 
+          _this.fade_out_color = impulse_colors["world "+ (index + 1) +" dark"];
+          var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+          _this.draw_world_bg(world_bg_ctx)
+          setTimeout(function(){
+            switch_game_state(new LevelIntroState(level, index + 1));
+          }, _this.fade_out_interval_practice)
         }
 
       })(level_name, i)
@@ -149,13 +155,14 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
   if(unlocked) {
       this.world_buttons[world_num] = new SmallButton(name, 32, x, y, 150, 100, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
       function(){
+        _this.fade_out_interval = _this.fade_out_interval_main
         _this.fade_out_duration = _this.fade_out_interval; 
         _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
         var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
         _this.draw_world_bg(world_bg_ctx)
         setTimeout(function(){
           switch_game_state(new MainGameTransitionState(world_num, null, null, null, null))
-        }, 500)})
+        }, _this.fade_out_interval_main)})
   } else {
     this.world_buttons[world_num] = new SmallButton(this.requirements[world_num], 16, x, y, 200, 200, impulse_colors["boss "+world_num], impulse_colors["boss "+world_num],
      function(){})
@@ -170,17 +177,18 @@ WorldMapState.prototype.draw_world_bg = function(ctx) {
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.fade_out_color) {
+    ctx.save()
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
     ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-    ctx.globalAlpha /= 5
+    ctx.globalAlpha *= get_bg_opacity(this.cur_world)
     ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-    ctx.globalAlpha *= 5
+    ctx.restore()
   }
   ctx.save()
 
   if(this.fade_out_duration != null) {
-    ctx.globalAlpha = Math.max((this.fade_out_duration/this.fade_out_interval), 0)
+    ctx.globalAlpha *= Math.max((this.fade_out_duration/this.fade_out_interval), 0)
   }
 
   if (this.fader.get_current_animation() == "fade_in") {

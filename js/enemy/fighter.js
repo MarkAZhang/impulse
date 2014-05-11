@@ -104,7 +104,6 @@ Fighter.prototype.get_current_status = function() {
 }
 
 Fighter.prototype.additional_processing = function(dt) {
-
   if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
     this.fighter_status = "frenzy"
 
@@ -139,7 +138,6 @@ Fighter.prototype.additional_processing = function(dt) {
     this.color = imp_params.impulse_enemy_stats[this.type].color;
     this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
-
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && this.status_duration[1] <= 0) {
 

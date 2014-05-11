@@ -1,5 +1,4 @@
 var VisibilityGraph = function(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
-  console.log("CREATING VISIBILITY GRAPH")
   this.init(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)
 }
 
@@ -45,9 +44,9 @@ VisibilityGraph.prototype.init = function(level, poly_edges, vertices, edges, ed
 
         if(!inPoly)
         {
-          vertex.p_n = i  //number of polygon
-          vertex.p_v = polygon.length
-          vertex.p_i = j  //index of vertex in polygon
+          vertex["p_n"] = i  //number of polygon
+          vertex["p_v"] = polygon.length
+          vertex["p_i"] = j  //index of vertex in polygon
           vertices.push(vertex)
 
         }
@@ -64,7 +63,7 @@ VisibilityGraph.prototype.init = function(level, poly_edges, vertices, edges, ed
 
         var v_i = vertices[i]
         var v_j = vertices[j]
-        if(v_i.p_n!=v_j.p_n || (v_i.p_n==v_j.p_n && (Math.max(v_i.p_i, v_j.p_i) - Math.min(v_i.p_i, v_j.p_i) == 1 || Math.min(v_i.p_i, v_j.p_i) == 0 && Math.max(v_i.p_i, v_j.p_i) == v_i.p_v - 1)))//if adjacent edges of same polygon, add. else, if different polygons and visible, add
+        if(v_i["p_n"]!=v_j["p_n"] || (v_i["p_n"]==v_j["p_n"] && (Math.max(v_i["p_i"], v_j["p_i"]) - Math.min(v_i["p_i"], v_j["p_i"]) == 1 || Math.min(v_i["p_i"], v_j["p_i"]) == 0 && Math.max(v_i["p_i"], v_j["p_i"]) == v_i["p_v"] - 1)))//if adjacent edges of same polygon, add. else, if different polygons and visible, add
         {
           if(isVisible(v_i, v_j, poly_edges) && isVisible(v_i, v_j, this.level.obstacle_edges))
           {
@@ -74,7 +73,7 @@ VisibilityGraph.prototype.init = function(level, poly_edges, vertices, edges, ed
             edge_list[j][i] = dist
           }
         }
-        else if(v_i.p_n==v_j.p_n && !pointInPolygon(polygons[v_i.p_n], {x: (v_i.x + v_j.x)/2, y: (v_i.y + v_j.y)/2}))
+        else if(v_i["p_n"]==v_j["p_n"] && !pointInPolygon(polygons[v_i["p_n"]], {x: (v_i.x + v_j.x)/2, y: (v_i.y + v_j.y)/2}))
         {//for concave polygons
           if(isVisible(v_i, v_j, this.level.obstacle_edges) && isVisible(v_i, v_j, poly_edges))
           {
@@ -124,13 +123,13 @@ VisibilityGraph.prototype.init = function(level, poly_edges, vertices, edges, ed
 
 VisibilityGraph.prototype.is_valid_visible_vertice = function(point, vertex, polygonContainingPoint, passThroughPolygonContainingPoint) {
   if (passThroughPolygonContainingPoint) {
-    return isVisible(point, vertex, this.poly_edges, polygonContainingPoint/*ignore_polygon*/) && (vertex.p_n != polygonContainingPoint ||
-         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex.p_n]))
+    return isVisible(point, vertex, this.poly_edges, polygonContainingPoint/*ignore_polygon*/) && (vertex["p_n"] != polygonContainingPoint ||
+         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex["p_n"]]))
        
   } else {
     if (polygonContainingPoint) {
-      return (vertex.p_n == polygonContainingPoint &&
-         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex.p_n]))
+      return (vertex["p_n"] == polygonContainingPoint &&
+         isVisibleThroughPolygon(point, vertex, this.obstacle_polygons[vertex["p_n"]]))
     } else {
       return isVisible(point, vertex, this.poly_edges)
     }
@@ -217,7 +216,6 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
     }
   }
 
-
   for(var i = 0; i < point1_adj.length; i++)
   {
     for(var j = 0; j < point2_adj.length; j++)
@@ -229,7 +227,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
       }
       else
       {
-        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
+        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]]["b"] // dist
       }
       if(v_dist == null) continue
       var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
@@ -240,21 +238,17 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
         if(point1_adj[i] == point2_adj[j])
         {
           min_path = [point1_adj[i]]
-          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-          //console.log("NEW MIN PATH with "+dist)
-          //console.log(min_path)
         }
         else
         {
-          //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-          min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
-          //console.log("NEW MIN PATH with "+dist)
-          //console.log(min_path)
+          min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]]["a"] // path
         }
       }
     }
   }
-  if(!min_path) return {path: null, dist: null}//it's possible that player is inside an open-space that is surrouded by triangle edges.
+  if(!min_path) {
+    return {path: null, dist: null}//it's possible that player is inside an open-space that is surrouded by triangle edges.
+  }
   if(pick_alt_path) {
     var random_path_index = Math.floor(Math.random() * point1_adj.length * point2_adj.length)
 
@@ -274,7 +268,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
       }
       else
       {
-        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]].dist
+        v_dist = this.shortest_paths[point1_adj[i]][point2_adj[j]]["b"] // dist
       }
       if(v_dist != null) {
         var dist = p_dist(point1, this.vertices[point1_adj[i]]) + v_dist
@@ -301,7 +295,7 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
           else
           {
             //console.log(i+" "+j+" "+point1_adj[i]+" "+point2_adj[j])
-            min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]].path
+            min_path = this.shortest_paths[point1_adj[i]][point2_adj[j]]["a"] // path
             //console.log("NEW MIN PATH with "+dist)
             //console.log(min_path)
           }

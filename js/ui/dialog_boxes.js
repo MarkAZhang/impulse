@@ -26,8 +26,12 @@ DialogBox.prototype.process = function(dt) {
 DialogBox.prototype.draw = function(ctx) {
 
   ctx.save();
-  draw_image_on_bg_ctx(ctx, imp_vars.world_menu_bg_canvas, get_bg_opacity(this.world_num ? this.world_num : 0));
-
+  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
+  ctx.fillRect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.globalAlpha *= get_bg_opacity(this.world_num ? this.world_num : 0)
+  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.restore();
+  ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
   } else if (this.fader.get_current_animation() == "fade_out") {

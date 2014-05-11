@@ -148,6 +148,12 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_gear(context, this.x, this.y - this.h/8, 15, this.color, this.bg_color)
     }
+  } else if(this.icon == "fb") {
+    if(this.hover) {
+      draw_fb_icon(context, this.x, this.y - this.h/8, 30, this.hover_color)   
+    } else {
+      draw_fb_icon(context, this.x, this.y - this.h/8, 30, this.color)   
+    }
   } else if(this.icon == "save") {
     if(this.hover) {
       draw_save_icon(context, this.x, this.y - this.h/8, 20, this.hover_color)   

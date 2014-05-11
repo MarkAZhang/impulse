@@ -32,6 +32,7 @@ function TitleState(last_state) {
     "fade_out": 250
   });
   this.fader.set_animation("fade_in");
+  open_share_dialog();
 }
 
 
@@ -162,6 +163,8 @@ TitleState.prototype.setup_main_menu = function() {
     var _this = this;
     this.buttons["menu"].push(new IconButton("START GAME", 20, imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
+
+      close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "easy"
       save_game()
@@ -185,6 +188,7 @@ TitleState.prototype.setup_main_menu = function() {
 
     this.buttons["menu"].push(new IconButton("CHALLENGE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
+      close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
       imp_vars.player_data.difficulty_mode = "normal"
       save_game()
@@ -221,6 +225,11 @@ TitleState.prototype.setup_main_menu = function() {
       });
     }, "gear"))
 
+    /*this.buttons["menu"].push(new IconButton("SHARE", 16, imp_vars.levelWidth - 50, imp_vars.levelHeight - 50, 100, 70, impulse_colors["impulse_blue"], impulse_colors["impulse_blue"],function(){
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new OptionsMenu(_this))
+      });
+    }, "fb"))*/
   }
 
   

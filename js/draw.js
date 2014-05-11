@@ -538,6 +538,19 @@ function draw_rounded_rect(context, x, y, w, h, r, color) {
   context.restore()
 }
 
+function draw_fb_icon(context, x, y, scale, color) {
+  context.save()
+  context.beginPath()
+  context.rect(x - scale/2, y - scale/2, scale, scale)
+  context.lineWidth = 4
+  context.strokeStyle = color
+  context.stroke()
+  context.fillStyle = color
+  context.font = "20px Muli"
+  context.fillText("f", x, y + scale/4);
+  context.restore()  
+}
+
 function draw_pause_icon(context, x, y, scale, color, key_display) {
 
   context.save()
@@ -1258,9 +1271,9 @@ function loadSprite(imageName)
     return image;
 }
 
-playerSprite = loadSprite("art/sprites.png")
+var playerSprite = loadSprite("art/sprites.png")
 
-spriteSheetData = {
+var spriteSheetData = {
   //x, y, w, h
   //"player_normal": [60, 0, 60, 60],
   "player_normal": [0, 0, 40, 40],

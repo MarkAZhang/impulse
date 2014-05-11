@@ -9,7 +9,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
 //need to set effective_radius if do_yield = true
 
-this.original_spawn_point = new b2Vec2(x, y);
+
+  this.original_spawn_point = new b2Vec2(x, y);
 
   this.impulse_game_state = impulse_game_state
   this.image_enemy_type = this.type
@@ -21,6 +22,7 @@ this.original_spawn_point = new b2Vec2(x, y);
   for(i in imp_params.impulse_enemy_stats[this.type]) {
     this[i] = imp_params.impulse_enemy_stats[this.type][i]
   }
+
 
   this.pointer_vertices = []
 

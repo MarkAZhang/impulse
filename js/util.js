@@ -27,10 +27,10 @@ function isVisible(v_i, v_j, edges, ignore_polygon)
   for(var k = 0; k < edges.length; k++)
   {
 
-    if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
+    if(eq(v_i, edges[k]["p1"]) || eq(v_i, edges[k]["p2"]) || eq(v_j, edges[k]["p1"]) || eq(v_j, edges[k]["p2"])) {
       continue
     }
-  if(edges[k].p1.p_n !== ignore_polygon && segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
+  if(edges[k]["p1"]["p_n"] !== ignore_polygon && segIntersection(v_i, v_j, edges[k]["p1"], edges[k]["p2"]))
     {
       return false
     }
@@ -286,17 +286,17 @@ function getBoundaryPolygon(polygon, radius) {
     cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
     cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
     if (cur_angle > Math.PI) {
-      ans.push({x: polygon[i].x+j_to_i_normal.x*radius - j_to_i.x*1/Math.tan(cur_angle/2 - Math.PI/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius - j_to_i.y *1/Math.tan(cur_angle/2 - Math.PI/2)* radius})
+      ans.push({"x": polygon[i].x+j_to_i_normal.x*radius - j_to_i.x*1/Math.tan(cur_angle/2 - Math.PI/2)*radius, "y": polygon[i].y + j_to_i_normal.y*radius - j_to_i.y *1/Math.tan(cur_angle/2 - Math.PI/2)* radius})
 
     }
     else if(cur_angle > 5*Math.PI/6)
     {
-      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
-      ans.push({x: polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, y: polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})
+      ans.push({"x": polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*radius, "y": polygon[i].y + j_to_i_normal.y*radius + j_to_i.y * radius})
+      ans.push({"x": polygon[i].x+k_to_i_normal.x*radius+k_to_i.x*radius, "y": polygon[i].y + k_to_i_normal.y*radius + k_to_i.y * radius})
     }
     else
     {
-      ans.push({x: polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*Math.tan(cur_angle/2)*radius, y: polygon[i].y + j_to_i_normal.y*radius + j_to_i.y *Math.tan(cur_angle/2)* radius})
+      ans.push({"x": polygon[i].x+j_to_i_normal.x*radius+j_to_i.x*Math.tan(cur_angle/2)*radius, "y": polygon[i].y + j_to_i_normal.y*radius + j_to_i.y *Math.tan(cur_angle/2)* radius})
 
     }
 
@@ -307,8 +307,8 @@ function getBoundaryPolygon(polygon, radius) {
 }
 
 function check_bounds(buffer, pt, draw_factor) {
-  var factor = draw_factor ? draw_factor : 1
-  return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_vars.levelWidth/factor - buffer && pt.y <= (imp_vars.levelHeight)/factor - buffer
+  var factor = draw_factor ? draw_factor : 1;
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_vars.levelWidth/factor - buffer && pt.y <= (imp_vars.levelHeight)/factor - buffer;
 }
 
 function get_safest_spawn_point(object, player, level_name) {

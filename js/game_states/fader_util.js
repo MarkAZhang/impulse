@@ -33,7 +33,7 @@ Fader.prototype.process = function(dt) {
 
 Fader.prototype.get_animation_progress = function() {
   if (this.animation) {
-    return 1 - this.timer / this.animation_durations[this.animation];
+    return Math.min(1 - this.timer / this.animation_durations[this.animation], 1);
   }
   return 0;
 }

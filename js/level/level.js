@@ -560,7 +560,7 @@ Level.prototype.generate_obstacle_edges = function() {
     var k = obstacle.verticeSet.length - 1
     for(var j = 0; j < obstacle.verticeSet.length; j++)
     {
-      this.obstacle_edges.push({p1: obstacle.verticeSet[k], p2: obstacle.verticeSet[j]})
+      this.obstacle_edges.push({"p1": obstacle.verticeSet[k], "p2": obstacle.verticeSet[j]})
       k = j
     }
   }

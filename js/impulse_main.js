@@ -18,7 +18,8 @@ var imp_vars = {
   player_data: {},
   impulse_music: null,
   minified: false,
-  bg_opacity: 0.3
+  bg_opacity: 0.3,
+  share_button_open: true // button starts out as open.
 }
 
 window["impulse_main"] =  function() {
@@ -229,6 +230,7 @@ function step() {
     imp_vars.cur_dialog_box.draw(imp_vars.ctx)
   }
 
+  check_share_dialog();
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   imp_vars.step_id = setTimeout(step, Math.max(33 - temp_dt, 1))
@@ -377,8 +379,6 @@ function on_click(event) {
 }*/
 
 function toggleFullScreen() {
-
-
 
     var isInFullScreen = (document.fullScreenElement && document.fullScreenElement !==     null) ||    // alternative standard method
             (document.mozFullScreen || document.webkitIsFullScreen);
@@ -727,4 +727,37 @@ function get_bg_opacity(world) {
     return 0.4;
   }
   return imp_vars.bg_opacity;
+}
+
+function share_on_facebook_dialog() {
+  FB.ui({
+    method: 'share',
+    href: 'https://developers.facebook.com/docs/dialogs/',
+  }, function(response){});
+}
+
+function open_share_dialog() {
+  // share_button_open prevents us from calling click too much.
+  if (document.getElementById("at4-soc") && !share_dialog_is_open()) {
+    document.getElementById("at4-soc").click()
+  }
+}
+
+function close_share_dialog() {
+  if (imp_vars.share_button_open && document.getElementById("at4-scc") && share_dialog_is_open()) {
+    document.getElementById("at4-scc").click() 
+  }
+}
+
+function check_share_dialog() {
+  if (imp_vars.cur_game_state instanceof TitleState && imp_vars.cur_dialog_box == null) {
+    open_share_dialog();
+  } else {
+    close_share_dialog();
+  }
+}
+
+function share_dialog_is_open() {
+  // check whether the at4-share element has the at4-show class. THIS HACKY IMPLEMENTATION IS 3RD PARTY SPECIFIC!
+  return document.getElementById("at4-share").className.match(/\bat4-show\b/);
 }

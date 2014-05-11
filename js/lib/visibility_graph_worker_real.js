@@ -1,11 +1,11 @@
 self.onmessage = function(event) {
 
 
-  var polygons = event.data.polygons
-  var obstacle_edges = event.data.obstacle_edges // actual obstacle edges
-  var draw_factor = event.data.draw_factor
-  var levelWidth = event.data.levelWidth
-  var levelHeight = event.data.levelHeight
+  var polygons = event.data["a"]
+  var obstacle_edges = event.data["b"] // actual obstacle edges
+  var draw_factor = event.data["c"]
+  var levelWidth = event.data["d"]
+  var levelHeight = event.data["e"]
   var poly_edges = [] // buffered obstacle edges (surround)
   var vertices = []
   var edges = [] // visibility graph edges
@@ -28,21 +28,21 @@ self.onmessage = function(event) {
           inPoly = true
         }
       }
-      vertex.p_n = i  //number of polygon
-      vertex.p_v = polygon.length // numbe of vertices in polygon
-      vertex.p_i = j  //index of vertex in polygon
+      vertex["p_n"] = i  //number of polygon
+      vertex["p_v"] = polygon.length // numbe of vertices in polygon
+      vertex["p_i"] = j  //index of vertex in polygon
 
       if(!inPoly && check_bounds(0, vertex, draw_factor, levelWidth, levelHeight))
       {
         vertices.push(vertex)
 
       }
-      poly_edges.push({p1: polygon[j], p2: polygon[m]})
+      poly_edges.push({"p1": polygon[j], "p2": polygon[m]})
       m = j
     }
   }
 
-  postMessage({percentage: .25})
+  postMessage({"z": .25}) /*percentage */
 
   for(var i = 0; i < vertices.length; i++)
   {
@@ -52,24 +52,21 @@ self.onmessage = function(event) {
 
       var v_i = vertices[i]
       var v_j = vertices[j]
-      if(v_i.x *draw_factor == 400 && v_i.y *draw_factor== 350) {
-        console.log("HERE")
-      }
-      if(v_i.p_n!=v_j.p_n || (v_i.p_n==v_j.p_n && (Math.max(v_i.p_i, v_j.p_i) - Math.min(v_i.p_i, v_j.p_i) == 1 || Math.min(v_i.p_i, v_j.p_i) == 0 && Math.max(v_i.p_i, v_j.p_i) == v_i.p_v - 1)))//if adjacent edges of same polygon, add. else, if different polygons and visible, add
+      if(v_i["p_n"]!=v_j["p_n"] || (v_i["p_n"]==v_j["p_n"] && (Math.max(v_i["p_i"], v_j["p_i"]) - Math.min(v_i["p_i"], v_j["p_i"]) == 1 || Math.min(v_i["p_i"], v_j["p_i"]) == 0 && Math.max(v_i["p_i"], v_j["p_i"]) == v_i["p_v"] - 1)))//if adjacent edges of same polygon, add. else, if different polygons and visible, add
       {
         if(isVisible(v_i, v_j, poly_edges) && isVisible(v_i, v_j, obstacle_edges))
         {
-          edges.push({p1: v_i, p2: v_j})
+          edges.push({"p1": v_i, "p2": v_j})
           var dist =  p_dist(v_j, v_i)
           edge_list[i][j] = dist
           edge_list[j][i] = dist
         }
       }
-      else if(v_i.p_n==v_j.p_n && !pointInPolygon(polygons[v_i.p_n], {x: (v_i.x + v_j.x)/2, y: (v_i.y + v_j.y)/2}))
+      else if(v_i["p_n"]==v_j["p_n"] && !pointInPolygon(polygons[v_i["p_n"]], {x: (v_i.x + v_j.x)/2, y: (v_i.y + v_j.y)/2}))
       {//for concave polygons
         if(isVisible(v_i, v_j, obstacle_edges) && isVisible(v_i, v_j, poly_edges))
         {
-          edges.push({p1: v_i, p2: v_j})
+          edges.push({"p1": v_i, "p2": v_j})
           var dist =  p_dist(v_j, v_i)
           edge_list[i][j] = dist
           edge_list[j][i] = dist
@@ -78,7 +75,7 @@ self.onmessage = function(event) {
     }
   }
 
-  postMessage({percentage: .50})
+  postMessage({"z": .50}) /*percentage */
 
   for(var h = 0; h < vertices.length; h++)
   {
@@ -89,8 +86,8 @@ self.onmessage = function(event) {
     {
        var path = dijkstra.extract_shortest_path_from_predecessor_list(predecessors, i);
        if(path.length == 1) {
-         shortest_paths[h][i] = {path: null, dist: null}
-         shortest_paths[i][h] = {path: null, dist: null}
+         shortest_paths[h][i] = {"a": null, "b": null}
+         shortest_paths[i][h] = {"a": null, "b": null}
          continue
        }//nonexistent path
        var sum = 0
@@ -100,11 +97,11 @@ self.onmessage = function(event) {
         sum+=edge_list[j][path[k]]
           j = path[k]
        }
-       shortest_paths[h][i] = {path: path, dist: sum}
-       shortest_paths[i][h] = {path: path.slice(0).reverse(), dist: sum}
+       shortest_paths[h][i] = {"a": path, "b": sum} /* a = path, b = dist */
+       shortest_paths[i][h] = {"a": path.slice(0).reverse(), "b": sum} /* a = path, b = dist */
     }
   }
-  postMessage({percentage: .75})
+  postMessage({"z": .75}) /*percentage */
 
   var split_size = 50
 
@@ -136,8 +133,13 @@ self.onmessage = function(event) {
 
   }
 
-
-  postMessage({poly_edges: poly_edges, vertices: vertices, edges: edges, edge_list: edge_list, shortest_paths: shortest_paths, visible_vertices: visible_vertices})
+  postMessage({
+    "a": poly_edges,
+    "b": vertices,
+    "c": edges,
+    "d": edge_list, 
+    "e": shortest_paths, 
+    "f": visible_vertices})
 }
 
 function getVerticesVisibleFromSquare(pt, vertices, edges, cache) {
@@ -162,10 +164,10 @@ function isVisible(v_i, v_j, edges)
   for(var k = 0; k < edges.length; k++)
   {
 
-    if(eq(v_i, edges[k].p1) || eq(v_i, edges[k].p2) || eq(v_j, edges[k].p1) || eq(v_j, edges[k].p2)) {
+    if(eq(v_i, edges[k]["p1"]) || eq(v_i, edges[k]["p2"]) || eq(v_j, edges[k]["p1"]) || eq(v_j, edges[k]["p2"])) {
       continue
     }
-    if(segIntersection(v_i, v_j, edges[k].p1, edges[k].p2))
+    if(segIntersection(v_i, v_j, edges[k]["p1"], edges[k]["p2"]))
     {
       return false
     }
@@ -369,4 +371,3 @@ var dijkstra = {
   }
 };
 
-//console.log("END");

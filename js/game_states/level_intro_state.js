@@ -16,8 +16,21 @@ function LevelIntroState(level_name, world) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.bright_color, this.bright_color, function(_this){return function(){
+    // When the back button is pressed, draw the world-specific background on the bg_ctx and show it.
+    imp_vars.bg_ctx.fillStyle =  impulse_colors["world "+_this.world_num+" dark"]
+    imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    imp_vars.bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    imp_vars.bg_ctx.globalAlpha *= get_bg_opacity(0);
+    draw_bg(imp_vars.bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+_this.world_num)   
+    imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    imp_vars.bg_canvas.setAttribute("style", "")
 
-    _this.fader.set_animation("fade_out", function() {
+    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    world_bg_ctx.fillStyle = "black"
+    world_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    // draw the title background on the world_bg_ctx and fade it out.
+    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+    _this.fader.set_animation("fade_out_to_main", function() {
       if(_this.world_num) {
         switch_game_state(new WorldMapState(_this.world_num))
       }
@@ -86,7 +99,8 @@ function LevelIntroState(level_name, world) {
 
   this.fader = new Fader({
     "fade_in": 500,
-    "fade_out": 250
+    "fade_out": 250,
+    "fade_out_to_main": 250
   });
   this.fader.set_animation("fade_in");
 }
@@ -95,9 +109,11 @@ LevelIntroState.prototype.process = function(dt) {
   this.fader.process(dt);
 }
 
+
 LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    world_bg_ctx.clearRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
     draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
     bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
@@ -106,14 +122,26 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     bg_canvas.setAttribute("style", "display:none")
   }
 
-  ctx.save()
-  ctx.globalAlpha *= get_bg_opacity(this.world_num);
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-  ctx.restore()
+  if (this.fader.get_current_animation() != "fade_out_to_main") {
+    ctx.save()
+    ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
+    ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.globalAlpha *= get_bg_opacity(this.world_num);
+    ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.restore()
+  } else {
+    ctx.save()
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.globalAlpha *= get_bg_opacity(0);
+    ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.restore()
+  }
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
-  } else if (this.fader.get_current_animation() == "fade_out") {
+  } else if (this.fader.get_current_animation() == "fade_out" || this.fader.get_current_animation() == "fade_out_to_main") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
   if (!this.is_boss_level) {

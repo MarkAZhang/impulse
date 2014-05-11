@@ -154,6 +154,8 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
   ctx.save()
+  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
+  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
