@@ -315,7 +315,7 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 }
 
 RewardGameState.prototype.debug = function() {
-  if (true) {
+  if (false) {
     this.rewards.push({
       type: "share"
     })
