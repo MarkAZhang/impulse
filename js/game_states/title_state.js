@@ -75,11 +75,10 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     
   }*/
   ctx.shadowColor = impulse_colors["impulse_blue"]
-  ctx.shadowBlur = 20
+  ctx.shadowBlur = 0
   draw_logo(ctx,imp_vars.levelWidth/2, 150, "MARK ZHANG")
 
   //ctx.shadowBlur = 5
-
   for(var i = 0; i < this.buttons[this.state].length; i++)
   {
     this.buttons[this.state][i].draw(ctx)
