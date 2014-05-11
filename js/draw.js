@@ -1059,7 +1059,7 @@ function draw_multi_fragment(context, x, y, angle) {
 
 }
 
-function draw_logo(context, x, y, text) {
+function draw_logo(context, x, y, text, scale) {
 
   context.save()
   context.textAlign = "center"
@@ -1069,7 +1069,7 @@ function draw_logo(context, x, y, text) {
 
 /*  context.font = '72px Muli'
   context.fillText("IMPULSE", x, y)*/
-  var logoScale = 0.85;
+  var logoScale = scale ? scale : 0.85;
   context.drawImage(logoSprite, x - logoSprite.width/2 * logoScale, y - logoSprite.height * 0.75 * logoScale, logoSprite.width * logoScale, logoSprite.height * logoScale)
 
   if(text) {

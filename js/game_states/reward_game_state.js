@@ -8,7 +8,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.args = args
   this.rewards = []
   this.debug()
-  this.cur_reward_index = 0
+  this.cur_reward_index = -1
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
@@ -31,6 +31,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   ]
   
   this.determine_rewards()
+  this.next_reward()
   if(this.rewards.length > 0) {
     imp_vars.impulse_music.stop_bg()  
   }
@@ -82,12 +83,16 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
+    if (cur_reward.type == "share") {
+      document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
+    }
   } else if(this.transition_state == "out") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = Math.max(0, prog)
+    document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
   }
   // draw tessellation if applicable
-  if (cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty") {
+  if (cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" && cur_reward.type != "share") {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
@@ -110,7 +115,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "final_victory") {
-      ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       message_size = 32
       main_message = imp_vars.player_data.difficulty_mode == "easy" ? "YOU'VE CLEARED STANDARD MODE" : "YOU'VE CLEARED CHALLENGE MODE"
       main_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "WELL DONE!" : "INCREDIBLE!"
@@ -118,11 +122,28 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "24px Muli"
       ctx.fillStyle = "white"
       if (imp_vars.player_data.difficulty_mode == "easy") {
-        ctx.fillText("NOW TRY CHALLENGE MODE!", imp_vars.levelWidth/2, 270)
+        ctx.fillText("BUT CAN YOU BEAT CHALLENGE MODE?", imp_vars.levelWidth/2, 260)
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE!", imp_vars.levelWidth/2, 270)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE!", imp_vars.levelWidth/2, 260)
         // TODO: add sharing
       }
+    }
+
+    if(cur_reward.type == "share") {
+      ctx.textAlign = "center"
+      ctx.font = "24px Muli"
+      ctx.fillStyle = "white"
+      draw_logo(ctx,imp_vars.levelWidth/2, 150, "", 0.5)
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("IS COMPLETELY FREE-TO-PLAY", imp_vars.levelWidth/2, 210)
+      ctx.font = "24px Muli"
+      ctx.fillStyle = "white"
+      ctx.fillText("IF YOU'RE ENJOYING THE GAME", imp_vars.levelWidth/2, 350)
+      ctx.font = "30px Muli"
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 400)
+      draw_spark(ctx, 230, 467, 0)
+      draw_spark(ctx, 570, 467, 0)
     }
 
 
@@ -294,7 +315,10 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 }
 
 RewardGameState.prototype.debug = function() {
-  if (false) {
+  if (true) {
+    this.rewards.push({
+      type: "share"
+    })
 
      this.rewards.push({
       type: "first_time_tutorial"
@@ -369,11 +393,16 @@ RewardGameState.prototype.process = function(dt) {
 }
 
 RewardGameState.prototype.next_reward = function() {
+  if (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") {
+    document.getElementById("addthis-inline").style.display = "none"
+  }
   this.cur_reward_index += 1
 
   if (this.cur_reward_index < this.rewards.length) { 
-    var reward = this.rewards[this.cur_reward_index]
-
+    var cur_reward = this.rewards[this.cur_reward_index]
+    if (cur_reward.type == "share") {
+      document.getElementById("addthis-inline").style.display = "block"
+    }
   }
 }
 
@@ -455,6 +484,11 @@ RewardGameState.prototype.determine_rewards = function() {
         type: "final_victory",
       })
     }
+    if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
+      this.rewards.push({
+        type: "share"
+      });
+    }
     
     imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
   }
@@ -509,7 +543,7 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
 }
 
 RewardGameState.prototype.on_click = function(x, y) {
-  if(this.rewards.length == 0) {
+  if(this.rewards.length == 0 || (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share")) {
     return
   }
   if (this.rewards[this.cur_reward_index].type == "select_difficulty") {
