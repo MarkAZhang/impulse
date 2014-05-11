@@ -11,7 +11,7 @@ LoaderGameState.prototype.load_level = function(level_data) {
   level.generate_obstacles()
 
   if(imp_vars.minified)
-    var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker.js")
+    var visibility_graph_worker = new Worker("js/lib/worker.js")
   else
     var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker_real.js")
   visibility_graph_worker.postMessage({"a": level.boundary_polygons, /*polygons*/

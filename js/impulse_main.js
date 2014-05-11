@@ -17,7 +17,7 @@ var imp_vars = {
   save_name: "impulse_save_data",
   player_data: {},
   impulse_music: null,
-  minified: false,
+  minified: true,
   bg_opacity: 0.3,
   share_button_open: true // button starts out as open.
 }
