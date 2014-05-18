@@ -73,16 +73,16 @@ HowToPlayState.prototype.load_complete = function() {
   this.score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
   this.star_colors =  ["white", "silver", "gold"]
 
-  this.special_buttons = []
   var _this = this
+  /* this.special_buttons = []
   this.easy_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2-100, 390, 200, 50, "white", "blue", function(){_this.change_mode("easy")})
   this.special_buttons.push(this.easy_mode_button)
   this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
-  this.special_buttons.push(this.normal_mode_button)
+  this.special_buttons.push(this.normal_mode_button) */
 
   this.exit_button = new IconButton("EXIT TUTORIAL", 20, 400, 440, 125, 85, this.lite_color, "white", function(){_this.exit_tutorial = true}, "quit")
 
-  this.set_difficulty_button_underline();
+  //this.set_difficulty_button_underline();
 
   this.has_ult = has_ult()
   this.ult_num = calculate_ult()
@@ -97,14 +97,14 @@ HowToPlayState.prototype.load_complete = function() {
 HowToPlayState.prototype.change_mode = function(type) {
   imp_vars.player_data.difficulty_mode = type;
   save_game();
-  this.set_difficulty_button_underline();
+  //this.set_difficulty_button_underline();
 }
 
 
-HowToPlayState.prototype.set_difficulty_button_underline = function() {
+/*HowToPlayState.prototype.set_difficulty_button_underline = function() {
   this.easy_mode_button.underline = (imp_vars.player_data.difficulty_mode == "easy");
   this.normal_mode_button.underline = (imp_vars.player_data.difficulty_mode == "normal");
-}
+}*/
 
 HowToPlayState.prototype.additional_processing = function(dt) {
   if(this.pause || this.zoom != 1) return
@@ -1013,12 +1013,7 @@ HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
 HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
     if (this.mode == "normal_tutorial") {
-      if(this.cur_page == 10+ this.ult_page_offset) {
-        for(var i=0; i < this.special_buttons.length; i++) {
-          this.special_buttons[i].on_mouse_move(x - imp_vars.sidebarWidth, y)
-        }
-      }
-      if(this.cur_page == 13+ this.ult_page_offset) {
+      if(this.cur_page == 14 + this.ult_page_offset) {
         this.exit_button.on_mouse_move(x - imp_vars.sidebarWidth, y)
       }
     }
@@ -1111,13 +1106,7 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
 
     if(this.mode == "normal_tutorial" && x > imp_vars.sidebarWidth && (x < imp_vars.canvasWidth - imp_vars.sidebarWidth && y > 400 || (this.cur_page == 10 + this.ult_page_offset && y > 350))) {
 
-      if(this.cur_page == 10+ this.ult_page_offset) {
-        for(var i=0; i < this.special_buttons.length; i++) {
-          this.special_buttons[i].on_click(x - imp_vars.sidebarWidth, y)
-        }
-      }
-
-      if(this.cur_page == 13+ this.ult_page_offset) {
+      if(this.cur_page == 14+ this.ult_page_offset) {
         this.exit_button.on_click(x - imp_vars.sidebarWidth, y)
       }
 
