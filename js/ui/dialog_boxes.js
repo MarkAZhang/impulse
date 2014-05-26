@@ -433,6 +433,10 @@ function OptionsMenu(previous_menu) {
   this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
   this.effects_volume_slider.value = Math.log(imp_vars.impulse_music.effects_volume)/Math.log(100.0)*/
 
+  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up - 37, 20, 20, this.bright_color, function(on) {
+    toggle_mute()
+  }, !imp_vars.player_data.options.music_mute))
+
   this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up - 7, 20, 20, this.bright_color, function(on) {
     imp_vars.impulse_music.mute_effects(!on)
   }, !imp_vars.impulse_music.effects_mute))
@@ -491,6 +495,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
 
   ctx.font = '18px Muli';
   ctx.textAlign = "left"
+  ctx.fillText("GAME MUSIC", this.x - 130, this.y - this.h/2 + this.options_y_line_up - 30)
   ctx.fillText("SOUND EFFECTS", this.x - 130, this.y - this.h/2 + this.options_y_line_up )
   ctx.fillText("PARTICLE EFFECTS", this.x - 130, this.y - this.h/2 + this.options_y_line_up + 30)
   ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2  + this.options_y_line_up + 60)
