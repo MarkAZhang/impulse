@@ -15,7 +15,11 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.slingshot_force = 50 //force that the spear impulses the player
 
+  this.first_time_in_arena = false
+
   this.death_radius = 5
+
+  this.slow_factor = 0.5
 
   this.do_yield = false
 
@@ -60,11 +64,26 @@ Slingshot.prototype.move = function() {
   }
 }
 
+Slingshot.prototype.modify_movement_vector = function(dir) {
+  if(this.status_duration[2] > 0) {
+    dir.Multiply(this.slow_factor)
+  }
+  if (!this.first_time_in_arena) {
+    dir.Multiply(this.slow_factor)
+  }
+  dir.Multiply(this.force)
+}
+
 Slingshot.prototype.additional_processing = function(dt) {
 
   if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.status_duration[1] > 0) {
     this.slingshot_mode = false
     this.lin_damp = this.orig_lin_damp
+  }
+
+  // Slow the slingshot until it enters the arena, with a small buffer.
+  if (!this.first_time_in_arena && check_bounds(1, this.body.GetPosition(), imp_vars.draw_factor)) {
+    this.first_time_in_arena = true
   }
 
   this.special_mode = this.empowered_duration > 0
