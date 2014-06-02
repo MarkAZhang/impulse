@@ -72,7 +72,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.boss_force = 40
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.boss_force = 40    
+    this.boss_force = 30  
   }
 
   this.joint_padding = 1
