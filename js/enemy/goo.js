@@ -65,6 +65,7 @@ Goo.prototype.additional_processing = function(dt) {
 
   } else if(this.goo_state == "big" && this.goo_state_timer <= 0) {
     this.goo_state = "shrinking";
+    imp_vars.impulse_music.play_sound("goo")
     this.goo_state_timer = this.goo_change_transition;
 
   } else if (this.goo_state == "shrinking") {
@@ -141,12 +142,13 @@ Goo.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit
   if(this.status_duration[1] <= 0) {
       if(this.goo_state == "shrinking") {
         this.goo_state_timer = this.goo_change_transition - this.goo_state_timer;
-      this.goo_state = "expanding"
+        this.goo_state = "expanding"
       } else if(this.goo_state == "big") {
         this.goo_state_timer = this.goo_expand_period
       } else if(this.goo_state == "small") {
         this.goo_state_timer = this.goo_change_transition
-      this.goo_state = "expanding"
+        this.goo_state = "expanding"
+        imp_vars.impulse_music.play_sound("goo")
       }
 
     }

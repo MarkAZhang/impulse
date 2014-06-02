@@ -128,6 +128,7 @@ Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_forc
     this.slingshot_duration = this.slingshot_interval
     this.empowered_duration = this.empowered_interval
     this.lin_damp = this.slingshot_lin_damp
+    imp_vars.impulse_music.play_sound("sshot")  
   }
 }
 

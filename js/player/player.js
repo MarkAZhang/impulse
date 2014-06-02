@@ -580,6 +580,8 @@ Player.prototype.readjust_force = function() {
 }
 
 Player.prototype.initiate_ultimate = function() {
+
+  imp_vars.impulse_music.play_sound("ult")
   this.ultimate = true
   this.ultimate_loc = this.body.GetPosition().Copy()
   this.ultimate_duration = this.ultimate_length
@@ -658,7 +660,7 @@ Player.prototype.finish_ultimate = function() {
     this.impulse_game_state.player_ulted()
   }
   if (this.level.is_boss_level) {
-    this.body.SetPosition(this.ultimate_loc)    
+    this.body.SetPosition(this.ultimate_loc)
   }
 }
 
@@ -938,10 +940,11 @@ Player.prototype.point_intersect = function(pt) {
   return p_dist(pt, this.body.GetPosition()) < this.r
 }
 
-Player.prototype.start_death = function() {
+Player.prototype.start_death = function(reason) {
   this.dying = true
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
+  if (reason != "absorbed")
   imp_vars.impulse_music.play_sound("pdeath")
   this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity(), true)
 }

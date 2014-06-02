@@ -105,7 +105,9 @@ Fighter.prototype.get_current_status = function() {
 
 Fighter.prototype.additional_processing = function(dt) {
   if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
+    imp_vars.impulse_music.play_sound("ffrenzy")
     this.fighter_status = "frenzy"
+
 
     this.shoot_durations = [this.frenzy_shoot_interval, this.frenzy_shoot_interval]
     this.color = "red"
@@ -148,6 +150,7 @@ Fighter.prototype.additional_processing = function(dt) {
         var target_angle = _atan(cur_bullet_loc, this.player.body.GetPosition())
         if (this.has_sight_of_player) {
           this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval) : this.frenzy_shoot_interval
+          imp_vars.impulse_music.play_sound("fbullet")
           if(this.fighter_status == "frenzy") {
             this.frenzy_charge -= 0.5
             var new_piercing_bullet = new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id )

@@ -15,13 +15,60 @@ var imp_params = {
   },
   sounds: {
     "impulse": "effects/impulse",
-    "pdeath": "effects/pdeath"
-
+    "pdeath": "effects/pdeath",
+    "ffrenzy": "effects/ffrenzy",
+    "sparks": "effects/sparks",
+    "ult": "effects/ult",
+    "pwheel": "effects/pwheel",
+    "goo": "effects/goo",
+    "sshot": "effects/sshot",
+    "deathray": "effects/deathray",
+    "b1hit": "effects/b1hit",
+    "b1shrink": "effects/b1shrink",
+    "b1grow": "effects/b1grow",
+    "b2bhole": "effects/b2bhole",
+    "b3strike": "effects/b3strike",
+    "b3select": "effects/b3select",
+    "b4spawner": "effects/b4spawner",
+    "b4attacker": "effects/b4attacker",
+    "b4darkness": "effects/b4darkness",
   },
   multisounds: {
+    "b3tick": {
+      file: "effects/b3tick",
+      maxnum: 2
+    },
     "sdeath": {
       file: "effects/sdeath",
       maxnum: 4
+    },
+    "tdeath": {
+      file: "effects/tdeath",
+      maxnum: 4
+    },
+    "hfire": {
+      file: "effects/hfire",
+      maxnum: 2
+    },
+    "hhit": {
+      file: "effects/hhit",
+      maxnum: 2
+    },
+    "fbullet": {
+      file: "effects/fbullet",
+      maxnum: 4
+    },
+    "fbullethit": {
+      file: "effects/fbullethit",
+      maxnum: 4
+    },
+    "b2eat": {
+      file: "effects/b2eat",
+      maxnum: 4
+    },
+    "b4spawneract": {
+      file: "effects/b4spawneract",
+      maxnum: 2
     }
   },
   bg: {

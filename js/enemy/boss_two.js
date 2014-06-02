@@ -46,6 +46,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.black_hole_player_factor = 1
   this.black_hole_switch_time = 1000
   this.black_hole_expand_prop = 0.7
+  this.black_hole_sound_played = false
 
   this.knockback_red_interval = 150
   this.knockback_red_duration = 0
@@ -240,12 +241,15 @@ BossTwo.prototype.additional_processing = function(dt) {
 
   if (imp_vars.player_data.difficulty_mode == "normal") {
     if(this.black_hole_timer < 0) {
+      if (!this.black_hole_sound_played) {
+        this.black_hole_sound_played = true
+        imp_vars.impulse_music.play_sound("b2bhole")  
+      }
       var prop = -this.black_hole_timer/this.black_hole_duration
       if(prop < this.black_hole_expand_prop)
         this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (prop/this.black_hole_expand_prop))
       else
         this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (1 - (prop-this.black_hole_expand_prop)/(1-this.black_hole_expand_prop)))
-
       this.black_hole()
     }
     if(this.black_hole_timer < -this.black_hole_duration) {
@@ -253,6 +257,7 @@ BossTwo.prototype.additional_processing = function(dt) {
       this.black_hole_radius = 0
       this.player_struck = false
       this.enemies_struck = []
+      this.black_hole_sound_played = false
     }
     this.black_hole_timer -= dt
   }
@@ -270,7 +275,7 @@ var polygons = this.get_arm_polygons()
   for(var j = 0; j < polygons.length; j++) {
     if(pointInPolygon(polygons[j], loc)) {
       if (dist <= this.effective_radius * this.last_growth_factor * this.high_gravity_factor)
-        return 1.25 * this.boss_beam_gravity_force
+        return 2 * this.boss_beam_gravity_force
       else if (dist <= this.effective_radius * this.last_growth_factor * this.low_gravity_factor)
         return 1.5 * this.boss_beam_gravity_force
       return this.boss_beam_gravity_force
@@ -542,6 +547,7 @@ BossTwo.prototype.collide_with = function(other) {
   if(other.dying) return
 
   if(other === this.player) {
+    imp_vars.impulse_music.play_sound("b2eat")  
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
     //other.lin_damp = 2
@@ -554,17 +560,16 @@ BossTwo.prototype.collide_with = function(other) {
     //other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
   else if(other !== this.player) {
-    if(!other.dying) {
-      if(other.type != "harpoonhead") {
-        other.start_death("absorbed")
-        this.growth_factor += this.growth_on_enemy
-        this.enemies_struck.push(other)
-      } else {
-        other.harpoon.start_death("absorbed")
-        this.growth_factor += this.growth_on_enemy
-        this.enemies_struck.push(other)
-        this.enemies_struck.push(other.harpoon)
-      }
+    imp_vars.impulse_music.play_sound("b2eat")  
+    if(other.type != "harpoonhead") {
+      other.start_death("absorbed")
+      this.growth_factor += this.growth_on_enemy
+      this.enemies_struck.push(other)
+    } else {
+      other.harpoon.start_death("absorbed")
+      this.growth_factor += this.growth_on_enemy
+      this.enemies_struck.push(other)
+      this.enemies_struck.push(other.harpoon)
     }
   }
 }

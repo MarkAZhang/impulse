@@ -157,7 +157,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "ulted", "white", "world1", "world2", "world3", "world4"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "ulted", "white", "world1", "world2", "world3", "world4", "black"]
   this.additional_statuses = []
 
   this.adjust_position_counter = 0
@@ -621,8 +621,15 @@ Enemy.prototype.start_death = function(death) {
     }
   }
 
-  if(this.dying != "accidental") {
-    imp_vars.impulse_music.play_sound("sdeath")
+  if(this.dying != "accidental" && this.dying != "absorbed") {
+    if (this.type == "tank") {
+      imp_vars.impulse_music.play_sound("tdeath")  
+    } else if (this.type == "troll" && this.dying == "hit_player" && this.status_duration[1] <= 0) {
+      // do nothing if it's a troll hitting a player. there's a different sound.
+    } else {
+      imp_vars.impulse_music.play_sound("sdeath")
+    }
+    
   }
 
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
@@ -1131,6 +1138,8 @@ Enemy.prototype.get_color_for_status = function(status) {
     return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
+  } else if(status == "black") {
+    return "black"
   } else if(status.slice(0, 5) == "world") {
     return impulse_colors["world "+status.slice(5,6)+" lite"]
   }

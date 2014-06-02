@@ -53,6 +53,7 @@ FighterBullet.prototype.collide_with = function(other) {
   if(other === this.player) {
     this.start_death("hit_player")
     if(this.status_duration[1] <= 0) {
+      imp_vars.impulse_music.play_sound("fbullethit")
       var vel = this.body.GetLinearVelocity().Copy()
       vel.Normalize()
       //_atan(this.body.GetPosition(), this.player.body.GetPosition())
@@ -71,12 +72,13 @@ FighterBullet.prototype.collide_with = function(other) {
     if(other instanceof FighterBullet) return
 
     this.start_death("hit_enemy")
-    if(other.id != this.parent_id || this.reflected) {
 
-      if(other instanceof Fighter) {
-        other.frenzy_charge = 0
-      }
+    if(other.id != this.parent_id || this.reflected) {
       if(this.status_duration[1] <= 0) {
+        imp_vars.impulse_music.play_sound("fbullethit")
+        if(other instanceof Fighter) {
+          other.frenzy_charge = 0
+        }
         var vel = this.body.GetLinearVelocity().Copy()
         vel.Normalize()
         //var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())

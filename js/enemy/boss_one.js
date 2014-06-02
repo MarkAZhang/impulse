@@ -69,7 +69,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 100)
 
-  this.boss_force = 30
+  this.boss_force = 40
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.boss_force = 40    
@@ -185,6 +185,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.max_turret_interval = 10000
   this.max_punching_interval = 12000
+  this.max_punching_interval_with_no_enemies = 6000
   this.max_turret_timer = this.max_turret_interval/2
   this.max_punching_timer = this.max_punching_interval
 
@@ -482,6 +483,13 @@ BossOne.prototype.additional_processing = function(dt) {
 
   this.start_time += dt
 
+  if (this.level.enemies.length == 1) {
+    // if there are no enemies on the stage, don't punch for so long
+    if (this.max_punching_timer > this.max_punching_interval_with_no_enemies) {
+      this.max_punching_timer = this.max_punching_interval_with_no_enemies
+    }
+  }
+
   if(this.spawn_duration > 0) {
     this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
     this.visibility = 1 - this.spawn_duration / this.spawn_interval
@@ -492,7 +500,6 @@ BossOne.prototype.additional_processing = function(dt) {
     this.visibility = 1
     this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
-
 
   //console.log("LH: "+this.joints["lh"].GetJointAngle()+"RH: "+this.joints["rh"].GetJointAngle()+"LL: "+this.joints["ll"].GetJointAngle()
   //  +"RL: "+this.joints["rl"].GetJointAngle()+"LU: "+this.joints["lu"].GetJointAngle()+"RU: "+this.joints["ru"].GetJointAngle()
@@ -648,16 +655,25 @@ BossOne.prototype.additional_processing = function(dt) {
   }
 
   if (imp_vars.player_data.difficulty_mode == "normal") {
-    if(this.lighten_timer < 0 && !this.lightened) {
+    if(this.lighten_timer < 0 && this.lighten_timer > -this.lighten_duration * 0.9 && !this.lightened) {
       this.lightened = true
+      imp_vars.impulse_music.play_sound("b1shrink")
+
       if(this.shoot_duration > this.shoot_interval/this.shoot_speedup_factor) {
         this.shoot_duration = this.shoot_interval/this.shoot_speedup_factor
       }
       this.global_lighten()
     }
 
+    if (this.lighten_timer < -this.lighten_duration * 0.9) {
+      if (this.lightened)  {
+        // in order to play the sound at the right moment, we'll allow the boss's punches to lose the lighten bonus early.
+        this.lightened = false
+        imp_vars.impulse_music.play_sound("b1grow")  
+      }
+    }
+
     if(this.lighten_timer < -this.lighten_duration) {
-      this.lightened = false
       this.lighten_timer = this.lighten_interval
     }
     this.lighten_timer -= dt
@@ -1090,24 +1106,29 @@ BossOne.prototype.move = function() {
 BossOne.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
-
-    if(body == this.body) {
-      var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
-      other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
-    } else {
-      var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-      // hit while punching
-      if(this.state == "punching" && !this.lightened) {
-        other.body.ApplyImpulse(new b2Vec2(this.boss_force * 0.75 * Math.cos(boss_angle), this.boss_force * 0.75 * Math.sin(boss_angle)), other.body.GetWorldCenter())
-      // hit while turret and not hands
-      } else if(body != this.body_parts["lh"] && body != this.body_parts["rh"]){
-        other.body.ApplyImpulse(new b2Vec2(this.boss_force*2 * Math.cos(boss_angle), this.boss_force*2 * Math.sin(boss_angle)), other.body.GetWorldCenter())
-      // hit hands while turret
-      } else {
-        other.body.ApplyImpulse(new b2Vec2(this.boss_force/2 * Math.cos(boss_angle), this.boss_force/2 * Math.sin(boss_angle)), other.body.GetWorldCenter())
-      }
+  if (other == this.player)
+    imp_vars.impulse_music.play_sound("b1hit")
+  if(body == this.body) {
+    var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
+    other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
+  } else {
+    var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+    // hit while punching
+    var force = this.boss_force;
+    if (this.lightened) {
+      force *= 2
     }
-
+    if(this.state == "punching") {
+      force *= 1.5
+    // hit while turret and not hands
+    } else if(body != this.body_parts["lh"] && body != this.body_parts["rh"]){
+      force *= 2
+    // hit hands while turret
+    } else {
+      force *= 1
+    }
+    other.body.ApplyImpulse(new b2Vec2(force *  Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+  }
 }
 BossOne.prototype.get_impulse_sensitive_pts = function() {
   var ans = []

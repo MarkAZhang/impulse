@@ -208,6 +208,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.darkness_canvas_ctx.closePath();
   this.darkness_canvas_ctx.fillStyle = "black";
   this.darkness_canvas_ctx.fill()
+  this.darkness_sound_played = false
 }
 
 
@@ -255,6 +256,10 @@ BossFour.prototype.draw_blindness_overlay = function(context, draw_factor) {
     context.drawImage(this.darkness_canvas, 0, 0, this.darkness_canvas.width, this.darkness_canvas.height, -r, -r, 2 * r, 2 * r);
     context.restore();
   } else if (this.darkness_timer > -this.darkness_spreading_duration) {
+    if (!this.darkness_sound_played) {
+      this.darkness_sound_played = true
+      imp_vars.impulse_music.play_sound("b4darkness")  
+    }
     var prog = (this.darkness_timer / -this.darkness_spreading_duration);
     var r = (this.effective_radius * (1 - prog) + 60 * prog) * draw_factor;
     context.save();
@@ -539,6 +544,7 @@ BossFour.prototype.additional_processing = function(dt) {
 
       if (this.darkness_timer < -(this.darkness_spreading_duration + this.darkness_duration + this.darkness_vanish_duration)) {
         this.darkness_timer = this.darkness_interval;
+        this.darkness_sound_played = false
       }
 
     }
@@ -678,6 +684,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     this.attack_bud_charging = false  
     bud.enemy.body.ResetMassData()
     bud.enemy = null
+    imp_vars.impulse_music.play_sound("b4attacker")  
   } else if(bud.type == "spawn"){
     this.ready_attack_bud = null
     this.attack_bud_charging = false  
@@ -695,6 +702,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.enemy.body.ResetMassData()
     bud.enemy = null
     this.target_spawn_angle = null
+    imp_vars.impulse_music.play_sound("b4spawner")  
   }
 }
 

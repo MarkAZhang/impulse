@@ -331,6 +331,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     if(this.no_sight() || this.impulse_game_state.is_boss_level) {
       this.harpoonable = true
       if(this.can_harpoon() ) {
+        imp_vars.impulse_music.play_sound("hfire")
         this.harpoon_state = "fire"
         this.harpoon_dir = _atan(this.harpoon_head.body.GetPosition(), this.get_harpoon_target_pt())
         this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
@@ -589,6 +590,7 @@ Harpoon.prototype.disengage_harpoon = function() {
 
 Harpoon.prototype.engage_harpoon = function(target) {
   if(this.harpoon_state != "engaged" && !this.dying && this.status_duration[1] <= 0 && target.id !== this.harpoon_disengage_id) {
+    imp_vars.impulse_music.play_sound("hhit")
     this.harpoon_state = "engaged"
     /*this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
     this.harpoon_joint.Initialize(this.body, target.body, this.body.GetWorldCenter(), target.body.GetWorldCenter())

@@ -228,6 +228,7 @@ Level.prototype.process = function(dt) {
     } else if(!this.is_boss_level) {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
       if(p_dist(player_loc, this.spark_loc) < 25) {
+        imp_vars.impulse_music.play_sound("sparks")
         if(this.impulse_game_state.main_game) {
           this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
           if(this.impulse_game_state.hive_numbers.sparks >= 100) {
@@ -249,6 +250,7 @@ Level.prototype.process = function(dt) {
     } else if(!this.is_boss_level) {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
       if(p_dist(player_loc, this.multi_loc) < 25) {
+        imp_vars.impulse_music.play_sound("sparks")
         this.impulse_game_state.game_numbers.base_combo += 5
         this.add_fragments("multi", {x: this.multi_loc.x, y: this.multi_loc.y})
         this.generate_multi()

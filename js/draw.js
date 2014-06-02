@@ -310,6 +310,19 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
         draw_shape(context, x, y, this_shape, draw_scale, color)  
       }
     }
+
+    var extra_lines =  imp_params.impulse_enemy_stats[enemy_name].extra_rendering_lines
+    if(!(typeof extra_lines === "undefined")) {
+      for(var m = 0; m < extra_lines.length; m++) {
+        context.beginPath()
+        var line = extra_lines[m]
+        context.moveTo(x + draw_scale*line["x1"], y + draw_scale*line["y1"])
+        context.lineTo(x + draw_scale*line["x2"], y + draw_scale*line["y2"])
+        context.lineWidth = 2
+        context.strokeStyle = color
+        context.stroke()
+      }
+    }
   context.restore()
 }
 

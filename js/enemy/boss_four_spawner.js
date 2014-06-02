@@ -51,7 +51,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
   
 
 	if(this.spawn && this.spawn_action_timer < this.spawn_action_period/2) {
-
+    imp_vars.impulse_music.play_sound("b4spawneract")  
 		var ray_angle = _atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
     var exit_points = Math.max(this.spawn_number, 4)
@@ -162,7 +162,9 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   
   if(this.status_duration[1] > 0)
     context.globalAlpha *= 0.5
-  draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), this.firing ? "white" : "black")
+
+  //draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color
+  draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
   /*context.beginPath()
   context.arc(this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, 0, Math.PI * 2)
   context.lineWidth = 2

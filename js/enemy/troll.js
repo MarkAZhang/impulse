@@ -108,6 +108,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle,
       this.body.ApplyImpulse(new b2Vec2(.25 * impulse_force*Math.cos(hit_angle), .25 * impulse_force*Math.sin(hit_angle)),
       this.body.GetWorldCenter())
       this.player.confuse(this.short_troll_period)
+      imp_vars.impulse_music.play_sound("pwheel")
       this.confused_targets.push({object: this.player, timer: this.confused_duration})
     //}
   }
@@ -121,8 +122,10 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle,
 }
 
 Troll.prototype.player_hit_proc = function() {
-  if(this.status_duration[1] <= 0)
+  if(this.status_duration[1] <= 0) {
     this.player.confuse(this.long_troll_period)
+    imp_vars.impulse_music.play_sound("pwheel")
+  }
 }
 
 Troll.prototype.bulk_draw_start = function(context, draw_factor, num) {

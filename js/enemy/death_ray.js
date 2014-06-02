@@ -145,6 +145,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     else {
       this.fire_duration = Math.max(this.fire_duration - dt, 0)
       //fire the ray
+      imp_vars.impulse_music.play_sound("deathray")
       if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
         var ray_polygon = this.get_ray_polygon()
         this.fired = true
@@ -319,7 +320,7 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
       var prog = 1 - this.shoot_duration / (this.shoot_interval * this.aim_proportion)
       context.save();
       context.beginPath()
-      context.globalAlpha = Math.max(prog, .2)
+      context.globalAlpha *= Math.max(prog, .2)
       context.moveTo(ray_polygon[1].x * draw_factor, ray_polygon[1].y * draw_factor)
       context.lineTo(ray_polygon[2].x * draw_factor, ray_polygon[2].y * draw_factor)
       context.moveTo(ray_polygon[3].x * draw_factor, ray_polygon[3].y * draw_factor)
