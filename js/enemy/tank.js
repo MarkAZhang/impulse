@@ -235,6 +235,10 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
 }
 
 Tank.prototype.bulk_draw = function(context, draw_factor, num) {
+  // Do not draw if dying. We cannot change the opacity for a given enemy for bulk-draw, so we just don't draw at all.
+  if (this.dying) {
+    return
+  }
   if(this.durations["volatile"] <= 0 && this.status_duration[1] <= 0) {
     context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)

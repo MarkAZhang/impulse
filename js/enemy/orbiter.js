@@ -320,10 +320,6 @@ Orbiter.prototype.weaken = function() {
 Orbiter.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
   context.save()
-  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
-  if(this.dying) {
-    context.globalAlpha *= prog;
-  }
   context.beginPath()
   context.strokeStyle = this.color
   if(num == 1) {
@@ -333,6 +329,10 @@ Orbiter.prototype.bulk_draw_start = function(context, draw_factor, num) {
 }
 
 Orbiter.prototype.bulk_draw = function(context, draw_factor, num) {
+  // Do not draw if dying. We cannot change the opacity for a given enemy for bulk-draw, so we just don't draw at all.
+  if (this.dying) {
+    return
+  }
   if(num == 1) {
     if(this.recovery_timer > 0 && !this.dying && !(this.status_duration[0] > 0)) {
       bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)

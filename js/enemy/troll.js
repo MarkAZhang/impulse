@@ -104,13 +104,11 @@ Troll.prototype.additional_drawing = function(context, draw_factor, latest_color
 
 Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
   if(this.status_duration[1] <= 0 && this.entered_arena) {
-    //if(isVisible(this.player.body.GetPosition(), this.body.GetPosition(), this.level.obstacle_edges)) {
-      this.body.ApplyImpulse(new b2Vec2(.25 * impulse_force*Math.cos(hit_angle), .25 * impulse_force*Math.sin(hit_angle)),
-      this.body.GetWorldCenter())
-      this.player.confuse(this.short_troll_period)
-      imp_vars.impulse_music.play_sound("pwheel")
-      this.confused_targets.push({object: this.player, timer: this.confused_duration})
-    //}
+    this.body.ApplyImpulse(new b2Vec2(.25 * impulse_force*Math.cos(hit_angle), .25 * impulse_force*Math.sin(hit_angle)),
+    this.body.GetWorldCenter())
+    this.player.confuse(this.short_troll_period)
+    imp_vars.impulse_music.play_sound("pwheel")
+    this.confused_targets.push({object: this.player, timer: this.confused_duration})
   }
   else {
     this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
@@ -131,10 +129,6 @@ Troll.prototype.player_hit_proc = function() {
 Troll.prototype.bulk_draw_start = function(context, draw_factor, num) {
 
   context.save()
-  var prog = this.dying ? Math.max((this.dying_duration) / this.dying_length, 0) : 1
-  if(this.dying) {
-    context.globalAlpha *= prog;
-  }
   context.beginPath()
   context.strokeStyle = this.color
   if(num == 1) {
@@ -148,6 +142,10 @@ Troll.prototype.bulk_draw_start = function(context, draw_factor, num) {
 }
 
 Troll.prototype.bulk_draw = function(context, draw_factor, num) {
+  // Do not draw if dying. We cannot change the opacity for a given enemy for bulk-draw, so we just don't draw at all.
+  if (this.dying) {
+    return
+  }
   if(num == 1) {
     if(this.recovery_timer > 0 && !this.dying && !(this.status_duration[0] > 0)) {
       bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
