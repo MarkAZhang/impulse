@@ -98,7 +98,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 0.2
     draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 100)
     ctx.restore()
-  }    var main_message = ""
+  }    
+  var main_message = ""
     var main_message_teaser = ""
     var main_reward_text_y = 250
     var new_values_text_y = 430
@@ -116,15 +117,24 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
     if(cur_reward.type == "final_victory") {
       message_size = 32
-      main_message = imp_vars.player_data.difficulty_mode == "easy" ? "YOU'VE CLEARED STANDARD MODE" : "YOU'VE CLEARED CHALLENGE MODE"
-      main_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "WELL DONE!" : "INCREDIBLE!"
+            
+      final_message = imp_vars.player_data.difficulty_mode == "easy" ? "STANDARD MODE COMPLETED" : "CHALLENGE MODE COMPLETED"
+      final_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "WELL DONE" : "WICKED SICK"
+
       ctx.textAlign = "center"
-      ctx.font = "24px Muli"
+      ctx.fillStyle = impulse_colors["impulse_blue"]  
+      ctx.font = "32px Muli"
+      ctx.fillText(final_message, imp_vars.levelWidth/2, 240)
+      ctx.font = "20px Muli"
+      ctx.fillStyle = "white"
+      ctx.fillText(final_message_teaser, imp_vars.levelWidth/2, 280)
+
+      ctx.font = "16px Muli"
       ctx.fillStyle = "white"
       if (imp_vars.player_data.difficulty_mode == "easy") {
-        ctx.fillText("BUT CAN YOU BEAT CHALLENGE MODE?", imp_vars.levelWidth/2, 260)
+        ctx.fillText("BUT CAN YOU BEAT CHALLENGE MODE?", imp_vars.levelWidth/2, 400)
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE!", imp_vars.levelWidth/2, 260)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_vars.levelWidth/2, 450)
         // TODO: add sharing
       }
     }
@@ -133,15 +143,12 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.font = "24px Muli"
       ctx.fillStyle = "white"
-      draw_logo(ctx,imp_vars.levelWidth/2, 150, "", 0.5)
+      draw_logo(ctx,imp_vars.levelWidth/2, 200, "")
       ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("IS COMPLETELY FREE-TO-PLAY", imp_vars.levelWidth/2, 210)
-      ctx.font = "24px Muli"
+      ctx.font = "20px Muli"
       ctx.fillStyle = "white"
-      ctx.fillText("IF YOU'RE ENJOYING THE GAME", imp_vars.levelWidth/2, 350)
-      ctx.font = "30px Muli"
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 400)
+      ctx.fillText("IF YOU'RE ENJOYING THE GAME", imp_vars.levelWidth/2, 300)
+      ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 340)
       draw_spark(ctx, 230, 467, 0)
       draw_spark(ctx, 570, 467, 0)
     }
@@ -316,6 +323,9 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 
 RewardGameState.prototype.debug = function() {
   if (false) {
+    this.rewards.push({
+      type: "final_victory"
+    })
     this.rewards.push({
       type: "share"
     })

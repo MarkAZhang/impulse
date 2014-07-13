@@ -33,20 +33,24 @@ function TitleState(last_state) {
   });
   this.fader.set_animation("fade_in");
   open_share_dialog();
+  this.trailer_fade_in = 0;
+  this.trailer_fade_total = 8000;
+  this.trailer_fade_delay = 7000;
 }
 
 
 TitleState.prototype.process = function(dt) {
   this.fader.process(dt);
+  this.trailer_fade_in += dt
 }
 
 
 
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    imp_vars.bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
-    this.bg_drawn = true
+   imp_vars.bg_canvas.setAttribute("style", "")
+   draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
+   this.bg_drawn = true
   }
 
   //ctx.globalAlpha = .3
@@ -77,6 +81,21 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
   draw_logo(ctx,imp_vars.levelWidth/2, 150, "MARK ZHANG")
+
+  // TEXT FOR TRAILER
+  /*ctx.save()
+  ctx.globalAlpha = Math.min(1, (this.trailer_fade_in > this.trailer_fade_delay ? this.trailer_fade_in - this.trailer_fade_delay : 0)/ (this.trailer_fade_total - this.trailer_fade_delay))
+  ctx.textAlign = 'center'
+  ctx.font = '24px Muli'
+  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.fillText('PLAY FOR FREE AT', 400, 420)
+  
+  ctx.font = '20px Muli'
+  ctx.fillText("www.play-impulse.com", 400, 450)
+  ctx.font = '12px Muli'
+  ctx.fillStyle = "white"
+  ctx.fillText("'Half Past Nothing' by Schemawound", 400, 550)
+  ctx.restore()*/
 
   //ctx.shadowBlur = 5
   for(var i = 0; i < this.buttons[this.state].length; i++)

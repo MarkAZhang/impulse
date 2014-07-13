@@ -289,20 +289,32 @@ ImpulseGameState.prototype.process = function(dt) {
       this.clear_message()
     }
 
-    if(this.zoom_state != "none") {
-      if(this.zoom_transition_timer <= 0) {
-        this.zoom_state = "none"
-        this.zoom = this.zoom_target_scale;
-        this.camera_center = this.zoom_target_pt;
-        this.zoom_bg_switch = false;
-      } else {
-        var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
-        //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
-        this.zoom = 1/(1/(this.zoom_start_scale) * prop + 1/(this.zoom_target_scale) * (1-prop))
-        this.camera_center.x = this.zoom_start_pt.x * prop + this.zoom_target_pt.x * (1-prop)
-        this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
-        this.zoom_transition_timer -= dt;
+    /*if (this.game_numbers.seconds >= 4) {
+      this.zoom_to_player = true
+      this.zoom = 1.7
+      this.zoom_state = "player"
+    }*/
+
+    // ZOOM TO PLAYER, WAS USED DURING TRAILER RECORDING
+    if (!this.zoom_to_player) {
+      if(this.zoom_state != "none") {
+        if(this.zoom_transition_timer <= 0) {
+          this.zoom_state = "none"
+          this.zoom = this.zoom_target_scale;
+          this.camera_center = this.zoom_target_pt;
+          this.zoom_bg_switch = false;
+        } else {
+          var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
+          //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
+          this.zoom = 1/(1/(this.zoom_start_scale) * prop + 1/(this.zoom_target_scale) * (1-prop))
+          this.camera_center.x = this.zoom_start_pt.x * prop + this.zoom_target_pt.x * (1-prop)
+          this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
+          this.zoom_transition_timer -= dt;
+        }
       }
+    } else {
+      this.camera_center = {x: this.player.body.GetPosition().x * imp_vars.draw_factor,
+                            y: this.player.body.GetPosition().y * imp_vars.draw_factor}
     }
 
     if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && !this.boss_intro_text_activated) {
@@ -461,7 +473,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   this.level.pre_draw(ctx, imp_vars.draw_factor )
   this.player.pre_draw(ctx)
 
-  this.level.draw(ctx, imp_vars.draw_factor )
+  this.level.draw(ctx, imp_vars.draw_factor)
 
   if(this.zoom != 1 && this.victory) {
     ctx.save()
@@ -977,7 +989,21 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true
-  } else
+  } 
+  // USED FOR TRAILER RECORDING
+  /*else if (keyCode == 69) {
+    this.zoom_to_player = !this.zoom_to_player
+    if (this.zoom_to_player) {
+      this.zoom = 1.7
+      this.zoom_state = "player"
+    } else {
+      this.zoom = 1
+      this.camera_center = {x: imp_vars.levelWidth/2, y: imp_vars.levelHeight/2}
+      this.zoom_state = "none"
+      this.fade_state = "none"
+      this.zoom_bg_switch = false
+    }
+  } */else
     this.player.keyDown(keyCode)  //even if paused, must still process
 }
 

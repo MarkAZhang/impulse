@@ -937,13 +937,9 @@ BossOne.prototype.draw = function(context, draw_factor) {
       tp.y*draw_factor,
       (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head", immunitasSprite)
 
-
-
-
   context.restore()
 
   this.additional_drawing(context, draw_factor)
-
 }
 
 BossOne.prototype.draw_special_attack_timer = function(context, draw_factor) {
