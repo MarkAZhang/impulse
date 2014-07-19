@@ -17,9 +17,21 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.high_score = false
   this.level_loaded = true
   this.has_ult = has_ult()
+  this.world_num = world_num
+  this.color = impulse_colors["world "+world_num]
+  this.lite_color = impulse_colors["world "+world_num+" lite"]
+  this.bright_color = impulse_colors["world "+world_num+" bright"]
+  this.dark_color = impulse_colors["world "+world_num+" dark"]
+  this.visibility_graph = visibility_graph
+  this.buttons = []
+  this.bg_drawn = false
+  this.star_colors = ["bronze", "silver", "gold"]
+  this.first_time = false
 
   this.continued = false
+  // If this is the not the initial transition into the world, initialize variables.
   if(level) {
+    // Coming in from a level.
     if(this.game_numbers) {
       this.last_level = level
       this.last_level_name = level.level_name
@@ -36,6 +48,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.last_level_summary_interval *= 0.66
         this.transition_timer *= 0.66
         this.level_intro_interval *= 0.66
+        // Reduce lives by 1 if lost.
         this.hive_numbers.lives -= 1
         this.hive_numbers.last_sparks = this.hive_numbers.sparks
         this.hive_numbers.last_lives = this.hive_numbers.lives
@@ -63,17 +76,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     }
     this.transition_timer = this.world_intro_interval
   }
-
-  this.world_num = world_num
-  this.color = impulse_colors["world "+world_num]
-  this.lite_color = impulse_colors["world "+world_num+" lite"]
-  this.bright_color = impulse_colors["world "+world_num+" bright"]
-  this.dark_color = impulse_colors["world "+world_num+" dark"]
-  this.visibility_graph = visibility_graph
-  this.buttons = []
-  this.bg_drawn = false
-  this.star_colors = ["bronze", "silver", "gold"]
-  this.first_time = false
+  
   if(!this.continued) {
     if(this.victory || !this.last_level) {
       // beat last level or first level
@@ -116,7 +119,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       this.level.draw_bg(imp_vars.bg_ctx)
       this.bg_drawn = true
       imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
-
     }
     if(this.level.is_boss_level) {
       if(this.victory)
@@ -159,8 +161,6 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
     else
       this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
   }
-
-  
 
   if(this.victory) {
     if(!this.last_level.is_boss_level) {

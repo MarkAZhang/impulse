@@ -299,18 +299,21 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
     ctx.font = '12px Muli'
     ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
     ctx.font = '36px Muli'
-    ctx.fillStyle = MainGameSummaryState.prototype.get_rank_color(MainGameSummaryState.prototype.rank_cutoffs[imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["rank"]], index)
+    ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"], 
+      index,
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"])
     ctx.shadowColor = ctx.fillStyle
     ctx.shadowBlur = 10
-    var rank = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["rank"]
-    ctx.fillText(rank, this.world_buttons[index].x, this.world_buttons[index].y + 60)
-    if(rank == "F") {
+    var victory_type = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"]
+    ctx.fillText(victory_type, this.world_buttons[index].x, this.world_buttons[index].y + 60)
+    if(victory_type == "half") {
       ctx.font = '11px Muli'
       ctx.fillText("CONTINUES: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
         , this.world_buttons[index].x, this.world_buttons[index].y + 80)
       
     }
-    if(rank == "S" && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"] > 0) {
+    if(victory_type == "gold" && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"] > 0) {
       ctx.font = '11px Muli'
       ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
         , this.world_buttons[index].x, this.world_buttons[index].y + 80)

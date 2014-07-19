@@ -974,12 +974,12 @@ ImpulseGameState.prototype.toggle_pause = function() {
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
 
-  if(keyCode == 90) {//Z
+  if(keyCode == 90 && imp_vars.dev) {//Z - insta-victory if debug is on.
     this.victory = true
     if(this.is_boss_level) {
       this.level.boss_victory = true
     } else {
-      this.game_numbers.score = this.level.cutoff_scores[0];
+      this.game_numbers.score = this.level.cutoff_scores[2];
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {

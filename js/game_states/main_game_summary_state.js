@@ -19,6 +19,14 @@ MainGameSummaryState.prototype.rank_cutoffs = {
     "S+": 25 //special
   }
 
+MainGameSummaryState.prototype.victory_types = [
+  "half",
+  "basic",
+  "silver",
+  "gold",
+];
+
+
 function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph, save_screen, just_saved) {
 
   this.just_saved = just_saved
@@ -35,8 +43,6 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   if(save_screen) {
     this.hive_numbers = HiveNumbers.prototype.clone(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode])
-
-
     this.hive_numbers.adjust_values()
     save_game()
     this.world_num = this.hive_numbers.world
@@ -48,66 +54,57 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.transition_state = "in"
   this.buttons = []
 
-  this.rank = "F"
+  this.victory_type = "half"
 
   this.shift_down_time = 0
   this.ctrl_down_time = 0
 
-  this.rank_color = "red"
+  this.victory_color = "red"
 
   if(victory) {
     this.calculate_deaths()
     this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED"
 
-    var total_stars = 0
+    var min_star = 3
     for(level in hive_numbers.game_numbers) {
-      total_stars += hive_numbers.game_numbers[level].stars
+      if (hive_numbers.game_numbers[level].stars < min_star) {
+        min_star = hive_numbers.game_numbers[level].stars;
+      }
     }
 
     if(!hive_numbers.continues) {
-      for(rank in this.rank_cutoffs) {
-        if(this.rank_cutoffs[rank] <= total_stars){
-          this.rank = rank;
-        } else {
-          break
-        }
-      }
-      this.rank_color = this.get_rank_color(total_stars, world_num)
-    } else {
-      this.rank_color = "red"
+      this.victory_type = this.victory_types[min_star]
     }
+    
+    this.victory_color = this.get_victory_color(this.victory_type, world_num, this.total_deaths)
 
-    if(this.rank == "S" && this.total_deaths == 0) {
-      this.rank = "S+"
-    }
-
-
-
-    var rank_data = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]
+    var victory_data = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]
 
     // don't  make the player feel bad if this is their first play-through
-    if (rank_data === undefined && this.rank_color == "red") {
-      this.rank_color = impulse_colors["world "+world_num+" bright"]
+    if (victory_data === undefined && this.victory_type == "half") {
+      this.victory_color = impulse_colors["world "+world_num+" bright"]
     }
 
-    if(!rank_data ||
-      this.rank_cutoffs[this.rank] > this.rank_cutoffs[rank_data["rank"]] ||
-      (this.rank == rank_data["rank"] && 
-      ((this.rank == "F" && hive_numbers.continues < rank_data["continues"]) ||
-      (this.rank == "S" && this.total_deaths < rank_data["deaths"])))) {
-      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] = 
-      {
-        "rank": this.rank,
-        "continues": hive_numbers.continues,
-        "deaths": this.total_deaths,
-        "stars": total_stars,
-        "first_victory": rank_data === undefined
-      }
-      save_game()
+    if (victory_data && victory_data["rank"]) {
+      var victory_type = MainGameSummaryState.prototype.convert_rank_to_victory_type(victory_data["rank"]);
+      MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type(difficulty, world, victory_type);
+    }
+
+    if(!victory_data ||
+      this.victory_types.indexOf(this.victory_type) > this.victory_types.indexOf(victory_data["victory_type"]) ||
+      (this.victory_type == victory_data["victory_type"] && 
+      ((this.victory_type == "half" && hive_numbers.continues < victory_data["continues"]) ||
+       (this.victory_type == "gold" && this.total_deaths < victory_data["deaths"])))) {
+        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] = 
+          {
+            "victory_type": this.victory_type,
+            "continues": hive_numbers.continues,
+            "deaths": this.total_deaths,
+            "first_victory": victory_data === undefined
+          }
+        save_game()
     }
   }
-
-
 
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num+" lite"]
@@ -161,18 +158,46 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.star_colors = ["bronze", "silver", "gold"]
 }
 
-MainGameSummaryState.prototype.get_rank_color = function(stars, world_num) {
-    if(stars >= this.rank_cutoffs["S"]) {
-      return impulse_colors["impulse_blue"]
-    }
-    if(stars >= this.rank_cutoffs["B-"]) {
-      return impulse_colors["world "+world_num+" bright"]
-    }
+MainGameSummaryState.prototype.convert_rank_to_victory_type = function(rank) {
+  var stars = MainGameSummaryState.prototype.rank_cutoffs[rank];
+  var victory_type = "half"
+  if (stars > 0) {
+    victory_type = "basic"
+  }
+  if (stars >= 16) {
+    victory_type = "silver"
+  }
+  if (stars >= 24) {
+    victory_type = "gold"
+  }
+  return victory_type
+}
 
-    if(stars >= this.rank_cutoffs["C-"]) {
-      return impulse_colors["world "+world_num+" bright"]
-    }
-    return "red"
+MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type = function(difficulty, world, victory_type) {
+  imp_vars.player_data.world_rankings[difficulty][world] = {
+    "victory_type": victory_type,
+    "continues": victory_type == "half" ? 1 : 0,
+    "deaths": 9,
+    "first_victory": true 
+  }
+  save_game()
+}
+
+MainGameSummaryState.prototype.get_victory_color = function(victory_type, world_num, total_deaths) {
+
+  var victory_colors = [
+    "red",
+    impulse_colors["world "+world_num+" bright"],
+    impulse_colors["silver"],
+    impulse_colors["gold"]
+  ];
+
+  // Special color if no deaths and gold clear.
+  if (victory_type == "gold" && total_deaths == 0) {
+    return impulse_colors["impulse_blue"];
+  }
+
+  return victory_colors[this.victory_types.indexOf(victory_type)];
 }
 
 MainGameSummaryState.prototype.calculate_deaths = function() {
@@ -288,10 +313,10 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '18px Muli'
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
-    ctx.fillStyle = this.rank_color
+    ctx.fillStyle = this.victory_color
     ctx.shadowColor = ctx.fillStyle
     ctx.font = '84px Muli'
-    ctx.fillText(this.rank, imp_vars.levelWidth/2, 235)
+    ctx.fillText(this.victory_type, imp_vars.levelWidth/2, 235)
   } else if(this.save_screen) {
     draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, {labels: true, ult: this.has_ult})
     ctx.font = '16px Muli'

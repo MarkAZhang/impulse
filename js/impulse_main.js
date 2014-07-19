@@ -529,13 +529,13 @@ function load_game() {
     for (world in imp_vars.player_data.world_rankings[difficulty]) {
       var value = imp_vars.player_data.world_rankings[difficulty][world]
       if (typeof value === "string") {
-        imp_vars.player_data.world_rankings[difficulty][world] = {
-          "rank": value,
-          "continues": value == "F" ? 1 : 0,
-          "deaths": 9,
-          "stars": MainGameSummaryState.prototype.rank_cutoffs[value],
-          "first_victory": true 
-        }
+        var victory_type = MainGameSummaryState.prototype.convert_rank_to_victory_type(value);
+        MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type(difficulty, world, victory_type);
+      }
+      // If we use the old rank system, convert it over.
+      if (value["rank"]) {
+        var victory_type = MainGameSummaryState.prototype.convert_rank_to_victory_type(value["rank"]);
+        MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type(difficulty, world, victory_type);
       }
     }
   }

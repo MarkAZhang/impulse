@@ -618,6 +618,9 @@ function calculate_rating_for_difficulty_mode(difficulty) {
 
 function calculate_current_rating(difficulty) {
 
+  // temporarily disabled. will remove soon
+  return 0;
+
   var rating = 0
   // calculate level contribution
   for(var i in imp_params.impulse_level_data)  {
