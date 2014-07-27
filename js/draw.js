@@ -107,6 +107,12 @@ function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, t
   }
   if(text == "GATEWAY UNLOCKED")
     draw_tessellation_sign(context, world_num, x, y, 50)
+  if(text == "SILVER SCORE") {
+    drawSprite(context, x, y, 0, 50, 50, "silver_trophy")
+  }
+  if(text == "GOLD SCORE") {
+    drawSprite(context, x, y, 0, 50, 50, "gold_trophy")
+  }
   context.restore()
   context.textAlign = "center"
   context.font = text_size+"px Muli"
@@ -1298,7 +1304,7 @@ var spriteSheetData = {
   "player_white": [200, 0, 40, 40],
   "spark": [0, 41, 40, 40],
   "multi": [0, 81, 40, 40],
-  "white_glow": [48, 40, 100, 100],
+  "white_glow": [40, 40, 100, 100],
   "ultimate": [148, 41, 150, 150],
   "lives_icon": [0, 0, 40, 40],
   "sparks_icon": [0, 41, 40, 40],
@@ -1313,6 +1319,9 @@ var spriteSheetData = {
   "world3_star": [42, 199, 41, 38],
   "world4_starblank": [0, 237, 41, 38],
   "world4_star": [42, 237, 41, 38],
+  "silver_trophy": [0, 277, 90, 78],
+  "gold_trophy": [89, 277, 90, 78],
+  "timer_icon": [169, 197, 61, 77],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],
@@ -1431,6 +1440,18 @@ function drawSprite(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, 
     ctx.restore();
 }
 
+function drawImageWithRotation(ctx, x, y, rotation, actualWidth, actualHeight, image) {
+  var w = image.width;
+  var h = image.height;
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotation);
+
+  ctx.drawImage(image, 0, 0, w, h, -actualWidth/2, -actualHeight/2, actualWidth, actualHeight);
+  ctx.restore();
+}
+
 function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   var bg = impulse_bg_images[spriteName]
   var w = bg.width;
@@ -1481,4 +1502,18 @@ function draw_victory_type_icon(ctx, x, y, world_num, victory_type, scale) {
     drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
     drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
   }
+}
+
+function draw_ellipse(ctx, cx, cy, rx, ry, style) {
+  ctx.save(); // save state
+  ctx.beginPath();
+  ctx.translate(cx-rx, cy-ry);
+  ctx.scale(rx, ry);
+  ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
+  ctx.restore(); // restore to original state
+  ctx.save();
+  if(style)
+    ctx.strokeStyle=style;
+  ctx.stroke();
+  ctx.restore();
 }

@@ -1,0 +1,96 @@
+QuestGameState.prototype = new GameState
+
+QuestGameState.prototype.constructor = QuestGameState
+
+function QuestGameState() {
+  this.fader = new Fader({
+    "fade_in": 500,
+    "fade_out": 250
+  });  
+  this.fader.set_animation("fade_in");
+  this.buttons = [];
+  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+    _this.fader.set_animation("fade_out", function() {
+      switch_game_state(new TitleState(true))
+    });
+  }}(this), "back"));
+  this.set_up_quests();
+}
+
+
+QuestGameState.prototype.process = function(dt) {
+  this.fader.process(dt);
+  this.trailer_fade_in += dt
+}
+
+QuestGameState.prototype.set_up_quests = function() {
+  var quest_size = 50;
+
+  var first_row_x = 130;
+  var first_row_gap = 150;
+	this.buttons.push(new QuestButton("beat_hive1", imp_vars.levelWidth/2 - 1.5 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hive2", imp_vars.levelWidth/2 - 0.5 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hive3", imp_vars.levelWidth/2 + 0.5 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hive4", imp_vars.levelWidth/2 + 1.5 * first_row_gap, first_row_x, quest_size, quest_size));
+
+  var second_row_x = 280;
+  var second_row_gap = 150;
+  this.buttons.push(new QuestButton("first_gold", imp_vars.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("fast_time", imp_vars.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("combo", imp_vars.levelWidth/2 + 0 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("survivor", imp_vars.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
+
+  var third_row_x = 430;
+  var third_row_gap = 150;
+  this.buttons.push(new QuestButton("0star", imp_vars.levelWidth/2 - 1.5 * third_row_gap, third_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("1star", imp_vars.levelWidth/2 - 0.5 * third_row_gap, third_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("2star", imp_vars.levelWidth/2 + 0.5 * third_row_gap, third_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("3star", imp_vars.levelWidth/2 + 1.5 * third_row_gap, third_row_x, quest_size, quest_size));
+
+}
+
+
+QuestGameState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn) {
+    imp_vars.bg_canvas.setAttribute("style", "")
+    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
+    this.bg_drawn = true
+  }
+
+  if (this.fader.get_current_animation() == "fade_in") {
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+  } else if (this.fader.get_current_animation() == "fade_out") {
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+  }
+
+  ctx.textAlign = "center"
+  ctx.font = '24px Muli'
+  ctx.fillStyle = "white"
+
+  ctx.fillText("QUESTS", imp_vars.levelWidth/2, 50)
+  /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
+  ctx.font = '18px Muli'
+  ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);
+  ctx.fillText("FOR EXPERIENCED PLAYERS.", imp_vars.levelWidth/2, 325);
+  
+  ctx.fillText("IF THIS IS YOUR FIRST TIME,", imp_vars.levelWidth/2, 400);
+  ctx.fillText("YOU MAY WANT TO TRY NORMAL MODE FIRST.", imp_vars.levelWidth/2, 425);*/
+  for(var i = 0; i < this.buttons.length; i++)
+  {
+    this.buttons[i].draw(ctx)
+  }
+}
+
+QuestGameState.prototype.on_mouse_move = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++)
+  {
+    this.buttons[i].on_mouse_move(x, y)
+  }
+}
+
+QuestGameState.prototype.on_click = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_click(x, y)
+  }
+}
