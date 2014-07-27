@@ -14,6 +14,7 @@ ImpulseButton.prototype.init = function(x, y, w, h, action, border, color) {
   this.color = color
   this.hover = false
   this.hover_color = null
+  this.hover_overlay;
 }
 
 ImpulseButton.prototype.draw = function(context) {
@@ -32,7 +33,14 @@ ImpulseButton.prototype.draw = function(context) {
     context.fill() 
   }*/
   this.additional_draw(context)
+  
   context.restore()
+}
+
+ImpulseButton.prototype.post_draw = function(context) {
+  if (this.hover_overlay) {
+    this.hover_overlay.draw(context)
+  }
 }
 ImpulseButton.prototype.additional_draw = function(context) {}
 
@@ -42,6 +50,7 @@ ImpulseButton.prototype.on_mouse_move = function(x,y) {
       if(this.active)
       {
         this.hover = true
+
       }
       this.mouseOver = true
     }
@@ -49,6 +58,11 @@ ImpulseButton.prototype.on_mouse_move = function(x,y) {
     {
       this.hover = false
       this.mouseOver = false
+    }
+
+    if (this.hover_overlay) {
+      this.hover_overlay.set_visible(this.mouseOver);
+      this.hover_overlay.set_position(x, y);
     }
 }
 
@@ -73,4 +87,8 @@ ImpulseButton.prototype.on_key_down = function(keyCode) {
   if (this.active && (this.keyCode && this.keyCode == keyCode) || (this.sKeyCode && this.sKeyCode == keyCode)) {
     this.action()
   }
+}
+
+ImpulseButton.prototype.add_hover_overlay = function(hover_overlay) {
+  this.hover_overlay = hover_overlay;
 }

@@ -103,6 +103,11 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[this.state][i].draw(ctx)
   }
 
+  for(var i = 0; i < this.buttons[this.state].length; i++)
+  {
+    this.buttons[this.state][i].post_draw(ctx)
+  }
+
   /*ctx.font = '20px Muli'
   draw_empty_star(ctx, imp_vars.levelWidth - 20, imp_vars.levelHeight - 15, 15, "black")
   ctx.textAlign = 'right'
@@ -202,7 +207,7 @@ TitleState.prototype.setup_main_menu = function() {
           switch_game_state(new WorldMapState(i))
         });
       }
-    }, "player"))
+    }, "player"));
 
     this.buttons["menu"].push(new IconButton("CHALLENGE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){

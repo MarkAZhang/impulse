@@ -11,7 +11,6 @@ var HiveNumbers = function(world_num, main_game) {
   if(!this.main_game) {
     this.lives = 0
     if(this.ultimates > 1) this.ultimates = 1
-    
   }
 
   this.last_lives = this.lives

@@ -295,29 +295,29 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
     ctx.save()
     ctx.textAlign = "center"
-    ctx.fillStyle = impulse_colors["world "+index+" bright"]
-    ctx.font = '12px Muli'
-    ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
-    ctx.font = '36px Muli'
     ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
       imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"], 
       index,
       imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"])
+    ctx.font = '12px Muli'
+    ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 30)
+    ctx.font = '36px Muli'
     ctx.shadowColor = ctx.fillStyle
-    ctx.shadowBlur = 10
+    ctx.shadowBlur = 100
+    ctx.save()
     var victory_type = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"]
-    ctx.fillText(victory_type, this.world_buttons[index].x, this.world_buttons[index].y + 60)
+    draw_victory_type_icon(ctx, this.world_buttons[index].x, this.world_buttons[index].y + 50, index, victory_type, 1)
+    ctx.restore()
     if(victory_type == "half") {
       ctx.font = '11px Muli'
-      ctx.fillText("CONTINUES: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
+      ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
         , this.world_buttons[index].x, this.world_buttons[index].y + 80)
-      
     }
-    if(victory_type == "gold" && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"] > 0) {
+    /*if(victory_type == "gold") {
       ctx.font = '11px Muli'
       ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
         , this.world_buttons[index].x, this.world_buttons[index].y + 80)
-    }
+    }*/
     ctx.restore()
   }
 

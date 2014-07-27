@@ -1305,6 +1305,14 @@ var spriteSheetData = {
   "ultimate_icon": [0, 155, 42, 42],
   "ultimate_icon_blue": [43, 155, 42, 42],
   "ultimate_shard": [0, 121, 18, 32],
+  "world1_starblank": [85, 199, 41, 38],
+  "world1_star": [127, 199, 41, 38],
+  "world2_starblank": [85, 237, 41, 38],
+  "world2_star": [127, 237, 41, 38],
+  "world3_starblank": [0, 199, 41, 38],
+  "world3_star": [42, 199, 41, 38],
+  "world4_starblank": [0, 237, 41, 38],
+  "world4_star": [42, 237, 41, 38],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],
@@ -1453,4 +1461,24 @@ function draw_image_on_bg_ctx(bg_ctx, image, alpha) {
   bg_ctx.globalAlpha = alpha
   bg_ctx.drawImage(image, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
   bg_ctx.globalAlpha = 1
+}
+
+function draw_victory_type_icon(ctx, x, y, world_num, victory_type, scale) {
+  if (victory_type == "half") {
+    drawSprite(ctx, x - 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+    drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+    drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+  } else if (victory_type == "basic") {
+    drawSprite(ctx, x - 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+    drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+    drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+  } else if (victory_type == "silver") {
+    drawSprite(ctx, x - 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+    drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+    drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+  } else if (victory_type == "gold") {
+    drawSprite(ctx, x - 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+    drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+    drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_star")
+  }
 }

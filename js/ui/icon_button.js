@@ -191,6 +191,23 @@ IconButton.prototype.draw_icon  = function(context) {
   } else if(this.icon == "right_mouse") {
     draw_arrow_keys(context, this.x - this.w * 0.17, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     draw_bare_mouse(context, this.x + this.w * 0.23, this.y - this.h * 0.1, this.w * 0.17, this.h * 0.4, this.hover ? this.hover_color : this.color)
+  } else if(this.icon == "help_icon") {
+    context.beginPath()
+    context.arc(this.x, this.y, this.w / 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI, false)
+    context.strokeStyle = this.hover ? this.hover_color : this.color;
+    context.lineWidth = 2;
+    context.fillStyle = "black"
+    context.stroke();
+    context.fill();
+    context.beginPath();
+    context.arc(this.x, this.y - this.w / 8, this.w / 8, -Math.PI, 0, false);
+    context.lineTo(this.x, this.y + this.w / 8);
+    //context.lineTo(this.x, this.y + this.w * 3 / 8);
+    context.stroke();
+    context.beginPath();
+    context.arc(this.x, this.y + this.w / 2 - 4, 1, 0, 2 * Math.PI);
+    context.fillStyle = this.hover ? this.hover_color : this.color;
+    context.fill();
   } else if(this.icon == "controls") {
     context.shadowBlur = 0
     if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {

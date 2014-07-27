@@ -149,8 +149,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.fillText("IF YOU'RE ENJOYING THE GAME", imp_vars.levelWidth/2, 300)
       ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 340)
-      draw_spark(ctx, 230, 467, 0)
-      draw_spark(ctx, 570, 467, 0)
+      //draw_spark(ctx, 230, 467, 0)
+      //draw_spark(ctx, 570, 467, 0)
     }
 
 
@@ -553,7 +553,9 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
 }
 
 RewardGameState.prototype.on_click = function(x, y) {
-  if(this.rewards.length == 0 || (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share")) {
+  if(this.rewards.length == 0 || 
+    (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") ||
+     this.cur_reward_index >= this.rewards.length) {
     return
   }
   if (this.rewards[this.cur_reward_index].type == "select_difficulty") {

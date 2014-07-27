@@ -61,6 +61,11 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   this.victory_color = "red"
 
+  this.color = impulse_colors["world "+this.world_num]
+  this.lite_color = impulse_colors["world "+this.world_num+" lite"]
+  this.bright_color = impulse_colors["world "+this.world_num+" bright"]
+  this.dark_color = impulse_colors["world "+this.world_num+" dark"]
+
   if(victory) {
     this.calculate_deaths()
     this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED"
@@ -71,6 +76,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
         min_star = hive_numbers.game_numbers[level].stars;
       }
     }
+    min_star = 0
 
     if(!hive_numbers.continues) {
       this.victory_type = this.victory_types[min_star]
@@ -104,12 +110,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
           }
         save_game()
     }
+
+    var help_button = new IconButton("", 16, 490, 205, 20, 20, this.lite_color, this.bright_color, function() {}, "help_icon")
+    this.buttons.push(help_button);
+    help_button.add_hover_overlay(new HoverOverlay("rank_explanation", this.bright_color, this.world_num));
   }
 
-  this.color = impulse_colors["world "+this.world_num]
-  this.lite_color = impulse_colors["world "+this.world_num+" lite"]
-  this.bright_color = impulse_colors["world "+this.world_num+" bright"]
-  this.dark_color = impulse_colors["world "+this.world_num+" dark"]
   var _this = this;
 
   if(this.save_screen && !this.just_saved) {
@@ -185,19 +191,17 @@ MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type = function(
 
 MainGameSummaryState.prototype.get_victory_color = function(victory_type, world_num, total_deaths) {
 
-  var victory_colors = [
-    "red",
+  /*var victory_colors = [
+    impulse_colors["world "+world_num+" bright"],
     impulse_colors["world "+world_num+" bright"],
     impulse_colors["silver"],
     impulse_colors["gold"]
-  ];
+  ];*/
 
   // Special color if no deaths and gold clear.
-  if (victory_type == "gold" && total_deaths == 0) {
-    return impulse_colors["impulse_blue"];
-  }
-
-  return victory_colors[this.victory_types.indexOf(victory_type)];
+  
+  return impulse_colors["world "+world_num+" bright"]
+  //return victory_colors[this.victory_types.indexOf(victory_type)];
 }
 
 MainGameSummaryState.prototype.calculate_deaths = function() {
@@ -272,57 +276,44 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '20px Muli'
   if(this.victory) {
-    ctx.fillStyle = impulse_colors["world "+(this.world_num)+ " bright"]
-    ctx.shadowColor = ctx.fillStyle
+    ctx.fillStyle = this.bright_color
     ctx.font = '40px Muli'
     ctx.fillText(this.victory_text, imp_vars.levelWidth/2, 130)
   }
   else if(this.save_screen) {
     ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.shadowColor = ctx.fillStyle
     ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 90)
     ctx.fillStyle = this.bright_color;
-    ctx.shadowColor = ctx.fillStyle
     ctx.font = '40px Muli'
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
   } else {
     ctx.fillStyle = 'red'
-    ctx.shadowColor = ctx.fillStyle
     ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 80)
+    ctx.fillStyle = this.bright_color
     if(this.hive_numbers.continues > 0) {
-      ctx.font = '12px Muli'
+      ctx.font = '18px Muli'
       ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 175)  
     }
-    ctx.fillStyle = this.bright_color;
-    ctx.shadowColor = ctx.fillStyle
     ctx.font = '40px Muli'
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
   }
 
-
   if(this.victory && this.hive_numbers.continues) {
-    ctx.fillStyle = "red";
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '12px Muli'
-    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 255)
+    ctx.fillStyle = this.bright_color
+    ctx.font = '18px Muli'
+    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 250)
   }
 
   if(this.victory) {
-
     ctx.fillStyle = this.bright_color
     ctx.font = '18px Muli'
-    ctx.shadowColor = ctx.fillStyle
     ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
-    ctx.fillStyle = this.victory_color
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '84px Muli'
-    ctx.fillText(this.victory_type, imp_vars.levelWidth/2, 235)
+    draw_victory_type_icon(ctx, imp_vars.levelWidth/2, 200, this.world_num, this.victory_type, 1.5)
   } else if(this.save_screen) {
     draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, {labels: true, ult: this.has_ult})
     ctx.font = '16px Muli'
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
-      ctx.shadowColor = ctx.fillStyle
       ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 240)
     }
   }
@@ -404,11 +395,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   } else {
     ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   }
-  ctx.restore()
 
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].post_draw(ctx)
+  }
+  ctx.restore()
 
 }
 
@@ -423,10 +417,10 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
+  /*if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
       this.transition_state="out";
       this.transition_timer = this.transition_interval
-    }
+    }*/
 }
 
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
