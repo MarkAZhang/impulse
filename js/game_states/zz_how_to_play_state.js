@@ -41,7 +41,7 @@ HowToPlayState.prototype.load_complete = function() {
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
-  this.num_pages = 15
+  this.num_pages = 13
   if (this.mode == "normal_tutorial") {
     this.cur_page = 0
   } else if (this.mode == "first_time_tutorial") {
@@ -374,85 +374,8 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     }
 
+    
     if(this.cur_page == 11 + this.ult_page_offset) {
-
-      ctx.font = '24px Muli'
-      ctx.fillStyle = "white"
-      drawSprite(ctx, 400, 310, 0, 40, 40, "ultimate_icon")
-      ctx.fillText("CHALLENGE MODE", 400, 360)
-
-
-      ctx.font = '16px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("STRONGER ENEMIES", 400, 400)
-      ctx.fillStyle = "white"
-      ctx.fillText("MORE NUMEROUS ENEMIES", 400, 430)
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("HIGHER GATEWAY SCORES", 400, 460)
-      ctx.fillStyle = "white"
-      ctx.fillText("BOSSES HAVE SPECIAL ABILITIES", 400, 490)
-      /*ctx.globalAlpha /= 2
-      ctx.font = '12px Muli'
-      ctx.fillText("SPECIAL MODES CAN ONLY BE UNLOCKED IN CHALLENGE MODE!", 400, 530)
-      ctx.globalAlpha *= 2*/
-
-      /*for(var i=0; i < this.special_buttons.length; i++) {
-        this.special_buttons[i].draw(ctx)
-      }
-
-      ctx.globalAlpha /= 2
-      ctx.font = '12px Muli'
-      ctx.fillText("FOR CASUAL PLAYERS", 300, 365)
-      ctx.fillText("FOR EXPERIENCED PLAYERS", 500, 365)
-      ctx.globalAlpha *= 2
-      ctx.font = "20px Muli"
-
-      ctx.fillText("SELECT DIFFICULTY MODE", 400, 500)
-      ctx.font = '12px Muli'
-      ctx.fillStyle = "white"
-      ctx.globalAlpha /= 2
-      ctx.fillText("CAN BE CHANGED IN MAIN MENU OPTIONS", 400, 520)*/
-    }
-    if (this.cur_page == 12 + this.ult_page_offset) {
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.font = '18px Muli'
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("RANK", 550, 337)
-      ctx.font = '40px Muli'
-      ctx.fillText("S", 550, 315)
-      ctx.fillStyle = "red"
-      ctx.font = '18px Muli'
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("RANK", 250, 337)
-      ctx.font = '40px Muli'
-      ctx.fillText("F", 250, 315)
-      ctx.fillStyle = "white"
-      ctx.font = '18px Muli'
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("RANK", 400, 337)
-      ctx.font = '40px Muli'
-      ctx.fillText("B", 400, 315)
-      
-      ctx.font = '16px Muli'
-
-      ctx.fillText("YOUR RANK WHEN YOU DEFEAT A HIVE IS BASED ON", 400, 380)
-      ctx.font = '12px Muli'
-      ctx.globalAlpha /= 2
-      ctx.fillText("(IN ORDER OF IMPORTANCE)", 400, 400)
-      ctx.globalAlpha *= 2
-      ctx.font = '16px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("NUMBER OF CONTINUES", 400, 440)
-      ctx.fillStyle = "white"
-      ctx.fillText("NUMBER OF GOLD AND SILVER SCORES", 400, 470)
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("NUMBER OF DEATHS", 400, 500)
-      // ctx.font = '12px Muli'
-      // ctx.fillText("GET GOOD RANKS TO UNLOCK SPECIAL MODES!", 400, 550)
-    }
-
-
-    if(this.cur_page == 13 + this.ult_page_offset) {
 
       ctx.textAlign = 'center'
       ctx.font = '12px Muli'
@@ -476,7 +399,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("INCREASE YOUR RATING TO UNLOCK EXTRA LIVES AND MORE!", 400, 550)
     }
 
-    if(this.cur_page == 14 + this.ult_page_offset) {
+    if(this.cur_page == 12 + this.ult_page_offset) {
 
       this.exit_button.draw(ctx)
       ctx.fillStyle = impulse_colors["impulse_blue"]

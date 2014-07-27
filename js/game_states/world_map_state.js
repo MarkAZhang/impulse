@@ -261,7 +261,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '15px Muli'
   ctx.textAlign = 'center'
-  ctx.fillStyle = "white"
+  ctx.fillStyle = "white";
   ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.levelWidth/2, 30)
   ctx.restore()
 }

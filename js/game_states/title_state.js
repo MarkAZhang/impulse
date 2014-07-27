@@ -1,6 +1,5 @@
 TitleState.prototype = new GameState
 
-
 TitleState.prototype.constructor = TitleState
 
 function TitleState(last_state) {
@@ -221,13 +220,19 @@ TitleState.prototype.setup_main_menu = function() {
           switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
         });
       } else {
+        if (!imp_params.impulse_level_data["HIVE 1-1"].save_state["normal"].seen) {
+          _this.fader.set_animation("fade_out", function() {
+            switch_game_state(new ChallengeModeIntroState());
+          });
+        } else {
         var i = 1;
-        while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
-          i += 1
+          while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+            i += 1
+          }
+          _this.fader.set_animation("fade_out", function() {
+            switch_game_state(new WorldMapState(i))
+          });
         }
-        _this.fader.set_animation("fade_out", function() {
-          switch_game_state(new WorldMapState(i))
-        });
       }
     }, "normal_mode"))
 
@@ -292,4 +297,3 @@ TitleState.prototype.set_difficulty_button_underline = function() {
   this.easy_mode_button.underline = (imp_vars.player_data.difficulty_mode == "easy");
   this.normal_mode_button.underline = (imp_vars.player_data.difficulty_mode == "normal");
 }
-
