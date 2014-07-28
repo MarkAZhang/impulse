@@ -7,6 +7,9 @@ function QuestButton(type, x, y, r) {
   this.x = x;
   this.y = y;
   this.r = r;
+  this.w = 2 * r;
+  this.h = 2 * r;
+  this.add_hover_overlay(new HoverOverlay(this.type, "white", 0));
 }
 
 QuestButton.prototype.draw = function(ctx, bg_ctx) {
@@ -102,7 +105,7 @@ QuestButton.prototype.draw = function(ctx, bg_ctx) {
 
 	if (this.type.substring(1, 5) == "star") {
 		ctx.save()
-		ctx.globalAlpha *= 0.2
+		ctx.globalAlpha *= 0.1
 		drawSprite(ctx, this.x, this.y, 0, this.r * 1.2, this.r * 1.2, "white_glow")
 		ctx.restore()
 		var stars = parseInt(this.type.substring(0, 1));

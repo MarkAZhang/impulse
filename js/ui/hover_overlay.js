@@ -12,6 +12,9 @@ HoverOverlay.prototype.init = function(type, color, world_num) {
 	if (this.type == "rank_explanation") {
 		this.w = 360;
 		this.h = 140;
+	} else {
+		this.w = 100;
+		this.h = 100;
 	}
 	this.opacity = 0;
 	this.world_num = world_num

@@ -80,6 +80,10 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+  for(var i = 0; i < this.buttons.length; i++)
+  {
+    this.buttons[i].post_draw(ctx)
+  }
 }
 
 QuestGameState.prototype.on_mouse_move = function(x, y) {
