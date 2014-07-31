@@ -1517,3 +1517,25 @@ function draw_ellipse(ctx, cx, cy, rx, ry, style) {
   ctx.stroke();
   ctx.restore();
 }
+
+function convert_canvas_to_grayscale(canvas, opacity) {
+  var canvasContext = canvas.getContext('2d');
+  var imgPixels = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+
+  for(var y = 0; y < imgPixels.height; y++){
+       for(var x = 0; x < imgPixels.width; x++){
+            var i = (y * 4) * imgPixels.width + x * 4;
+            var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+            imgPixels.data[i] = avg;
+            imgPixels.data[i + 1] = avg;
+            imgPixels.data[i + 2] = avg;
+            imgPixels.data[i + 3] = imgPixels.data[i + 3] ? opacity : 0;
+       }
+  }
+  var gray_canvas = document.createElement('canvas');
+  gray_canvas.width = imgPixels.width
+  gray_canvas.height = imgPixels.height
+  var gray_canvas_ctx = gray_canvas.getContext('2d');
+  gray_canvas_ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
+  return gray_canvas;
+}
