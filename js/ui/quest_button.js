@@ -14,26 +14,35 @@ function QuestButton(type, x, y, r) {
   this.normal_canvas.height = this.h
   var normal_canvas_ctx = this.normal_canvas.getContext('2d');
   this.draw_button(normal_canvas_ctx);
-  this.gray_canvas = convert_canvas_to_grayscale(this.normal_canvas, 150)
+  this.gray_canvas = convert_canvas_to_grayscale(this.normal_canvas, 255)
 
   this.add_hover_overlay(new HoverOverlay(this.type, "white", 0));
 }
 
 QuestButton.prototype.draw = function(ctx, bg_ctx) {
 	ctx.drawImage(this.gray_canvas, 0, 0, this.w, this.h, this.x - this.r, this.y - this.r, this.w, this.h);
+	if (this.mouseOver)	 {
+		ctx.save();
+		ctx.globalAlpha *= 0.2;
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false);
+		ctx.fillStyle = "#fff"		
+		ctx.fill();
+		ctx.beginPath();
+		ctx.restore();
+	}
 }
 
 QuestButton.prototype.draw_button = function(ctx) {
-
 	ctx.beginPath();
 	ctx.arc(this.r, this.r, this.r, 0, 2 * Math.PI, false);
-	ctx.fillStyle = "#000"
+	ctx.fillStyle = this.mouseOver ? "#333" : "#000"
 	ctx.fill();
 	ctx.beginPath();
 	ctx.arc(this.r, this.r, this.r - 8, 0, 2 * Math.PI, false);
 	ctx.lineWidth = 4;
 	ctx.strokeStyle = "white";
-	ctx.stroke();
+	ctx.stroke();	
 	if (this.type == "beat_hive1") {
 		draw_tessellation_sign(ctx, 1, this.r, this.r, this.r * 0.6, true, 0);
 	}
@@ -132,6 +141,8 @@ QuestButton.prototype.draw_button = function(ctx) {
 		}
 		drawSprite(ctx, this.r, this.r + this.r / 4, 0, this.r * 0.7, this.r * 0.7, "ultimate_icon")
 	}
+
+
 }
 
 QuestButton.prototype.process = function(dt) {

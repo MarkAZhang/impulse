@@ -3,6 +3,9 @@ QuestGameState.prototype = new GameState
 QuestGameState.prototype.constructor = QuestGameState
 
 function QuestGameState() {
+  this.cur_start_lives = calculate_lives()
+  this.cur_start_ult = calculate_ult()
+  this.cur_start_spark_val = calculate_spark_val()
   this.fader = new Fader({
     "fade_in": 500,
     "fade_out": 250
@@ -26,14 +29,14 @@ QuestGameState.prototype.process = function(dt) {
 QuestGameState.prototype.set_up_quests = function() {
   var quest_size = 50;
 
-  var first_row_x = 130;
+  var first_row_x = 150;
   var first_row_gap = 150;
 	this.buttons.push(new QuestButton("beat_hive1", imp_vars.levelWidth/2 - 1.5 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("beat_hive2", imp_vars.levelWidth/2 - 0.5 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("beat_hive3", imp_vars.levelWidth/2 + 0.5 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("beat_hive4", imp_vars.levelWidth/2 + 1.5 * first_row_gap, first_row_x, quest_size, quest_size));
 
-  var second_row_x = 280;
+  var second_row_x = 300;
   var second_row_gap = 150;
   this.buttons.push(new QuestButton("first_gold", imp_vars.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("fast_time", imp_vars.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
@@ -41,7 +44,7 @@ QuestGameState.prototype.set_up_quests = function() {
   this.buttons.push(new QuestButton("survivor", imp_vars.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
 
-  var third_row_x = 430;
+  var third_row_x = 450;
   var third_row_gap = 150;
   this.buttons.push(new QuestButton("0star", imp_vars.levelWidth/2 - 1.5 * third_row_gap, third_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("1star", imp_vars.levelWidth/2 - 0.5 * third_row_gap, third_row_x, quest_size, quest_size));
@@ -69,6 +72,14 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = "white"
 
   ctx.fillText("QUESTS", imp_vars.levelWidth/2, 50)
+  ctx.font = '12px Muli'
+  ctx.fillText("MOUSE OVER TO VIEW", imp_vars.levelWidth/2, 75)
+  draw_lives_and_sparks(ctx,
+    this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult,
+    imp_vars.levelWidth / 2, 
+    imp_vars.levelHeight - 50, 
+    20, 
+    {labels: true, ult: this.has_ult})
   /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);
