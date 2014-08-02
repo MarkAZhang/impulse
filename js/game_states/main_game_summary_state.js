@@ -80,6 +80,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
     if(!hive_numbers.continues) {
       this.victory_type = this.victory_types[min_star]
+      this.hive_numbers.victory_type = this.victory_type
     }
     
     this.victory_color = this.get_victory_color(this.victory_type, world_num, this.total_deaths)

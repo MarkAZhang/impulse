@@ -171,7 +171,7 @@ TitleState.prototype.setup_main_menu = function() {
       }
     }))
     this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
+    //this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
     //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, imp_vars.levelWidth/2,
     //      imp_vars.levelHeight/2+70, 200, 50, function(){switch_game_state(new
     //        ImpulseGameState(ctx, "SURVIVAL"))}))
@@ -180,6 +180,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
     this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
+    this.buttons["menu"].push(new SmallButton("QUESTS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new QuestGameState())}))
   } else {
     var button_y = imp_vars.levelHeight/2 + 50
     var _this = this;
@@ -237,21 +238,27 @@ TitleState.prototype.setup_main_menu = function() {
     }, "normal_mode"))
 
     //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 + 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){
+    this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 - 80, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new HowToPlayState("normal_tutorial"))
         });
     }, "tutorial"))
-    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_vars.levelWidth/2 + 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new CreditsState())
       });
     }, "credit"))
-    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 185, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         set_dialog_box(new OptionsMenu(_this))
       });
     }, "gear"))
+
+    this.buttons["menu"].push(new IconButton("QUESTS", 16, imp_vars.levelWidth/2 + 80, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new QuestGameState(_this))
+      });
+    }, "quest"))
 
     /*this.buttons["menu"].push(new IconButton("SHARE", 16, imp_vars.levelWidth - 50, imp_vars.levelHeight - 50, 100, 70, impulse_colors["impulse_blue"], impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {

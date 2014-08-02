@@ -370,6 +370,7 @@ Player.prototype.process = function(dt) {
     if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
     {
       this.attacking = true
+      this.impulse_game_state.game_numbers.impulsed = true;
       this.attack_loc = this.body.GetPosition().Copy()
       this.attack_angle = this.impulse_angle
       this.attack_duration = this.attack_length
@@ -386,7 +387,6 @@ Player.prototype.process = function(dt) {
           this.impulse_game_state.hive_numbers.ultimates -= 1
         }
       }
-      
     }
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
@@ -427,6 +427,7 @@ Player.prototype.process = function(dt) {
           this.attack_angle += Math.PI
         }
         this.attacking = true
+        this.impulse_game_state.game_numbers.impulsed = true;
         this.attack_loc = this.body.GetPosition().Copy()
         this.attack_duration = this.attack_length
         imp_vars.impulse_music.play_sound("impulse")

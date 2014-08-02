@@ -759,6 +759,25 @@ function draw_save_icon(context, x, y, scale, color) {
   context.restore()
   
 }
+function draw_quest_icon(context, x, y, scale, color) {
+  context.save()
+  context.shadowBlur = 0
+  context.beginPath()
+  context.fillStyle = color
+  context.strokeStyle = color
+  context.arc(x, y, scale * 0.7, 0, 2 * Math.PI, true)
+  context.lineWidth = 3
+  context.stroke()
+  context.beginPath()
+  context.lineWidth = 4
+  context.moveTo(x, y - scale * 0.4)  
+  context.lineTo(x, y + scale * 0.2)
+  context.moveTo(x, y + scale * 0.3)
+  context.lineTo(x, y + scale * 0.4)
+  context.stroke()
+  context.restore()
+  
+}
 
 function draw_quit_icon(context, x, y, scale, color) {
   context.save()
@@ -1102,8 +1121,6 @@ function draw_logo(context, x, y, text, scale) {
 }
 
 function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, args) {
-
-
   context.save()
 
   var x_offset = size * 0.9
@@ -1538,4 +1555,114 @@ function convert_canvas_to_grayscale(canvas, opacity) {
   var gray_canvas_ctx = gray_canvas.getContext('2d');
   gray_canvas_ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
   return gray_canvas;
+}
+
+draw_quest_button = function(ctx, x, y, r, type) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  ctx.fillStyle = "#000"
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, r - 8, 0, 2 * Math.PI, false);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "white";
+  ctx.stroke(); 
+  if (type == "beat_hive1") {
+    draw_tessellation_sign(ctx, 1, x, y, r * 0.6, true, 0);
+  }
+  if (type == "beat_hive2") {
+    draw_tessellation_sign(ctx, 2,  x, y, r * 0.6, true, 0);
+  }
+  if (type == "beat_hive3") {
+    draw_tessellation_sign(ctx, 3, x, y, r * 0.6, true, 0);
+  }
+  if (type == "beat_hive4") {
+    draw_tessellation_sign(ctx, 4, x, y, r * 0.6, true, 0);
+  }
+  if (type == "first_gold") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    drawSprite(ctx, x, y, 0, r * 0.8, r * 0.8, "gold_trophy")
+
+    ctx.font = "15px Muli"
+    ctx.textAlign = 'center'
+    ctx.fillStyle = impulse_colors["gold"]
+    ctx.fillText("1", x, y - 1)
+  }
+
+  if (type == "combo") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+
+    drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
+
+    
+    ctx.beginPath()
+    ctx.arc(x, y - r/2, r * 0.75, Math.PI/3, 2 * Math.PI/3, false);
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke();
+    var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
+    for(var i = 0; i < angles_to_draw.length; i++) {
+      var angle = angles_to_draw[i];
+      drawImageWithRotation(ctx, 
+        x + r * 0.9 * Math.cos(angle), 
+        y - r / 2 + r * 0.9 * Math.sin(angle),
+      angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
+    }
+  }
+
+  if (type == "survivor") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    drawSprite(ctx, x, y, 0, r * 0.4, r * 0.4, "player_normal")
+    for(var i = 0; i < 8; i++) {
+      var angle = Math.PI * 2 * i / 4 + Math.PI/4;
+      drawImageWithRotation(ctx, 
+        x + r * 0.5 * Math.cos(angle), 
+        y + r * 0.5 * Math.sin(angle),
+      Math.PI/2 + angle, 15, 15, imp_params.impulse_enemy_stats["spear"].images["normal"]);
+    } 
+  }
+
+  if (type == "fast_time") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    drawSprite(ctx, x, y, 0, r * 0.7, r * 0.7, "timer_icon")
+  }
+
+  if (type == "pacifist") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    drawSprite(ctx, x, y + r * 0.2, 0, r * 0.4, r * 0.4, "player_normal")
+    ctx.save();
+    ctx.lineWidth = 3
+    draw_ellipse(ctx, x, y - r * 0.2, r/6, r/12, impulse_colors["gold"])
+  }
+
+  if (type.substring(1, 5) == "star") {
+    ctx.save()
+    ctx.globalAlpha *= 0.1
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    var stars = parseInt(type.substring(0, 1));
+    var angles_to_draw = [Math.PI * 1.25, Math.PI * 3/2, Math.PI * 1.75];
+    for(var i = 0; i < angles_to_draw.length; i++) {
+      var angle = angles_to_draw[i];
+      drawSprite(ctx, 
+        x + r * 0.6 * Math.cos(angle), 
+        y + r * 0.1 + r * 0.6 * Math.sin(angle), 
+        0, 20, 20, i < stars ? "world"+(stars+1)+"_star" : "world"+(stars+1)+"_starblank")
+    }
+    drawSprite(ctx, x, y + r / 4, 0, r * 0.7, r * 0.7, "ultimate_icon")
+  }
 }

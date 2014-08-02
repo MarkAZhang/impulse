@@ -7,7 +7,6 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.main_game = main_game
   this.args = args
   this.rewards = []
-  this.debug()
   this.cur_reward_index = -1
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
@@ -16,6 +15,10 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
+  this.current_lives = calculate_lives();
+  this.current_sparks = calculate_spark_val();
+  this.current_ult = calculate_ult();
+  this.stars = 0; // only for practice mode.
   var _this = this;
 
   this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_vars.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
@@ -29,13 +32,13 @@ function RewardGameState(hive_numbers, main_game, args) {
     "you have a limited number of # ultimates per continue # (currently 1)",
     "If you die after using ultimate, # it is refunded"
   ]
+  this.debug()
   
   this.determine_rewards()
   this.next_reward()
   if(this.rewards.length > 0) {
     imp_vars.impulse_music.stop_bg()  
   }
-  
 }
 
 RewardGameState.prototype.change_mode = function(type) {
@@ -46,12 +49,118 @@ RewardGameState.prototype.change_mode = function(type) {
     this.transition_state="out";
     this.transition_timer = this.transition_interval * 4  
   }
-  
+}
+
+RewardGameState.prototype.check_quests = function() {
+
+  if (this.main_game) {
+    for(var level in this.hive_numbers.game_numbers) {
+      this.check_quests_helper(level, this.hive_numbers.game_numbers[level]);
+    }
+  } else {
+    this.check_quests_helper(this.args.level.level_name, this.args.game_numbers);
+  }
+}
+
+RewardGameState.prototype.check_quests_helper = function(level, game_numbers) {
+  var world = parseInt(level.substring(5, 6))
+  // Check if this game_number is a gold score.
+  if (game_numbers.stars == 3 || this.stars == 3) {
+    // Completed the first gold quest.
+    this.quest_complete("first_gold");
+  }
+  if (world == 2 && game_numbers.combo >= 150) {
+    this.quest_complete("combo");
+  }
+  if (world == 3 && game_numbers.seconds >= 150) {
+    this.quest_complete("survivor");
+  }
+  if (world == 1 && game_numbers.seconds <= 30) {
+    this.quest_complete("fast_time");
+  }
+  if (game_numbers.impulsed == false) {
+    this.quest_complete("pacifist");
+  }
+
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    var min_victory_type = 3;
+    var victory_types =  ["half", "basic", "silver", "gold"];
+    for (var i = 1; i <= 4; i++) {
+      if (imp_vars.player_data.world_rankings["normal"]["world " + i]) {
+        var victory_type = imp_vars.player_data.world_rankings["normal"]["world " + i].victory_type;
+        if (victory_types.indexOf(victory_type) < min_victory_type) {
+          min_victory_type = victory_types.indexOf(victory_type)
+        }
+      } else {
+        // If a world is missing, then there is no min_victory_type;
+        min_victory_type = -1;
+      }
+    }
+
+    if (min_victory_type >= 0) {
+      this.quest_complete("0star"); 
+    }
+    if (min_victory_type >= 1) {
+      this.quest_complete("1star"); 
+    }
+    if (min_victory_type >= 2) {
+      this.quest_complete("2star"); 
+    }
+    if (min_victory_type == 3) {
+      this.quest_complete("3star"); 
+    }
+  }
+}
+
+// Check whether the quest is already complete. If it isn't, show the reward screen.
+RewardGameState.prototype.quest_complete = function(type) {
+  if (imp_vars.player_data.quests.indexOf(type) == -1) {
+    imp_vars.player_data.quests.push(type);
+    save_game();
+    this.rewards.push({
+      type: "quest",
+      data: {
+        type: type
+      }
+    })
+    for (var i = 0; i < imp_params.quest_data[type].rewards.length; i++) {
+      var reward = imp_params.quest_data[type].rewards[i];
+
+      if (reward == "life") {
+        this.current_lives += 1;
+        this.rewards.push({
+          type: "lives",
+          data: {
+            diff: 1,
+            new_lives: this.current_lives
+          }
+        })
+      }
+      if (reward == "ult") {
+        this.current_ult += 1;
+        this.rewards.push({
+          type: "ult",
+          data: {
+            diff: 1,
+            new_ult: this.current_ult
+          }
+        })
+      }
+      if (reward == "spark") {
+        this.current_sparks += 1;
+        this.rewards.push({
+          type: "spark_val",
+          data: {
+            diff: 1,
+            new_spark_val: this.current_sparks
+          }
+        })
+      }
+    }
+  }
 }
 
 RewardGameState.prototype.draw = function(ctx, bg_ctx) {
-
-
   if(this.rewards.length == 0) {
     return
   }
@@ -92,7 +201,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
   }
   // draw tessellation if applicable
-  if (cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" && cur_reward.type != "share") {
+  if (cur_reward.type != "quest" && cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" && cur_reward.type != "share") {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
@@ -103,7 +212,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var main_message_teaser = ""
     var main_reward_text_y = 250
     var new_values_text_y = 430
-    var message_size = 48
+    var message_size = 32
 
     if(cur_reward.type == "world_victory") {
       ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
@@ -158,7 +267,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
       main_message = "YOUR SKILL RATING WENT UP"
       main_message_teaser = "CONGRATULATIONS!"
-      message_size = 40
+      message_size = 32
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
@@ -224,6 +333,30 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       draw_arrow(ctx, imp_vars.levelWidth/2, new_values_text_y, 20, "right", "white", false)
 
       ctx.fillText(cur_reward.data.new_ult, imp_vars.levelWidth/2 + x_separation, new_values_text_y + 40)
+    }
+
+    if(cur_reward.type == "quest") {
+      var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
+      ctx.save()
+      draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 150)
+      ctx.restore()
+      ctx.textAlign = "center"
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+
+      ctx.font = '32px Muli'
+      ctx.fillText("QUEST COMPLETE!", imp_vars.levelWidth/2, 120)
+
+      
+      //drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate_icon")
+      draw_quest_button(ctx, imp_vars.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
+
+      ctx.font = '24px Muli'
+      ctx.fillStyle = "white"      
+      for (var i = 0; i < imp_params.quest_data[cur_reward.data.type].text.length; i++) {
+        var text = imp_params.quest_data[cur_reward.data.type].text[i];
+        ctx.fillText(text, imp_vars.levelWidth / 2, main_reward_text_y + 150 + i * 36);
+      }
+
     }
 
     if(cur_reward.type == "spark_val") {
@@ -323,9 +456,7 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 
 RewardGameState.prototype.debug = function() {
   if (false) {
-    this.rewards.push({
-      type: "final_victory"
-    })
+    this.quest_complete("beat_hive1")
     this.rewards.push({
       type: "share"
     })
@@ -435,6 +566,7 @@ RewardGameState.prototype.advance_game_state = function() {
 
 RewardGameState.prototype.determine_rewards = function() {
 
+
   if(this.args.is_tutorial) {
     if(this.args.tutorial_first_time) {
       this.rewards.push({
@@ -471,6 +603,8 @@ RewardGameState.prototype.determine_rewards = function() {
     }
   }
 
+  this.check_quests();
+
   var rating = calculate_current_rating()
   if(rating > this.hive_numbers.original_rating) {
     this.rewards.push({
@@ -486,13 +620,16 @@ RewardGameState.prototype.determine_rewards = function() {
       this.rewards.push({
         type: "world_victory",
         data: this.hive_numbers.world
-      })  
+      })
+      // Completed the quest for beating this world.
+      this.quest_complete("beat_hive"+this.hive_numbers.world)
     }
 
     if (this.hive_numbers.world == 4) {
       this.rewards.push({
         type: "final_victory",
       })
+      this.quest_complete("beat_hive"+this.hive_numbers.world)
     }
     if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
       this.rewards.push({

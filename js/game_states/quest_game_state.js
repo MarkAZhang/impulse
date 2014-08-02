@@ -6,6 +6,7 @@ function QuestGameState() {
   this.cur_start_lives = calculate_lives()
   this.cur_start_ult = calculate_ult()
   this.cur_start_spark_val = calculate_spark_val()
+  this.has_ult = has_ult();
   this.fader = new Fader({
     "fade_in": 500,
     "fade_out": 250
@@ -79,7 +80,7 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
     imp_vars.levelWidth / 2, 
     imp_vars.levelHeight - 50, 
     20, 
-    {labels: true, ult: this.has_ult})
+    {labels: true, ult: this.has_ult, starting_values: true})
   /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);

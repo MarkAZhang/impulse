@@ -72,94 +72,18 @@ HoverOverlay.prototype.draw = function(ctx) {
 	    ctx.fillText("NO CONTINUES USED", xright - xpaddingright, ytop + ypaddingtop + ysep);
 	    ctx.fillText("SILVER SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 2 * ysep);
 	    ctx.fillText("GOLD SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 3 * ysep);
-	} else if (this.type == "beat_hive1") {
+	} else {
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";
 		ctx.fillStyle = "white";
-		ctx.fillText("DEFEAT HIVE 1", this.x, this.y - this.h/2 + 40);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "beat_hive2") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("DEFEAT HIVE 2", this.x, this.y - this.h/2 + 40);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "beat_hive3") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("DEFEAT HIVE 3", this.x, this.y - this.h/2 + 40);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "beat_hive4") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("DEFEAT HIVE 4", this.x, this.y - this.h/2 + 40);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "first_gold") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("GET A GOLD SCORE", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("ON ANY LEVEL", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "combo") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("BEAT A LEVEL IN HIVE 2", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("WITH 150 COMBO OR MORE", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "pacifist") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("BEAT ANY LEVEL", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("WITHOUT USING IMPULSE", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "survivor") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("BEAT A LEVEL IN HIVE 3", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("AFTER 2.5 MINUTES", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "fast_time") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-
-		ctx.fillText("BEAT A LEVEL IN HIVE 1", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("IN UNDER 30 SECONDS", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "0star") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("DEFEAT CHALLENGE MODE", this.x, this.y - this.h/2 + 40);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "1star") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("GET 1 STAR ON ALL HIVES", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("IN CHALLENGE MODE", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "2star") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("GET 2 STAR ON ALL HIVES", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("IN CHALLENGE MODE", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
-	} else if (this.type == "3star") {
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("GET 3 STAR ON ALL HIVES", this.x, this.y - this.h/2 + 40);
-		ctx.fillText("IN CHALLENGE MODE", this.x, this.y - this.h/2 + 64);
-		this.draw_rewards(ctx, this.type)
+		for (var i = 0; i < imp_params.quest_data[this.type].text.length; i++) {
+			var text = imp_params.quest_data[this.type].text[i];
+			ctx.fillText(text, this.x, this.y - this.h / 2 + 40 + i * 24);
+		}
+		this.draw_rewards(ctx, this.type);
 	}
+
+	
 	ctx.restore();
 };
 
@@ -173,12 +97,18 @@ HoverOverlay.prototype.draw_rewards = function(ctx, type) {
 	ctx.lineWidth = 1;
 	ctx.stroke();
 	ctx.fillText("REWARD", this.x, reward_y - 20);
-	
-	var reward_gap = 45
-	var rewards = imp_params.quest_data[this.type]["rewards"];
-	for (var i = 0; i < rewards.length; i++) {
-		reward = rewards[i];
-		this.draw_reward(ctx, this.x - reward_gap * ((rewards.length - 1) / 2 - i), reward_y, reward);
+	var rewards = imp_params.quest_data[this.type].rewards;
+	if (rewards.length > 0) {
+		var reward_gap = 45
+		for (var i = 0; i < rewards.length; i++) {
+			reward = rewards[i];
+			this.draw_reward(ctx, this.x - reward_gap * ((rewards.length - 1) / 2 - i), reward_y, reward);
+		}
+	} else {
+		ctx.font = "12px Muli";
+		ctx.fillStyle = impulse_colors["impulse_blue"];
+		ctx.textAlign = 'center';	
+		ctx.fillText("NEW UPCOMING GAME MODE", this.x, reward_y)
 	}
 }
 

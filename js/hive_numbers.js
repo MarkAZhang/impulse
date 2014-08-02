@@ -28,6 +28,8 @@ var HiveNumbers = function(world_num, main_game) {
   this.boss_name = imp_params.tessellation_names[world_num]
 
   this.original_rating = calculate_current_rating()
+
+  this.victory_type = null
 }
 
 HiveNumbers.prototype.clone = function(object) {

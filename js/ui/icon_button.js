@@ -160,6 +160,12 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_save_icon(context, this.x, this.y - this.h/8, 20, this.color)   
     }
+  } else if (this.icon == "quest") {
+    if(this.hover) {
+      draw_quest_icon(context, this.x, this.y - this.h/8, 18, this.hover_color)   
+    } else {
+      draw_quest_icon(context, this.x, this.y - this.h/8, 18, this.color)   
+    }
   } else if(this.icon == "quit") {
     if(this.hover) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.hover_color)   

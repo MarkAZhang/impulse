@@ -11,7 +11,7 @@ function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_gam
 
 ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, main_game, first_ever) {
 
-  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
+  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null, impulsed: false}
   this.hive_numbers = hive_numbers
 
   this.main_game = main_game
@@ -980,6 +980,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.level.boss_victory = true
     } else {
       this.game_numbers.score = this.level.cutoff_scores[2];
+      this.game_numbers.game_length  = 150000
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {

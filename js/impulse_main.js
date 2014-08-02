@@ -658,47 +658,37 @@ function calculate_stars(difficulty_mode) {
 }
 
 function has_ult() {
-  return calculate_current_rating() >= imp_params.ult_upgrades[0].rating
+  return calculate_ult() >= 1;
 }
 
-function calculate_lives(this_rating) {
-  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
-  var life = 3
-  var life_cutoffs = imp_params.life_upgrades
-  for(var i = 0; i < life_cutoffs.length; i++) {
-    if(rating >= life_cutoffs[i].rating) {
-      life = life_cutoffs[i].life
-    } else {
-      break
+function calculate_lives() {
+  var life = 3;
+  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
+    var quest = imp_vars.player_data.quests[i];
+    if (imp_params.quest_data[quest].rewards.indexOf("life") != -1) {
+      life += 1;
     }
   }
   return life
 }
 
-function calculate_ult(this_rating) {
-  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
-  var ult = 0
-  var ult_cutoffs = imp_params.ult_upgrades
-  for(var i = 0; i < ult_cutoffs.length; i++) {
-    if(rating >= ult_cutoffs[i].rating) {
-      ult = ult_cutoffs[i].ult
-    } else {
-      break
+function calculate_ult() {
+  var ult = 0;
+  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
+    var quest = imp_vars.player_data.quests[i];
+    if (imp_params.quest_data[quest].rewards.indexOf("ult") != -1) {
+      ult += 1;
     }
   }
-  return ult
+  return ult;
 }
 
-
-function calculate_spark_val(this_rating) {
-  var rating = this_rating === undefined ? calculate_current_rating() : this_rating
-  var spark_val = 10
-  var spark_val_cutoffs = imp_params.spark_upgrades
-  for(var i = 0; i < spark_val_cutoffs.length; i++) {
-    if(rating >= spark_val_cutoffs[i].rating) {
-      spark_val = spark_val_cutoffs[i].spark_val
-    } else {
-      break
+function calculate_spark_val() {
+  var spark_val = 10;
+  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
+    var quest = imp_vars.player_data.quests[i];
+    if (imp_params.quest_data[quest].rewards.indexOf("spark") != -1) {
+      spark_val += 1;
     }
   }
   return spark_val
