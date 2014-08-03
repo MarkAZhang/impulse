@@ -79,7 +79,7 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
     this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult,
     imp_vars.levelWidth / 2, 
     imp_vars.levelHeight - 50, 
-    20, 
+    15, 
     {labels: true, ult: this.has_ult, starting_values: true})
   /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
   ctx.font = '18px Muli'

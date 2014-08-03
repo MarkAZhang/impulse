@@ -41,7 +41,7 @@ HowToPlayState.prototype.load_complete = function() {
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
-  this.num_pages = 13
+  this.num_pages = 12
   if (this.mode == "normal_tutorial") {
     this.cur_page = 0
   } else if (this.mode == "first_time_tutorial") {
@@ -80,7 +80,9 @@ HowToPlayState.prototype.load_complete = function() {
   this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+100, 390, 200, 50, "white", "blue",function(){_this.change_mode("normal")})
   this.special_buttons.push(this.normal_mode_button) */
 
-  this.exit_button = new IconButton("EXIT TUTORIAL", 20, 400, 440, 125, 85, this.lite_color, "white", function(){_this.exit_tutorial = true}, "quit")
+  this.exit_button = new IconButton("EXIT TUTORIAL", 20, 400, 440, 125, 85, this.lite_color, "white", function(){
+    _this.exit_tutorial = true
+  }, "quit")
 
   //this.set_difficulty_button_underline();
 
@@ -375,31 +377,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
 
     
-    if(this.cur_page == 11 + this.ult_page_offset) {
-
-      ctx.textAlign = 'center'
-      ctx.font = '12px Muli'
-      ctx.fillStyle = 'white'
-      ctx.fillText("PLAYER SKILL RATING", 400, 300)
-      ctx.font = '48px Muli'
-      ctx.fillText(this.cur_rating, 400, 345)
-
-      ctx.font = '16px Muli'
-      ctx.fillText("YOUR PLAYER SKILL RATING IS BASED ON", 400, 400)
-      
-      ctx.font = '16px Muli'
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("HIGH SCORES ON EACH LEVEL", 400, 440)
-      ctx.fillStyle = "white"
-      ctx.fillText("BEST RANKS ON EACH HIVE", 400, 470)
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("CHALLENGE MODE > STANDARD MODE", 400, 500)
-      ctx.fillStyle = "white"
-      ctx.font = '12px Muli'
-      ctx.fillText("INCREASE YOUR RATING TO UNLOCK EXTRA LIVES AND MORE!", 400, 550)
-    }
-
-    if(this.cur_page == 12 + this.ult_page_offset) {
+     if(this.cur_page == 11 + this.ult_page_offset) {
 
       this.exit_button.draw(ctx)
       ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -936,7 +914,7 @@ HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
 HowToPlayState.prototype.on_mouse_move = function(x, y) {
   if(!this.pause && this.ready && this.zoom == 1) {
     if (this.mode == "normal_tutorial") {
-      if(this.cur_page == 14 + this.ult_page_offset) {
+      if(this.cur_page == this.num_pages - 1) {
         this.exit_button.on_mouse_move(x - imp_vars.sidebarWidth, y)
       }
     }
@@ -1029,7 +1007,7 @@ HowToPlayState.prototype.on_mouse_down = function(x, y) {
 
     if(this.mode == "normal_tutorial" && x > imp_vars.sidebarWidth && (x < imp_vars.canvasWidth - imp_vars.sidebarWidth && y > 400 || (this.cur_page == 10 + this.ult_page_offset && y > 350))) {
 
-      if(this.cur_page == 14+ this.ult_page_offset) {
+      if(this.cur_page == this.num_pages - 1) {
         this.exit_button.on_click(x - imp_vars.sidebarWidth, y)
       }
 

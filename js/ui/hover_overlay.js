@@ -1,11 +1,12 @@
-var HoverOverlay = function(type, color, world_num) {
+var HoverOverlay = function(type, color, world_num, completed) {
   if(!color) return
-  this.init(type, color, world_num)
+  this.init(type, color, world_num, completed)
 };
 
-HoverOverlay.prototype.init = function(type, color, world_num) {
+HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 	this.type = type;
 	this.color = color;
+	this.completed = completed;
 	this.x = 0;
 	this.y = 0;
 	this.visible = false;
@@ -96,7 +97,11 @@ HoverOverlay.prototype.draw_rewards = function(ctx, type) {
 	ctx.strokeStyle = "white"
 	ctx.lineWidth = 1;
 	ctx.stroke();
-	ctx.fillText("REWARD", this.x, reward_y - 20);
+	if (this.completed) {
+		ctx.fillText("COMPLETED", this.x, reward_y - 20);
+	} else {
+		ctx.fillText("REWARD", this.x, reward_y - 20);
+	}
 	var rewards = imp_params.quest_data[this.type].rewards;
 	if (rewards.length > 0) {
 		var reward_gap = 45

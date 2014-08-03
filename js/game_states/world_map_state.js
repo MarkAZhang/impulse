@@ -241,21 +241,13 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
-  ctx.textAlign = 'center'
-  ctx.font = '12px Muli'
-  ctx.fillStyle = 'white'
-  ctx.fillText("PLAYER SKILL RATING", imp_vars.levelWidth - 90, imp_vars.levelHeight - 85)
-  ctx.font = '48px Muli'
-  ctx.fillText(this.cur_rating, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 40)
-  if(this.next_upgrade != null) {
-    ctx.font = '10px Muli'
-    ctx.fillText("NEXT UPGRADE AT "+this.next_upgrade, imp_vars.levelWidth  - 90, imp_vars.levelHeight - 20)
-  }
+  
   ctx.font = '13px Muli'
   ctx.fillStyle = "white"
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
 
-  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult, imp_vars.levelWidth/2, imp_vars.levelHeight/2, 21, {labels: true, starting_values: true, ult: this.has_ult})
+  draw_lives_and_sparks(ctx, this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult,
+   imp_vars.levelWidth/2, imp_vars.levelHeight/2, 15, {labels: true, starting_values: true, ult: this.has_ult})
 
   
 

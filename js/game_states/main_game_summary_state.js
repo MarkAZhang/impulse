@@ -2,6 +2,7 @@ MainGameSummaryState.prototype = new GameState
 
 MainGameSummaryState.prototype.constructor = MainGameSummaryState
 
+// Kept for the purpose of converting old ranks to the new victory type.
 MainGameSummaryState.prototype.rank_cutoffs = {
     "F": 0,
     "D": 10,

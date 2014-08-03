@@ -16,8 +16,8 @@ function QuestButton(type, x, y, r) {
   draw_quest_button(normal_canvas_ctx, this.r, this.r, this.r, this.type);
   this.gray_canvas = convert_canvas_to_grayscale(this.normal_canvas, 255)
 
-  this.add_hover_overlay(new HoverOverlay(this.type, "white", 0));
   this.quest_completed = imp_vars.player_data.quests.indexOf(type) != -1;
+  this.add_hover_overlay(new HoverOverlay(this.type, "white", 0, this.quest_completed));
 }
 
 QuestButton.prototype.draw = function(ctx, bg_ctx) {

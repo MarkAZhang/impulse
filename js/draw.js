@@ -1149,7 +1149,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
     context.fillText("LIVES", x - size * 1.8 + x_offset , y - size * 0.8)
 
     if(args.starting_values) {
-      context.fillText("SPARK", x + x_offset , y - size * 1.2)  
+      context.fillText("SPARK", x + x_offset , y - size * 1.4)  
       context.fillText("VALUE", x + x_offset , y - size * 0.8)  
     } else
       context.fillText("SPARKS", x + x_offset , y - size * 0.8)
