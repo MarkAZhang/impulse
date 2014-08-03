@@ -31,7 +31,32 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "1star" || this.type == "2star" || this.type == "3star") {
 		this.w = 250;
 		this.h = 150;
+	} else if (this.type == "option_game_music") {
+		this.w = 250;
+		this.h = 40;
+	} else if (this.type == "option_sound_effects") {
+		this.w = 200;
+		this.h = 40;
+	} else if (this.type == "option_fullscreen") {
+		this.w = 150;
+		this.h = 40;
+	} else if (this.type == "option_particle_effects") {
+		this.w = 250;
+		this.h = 40;
+	} else if (this.type == "option_score_labels") {
+		this.w = 350;
+		this.h = 40;
+	} else if (this.type == "option_multiplier_display") {
+		this.w = 300;
+		this.h = 40;
+	} else if (this.type == "option_impulse_shadow") {
+		this.w = 350;
+		this.h = 40;
+	} else if (this.type == "option_defeat_screens") {
+		this.w = 300;
+		this.h = 40;
 	}
+
 	this.opacity = 0;
 	this.world_num = world_num
 };
@@ -48,6 +73,31 @@ HoverOverlay.prototype.draw = function(ctx) {
 	ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
 	ctx.stroke();
 	ctx.fill();
+
+	if (this.type == "option_game_music") {
+		this.option_text = "PLAY BACKGROUND MUSIC"
+	}
+	if (this.type == "option_sound_effects") {
+		this.option_text = "PLAY SOUND EFFECTS"
+	}
+	if (this.type == "option_fullscreen") {
+		this.option_text = "GO FULLSCREEN"
+	}
+	if (this.type == "option_particle_effects") {
+		this.option_text = "SHOW PARTICLE EFFECTS"
+	}
+	if (this.type == "option_score_labels") {
+		this.option_text = "SHOW SCORE VALUE WHEN ENEMIES DIE"
+	}
+	if (this.type == "option_multiplier_display") {
+		this.option_text = "SHOW MULTIPLIER BELOW PLAYER"
+	}
+	if (this.type == "option_impulse_shadow") {
+		this.option_text = "SHOW AIMING SHADOW FOR IMPULSE"
+	}
+	if (this.type == "option_defeat_screens") {
+		this.option_text = "SHOW DEFEAT SCREEN ON DEATH"
+	}
 
 	if (this.type == "rank_explanation") {
 		var ytop = this.y - this.h/2;
@@ -73,7 +123,13 @@ HoverOverlay.prototype.draw = function(ctx) {
 	    ctx.fillText("NO CONTINUES USED", xright - xpaddingright, ytop + ypaddingtop + ysep);
 	    ctx.fillText("SILVER SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 2 * ysep);
 	    ctx.fillText("GOLD SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 3 * ysep);
+	} else if (this.type.substring(0, 6) == "option") {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText(this.option_text, this.x, this.y - this.h / 2 + 25);
 	} else {
+		// rewards
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";
 		ctx.fillStyle = "white";
@@ -142,4 +198,8 @@ HoverOverlay.prototype.set_visible = function(visibility) {
 HoverOverlay.prototype.set_position = function(mx, my) {
 	this.x = mx;
 	this.y = my + this.h/2;
+
+	if (this.type.substring(0, 6) == "option") {
+		this.y += 20
+	}
 }

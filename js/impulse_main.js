@@ -378,13 +378,16 @@ function on_click(event) {
   }
 }*/
 
-function toggleFullScreen() {
-
-    var isInFullScreen = (document.fullScreenElement && document.fullScreenElement !==     null) ||    // alternative standard method
+function isInFullScreen() {
+  return (document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
             (document.mozFullScreen || document.webkitIsFullScreen);
+}
+
+function toggleFullScreen() {
+  var isFullScreen = isInFullScreen();
 
     var docElm = document.documentElement;
-    if (!isInFullScreen) {
+    if (!isFullScreen) {
 
         if (docElm.requestFullscreen) {
             docElm.requestFullscreen();

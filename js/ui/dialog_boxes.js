@@ -374,7 +374,7 @@ function OptionsMenu(previous_menu) {
   this.solid = false;
   this.world_num = previous_menu.world_num
 
-  this.options_y_line_up = 170
+  this.options_y_line_up = 133
 
   this.previous_menu = previous_menu
   if (this.previous_menu instanceof PauseMenu) {
@@ -426,52 +426,74 @@ function OptionsMenu(previous_menu) {
 
   this.current_help_text = ""
 
-  this.checkboxes = []
-  //this.back_button.underline_index = 0
-  /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
-  this.music_volume_slider.value = Math.log(imp_vars.impulse_music.bg_music_volume)/Math.log(100.0)
+  var button_width = 300;
 
-  this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
-  this.effects_volume_slider.value = Math.log(imp_vars.impulse_music.effects_volume)/Math.log(100.0)*/
-
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up - 37, 20, 20, this.bright_color, function(on) {
+  var button = new OptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function() {
     toggle_mute()
-  }, !imp_vars.player_data.options.music_mute))
+  }, function() {
+    return !imp_vars.player_data.options.music_mute;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_game_music", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up - 7, 20, 20, this.bright_color, function(on) {
-    imp_vars.impulse_music.mute_effects(!on)
-  }, !imp_vars.impulse_music.effects_mute))
+  button = new OptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(on) {
+    imp_vars.impulse_music.mute_effects(on)
+  }, function() {
+    return !imp_vars.impulse_music.effects_mute;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_sound_effects", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up + 23, 20, 20, this.bright_color, function() {
+  button = new OptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
+    toggleFullScreen();
+  }, function() {
+    return isInFullScreen()
+  });
+  button.add_hover_overlay(new HoverOverlay("option_fullscreen", this.bright_color, this.world_num))
+  this.buttons.push(button)
+
+  button = new OptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.explosions = !imp_vars.player_data.options.explosions
-    save_game()
-  }, imp_vars.player_data.options.explosions))
+  }, function() {
+    return imp_vars.player_data.options.explosions;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_particle_effects", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up + 53, 20, 20, this.bright_color, function() {
+  button = new OptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.score_labels = !imp_vars.player_data.options.score_labels
-    save_game()
-  }, imp_vars.player_data.options.score_labels))
+  }, function() {
+    return imp_vars.player_data.options.score_labels;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_score_labels", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
-  /*this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + 288, 20, 20, this.lite_color, function() {
-    imp_vars.player_data.options.progress_circle = !imp_vars.player_data.options.progress_circle
-    save_game()
-  }, imp_vars.player_data.options.progress_circle))*/
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up + 83, 20, 20, this.bright_color, function() {
-  imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
-    save_game()
-  }, imp_vars.player_data.options.multiplier_display))
+  button = new OptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, function(on) {
+    imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
+  }, function() {
+    return imp_vars.player_data.options.multiplier_display;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_multiplier_display", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
-  this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up + 113, 20, 20, this.bright_color, function() {
-  imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
-    save_game()
-  }, imp_vars.player_data.options.impulse_shadow))
+  button = new OptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, function(on) {
+    imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
+  }, function() {
+    return imp_vars.player_data.options.impulse_shadow;
+  });
+  button.add_hover_overlay(new HoverOverlay("option_impulse_shadow", this.bright_color, this.world_num))
+  this.buttons.push(button)
 
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game) {
-    this.checkboxes.push(new CheckBox(this.x + 120, this.y - this.h/2 + this.options_y_line_up + 143, 20, 20, this.bright_color, function() {
-    imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
-      save_game()
-    }, imp_vars.player_data.options.show_transition_screens))
+      button = new OptionButton("SHOW DEFEAT SCREENS", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
+      imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
+    }, function() {
+      return imp_vars.player_data.options.show_transition_screens;
+    });
+    button.add_hover_overlay(new HoverOverlay("option_defeat_screens", this.bright_color, this.world_num))
+    this.buttons.push(button)
   }
+
   this.fader.set_animation("fade_in");
 }
 
@@ -494,17 +516,9 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  ctx.font = '18px Muli';
-  ctx.textAlign = "left"
-  ctx.fillText("GAME MUSIC", this.x - 130, this.y - this.h/2 + this.options_y_line_up - 30)
-  ctx.fillText("SOUND EFFECTS", this.x - 130, this.y - this.h/2 + this.options_y_line_up )
-  ctx.fillText("PARTICLE EFFECTS", this.x - 130, this.y - this.h/2 + this.options_y_line_up + 30)
-  ctx.fillText("SCORE LABELS", this.x - 130, this.y - this.h/2  + this.options_y_line_up + 60)
-  //ctx.fillText("PROGRESS CIRCLE", this.x - 130, this.y - this.h/2 + 295)
-  ctx.fillText("MULTIPLIER DISPLAY", this.x - 130, this.y - this.h/2 + this.options_y_line_up + 90)
-  ctx.fillText("IMPULSE SHADOW", this.x - 130, this.y - this.h/2 + this.options_y_line_up + 120)
-  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game )
-    ctx.fillText("SHOW DEFEAT SCREENS", this.x - 130, this.y - this.h/2 + this.options_y_line_up + 150)
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].post_draw(ctx)
+  }
 
   ctx.textAlign = 'center'
   if(this.current_help_text) {
@@ -520,9 +534,9 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   //this.music_volume_slider.draw(ctx)
   //this.effects_volume_slider.draw(ctx)
 
-  for(var index in this.checkboxes) {
-    this.checkboxes[index].draw(ctx)
-  }
+  //for(var index in this.checkboxes) {
+  //  this.checkboxes[index].draw(ctx)
+  //}
   ctx.restore()
 }
 
@@ -532,30 +546,6 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
     this.buttons[i].on_mouse_move(x,y)
   }
 
-
-  if(Math.abs(y - (this.y - this.h/2 + this.options_y_line_up)) < 15) {
-    this.current_help_text = "SOUND EFFECTS ARE PLAYED"
-  }
-  else if(Math.abs(y - (this.y - this.h/2 + this.options_y_line_up + 30)) < 15) {
-    this.current_help_text = "ENEMIES EXPLODE ON DEATH. MAY SLOW GAMEPLAY"
-  }
-  else if(Math.abs(y - (this.y - this.h/2 + this.options_y_line_up + 60)) < 15) {
-    this.current_help_text = "DISPLAY SCORE VALUE OF ENEMY ON DEATH. MAY SLOW GAMEPLAY"
-  }
-  /*else if(Math.abs(y - (this.y - this.h/2 + 295)) < 15) {
-    this.current_help_text = "DISPLAYS PROGRESS TOWARDS SCORE GOAL AS CIRCULAR METER AROUND PLAYER"
-  }*/
-  else if(Math.abs(y - (this.y - this.h/2 + this.options_y_line_up + 90)) < 15) {
-    this.current_help_text = "DISPLAYS CURRENT MULTIPLIER BELOW PLAYER"
-  }
-  else if(Math.abs(y - (this.y - this.h/2 + this.options_y_line_up + 120)) < 15) {
-    this.current_help_text = "DISPLAYS AIMING SHADOW FOR IMPULSE"
-  }
-  else if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && Math.abs(y - (this.y - this.h/2 + this.options_y_line_up + 150)) < 15) {
-    this.current_help_text = "SHOWS DEFEAT SCREEN ON DEATH"
-  } else {
-    this.current_help_text = ""
-  }
   //this.music_volume_slider.on_mouse_move(x,y)
   //this.effects_volume_slider.on_mouse_move(x,y)
 }
