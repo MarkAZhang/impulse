@@ -233,12 +233,12 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
     if(this.transition_state == "out") {
       if(this.victory)
-        switch_game_state(new RewardGameState(this.hive_numbers, true, {}))
+        switch_game_state(new RewardGameState(this.hive_numbers, true, {victory: true}))
       else if(this.level) {
         this.hive_numbers.continue()
         switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
       } else {
-        switch_game_state(new RewardGameState(this.hive_numbers, true, {}))
+        switch_game_state(new RewardGameState(this.hive_numbers, true, {victory: false}))
       }
     }
   }

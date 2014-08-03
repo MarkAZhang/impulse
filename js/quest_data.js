@@ -52,15 +52,15 @@ imp_params.quest_data["0star"] = {
 
 imp_params.quest_data["1star"] = {
 	rewards: ["life", "spark", "ult"],
-	text: ["GET 1 STAR ON ALL HIVES", "IN CHALLENGE MODE"]
+	text: ["GET 1-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
 }
 
 imp_params.quest_data["2star"] = {
 	rewards: ["life", "spark", "ult"],
-	text: ["GET 2 STAR ON ALL HIVES", "IN CHALLENGE MODE"]
+	text: ["GET 2-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
 }
 
 imp_params.quest_data["3star"] = {
 	rewards: [],
-	text: ["GET 3 STAR ON ALL HIVES", "IN CHALLENGE MODE"]
+	text: ["GET 3-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
 }

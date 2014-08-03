@@ -52,6 +52,10 @@ RewardGameState.prototype.change_mode = function(type) {
 }
 
 RewardGameState.prototype.check_quests = function() {
+  // If this is the tutorial, or we didn't win, do not check quests.
+  if (!this.victory || this.args.is_tutorial) {
+    return;
+  }
 
   if (this.main_game) {
     for(var level in this.hive_numbers.game_numbers) {

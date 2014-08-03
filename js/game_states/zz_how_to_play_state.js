@@ -659,7 +659,7 @@ HowToPlayState.prototype.draw_sparks_page = function(ctx) {
 
   ctx.font = '12px Muli'
   ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.fillText("100 SPARKS = 1UP", 300, 495)
+  ctx.fillText("100 SPARKS = EXTRA LIFE", 300, 495)
 
   ctx.beginPath()
   ctx.rect(-160, imp_vars.canvasHeight - 140, 120, 80)

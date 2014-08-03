@@ -315,7 +315,8 @@ PauseMenu.prototype.quit_practice = function() {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level, 
       world_num: this.game_state.world_num,
-      visibility_graph: this.game_state.visibility_graph
+      visibility_graph: this.game_state.visibility_graph,
+      victory: false
     }))
   clear_dialog_box()
 }
