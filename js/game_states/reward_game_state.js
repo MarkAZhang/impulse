@@ -395,10 +395,10 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
       message_size = 30
       draw_tutorial_icon(ctx, imp_vars.levelWidth/2, main_reward_text_y, 30, "white" , false)
-      ctx.font = "24px Muli"
+      ctx.font = "16px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("CHECK OUT THE MAIN TUTORIAL FOR MORE INFO", imp_vars.levelWidth/2, new_values_text_y)
+      ctx.fillText("ARE YOU READY?", imp_vars.levelWidth/2, 150)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -594,12 +594,11 @@ RewardGameState.prototype.determine_rewards = function() {
       if (this.victory) {
         var ans = update_best_time_for_boss_level(this.args.level.level_name, this.args.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
         this.best_time = ans.best_time
-        this.stars = ans.stars  
+        this.stars = ans.stars
       } else {
         this.best_time = false
         this.stars = 0
       }
-      
     }
   }
 

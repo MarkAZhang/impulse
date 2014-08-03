@@ -13,8 +13,8 @@ imp_params.impulse_level_data['HOW TO PLAY'] = {
   buffer_radius: 1,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "normal": [5000, 10000, 20000],
-    "easy": [5000, 10000, 20000],
+    "normal": [2000, 10000, 20000],
+    "easy": [2000, 10000, 20000],
   },
   player_loc: {x: 400, y: 170},
   buffer_radius: 1
@@ -44,7 +44,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [10000, 50000, 300000],
+    "easy": [5000, 50000, 300000],
     "normal": [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}

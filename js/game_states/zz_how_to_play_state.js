@@ -167,6 +167,9 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("IMPULSE", 400, 420)*/
       ctx.font = '24px Muli'
       ctx.fillText("INTRO TUTORIAL", 400, 500)
+      ctx.font = '18px Muli'
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillText("PRESS Q TO PAUSE AND QUIT", 400, 535)
     }
 
     if(this.cur_page == 0) {
@@ -187,9 +190,11 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
         draw_arrow_keys(ctx, 400, 430, 60, "white")
       }
       ctx.fillText("IMPULSE", 400, 500)
+      ctx.save()
       ctx.globalAlpha *= 0.5
       ctx.font = '12px Muli'
       ctx.fillText("HOLD MOUSE TO CONTINUOUSLY IMPULSE", 400, 550)
+      ctx.restore()
     }
 
     if(this.cur_page == 2) {
@@ -225,10 +230,38 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     if([2, 5, 6, 7].indexOf(this.cur_page) != -1) {
       ctx.save()
-      ctx.fillStyle = "white"
-      ctx.globalAlpha *= 0.8 * this.get_flashing_prop()
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.globalAlpha *= Math.min(1, 1.5 * this.get_flashing_prop())
       ctx.font = "16px Muli"
       ctx.fillText("PRESS SPACEBAR TO CONTINUE", 400, 580)
+      ctx.restore()
+    } else if (this.cur_page == 0) {
+      ctx.save()
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.globalAlpha *= Math.min(1, 1.5 * this.get_flashing_prop())
+      ctx.font = "16px Muli"
+      ctx.fillText("TRY MOVING NOW", 400, 580)
+      ctx.restore()
+    } else if (this.cur_page == 1) {
+      ctx.save()
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.globalAlpha *= Math.min(1, 1.5 * this.get_flashing_prop())
+      ctx.font = "16px Muli"
+      ctx.fillText("TRY IMPULSING NOW", 400, 580)
+      ctx.restore()
+    } else if (this.cur_page == 3) {
+      ctx.save()
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.globalAlpha *= Math.min(1, 1.5 * this.get_flashing_prop())
+      ctx.font = "16px Muli"
+      ctx.fillText("TRY KILLING AN ENEMY NOW", 400, 580)
+      ctx.restore()
+    } else if (this.cur_page == 4 || this.cur_page == 8) {
+      ctx.save()
+      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.globalAlpha *= Math.min(1, 1.5 * this.get_flashing_prop())
+      ctx.font = "16px Muli"
+      ctx.fillText("GET THE GATEWAY SCORE", 400, 580)
       ctx.restore()
     }
   }
@@ -371,9 +404,6 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("FULLSCREEN", 550, 462)
       ctx.font = '12px Muli'
       ctx.fillText("ENEMY INFO AND GAME OPTIONS IN THE PAUSE MENU", 400, 530)
-
-
-
     }
 
     
@@ -584,9 +614,11 @@ HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
 
 
   ctx.fillStyle = "white"
+  ctx.save()
   ctx.globalAlpha *= 0.5
   ctx.font = '12px Muli'
   ctx.fillText("MULTIPLIER PERMANENTLY +1 EVERY 10 SECONDS", 400, 500)
+  ctx.restore()
 }
 
 HowToPlayState.prototype.draw_sparks_page = function(ctx) {
@@ -939,9 +971,9 @@ HowToPlayState.prototype.on_key_down = function(keyCode) {
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.hive_numbers && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     if (this.mode == "first_time_tutorial" && this.cur_page < 9) {
       // Prevent entering gateway in this specific instance
-      return
+    } else {
+      this.victory = true
     }
-    this.victory = true
   } else {
     this.player.keyDown(keyCode)  //even if paused, must still process
   }

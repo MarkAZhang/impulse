@@ -59,11 +59,6 @@ EnemyButton.prototype.additional_draw = function(context) {
     context.font = (3 * this.size) +'px Muli'
     context.fillText("?", cur_x, cur_y + 10)
   }
-
-
-
-
-
 }
 
 

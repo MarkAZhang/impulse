@@ -221,7 +221,7 @@ TitleState.prototype.setup_main_menu = function() {
           switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
         });
       } else {
-        if (!imp_params.impulse_level_data["HIVE 1-1"].save_state["normal"].seen) {
+        if (!imp_params.impulse_level_data["HIVE 1-1"].save_state["normal"].high_score) {
           _this.fader.set_animation("fade_out", function() {
             switch_game_state(new ChallengeModeIntroState());
           });
