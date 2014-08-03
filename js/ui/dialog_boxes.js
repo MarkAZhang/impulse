@@ -534,9 +534,6 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   //this.music_volume_slider.draw(ctx)
   //this.effects_volume_slider.draw(ctx)
 
-  //for(var index in this.checkboxes) {
-  //  this.checkboxes[index].draw(ctx)
-  //}
   ctx.restore()
 }
 
@@ -553,9 +550,6 @@ OptionsMenu.prototype.on_mouse_move = function(x, y) {
 OptionsMenu.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x,y)
-  }
-  for(var i = 0; i < this.checkboxes.length; i++) {
-    this.checkboxes[i].on_click(x,y)
   }
   //this.music_volume_slider.on_click(x,y)
   //this.effects_volume_slider.on_click(x,y)
@@ -646,7 +640,6 @@ function ControlsMenu(previous_menu) {
 
   this.buttons.push(this.back_button)
 
-  this.checkboxes = []
   /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
   this.music_volume_slider.value = Math.log(imp_vars.impulse_music.bg_music_volume)/Math.log(100.0)
 

@@ -139,8 +139,6 @@ HoverOverlay.prototype.draw = function(ctx) {
 		}
 		this.draw_rewards(ctx, this.type);
 	}
-
-	
 	ctx.restore();
 };
 
