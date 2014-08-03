@@ -14,7 +14,7 @@ function HowToPlayState(mode) {
   this.advance_page_timer = 0
   this.delay_after_player_moved = 100
   this.delay_during_player_dying_page = 750
-  this.title_screen_delay = 4000
+  this.title_screen_delay = 3000
   this.transition_interval = 500
   this.transition_timer = this.transition_interval
   this.transition_state = "in"

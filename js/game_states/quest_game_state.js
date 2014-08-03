@@ -40,8 +40,8 @@ QuestGameState.prototype.set_up_quests = function() {
   var second_row_x = 300;
   var second_row_gap = 150;
   this.buttons.push(new QuestButton("first_gold", imp_vars.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("fast_time", imp_vars.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("combo", imp_vars.levelWidth/2 + 0 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("combo", imp_vars.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("fast_time", imp_vars.levelWidth/2 + 0 * second_row_gap, second_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("survivor", imp_vars.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
 

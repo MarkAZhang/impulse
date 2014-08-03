@@ -68,18 +68,18 @@ RewardGameState.prototype.check_quests = function() {
 
 RewardGameState.prototype.check_quests_helper = function(level, game_numbers) {
   var world = parseInt(level.substring(5, 6))
-  // Check if this game_number is a gold score.
-  if (game_numbers.stars == 3 || this.stars == 3) {
+  // Check if this game_number is a gold score. Bosses don't count.
+  if ((game_numbers.stars == 3 || this.stars == 3) && level.substring(0, 4) != "BOSS") {
     // Completed the first gold quest.
     this.quest_complete("first_gold");
   }
-  if (world == 2 && game_numbers.combo >= 150) {
+  if (world == 1 && game_numbers.combo >= 150) {
     this.quest_complete("combo");
   }
   if (world == 3 && game_numbers.seconds >= 150) {
     this.quest_complete("survivor");
   }
-  if (world == 1 && game_numbers.seconds <= 30) {
+  if (world == 2 && game_numbers.seconds <= 30) {
     this.quest_complete("fast_time");
   }
   if (game_numbers.impulsed == false) {
@@ -149,6 +149,9 @@ RewardGameState.prototype.quest_complete = function(type) {
             new_ult: this.current_ult
           }
         })
+        if(this.current_ult == 1)  {
+          this.to_tutorial = true
+        }
       }
       if (reward == "spark") {
         this.current_sparks += 1;
@@ -189,9 +192,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
-  ctx.save()
-
-
+  ctx.save();
   // change transparency for transition
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
@@ -340,7 +341,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "quest") {
-      var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
+      var tessellation_num = 0
       ctx.save()
       draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 150)
       ctx.restore()
@@ -432,7 +433,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       } else {
         ctx.fillStyle = impulse_colors["impulse_blue"]  
       }
-      
       ctx.fillText(main_message, imp_vars.levelWidth/2, 120)
     }
 
@@ -444,13 +444,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
       else
         ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
-      ctx.restore()  
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
       ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 75)
     }
+    ctx.restore();
 }
 
 RewardGameState.prototype.adjust_difficulty_button_border = function() {
@@ -606,7 +606,6 @@ RewardGameState.prototype.determine_rewards = function() {
     }
   }
 
-  this.check_quests();
 
   var rating = calculate_current_rating()
   if(rating > this.hive_numbers.original_rating) {
@@ -620,20 +619,22 @@ RewardGameState.prototype.determine_rewards = function() {
   }
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
     if (this.hive_numbers.world < 4) {
+      this.quest_complete("beat_hive"+this.hive_numbers.world)
       this.rewards.push({
         type: "world_victory",
         data: this.hive_numbers.world
       })
       // Completed the quest for beating this world.
-      this.quest_complete("beat_hive"+this.hive_numbers.world)
     }
 
     if (this.hive_numbers.world == 4) {
+      this.quest_complete("beat_hive"+this.hive_numbers.world)
       this.rewards.push({
         type: "final_victory",
       })
-      this.quest_complete("beat_hive"+this.hive_numbers.world)
     }
+
+    this.check_quests();
     if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
       this.rewards.push({
         type: "share"

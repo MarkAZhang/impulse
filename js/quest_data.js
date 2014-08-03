@@ -27,7 +27,7 @@ imp_params.quest_data["first_gold"] = {
 
 imp_params.quest_data["combo"] = {
 	rewards: ["life"],
-	text: ["BEAT A LEVEL IN HIVE 2", "WITH 150 COMBO OR MORE"]
+	text: ["BEAT A LEVEL IN HIVE 1", "WITH 150 COMBO OR MORE"]
 }
 
 imp_params.quest_data["pacifist"] = {
@@ -42,7 +42,7 @@ imp_params.quest_data["survivor"] = {
 
 imp_params.quest_data["fast_time"] = {
 	rewards: ["spark"],
-	text: ["BEAT A LEVEL IN HIVE 1", "IN UNDER 30 SECONDS"]
+	text: ["BEAT A LEVEL IN HIVE 2", "IN UNDER 30 SECONDS"]
 }
 
 imp_params.quest_data["0star"] = {

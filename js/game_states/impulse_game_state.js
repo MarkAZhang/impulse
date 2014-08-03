@@ -979,8 +979,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     if(this.is_boss_level) {
       this.level.boss_victory = true
     } else {
-      this.game_numbers.score = this.level.cutoff_scores[2];
-      this.game_numbers.game_length  = 150000
+      this.game_numbers.score = this.level.cutoff_scores[0];
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {

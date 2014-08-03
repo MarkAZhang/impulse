@@ -77,7 +77,6 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
         min_star = hive_numbers.game_numbers[level].stars;
       }
     }
-    min_star = 0
 
     if(!hive_numbers.continues) {
       this.victory_type = this.victory_types[min_star]
