@@ -11,7 +11,7 @@ function WorldMapState(world) {
   this.cur_start_spark_val = calculate_spark_val()
   this.has_ult = has_ult()
 
-  this.cur_world = world
+  this.world_num = world
   this.next_world = null;
 
   this.buttons = []
@@ -66,6 +66,16 @@ function WorldMapState(world) {
   });
 
   this.fader.set_animation("fade_in");
+
+  // This uses methods from level.js
+  this.gateway_particles = []
+  this.gateway_particle_gen_interval = 1000
+  this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
+  this.gateway_particle_duration = 2000
+  // We need to divide by draw_factor due to the implementation in level.js
+  this.gateway_loc = {x: imp_vars.levelWidth/2/imp_vars.draw_factor, y: (imp_vars.levelHeight/2 - 125)/imp_vars.draw_factor}
+  this.gateway_size = 5
+  this.gateway_particles_per_round = 8
 }
 
 WorldMapState.prototype.set_up_world_map = function() {
@@ -92,9 +102,9 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
     var _this = this;
     var callback = (function(index) {
       return function() {
-        if (_this.cur_world != index) {
+        if (_this.world_num != index) {
           _this.fader.set_animation("fade_across", function() {
-            _this.cur_world = index;
+            _this.world_num = index;
           }); 
           _this.next_world = index;
         }
@@ -171,7 +181,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
-  draw_bg(ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.cur_world)
+  draw_bg(ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
@@ -181,7 +191,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
     ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-    ctx.globalAlpha *= get_bg_opacity(this.cur_world)
+    ctx.globalAlpha *= get_bg_opacity(this.world_num)
     ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
     ctx.restore()
   }
@@ -207,14 +217,14 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   if (this.fader.get_current_animation() == "fade_across") {
     ctx.save();
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
-    this.draw_world(ctx, this.cur_world);
+    this.draw_world(ctx, this.world_num);
     ctx.restore();
     ctx.save();
     ctx.globalAlpha *= this.fader.get_animation_progress();
     this.draw_world(ctx, this.next_world);
     ctx.restore();
   } else {
-    this.draw_world(ctx, this.cur_world);
+    this.draw_world(ctx, this.world_num);
   }
 
   for(var i = 0; i < this.mode_buttons.length; i++) {
@@ -236,11 +246,11 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
- 
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
   }
+  this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   
   ctx.font = '13px Muli'
   ctx.fillStyle = "white"
@@ -352,6 +362,7 @@ WorldMapState.prototype.process = function(dt) {
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }
+  this.process_gateway_particles(dt);
   this.fader.process(dt);
 }
 
@@ -360,12 +371,12 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   {
     this.buttons[i].on_mouse_move(x, y)
   }
-  this.world_buttons[this.cur_world].on_mouse_move(x, y)
+  this.world_buttons[this.world_num].on_mouse_move(x, y)
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_mouse_move(x, y)
   }
-  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
-    this.practice_buttons[this.cur_world][i].on_mouse_move(x, y)
+  for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
+    this.practice_buttons[this.world_num][i].on_mouse_move(x, y)
   }
 }
 
@@ -374,11 +385,15 @@ WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  this.world_buttons[this.cur_world].on_click(x, y)
+  this.world_buttons[this.world_num].on_click(x, y)
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_click(x, y)
   }
-  for(var i = 0; i < this.practice_buttons[this.cur_world].length; i++) {
-    this.practice_buttons[this.cur_world][i].on_click(x, y)
+  for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
+    this.practice_buttons[this.world_num][i].on_click(x, y)
   }
 }
+
+WorldMapState.prototype.process_gateway_particles = Level.prototype.process_gateway_particles;
+WorldMapState.prototype.generate_gateway_particles = Level.prototype.generate_gateway_particles;
+WorldMapState.prototype.draw_gateway_particles = Level.prototype.draw_gateway_particles;

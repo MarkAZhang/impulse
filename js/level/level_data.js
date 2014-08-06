@@ -29,7 +29,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
     "stunner": [0, 3, 0, 3, 4, 4, 50]
   },
   initial_spawn_data_easy: {
-    "stunner": 1
+    "stunner": 2
   },
   initial_spawn_data: {
     "stunner": 4
@@ -44,7 +44,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [5000, 50000, 300000],
+    "easy": [4000, 50000, 300000],
     "normal": [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
@@ -623,7 +623,7 @@ imp_params.impulse_level_data['HIVE 3-3'] = {
     "tank": [0, 10, 2, 4, 1, 0, 20],
     "harpoon": [0, 16, 4, 6, 1, 0, 15],
     "mote": [0, 8, 1.6, 3.2, 1, 0, 10],
-    "disabler": [0, 10, 1, 1, 1]
+    "disabler": [0, 10, 1, 1, 1, 0, 1]
   },
   enemies_easy: {
     "stunner": [6, 6, 1, 3, 1, 0, 10],

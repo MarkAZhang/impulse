@@ -120,6 +120,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.gateway_particle_gen_interval = 1000
   this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
   this.gateway_particle_duration = 2000
+  this.gateway_particles_per_round = 5
 
   this.spawn_point_counter = 0;
   this.reset();
@@ -273,31 +274,7 @@ Level.prototype.process = function(dt) {
 
     // if the gateway is opened, process the particles
     if (this.gateway_opened) {
-      
-      for (var i = 0; i < this.gateway_particles.length; i++) {
-        var particle = this.gateway_particles[i];
-        particle.prop += dt / this.gateway_particle_duration;
-        // remove the particle
-        if (particle.prop > 1) {
-          this.gateway_particles.splice(i, 1);
-        }
-      }
-
-      this.gateway_particle_gen_timer -= dt
-
-      if (this.gateway_particle_gen_timer < 0) {
-        this.gateway_particle_gen_timer += this.gateway_particle_gen_interval
-        var num_particles = 5
-        for (var i = 0; i < num_particles; i++) {
-          var angle = Math.random() * Math.PI * 2;
-          this.gateway_particles.push({
-            start_x: Math.cos(angle) * 1.5 * this.gateway_size + this.gateway_loc.x,
-            start_y: Math.sin(angle) * 1.4 * this.gateway_size + this.gateway_loc.y,
-            prop: 0
-          });
-        }
-      }
-
+      this.process_gateway_particles(dt);
     }
 
 
@@ -551,7 +528,6 @@ Level.prototype.generate_obstacles = function() {
     this.boundary_polygons.push(getBoundaryPolygon(temp_v, this.buffer_radius))
   }
   this.generate_obstacle_edges()
-
 }
 
 Level.prototype.generate_obstacle_edges = function() {
@@ -599,24 +575,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
 
 
   if (this.gateway_opened) {
-    for(var i = 0; i < this.gateway_particles.length; i++) {
-      var particle = this.gateway_particles[i];
-      ctx.save()
-      if (particle.prop < 0.25) {
-        ctx.globalAlpha *= particle.prop * 4
-      } else { 
-        var temp = (1 - particle.prop) / (0.75)
-        ctx.globalAlpha *= temp
-      }
-      ctx.beginPath()
-      ctx.rect(draw_factor * (particle.start_x * (1 - particle.prop) + this.gateway_loc.x * particle.prop) - 3,
-               draw_factor * (particle.start_y * (1 - particle.prop) + this.gateway_loc.y * particle.prop) - 3,
-               6,
-               6)
-      ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
-      ctx.fill()
-      ctx.restore()
-    }
+    this.draw_gateway_particles(ctx, draw_factor);
   }
   ctx.restore()
 }
@@ -757,6 +716,57 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.restore()
   //bg_ctx.clearRect(-100, 0, 100, imp_vars.levelHeight)
   //bg_ctx.clearRect(imp_vars.levelWidth, 0, 100, imp_vars.levelHeight)
+}
+
+Level.prototype.process_gateway_particles = function(dt) {
+  for (var i = 0; i < this.gateway_particles.length; i++) {
+    var particle = this.gateway_particles[i];
+    particle.prop += dt / this.gateway_particle_duration;
+    // remove the particle
+    if (particle.prop > 1) {
+      this.gateway_particles.splice(i, 1);
+    }
+  }
+
+  this.gateway_particle_gen_timer -= dt
+
+  if (this.gateway_particle_gen_timer < 0) {
+    this.gateway_particle_gen_timer += this.gateway_particle_gen_interval
+    this.generate_gateway_particles(this.gateway_loc.x, this.gateway_loc.y, this.gateway_particles_per_round)
+  }
+}
+
+Level.prototype.generate_gateway_particles = function(x, y, num_particles) {
+  for (var i = 0; i < num_particles; i++) {
+    var angle = Math.PI * 2 * i / num_particles + (Math.random() - 0.5) * Math.PI * 2 / num_particles
+    this.gateway_particles.push({
+      start_x: Math.cos(angle) * 1.5 * this.gateway_size + x,
+      start_y: Math.sin(angle) * 1.4 * this.gateway_size + y,
+      prop: 0
+    });
+  }
+}
+
+Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
+  for(var i = 0; i < this.gateway_particles.length; i++) {
+    var particle = this.gateway_particles[i];
+    ctx.save()
+    if (particle.prop < 0.25) {
+      ctx.globalAlpha *= particle.prop * 4
+    } else { 
+      var temp = (1 - particle.prop) / (0.75)
+      ctx.globalAlpha *= temp
+    }
+    ctx.beginPath()
+    ctx.rect(
+      draw_factor * (particle.start_x * (1 - particle.prop) + this.gateway_loc.x * particle.prop) - 3,
+      draw_factor * (particle.start_y * (1 - particle.prop) + this.gateway_loc.y * particle.prop) - 3,
+      6,
+      6)
+    ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
+    ctx.fill()
+    ctx.restore()
+  }
 }
 
 Level.prototype.create_enemy_images = function(enemy) {
