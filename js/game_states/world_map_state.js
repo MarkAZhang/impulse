@@ -242,7 +242,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
         ctx.fillStyle = "gray"
         ctx.fillText("???", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
       }
-      
     }
   }
 
@@ -250,6 +249,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
+
   this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   
   ctx.font = '13px Muli'
