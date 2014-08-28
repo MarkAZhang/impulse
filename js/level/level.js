@@ -228,15 +228,12 @@ Level.prototype.process = function(dt) {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
       if(p_dist(player_loc, this.spark_loc) < 25) {
         imp_vars.impulse_music.play_sound("sparks")
-        if(this.impulse_game_state.main_game) {
           this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
-          if(this.impulse_game_state.hive_numbers.sparks >= 100) {
-            this.impulse_game_state.hive_numbers.sparks -= 100;
-            this.impulse_game_state.hive_numbers.lives += 1
-            this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
-          }
-        } else
-          this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
+        if(this.impulse_game_state.hive_numbers.sparks >= 100) {
+          this.impulse_game_state.hive_numbers.sparks -= 100;
+          this.impulse_game_state.hive_numbers.lives += 1
+          this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
+        }
 
         //this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
         this.impulse_game_state.addScoreLabel(
@@ -244,7 +241,7 @@ Level.prototype.process = function(dt) {
           impulse_colors["impulse_blue"],
           this.spark_loc.x / imp_vars.draw_factor,
           this.spark_loc.y / imp_vars.draw_factor,
-          20);
+          20, 2000, true);
         this.generate_spark()
       }
 
@@ -257,13 +254,16 @@ Level.prototype.process = function(dt) {
       if(p_dist(player_loc, this.multi_loc) < 25) {
         imp_vars.impulse_music.play_sound("sparks")
         this.impulse_game_state.game_numbers.base_combo += 5
+        this.impulse_game_state.game_numbers.combo =
+          this.impulse_game_state.game_numbers.base_combo + Math.floor(this.impulse_game_state.game_numbers.seconds/10)
         //this.add_fragments("multi", {x: this.multi_loc.x, y: this.multi_loc.y})
         this.impulse_game_state.addScoreLabel(
-          "x5",
+          "x" + this.impulse_game_state.game_numbers.combo,
           "white",
           this.multi_loc.x / imp_vars.draw_factor,
           this.multi_loc.y / imp_vars.draw_factor,
-          20);
+          20,
+          2000);
         this.generate_multi()
       }
 

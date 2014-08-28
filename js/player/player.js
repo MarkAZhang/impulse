@@ -888,9 +888,6 @@ Player.prototype.draw = function(context) {
     if(imp_vars.player_data.options.multiplier_display && !this.impulse_game_state.is_boss_level) {
       context.font = "16px Muli"
       context.fillStyle = impulse_colors["impulse_blue"]
-      if(this.impulse_game_state.world_num == 0) {
-        context.fillStyle = impulse_colors["impulse_blue"]
-      }
       context.textAlign = "center"
       context.shadowBlur = 0
       context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor + 30)

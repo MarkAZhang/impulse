@@ -492,7 +492,7 @@ function load_game() {
       explosions: true,
       score_labels: true,
       progress_circle: false,
-      multiplier_display: true,
+      multiplier_display: false,
       impulse_shadow: true,
       show_transition_screens: false,
       control_hand: "right",

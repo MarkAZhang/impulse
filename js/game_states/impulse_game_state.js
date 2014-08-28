@@ -683,9 +683,15 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
 
       ctx.globalAlpha *= prog
       ctx.fillStyle = this.score_labels[i].color
-      ctx.textAlign = 'center'
-      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
-      ctx.fill()
+      if (this.score_labels[i].is_sparks) {
+        drawSprite(ctx, this.score_labels[i].x * imp_vars.draw_factor + 20,
+            this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise - 7
+            , 0, this.score_labels[i].size * 0.8, this.score_labels[i].size * 0.8, "spark")
+        ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor - 25, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
+      } else {
+        ctx.textAlign = 'center'
+        ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
+      } 
       ctx.restore()
     }
 }
@@ -883,7 +889,8 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
 }
 
 ImpulseGameState.prototype.get_combo_color = function(combo) {
-  var tcombo = 100;
+  return "white"
+  /*var tcombo = 100;
   var hperiod = 400;
   if(combo < tcombo) {
     var prog = combo/tcombo;
@@ -894,7 +901,7 @@ ImpulseGameState.prototype.get_combo_color = function(combo) {
     return "rgb("+red+","+green+","+blue+")";
   }
 
-  return this.get_combo_color((tcombo-0.01)*(Math.abs(hperiod - this.game_numbers.game_length%(2*hperiod))/hperiod))
+  return this.get_combo_color((tcombo-0.01)*(Math.abs(hperiod - this.game_numbers.game_length%(2*hperiod))/hperiod))*/
 }
 
 ImpulseGameState.prototype.transform_to_zoomed_space = function(pt) {
@@ -1095,10 +1102,10 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
   }
 }
 
-ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size, duration) {
+ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size, duration, is_sparks) {
   var this_duration = duration ? duration : this.score_label_duration
   var max_duration = duration ? duration : this.score_label_duration
-  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this_duration, max_duration: max_duration, size: font_size}
+  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this_duration, max_duration: max_duration, size: font_size, is_sparks: is_sparks}
   this.score_labels.push(temp_score_label)
 }
 
