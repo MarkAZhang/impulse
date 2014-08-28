@@ -2,13 +2,14 @@ MainGameTransitionState.prototype = new LoaderGameState
 
 MainGameTransitionState.prototype.constructor = MainGameTransitionState
 
-function MainGameTransitionState(world_num, level, victory, final_game_numbers, visibility_graph, hive_numbers, loading_game) {
+function MainGameTransitionState(world_num, level, victory, final_game_numbers, visibility_graph, hive_numbers, loading_game, from_world_map) {
 
   this.hive_numbers = hive_numbers
   this.victory = victory
 
   this.game_numbers = final_game_numbers
   this.first_process = false
+  this.from_world_map = from_world_map
 
   this.world_intro_interval = 3700
   this.level_intro_interval = 2200
@@ -135,6 +136,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
+      return "BOSS "+this.world_num
     return "HIVE "+this.world_num+"-1";
   } else {
     if(level.level_number < 7) {
@@ -268,6 +270,15 @@ MainGameTransitionState.prototype.process = function(dt) {
 }
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
+  if(!this.bg_drawn && this.level) {
+    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    this.level.draw_bg(bg_ctx)
+    this.bg_drawn = true
+    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
+    bg_canvas.setAttribute("style", "display:none")
+    draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+  }
+
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
 
@@ -281,17 +292,27 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   }*/
   
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
+  if (this.state == "world_intro" && !this.from_world_map) {
+    var prog = (this.transition_timer/this.world_intro_interval);
+    if (prog > 0.5) {
+      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)  
+    }
+  } else if (this.state == "level_intro") {
+    var prog = (this.transition_timer/this.level_intro_interval);
+    if (prog < 0.5) {
+      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)  
+    }
+  } else if (this.state == "last_level_summary") {
+    var prog = (this.transition_timer/this.last_level_summary_interval);
+    if (prog > 0.5) {
+      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)  
+    }
+  }
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
   if(!this.first_process) return
 
-  if(!this.bg_drawn && this.level) {
-    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-    this.level.draw_bg(bg_ctx)
-    this.bg_drawn = true
-    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
-    bg_canvas.setAttribute("style", "display:none")
-  }
+
 
   if(this.state == "world_intro") {
 
@@ -489,10 +510,10 @@ MainGameTransitionState.prototype.on_key_down = function(keyCode) {
 
 MainGameTransitionState.prototype.on_click = function(keyCode) {
     if(this.level_loaded) {
-      this.world_intro_interval /=4
-      this.level_intro_interval /=4
-      this.last_level_summary_interval /=4
-      this.transition_timer /=4
+      this.world_intro_interval /= 4
+      this.level_intro_interval /= 4
+      this.last_level_summary_interval /= 4
+      this.transition_timer /= 4
     }
 }
 

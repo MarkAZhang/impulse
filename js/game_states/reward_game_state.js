@@ -555,9 +555,16 @@ RewardGameState.prototype.advance_game_state = function() {
   if(this.to_tutorial) {
     switch_game_state(new HowToPlayState("ult_tutorial"))
   }
-  else if(this.main_game || this.args.is_tutorial)
+  else if (this.main_game) {
+    if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
+      // Immediately move to the next world.
+      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
+    } else {
       switch_game_state(new TitleState(true))
-  else {
+    }
+  } else if (this.args.is_tutorial) {
+      switch_game_state(new TitleState(true))
+  } else {
     switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
       best_time: this.best_time,
       high_score: this.high_score,

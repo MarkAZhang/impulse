@@ -171,7 +171,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, name, unlo
         var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
         _this.draw_world_bg(world_bg_ctx)
         setTimeout(function(){
-          switch_game_state(new MainGameTransitionState(world_num, null, null, null, null))
+          switch_game_state(new MainGameTransitionState(world_num, null, null, null, null, null, false, true))
         }, _this.fade_out_interval_main)})
   } else {
     this.world_buttons[world_num] = new SmallButton(this.requirements[world_num], 16, x, y, 200, 200, impulse_colors["boss "+world_num], impulse_colors["boss "+world_num],

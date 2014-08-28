@@ -242,8 +242,6 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
-
-
   ctx.fillStyle = this.dark_color
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
 
@@ -309,7 +307,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.bright_color
     ctx.font = '18px Muli'
     ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
-    draw_victory_type_icon(ctx, imp_vars.levelWidth/2, 200, this.world_num, this.victory_type, 1.5)
+    draw_victory_type_icon(ctx, imp_vars.levelWidth/2, 200, this.world_num, this.victory_type, 1.2)
   } else if(this.save_screen) {
     draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, {labels: true, ult: this.has_ult})
     ctx.font = '16px Muli'
@@ -472,7 +470,7 @@ MainGameSummaryState.prototype.resume_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
   this.hive_numbers.original_rating = calculate_current_rating() // set to current rating when restarting game
-  switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true))
+  switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
