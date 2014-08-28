@@ -92,3 +92,6 @@ ImpulseButton.prototype.on_key_down = function(keyCode) {
 ImpulseButton.prototype.add_hover_overlay = function(hover_overlay) {
   this.hover_overlay = hover_overlay;
 }
+
+ImpulseButton.prototype.on_mouse_down = function(x, y) {}
+ImpulseButton.prototype.on_mouse_up = function(x, y) {}

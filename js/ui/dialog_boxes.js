@@ -428,23 +428,20 @@ function OptionsMenu(previous_menu) {
 
   var button_width = 300;
 
-  var button = new OptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function() {
-    toggle_mute()
-  }, function() {
-    return !imp_vars.player_data.options.music_mute;
-  });
+  var button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function(value) {
+    imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100)) // sqrt it to get a better curve
+  }, Math.pow(imp_vars.player_data.options.bg_music_volume / 100, 0.5));
+  
   button.add_hover_overlay(new HoverOverlay("option_game_music", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(on) {
-    imp_vars.impulse_music.mute_effects(on)
-  }, function() {
-    return !imp_vars.impulse_music.effects_mute;
-  });
+  button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(value) {
+    imp_vars.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
+  }, Math.pow(imp_vars.player_data.options.effects_volume / 100, 0.333));
   button.add_hover_overlay(new HoverOverlay("option_sound_effects", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
     toggleFullScreen();
   }, function() {
     return isInFullScreen()
@@ -452,7 +449,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new HoverOverlay("option_fullscreen", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.explosions = !imp_vars.player_data.options.explosions
   }, function() {
     return imp_vars.player_data.options.explosions;
@@ -460,7 +457,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new HoverOverlay("option_particle_effects", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.score_labels = !imp_vars.player_data.options.score_labels
   }, function() {
     return imp_vars.player_data.options.score_labels;
@@ -468,7 +465,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new HoverOverlay("option_score_labels", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
   }, function() {
     return imp_vars.player_data.options.multiplier_display;
@@ -476,7 +473,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new HoverOverlay("option_multiplier_display", this.bright_color, this.world_num))
   this.buttons.push(button)
 
-  button = new OptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
   }, function() {
     return imp_vars.player_data.options.impulse_shadow;
@@ -485,7 +482,7 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(button)
 
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game) {
-      button = new OptionButton("SHOW DEFEAT SCREENS", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
+      button = new CheckboxOptionButton("SHOW DEFEAT SCREENS", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
       imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
     }, function() {
       return imp_vars.player_data.options.show_transition_screens;
@@ -562,10 +559,16 @@ OptionsMenu.prototype.on_key_down = function(keyCode) {
 }
 
 OptionsMenu.prototype.on_mouse_down = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_down(x,y)
+  }
   //this.music_volume_slider.on_mouse_down(x,y)
   //this.effects_volume_slider.on_mouse_down(x,y)
 }
 OptionsMenu.prototype.on_mouse_up = function(x, y) {
+  for(var i = 0; i < this.buttons.length; i++) {
+    this.buttons[i].on_mouse_up(x,y)
+  }
   //this.music_volume_slider.on_mouse_up(x,y)
   //this.effects_volume_slider.on_mouse_up(x,y)
   //imp_vars.impulse_music.change_bg_volume(this.convert_slider_value(this.music_volume_slider.value))
@@ -668,6 +671,8 @@ ControlsMenu.prototype.on_click = function(x, y) {
     this.buttons[i].on_click(x,y)
   }
 }
+
+
 
 ControlsMenu.prototype.adjust_colors = function() {
   for(var i in this.control_buttons) {

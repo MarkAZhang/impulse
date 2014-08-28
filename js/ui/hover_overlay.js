@@ -32,10 +32,10 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 		this.w = 250;
 		this.h = 150;
 	} else if (this.type == "option_game_music") {
-		this.w = 250;
+		this.w = 300;
 		this.h = 40;
 	} else if (this.type == "option_sound_effects") {
-		this.w = 200;
+		this.w = 250;
 		this.h = 40;
 	} else if (this.type == "option_fullscreen") {
 		this.w = 150;
@@ -75,10 +75,10 @@ HoverOverlay.prototype.draw = function(ctx) {
 	ctx.fill();
 
 	if (this.type == "option_game_music") {
-		this.option_text = "PLAY BACKGROUND MUSIC"
+		this.option_text = "BACKGROUND MUSIC VOLUME"
 	}
 	if (this.type == "option_sound_effects") {
-		this.option_text = "PLAY SOUND EFFECTS"
+		this.option_text = "SOUND EFFECTS VOLUME"
 	}
 	if (this.type == "option_fullscreen") {
 		this.option_text = "GO FULLSCREEN"

@@ -97,7 +97,7 @@ window["impulse_main"] =  function() {
 
 function set_up_game_buttons() {
   imp_params.game_buttons = []
-  imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
+  /*imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
     toggle_mute()
   }, "mute_in_game"))
 
@@ -107,8 +107,7 @@ function set_up_game_buttons() {
 
   imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
     toggleFullScreen()
-  }, "fullscreen_in_game"))
-
+  }, "fullscreen_in_game"))*/
 }
 
 function toggle_pause() {
@@ -422,13 +421,13 @@ function toggle_mute() {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
-  if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
+  /*if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
     toggle_mute()    
-  }
+  }*/
 
-  if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
+  /*if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
     toggleFullScreen()
-  }
+  }*/
 
   if(imp_vars.cur_dialog_box) {
     imp_vars.cur_dialog_box.on_key_down(keyCode)
@@ -487,8 +486,8 @@ function load_game() {
   }
 
   var default_options = {
-      music_mute: false,
-      effects_mute: false,
+      effects_volume: 100,
+      bg_music_volume: 100,
       explosions: true,
       score_labels: true,
       progress_circle: false,

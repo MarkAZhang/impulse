@@ -540,7 +540,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     } else if (this.new_enemy_timer > this.new_enemy_duration - 500) {
       ctx.globalAlpha *= Math.max(0, (this.new_enemy_duration - this.new_enemy_timer) / 500) 
     }
-    ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
+    ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2, 120, 160)
     ctx.restore()
   }
 
@@ -859,9 +859,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.shadowBlur = 0;
   context.save()*/
 
-  draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 110, 24, {labels: true, ult: this.has_ult})
+  draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {labels: true, ult: this.has_ult})
+  //context.font = '12px Muli'
+  //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);
   context.restore()
-
 
   context.restore()
 }
