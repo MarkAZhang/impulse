@@ -776,7 +776,7 @@ Player.prototype.draw = function(context) {
     context.save()
     if(this.confuse_duration > 0) {
       var prop = Math.max(((this.confuse_interval-this.confuse_duration) / this.confuse_interval), 0)
-      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "24ac40") 
+      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "#24ac40") 
     } else if(this.silence_duration > 0) {
       var prop = Math.max(((this.silence_interval-this.silence_duration) / this.silence_interval), 0)
       draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "gray") 
