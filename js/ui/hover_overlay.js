@@ -55,6 +55,21 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "option_defeat_screens") {
 		this.w = 300;
 		this.h = 40;
+	} else if (this.type == "tutorial_move") {
+		this.w = 220;
+		this.h = 40;
+	} else if (this.type == "tutorial_impulse") {
+		this.w = 220;
+		this.h = 40;
+	} else if (this.type == "tutorial_pause") {
+		this.w = 220;
+		this.h = 40;
+	} else if (this.type == "tutorial_score_points") {
+		this.w = 380;
+		this.h = 40;
+	} else if (this.type == "tutorial_enter_gateway") {
+		this.w = 300;
+		this.h = 40;
 	}
 
 	this.opacity = 0;
@@ -69,10 +84,11 @@ HoverOverlay.prototype.draw = function(ctx) {
 	ctx.beginPath();
 	ctx.strokeStyle = this.color;
 	ctx.fillStyle = "black"
-	ctx.lineWidth = 4;
+	ctx.shadowBlur = 0;
+	ctx.lineWidth = 2;
 	ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-	ctx.stroke();
 	ctx.fill();
+	ctx.stroke();
 
 	if (this.type == "option_game_music") {
 		this.option_text = "BACKGROUND MUSIC VOLUME"
@@ -99,7 +115,56 @@ HoverOverlay.prototype.draw = function(ctx) {
 		this.option_text = "SHOW DEFEAT SCREEN ON DEATH"
 	}
 
-	if (this.type == "rank_explanation") {
+	if (this.type == "tutorial_move") {
+		if(imp_vars.player_data.options.control_hand == "right") {
+			this.tutorial_text = "WASD TO MOVE";
+	    }
+	    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+	    	this.tutorial_text = "ARROW KEYS TO MOVE";
+	    }
+	}
+
+	if (this.type == "tutorial_impulse") {
+	  if(imp_vars.player_data.options.control_scheme == "mouse") {
+	  	this.tutorial_text = "CLICK TO IMPULSE";
+      } else {
+	  	this.tutorial_text = "ARROW KEYS TO IMPULSE";
+      }
+	}
+
+	if (this.type == "tutorial_pause") {
+	  if(imp_vars.player_data.options.control_hand == "right") {
+	  	this.tutorial_text = "ESC TO PAUSE";
+      } else if(imp_vars.player_data.options.control_hand == "left") {
+      	this.tutorial_text = "ENTER TO PAUSE";
+      }
+	}
+
+	if (this.type == "tutorial_score_points") {
+		this.tutorial_text = "SCORE POINTS TO OPEN LEVEL GATEWAY"
+	}
+
+	if (this.type == "tutorial_enter_gateway") {
+		if(imp_vars.player_data.options.control_hand == "right") {
+			this.tutorial_text = "SPACEBAR TO ENTER GATEWAY";
+        }
+        if(imp_vars.player_data.options.control_hand == "left") {
+        	this.tutorial_text = "SHIFT TO ENTER GATEWAY";
+        }
+	}
+
+	if (this.type.substring(0, 8) == "tutorial") {
+		/*if(imp_vars.player_data.options.control_hand == "right") {
+	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color, ["W", "A", "S", "D"])
+	    }
+	    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color)
+	    }*/
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText(this.tutorial_text, this.x, this.y - this.h / 2 + 25);
+	} else 	if (this.type == "rank_explanation") {
 		var ytop = this.y - this.h/2;
 		/*ctx.textAlign = 'center'
 		ctx.font = "20px Muli"
@@ -199,5 +264,10 @@ HoverOverlay.prototype.set_position = function(mx, my) {
 
 	if (this.type.substring(0, 6) == "option") {
 		this.y += 20
+	}
+
+	if (this.type.substring(0, 8) == "tutorial") {
+		this.x = mx;
+		this.y = my - this.h/2 - 50;
 	}
 }

@@ -74,7 +74,7 @@ function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
 
   context.fillStyle = color
   context.font = "20px MUli"
-  context.fillText("CLICK", x, y + h * 0.3)
+  context.fillText("PAUSE", x, y + h * 0.3)
   context.font = "16px MUli"
   context.fillText("FOR INFO", x, y + h * 0.42)
   context.restore()
@@ -444,17 +444,17 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
   draw_rounded_rect(context, x + size, y, size * 0.9, size * 0.9, size * 0.2, color)
 
   context.fillStyle = color;
-  context.font = '20px Muli'
+  context.font = (size * 0.4) + 'px Muli'
   context.textAlign = "center"
   if(keysArray) {
-    context.fillText(keysArray[0], x, y - size * 2/3)
-    context.fillText(keysArray[1], x - size, y + size * 1/3)
-    context.fillText(keysArray[2], x, y + size * 1/3)
-    context.fillText(keysArray[3], x + size, y + size * 1/3)
-    draw_arrow(context, x, y - size * 1.1, size * 0.3, "up", color)
-    draw_arrow(context, x - size, y - size * 0.1, size * 0.3, "left", color)
-    draw_arrow(context, x, y - size * 0.13, size * 0.3, "down", color)
-    draw_arrow(context, x + size, y - size * 0.1, size * 0.3, "right", color)
+    context.fillText(keysArray[0], x, y - size * 1)
+    context.fillText(keysArray[1], x - size, y + size * 0)
+    context.fillText(keysArray[2], x, y + size * 0)
+    context.fillText(keysArray[3], x + size, y + size * 0)
+    draw_arrow(context, x, y - size * 0.8, size * 0.3, "up", color)
+    draw_arrow(context, x - size, y + size * 0.2, size * 0.3, "left", color)
+    draw_arrow(context, x, y + size * 0.2, size * 0.3, "down", color)
+    draw_arrow(context, x + size, y + size * 0.2, size * 0.3, "right", color)
   } else {
     draw_arrow(context, x, y - size , size * 0.5, "up", color)
     draw_arrow(context, x - size, y , size * 0.5, "left", color)

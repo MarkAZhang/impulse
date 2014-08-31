@@ -394,6 +394,10 @@ Level.prototype.initial_spawn = function() {
         num_enemies_to_spawn = Math.max( 1, 0.5 * num_enemies_to_spawn)
       }
 
+      if (this.impulse_game_state.show_tutorial) {
+        num_enemies_to_spawn *= 0.5
+      }      
+
       for(var i = 0; i < Math.floor(num_enemies_to_spawn); i++) {
         this.spawn_this_enemy(enemy, spawn_point_index);
         spawn_point_index+=1;
@@ -420,6 +424,10 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
       if (this.impulse_game_state instanceof HowToPlayState && this.double_spawn) {
         num_enemies_to_spawn *= 2
+      }
+
+      if (this.impulse_game_state.show_tutorial) {
+        num_enemies_to_spawn *= 0.5
       }
 
       if (this.impulse_game_state instanceof HowToPlayState && this.no_spawn) {

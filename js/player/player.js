@@ -378,6 +378,9 @@ Player.prototype.process = function(dt) {
       if (this.impulse_game_state instanceof HowToPlayState) {
         this.impulse_game_state.player_impulsed()  
       }
+      if (this.impulse_game_state.show_tutorial) {
+        this.impulse_game_state.add_tutorial_signal("player_impulsed")
+      }
       
     }
     if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
@@ -565,6 +568,9 @@ Player.prototype.process = function(dt) {
 
     if (this.impulse_game_state instanceof HowToPlayState && (f_x != 0 || f_y != 0)) {
       this.impulse_game_state.player_moved()
+    }
+    if (this.impulse_game_state.show_tutorial && (f_x != 0 || f_y != 0)) {
+      this.impulse_game_state.add_tutorial_signal("player_moved")
     }
   }
 }

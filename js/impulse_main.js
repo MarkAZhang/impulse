@@ -86,11 +86,11 @@ window["impulse_main"] =  function() {
     set_up_game_buttons()
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
-    if(imp_vars.player_data.first_time) {
+    /*if(imp_vars.player_data.first_time) {
       imp_vars.cur_game_state = new HowToPlayState("first_time_tutorial")
-    } else {
-      imp_vars.cur_game_state = new TitleState(null)
-    }
+    } else {*/
+    imp_vars.cur_game_state = new TitleState(null)
+    //}
     imp_vars.last_time = (new Date()).getTime();
     step()
 }

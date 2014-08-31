@@ -2,14 +2,14 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game, first_time, first_ever) {
+function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game, first_time) {
 
   if(!world) return
 
-  this.init(world, level, visibility_graph, first_time, hive_numbers, main_game, first_ever)
+  this.init(world, level, visibility_graph, first_time, hive_numbers, main_game)
 }
 
-ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, main_game, first_ever) {
+ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, main_game) {
 
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null, impulsed: false}
   this.hive_numbers = hive_numbers
@@ -20,8 +20,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
   }
 
-  this.first_time = first_time
-  this.first_ever = first_ever
+
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -145,6 +144,12 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     imp_params.game_buttons[i].hover_color = this.bright_color
   }
 
+  // if we are playing for the first time, show the tutorial.
+  this.show_tutorial = imp_vars.player_data.first_time
+  if (this.show_tutorial) {
+    this.tutorial_overlay_manager = new TutorialOverlayManager(this);
+    this.tutorial_signals = {};
+  }
 }
 
 ImpulseGameState.prototype.reset = function() {
@@ -274,6 +279,12 @@ ImpulseGameState.prototype.process = function(dt) {
   this.fps_counter+=1
   if(!this.pause)
   {
+    if (this.show_tutorial) {
+      this.tutorial_overlay_manager.process(dt);
+      if(this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+        this.add_tutorial_signal("moved_to_gateway")
+      }
+    }
     this.check_pause()
     this.draw_interface_timer -= dt
 
@@ -520,6 +531,12 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.is_boss_level) {
     this.draw_score_labels(ctx)
   }
+
+  // Draw the tutorial if applicable.
+  if (this.show_tutorial) {
+    this.tutorial_overlay_manager.draw(ctx);
+  }
+
   ctx.restore()
 
   ctx.clearRect(0, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
@@ -924,9 +941,10 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
 
-  if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
+  // Ignore mouse dowsn on the new enemy message box.
+  /*if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
     return
-  }
+  }*/
 
   if(!this.pause) {
     this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
@@ -951,16 +969,17 @@ ImpulseGameState.prototype.reset_player_state = function() {
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(this.pause) return
 
-  if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
+  // Process a click on the new enemy message box.
+  /*if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
       imp_params.impulse_enemy_stats[this.new_enemy_type].seen += 5 // do not show any more if this is clicked
       var _this = this
       setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
       this.pause = true
       this.reset_player_state()
       this.new_enemy_timer = 2000
-  } else {
-    this.player.mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
-  }
+  } else {*/
+  this.player.mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+  //}
 }
 
 ImpulseGameState.prototype.on_right_mouse_up = function(x, y) {
@@ -1155,6 +1174,9 @@ ImpulseGameState.prototype.check_cutoffs = function() {
         if (this instanceof HowToPlayState) {
           this.gateway_opened()
         }
+        if (this.show_tutorial) {
+          this.add_tutorial_signal("gateway_opened")
+        }
       }
   }
 
@@ -1185,5 +1207,11 @@ ImpulseGameState.prototype.game_over = function() {
       visibility_graph: this.visibility_graph,
       victory: this.victory
     }))
+  }
+}
+
+ImpulseGameState.prototype.add_tutorial_signal = function(signal) {
+  if (this.show_tutorial) {
+    this.tutorial_signals[signal] = true;
   }
 }

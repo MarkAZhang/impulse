@@ -207,6 +207,9 @@ Enemy.prototype.check_death = function() {
         if (this.impulse_game_state instanceof HowToPlayState) {
           this.impulse_game_state.enemy_killed()
         }
+        if (this.impulse_game_state.show_tutorial) {
+          this.impulse_game_state.add_tutorial_signal("enemy_killed")
+        }
         this.start_death("kill")
       }
 
