@@ -44,7 +44,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [4000, 50000, 300000],
+    "easy": [2500, 50000, 300000],
     "normal": [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
