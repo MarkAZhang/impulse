@@ -395,7 +395,7 @@ Level.prototype.initial_spawn = function() {
       }
 
       if (this.impulse_game_state.show_tutorial) {
-        num_enemies_to_spawn *= 0.5
+        num_enemies_to_spawn = Math.ceil(num_enemies_to_spawn * 0.5)
       }      
 
       for(var i = 0; i < Math.floor(num_enemies_to_spawn); i++) {
@@ -427,7 +427,7 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
       }
 
       if (this.impulse_game_state.show_tutorial) {
-        num_enemies_to_spawn *= 0.5
+        num_enemies_to_spawn = Math.ceil(num_enemies_to_spawn * 0.5);
       }
 
       if (this.impulse_game_state instanceof HowToPlayState && this.no_spawn) {

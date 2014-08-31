@@ -104,7 +104,7 @@ Troll.prototype.additional_drawing = function(context, draw_factor, latest_color
 
 Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
   if(this.status_duration[1] <= 0 && this.entered_arena) {
-    this.body.ApplyImpulse(new b2Vec2(.25 * impulse_force*Math.cos(hit_angle), .25 * impulse_force*Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new b2Vec2(.3 * impulse_force*Math.cos(hit_angle), .3 * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
     this.player.confuse(this.short_troll_period)
     imp_vars.impulse_music.play_sound("pwheel")

@@ -342,7 +342,7 @@ PauseMenu.prototype.quit_tutorial = function() {
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       is_tutorial: true,
-      tutorial_first_time: this.game_state.mode == "first_time_tutorial"
+      tutorial_first_time: this.game_state.mode
     }))
    clear_dialog_box()
 }

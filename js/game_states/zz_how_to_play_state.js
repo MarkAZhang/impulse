@@ -1083,7 +1083,7 @@ HowToPlayState.prototype.game_over = function() {
       world_num: this.world_num,
       visibility_graph: this.visibility_graph,
       is_tutorial: true,
-      tutorial_first_time: this.mode == "first_time_tutorial"
+      tutorial_type: this.mode,
     }))
   } else {
     this.zoom_start_scale = 0.1

@@ -80,6 +80,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   var contactListener = new b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
+  contactListener.EndContact = this.handle_collisions_on_end_contact
   this.world.SetContactListener(contactListener);
   this.pause = false
   this.ready = true
@@ -103,6 +104,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.zoom_target_scale = 1
   this.zoom = 0.1
   this.zoom_bg_switch = true;
+  this.first_time = first_time;
   if(this.first_time) {
     this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
   } else {
@@ -1078,6 +1080,24 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
   if(!first || !second) return
 
 
+
+  first["owner"].collide_with(second["owner"], first["body"], second["body"])
+  second["owner"].collide_with(first["owner"], second["body"], first["body"])
+
+  //contact.SetEnabled(false)
+
+}
+
+ImpulseGameState.prototype.handle_collisions_on_end_contact = function(contact) {
+  // This method is a special case. Only run if both objects are tanks.
+  // When tanks are already touching each other, we want them to explode if we impulse them.
+  var first = contact.GetFixtureA().GetUserData()
+  var second = contact.GetFixtureB().GetUserData()
+
+  if(!first || !second) return
+  if (first["owner"].type != "tank" || second["owner"].type != "tank") {
+    return;
+  }
 
   first["owner"].collide_with(second["owner"], first["body"], second["body"])
   second["owner"].collide_with(first["owner"], second["body"], first["body"])

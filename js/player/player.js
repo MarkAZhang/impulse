@@ -475,7 +475,6 @@ Player.prototype.process = function(dt) {
     }
     else
     {
-
       for(var i = 0; i < this.level.enemies.length; i++)
       {
         if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue

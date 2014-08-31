@@ -55,7 +55,7 @@ IconButton.prototype.additional_draw = function(context) {
 
   if (this.extra_text) {
     context.font = this.extra_text_size ? this.extra_text_size : this.size * 0.7 +'px Muli';
-    context.fillText(this.extra_text, this.x, this.y + this.h/3 + 1.2 * this.size)
+    context.fillText(this.extra_text, this.x, this.y + this.h/3 + 1 * this.size)
   }
   
   context.fill()

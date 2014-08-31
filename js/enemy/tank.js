@@ -27,6 +27,8 @@ function Tank(world, x, y, id, impulse_game_state) {
     this.bomb_factor = 5
   }
 
+  this.tank_collision_fudge_period = 75;
+
   this.activated = false
 
   this.cause_of_death = null
@@ -51,6 +53,10 @@ Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = this.status_duration[1] <= 0
   //this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+
+  if (this.tank_collision_fudge_timer > 0) {
+    this.tank_collision_fudge_timer -= dt;
+  }
 
   if(this.durations["volatile"] > 0) {
     this.durations["volatile"] -= dt
@@ -107,6 +113,8 @@ Tank.prototype.check_death = function()
 
 
 Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+  this.durations["impulsed"] += this.impulsed_duration
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   if(!ultimate) 
     this.open(this.open_period)
   if (this.status_duration[2] > 0) {
@@ -114,9 +122,11 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, 
   } else {
     this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
   }
-  
-  this.durations["impulsed"] += this.impulsed_duration
-  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+
+  if (this.tank_collision_fudge_timer > 0 && !this.dying && !this.activated && this.status_duration[1] <= 0) {
+    this.activated = true
+    this.cause_of_death = "kill"
+  }
 }
 
 Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
@@ -124,16 +134,17 @@ Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hi
 }
 
 Tank.prototype.collide_with = function(other, this_body, other_body) {
-  if(other instanceof Tank && this.durations["volatile"] > 0 && !this.dying && !this.activated)
-  {
-
-    if(this.status_duration[1] <= 0) {
+  if(other instanceof Tank) {
+    if (this.durations["volatile"] > 0 && !this.dying && !this.activated && this.status_duration[1] <= 0)
+    {
       this.activated = true
       this.cause_of_death = "kill"
+    } else {
+      // If we've collided with a tank, but we haven't received the impulse, 
+      // it's possible that the impulse is about to hit. Give a short grace period.
+      this.tank_collision_fudge_timer = this.tank_collision_fudge_period;
     }
-
-  }
-
+  } 
 
   /*if(other instanceof BossOne && this.durations["open"] > 0 && !this.dying && !this.activated)
   {

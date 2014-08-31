@@ -563,7 +563,13 @@ RewardGameState.prototype.advance_game_state = function() {
       switch_game_state(new TitleState(true))
     }
   } else if (this.args.is_tutorial) {
-      switch_game_state(new TitleState(true))
+
+      if (this.args.tutorial_type == "ult_tutorial") {
+        // They MUST have come from world 2. Take them to world 2.
+        switch_game_state(new MainGameTransitionState(2, null, null, null, null))    
+      } else {
+        switch_game_state(new TitleState(true))  
+      }
   } else {
     switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
       best_time: this.best_time,
@@ -579,7 +585,7 @@ RewardGameState.prototype.determine_rewards = function() {
 
 
   if(this.args.is_tutorial) {
-    if(this.args.tutorial_first_time) {
+    if(this.args.tutorial_type == "first_time_tutorial") {
       this.rewards.push({
         type: "first_time_tutorial"
       })
@@ -642,11 +648,11 @@ RewardGameState.prototype.determine_rewards = function() {
     }
 
     this.check_quests();
-    if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
+    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
       this.rewards.push({
         type: "share"
       });
-    }
+    }*/
     
     imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
   }
