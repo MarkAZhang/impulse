@@ -1,18 +1,24 @@
 var TutorialOverlayManager = function(impulse_game_state) {
 	this.overlays = [];
 	this.impulse_game_state = impulse_game_state;
-  	this.add_overlays();
   	this.initial_delay = 3000;
+  	this.tutorial_level = parseInt(impulse_game_state.level_name.substring(7)) // Take the X of HIVE 0-X.
+  	this.add_overlays();
 }
 
 TutorialOverlayManager.prototype.add_overlays = function() {
-	this.overlays.push(new MoveTutorialOverlay(this.impulse_game_state));
-	this.overlays.push(new ImpulseTutorialOverlay(this.impulse_game_state));
-	//this.overlays.push(new KillEnemyTutorialOverlay(this.impulse_game_state));
-	this.overlays.push(new PauseTutorialOverlay(this.impulse_game_state));
-	//this.overlays.push(new ScorePointsTutorialOverlay(this.impulse_game_state));
-	this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
-	this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
+	if (this.tutorial_level == 1) {
+		this.overlays.push(new MoveTutorialOverlay(this.impulse_game_state));	
+		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
+	} else {
+		this.overlays.push(new ImpulseTutorialOverlay(this.impulse_game_state));
+		//this.overlays.push(new KillEnemyTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new PauseTutorialOverlay(this.impulse_game_state));
+		//this.overlays.push(new ScorePointsTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));		
+	}
 }
 
 TutorialOverlayManager.prototype.draw = function(ctx) {
@@ -254,12 +260,12 @@ GatewayMoveTutorialOverlay.prototype.draw = function(ctx) {
 	/*draw_arrow(ctx, loc.x - 45, loc.y, 25, "right", "red", false)
     draw_arrow(ctx, loc.x + 45, loc.y, 25, "left", "red", false)*/
     ctx.beginPath();
-    ctx.moveTo(loc.x, loc.y - 75 - prog * 20);
-    ctx.lineTo(loc.x, loc.y - 55 - prog * 20);
-    ctx.lineWidth = 8
-    ctx.strokeStyle = "white"
+    ctx.moveTo(loc.x, loc.y - 122 - prog * 50);
+    ctx.lineTo(loc.x, loc.y - 82 - prog * 50);
+    ctx.lineWidth = 16
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
     ctx.stroke();
-    draw_arrow(ctx, loc.x, loc.y - 50 - prog * 20, 25, "down", "white", false)
+    draw_arrow(ctx, loc.x, loc.y - 70 - prog * 50, 50, "down", impulse_colors["impulse_blue"], false)
     //draw_arrow(ctx, loc.x, loc.y + 45, 25, "up", "red", false)
     /*ctx.beginPath()
     ctx.arc(loc.x, loc.y, 50, 0, 2 * Math.PI)

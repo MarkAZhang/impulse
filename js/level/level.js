@@ -107,7 +107,11 @@ Level.prototype.init = function(data, level_intro_state) {
     "fourth boss": BossFour,
     "boss four spawner": BossFourSpawner,
   }
-  this.gateway_loc = {x: this.get_starting_loc().x/imp_vars.draw_factor, y: this.get_starting_loc().y/imp_vars.draw_factor}
+  if (data.gateway_loc) {
+    this.gateway_loc = {x: data.gateway_loc.x/imp_vars.draw_factor, y: data.gateway_loc.y/imp_vars.draw_factor}
+  } else {
+    this.gateway_loc = {x: this.get_starting_loc().x/imp_vars.draw_factor, y: this.get_starting_loc().y/imp_vars.draw_factor}
+  }
   this.gateway_size = 4
 
   this.gateway_transition_interval = 500
@@ -189,6 +193,7 @@ Level.prototype.reset = function() {
 }
 
 Level.prototype.generate_spark = function() {
+  if (this.spark_spawn_points.length == 0) return
   var spark_index = Math.floor(Math.random() * this.spark_spawn_points.length)
   this.spark_loc = {x: this.spark_spawn_points[spark_index][0], y: this.spark_spawn_points[spark_index][1]};
   var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
@@ -221,6 +226,7 @@ Level.prototype.generate_multi = function() {
 
 Level.prototype.process = function(dt) {
   //handle obstacle visibility
+  if (this.spark_spawn_points.length > 0) {
     this.spark_duration -= dt
     if(!this.is_boss_level && (this.spark_loc == null || this.spark_duration < 0)) {
       this.generate_spark()
@@ -270,106 +276,107 @@ Level.prototype.process = function(dt) {
     }
 
     this.spark_spin_angle += Math.PI * 2 * dt / this.spark_spin_rate
+  }
 
-    if(this.gateway_transition_duration != null) {
-      if(this.gateway_transition_duration > 0) {
-        this.gateway_transition_duration -= dt
-      } else {
-        imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-        this.draw_bg(imp_vars.bg_ctx)
-        imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
-        this.gateway_transition_duration = null
-      }
-    }
-
-    // if the gateway is opened, process the particles
-    if (this.gateway_opened) {
-      this.process_gateway_particles(dt);
-    }
-
-
-    if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
-    {
-      this.obstacle_visibility = Math.min(1, this.obstacle_visibility + dt/1000)
-    }
-    else if(this.obstacles_visible_timer > 0 && this.obstacle_visibility > 0)
-    {
-      this.obstacle_visibility = Math.max(0, this.obstacle_visibility - dt/1000)
-    }
-    if (this.obstacles_visible_timer > 0)
-      this.obstacles_visible_timer -= dt
-
-    this.dead_enemies = []
-    this.spawned_enemies = []
-    this.expired_enemies = []
-
-    for(var i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].process(i, dt)
-    }
-    while(this.dead_enemies.length > 0)
-    {
-      var dead_i = this.dead_enemies.pop()
-
-      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
-      if(this.enemies[dead_i] instanceof Harpoon) {
-        this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].harpoon_head.body)
-      }
-
-      if(this.enemies[dead_i] == this.boss) {
-        this.boss_victory = true
-
-      }
-    }
-
-    for(var i = this.fragments.length - 1; i >= 0; i--) {
-      this.fragments[i].process(dt);
-      if(this.fragments[i].isDone()) {
-        this.fragments.splice(i, 1);
-        this.total_fragments -= 4;
-      }
-    }
-
-    while(this.expired_enemies.length > 0)
-    {
-      var dead_i = this.expired_enemies.pop()
-
-      this.enemy_numbers[this.enemies[dead_i].type] -= 1
-
-      if(this.enemies[dead_i].type == "goo" || this.enemies[dead_i].type == "disabler") { // if goo or disabler died, reset the death timer
-        this.enemy_spawners[this.enemies[dead_i].type].reset_spawn_period(this.impulse_game_state.game_numbers.seconds);
-      }
-
-      this.enemies.splice(dead_i, 1)
-
-    }
-
-    while(this.spawned_enemies.length > 0)
-    {
-      var new_enemy = this.spawned_enemies.pop()
-
-      this.add_enemy(new_enemy)
-
-    }
-
-    if(!this.initial_spawn_done) {
-      this.initial_spawn()
-      this.initial_spawn_done = true;
+  if(this.gateway_transition_duration != null) {
+    if(this.gateway_transition_duration > 0) {
+      this.gateway_transition_duration -= dt
     } else {
-      this.check_enemy_spawn_timers(dt)
+      imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+      this.draw_bg(imp_vars.bg_ctx)
+      imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+      this.gateway_transition_duration = null
+    }
+  }
 
-      if(this.spawn_timer >= 0) {
-        this.spawn_timer -= dt
-      }
-      else {
-        if(this.spawn_queue.length > 0) {
-          var enemy_type_to_spawn = this.spawn_queue[0].type;
-          var spawn_point_index = this.spawn_queue[0].spawn_point;
-          this.spawn_queue = this.spawn_queue.slice(1)
-          this.spawn_this_enemy(enemy_type_to_spawn, spawn_point_index)
-          this.spawn_timer = this.spawn_interval
-        }
+  // if the gateway is opened, process the particles
+  if (this.gateway_opened) {
+    this.process_gateway_particles(dt);
+  }
+
+
+  if(this.obstacles_visible_timer <= 0 && this.obstacle_visibility < 1)
+  {
+    this.obstacle_visibility = Math.min(1, this.obstacle_visibility + dt/1000)
+  }
+  else if(this.obstacles_visible_timer > 0 && this.obstacle_visibility > 0)
+  {
+    this.obstacle_visibility = Math.max(0, this.obstacle_visibility - dt/1000)
+  }
+  if (this.obstacles_visible_timer > 0)
+    this.obstacles_visible_timer -= dt
+
+  this.dead_enemies = []
+  this.spawned_enemies = []
+  this.expired_enemies = []
+
+  for(var i = 0; i < this.enemies.length; i++) {
+    this.enemies[i].process(i, dt)
+  }
+  while(this.dead_enemies.length > 0)
+  {
+    var dead_i = this.dead_enemies.pop()
+
+    this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
+    if(this.enemies[dead_i] instanceof Harpoon) {
+      this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].harpoon_head.body)
+    }
+
+    if(this.enemies[dead_i] == this.boss) {
+      this.boss_victory = true
+
+    }
+  }
+
+  for(var i = this.fragments.length - 1; i >= 0; i--) {
+    this.fragments[i].process(dt);
+    if(this.fragments[i].isDone()) {
+      this.fragments.splice(i, 1);
+      this.total_fragments -= 4;
+    }
+  }
+
+  while(this.expired_enemies.length > 0)
+  {
+    var dead_i = this.expired_enemies.pop()
+
+    this.enemy_numbers[this.enemies[dead_i].type] -= 1
+
+    if(this.enemies[dead_i].type == "goo" || this.enemies[dead_i].type == "disabler") { // if goo or disabler died, reset the death timer
+      this.enemy_spawners[this.enemies[dead_i].type].reset_spawn_period(this.impulse_game_state.game_numbers.seconds);
+    }
+
+    this.enemies.splice(dead_i, 1)
+
+  }
+
+  while(this.spawned_enemies.length > 0)
+  {
+    var new_enemy = this.spawned_enemies.pop()
+
+    this.add_enemy(new_enemy)
+
+  }
+
+  if(!this.initial_spawn_done) {
+    this.initial_spawn()
+    this.initial_spawn_done = true;
+  } else {
+    this.check_enemy_spawn_timers(dt)
+
+    if(this.spawn_timer >= 0) {
+      this.spawn_timer -= dt
+    }
+    else {
+      if(this.spawn_queue.length > 0) {
+        var enemy_type_to_spawn = this.spawn_queue[0].type;
+        var spawn_point_index = this.spawn_queue[0].spawn_point;
+        this.spawn_queue = this.spawn_queue.slice(1)
+        this.spawn_this_enemy(enemy_type_to_spawn, spawn_point_index)
+        this.spawn_timer = this.spawn_interval
       }
     }
+  }
 
   if(this.boss_victory) {
     for(var i = 0; i < this.enemies.length; i++) {

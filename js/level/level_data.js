@@ -20,6 +20,29 @@ imp_params.impulse_level_data['HOW TO PLAY'] = {
   buffer_radius: 1
 }
 
+imp_params.impulse_level_data['HIVE 0-1'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 200, y: 300},
+  gateway_loc: {x: 600, y: 300}
+}
+
 imp_params.impulse_level_data['HIVE 1-1'] = {
   enemies_easy: {
     //"stunner": [0, 4, 1.75, 2, 50]
@@ -48,7 +71,6 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
     "normal": [50000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 300}
-
 }
 
 imp_params.impulse_level_data['HIVE 1-2'] = {

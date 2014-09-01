@@ -15,6 +15,11 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
   this.active = true
   this.bg_color = null//"black"
   this.underline_on_hover = true
+
+  if (this.icon.slice(0, 5) == "world") {
+    this.underline_on_hover = false;
+
+  }
   //this.border = true
 }
 
@@ -47,9 +52,10 @@ IconButton.prototype.additional_draw = function(context) {
   } else {
     context.shadowBlur = 0
   }
+
   if (this.icon.slice(0, 8) == "practice") {
     context.fillText(this.text, this.x, this.y + this.h/6)  
-  } else {
+  } else if (this.icon.slice(0, 5) != "world") {
     context.fillText(this.text, this.x, this.y + this.h/3)
   }
 
@@ -230,7 +236,6 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_arrow_keys(context, this.x + this.w * 0.2, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }
   } else if(this.icon.slice(0, 5) == "world") {
-    var text = ["I", "II","III", "IV"]
     var world_num = parseInt(this.icon.slice(5));
     context.save()
     if(this.hover && this.active) {
@@ -252,8 +257,8 @@ IconButton.prototype.draw_icon  = function(context) {
     }
     context.textAlign = 'center'
     context.font = "32px Muli"
-    context.fillStyle = this.color;
-    context.fillText(text[world_num-1], this.x, this.y + 10)
+    context.fillStyle = this.active ? this.color : "gray";
+    context.fillText(this.text, this.x, this.y + 10)
     context.restore()
   } else if(this.icon.slice(0, 8) == "practice") {
     var text = ["I", "II","III", "IV"]

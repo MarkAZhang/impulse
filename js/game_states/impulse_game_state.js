@@ -4,7 +4,7 @@ ImpulseGameState.prototype.constructor = ImpulseGameState
 
 function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game, first_time) {
 
-  if(!world) return
+  if(world == null || world == undefined) return
 
   this.init(world, level, visibility_graph, first_time, hive_numbers, main_game)
 }
@@ -146,12 +146,14 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     imp_params.game_buttons[i].hover_color = this.bright_color
   }
 
-  // if we are playing for the first time, show the tutorial.
-  this.show_tutorial = imp_vars.player_data.first_time
+  // if this is world zero. show the tutorial.
+  this.show_tutorial = this.world_num == 0
   if (this.show_tutorial) {
     this.tutorial_overlay_manager = new TutorialOverlayManager(this);
     this.tutorial_signals = {};
   }
+
+  this.check_cutoffs();
 }
 
 ImpulseGameState.prototype.reset = function() {
@@ -703,6 +705,7 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
       ctx.globalAlpha *= prog
       ctx.fillStyle = this.score_labels[i].color
       if (this.score_labels[i].is_sparks) {
+        ctx.textAlign = 'left'
         drawSprite(ctx, this.score_labels[i].x * imp_vars.draw_factor + 20,
             this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise - 7
             , 0, this.score_labels[i].size * 0.8, this.score_labels[i].size * 0.8, "spark")
@@ -881,7 +884,6 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {labels: true, ult: this.has_ult})
   //context.font = '12px Muli'
   //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);
-  context.restore()
 
   context.restore()
 }
@@ -1169,7 +1171,9 @@ ImpulseGameState.prototype.check_cutoffs = function() {
         this.gateway_unlocked = true
         this.level_redraw_bg = true
         //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
-        this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
+        if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
+          this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
+        }
       } else if(this.stars == 2) {
         if(this.main_game) {
           this.hive_numbers.lives +=1
