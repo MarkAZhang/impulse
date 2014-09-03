@@ -85,7 +85,12 @@ function WorldMapState(world) {
   this.gateway_size = 5
   this.gateway_particles_per_round = 8
 
-
+  if (imp_vars.player_data.first_time) {
+    // If we don't set timeout, the click event will set world map state back to the game state.
+    setTimeout(function() {
+      switch_game_state(new MainGameTransitionState(0, null, null, null, null, null, false, true))
+    });
+  }
 }
 
 WorldMapState.prototype.set_up_world_map = function() {
@@ -189,7 +194,9 @@ WorldMapState.prototype.draw_world_bg = function(ctx) {
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
-
+  if (imp_vars.player_data.first_time) {
+    return
+  }
   if(this.fade_out_color) {
     ctx.save()
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
@@ -355,6 +362,9 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
 };
 
 WorldMapState.prototype.process = function(dt) {
+  if (imp_vars.player_data.first_time) {
+    return
+  }
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }

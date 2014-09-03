@@ -3,6 +3,7 @@ HowToPlayState.prototype = new ImpulseGameState
 HowToPlayState.prototype.constructor = HowToPlayState
 
 function HowToPlayState(mode) {
+  this.level_name = "HOW TO PLAY"
   this.init(0, null, null, true, this.hive_numbers, false)
   this.mode = mode
   this.ready = false

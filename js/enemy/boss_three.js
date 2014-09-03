@@ -40,13 +40,13 @@ function BossThree(world, x, y, id, impulse_game_state) {
   }
   this.num_arms = 16
   this.striking_arms = {}
-  this.strike_duration = 2200
+  this.strike_duration = 2200 // this is how long the strike lasts, with the first part of it being the "charge"
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.strike_duration = 3500
+    this.strike_duration = 2800
   }
-  this.strike_interval = 1500
+  this.strike_interval = 1500 // every interval, we add a new strike
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.strike_interval = 2500
+    this.strike_interval = 2000
   }
   this.strike_timer = this.strike_interval
   this.strike_charging_prop = 0.7

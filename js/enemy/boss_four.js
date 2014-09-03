@@ -157,6 +157,10 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.attack_bud_expand_period = 10000
 
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.attack_bud_expand_period = 12000    
+  }
+
   this.attack_bud_charging = false
   this.attack_bud_charge_period = 1250
   this.attack_bud_charge_timer = this.attack_bud_charge_period
@@ -732,7 +736,7 @@ BossFour.prototype.repel_enemies = function() {
     if(enemy.dying) continue
     if(enemy != this && enemy.type != "boss four attacker" && enemy.type != "boss four spawner") {
 
-      if(p_dist(enemy.body.GetPosition(), this.body.GetPosition()) < 6.5) { // kill the enemy
+      if(p_dist(enemy.body.GetPosition(), this.body.GetPosition()) < 6) { // kill the enemy
         enemy.start_death("absorbed")
         continue
       }
@@ -832,8 +836,10 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
 
     var regulator = 4
 
+    // If we're half-dead, and number of spawners is too high, slow down.
     if(this.getLife() < 0.5 && this.getNumberSpawners() > 3) regulator *= 1.5
 
+    // If there aren't many spawners, spawn them faster.
     if(this.getNumberSpawners() < 2) regulator = 3
 
     if(this.bud_count % regulator == 0) {
@@ -864,7 +870,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
   this.level.enemy_counter += 1
   if(this.initial_spawn && bud.type == "spawn") {
     // spawn the initial_spawn faster
-    bud.expand_period = this.attack_bud_expand_period/10
+    bud.expand_period = 1000
     bud.expand_timer = bud.expand_period
   } else {
     bud.expand_period = this.attack_bud_expand_period

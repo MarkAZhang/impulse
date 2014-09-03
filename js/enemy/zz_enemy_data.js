@@ -1,5 +1,33 @@
 imp_params.impulse_enemy_stats = {}
 
+imp_params.impulse_enemy_stats["dumb_stunner"] = {
+  color: "#00ffff",///"#999",
+  density: 2.2,
+  lin_damp: 6,
+  effective_radius: .5,
+  force: 0, // does not move
+  score_value: 100,
+  attack_rating: 1,
+  batch_enemy_image: true,
+  true_name: "stunner",
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+    [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
+  draw_polygons: [{type: "polygon", x: -0.1, y: 0, r: .5, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
+    [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
+  dies_on_impact: "YES",
+  enemy_info: [
+    "Upon collision, stuns you for a short period",
+    //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
+    //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
+  ],
+
+  className: DumbStunner
+}
+
 imp_params.impulse_enemy_stats["stunner"] = {
   color: "#00ffff",///"#999",
   density: 1.5,

@@ -16,9 +16,9 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.safe = true
 
   this.arm_core_angle = Math.PI * 3/4
-  this.arm_width_angle_min = Math.PI * 1/8
-  this.arm_width_angle_max = Math.PI * 3/8
-  this.arm_width_angle = Math.PI * 1/8
+  this.arm_width_angle_min = Math.PI * 3/16
+  this.arm_width_angle_max = Math.PI * 1/2
+  this.arm_width_angle = Math.PI * 3/16
   this.arm_width_angle_transition_rate = Math.PI * 1/8
   this.arm_length = 50
   this.arm_taper = .9

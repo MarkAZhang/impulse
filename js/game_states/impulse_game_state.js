@@ -60,7 +60,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     }
     else if(this.level_name.slice(0, 4) == "BOSS")
       imp_vars.impulse_music.play_bg(imp_params.songs["Tessellation"])
-    else
+    else if (this.world_num != 0)
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
   }
 
@@ -147,13 +147,20 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   }
 
   // if this is world zero. show the tutorial.
-  this.show_tutorial = this.world_num == 0
+  this.show_tutorial = (this.world_num == 0 || 
+    imp_vars.player_data.tutorial_shown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
   if (this.show_tutorial) {
     this.tutorial_overlay_manager = new TutorialOverlayManager(this);
     this.tutorial_signals = {};
   }
 
-  this.check_cutoffs();
+  if (!this.is_boss_level && this.level) {
+    this.check_cutoffs();
+  }
+
+  if (this.world_num == 0 && this.hive_numbers) {
+    this.hive_numbers.lives = 99;
+  }
 }
 
 ImpulseGameState.prototype.reset = function() {
@@ -407,6 +414,8 @@ ImpulseGameState.prototype.process = function(dt) {
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 
     this.game_numbers.game_length += dt
+
+    this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
     this.level.process(dt)
     for(var i = this.score_labels.length - 1; i >= 0; i--) {
       this.score_labels[i].duration -= dt
@@ -553,28 +562,30 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   } else {
     this.draw_interface(ctx)
   }
-  if(this.new_enemy_type != null) {
-    ctx.save()
-    this.set_zoom_transparency(ctx)
-    if (this.new_enemy_timer < 500) {
-      ctx.globalAlpha *= Math.max(0, this.new_enemy_timer / 500) 
-    } else if (this.new_enemy_timer > this.new_enemy_duration - 500) {
-      ctx.globalAlpha *= Math.max(0, (this.new_enemy_duration - this.new_enemy_timer) / 500) 
+  if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) { 
+    if(this.new_enemy_type != null) {
+      ctx.save()
+      this.set_zoom_transparency(ctx)
+      if (this.new_enemy_timer < 500) {
+        ctx.globalAlpha *= Math.max(0, this.new_enemy_timer / 500) 
+      } else if (this.new_enemy_timer > this.new_enemy_duration - 500) {
+        ctx.globalAlpha *= Math.max(0, (this.new_enemy_duration - this.new_enemy_timer) / 500) 
+      }
+      ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2, 120, 160)
+      ctx.restore()
     }
-    ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2, 120, 160)
-    ctx.restore()
-  }
 
-  if(this.score_achieve_text != null) {
-    ctx.save()
-    this.set_zoom_transparency(ctx)
-    if (this.score_achieve_timer < 500) {
-      ctx.globalAlpha *= Math.max(0, this.score_achieve_timer / 500) 
-    } else if (this.score_achieve_timer > this.score_achieve_duration - 500) {
-      ctx.globalAlpha *= Math.max(0, (this.score_achieve_duration - this.score_achieve_timer) / 500) 
+    if(this.score_achieve_text != null) {
+      ctx.save()
+      this.set_zoom_transparency(ctx)
+      if (this.score_achieve_timer < 500) {
+        ctx.globalAlpha *= Math.max(0, this.score_achieve_timer / 500) 
+      } else if (this.score_achieve_timer > this.score_achieve_duration - 500) {
+        ctx.globalAlpha *= Math.max(0, (this.score_achieve_duration - this.score_achieve_timer) / 500) 
+      }
+      ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
+      ctx.restore()
     }
-    ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
-    ctx.restore()
   }
 
   this.draw_score_bar(ctx)
@@ -785,7 +796,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  if (!(this instanceof HowToPlayState)) {
+  if (!(this instanceof HowToPlayState) && !this.world_num == 0) {
     context.font = "14px Muli"
     context.save()
     context.globalAlpha *= 1
@@ -793,64 +804,65 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.restore()
   }
 
-  context.font = '64px Muli'
-  //context.shadowBlur = 10;
-  //context.shadowColor = context.fillStyle;
+  // Draw the level name.
+  if (this.world_num != 0) {
+    context.font = '64px Muli'
 
+    type = this.level_name.split(" ")[0]
+    if(type != "HOW") {
+      context.fillText(type, imp_vars.sidebarWidth/2, 70)
+    } else {
+      context.font = '40px Muli'
+      context.fillText("HOW TO", imp_vars.sidebarWidth/2, 70)
+    }
 
-  type = this.level_name.split(" ")[0]
-  if(type != "HOW") {
-    context.fillText(type, imp_vars.sidebarWidth/2, 70)
-  } else {
+    context.font = '80px Muli'
+    if(type == "BOSS") {
+      context.fillText(this.world_num, imp_vars.sidebarWidth/2, 140)
+    } else if(type == "HOW") {
+      context.font = '60px Muli'
+      context.fillText("PLAY", imp_vars.sidebarWidth/2, 130)
+    } else {
+      context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, 140)
+    }
+  } else if(imp_params.impulse_level_data[this.level_name].show_full_interface) {
     context.font = '40px Muli'
-    context.fillText("HOW TO", imp_vars.sidebarWidth/2, 70)
+    context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, 70)
   }
 
-  context.font = '80px Muli'
-  if(type == "BOSS") {
-    context.fillText(this.world_num, imp_vars.sidebarWidth/2, 140)
-  } else if(type == "HOW") {
-    context.font = '60px Muli'
-    context.fillText("PLAY", imp_vars.sidebarWidth/2, 130)
-  } else {
-    context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, 140)
-  }
 
 
   // draw the game time
-  context.fillStyle = this.color;
-  context.font = '32px Muli'
-  this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
-  var a =  this.game_numbers.seconds % 60
-  a = a < 10 ? "0"+a : a
-  this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-
-  context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80)
-
-
-
-
+  if (this.world_num != 0) {
+    context.fillStyle = this.color;
+    context.font = '32px Muli'
+    var a =  this.game_numbers.seconds % 60
+    a = a < 10 ? "0"+a : a
+    this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
+    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80)
+  }
 
   if(!this.is_boss_level) {
-    // draw score
-    context.font = '40px Muli'
-    context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 46)
+    if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+      // draw score
+      context.font = '40px Muli'
+      context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 46)
 
-    if(this.stars < 3) {
-      context.fillStyle = impulse_colors[this.star_colors[this.stars]]
-      //context.shadowColor = context.fillStyle;
-      context.font = '21px Muli'
-      context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
-      context.font = '42px Muli'
-      context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
+      if(this.stars < 3) {
+        context.fillStyle = impulse_colors[this.star_colors[this.stars]]
+        //context.shadowColor = context.fillStyle;
+        context.font = '21px Muli'
+        context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
+        context.font = '42px Muli'
+        context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
+      }
+      else {
+        /*context.fillStyle = impulse_colors[this.star_colors[2]]
+        context.shadowColor = context.fillStyle;
+        context.font = '60px Muli'
+        context.fillText("WIN", canvasWidth - imp_vars.sidebarWidth/2, canvasHeight - 40)*/
+      }
     }
-    else {
-      /*context.fillStyle = impulse_colors[this.star_colors[2]]
-      context.shadowColor = context.fillStyle;
-      context.font = '60px Muli'
-      context.fillText("WIN", canvasWidth - imp_vars.sidebarWidth/2, canvasHeight - 40)*/
-    }
-
   } else {
     context.fillStyle = impulse_colors["boss "+this.world_num]
     //context.shadowColor = context.fillStyle;
@@ -880,8 +892,9 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fill()
   context.shadowBlur = 0;
   context.save()*/
-
-  draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {labels: true, ult: this.has_ult})
+  if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {labels: true, ult: this.has_ult})
+  }
   //context.font = '12px Muli'
   //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);
 
@@ -889,6 +902,9 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 }
 
 ImpulseGameState.prototype.draw_score_bar = function(ctx) {
+  if (this.world_num == 0 && !imp_params.impulse_level_data[this.level_name].show_full_interface) {
+    return;
+  }
   ctx.save()
   this.set_zoom_transparency(ctx)
 
@@ -1215,6 +1231,9 @@ ImpulseGameState.prototype.increment_combo = function() {
 
 ImpulseGameState.prototype.reset_combo = function() {
   if (this.player.ultimate) return
+  if (this.show_tutorial) {
+    this.add_tutorial_signal("multiplier_reset")
+  }
   this.game_numbers.base_combo = 1
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 }

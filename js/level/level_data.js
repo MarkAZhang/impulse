@@ -43,6 +43,87 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
   gateway_loc: {x: 600, y: 300}
 }
 
+imp_params.impulse_level_data['HIVE 0-2'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[60,120],[120,120],[120,420],[680,420],[680,120],[740,120],[740,480],[60,480]],[[180,120],[620,120],[620,360],[560,360],[560,180],[240,180],[240,360],[180,360]]],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 400, y: 520},
+  gateway_loc: {x: 400, y: 300}
+}
+
+imp_params.impulse_level_data['HIVE 0-3'] = {
+  enemies_easy: {
+    "dumb_stunner": [0, 1, 0, 1, 1, 0, 1],
+  },
+  enemies: {
+    "dumb_stunner": [0, 1, 0, 1, 1, 0, 1],
+  },
+  initial_spawn_data_easy: {
+    "dumb_stunner": 1
+  },
+  initial_spawn_data: {
+    "dumb_stunner": 1
+  },
+  dominant_enemy: "dumb_stunner",
+  obstacle_v: [[[-50, -50], [850, -50], [850, 200], [-50, 200]], [[-50, 400], [850, 400], [850, 650], [-50, 650]],
+    [[50, -50], [50, 650], [-50, 650], [-50, -50]], [[750, -50], [750, 650], [850, 650], [850, -50]]],
+  spark_spawn_points: [],
+  spawn_points: [[200, 300]],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [100, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 100, y: 300},
+  gateway_loc: {x: 600, y: 300}
+}
+
+imp_params.impulse_level_data['HIVE 0-4'] = {
+  enemies_easy: {
+    "dumb_stunner": [0, 1, 0, 1, 1, 0, 4],
+  },
+  enemies: {
+    "dumb_stunner": [0, 1, 0, 1, 1, 0, 4],
+  },
+  initial_spawn_data_easy: {
+    "dumb_stunner": 4
+  },
+  initial_spawn_data: {
+    "dumb_stunner": 4
+  },
+  dominant_enemy: "dumb_stunner",
+  obstacle_v: [[[-50, -50], [850, -50], [850, 50], [-50, 50]], [[-50, 550], [850, 550], [850, 650], [-50, 650]],
+    [[50, -50], [50, 650], [-50, 650], [-50, -50]], [[750, -50], [750, 650], [850, 650], [850, -50]]],
+  spark_spawn_points: [[200, 200], [600, 200], [200, 400], [600, 400]],
+  spawn_points: [[300, 300], [500, 300], [400, 200], [400, 400]],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "easy": [5000, 10000, 20000],
+    "normal": [5000, 10000, 20000],
+  },
+  player_loc: {x: 400, y: 300},
+  spawn_pattern: "spread",
+  show_full_interface: true
+}
+
 imp_params.impulse_level_data['HIVE 1-1'] = {
   enemies_easy: {
     //"stunner": [0, 4, 1.75, 2, 50]

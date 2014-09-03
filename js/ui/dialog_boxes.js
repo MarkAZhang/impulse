@@ -1,4 +1,4 @@
-// ENEMY BOX BUG IS NOT RESOLVED...
+  // ENEMY BOX BUG IS NOT RESOLVED...
 
 var DialogBox = function() {
 
@@ -116,7 +116,7 @@ PauseMenu.prototype.add_buttons = function() {
 
   this.buttons = []
   var resume_x_location = 0;
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+  if(this.level_name.slice(0, 11) != "HOW TO PLAY" && this.world_num != 0) {
     resume_x_location = this.x;
 
     if(!this.level.main_game) {
@@ -158,7 +158,8 @@ PauseMenu.prototype.add_buttons = function() {
     }
 
   } else {
-    this.quit_button = new IconButton("QUIT", 16, this.x + 157, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+    this.quit_button = new IconButton(this.world_num == 0 && imp_vars.player_data.first_time ? "SKIP TUTORIAL" : "QUIT", 
+        16, this.x + 157, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.quit_tutorial()
     }}(this), "quit")
     this.buttons.push(this.quit_button)
@@ -254,7 +255,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     ctx.fillText("CLICK FOR INFO", this.x, this.y - this.h/2 + 290)
   }
 
-
+  if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
     var temp_colors = [this.lite_color, 'silver', 'gold']
     var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
     var score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
@@ -273,7 +274,8 @@ PauseMenu.prototype.additional_draw = function(ctx) {
         ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 330 + 40 * i+15)
       }
     }
-    ctx.textAlign = "center";
+  }
+  ctx.textAlign = "center";
     //var score_color = 0
 
     /*if(!this.is_boss_level) {
@@ -342,7 +344,7 @@ PauseMenu.prototype.quit_tutorial = function() {
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       is_tutorial: true,
-      tutorial_first_time: this.game_state.mode
+      first_time_tutorial: imp_vars.player_data.first_time
     }))
    clear_dialog_box()
 }

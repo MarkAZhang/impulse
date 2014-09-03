@@ -70,7 +70,23 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "tutorial_enter_gateway") {
 		this.w = 300;
 		this.h = 40;
+	} else if (this.type == "tutorial_void") {
+		this.w = 300;
+		this.h = 40;
+	} else if (this.type == "tutorial_kill_enemy") {
+		this.w = 300;
+		this.h = 40;
+	} else if (this.type == "tutorial_incr_multiplier") {
+		this.w = 350;
+		this.h = 40;
+	} else if (this.type == "tutorial_reset_multiplier") {
+		this.w = 350;
+		this.h = 40;
+	} else if (this.type == "tutorial_one_up") {
+		this.w = 250;
+		this.h = 40;
 	}
+
 
 	this.opacity = 0;
 	this.world_num = world_num
@@ -141,7 +157,25 @@ HoverOverlay.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_score_points") {
-		this.tutorial_text = "SCORE POINTS TO OPEN LEVEL GATEWAY"
+		this.tutorial_text = "SCORE POINTS TO OPEN GATEWAY"
+	}
+
+	if (this.type == "tutorial_incr_multiplier") {
+		this.tutorial_text = "KILLING ENEMIES INCREASES MULTIPLIER"
+	}
+
+	if (this.type == "tutorial_reset_multiplier") {
+		this.tutorial_text = "TOUCHING ENEMIES RESETS MULTIPLIER"
+	}
+	if (this.type == "tutorial_one_up") {
+		this.tutorial_text = "100 SPARKS = 1UP"
+	}
+
+	if (this.type == "tutorial_void") {
+		this.tutorial_text = "DO NOT TOUCH THE VOID"
+	}
+	if (this.type == "tutorial_kill_enemy") {
+		this.tutorial_text = "IMPULSE THE ENEMY INTO THE VOID"
 	}
 
 	if (this.type == "tutorial_enter_gateway") {

@@ -161,7 +161,10 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }*/
   }
 
-  imp_vars.impulse_music.stop_bg()
+
+  if (this.world_num != 0) {
+    imp_vars.impulse_music.stop_bg()
+  }
   this.star_colors = ["bronze", "silver", "gold"]
 }
 
@@ -218,6 +221,10 @@ MainGameSummaryState.prototype.calculate_deaths = function() {
 }
 
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
+
+  if (this.world_num == 0) {
+    return;
+  }
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none" )
     this.bg_drawn = true
@@ -231,14 +238,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       this.transition_state = "none"
     }
     if(this.transition_state == "out") {
-      if(this.victory)
-        switch_game_state(new RewardGameState(this.hive_numbers, true, {victory: true}))
-      else if(this.level) {
-        this.hive_numbers.continue()
-        switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
-      } else {
-        switch_game_state(new RewardGameState(this.hive_numbers, true, {victory: false}))
-      }
+      this.go_to_next_state();
     }
   }
 
@@ -463,7 +463,9 @@ MainGameSummaryState.prototype.ctrl_down = function() {
 }
 
 MainGameSummaryState.prototype.process = function(dt) {
-
+  if (this.world_num == 0) {
+    this.go_to_next_state();
+  }
 }
 
 MainGameSummaryState.prototype.resume_game = function() {
@@ -481,4 +483,21 @@ MainGameSummaryState.prototype.delete_game = function() {
 
 MainGameSummaryState.prototype.exit_game = function() {
   switch_game_state( new TitleState(true))
+}
+
+MainGameSummaryState.prototype.go_to_next_state = function() {
+  if(this.victory)
+    switch_game_state(new RewardGameState(this.hive_numbers, true, 
+      {victory: true, 
+        is_tutorial: this.world_num == 0,
+        first_time_tutorial: imp_vars.player_data.first_time}))
+  else if(this.level) {
+    this.hive_numbers.continue()
+    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
+  } else {
+    switch_game_state(new RewardGameState(this.hive_numbers, true, 
+      {victory: false, 
+        is_tutorial: this.world_num == 0,
+        first_time_tutorial: imp_vars.player_data.first_time}))
+  }
 }

@@ -11,6 +11,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
+  this.first_time = imp_vars.player_data.first_time // cache the first time variable, since it might change during this game state
   this.victory = args.victory
   this.bg_drawn = false
   this.ult_num_pages = 7
@@ -246,7 +247,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "16px Muli"
       ctx.fillStyle = "white"
       if (imp_vars.player_data.difficulty_mode == "easy") {
-        ctx.fillText("BUT CAN YOU BEAT CHALLENGE MODE?", imp_vars.levelWidth/2, 400)
+        ctx.fillText("BUT CAN YOU CONQUER CHALLENGE MODE?", imp_vars.levelWidth/2, 400)
       } else {
         ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_vars.levelWidth/2, 450)
         // TODO: add sharing
@@ -559,6 +560,8 @@ RewardGameState.prototype.advance_game_state = function() {
     if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
       // Immediately move to the next world.
       switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
+    } else if (this.victory && this.hive_numbers.world == 0 && this.first_time) {
+      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
     } else {
       switch_game_state(new TitleState(true))
     }
@@ -585,13 +588,12 @@ RewardGameState.prototype.determine_rewards = function() {
 
 
   if(this.args.is_tutorial) {
-    if(this.args.tutorial_type == "first_time_tutorial") {
+    if(this.args.tutorial_type == "first_time_tutorial" || this.args.first_time_tutorial) {
       this.rewards.push({
         type: "first_time_tutorial"
       })
-      /*this.rewards.push({
-        type: "select_difficulty"
-      })*/
+      imp_vars.player_data.first_time = false;
+      save_game();
     }
     return
   }
@@ -619,7 +621,6 @@ RewardGameState.prototype.determine_rewards = function() {
     }
   }
 
-
   var rating = calculate_current_rating()
   if(rating > this.hive_numbers.original_rating) {
     this.rewards.push({
@@ -631,7 +632,7 @@ RewardGameState.prototype.determine_rewards = function() {
     })
   }
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
-    if (this.hive_numbers.world < 4) {
+    if (this.hive_numbers.world < 4 && this.hive_numbers.world > 0) {
       this.quest_complete("beat_hive"+this.hive_numbers.world)
       this.rewards.push({
         type: "world_victory",
@@ -655,6 +656,7 @@ RewardGameState.prototype.determine_rewards = function() {
     }*/
     
     imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
+    save_game();
   }
   if(calculate_lives(this.hive_numbers.original_rating) < calculate_lives()) {
     var diff = calculate_lives() - calculate_lives(this.hive_numbers.original_rating)

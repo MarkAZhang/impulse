@@ -49,8 +49,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.last_level_summary_interval *= 0.66
         this.transition_timer *= 0.66
         this.level_intro_interval *= 0.66
-        // Reduce lives by 1 if lost.
-        this.hive_numbers.lives -= 1
+        // Reduce lives by 1 if lost and not in tutorial
+        if (this.world_num != 0)
+          this.hive_numbers.lives -= 1
         this.hive_numbers.last_sparks = this.hive_numbers.sparks
         this.hive_numbers.last_lives = this.hive_numbers.lives
         this.hive_numbers.ultimates = this.hive_numbers.last_ultimates
@@ -84,6 +85,10 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
       if(this.last_level && this.last_level.is_boss_level) {
         // do not do the following if we have beat the last level.. will transfer to summary_state later
+        return
+      }
+      if(this.world_num == 0 && this.victory && this.last_level && this.last_level.level_name == "HIVE 0-4") {
+        // do not do the following if we have beat the last tutorial level.. will transfer to summary_state later
         return
       }
 
@@ -130,13 +135,13 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   }
 
 
-  if(!this.last_level || !this.last_level.is_boss_level)
+  if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level))
     imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
 }
 
 MainGameTransitionState.prototype.get_next_level_name = function(level) {
   if(!level) {
-    return "HIVE "+this.world_num+"-1";
+    return "HIVE "+this.world_num+"-1"
   } else {
     if(level.level_number < 7) {
       return "HIVE "+this.world_num+"-"+(level.level_number+1)
@@ -217,6 +222,18 @@ MainGameTransitionState.prototype.process = function(dt) {
     switch_game_state(new MainGameSummaryState(this.world_num, false, this.hive_numbers, this.level, this.visibility_graph))
     return
   }
+  // if last level of tutorial, go to summary state.
+  if(this.world_num == 0 && this.victory && this.last_level && this.last_level.level_name == "HIVE 0-4") {
+    switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
+    return
+  }
+
+  // if tutorial, skip the transition state.
+  if(this.world_num == 0 && this.state != "world_intro") {
+    switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
+    return
+  }
+
   if(this.last_level && this.last_level.is_boss_level && this.last_level.boss_victory) {
     switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return
@@ -253,8 +270,13 @@ MainGameTransitionState.prototype.process = function(dt) {
   if(this.transition_timer < 0) {
 
     if(this.state == "world_intro" && this.level_loaded) {
-      this.state = "level_intro"
-      this.transition_timer = this.level_intro_interval
+      // If this is the tutorial, do not show the level intro.
+      if (this.world_num == 0) {
+        switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
+      } else {
+        this.state = "level_intro"
+        this.transition_timer = this.level_intro_interval
+      }
     } else if(this.state == "last_level_summary" && this.level_loaded) {
 
       if(this.victory && this.level.is_boss_level) {
@@ -276,6 +298,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     bg_canvas.setAttribute("style", "display:none")
     draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+  }
+  if(this.world_num == 0 && this.state != "world_intro") {
+    return
   }
 
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
@@ -337,7 +362,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.save()
-    ctx.globalAlpha *= 0.6
+    ctx.globalAlpha *= 0.3
     draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 130)
     ctx.restore()
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
@@ -369,7 +394,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowColor = "black"
 
       ctx.save()
-      ctx.globalAlpha *= 0.6
+      ctx.globalAlpha *= 0.3
       draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
       ctx.restore()
       ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-100)

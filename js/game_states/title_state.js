@@ -235,17 +235,17 @@ TitleState.prototype.setup_main_menu = function() {
       });
     }, "gear"))
 
-    if (!imp_vars.player_data.first_time) {
+    /*if (!imp_vars.player_data.first_time) {
       //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
       this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 - 80, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){
           _this.fader.set_animation("fade_out", function() {
             switch_game_state(new HowToPlayState("normal_tutorial"))
           });
       }, "tutorial"))
-    }
+    }*/
 
     this.buttons["menu"].push(new IconButton("QUESTS", 16, 
-      imp_vars.player_data.first_time ? imp_vars.levelWidth/2 : imp_vars.levelWidth/2 + 80, 
+      imp_vars.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new QuestGameState(_this))

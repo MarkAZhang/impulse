@@ -524,8 +524,9 @@ function load_game() {
 
   imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'] ? load_obj['difficulty_mode'] : "normal";
   imp_vars.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
+  imp_vars.player_data.tutorial_shown = load_obj['tutorial_shown'] ? load_obj['tutorial_shown'] : [];
   imp_vars.player_data.options = load_obj["options"]
-imp_vars.player_data.quests = load_obj["quests"]
+  imp_vars.player_data.quests = load_obj["quests"]
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
 
@@ -616,6 +617,7 @@ function save_game() {
   save_obj['save_data'] = imp_vars.player_data.save_data
   save_obj['options'] = imp_vars.player_data.options
   save_obj['first_time'] = imp_vars.player_data.first_time
+  save_obj['tutorial_shown'] = imp_vars.player_data.tutorial_shown;
   save_obj['quests'] = imp_vars.player_data.quests
   localStorage[imp_vars.save_name] = JSON.stringify(save_obj)
 }

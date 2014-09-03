@@ -24,7 +24,12 @@ var HiveNumbers = function(world_num, main_game) {
 
   this.game_numbers = {}
   this.world = world_num
-  this.hive_name = "HIVE "+imp_params.tessellation_names[world_num]
+  if (this.world == 0) {
+    this.hive_name = "TUTORIAL"
+  } else {
+    this.hive_name = "HIVE "+imp_params.tessellation_names[world_num]  
+  }
+  
   this.boss_name = imp_params.tessellation_names[world_num]
 
   this.original_rating = calculate_current_rating()
