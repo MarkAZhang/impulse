@@ -78,7 +78,7 @@ CheckBox.prototype.draw = function(context) {
     context.lineTo(this.x + this.w/2, this.y - this.h/2)
   }
   context.strokeStyle = this.color
-  context.lineWidth = 1
+  context.lineWidth = 2
   context.stroke()
 }
 

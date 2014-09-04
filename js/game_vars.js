@@ -73,6 +73,10 @@ var imp_params = {
   },
   bg: {
     "Hive 0": "bg/hive0",
+    "Title Alt1": "bg/titlebg_alt1",
+    "Title Alt2": "bg/titlebg_alt2",
+    "Title Alt3": "bg/titlebg_alt3",
+    "Title Alt4": "bg/titlebg_alt4",
     "Hive 1": "bg/hive1",
     "Hive 2": "bg/hive2",
     "Hive 3": "bg/hive3",

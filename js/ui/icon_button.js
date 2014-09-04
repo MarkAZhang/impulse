@@ -21,7 +21,7 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
 
   }
   //this.border = true
-}
+};
 
 IconButton.prototype.additional_draw = function(context) {
   context.save() 

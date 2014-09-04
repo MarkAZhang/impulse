@@ -176,6 +176,12 @@ function set_up_title_bg() {
   var title_bg_ctx = title_bg_canvas.getContext('2d');
   draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
   imp_vars.title_bg_canvas = title_bg_canvas
+
+  var alt_title_bg_canvas = document.createElement('canvas');
+  alt_title_bg_canvas.width = imp_vars.levelWidth;
+  alt_title_bg_canvas.height = imp_vars.levelHeight;
+  imp_vars.alt_title_bg_canvas = alt_title_bg_canvas
+
   var world_menu_bg_canvas = document.createElement('canvas');
   world_menu_bg_canvas.width = imp_vars.levelWidth;
   world_menu_bg_canvas.height = imp_vars.levelHeight;

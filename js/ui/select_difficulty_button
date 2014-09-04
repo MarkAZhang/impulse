@@ -1,0 +1,24 @@
+IconButton.prototype = new ImpulseButton()
+
+IconButton.prototype.constructor = IconButton
+
+function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
+
+  this.text = text
+  this.size = size
+  this.real_size = size
+  this.init(x, y, w, h, action, false, color)
+  
+  this.hover_color = hcolor
+  this.shadow = false;
+  this.icon = icon
+  this.active = true
+  this.bg_color = null//"black"
+  this.underline_on_hover = true
+
+  if (this.icon.slice(0, 5) == "world") {
+    this.underline_on_hover = false;
+
+  }
+  //this.border = true
+}
