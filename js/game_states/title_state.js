@@ -194,12 +194,13 @@ TitleState.prototype.setup_main_menu = function() {
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
+        
+        if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal") {
+          switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+        }
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i, false))
         });
-        if (imp_vars.player_data.difficulty_mode == "normal") {
-          switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
-        }
       }
     }, "player"));
 
@@ -211,12 +212,13 @@ TitleState.prototype.setup_main_menu = function() {
       while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
         i += 1
       }
+
+      if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal") {
+        switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+      }
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new WorldMapState(i, true))
       });
-      if (imp_vars.player_data.difficulty_mode == "normal") {
-        switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
-      }
       
       /*if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         _this.fader.set_animation("fade_out", function() {
@@ -254,7 +256,7 @@ TitleState.prototype.setup_main_menu = function() {
       }, "tutorial"))
     }*/
 
-    this.buttons["menu"].push(new IconButton("QUESTS", 16, 
+    this.buttons["menu"].push(new IconButton("CHALLENGES", 16, 
       imp_vars.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {

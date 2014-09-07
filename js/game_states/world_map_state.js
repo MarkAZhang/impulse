@@ -154,7 +154,7 @@ WorldMapState.prototype.update_bg = function(index) {
   if (index != 0 && imp_vars.player_data.difficulty_mode == "normal") {
     switch_bg("Title Alt" + index, 250, imp_vars.bg_opacity * 0.5)      
   } else {
-    switch_bg("Hive 0", 250, imp_vars.bg_opacity * 0.5)      
+    switch_bg("Hive 0", 250, imp_vars.bg_opacity)
   }
 };
 

@@ -350,7 +350,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = impulse_colors["impulse_blue"]
 
       ctx.font = '32px Muli'
-      ctx.fillText("QUEST COMPLETE!", imp_vars.levelWidth/2, 120)
+      ctx.fillText("CHALLENGE COMPLETE!", imp_vars.levelWidth/2, 120)
 
       
       //drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate_icon")
