@@ -54,7 +54,7 @@ IconButton.prototype.additional_draw = function(context) {
   }
 
   if (this.icon.slice(0, 8) == "practice") {
-    context.fillText(this.text, this.x, this.y + this.h/6)  
+    context.fillText(this.text, this.x - 1, this.y + this.h/6)  
   } else if (this.icon.slice(0, 5) != "world") {
     context.fillText(this.text, this.x, this.y + this.h/3)
   }
@@ -261,7 +261,6 @@ IconButton.prototype.draw_icon  = function(context) {
     context.fillText(this.text, this.x, this.y + 10)
     context.restore()
   } else if(this.icon.slice(0, 8) == "practice") {
-    var text = ["I", "II","III", "IV"]
     var world_num = parseInt(this.icon.slice(8));
     if(!this.active) {
       context.globalAlpha *= 0.3

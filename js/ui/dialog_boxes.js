@@ -107,9 +107,7 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 }
 
 PauseMenu.prototype.draw_bg = function() {
-  var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-  draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
-  imp_vars.world_menu_bg_canvas.setAttribute("style", "")
+  set_bg("Hive " + this.world_num, imp_vars.bg_opacity)
 }
 
 PauseMenu.prototype.add_buttons = function() {

@@ -58,7 +58,7 @@ QuestGameState.prototype.set_up_quests = function() {
 QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     imp_vars.bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
+    set_bg("Hive 0", imp_vars.bg_opacity);
     this.bg_drawn = true
   }
 

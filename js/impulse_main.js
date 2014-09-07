@@ -173,8 +173,6 @@ function set_up_title_bg() {
   var title_bg_canvas = document.createElement('canvas');
   title_bg_canvas.width = imp_vars.levelWidth;
   title_bg_canvas.height = imp_vars.levelHeight;
-  var title_bg_ctx = title_bg_canvas.getContext('2d');
-  draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
   imp_vars.title_bg_canvas = title_bg_canvas
 
   var alt_title_bg_canvas = document.createElement('canvas');
@@ -186,6 +184,54 @@ function set_up_title_bg() {
   world_menu_bg_canvas.width = imp_vars.levelWidth;
   world_menu_bg_canvas.height = imp_vars.levelHeight;
   imp_vars.world_menu_bg_canvas = world_menu_bg_canvas
+}
+
+function switch_bg(bg_file, duration, alpha) {
+  // Only perform the switch if the bg_file is different.
+  if (imp_vars.bg_file != bg_file) {
+    imp_vars.switch_bg_duration = duration;
+    imp_vars.switch_bg_timer = duration;
+    var alt_title_bg_ctx = imp_vars.alt_title_bg_canvas.getContext('2d');
+    draw_bg(alt_title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
+    imp_vars.alt_bg_alpha = alpha;
+    imp_vars.alt_bg_file = bg_file;
+  }
+}
+
+// Will immediately draw the new bg onto the bg_ctx.
+function set_bg(bg_file, alpha) {
+  var title_bg_ctx = imp_vars.title_bg_canvas.getContext('2d');
+  draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
+  imp_vars.bg_alpha = alpha;
+  imp_vars.bg_file = bg_file;
+
+  imp_vars.bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+  imp_vars.bg_ctx.fillStyle = "#000"
+  imp_vars.bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+  imp_vars.bg_ctx.globalAlpha = imp_vars.bg_alpha;
+  imp_vars.bg_ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+  imp_vars.bg_ctx.globalAlpha = 1
+}
+
+function process_and_draw_bg(dt) {
+  if (imp_vars.switch_bg_timer > 0) {
+    var prog = imp_vars.switch_bg_timer / imp_vars.switch_bg_duration;
+
+    imp_vars.bg_ctx.clearRect(0, 0, canvas.width, canvas.height);
+    imp_vars.bg_ctx.fillStyle = "#000"
+    imp_vars.bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
+    imp_vars.bg_ctx.globalAlpha = prog * imp_vars.bg_alpha
+    imp_vars.bg_ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+    imp_vars.bg_ctx.globalAlpha = (1 - prog) * imp_vars.alt_bg_alpha
+    imp_vars.bg_ctx.drawImage(imp_vars.alt_title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+    imp_vars.bg_ctx.globalAlpha = 1
+
+    imp_vars.switch_bg_timer -= dt;
+  } else if (imp_vars.switch_bg_duration != null) {
+    // At the end of the transition, directly set the bg.
+    imp_vars.switch_bg_duration = null;
+    set_bg(imp_vars.alt_bg_file, imp_vars.alt_bg_alpha);
+  }
 }
 
 function step() {

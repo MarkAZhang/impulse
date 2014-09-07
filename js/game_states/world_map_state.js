@@ -2,7 +2,10 @@ WorldMapState.prototype = new GameState
 
 WorldMapState.prototype.constructor = WorldMapState
 
-function WorldMapState(world) {
+function WorldMapState(world, is_practice_mode) {
+
+  this.is_practice_mode = is_practice_mode;
+
   this.bg_drawn = false
   this.color = "white"//impulse_colors["impulse_blue"]
 
@@ -20,10 +23,13 @@ function WorldMapState(world) {
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
     _this.fader.set_animation("fade_out", function() {
       switch_game_state(new TitleState(_this));
-    }); 
+    });
+    switch_bg("Hive 0", 250, imp_vars.bg_opacity)      
   }, "back"));
 
-  this.buttons.push(new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"]));
+  this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
+
+  this.buttons.push(this.select_difficulty_button);
 
   this.world_buttons = {
   }
@@ -57,9 +63,13 @@ function WorldMapState(world) {
 
   this.world_button_y = imp_vars.levelHeight/2;
 
-  this.set_up_world_map()
   this.set_up_mode_buttons()
-  this.set_up_practice_buttons()
+
+  if (!this.is_practice_mode) {
+    this.set_up_world_map()
+  } else {
+    this.set_up_practice_buttons()
+  }
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
 
@@ -122,7 +132,8 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
         if (_this.world_num != index) {
           _this.fader.set_animation("fade_across", function() {
             _this.world_num = index;
-          }); 
+          });
+          _this.update_bg(index);
           _this.next_world = index;
         }
       };
@@ -135,13 +146,24 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
   }
 }
 
+// Update background based on index and current difficulty.
+WorldMapState.prototype.update_bg = function(index) {
+  if (index == undefined) {
+    index = this.world_num;
+  }
+  if (index != 0 && imp_vars.player_data.difficulty_mode == "normal") {
+    switch_bg("Title Alt" + index, 250, imp_vars.bg_opacity * 0.5)      
+  } else {
+    switch_bg("Hive 0", 250, imp_vars.bg_opacity * 0.5)      
+  }
+};
+
 WorldMapState.prototype.set_up_practice_buttons = function() {
 
   var diff = 85
 
   for(var i = 1; i <= 4; i++) {
     this.practice_buttons[i] = []
-    continue;
     var colors = ["world "+i+" bright", "world "+i+" bright", "silver", "gold"]
     for(var j = 0; j < 8; j++) {
 
@@ -164,8 +186,12 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
         }
 
       })(level_name, i)
-      var new_button = new IconButton(j == 7 ? "BOSS" : j+1, 20, imp_vars.levelWidth/2 + ((-3.5 + j) * diff), imp_vars.levelHeight/2+130, 50, 50,
-      this_color, this_color, callback, "practice"+i)
+      /*var x = imp_vars.levelWidth/2 + ((-3.5 + j) * diff);
+      var y = imp_vars.levelHeight/2+130;*/
+      var x = imp_vars.levelWidth/2 + ((-1.5 + (j % 4)) * 150);
+      var y = j >= 4 ? imp_vars.levelHeight/2+100  : imp_vars.levelHeight/2 
+
+      var new_button = new IconButton(j+1, 30, x, y, 75, 75, this_color, this_color, callback, "practice"+i);
       new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[i].push(new_button)
@@ -227,10 +253,10 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_vars.alt_title_bg_canvas, imp_vars.bg_opacity * 0.5)
+    //switch_bg("Title Alt1", 500, imp_vars.bg_opacity / 2)
     this.bg_drawn = true
   }
-  
+
   if (this.fader.get_current_animation() == "fade_across") {
     ctx.save();
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
@@ -271,7 +297,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   // Only draw gateway particles if the current world is active.
-  if (this.world_unlocked[this.world_num]) {
+  if (!this.is_practice_mode && this.world_unlocked[this.world_num] ) {
     this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   }
   
@@ -285,55 +311,62 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 // Draw everything associated with a particular hive.
 WorldMapState.prototype.draw_world = function(ctx, index) {
 
-  this.world_buttons[index].draw(ctx)
+  if (!this.is_practice_mode) {
+    this.world_buttons[index].draw(ctx)
+  }
 
   if (index > 0) {
-    // draw stuff like rank and continues below the world button
-    if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
-      ctx.save()
-      ctx.textAlign = "center"
-      ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
-        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"], 
-        index,
-        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"])
-      ctx.font = '18px Muli'
-      ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 100)
-      ctx.font = '36px Muli'
-      ctx.save()
-      var victory_type = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"]
-      draw_victory_type_icon(ctx, this.world_buttons[index].x, this.world_buttons[index].y + 120, index, victory_type, 1)
-      ctx.restore()
-      if(victory_type == "half") {
-        ctx.font = '11px Muli'
-        ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
-          , this.world_buttons[index].x, this.world_buttons[index].y + 150)
+    if (!this.is_practice_mode) {
+      // draw stuff like rank and continues below the world button
+      if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
+        ctx.save()
+        ctx.textAlign = "center"
+        ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
+          imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"], 
+          index,
+          imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"])
+        ctx.font = '18px Muli'
+        ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 100)
+        ctx.font = '36px Muli'
+        ctx.save()
+        var victory_type = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"]
+        draw_victory_type_icon(ctx, this.world_buttons[index].x, this.world_buttons[index].y + 120, index, victory_type, 1)
+        ctx.restore()
+        if(victory_type == "half") {
+          ctx.font = '11px Muli'
+          ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
+            , this.world_buttons[index].x, this.world_buttons[index].y + 150)
+        }
+        /*if(victory_type == "gold") {
+          ctx.font = '11px Muli'
+          ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
+            , this.world_buttons[index].x, this.world_buttons[index].y + 80)
+        }*/
+        ctx.restore()
       }
-      /*if(victory_type == "gold") {
-        ctx.font = '11px Muli'
-        ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
-          , this.world_buttons[index].x, this.world_buttons[index].y + 80)
-      }*/
-      ctx.restore()
-    }
+    } else {
+      /*ctx.font = '13px Muli'
+      ctx.fillStyle = "white"
+      ctx.fillText("SELECT A PRACTICE LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 50)*/
+      // draw the practice buttons
+      /*ctx.save()
+      ctx.globalAlpha *= 0.3
+      for(var i = 0; i < this.practice_buttons[index].length; i++) {
+        if(!this.practice_buttons[index][i].active) continue
+        if(i > 0) {
 
-    // draw the practice buttons
-    ctx.save()
-    ctx.globalAlpha *= 0.3
-    for(var i = 0; i < this.practice_buttons[index].length; i++) {
-      if(!this.practice_buttons[index][i].active) continue
-      if(i > 0) {
-
-        ctx.beginPath()
-        ctx.moveTo(this.practice_buttons[index][i-1].x + this.offsets[index], this.practice_buttons[index][i-1].y)
-        ctx.lineTo(this.practice_buttons[index][i].x - this.offsets[index], this.practice_buttons[index][i].y)
-        ctx.lineWidth = 6
-        ctx.strokeStyle = impulse_colors['boss '+(index)]
-        ctx.stroke()
+          ctx.beginPath()
+          ctx.moveTo(this.practice_buttons[index][i-1].x + this.offsets[index], this.practice_buttons[index][i-1].y)
+          ctx.lineTo(this.practice_buttons[index][i].x - this.offsets[index], this.practice_buttons[index][i].y)
+          ctx.lineWidth = 6
+          ctx.strokeStyle = impulse_colors['boss '+(index)]
+          ctx.stroke()
+        }
       }
-    }
-    ctx.restore()
-    for(var i = 0; i < this.practice_buttons[index].length; i++) {
-      this.practice_buttons[index][i].draw(ctx)
+      ctx.restore()*/
+      for(var i = 0; i < this.practice_buttons[index].length; i++) {
+        this.practice_buttons[index][i].draw(ctx)
+      }
     }
 
     // draw labels.
@@ -343,6 +376,18 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
     ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
     ctx.font = '10px Muli'
     ctx.fillText("SELECT A LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 95)*/
+  }
+
+  if(index != 0) {
+    if (this.is_practice_mode) {
+      ctx.fillStyle = "white"
+      ctx.font = "24px Muli"
+      ctx.fillText("PRACTICE MODE", imp_vars.levelWidth/2, this.world_button_y - 170)  
+    } else if (imp_vars.player_data.difficulty_mode == "normal") {
+      ctx.fillStyle = "white"
+      ctx.font = "24px Muli"
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, this.world_button_y - 170)  
+    }
   }
 
   // draw hive name
@@ -363,8 +408,11 @@ WorldMapState.prototype.process = function(dt) {
   if(this.fade_out_duration != null) {
     this.fade_out_duration -= dt
   }
+  if (!this.is_practice_mode)
   this.process_gateway_particles(dt);
   this.fader.process(dt);
+
+  process_and_draw_bg(dt);
 }
 
 WorldMapState.prototype.on_mouse_move = function(x, y) {
@@ -372,15 +420,20 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   {
     this.buttons[i].on_mouse_move(x, y)
   }
-  this.world_buttons[this.world_num].on_mouse_move(x, y)
+  if (!this.is_practice_mode) {
+    this.world_buttons[this.world_num].on_mouse_move(x, y)  
+  } else {
+    if (this.world_num != 0) {
+      for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
+        this.practice_buttons[this.world_num][i].on_mouse_move(x, y)
+      }
+    }
+  }
+  
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_mouse_move(x, y)
   }
-  if (this.world_num != 0) {
-    for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
-      this.practice_buttons[this.world_num][i].on_mouse_move(x, y)
-    }
-  }
+  
 }
 
 WorldMapState.prototype.on_click = function(x, y) {
@@ -388,17 +441,20 @@ WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  this.world_buttons[this.world_num].on_click(x, y)
+  if (!this.is_practice_mode) {
+    this.world_buttons[this.world_num].on_click(x, y)  
+  } else {
+    if (this.world_num != 0) {
+      for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
+        this.practice_buttons[this.world_num][i].on_click(x, y)
+      }
+    }  
+  }
+  
   for(var i = 0; i < this.mode_buttons.length; i++) {
     this.mode_buttons[i].on_click(x, y)
   }
-  if (this.world_num != 0) {
-    for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
-      this.practice_buttons[this.world_num][i].on_click(x, y)
-    }
-  }
 }
-
 
 WorldMapState.prototype.process_gateway_particles = Level.prototype.process_gateway_particles;
 WorldMapState.prototype.generate_gateway_particles = Level.prototype.generate_gateway_particles;

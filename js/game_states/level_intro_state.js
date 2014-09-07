@@ -24,18 +24,21 @@ function LevelIntroState(level_name, world) {
     draw_bg(imp_vars.bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+_this.world_num)   
     imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
     imp_vars.bg_canvas.setAttribute("style", "")
+    
 
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-    world_bg_ctx.fillStyle = "black"
-    world_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-    // draw the title background on the world_bg_ctx and fade it out.
-    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
     _this.fader.set_animation("fade_out_to_main", function() {
       if(_this.world_num) {
-        switch_game_state(new WorldMapState(_this.world_num))
+        switch_game_state(new WorldMapState(_this.world_num, true))
       }
       else {
         switch_game_state(new TitleState(true))
+      }
+      imp_vars.bg_file = null
+      // TODO: transition the bg.
+      if (imp_vars.player_data.difficulty_mode == "normal") {
+        set_bg("Title Alt" + _this.world_num, imp_vars.bg_opacity * 0.5)
+      } else {
+        set_bg("Hive 0", imp_vars.bg_opacity)
       }
     });
   }}(this), "back"))
@@ -107,6 +110,7 @@ function LevelIntroState(level_name, world) {
 
 LevelIntroState.prototype.process = function(dt) {
   this.fader.process(dt);
+  process_and_draw_bg(dt);
 }
 
 

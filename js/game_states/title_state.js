@@ -36,6 +36,7 @@ function TitleState(last_state) {
 TitleState.prototype.process = function(dt) {
   this.fader.process(dt);
   this.trailer_fade_in += dt
+  process_and_draw_bg(dt);
 }
 
 
@@ -43,7 +44,7 @@ TitleState.prototype.process = function(dt) {
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
    imp_vars.bg_canvas.setAttribute("style", "")
-   draw_image_on_bg_ctx(bg_ctx, imp_vars.title_bg_canvas, imp_vars.bg_opacity)
+   set_bg("Hive 0", imp_vars.bg_opacity)
    this.bg_drawn = true
   }
 
@@ -181,8 +182,6 @@ TitleState.prototype.setup_main_menu = function() {
 
       close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
-      imp_vars.player_data.difficulty_mode = "easy"
-      save_game()
       
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         //setTimeout(function(){
@@ -196,19 +195,30 @@ TitleState.prototype.setup_main_menu = function() {
           i += 1
         }
         _this.fader.set_animation("fade_out", function() {
-          switch_game_state(new WorldMapState(i))
+          switch_game_state(new WorldMapState(i, false))
         });
+        if (imp_vars.player_data.difficulty_mode == "normal") {
+          switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+        }
       }
     }, "player"));
 
-    this.buttons["menu"].push(new IconButton("CHALLENGE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("PRACTICE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
       close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
-      imp_vars.player_data.difficulty_mode = "normal"
-      save_game()
+      var i = 1;
+      while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+        i += 1
+      }
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new WorldMapState(i, true))
+      });
+      if (imp_vars.player_data.difficulty_mode == "normal") {
+        switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+      }
       
-      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
+      /*if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
         });
@@ -226,7 +236,7 @@ TitleState.prototype.setup_main_menu = function() {
             switch_game_state(new WorldMapState(i))
           });
         }
-      }
+      }*/
     }, "normal_mode"))
 
     this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_vars.levelWidth/2 - 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){

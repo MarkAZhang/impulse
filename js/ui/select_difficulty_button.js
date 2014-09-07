@@ -2,7 +2,7 @@ SelectDifficultyButton.prototype = new ImpulseButton()
 
 SelectDifficultyButton.prototype.constructor = SelectDifficultyButton
 
-function SelectDifficultyButton(size, x, y, w, h, color, hcolor) {
+function SelectDifficultyButton(size, x, y, w, h, color, hcolor, world_map_state) {
 
   this.size = size
   this.real_size = size
@@ -14,12 +14,14 @@ function SelectDifficultyButton(size, x, y, w, h, color, hcolor) {
   this.bg_color = null//"black"
 
   this.checkbox = new CheckBox(this.x, this.y - this.h/8, 20, 20, this.color);
+  this.world_map_state = world_map_state;
   this.recalculate_state();
 }
 
 SelectDifficultyButton.prototype.on_adjust_difficulty = function() {
   imp_vars.player_data.difficulty_mode = imp_vars.player_data.difficulty_mode == "easy" ? "normal" : "easy";
   save_game();
+  this.world_map_state.update_bg();
 
   this.recalculate_state();
 }

@@ -31,12 +31,18 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
  this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.color, function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new WorldMapState(_this.world_num))
+        switch_game_state(new WorldMapState(_this.world_num, true))
+        if (imp_vars.player_data.difficulty_mode == "normal") {
+          set_bg("Title Alt" + _this.world_num, imp_vars.bg_opacity * 0.5)
+        } else {
+          set_bg("Hive 0", imp_vars.bg_opacity)
+        }
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new TitleState(true))
+        set_bg("Hive 0", imp_vars.bg_opacity)
       });
     }
   }}(this), "back"))
