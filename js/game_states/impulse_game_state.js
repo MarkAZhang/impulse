@@ -195,6 +195,9 @@ ImpulseGameState.prototype.reset = function() {
   this.progress_bar_prop = 0
   this.boss_intro_text_activated = false
   
+  if (!this.is_boss_level && this.level) {
+    this.check_cutoffs();
+  }
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
  // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
@@ -358,7 +361,13 @@ ImpulseGameState.prototype.process = function(dt) {
 
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
-      if (this.exit_tutorial) {
+      if (this.main_game && !this.world_num == 0) {
+        this.hive_numbers.lives -= 1
+        this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
+        window.console.log("DEATH! " + window.performance.now())
+      }
+
+      if (this.exit_tutorial || (this.hive_numbers.lives < 0 && this.main_game)) {
         if(this.zoom_state == "none" && this.zoom == 1) {
           this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
           this.fade_state = "out"

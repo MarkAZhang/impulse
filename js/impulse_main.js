@@ -511,7 +511,7 @@ function load_game() {
   var load_obj = {}
   if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
     imp_vars.player_data.first_time = true
-    load_obj["difficulty_mode"] = "normal"
+    load_obj["difficulty_mode"] = "easy"
   }
   else {
     load_obj = JSON.parse(localStorage[imp_vars.save_name])

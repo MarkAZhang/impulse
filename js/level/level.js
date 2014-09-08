@@ -535,6 +535,10 @@ Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
 }
 
 Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
+  if (this.restarting_level) {
+    return
+  }
+
   var this_enemy = imp_params.impulse_enemy_stats[enemy_type].className
 
   if(this_enemy.prototype.is_boss && this.boss_spawned) {
