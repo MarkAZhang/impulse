@@ -111,6 +111,11 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.mouse_pressed = false
   this.last_right_mouse_down = 0
   this.right_mouse_pressed = false
+
+  // When the player first appears.
+  this.appear_duration = 250;
+  this.appearing = true;
+  this.appear_timer = this.appear_duration;
 }
 
 Player.prototype.keyDown = function(keyCode) {
@@ -280,6 +285,13 @@ Player.prototype.process = function(dt) {
   {
     this.dying_duration -= dt
     return
+  }
+
+  if (this.appearing) {
+    this.appear_timer -= dt;
+    if (this.appear_timer < 0) {
+      this.appearing = false;
+    }
   }
 
   if (this.silence_duration > 0) {
@@ -786,34 +798,36 @@ Player.prototype.draw = function(context) {
       var prop = Math.max(((this.silence_interval-this.silence_duration) / this.silence_interval), 0)
       draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "gray") 
     }
-    if(this.ultimate) {
 
-      var lighten_factor = this.get_lighten_factor()
-      drawSprite(
-        context, 
-        this.ultimate_loc.x*imp_vars.draw_factor, 
-        this.ultimate_loc.y*imp_vars.draw_factor, 
-        (this.body.GetAngle()), 
-        this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
-        this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, 
-        "player_gray")
-    } else if(this.status_duration[0] > 0)
-    {
-      this.draw_player_sprite(context, "player_red");
-    }
-    else if(this.status_duration[4] > 0)
-    {
-      this.draw_player_sprite(context, "player_green");
-    }
-    else if(this.status_duration[1] > 0)
-    {
-      this.draw_player_sprite(context, "player_gray");
-    }
-    else if(this.status_duration[2] > 0)
-    {
-      this.draw_player_sprite(context, "player_yellow");
-    }
-     else {
+    if (!this.appearing) {
+      if(this.ultimate) {
+
+        var lighten_factor = this.get_lighten_factor()
+        drawSprite(
+          context, 
+          this.ultimate_loc.x*imp_vars.draw_factor, 
+          this.ultimate_loc.y*imp_vars.draw_factor, 
+          (this.body.GetAngle()), 
+          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
+          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, 
+          "player_gray")
+      } else if(this.status_duration[0] > 0)
+      {
+        this.draw_player_sprite(context, "player_red");
+      }
+      else if(this.status_duration[4] > 0)
+      {
+        this.draw_player_sprite(context, "player_green");
+      }
+      else if(this.status_duration[1] > 0)
+      {
+        this.draw_player_sprite(context, "player_gray");
+      }
+      else if(this.status_duration[2] > 0)
+      {
+        this.draw_player_sprite(context, "player_yellow");
+      }
+      else {
       //normal
       /*context.beginPath()
       context.shadowBlur = 10;
@@ -824,6 +838,20 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 0;*/
         this.draw_player_sprite(context, "player_normal");
       }
+    } else {
+      var prog = this.appear_timer / this.appear_duration;
+      var factor = 1 + 8 * prog;
+      context.save();
+      context.globalAlpha *= 1 - prog
+      context.beginPath();
+      context.lineWidth = Math.ceil(4 - 4 * prog);
+      context.strokeStyle = impulse_colors["impulse_blue"];
+      context.arc(this.body.GetPosition().x * imp_vars.draw_factor, this.body.GetPosition().y * imp_vars.draw_factor, this.shape.GetRadius() * factor * imp_vars.draw_factor, 0, 2*Math.PI, true);
+      context.stroke();
+      context.restore();
+    }
+
+
     var lighten_factor = this.get_lighten_factor()
 
     if(this.status_duration[3] > 0) {

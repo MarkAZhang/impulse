@@ -103,11 +103,11 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   }
   this.enemy_image_size = 40
   this.add_buttons()
-  this.draw_bg();
+  //this.draw_bg();
 }
 
 PauseMenu.prototype.draw_bg = function() {
-  set_bg("Hive " + this.world_num, imp_vars.bg_opacity)
+  //set_bg("Hive " + this.world_num, imp_vars.bg_opacity)
 }
 
 PauseMenu.prototype.add_buttons = function() {

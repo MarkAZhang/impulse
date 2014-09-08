@@ -32,7 +32,6 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.original_v_damping = 0.5
     this.num_fragments = 6
     this.burst = 1
-
   } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
     this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = imp_params.impulse_enemy_stats[enemy_type].color

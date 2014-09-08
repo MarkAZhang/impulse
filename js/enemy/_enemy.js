@@ -624,7 +624,7 @@ Enemy.prototype.start_death = function(death) {
     }
   }
 
-  if(this.dying != "accidental" && this.dying != "absorbed") {
+  if(this.dying != "accident" && this.dying != "fade" && this.dying != "absorbed") {
     if (this.type == "tank") {
       imp_vars.impulse_music.play_sound("tdeath")  
     } else if (this.type == "troll" && this.dying == "hit_player" && this.status_duration[1] <= 0) {
@@ -632,7 +632,6 @@ Enemy.prototype.start_death = function(death) {
     } else {
       imp_vars.impulse_music.play_sound("sdeath")
     }
-    
   }
 
   this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
@@ -759,7 +758,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   else
     context.globalAlpha *= this.visibility ? this.visibility : 1
 
-   var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
+   var radius_factor = this.dying && this.dying != "fade"? (1 + this.death_radius * prog) : 1; // if dying, will expand
 
    var my_size = size
    if(this.status_duration[3] > 0) {

@@ -20,7 +20,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
   }
 
-
   this.pause = true
   this.ready = false
   this.buttons = []
@@ -352,17 +351,29 @@ ImpulseGameState.prototype.process = function(dt) {
       this.boss_intro_text_duration -= dt
     }
 
+    if (this.player.dying && this.player.dying_duration > 0 && !this.level.restarting_level) {
+      this.level.prepare_level_for_reset();
+      this.game_numbers.score = 0;
+    }
+
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
-      if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
-        this.fade_state = "out"
-      } else if(this.zoom_state == "none"){
-        this.ready = false
-        this.game_over();
+      if (this.exit_tutorial) {
+        if(this.zoom_state == "none" && this.zoom == 1) {
+          this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
+          this.fade_state = "out"
+        } else if(this.zoom_state == "none"){
+          this.ready = false
+          this.game_over();
+        }
+      } else {
+        this.reset();
+        this.make_player();  
       }
       return;
     }
+
+
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0) {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
@@ -392,12 +403,15 @@ ImpulseGameState.prototype.process = function(dt) {
 
       var temp_stars = this.stars < 3 ? this.stars : 2
       var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
+      var adjust_time = this.progress_bar_adjust;
+      if (this.player.dying) {
+        adjust_time /= 3
+      }
       if(this.progress_bar_prop > prop) {
-        this.progress_bar_prop  = Math.max(this.progress_bar_prop - dt/this.progress_bar_adjust, prop)
-
+        this.progress_bar_prop  = Math.max(this.progress_bar_prop - dt/adjust_time, prop)
       }
       else if(this.progress_bar_prop < prop) {
-        this.progress_bar_prop  = Math.min(this.progress_bar_prop + dt/this.progress_bar_adjust, prop)
+        this.progress_bar_prop  = Math.min(this.progress_bar_prop + dt/adjust_time, prop)
       }
     }
 

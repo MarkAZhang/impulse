@@ -9,6 +9,12 @@ Level.prototype.init = function(data, level_intro_state) {
   this.impulse_game_state = null
   this.spawn_pattern = data.spawn_pattern;
 
+  // If the player has died, we tell the level to blow up enemies and other maintenance to prepare for restart.
+  this.restarting_level = false;
+
+  // The length of effects that occur during restart.
+  this.restarting_effects_duration = 500;
+
   // Retrieve enemy data. Use easy mode if necessary but default to normal.
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.enemies_data = data.enemies_easy
@@ -115,6 +121,7 @@ Level.prototype.init = function(data, level_intro_state) {
   }
   this.gateway_size = 4
 
+
   this.gateway_transition_interval = 500
   this.gateway_transition_duration = null
 
@@ -141,6 +148,14 @@ Level.prototype.get_starting_loc = function() {
   return this.starting_loc
 }
 
+Level.prototype.prepare_level_for_reset = function() {
+  this.restarting_level = true;
+  this.restarting_timer = this.restarting_effects_duration;
+  for (var i = 0; i < this.enemies.length; i++) {
+    this.enemies[i].start_death("fade")
+  }
+}
+
 Level.prototype.reset = function() {
 
   if(this.impulse_game_state && this.impulse_game_state.main_game) {
@@ -148,6 +163,7 @@ Level.prototype.reset = function() {
   } else {
     this.main_game = false
   }
+  this.restarting_level = false;
   this.enemies = []
   this.enemy_counter = 0
   this.spawn_interval = 200
@@ -289,6 +305,10 @@ Level.prototype.process = function(dt) {
       imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
       this.gateway_transition_duration = null
     }
+  }
+
+  if (this.restarting_level) {
+    this.restarting_timer -= dt;
   }
 
   // if the gateway is opened, process the particles
@@ -670,6 +690,11 @@ Level.prototype.draw = function(context, draw_factor) {
     context.save()
     context.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.7)
 
+    // if restarting level, force the spark to fade.
+    if (this.restarting_level) {
+      context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
+    }
+
     draw_spark(context, this.spark_loc.x, this.spark_loc.y, this.spark_spin_angle)
     context.restore()
 
@@ -679,6 +704,11 @@ Level.prototype.draw = function(context, draw_factor) {
     var prog = this.multi_duration/this.multi_life;
     context.save()
     context.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.7)
+
+    // if restarting level, force the multi to fade.
+    if (this.restarting_level) {
+      context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
+    }
 
     draw_multi(context, this.multi_loc.x, this.multi_loc.y, this.spark_spin_angle)
     context.restore()
