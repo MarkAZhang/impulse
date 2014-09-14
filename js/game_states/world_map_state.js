@@ -17,6 +17,9 @@ function WorldMapState(world, is_practice_mode) {
   this.world_num = world
   this.next_world = null;
 
+  this.cur_difficulty_mode = imp_vars.player_data.difficulty_mode;
+  this.next_difficulty_mode = null;
+
   this.buttons = []
   var _this = this
 
@@ -27,16 +30,11 @@ function WorldMapState(world, is_practice_mode) {
     switch_bg("Hive 0", 250, imp_vars.bg_opacity)      
   }, "back"));
 
+  this.difficulties = ["easy", "normal"];
+
   this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
 
   this.buttons.push(this.select_difficulty_button);
-
-  this.world_buttons = {
-  }
-  // the things you select at the bottom
-  this.mode_buttons = []
-
-  this.practice_buttons = {}
 
   this.num_mode_buttons = 5
 
@@ -53,24 +51,21 @@ function WorldMapState(world, is_practice_mode) {
     4: 20
   }
 
-  this.world_unlocked = {
-    0: true,
-    1: true,
-    2: imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 1"],
-    3: imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 2"],
-    4: imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 3"],
+  this.world_unlocked = {};
+  
+  for (var i = 0; i < this.difficulties.length; i++) {
+    var difficulty = this.difficulties[i];
+    this.world_unlocked[difficulty] = {
+      0: true,
+      1: true,
+      2: imp_vars.player_data.world_rankings[difficulty]["world 1"],
+      3: imp_vars.player_data.world_rankings[difficulty]["world 2"],
+      4: imp_vars.player_data.world_rankings[difficulty]["world 3"],
+    }  
   }
 
   this.world_button_y = imp_vars.levelHeight/2;
-
-  this.set_up_mode_buttons()
-
-  if (!this.is_practice_mode) {
-    this.set_up_world_map()
-  } else {
-    this.set_up_practice_buttons()
-    this.set_up_world_icon(0, imp_vars.levelWidth/2, this.world_button_y, true)  
-  }
+  this.set_up_buttons();
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
 
@@ -109,7 +104,28 @@ function WorldMapState(world, is_practice_mode) {
 
 }
 
-WorldMapState.prototype.set_up_world_map = function() {
+WorldMapState.prototype.set_up_buttons = function() {
+  this.world_buttons = {}
+  // the things you select at the bottom
+  this.mode_buttons = {}
+
+  this.practice_buttons = {}
+
+  for (var i = 0; i < this.difficulties.length; i++) {
+    this.world_buttons[this.difficulties[i]] = {};
+    this.mode_buttons[this.difficulties[i]] = [];
+    this.practice_buttons[this.difficulties[i]] = {};
+    this.set_up_mode_buttons(this.difficulties[i])
+    if (!this.is_practice_mode) {
+      this.set_up_world_map(this.difficulties[i])
+    } else {
+      this.set_up_practice_buttons(this.difficulties[i])
+      this.set_up_world_icon(0, imp_vars.levelWidth/2, this.world_button_y, true, this.difficulties[i])  
+    }  
+  }
+}
+
+WorldMapState.prototype.set_up_world_map = function(difficulty) {
     var _this = this;
     /*this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
      function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
@@ -117,18 +133,18 @@ WorldMapState.prototype.set_up_world_map = function() {
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})*/
     for (var i = 0; i <= 4; i++) {
-      this.set_up_world_icon(i, imp_vars.levelWidth/2, this.world_button_y, this.world_unlocked[i])  
+      this.set_up_world_icon(i, imp_vars.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)  
     }
 }
 
-WorldMapState.prototype.set_up_mode_buttons = function() {
+WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
   var diff = 75
   var button_color = "white"
   var text = ["T", "1", "2", "3", "4"]
   var num_buttons_to_show = 2; // always show world 1 and tutorial
   // Get the number of buttons to show.
   for(var i = 2; i < this.num_mode_buttons; i++) {
-    if(i > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(i-1)] && !imp_vars.dev) {
+    if(i > 1 && !imp_vars.player_data.world_rankings[difficulty]["world "+(i-1)] && !imp_vars.dev) {
       break;     
     } else {
       num_buttons_to_show += 1;
@@ -144,33 +160,53 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
           _this.fader.set_animation("fade_across", function() {
             _this.world_num = index;
           });
-          _this.update_bg(index);
+          _this.update_bg(index, _this.cur_difficulty_mode);
           _this.next_world = index;
+          _this.next_difficulty_mode = _this.cur_difficulty_mode;
         }
       };
     })(i)
-    this.mode_buttons.push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))  
+    this.mode_buttons[difficulty].push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))  
   }
 }
 
 // Update background based on index and current difficulty.
-WorldMapState.prototype.update_bg = function(index) {
+WorldMapState.prototype.update_on_difficulty_change = function(difficulty) {
+  if (this.cur_difficulty_mode != difficulty) {
+    var _this = this;
+    // If the current world isn't unlocked in the new difficulty, change to the latest that is unlocked.    
+    var i = this.world_num;
+    while (i > 1 && !imp_vars.player_data.world_rankings[difficulty]["world "+(i-1)] && !imp_vars.dev) {
+      i -= 1;
+    }
+    this.fader.set_animation("fade_across", function() {
+      _this.cur_difficulty_mode = _this.next_difficulty_mode;
+      _this.world_num = 1;
+    });
+    this.update_bg(i, difficulty);
+
+    this.next_world = i;
+    this.next_difficulty_mode = difficulty
+  }
+};
+
+WorldMapState.prototype.update_bg = function(index, difficulty) {
   if (index == undefined) {
     index = this.world_num;
   }
-  if (index != 0 && imp_vars.player_data.difficulty_mode == "normal") {
+  if (index != 0 && difficulty == "normal") {
     switch_bg("Title Alt" + index, 250, imp_vars.bg_opacity * 0.5)      
   } else {
     switch_bg("Hive 0", 250, imp_vars.bg_opacity)
   }
-};
+}
 
-WorldMapState.prototype.set_up_practice_buttons = function() {
+WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
 
   var diff = 85
 
   for(var i = 1; i <= 4; i++) {
-    this.practice_buttons[i] = []
+    this.practice_buttons[difficulty][i] = []
     var colors = ["world "+i+" bright", "world "+i+" bright", "silver", "gold"]
     for(var j = 0; j < 8; j++) {
 
@@ -179,7 +215,7 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
         level_name = "BOSS "+i
       }
       var _this = this;
-      var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].stars]]
+      var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[difficulty].stars]]
       var callback = (function(level, index) {
         return function() {
           _this.fade_out_interval = _this.fade_out_interval_practice
@@ -201,21 +237,20 @@ WorldMapState.prototype.set_up_practice_buttons = function() {
       var new_button = new IconButton(j+1, 30, x, y, 75, 75, this_color, this_color, callback, "practice"+i);
       new_button.underline_on_hover = false
       new_button.level_name = level_name
-      this.practice_buttons[i].push(new_button)
-      new_button.active = imp_params.impulse_level_data[level_name].save_state[imp_vars.player_data.difficulty_mode].seen || 
-        (j == 0 && this.world_unlocked[i]) || imp_vars.dev
+      this.practice_buttons[difficulty][i].push(new_button)
+      new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen || 
+        (j == 0 && this.world_unlocked[difficulty][i]) || imp_vars.dev
       if(!new_button.active) {
         new_button.color = "gray"
       }
-
     }
   }
 }
 
-WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked) {
+WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, difficulty) {
   var text = unlocked ? "START" : "LOCKED";
   var _this = this
-  this.world_buttons[world_num] = new IconButton(text, 50, x, y, 150, 150, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
+  this.world_buttons[difficulty][world_num] = new IconButton(text, 50, x, y, 150, 150, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
     function(){
       _this.fade_out_interval = _this.fade_out_interval_main
       _this.fade_out_duration = _this.fade_out_interval; 
@@ -225,7 +260,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked) 
       setTimeout(function(){
         switch_game_state(new MainGameTransitionState(world_num, null, null, null, null, null, false, true))
       }, _this.fade_out_interval_main)}, "world"+world_num)
-  this.world_buttons[world_num].active = unlocked
+  this.world_buttons[difficulty][world_num].active = unlocked
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
@@ -267,35 +302,14 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   if (this.fader.get_current_animation() == "fade_across") {
     ctx.save();
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
-    this.draw_world(ctx, this.world_num);
+    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
     ctx.restore();
     ctx.save();
     ctx.globalAlpha *= this.fader.get_animation_progress();
-    this.draw_world(ctx, this.next_world);
+    this.draw_world(ctx, this.next_world, this.next_difficulty_mode);
     ctx.restore();
   } else {
-    this.draw_world(ctx, this.world_num);
-  }
-
-  for(var i = 0; i < this.mode_buttons.length; i++) {
-    this.mode_buttons[i].draw(ctx)
-    if(this.mode_buttons[i].mouseOver) {
-      ctx.textAlign = "center"
-      ctx.font = '15px Muli'
-      if (i == 0) {
-        ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      } else if(this.mode_buttons[i].active) {
-        ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText("HIVE "+imp_params.tessellation_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      } else if(this.mode_buttons[i-1].active) {
-        ctx.fillStyle = "gray"
-        ctx.fillText(this.requirements[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      } else {
-        ctx.fillStyle = "gray"
-        ctx.fillText("???", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
-      }
-    }
+    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
   }
 
   for(var i = 0; i < this.buttons.length; i++)
@@ -304,7 +318,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   // Only draw gateway particles if the current world is active.
-  if (!this.is_practice_mode && this.world_unlocked[this.world_num] ) {
+  if (!this.is_practice_mode && this.world_unlocked[imp_vars.player_data.difficulty_mode][this.world_num] ) {
     this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   }
   
@@ -316,33 +330,33 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 }
 
 // Draw everything associated with a particular hive.
-WorldMapState.prototype.draw_world = function(ctx, index) {
+WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
 
   if (!this.is_practice_mode || index == 0) {
-    this.world_buttons[index].draw(ctx)
+    this.world_buttons[difficulty][index].draw(ctx)
   }
 
   if (index > 0) {
     if (!this.is_practice_mode) {
       // draw stuff like rank and continues below the world button
-      if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode].hasOwnProperty("world "+index)) {
+      if(imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world "+index)) {
         ctx.save()
         ctx.textAlign = "center"
         ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
-          imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"], 
+          imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"], 
           index,
-          imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"])
+          imp_vars.player_data.world_rankings[difficulty]["world "+index]["deaths"])
         ctx.font = '18px Muli'
-        ctx.fillText('RANK', this.world_buttons[index].x, this.world_buttons[index].y + 100)
+        ctx.fillText('RANK', this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 100)
         ctx.font = '36px Muli'
         ctx.save()
-        var victory_type = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["victory_type"]
-        draw_victory_type_icon(ctx, this.world_buttons[index].x, this.world_buttons[index].y + 120, index, victory_type, 1)
+        var victory_type = imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"]
+        draw_victory_type_icon(ctx, this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 120, index, victory_type, 1)
         ctx.restore()
         if(victory_type == "half") {
           ctx.font = '11px Muli'
-          ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["continues"]
-            , this.world_buttons[index].x, this.world_buttons[index].y + 150)
+          ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[difficulty]["world "+index]["continues"]
+            , this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 150)
         }
         /*if(victory_type == "gold") {
           ctx.font = '11px Muli'
@@ -372,8 +386,8 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
       }
       ctx.restore()*/
       if (index != 0) {
-        for(var i = 0; i < this.practice_buttons[index].length; i++) {
-          this.practice_buttons[index][i].draw(ctx)
+        for(var i = 0; i < this.practice_buttons[difficulty][index].length; i++) {
+          this.practice_buttons[difficulty][index][i].draw(ctx)
         }
       }
     }
@@ -408,6 +422,22 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
   } else {
     ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, this.world_button_y - 125)  
   }
+
+  // mode buttons
+  for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
+    this.mode_buttons[difficulty][i].draw(ctx)
+    if(this.mode_buttons[difficulty][i].mouseOver) {
+      ctx.textAlign = "center"
+      ctx.font = '15px Muli'
+      if (i == 0) {
+        ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
+        ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+      } else if(this.mode_buttons[difficulty][i].active) {
+        ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
+        ctx.fillText("HIVE "+imp_params.tessellation_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+      }
+    }
+  }
 };
 
 WorldMapState.prototype.process = function(dt) {
@@ -429,20 +459,21 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   {
     this.buttons[i].on_mouse_move(x, y)
   }
+  var difficulty = imp_vars.player_data.difficulty_mode;
   if (!this.is_practice_mode) {
-    this.world_buttons[this.world_num].on_mouse_move(x, y)  
+    this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)  
   } else {
     if (this.world_num != 0) {
-      for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
-        this.practice_buttons[this.world_num][i].on_mouse_move(x, y)
+      for(var i = 0; i < this.practice_buttons[difficulty][this.world_num].length; i++) {
+        this.practice_buttons[difficulty][this.world_num][i].on_mouse_move(x, y)
       }
     } else {
-      this.world_buttons[this.world_num].on_mouse_move(x, y)
+      this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)
     }
   }
   
-  for(var i = 0; i < this.mode_buttons.length; i++) {
-    this.mode_buttons[i].on_mouse_move(x, y)
+  for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
+    this.mode_buttons[difficulty][i].on_mouse_move(x, y)
   }
   
 }
@@ -452,20 +483,21 @@ WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
+  var difficulty = imp_vars.player_data.difficulty_mode;
   if (!this.is_practice_mode) {
-    this.world_buttons[this.world_num].on_click(x, y)  
+    this.world_buttons[difficulty][this.world_num].on_click(x, y)  
   } else {
     if (this.world_num != 0) {
-      for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
-        this.practice_buttons[this.world_num][i].on_click(x, y)
+      for(var i = 0; i < this.practice_buttons[difficulty][this.world_num].length; i++) {
+        this.practice_buttons[difficulty][this.world_num][i].on_click(x, y)
       }
     } else {
-      this.world_buttons[this.world_num].on_click(x, y)  
+      this.world_buttons[difficulty][this.world_num].on_click(x, y)  
     }  
   }
   
-  for(var i = 0; i < this.mode_buttons.length; i++) {
-    this.mode_buttons[i].on_click(x, y)
+  for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
+    this.mode_buttons[difficulty][i].on_click(x, y)
   }
 }
 
