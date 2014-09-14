@@ -181,7 +181,7 @@ WorldMapState.prototype.update_on_difficulty_change = function(difficulty) {
     }
     this.fader.set_animation("fade_across", function() {
       _this.cur_difficulty_mode = _this.next_difficulty_mode;
-      _this.world_num = 1;
+      _this.world_num = i;
     });
     this.update_bg(i, difficulty);
 

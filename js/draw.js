@@ -1343,12 +1343,16 @@ var spriteSheetData = {
   "ultimate_icon_blue": [43, 155, 42, 42],
   "ultimate_shard": [0, 121, 18, 32],
   "world1_starblank": [85, 199, 41, 38],
+  "world1_starhalf": [127, 199, 19, 38],
   "world1_star": [127, 199, 41, 38],
   "world2_starblank": [85, 237, 41, 38],
+  "world2_starhalf": [127, 237, 19, 38],
   "world2_star": [127, 237, 41, 38],
   "world3_starblank": [0, 199, 41, 38],
+  "world3_starhalf": [42, 199, 19, 38],
   "world3_star": [42, 199, 41, 38],
   "world4_starblank": [0, 237, 41, 38],
+  "world4_starhalf": [42, 237, 19, 38],
   "world4_star": [42, 237, 41, 38],
   "silver_trophy": [0, 277, 90, 78],
   "gold_trophy": [89, 277, 90, 78],
@@ -1510,6 +1514,7 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
 function draw_victory_type_icon(ctx, x, y, world_num, victory_type, scale) {
   if (victory_type == "half") {
     drawSprite(ctx, x - 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
+    drawSprite(ctx, x - 36 * scale, y, 0, 12 * scale, 25 * scale, "world" + world_num + "_starhalf")
     drawSprite(ctx, x, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
     drawSprite(ctx, x + 30 * scale, y, 0, 25 * scale, 25 * scale, "world" + world_num + "_starblank")
   } else if (victory_type == "basic") {
