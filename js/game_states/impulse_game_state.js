@@ -925,7 +925,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
         labels: true, 
         ult: this.has_ult, 
         sparks: imp_vars.player_data.difficulty_mode == "normal",
-        lives: imp_vars.player_data.difficulty_mode == "normal",
+        lives: imp_vars.player_data.difficulty_mode == "normal" && this.main_game,
       })
   }
   //context.font = '12px Muli'

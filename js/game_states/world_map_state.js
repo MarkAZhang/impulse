@@ -261,6 +261,10 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
         switch_game_state(new MainGameTransitionState(world_num, null, null, null, null, null, false, true))
       }, _this.fade_out_interval_main)}, "world"+world_num)
   this.world_buttons[difficulty][world_num].active = unlocked
+  if (difficulty == "normal") {
+    this.world_buttons[difficulty][world_num].add_hover_overlay(
+      new HoverOverlay("lives_and_sparks", impulse_colors["world "+world_num+" bright"], world_num));
+  }
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
@@ -299,19 +303,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
   }
 
-  if (this.fader.get_current_animation() == "fade_across") {
-    ctx.save();
-    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
-    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
-    ctx.restore();
-    ctx.save();
-    ctx.globalAlpha *= this.fader.get_animation_progress();
-    this.draw_world(ctx, this.next_world, this.next_difficulty_mode);
-    ctx.restore();
-  } else {
-    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
-  }
-
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)
@@ -326,7 +317,18 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = "white"
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
 
-
+  if (this.fader.get_current_animation() == "fade_across") {
+    ctx.save();
+    ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
+    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha *= this.fader.get_animation_progress();
+    this.draw_world(ctx, this.next_world, this.next_difficulty_mode);
+    ctx.restore();
+  } else {
+    this.draw_world(ctx, this.world_num, this.cur_difficulty_mode);
+  }
 }
 
 // Draw everything associated with a particular hive.
@@ -353,11 +355,11 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
         var victory_type = imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"]
         draw_victory_type_icon(ctx, this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 120, index, victory_type, 1)
         ctx.restore()
-        if(victory_type == "half") {
+        /*if(victory_type == "half") {
           ctx.font = '11px Muli'
           ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[difficulty]["world "+index]["continues"]
             , this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 150)
-        }
+        }*/
         /*if(victory_type == "gold") {
           ctx.font = '11px Muli'
           ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
@@ -437,6 +439,9 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
         ctx.fillText("HIVE "+imp_params.tessellation_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
       }
     }
+  }
+  if (!this.is_practice_mode || index == 0) {
+    this.world_buttons[difficulty][index].post_draw(ctx)
   }
 };
 

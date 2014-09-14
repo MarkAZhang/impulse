@@ -85,8 +85,14 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "tutorial_one_up") {
 		this.w = 250;
 		this.h = 40;
+	} else if (this.type == "lives_and_sparks") {
+		this.w = 150;
+		this.h = 110;
+		this.has_ult = has_ult();
+		this.lives = calculate_lives()
+	    this.ultimates = calculate_ult()
+		this.spark_val = calculate_spark_val()
 	}
-
 
 	this.opacity = 0;
 	this.world_num = world_num
@@ -174,6 +180,7 @@ HoverOverlay.prototype.draw = function(ctx) {
 	if (this.type == "tutorial_void") {
 		this.tutorial_text = "DO NOT TOUCH THE VOID"
 	}
+
 	if (this.type == "tutorial_kill_enemy") {
 		this.tutorial_text = "IMPULSE THE ENEMY INTO THE VOID"
 	}
@@ -198,7 +205,7 @@ HoverOverlay.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.tutorial_text, this.x, this.y - this.h / 2 + 25);
-	} else 	if (this.type == "rank_explanation") {
+	} else	if (this.type == "rank_explanation") {
 		var ytop = this.y - this.h/2;
 		/*ctx.textAlign = 'center'
 		ctx.font = "20px Muli"
@@ -227,6 +234,20 @@ HoverOverlay.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.option_text, this.x, this.y - this.h / 2 + 25);
+	} else if (this.type == "lives_and_sparks") {
+		ctx.textAlign = 'center';
+		ctx.font = "12px Muli";
+		ctx.fillStyle = "white";
+		ctx.fillText("STARTING VALUES", this.x, this.y - this.h / 2 + 20);
+	  draw_lives_and_sparks(
+	      ctx, this.lives, this.spark_val, this.ultimates, 
+	      this.x, this.y + 5, 20, {
+	        labels: true,
+	        starting_values: true,
+	        ult: this.has_ult, 
+	        sparks: true,
+	        lives: true
+	      })
 	} else {
 		// rewards
 		ctx.textAlign = 'center';

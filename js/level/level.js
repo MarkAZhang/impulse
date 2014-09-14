@@ -244,30 +244,32 @@ Level.prototype.generate_multi = function() {
 Level.prototype.process = function(dt) {
   //handle obstacle visibility
   if (!this.is_boss_level && this.spark_spawn_points.length > 0) {
-    this.spark_duration -= dt
-    if(this.spark_loc == null || this.spark_duration < 0) {
-      this.generate_spark()
-    } else {
-      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
-      if(p_dist(player_loc, this.spark_loc) < 25) {
-        imp_vars.impulse_music.play_sound("sparks")
-          this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
-        if(this.impulse_game_state.hive_numbers.sparks >= 100) {
-          this.impulse_game_state.hive_numbers.sparks -= 100;
-          this.impulse_game_state.hive_numbers.lives += 1
-          this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
-        }
-
-        //this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
-        this.impulse_game_state.addScoreLabel(
-          "+" + this.impulse_game_state.hive_numbers.spark_val,
-          impulse_colors["impulse_blue"],
-          this.spark_loc.x / imp_vars.draw_factor,
-          this.spark_loc.y / imp_vars.draw_factor,
-          20, 2000, true);
+    if (imp_vars.player_data.difficulty_mode == "normal") {
+      this.spark_duration -= dt
+      if(this.spark_loc == null || this.spark_duration < 0) {
         this.generate_spark()
-        if (this.impulse_game_state.show_tutorial) {
-          this.impulse_game_state.add_tutorial_signal("got_spark")
+      } else {
+        var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
+        if(p_dist(player_loc, this.spark_loc) < 25) {
+          imp_vars.impulse_music.play_sound("sparks")
+            this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
+          if(this.impulse_game_state.hive_numbers.sparks >= 100) {
+            this.impulse_game_state.hive_numbers.sparks -= 100;
+            this.impulse_game_state.hive_numbers.lives += 1
+            this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
+          }
+
+          //this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
+          this.impulse_game_state.addScoreLabel(
+            "+" + this.impulse_game_state.hive_numbers.spark_val,
+            impulse_colors["impulse_blue"],
+            this.spark_loc.x / imp_vars.draw_factor,
+            this.spark_loc.y / imp_vars.draw_factor,
+            20, 2000, true);
+          this.generate_spark()
+          if (this.impulse_game_state.show_tutorial) {
+            this.impulse_game_state.add_tutorial_signal("got_spark")
+          }
         }
       }
     }

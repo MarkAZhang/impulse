@@ -1171,7 +1171,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
 
     if (piece == "sparks") {
       if (args.starting_values) {
-        context.fillText("SPARK", x_loc, y - size * 1.4)  
+        context.fillText("SPARK", x_loc, y - size * 1.3)  
         context.fillText("VALUE", x_loc, y - size * 0.8)  
       } else
         context.fillText("SPARKS", x_loc, y - size * 0.8)
