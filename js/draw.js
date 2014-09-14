@@ -1121,51 +1121,65 @@ function draw_logo(context, x, y, text, scale) {
 }
 
 function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, args) {
+
+  var pieces_to_draw = [];
+
+  if (args.lives) {
+    pieces_to_draw.push("lives")
+  }
+  if (args.sparks) {
+    pieces_to_draw.push("sparks")
+  }
+  if (args.ult) {
+    pieces_to_draw.push("ult")
+  }
+
+  var xgap = size * 1.8;
+
   context.save()
+  for (var i = 0; i < pieces_to_draw.length; i++) {
+    var piece = pieces_to_draw[i];
+    var x_loc = x - (pieces_to_draw.length - 1) / 2 * xgap + i * xgap;
 
-  var x_offset = size * 0.9
-  if(args.ult) {
-    x_offset = 0
-  }
-  context.font = size+'px Muli'
-  context.fillStyle = "white"
-  context.shadowBlur = 0
-  
-  drawSprite(context, x - size * 1.8 + x_offset , y, 0, 1.3 * size, 1.3 * size, "lives_icon")
-  drawSprite(context, x + x_offset + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")
-  if(args.shadow) {
-    context.shadowBlur = 10
-    context.shadowColor = context.fillStyle
-  }
-  context.textAlign = 'center'
-  context.fillText(lives, x - size * 1.8 + x_offset , y + size * 1.6)
-   if(args.starting_values)
-    context.fillText(sparks, x + x_offset , y+ size * 1.6)
-  else 
-    context.fillText(sparks, x + x_offset , y+ size * 1.6)
-  
-  if(args.labels) {
+    context.font = size+'px Muli'
+    context.fillStyle = (piece == "ult") ? "white" : impulse_colors["impulse_blue"]
+    context.shadowBlur = 0
+    context.textAlign = 'center'
+    if(args.shadow) {
+      context.shadowBlur = 10
+      context.shadowColor = context.fillStyle
+    }
+    if (piece == "lives") {
+      drawSprite(context, x_loc, y, 0, 1.3 * size, 1.3 * size, "lives_icon")
+      context.fillText(lives, x_loc, y + size * 1.6)
+    }
+
+    if (piece == "sparks") {
+      drawSprite(context, x_loc + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")    
+      context.fillText(sparks, x_loc, y + size * 1.6)
+    }
+
+    if (piece == "ult") {
+      drawSprite(context, x_loc, y, 0, 1.2 * size, 1.2 * size, "ultimate_icon")
+      context.fillText(ultimates, x_loc, y + size * 1.6)
+    }
     context.font = Math.max(8, (size/3))+'px Muli'
-    context.fillText("LIVES", x - size * 1.8 + x_offset , y - size * 0.8)
 
-    if(args.starting_values) {
-      context.fillText("SPARK", x + x_offset , y - size * 1.4)  
-      context.fillText("VALUE", x + x_offset , y - size * 0.8)  
-    } else
-      context.fillText("SPARKS", x + x_offset , y - size * 0.8)
+    if (piece == "lives") {
+       context.fillText("LIVES", x_loc, y - size * 0.8)
+    }
 
-  }
-  context.font = size+'px Muli'
-  if(args.ult) {
-    context.fillStyle = "white"
-    context.shadowColor = context.fillStyle
-    drawSprite(context, x + size * 1.8 , y, 0, 1.2 * size, 1.2 * size, "ultimate_icon")
-    context.fillText(ultimates, x + size * 1.8, y+ size * 1.6)
-  }
+    if (piece == "sparks") {
+      if (args.starting_values) {
+        context.fillText("SPARK", x_loc, y - size * 1.4)  
+        context.fillText("VALUE", x_loc, y - size * 0.8)  
+      } else
+        context.fillText("SPARKS", x_loc, y - size * 0.8)
+    }
 
-  if(args.labels && args.ult) {
-    context.font = Math.max(8, (size/3))+'px Muli'
-    context.fillText("ULT", x + size * 1.8, y - size * 0.8)
+    if (piece == "ult") {
+      context.fillText("ULT", x_loc, y - size * 0.8)
+    }
   }
   context.restore()
 }

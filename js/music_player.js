@@ -109,7 +109,6 @@ MusicPlayer.prototype.change_bg_volume = function(volume) {
 }
 
 MusicPlayer.prototype.change_effects_volume = function(volume) {
-  window.console.log("CHANGING TO " + volume)
   imp_vars.player_data.options.effects_volume = volume
   save_game()
 }

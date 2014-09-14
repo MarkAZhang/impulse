@@ -364,7 +364,9 @@ ImpulseGameState.prototype.process = function(dt) {
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
       if (this.main_game && !this.world_num == 0 && this.zoom_state == "none" && this.zoom == 1) {
-        this.hive_numbers.lives -= 1
+        if (imp_vars.player_data.difficulty_mode == "normal") {
+          this.hive_numbers.lives -= 1  
+        }
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
       }
 
@@ -917,7 +919,14 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.shadowBlur = 0;
   context.save()*/
   if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-    draw_lives_and_sparks(context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {labels: true, ult: this.has_ult})
+    draw_lives_and_sparks(
+      context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
+      imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {
+        labels: true, 
+        ult: this.has_ult, 
+        sparks: imp_vars.player_data.difficulty_mode == "normal",
+        lives: imp_vars.player_data.difficulty_mode == "normal",
+      })
   }
   //context.font = '12px Muli'
   //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);

@@ -309,7 +309,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
     draw_victory_type_icon(ctx, imp_vars.levelWidth/2, 200, this.world_num, this.victory_type, 1.2)
   } else if(this.save_screen) {
-    draw_lives_and_sparks(ctx, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, imp_vars.levelWidth/2, 170, 24, {labels: true, ult: this.has_ult})
+    draw_lives_and_sparks(ctx, 
+      this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
+      imp_vars.levelWidth/2, 170, 24, {
+        labels: true, 
+        ult: this.has_ult,
+        sparks: imp_vars.player_data.difficulty_mode == "normal",
+        lives: imp_vars.player_data.difficulty_mode == "normal",
+      });
     ctx.font = '16px Muli'
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"

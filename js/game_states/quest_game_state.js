@@ -80,7 +80,7 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
     imp_vars.levelWidth / 2, 
     imp_vars.levelHeight - 50, 
     15, 
-    {labels: true, ult: this.has_ult, starting_values: true})
+    {labels: true, ult: this.has_ult, lives: true, sparks: true, starting_values: true})
   /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);

@@ -403,7 +403,14 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
 
-      draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, {labels: true, ult: this.has_ult})
+      draw_lives_and_sparks(ctx, 
+        Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, 
+        imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, {
+          labels: true, 
+          ult: this.has_ult,
+          sparks: imp_vars.player_data.difficulty_mode == "normal",
+          lives: imp_vars.player_data.difficulty_mode == "normal",
+        })
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
