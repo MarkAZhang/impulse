@@ -69,6 +69,7 @@ function WorldMapState(world, is_practice_mode) {
     this.set_up_world_map()
   } else {
     this.set_up_practice_buttons()
+    this.set_up_world_icon(0, imp_vars.levelWidth/2, this.world_button_y, true)  
   }
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
@@ -122,10 +123,20 @@ WorldMapState.prototype.set_up_world_map = function() {
 
 WorldMapState.prototype.set_up_mode_buttons = function() {
   var diff = 75
-  var cur_x =  imp_vars.levelWidth/2 - ((this.num_mode_buttons - 1) * 0.5) * diff
   var button_color = "white"
   var text = ["T", "1", "2", "3", "4"]
-  for(var i = 0; i <= 4; i++) {
+  var num_buttons_to_show = 2; // always show world 1 and tutorial
+  // Get the number of buttons to show.
+  for(var i = 2; i < this.num_mode_buttons; i++) {
+    if(i > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(i-1)] && !imp_vars.dev) {
+      break;     
+    } else {
+      num_buttons_to_show += 1;
+    }
+  }
+  var cur_x =  imp_vars.levelWidth/2 - ((num_buttons_to_show - 1) * 0.5) * diff
+
+  for(var i = 0; i < num_buttons_to_show; i++) {
     var _this = this;
     var callback = (function(index) {
       return function() {
@@ -139,10 +150,6 @@ WorldMapState.prototype.set_up_mode_buttons = function() {
       };
     })(i)
     this.mode_buttons.push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))  
-    if(i > 1 && !imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+(i-1)] && !imp_vars.dev) {
-      this.mode_buttons[i].active = false
-      this.mode_buttons[i].color = "gray"
-    }
   }
 }
 
@@ -311,7 +318,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 // Draw everything associated with a particular hive.
 WorldMapState.prototype.draw_world = function(ctx, index) {
 
-  if (!this.is_practice_mode) {
+  if (!this.is_practice_mode || index == 0) {
     this.world_buttons[index].draw(ctx)
   }
 
@@ -364,8 +371,10 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
         }
       }
       ctx.restore()*/
-      for(var i = 0; i < this.practice_buttons[index].length; i++) {
-        this.practice_buttons[index][i].draw(ctx)
+      if (index != 0) {
+        for(var i = 0; i < this.practice_buttons[index].length; i++) {
+          this.practice_buttons[index][i].draw(ctx)
+        }
       }
     }
 
@@ -427,6 +436,8 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
       for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
         this.practice_buttons[this.world_num][i].on_mouse_move(x, y)
       }
+    } else {
+      this.world_buttons[this.world_num].on_mouse_move(x, y)
     }
   }
   
@@ -448,6 +459,8 @@ WorldMapState.prototype.on_click = function(x, y) {
       for(var i = 0; i < this.practice_buttons[this.world_num].length; i++) {
         this.practice_buttons[this.world_num][i].on_click(x, y)
       }
+    } else {
+      this.world_buttons[this.world_num].on_click(x, y)  
     }  
   }
   
