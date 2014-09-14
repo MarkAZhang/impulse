@@ -192,7 +192,14 @@ function switch_bg(bg_file, duration, alpha) {
     imp_vars.switch_bg_duration = duration;
     imp_vars.switch_bg_timer = duration;
     var alt_title_bg_ctx = imp_vars.alt_title_bg_canvas.getContext('2d');
-    draw_bg(alt_title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
+    // bg_file can also be a color.
+    if (bg_file.substring(0, 1) == "#") {
+      alt_title_bg_ctx.fillStyle = bg_file;
+      alt_title_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+    } else {
+      draw_bg(alt_title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)  
+    }
+    
     imp_vars.alt_bg_alpha = alpha;
     imp_vars.alt_bg_file = bg_file;
   }
@@ -201,7 +208,12 @@ function switch_bg(bg_file, duration, alpha) {
 // Will immediately draw the new bg onto the bg_ctx.
 function set_bg(bg_file, alpha) {
   var title_bg_ctx = imp_vars.title_bg_canvas.getContext('2d');
-  draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
+  if (bg_file.substring(0, 1) == "#") {
+    title_bg_ctx.fillStyle = bg_file;
+    title_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
+  } else {
+    draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)  
+  }
   imp_vars.bg_alpha = alpha;
   imp_vars.bg_file = bg_file;
 
@@ -209,6 +221,7 @@ function set_bg(bg_file, alpha) {
   imp_vars.bg_ctx.fillStyle = "#000"
   imp_vars.bg_ctx.fillRect(0, 0, canvas.width, canvas.height);
   imp_vars.bg_ctx.globalAlpha = imp_vars.bg_alpha;
+
   imp_vars.bg_ctx.drawImage(imp_vars.title_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight);
   imp_vars.bg_ctx.globalAlpha = 1
 }
@@ -281,7 +294,7 @@ function step() {
     imp_vars.cur_dialog_box.draw(imp_vars.ctx)
   }
 
-  check_share_dialog();
+  //check_share_dialog();
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   imp_vars.step_id = setTimeout(step, Math.max(33 - temp_dt, 1))
@@ -787,7 +800,7 @@ function share_on_facebook_dialog() {
     href: 'https://developers.facebook.com/docs/dialogs/',
   }, function(response){});
 }
-
+/*
 function open_share_dialog() {
   // share_button_open prevents us from calling click too much.
   if (document.getElementById("at4-soc") && !share_dialog_is_open()) {
@@ -812,4 +825,4 @@ function check_share_dialog() {
 function share_dialog_is_open() {
   // check whether the at4-share element has the at4-show class. THIS HACKY IMPLEMENTATION IS 3RD PARTY SPECIFIC!
   return document.getElementById("at4-share").className.match(/\bat4-show\b/);
-}
+}*/

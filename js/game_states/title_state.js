@@ -26,7 +26,7 @@ function TitleState(last_state) {
     "fade_out": 250
   });
   this.fader.set_animation("fade_in");
-  open_share_dialog();
+  //open_share_dialog();
   this.trailer_fade_in = 0;
   this.trailer_fade_total = 8000;
   this.trailer_fade_delay = 7000;
@@ -180,7 +180,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new IconButton("START GAME", 20, imp_vars.player_data.first_time ? imp_vars.levelWidth/2 : imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
 
-      close_share_dialog();
+      //close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
       
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
@@ -197,6 +197,8 @@ TitleState.prototype.setup_main_menu = function() {
         
         if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
           switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+        } else {
+          switch_bg(impulse_colors["world 0 dark"], 250, 1)
         }
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i, false))
@@ -207,7 +209,7 @@ TitleState.prototype.setup_main_menu = function() {
     if (!imp_vars.player_data.first_time) {
       this.buttons["menu"].push(new IconButton("PRACTICE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
       function(){
-        close_share_dialog();
+        //close_share_dialog();
         //_this.fade_out_duration = _this.fade_interval;
         var i = 1;
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {

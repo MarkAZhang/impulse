@@ -60,11 +60,11 @@ body{
         .button:hover {
             text-decoration: underline;
         }
-        #addthis-inline {
+        /*#addthis-inline {
             z-index: 10;
             position: absolute;
             left: -webkit-calc(50% - 92px);
             top: 450px;
             opacity: 0;
             display: none;
-        }
+        }*/

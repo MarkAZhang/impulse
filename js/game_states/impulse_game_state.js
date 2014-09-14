@@ -357,6 +357,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if (this.player.dying && this.player.dying_duration > 0 && !this.level.restarting_level && this.hive_numbers.lives > 0) {
       this.level.prepare_level_for_reset();
       this.game_numbers.score = 0;
+      this.game_numbers.combo = 1;
       this.stars = 0;
     }
 

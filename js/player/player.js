@@ -472,6 +472,7 @@ Player.prototype.process = function(dt) {
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
+
       this.start_death()
       break
     }
@@ -867,7 +868,7 @@ Player.prototype.draw = function(context) {
     if(imp_vars.player_data.options.impulse_shadow) {
       context.save();
       var prog = this.appear_timer / this.appear_duration;
-      context.globalAlpha *= (1 - prog);
+      context.globalAlpha *= Math.max(0, 1 - prog);
       if (this.status_duration[1] <= 0 && imp_vars.player_data.options.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 

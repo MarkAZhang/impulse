@@ -220,15 +220,18 @@ MainGameTransitionState.prototype.process = function(dt) {
     switch_game_state(new MainGameSummaryState(this.world_num, false, this.hive_numbers, this.level, this.visibility_graph))
     return
   }
+
   // if last level of tutorial, go to summary state.
   if(this.world_num == 0 && this.victory && this.last_level && this.last_level.level_name == "HIVE 0-4") {
     switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return
   }
 
-  // if tutorial, skip the transition state.
-  if(this.world_num == 0 && this.state != "world_intro") {
-    switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
+  // if tutorial, skip the transition state. Also, if this is the first time, go directly to impulse game state.
+  if(this.world_num == 0) {
+    if(this.level_loaded) {
+      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true, this.victory === null ? true : this.victory, this.first_time))
+    }  
     return
   }
 
@@ -290,19 +293,20 @@ MainGameTransitionState.prototype.process = function(dt) {
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn && this.level) {
+    bg_canvas.setAttribute("style", "display:none")
     bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
-    bg_canvas.setAttribute("style", "display:none")
     draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
-  }
-  if(this.world_num == 0 && this.state != "world_intro") {
-    return
   }
 
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+
+  if(this.world_num == 0) {
+    return
+  }
 
   ctx.save()
   /*if(this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval * 3 / 4) {

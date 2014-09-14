@@ -198,13 +198,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
-    if (cur_reward.type == "share") {
+    /*if (cur_reward.type == "share") {
       document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
-    }
+    }*/
   } else if(this.transition_state == "out") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = Math.max(0, prog)
-    document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
+    //document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
   }
   // draw tessellation if applicable
   if (cur_reward.type != "quest" && cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" && cur_reward.type != "share") {
@@ -254,7 +254,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
 
-    if(cur_reward.type == "share") {
+    /*if(cur_reward.type == "share") {
       ctx.textAlign = "center"
       ctx.font = "24px Muli"
       ctx.fillStyle = "white"
@@ -266,7 +266,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 340)
       //draw_spark(ctx, 230, 467, 0)
       //draw_spark(ctx, 570, 467, 0)
-    }
+    }*/
 
 
     if(cur_reward.type == "rating") {
@@ -462,9 +462,9 @@ RewardGameState.prototype.adjust_difficulty_button_border = function() {
 RewardGameState.prototype.debug = function() {
   if (false) {
     this.quest_complete("beat_hive1")
-    this.rewards.push({
+    /*this.rewards.push({
       type: "share"
-    })
+    })*/
 
      this.rewards.push({
       type: "first_time_tutorial"
@@ -539,16 +539,16 @@ RewardGameState.prototype.process = function(dt) {
 }
 
 RewardGameState.prototype.next_reward = function() {
-  if (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") {
+  /*if (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") {
     document.getElementById("addthis-inline").style.display = "none"
-  }
+  }*/
   this.cur_reward_index += 1
 
   if (this.cur_reward_index < this.rewards.length) { 
     var cur_reward = this.rewards[this.cur_reward_index]
-    if (cur_reward.type == "share") {
+    /*if (cur_reward.type == "share") {
       document.getElementById("addthis-inline").style.display = "block"
-    }
+    }*/
   }
 }
 
