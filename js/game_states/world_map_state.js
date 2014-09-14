@@ -381,7 +381,7 @@ WorldMapState.prototype.draw_world = function(ctx, index) {
   if(index != 0) {
     if (this.is_practice_mode) {
       ctx.fillStyle = "white"
-      ctx.font = "24px Muli"
+      ctx.font = "20px Muli"
       ctx.fillText("PRACTICE MODE", imp_vars.levelWidth/2, this.world_button_y - 170)  
     } else if (imp_vars.player_data.difficulty_mode == "normal") {
       ctx.fillStyle = "white"

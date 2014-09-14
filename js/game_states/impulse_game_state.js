@@ -354,17 +354,17 @@ ImpulseGameState.prototype.process = function(dt) {
       this.boss_intro_text_duration -= dt
     }
 
-    if (this.player.dying && this.player.dying_duration > 0 && !this.level.restarting_level) {
+    if (this.player.dying && this.player.dying_duration > 0 && !this.level.restarting_level && this.hive_numbers.lives > 0) {
       this.level.prepare_level_for_reset();
       this.game_numbers.score = 0;
+      this.stars = 0;
     }
 
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
-      if (this.main_game && !this.world_num == 0) {
+      if (this.main_game && !this.world_num == 0 && this.zoom_state == "none" && this.zoom == 1) {
         this.hive_numbers.lives -= 1
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-        window.console.log("DEATH! " + window.performance.now())
       }
 
       if (this.exit_tutorial || (this.hive_numbers.lives < 0 && this.main_game)) {

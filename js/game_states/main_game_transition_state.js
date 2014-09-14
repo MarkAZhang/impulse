@@ -117,8 +117,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       if((typeof this.hive_numbers.game_numbers[this.last_level.level_name].deaths) === undefined)
         this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
 
-      this.hive_numbers.game_numbers[this.last_level.level_name].deaths += 1
-
       this.level = this.last_level
       this.level.impulse_game_state = null
       imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar

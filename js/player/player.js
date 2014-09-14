@@ -865,6 +865,9 @@ Player.prototype.draw = function(context) {
     context.beginPath()
 
     if(imp_vars.player_data.options.impulse_shadow) {
+      context.save();
+      var prog = this.appear_timer / this.appear_duration;
+      context.globalAlpha *= (1 - prog);
       if (this.status_duration[1] <= 0 && imp_vars.player_data.options.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 
@@ -879,8 +882,9 @@ Player.prototype.draw = function(context) {
         context.lineWidth = 2
         context.strokeStyle = impulse_colors["impulse_blue"]
         context.stroke()
-        context.globalAlpha *= 6
+        
       }
+      context.restore();
     }
     if(this.attacking)
     {
