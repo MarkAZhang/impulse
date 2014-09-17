@@ -16,6 +16,8 @@ function Tank(world, x, y, id, impulse_game_state) {
   if(imp_vars.player_data.difficulty_mode == "easy")
     this.tank_force = 80
 
+  if (imp_vars.player_data.difficulty_mode == "normal") {}
+
   this.death_radius = 5
 
   this.detonate_timer = 200
@@ -120,7 +122,12 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, 
   if (this.status_duration[2] > 0) {
     this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
   } else {
-    this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+    if (imp_vars.player_data.difficulty_mode == "easy") {
+      this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+    } else {
+      this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+    }
+    
   }
 
   if (this.tank_collision_fudge_timer > 0 && !this.dying && !this.activated && this.status_duration[1] <= 0) {
