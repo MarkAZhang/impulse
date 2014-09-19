@@ -114,7 +114,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
     var help_button = new IconButton("", 16, 490, 205, 20, 20, this.lite_color, this.bright_color, function() {}, "help_icon")
     this.buttons.push(help_button);
-    help_button.add_hover_overlay(new HoverOverlay("rank_explanation", this.bright_color, this.world_num));
+    help_button.add_hover_overlay(new MessageBox("rank_explanation", this.bright_color, this.world_num));
   }
 
   var _this = this;
@@ -221,12 +221,11 @@ MainGameSummaryState.prototype.calculate_deaths = function() {
 }
 
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
-
   if (this.world_num == 0) {
     return;
   }
   if(!this.bg_drawn) {
-    bg_canvas.setAttribute("style", "display:none" )
+    bg_canvas.setAttribute("style", "display:none")
     this.bg_drawn = true
     draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
   }

@@ -1,15 +1,16 @@
-var HoverOverlay = function(type, color, world_num, completed) {
+var MessageBox = function(type, color, world_num, completed) {
   if(!color) return
   this.init(type, color, world_num, completed)
 };
 
-HoverOverlay.prototype.init = function(type, color, world_num, completed) {
+MessageBox.prototype.init = function(type, color, world_num, completed) {
 	this.type = type;
 	this.color = color;
 	this.completed = completed;
 	this.x = 0;
 	this.y = 0;
 	this.visible = false;
+	this.message_only = false;
 	if (this.type == "rank_explanation") {
 		this.w = 360;
 		this.h = 140;
@@ -92,13 +93,18 @@ HoverOverlay.prototype.init = function(type, color, world_num, completed) {
 		this.lives = calculate_lives()
 	    this.ultimates = calculate_ult()
 		this.spark_val = calculate_spark_val()
+	} else if (this.type == "god_mode_alert") {
+		this.w = 250;
+		this.h = 40;
+		this.message = "ALL LEVELS UNLOCKED"
+		this.message_only = true
 	}
 
 	this.opacity = 0;
 	this.world_num = world_num
 };
 
-HoverOverlay.prototype.draw = function(ctx) {
+MessageBox.prototype.draw = function(ctx) {
 	if(!this.visible) return;
 	ctx.save()
 	ctx.globalAlpha *= 0.9
@@ -248,6 +254,11 @@ HoverOverlay.prototype.draw = function(ctx) {
 	        sparks: true,
 	        lives: true
 	      })
+	} else if (this.message_only) {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText(this.message, this.x, this.y - this.h / 2 + 25);
 	} else {
 		// rewards
 		ctx.textAlign = 'center';
@@ -262,7 +273,7 @@ HoverOverlay.prototype.draw = function(ctx) {
 	ctx.restore();
 };
 
-HoverOverlay.prototype.draw_rewards = function(ctx, type) {
+MessageBox.prototype.draw_rewards = function(ctx, type) {
 	ctx.font = "12px Muli";
 	var reward_y = this.y + this.h / 2 - 20
 	ctx.beginPath();
@@ -291,7 +302,7 @@ HoverOverlay.prototype.draw_rewards = function(ctx, type) {
 	}
 }
 
-HoverOverlay.prototype.draw_reward = function(ctx, x, y, type) {
+MessageBox.prototype.draw_reward = function(ctx, x, y, type) {
 	var size = 18;
 	ctx.font = "15px Muli";
 	ctx.fillStyle = "white";
@@ -308,12 +319,12 @@ HoverOverlay.prototype.draw_reward = function(ctx, x, y, type) {
 	}
 }
 
-HoverOverlay.prototype.set_visible = function(visibility) {
+MessageBox.prototype.set_visible = function(visibility) {
 	this.visible = visibility;
 }
 
 // Mouse x and y are passed in. The actual x, y position is also based on type, w, and h.
-HoverOverlay.prototype.set_position = function(mx, my) {
+MessageBox.prototype.set_position = function(mx, my) {
 	this.x = mx;
 	this.y = my + this.h/2;
 

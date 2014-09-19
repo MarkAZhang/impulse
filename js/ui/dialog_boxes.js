@@ -432,13 +432,13 @@ function OptionsMenu(previous_menu) {
     imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.bg_music_volume / 100, 0.5));
   
-  button.add_hover_overlay(new HoverOverlay("option_game_music", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_game_music", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(value) {
     imp_vars.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.effects_volume / 100, 0.333));
-  button.add_hover_overlay(new HoverOverlay("option_sound_effects", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_sound_effects", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
@@ -446,7 +446,7 @@ function OptionsMenu(previous_menu) {
   }, function() {
     return isInFullScreen()
   });
-  button.add_hover_overlay(new HoverOverlay("option_fullscreen", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_fullscreen", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
@@ -454,7 +454,7 @@ function OptionsMenu(previous_menu) {
   }, function() {
     return imp_vars.player_data.options.explosions;
   });
-  button.add_hover_overlay(new HoverOverlay("option_particle_effects", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_particle_effects", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, function(on) {
@@ -462,7 +462,7 @@ function OptionsMenu(previous_menu) {
   }, function() {
     return imp_vars.player_data.options.score_labels;
   });
-  button.add_hover_overlay(new HoverOverlay("option_score_labels", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_score_labels", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, function(on) {
@@ -470,7 +470,7 @@ function OptionsMenu(previous_menu) {
   }, function() {
     return imp_vars.player_data.options.multiplier_display;
   });
-  button.add_hover_overlay(new HoverOverlay("option_multiplier_display", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_multiplier_display", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, function(on) {
@@ -478,7 +478,7 @@ function OptionsMenu(previous_menu) {
   }, function() {
     return imp_vars.player_data.options.impulse_shadow;
   });
-  button.add_hover_overlay(new HoverOverlay("option_impulse_shadow", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_impulse_shadow", this.bright_color, this.world_num))
   this.buttons.push(button)
 
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game) {
@@ -487,7 +487,7 @@ function OptionsMenu(previous_menu) {
     }, function() {
       return imp_vars.player_data.options.show_transition_screens;
     });
-    button.add_hover_overlay(new HoverOverlay("option_defeat_screens", this.bright_color, this.world_num))
+    button.add_hover_overlay(new MessageBox("option_defeat_screens", this.bright_color, this.world_num))
     this.buttons.push(button)
   }
 

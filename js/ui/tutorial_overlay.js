@@ -171,7 +171,7 @@ MoveTutorialOverlay.prototype.constructor = MoveTutorialOverlay;
 
 function MoveTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
-	this.hover_overlay = new HoverOverlay("tutorial_move", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_move", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 MoveTutorialOverlay.prototype.draw = function(ctx) {
@@ -191,7 +191,7 @@ VoidTutorialOverlay.prototype.constructor = VoidTutorialOverlay;
 
 function VoidTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
-	this.hover_overlay = new HoverOverlay("tutorial_void", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_void", impulse_game_state.bright_color, impulse_game_state.world_num);
 	this.duration = 3000
 }
 
@@ -220,7 +220,7 @@ ImpulseTutorialOverlay.prototype.constructor = ImpulseTutorialOverlay;
 
 function ImpulseTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
-	this.hover_overlay = new HoverOverlay("tutorial_impulse", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_impulse", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 ImpulseTutorialOverlay.prototype.draw = function(ctx) {
@@ -240,7 +240,7 @@ KillEnemyTutorialOverlay.prototype.constructor = KillEnemyTutorialOverlay;
 
 function KillEnemyTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
-	this.hover_overlay = new HoverOverlay("tutorial_kill_enemy", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_kill_enemy", impulse_game_state.bright_color, impulse_game_state.world_num);
 	this.delay_timer = 10000
 }
 
@@ -262,7 +262,7 @@ PauseTutorialOverlay.prototype.constructor = PauseTutorialOverlay;
 function PauseTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
-	this.hover_overlay = new HoverOverlay("tutorial_pause", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_pause", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 PauseTutorialOverlay.prototype.is_ready = function() {
@@ -285,7 +285,7 @@ ScorePointsTutorialOverlay.prototype.constructor = ScorePointsTutorialOverlay;
 function ScorePointsTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
-	this.hover_overlay = new HoverOverlay("tutorial_score_points", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_score_points", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
@@ -306,7 +306,7 @@ IncrMultiplierTutorialOverlay.prototype.constructor = IncrMultiplierTutorialOver
 function IncrMultiplierTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
-	this.hover_overlay = new HoverOverlay("tutorial_incr_multiplier", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_incr_multiplier", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 IncrMultiplierTutorialOverlay.prototype.is_ready = function() {
@@ -327,7 +327,7 @@ function ResetMultiplierTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
 	this.on_demand = true;
-	this.hover_overlay = new HoverOverlay("tutorial_reset_multiplier", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_reset_multiplier", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 ResetMultiplierTutorialOverlay.prototype.is_ready = function() {
@@ -355,7 +355,7 @@ function OneUpTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
 	this.on_demand = true;
-	this.hover_overlay = new HoverOverlay("tutorial_one_up", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_one_up", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 OneUpTutorialOverlay.prototype.is_ready = function() {
@@ -432,7 +432,7 @@ GatewayEnterTutorialOverlay.prototype.constructor = GatewayEnterTutorialOverlay;
 function GatewayEnterTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.duration = 3000;
-	this.hover_overlay = new HoverOverlay("tutorial_enter_gateway", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.hover_overlay = new MessageBox("tutorial_enter_gateway", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
 GatewayEnterTutorialOverlay.prototype.draw = function(ctx) {

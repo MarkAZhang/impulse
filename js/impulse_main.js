@@ -1,4 +1,5 @@
 var imp_vars = {
+  god_mode: false,
   dev: false,
   step_id: 0,
   canvasWidth: 0,
@@ -10,6 +11,7 @@ var imp_vars = {
   canvas: null,
   bg_canvas: null,
   bg_ctx: null,
+  cur_popup_message: null,
   draw_factor: 15,
   last_time: 0,
   cur_game_state: null,
@@ -255,6 +257,9 @@ function step() {
   if (imp_vars.cur_dialog_box != null) {
     imp_vars.cur_dialog_box.process(dt);
   }
+  if (imp_vars.cur_popup_message != null) {
+    process_popup_message(dt)
+  }
   if(!(imp_vars.cur_game_state instanceof ImpulseGameState)) {
     imp_vars.ctx.clearRect(0, 0, canvas.width, canvas.height);
   } else if(imp_vars.cur_game_state instanceof ImpulseGameState &&  imp_vars.cur_game_state.ready) {
@@ -294,6 +299,10 @@ function step() {
     imp_vars.cur_dialog_box.draw(imp_vars.ctx)
   }
 
+  if (imp_vars.cur_popup_message != null) {
+    draw_popup_message(imp_vars.ctx)
+  }
+
   //check_share_dialog();
   imp_vars.last_time = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
@@ -307,6 +316,35 @@ function set_dialog_box(box) {
 
 function clear_dialog_box() {
   imp_vars.cur_dialog_box = null
+}
+
+function set_popup_message(type, duration, color, world_num) {
+  imp_vars.cur_popup_message = new MessageBox(type, color ? color : "white", world_num ? world_num : 0);
+  imp_vars.cur_popup_message.set_position(imp_vars.canvasWidth/2, imp_vars.canvasHeight - 50)
+  imp_vars.cur_popup_message.set_visible(true)
+  imp_vars.cur_popup_duration = duration;
+  imp_vars.cur_popup_timer = duration;
+}
+
+function process_popup_message(dt) {
+  imp_vars.cur_popup_timer -= dt;
+  if (imp_vars.cur_popup_timer < 0) {
+    imp_vars.cur_popup_message = null;
+  }
+}
+
+function draw_popup_message(ctx) {
+  ctx.save();
+  var prog = imp_vars.cur_popup_timer / imp_vars.cur_popup_duration;
+  if (prog < 0.2) {
+    ctx.globalAlpha *= prog * 5;
+  } else if (prog > 0.9) {
+    ctx.globalAlpha *= 10 * (1 - prog)
+  } else {
+    ctx.globalAlpha = 1
+  }
+  imp_vars.cur_popup_message.draw(ctx);
+  ctx.restore();
 }
 
 function on_mouse_move(event) {
@@ -486,9 +524,19 @@ function toggle_mute() {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
-  /*if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
+  if(keyCode == imp_params.keys.GOD_MODE_KEY) { //G = god mode
+    if (imp_vars.god_mode == false) {
+      imp_vars.god_mode = true
+      set_popup_message("god_mode_alert", 2500, "white", 0)
+      if (imp_vars.cur_game_state instanceof WorldMapState) {
+        imp_vars.cur_game_state.set_up_buttons();
+      }
+    }
+  }  
+
+  if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
     toggle_mute()    
-  }*/
+  }
 
   /*if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
     toggleFullScreen()
@@ -636,8 +684,6 @@ function load_level_data(difficulty_level, load_obj) {
         imp_params.impulse_level_data[i].save_state[difficulty_level].seen = load_obj['levels'][i]["save_state"][difficulty_level]["seen"]
         imp_params.impulse_level_data[i].save_state[difficulty_level].best_time = load_obj['levels'][i]["save_state"][difficulty_level]["best_time"]
 
-        
-        
         if(i.slice(0, 4) == "HIVE") {
           var stars = 0  
           while(imp_params.impulse_level_data[i].save_state[difficulty_level].high_score >= imp_params.impulse_level_data[i].cutoff_scores[difficulty_level][stars])

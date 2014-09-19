@@ -51,18 +51,6 @@ function WorldMapState(world, is_practice_mode) {
     4: 20
   }
 
-  this.world_unlocked = {};
-  
-  for (var i = 0; i < this.difficulties.length; i++) {
-    var difficulty = this.difficulties[i];
-    this.world_unlocked[difficulty] = {
-      0: true,
-      1: true,
-      2: imp_vars.player_data.world_rankings[difficulty]["world 1"],
-      3: imp_vars.player_data.world_rankings[difficulty]["world 2"],
-      4: imp_vars.player_data.world_rankings[difficulty]["world 3"],
-    }  
-  }
 
   this.world_button_y = imp_vars.levelHeight/2;
   this.set_up_buttons();
@@ -105,6 +93,20 @@ function WorldMapState(world, is_practice_mode) {
 }
 
 WorldMapState.prototype.set_up_buttons = function() {
+
+  this.world_unlocked = {};
+  
+  for (var i = 0; i < this.difficulties.length; i++) {
+    var difficulty = this.difficulties[i];
+    this.world_unlocked[difficulty] = {
+      0: true,
+      1: true,
+      2: imp_vars.player_data.world_rankings[difficulty]["world 1"] || imp_vars.dev || imp_vars.god_mode,
+      3: imp_vars.player_data.world_rankings[difficulty]["world 2"] || imp_vars.dev || imp_vars.god_mode,
+      4: imp_vars.player_data.world_rankings[difficulty]["world 3"] || imp_vars.dev || imp_vars.god_mode,
+    }
+  }
+  
   this.world_buttons = {}
   // the things you select at the bottom
   this.mode_buttons = {}
@@ -133,7 +135,7 @@ WorldMapState.prototype.set_up_world_map = function(difficulty) {
         switch_game_state(new MainGameTransitionState(1, null, null, null, null))
       }, 500)})*/
     for (var i = 0; i <= 4; i++) {
-      this.set_up_world_icon(i, imp_vars.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)  
+      this.set_up_world_icon(i, imp_vars.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)
     }
 }
 
@@ -144,7 +146,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
   var num_buttons_to_show = 2; // always show world 1 and tutorial
   // Get the number of buttons to show.
   for(var i = 2; i < this.num_mode_buttons; i++) {
-    if(i > 1 && !imp_vars.player_data.world_rankings[difficulty]["world "+(i-1)] && !imp_vars.dev) {
+    if(i > 1 && !this.world_unlocked[difficulty][i]) {
       break;     
     } else {
       num_buttons_to_show += 1;
@@ -176,7 +178,7 @@ WorldMapState.prototype.update_on_difficulty_change = function(difficulty) {
     var _this = this;
     // If the current world isn't unlocked in the new difficulty, change to the latest that is unlocked.    
     var i = this.world_num;
-    while (i > 1 && !imp_vars.player_data.world_rankings[difficulty]["world "+(i-1)] && !imp_vars.dev) {
+    while (i > 1 && !this.world_unlocked[difficulty][i]) {
       i -= 1;
     }
     this.fader.set_animation("fade_across", function() {
@@ -239,7 +241,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
       new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen || 
-        (j == 0 && this.world_unlocked[difficulty][i]) || imp_vars.dev
+        (j == 0 && this.world_unlocked[difficulty][i]) || (imp_vars.dev || imp_vars.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"
       }
@@ -263,7 +265,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
   this.world_buttons[difficulty][world_num].active = unlocked
   if (difficulty == "normal") {
     this.world_buttons[difficulty][world_num].add_hover_overlay(
-      new HoverOverlay("lives_and_sparks", impulse_colors["world "+world_num+" bright"], world_num));
+      new MessageBox("lives_and_sparks", impulse_colors["world "+world_num+" bright"], world_num));
   }
 }
 
