@@ -114,7 +114,8 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
     var help_button = new IconButton("", 16, 490, 205, 20, 20, this.lite_color, this.bright_color, function() {}, "help_icon")
     this.buttons.push(help_button);
-    help_button.add_hover_overlay(new MessageBox("rank_explanation", this.bright_color, this.world_num));
+    help_button.add_hover_overlay(new MessageBox("rank_explanation_" + imp_vars.player_data.difficulty_mode, 
+      this.bright_color, this.world_num));
   }
 
   var _this = this;
