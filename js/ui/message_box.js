@@ -12,7 +12,7 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	this.visible = false;
 	this.message_only = false;
 	this.show_box = true
-	if (this.type == "rank_explanation_easy") {
+	if (this.type == "rank_explanation") {
 		this.w = 360;
 		this.h = 105;
 	} else if (this.type == "rank_explanation_normal") {
@@ -245,7 +245,7 @@ MessageBox.prototype.draw = function(ctx) {
 	    ctx.fillText("NO CONTINUES USED", xright - xpaddingright, ytop + ypaddingtop + ysep);
 	    ctx.fillText("SILVER SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 2 * ysep);
 	    ctx.fillText("GOLD SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 3 * ysep);
-	} else if (this.type == "rank_explanation_easy") {
+	} else if (this.type == "rank_explanation") {
 		var ytop = this.y - this.h/2;
 		/*ctx.textAlign = 'center'
 		ctx.font = "20px Muli"

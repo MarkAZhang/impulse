@@ -100,7 +100,7 @@ function WorldMapState(world, is_practice_mode) {
         impulse_colors["world " + i + " bright"], 
         function() {}, "help_icon")
       this.help_buttons[difficulty][i] = help_button;
-      help_button.add_hover_overlay(new MessageBox("rank_explanation_" + difficulty, impulse_colors["world " + i + " bright"], i));
+      help_button.add_hover_overlay(new MessageBox("rank_explanation", impulse_colors["world " + i + " bright"], i));
     }
   }
 }
