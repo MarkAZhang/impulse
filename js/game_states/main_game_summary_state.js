@@ -394,10 +394,10 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(this.save_screen) {
     if(this.just_saved)
       ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
-  } else if(this.victory)
+  } else if(this.victory) {
     ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
-  else if(this.level) {
-    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+  /* else if(this.level) {
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)*/
   } else {
     ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
   }
@@ -493,14 +493,14 @@ MainGameSummaryState.prototype.exit_game = function() {
 }
 
 MainGameSummaryState.prototype.go_to_next_state = function() {
-  if(this.victory)
+  if(this.victory) {
     switch_game_state(new RewardGameState(this.hive_numbers, true, 
       {victory: true, 
         is_tutorial: this.world_num == 0,
         first_time_tutorial: imp_vars.player_data.first_time}))
-  else if(this.level) {
+  /*} else if(this.level) {
     this.hive_numbers.continue()
-    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))
+    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))*/
   } else {
     switch_game_state(new RewardGameState(this.hive_numbers, true, 
       {victory: false, 

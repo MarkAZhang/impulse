@@ -2,7 +2,7 @@ var HiveNumbers = function(world_num, main_game) {
 
   if(world_num === undefined)return
 
-  this.lives = calculate_lives()
+  this.lives = calculate_lives() - 1
   this.sparks = 0
   this.ultimates = calculate_ult()
   this.continues = 0

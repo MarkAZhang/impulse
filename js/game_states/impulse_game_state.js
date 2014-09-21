@@ -375,7 +375,11 @@ ImpulseGameState.prototype.process = function(dt) {
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-        save_player_game(this.hive_numbers);
+        if (this.out_of_lives) {
+          save_player_game({});
+        } else {
+          save_player_game(this.hive_numbers);
+        }
       }
     }
 
@@ -1084,7 +1088,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
-    if (this.is_boss_level && this.victory) {
+    if ((this.is_boss_level && this.victory) || this.out_of_lives) {
       // Do not allow player to pause if they've beaten the boss.
     } else {
       this.toggle_pause()
