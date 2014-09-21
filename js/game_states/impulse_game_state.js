@@ -373,7 +373,7 @@ ImpulseGameState.prototype.process = function(dt) {
       }
 
       // Save the game when the player dies.
-      if (this.main_game) {
+      if (this.main_game && this.world_num > 0) {
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
         save_player_game(this.hive_numbers);
       }
@@ -1075,22 +1075,30 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.game_numbers.score = this.level.cutoff_scores[0];
     }
     
-    if (this.main_game) {
-      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level);  
+    if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
+      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
+      for(var attribute in this.game_numbers)
+        this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
       save_player_game(this.hive_numbers);
       set_popup_message("saved_alert", 1500, "white", this.world_num)  
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
-    this.toggle_pause()    
+    if (this.is_boss_level && this.victory) {
+      // Do not allow player to pause if they've beaten the boss.
+    } else {
+      this.toggle_pause()
+    }
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true
     // Advance the level to the next level. 
-    if (this.main_game) {
-      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level);
+    if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
+      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
+      for(var attribute in this.game_numbers)
+        this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
       save_player_game(this.hive_numbers);
       set_popup_message("saved_alert", 1000, "white", this.world_num)
     }

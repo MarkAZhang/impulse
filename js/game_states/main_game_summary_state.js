@@ -222,7 +222,7 @@ MainGameSummaryState.prototype.calculate_deaths = function() {
 }
 
 MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
-  if (this.world_num == 0) {
+  if (this.world_num == 0 && !this.save_screen) {
     return;
   }
   if(!this.bg_drawn) {
@@ -470,7 +470,7 @@ MainGameSummaryState.prototype.ctrl_down = function() {
 }
 
 MainGameSummaryState.prototype.process = function(dt) {
-  if (this.world_num == 0) {
+  if (this.world_num == 0 && !this.save_screen) {
     this.go_to_next_state();
   }
 }

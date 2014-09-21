@@ -96,7 +96,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       if(loading_game) {
         this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level])
       } else {
-        this.level = this.load_level(imp_params.impulse_level_data[this.get_next_level_name(this.last_level)])
+        this.level = this.load_level(imp_params.impulse_level_data[this.get_next_level_name(this.last_level, this.world_num)])
       }
 
       this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode].seen
@@ -110,8 +110,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
       }
       this.hive_numbers.current_level = this.level.level_name
-
-      save_player_game(this.hive_numbers);
+      if (this.world_num > 0) {
+        save_player_game(this.hive_numbers);  
+      }
     } else {
       // died at last level
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
@@ -139,14 +140,14 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
 }
 
-MainGameTransitionState.prototype.get_next_level_name = function(level) {
+MainGameTransitionState.prototype.get_next_level_name = function(level, world_num) {
   if(!level) {
-    return "HIVE "+this.world_num+"-1"
+    return "HIVE "+world_num+"-1"
   } else {
     if(level.level_number < 7) {
-      return "HIVE "+this.world_num+"-"+(level.level_number+1)
+      return "HIVE "+world_num+"-"+(level.level_number+1)
     } else {
-      return "BOSS "+this.world_num
+      return "BOSS "+world_num
     }
   }
 }
@@ -184,8 +185,6 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
     }
     if(!this.last_level.is_boss_level) {
-      for(var attribute in this.game_numbers)
-        this.hive_numbers.game_numbers[this.last_level.level_name][attribute] = this.game_numbers[attribute]
       var stars = 0
       while(this.game_numbers.score >= imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
       {
