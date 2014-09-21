@@ -772,6 +772,11 @@ function calculate_stars(difficulty_mode) {
   imp_vars.player_data.stars[difficulty_mode] = total_stars + imp_vars.player_data.kill_stars
 }
 
+function save_player_game(hive_number) {
+  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = hive_number
+  save_game();
+}
+
 function has_ult() {
   return calculate_ult() >= 1;
 }

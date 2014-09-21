@@ -110,6 +110,8 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
       }
       this.hive_numbers.current_level = this.level.level_name
+
+      save_player_game(this.hive_numbers);
     } else {
       // died at last level
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))

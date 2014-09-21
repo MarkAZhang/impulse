@@ -72,6 +72,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.boss_intro_text_interval = 6000
   this.boss_intro_text_duration = 0
 
+  this.processed_death = false
+  this.out_of_lives = false
   //add walls
 
   this.addWalls()
@@ -167,6 +169,8 @@ ImpulseGameState.prototype.reset = function() {
   this.new_enemy_duration = 10000
   this.new_enemy_timer = 0
   this.new_enemy_type = null
+  this.processed_death = false;
+  this.out_of_lives = false
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
   this.world = new b2World(gravity, doSleep);
@@ -354,23 +358,30 @@ ImpulseGameState.prototype.process = function(dt) {
       this.boss_intro_text_duration -= dt
     }
 
-    if (this.player.dying && this.player.dying_duration > 0 && !this.level.restarting_level && this.hive_numbers.lives > 0) {
-      this.level.prepare_level_for_reset();
-      this.game_numbers.score = 0;
-      this.game_numbers.combo = 1;
-      this.stars = 0;
+    if (this.player.dying && this.player.dying_duration > 0 && !this.processed_death) {
+      this.processed_death = true
+      if (this.hive_numbers.lives > 0) {
+        this.level.prepare_level_for_reset();
+        this.game_numbers.score = 0;
+        this.game_numbers.combo = 1;
+        this.stars = 0;  
+        if (imp_vars.player_data.difficulty_mode == "normal") {
+          this.hive_numbers.lives -= 1
+        }
+      } else if (imp_vars.player_data.difficulty_mode == "normal") {
+        this.out_of_lives = true
+      }
+
+      // Save the game when the player dies.
+      if (this.main_game) {
+        this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
+        save_player_game(this.hive_numbers);
+      }
     }
 
     if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
     {
-      if (this.main_game && !this.world_num == 0 && this.zoom_state == "none" && this.zoom == 1) {
-        if (imp_vars.player_data.difficulty_mode == "normal") {
-          this.hive_numbers.lives -= 1  
-        }
-        this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-      }
-
-      if (this.exit_tutorial || (this.hive_numbers.lives < 0 && this.main_game)) {
+      if (this.exit_tutorial || (this.out_of_lives && this.main_game)) {
         if(this.zoom_state == "none" && this.zoom == 1) {
           this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
           this.fade_state = "out"
@@ -380,7 +391,7 @@ ImpulseGameState.prototype.process = function(dt) {
         }
       } else {
         this.reset();
-        this.make_player();  
+        this.make_player();
       }
       return;
     }
@@ -407,6 +418,8 @@ ImpulseGameState.prototype.process = function(dt) {
       } else if(this.zoom_state == "none"){
         this.ready = false
         this.game_over(true);
+        
+   
       }
       return;
     }
@@ -1054,12 +1067,18 @@ ImpulseGameState.prototype.toggle_pause = function() {
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
 
-  if(keyCode == 90 && imp_vars.dev) {//Z - insta-victory if debug is on.
+  if(keyCode == 90) {//} && imp_vars.dev) {//Z - insta-victory if debug is on.
     this.victory = true
     if(this.is_boss_level) {
       this.level.boss_victory = true
     } else {
       this.game_numbers.score = this.level.cutoff_scores[0];
+    }
+    
+    if (this.main_game) {
+      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level);  
+      save_player_game(this.hive_numbers);
+      set_popup_message("saved_alert", 1500, "white", this.world_num)  
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
@@ -1069,6 +1088,12 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     this.victory = true
     if(this.is_boss_level)
       this.level.boss_victory = true
+    // Advance the level to the next level. 
+    if (this.main_game) {
+      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level);
+      save_player_game(this.hive_numbers);
+      set_popup_message("saved_alert", 1000, "white", this.world_num)
+    }
   } 
   // USED FOR TRAILER RECORDING
   /*else if (keyCode == 69) {

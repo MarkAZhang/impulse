@@ -11,6 +11,7 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	this.y = 0;
 	this.visible = false;
 	this.message_only = false;
+	this.show_box = true
 	if (this.type == "rank_explanation_easy") {
 		this.w = 360;
 		this.h = 105;
@@ -101,6 +102,10 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.h = 40;
 		this.message = "ALL LEVELS UNLOCKED"
 		this.message_only = true
+	} else if (this.type == "saved_alert") {
+		this.w = 250;
+		this.h = 75;
+		this.show_box = false;
 	}
 
 	this.opacity = 0;
@@ -112,14 +117,16 @@ MessageBox.prototype.draw = function(ctx) {
 	ctx.save()
 	ctx.globalAlpha *= 0.9
 
-	ctx.beginPath();
-	ctx.strokeStyle = this.color;
-	ctx.fillStyle = "black"
-	ctx.shadowBlur = 0;
-	ctx.lineWidth = 2;
-	ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-	ctx.fill();
-	ctx.stroke();
+	if (this.show_box) {
+		ctx.beginPath();
+		ctx.strokeStyle = this.color;
+		ctx.fillStyle = "black"
+		ctx.shadowBlur = 0;
+		ctx.lineWidth = 2;
+		ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+		ctx.fill();
+		ctx.stroke();
+	}
 
 	if (this.type == "option_game_music") {
 		this.option_text = "BACKGROUND MUSIC VOLUME"
@@ -284,6 +291,15 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.message, this.x, this.y - this.h / 2 + 25);
+	} else if (this.type == "saved_alert") {
+		ctx.globalAlpha *= 0.5
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli"
+		ctx.fillStyle = this.color;
+		ctx.globalAlpha *= 0.5
+	    draw_save_icon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)   
+		ctx.globalAlpha *= 2
+		ctx.fillText("GAME SAVED", this.x, this.y + this.h / 2 - 33);
 	} else {
 		// rewards
 		ctx.textAlign = 'center';
@@ -294,7 +310,7 @@ MessageBox.prototype.draw = function(ctx) {
 			ctx.fillText(text, this.x, this.y - this.h / 2 + 40 + i * 24);
 		}
 		this.draw_rewards(ctx, this.type);
-	}
+	} 
 	ctx.restore();
 };
 

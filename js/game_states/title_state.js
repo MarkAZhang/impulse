@@ -183,7 +183,8 @@ TitleState.prototype.setup_main_menu = function() {
       //close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
       
-      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
+      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] && 
+         imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         //setTimeout(function(){
           _this.fader.set_animation("fade_out", function() {
             switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))

@@ -136,16 +136,9 @@ PauseMenu.prototype.add_buttons = function() {
       this.buttons.push(this.quit_button)
 
     } else {
-      if(this.game_numbers.seconds < 5) {
         this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 170, this.y - this.h/2 + 530, 120, 65, this.bright_color, this.bright_color, function(_this) { return function() {
           _this.save_and_quit_main_game()
         }}(this), "save")
-
-      } else {
-        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 170, this.y - this.h/2 + 530, 120, 65, "gray", "gray", function(_this) { return function() {
-        }}(this), "save")
-        this.save_and_quit_button.extra_text = "ONLY BEFORE 0:05";
-      }
 
       this.buttons.push(this.save_and_quit_button)
 
@@ -297,8 +290,6 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 
 PauseMenu.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
-    if(this.game_numbers.seconds >= 5 && this.buttons[i] == this.save_and_quit_button)
-      continue
     this.buttons[i].on_mouse_move(x,y)
   }
 }
@@ -331,6 +322,7 @@ PauseMenu.prototype.restart_practice = function() {
 }
 
 PauseMenu.prototype.quit_main_game = function() {
+  save_player_game({});
   switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
   clear_dialog_box()
 }
@@ -348,11 +340,7 @@ PauseMenu.prototype.quit_tutorial = function() {
 }
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
-  this.game_state.hive_numbers.sparks = this.game_state.hive_numbers.last_sparks
-  this.game_state.hive_numbers.lives = this.game_state.hive_numbers.last_lives
-  this.game_state.hive_numbers.ultimates = this.game_state.hive_numbers.last_ultimates
-  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = this.game_state.hive_numbers
-  save_game()
+  save_player_game(this.game_state.hive_numbers);
   switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
   clear_dialog_box()
 }

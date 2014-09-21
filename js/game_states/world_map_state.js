@@ -91,8 +91,8 @@ function WorldMapState(world, is_practice_mode) {
   }
 
   this.help_buttons = {}
-  for (var i = 0; i < this.difficulties.length; i++) {
-    var difficulty = this.difficulties[i];
+  for (var j = 0; j < this.difficulties.length; j++) {
+    var difficulty = this.difficulties[j];
     this.help_buttons[difficulty] = {}
     for (var i = 1; i <= 4; i++) {
       var help_button = new IconButton("", 16, 470, 422, 20, 20, 
