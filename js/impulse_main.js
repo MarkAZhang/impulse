@@ -21,6 +21,7 @@ var imp_vars = {
   impulse_music: null,
   minified: true,
   bg_opacity: 0.3,
+  switch_bg_duration: null,
   share_button_open: true // button starts out as open.
 }
 

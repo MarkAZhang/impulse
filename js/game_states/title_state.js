@@ -199,7 +199,7 @@ TitleState.prototype.setup_main_menu = function() {
         if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
           switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
         } else if (imp_vars.player_data.first_time) {
-          switch_bg(impulse_colors["world 0 dark"], 250, 1)
+          switch_bg(impulse_colors["world 0 dark"], 150, 1)
         }
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i, false))
