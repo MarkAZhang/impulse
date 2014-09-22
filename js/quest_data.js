@@ -1,23 +1,13 @@
 imp_params.quest_data = {};
 
-imp_params.quest_data["beat_hive1"] = {
+imp_params.quest_data["beat_hive"] = {
 	rewards: ["ult"],
-	text: ["DEFEAT HIVE 1"]
+	text: ["DEFEAT A HIVE"]
 }
 
-imp_params.quest_data["beat_hive2"] = {
-	rewards: ["spark"],
-	text: ["DEFEAT HIVE 2"]
-}
-
-imp_params.quest_data["beat_hive3"] = {
-	rewards: ["spark"],
-	text: ["DEFEAT HIVE 3"]
-}
-
-imp_params.quest_data["beat_hive4"] = {
+imp_params.quest_data["final_boss"] = {
 	rewards: ["life"],
-	text: ["DEFEAT HIVE 4"]
+	text: ["DEFEAT THE FINAL BOSS"]
 }
 
 imp_params.quest_data["first_gold"] = {
@@ -25,9 +15,10 @@ imp_params.quest_data["first_gold"] = {
 	text: ["GET A GOLD SCORE", "ON ANY LEVEL"]
 }
 
-imp_params.quest_data["combo"] = {
+imp_params.quest_data["high_roller"] = {
 	rewards: ["life"],
-	text: ["BEAT A LEVEL IN HIVE 1", "WITH 150 COMBO OR MORE"]
+	text: ["SCORE 250000 PTS OR MORE",
+		  "ON A SINGLE ENEMY"]
 }
 
 imp_params.quest_data["pacifist"] = {
@@ -35,24 +26,29 @@ imp_params.quest_data["pacifist"] = {
 	text: ["BEAT ANY LEVEL", "WITHOUT USING IMPULSE"]
 }
 
-imp_params.quest_data["survivor"] = {
-	rewards: ["life"],
-	text: ["BEAT A LEVEL IN HIVE 3", "AFTER 2.5 MINUTES"]
-}
-
-imp_params.quest_data["fast_time"] = {
+imp_params.quest_data["blitz_hive1"] = {
 	rewards: ["spark"],
-	text: ["BEAT A LEVEL IN HIVE 2", "IN UNDER 30 SECONDS"]
+	text: ["BEAT HIVE 1 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
 }
 
-imp_params.quest_data["0star"] = {
-	rewards: [],
-	text: ["DEFEAT CHALLENGE MODE"]
+imp_params.quest_data["blitz_hive2"] = {
+	rewards: ["life"],
+	text: ["BEAT HIVE 2 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+}
+
+imp_params.quest_data["blitz_hive3"] = {
+	rewards: ["life", "spark"],
+	text: ["BEAT HIVE 3 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+}
+
+imp_params.quest_data["blitz_hive4"] = {
+	rewards: ["life", "spark", "ult"],
+	text: ["BEAT HIVE 4 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
 }
 
 imp_params.quest_data["1star"] = {
-	rewards: ["life", "spark", "ult"],
-	text: ["GET 1-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
+	rewards: ["life", "spark"],
+	text: ["DEFEAT ALL HIVES", "IN CHALLENGE MODE"]
 }
 
 imp_params.quest_data["2star"] = {

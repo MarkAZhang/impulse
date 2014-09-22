@@ -642,7 +642,7 @@ imp_params.impulse_enemy_stats["second boss"] = {
 }
 
 imp_params.impulse_enemy_stats["third boss"] = {
-  color: "#a260a6",//"rgb(244, 164, 96)",
+  color: "#C000FF",//"rgb(244, 164, 96)",
   density: 2,
   lin_damp: 8,
   effective_radius: 4.5,

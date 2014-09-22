@@ -1356,7 +1356,10 @@ var spriteSheetData = {
   "world4_star": [42, 237, 41, 38],
   "silver_trophy": [0, 277, 90, 78],
   "gold_trophy": [89, 277, 90, 78],
-  "timer_icon": [169, 197, 61, 77],
+  "world1_timer": [189, 211, 48, 61],
+  "world2_timer": [241, 211, 48, 61],
+  "world3_timer": [189, 277, 48, 62],
+  "world4_timer": [241, 277, 48, 62],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],
@@ -1578,17 +1581,27 @@ draw_quest_button = function(ctx, x, y, r, type) {
   ctx.lineWidth = 4;
   ctx.strokeStyle = "white";
   ctx.stroke(); 
-  if (type == "beat_hive1") {
+  if (type == "beat_hive") {
     draw_tessellation_sign(ctx, 1, x, y, r * 0.6, true, 0);
+    ctx.beginPath()
+    ctx.lineWidth = 6
+    ctx.moveTo(x - r * 0.4, y - r * 0.4)
+    ctx.lineTo(x + r * 0.4, y + r * 0.4)
+    ctx.moveTo(x + r * 0.4, y - r * 0.4)
+    ctx.lineTo(x - r * 0.4, y + r * 0.4)
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke();
   }
-  if (type == "beat_hive2") {
-    draw_tessellation_sign(ctx, 2,  x, y, r * 0.6, true, 0);
-  }
-  if (type == "beat_hive3") {
-    draw_tessellation_sign(ctx, 3, x, y, r * 0.6, true, 0);
-  }
-  if (type == "beat_hive4") {
+  if (type == "final_boss") {
     draw_tessellation_sign(ctx, 4, x, y, r * 0.6, true, 0);
+    ctx.beginPath()
+    ctx.lineWidth = 6
+    ctx.moveTo(x - r * 0.4, y - r * 0.4)
+    ctx.lineTo(x + r * 0.4, y + r * 0.4)
+    ctx.moveTo(x + r * 0.4, y - r * 0.4)
+    ctx.lineTo(x - r * 0.4, y + r * 0.4)
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke();
   }
   if (type == "first_gold") {
     ctx.save()
@@ -1596,11 +1609,6 @@ draw_quest_button = function(ctx, x, y, r, type) {
     drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
     ctx.restore()
     drawSprite(ctx, x, y, 0, r * 0.8, r * 0.8, "gold_trophy")
-
-    ctx.font = "15px Muli"
-    ctx.textAlign = 'center'
-    ctx.fillStyle = impulse_colors["gold"]
-    ctx.fillText("1", x, y - 1)
   }
 
   if (type == "combo") {
@@ -1624,6 +1632,66 @@ draw_quest_button = function(ctx, x, y, r, type) {
         y - r / 2 + r * 0.9 * Math.sin(angle),
       angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
     }
+  }
+
+  if (type == "combo") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+
+    drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
+
+    
+    ctx.beginPath()
+    ctx.arc(x, y - r/2, r * 0.75, Math.PI/3, 2 * Math.PI/3, false);
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke();
+    var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
+    for(var i = 0; i < angles_to_draw.length; i++) {
+      var angle = angles_to_draw[i];
+      drawImageWithRotation(ctx, 
+        x + r * 0.9 * Math.cos(angle), 
+        y - r / 2 + r * 0.9 * Math.sin(angle),
+      angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
+    }
+  }
+
+  if (type == "high_roller") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+
+    drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
+    
+    ctx.beginPath()
+    ctx.arc(x, y - r/2, r * 0.65, Math.PI/3, 2 * Math.PI/3, false);
+    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    ctx.stroke();
+    var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
+    ctx.fillStyle = impulse_colors["gold"]
+    ctx.textAlign = "center"
+    ctx.font = "12px Muli"
+    ctx.fillText("250K", x, y + r/2)
+    
+  }
+
+  if (type.substring(0, 10) == "blitz_hive") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    var world = type.substring(10);
+    if (world == "1") {
+      drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "immunitas_glow", immunitasSprite)
+    } else if (world == "2") {
+      drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "consumendi_glow", consumendiSprite)
+    } else if (world == "3") {
+      drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "negligentia_glow", negligentiaSprite)
+    } else if (world == "4") {
+      drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "adrogantia_glow", adrogantiaSprite)
+    }
+    ctx.restore()
+    drawSprite(ctx, x, y, 0, r * 0.8, r * 0.8, "world"+type.substring(10)+"_timer")
   }
 
   if (type == "survivor") {

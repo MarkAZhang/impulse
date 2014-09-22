@@ -785,7 +785,7 @@ function calculate_lives() {
   var life = 3;
   for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
     var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest].rewards.indexOf("life") != -1) {
+    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("life") != -1) {
       life += 1;
     }
   }
@@ -796,7 +796,7 @@ function calculate_ult() {
   var ult = 0;
   for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
     var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest].rewards.indexOf("ult") != -1) {
+    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("ult") != -1) {
       ult += 1;
     }
   }
@@ -807,7 +807,7 @@ function calculate_spark_val() {
   var spark_val = 10;
   for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
     var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest].rewards.indexOf("spark") != -1) {
+    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("spark") != -1) {
       spark_val += 1;
     }
   }

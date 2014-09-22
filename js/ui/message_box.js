@@ -18,9 +18,18 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "rank_explanation_normal") {
 		this.w = 360;
 		this.h = 140;
+	} else if (this.type == "final_boss") {
+		this.w = 200;
+		this.h = 120;
+	} else if (this.type.substring(0, 10) == "blitz_hive") {
+		this.w = 300;
+		this.h = 150;
 	} else if (this.type.substring(0, 9) == "beat_hive") {
 		this.w = 150;
 		this.h = 120;
+	} else if (this.type == "high_roller") {
+		this.w = 250;
+		this.h = 150;
 	} else if (this.type == "first_gold") {
 		this.w = 200;
 		this.h = 150;
