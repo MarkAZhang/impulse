@@ -29,22 +29,26 @@ imp_params.quest_data["pacifist"] = {
 
 imp_params.quest_data["blitz_hive1"] = {
 	rewards: ["spark"],
-	text: ["BEAT HIVE 1 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+	text: ["BEAT HIVE 1 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	time_cutoff: 3
 }
 
 imp_params.quest_data["blitz_hive2"] = {
 	rewards: ["life"],
-	text: ["BEAT HIVE 2 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+	text: ["BEAT HIVE 2 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	time_cutoff: 400
 }
 
 imp_params.quest_data["blitz_hive3"] = {
 	rewards: ["life", "spark"],
-	text: ["BEAT HIVE 3 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+	text: ["BEAT HIVE 3 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	time_cutoff: 500
 }
 
 imp_params.quest_data["blitz_hive4"] = {
 	rewards: ["life", "spark", "ult"],
-	text: ["BEAT HIVE 4 IN CHALLENGE MODE", "UNDER 5 MINUTES"]
+	text: ["BEAT HIVE 4 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	time_cutoff: 600
 }
 
 imp_params.quest_data["1star"] = {

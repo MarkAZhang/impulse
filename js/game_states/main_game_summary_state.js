@@ -168,7 +168,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   }
   this.star_colors = ["bronze", "silver", "gold"]
 
-  if (!this.save_screen)
+  if (!this.save_screen && this.victory)
     this.check_quests();
 }
 
@@ -517,6 +517,10 @@ MainGameSummaryState.prototype.check_quests = function() {
     if (min_victory_type == 3) {
       set_quest_completed("3star"); 
     }
+  }
+
+  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
+    set_quest_completed("blitz_hive" + this.world_num); 
   }
 
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 

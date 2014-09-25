@@ -457,7 +457,7 @@ ImpulseGameState.prototype.process = function(dt) {
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 
     this.game_numbers.game_length += dt
-    this.hive_numbers.total_time += dt
+    this.hive_numbers.speed_run_countdown -= dt
 
     this.game_numbers.seconds = Math.floor(this.game_numbers.game_length/1000)
     this.level.process(dt)
@@ -890,7 +890,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 144);
     context.fillText("CHALLENGE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 155);
     context.font = '20px Muli';
-    var total_time = this.convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time / 1000));
+    var total_time = this.convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
     context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 176);
     context.font = '10px Muli';
     context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 194);
