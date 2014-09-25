@@ -503,7 +503,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
     this.mode_buttons[difficulty][i].on_mouse_move(x, y)
   }
 
-  if(imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world " + this.world_num)) {
+  if(this.world_num > 0 && imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world " + this.world_num)) {
     this.help_buttons[difficulty][this.world_num].on_mouse_move(x, y);
   }
   

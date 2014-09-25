@@ -321,7 +321,7 @@ function clear_dialog_box() {
 
 function set_popup_message(type, duration, color, world_num) {
   imp_vars.cur_popup_message = new MessageBox(type, color ? color : "white", world_num ? world_num : 0);
-  imp_vars.cur_popup_message.set_position(imp_vars.canvasWidth/2, imp_vars.canvasHeight - 50)
+  imp_vars.cur_popup_message.set_position(imp_vars.canvasWidth/2, imp_vars.canvasHeight - 10 - imp_vars.cur_popup_message.h)
   imp_vars.cur_popup_message.set_visible(true)
   imp_vars.cur_popup_duration = duration;
   imp_vars.cur_popup_timer = duration;
@@ -607,7 +607,7 @@ function load_game() {
       progress_circle: false,
       multiplier_display: false,
       impulse_shadow: true,
-      show_transition_screens: false,
+      speed_run_countdown: false,
       control_hand: "right",
       control_scheme: "mouse",
     }
@@ -834,6 +834,18 @@ function calculate_next_upgrade() {
       min_upgrade = spark_val_cutoffs[i].rating
   }
   return min_upgrade
+}
+
+function is_quest_completed(name) {
+  return imp_vars.player_data.quests.indexOf(name) != -1
+}
+
+function set_quest_completed(name) {
+  if (!is_quest_completed(name)) {
+    imp_vars.player_data.quests.push(name);
+    save_game();
+    set_popup_message("quest_" + name, 2500, "white", 0)
+  }
 }
 
 function get_bg_opacity(world) {

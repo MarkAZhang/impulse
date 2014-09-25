@@ -167,6 +167,9 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     imp_vars.impulse_music.stop_bg()
   }
   this.star_colors = ["bronze", "silver", "gold"]
+
+  if (!this.save_screen)
+    this.check_quests();
 }
 
 MainGameSummaryState.prototype.convert_rank_to_victory_type = function(rank) {
@@ -486,6 +489,58 @@ MainGameSummaryState.prototype.delete_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
   switch_game_state(new WorldMapState(this.world_num))
+}
+
+MainGameSummaryState.prototype.check_quests = function() {
+  // Check if this game_number is a gold score. Bosses don't count.
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    var min_victory_type = 3;
+    var victory_types =  ["half", "basic", "silver", "gold"];
+    for (var i = 1; i <= 4; i++) {
+      if (imp_vars.player_data.world_rankings["normal"]["world " + i]) {
+        var victory_type = imp_vars.player_data.world_rankings["normal"]["world " + i].victory_type;
+        if (victory_types.indexOf(victory_type) < min_victory_type) {
+          min_victory_type = victory_types.indexOf(victory_type)
+        }
+      } else {
+        // If a world is missing, then there is no min_victory_type;
+        min_victory_type = -1;
+      }
+    }
+
+    if (min_victory_type >= 1) {
+      set_quest_completed("1star")
+    }
+    if (min_victory_type >= 2) {
+      set_quest_completed("2star"); 
+    }
+    if (min_victory_type == 3) {
+      set_quest_completed("3star"); 
+    }
+  }
+
+  if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
+    && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+    if (this.hive_numbers.world < 4 && this.hive_numbers.world > 0) {
+      set_quest_completed("beat_hive")
+
+      /*this.rewards.push({
+        type: "world_victory",
+        data: this.hive_numbers.world
+      })*/
+      // Completed the quest for beating this world.
+    }
+
+    if (this.hive_numbers.world == 4) {
+      set_quest_completed("final_boss")
+    }
+
+    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
+      this.rewards.push({
+        type: "share"
+      });
+    }*/
+  }
 }
 
 MainGameSummaryState.prototype.exit_game = function() {

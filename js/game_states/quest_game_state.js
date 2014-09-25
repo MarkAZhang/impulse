@@ -72,7 +72,7 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '24px Muli'
   ctx.fillStyle = "white"
 
-  ctx.fillText("CHALLENGES", imp_vars.levelWidth/2, 50)
+  ctx.fillText("ACHIEVEMENTS", imp_vars.levelWidth/2, 50)
   ctx.font = '12px Muli'
   ctx.fillText("MOUSE OVER TO VIEW", imp_vars.levelWidth/2, 75)
   draw_lives_and_sparks(ctx,

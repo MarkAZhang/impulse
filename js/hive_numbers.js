@@ -8,6 +8,7 @@ var HiveNumbers = function(world_num, main_game) {
   this.continues = 0
   this.spark_val = calculate_spark_val()
   this.main_game = main_game
+  this.total_time = 0 // in ms
   if(!this.main_game) {
     this.lives = 0
     if(this.ultimates > 1) this.ultimates = 1

@@ -261,7 +261,7 @@ TitleState.prototype.setup_main_menu = function() {
       }, "tutorial"))
     }*/
 
-    this.buttons["menu"].push(new IconButton("CHALLENGES", 16, 
+    this.buttons["menu"].push(new IconButton("ACHIEVEMENTS", 16, 
       imp_vars.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {

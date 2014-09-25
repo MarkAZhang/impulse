@@ -41,7 +41,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.state = "last_level_summary"
         this.transition_timer = this.last_level_summary_interval
       } else {
-        this.state = imp_vars.player_data.options.show_transition_screens ? "last_level_summary" : "level_intro"
+        this.state = "level_intro"
         this.transition_timer = imp_vars.player_data.options.show_transition_screens ? this.last_level_summary_interval : this.level_intro_interval
       }
       this.compute_last_level_stats()
@@ -142,6 +142,9 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 
 MainGameTransitionState.prototype.get_next_level_name = function(level, world_num) {
   if(!level) {
+    if (world_num == 0) {
+      return "HIVE 0-1"
+    }
     return "HIVE "+world_num+"-1"
   } else {
     if(level.level_number < 7) {
@@ -170,6 +173,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
   }
 
   if(this.victory) {
+
     if(!this.last_level.is_boss_level) {
       var ans = update_high_score_for_level(this.last_level.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
       this.high_score = ans.high_score
@@ -209,6 +213,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
       this.target_sparks -= 100;
       this.target_lives += 1
     }
+    this.check_quests_helper(this.last_level.level_name, this.hive_numbers.game_numbers[this.last_level.level_name])
   }
 }
 
@@ -553,6 +558,18 @@ MainGameTransitionState.prototype.on_click = function(keyCode) {
 
 MainGameTransitionState.prototype.load_complete = function() {
   this.level_loaded = true
+}
+
+MainGameTransitionState.prototype.check_quests_helper = function(level, game_numbers) {
+  var world = parseInt(level.substring(5, 6))
+  // Check if this game_number is a gold score. Bosses don't count.
+  if ((game_numbers.stars == 3 || this.stars == 3) && level.substring(0, 4) != "BOSS") {
+    // Completed the first gold quest.
+    set_quest_completed("first_gold")
+  }
+  if (game_numbers.impulsed == false) {
+    set_quest_completed("pacifist")
+  }
 }
 
 MainGameTransitionState.prototype.get_combo_color = function(combo) {

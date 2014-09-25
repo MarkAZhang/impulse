@@ -360,8 +360,8 @@ ImpulseGameState.prototype.process = function(dt) {
 
     if (this.player.dying && this.player.dying_duration > 0 && !this.processed_death) {
       this.processed_death = true
+      this.level.prepare_level_for_reset();
       if (this.hive_numbers.lives > 0) {
-        this.level.prepare_level_for_reset();
         this.game_numbers.score = 0;
         this.game_numbers.combo = 1;
         this.stars = 0;  
@@ -457,8 +457,9 @@ ImpulseGameState.prototype.process = function(dt) {
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 
     this.game_numbers.game_length += dt
+    this.hive_numbers.total_time += dt
 
-    this.game_numbers.seconds = Math.round(this.game_numbers.game_length/1000)
+    this.game_numbers.seconds = Math.floor(this.game_numbers.game_length/1000)
     this.level.process(dt)
     for(var i = this.score_labels.length - 1; i >= 0; i--) {
       this.score_labels[i].duration -= dt
@@ -503,7 +504,7 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
-  if(this.pause) return
+  if (this.pause) return
   /*context.save();*/
 
   /*ctx.scale(this.zoom, this.zoom)
@@ -873,16 +874,26 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, 70)
   }
 
-
-
   // draw the game time
   if (this.world_num != 0) {
     context.fillStyle = this.color;
-    context.font = '32px Muli'
-    var a =  this.game_numbers.seconds % 60
-    a = a < 10 ? "0"+a : a
-    this.game_numbers.last_time = Math.floor(this.game_numbers.seconds/60)+":"+a
-    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80)
+    context.font = '32px Muli';
+    this.game_numbers.last_time = this.convert_seconds_to_time_string(this.game_numbers.seconds);
+    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80);
+  }
+
+  if (imp_vars.player_data.difficulty_mode == "normal" && this.main_game && imp_vars.player_data.options.speed_run_countdown) {
+    /*drawSprite(context, imp_vars.sidebarWidth/2 - 20, imp_vars.canvasHeight/2 + 153,
+      0, 24, 31, "world"+this.world_num+"_timer");*/
+    context.fillStyle = "white";
+    context.font = '10px Muli';
+    context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 144);
+    context.fillText("CHALLENGE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 155);
+    context.font = '20px Muli';
+    var total_time = this.convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time / 1000));
+    context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 176);
+    context.font = '10px Muli';
+    context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 194);
   }
 
   if(!this.is_boss_level) {
@@ -898,8 +909,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
         context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
         context.font = '42px Muli'
         context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
-      }
-      else {
+      } else {
         /*context.fillStyle = impulse_colors[this.star_colors[2]]
         context.shadowColor = context.fillStyle;
         context.font = '60px Muli'
@@ -914,9 +924,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
   }
 
-
   /*draw_star(context, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
-
   /*context.beginPath()
 
   context.rect(350, 2, 100, topbarHeight-4)
@@ -1076,7 +1084,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     if(this.is_boss_level) {
       this.level.boss_victory = true
     } else {
-      this.game_numbers.score = this.level.cutoff_scores[0];
+      this.game_numbers.score = this.level.cutoff_scores[2];
     }
     
     if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
@@ -1085,6 +1093,8 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
         this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
       save_player_game(this.hive_numbers);
       set_popup_message("saved_alert", 1500, "white", this.world_num)  
+    } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
+      save_player_game({});
     }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
@@ -1105,6 +1115,8 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
         this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
       save_player_game(this.hive_numbers);
       set_popup_message("saved_alert", 1000, "white", this.world_num)
+    } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
+      save_player_game({});
     }
   } 
   // USED FOR TRAILER RECORDING
@@ -1309,7 +1321,6 @@ ImpulseGameState.prototype.reset_combo = function() {
 }
 
 ImpulseGameState.prototype.game_over = function() {
-
   if (this.main_game) {
     switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory || this.level.boss_victory, this.game_numbers, this.visibility_graph, this.hive_numbers))
   } else {
@@ -1321,6 +1332,12 @@ ImpulseGameState.prototype.game_over = function() {
       victory: this.victory
     }))
   }
+}
+
+ImpulseGameState.prototype.convert_seconds_to_time_string = function(seconds) {
+  var a = seconds % 60;
+  a = a < 10 ? "0"+a : a;
+  return Math.floor(seconds/60)+":"+a;
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

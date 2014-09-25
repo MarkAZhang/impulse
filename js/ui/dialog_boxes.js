@@ -468,14 +468,14 @@ function OptionsMenu(previous_menu) {
   });
   button.add_hover_overlay(new MessageBox("option_impulse_shadow", this.bright_color, this.world_num))
   this.buttons.push(button)
-
-  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game) {
-      button = new CheckboxOptionButton("SHOW DEFEAT SCREENS", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
-      imp_vars.player_data.options.show_transition_screens = !imp_vars.player_data.options.show_transition_screens
+  var me = this;
+  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && imp_vars.player_data.difficulty_mode == "normal") {
+      button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
+      imp_vars.player_data.options.speed_run_countdown = !imp_vars.player_data.options.speed_run_countdown;
     }, function() {
-      return imp_vars.player_data.options.show_transition_screens;
+      return imp_vars.player_data.options.speed_run_countdown;
     });
-    button.add_hover_overlay(new MessageBox("option_defeat_screens", this.bright_color, this.world_num))
+    button.add_hover_overlay(new MessageBox("option_speed_run", this.bright_color, this.world_num))
     this.buttons.push(button)
   }
 
@@ -925,10 +925,11 @@ EnemyBox.prototype.additional_draw = function(ctx) {
         ctx.shadowColor = ctx.fillStyle
         ctx.fill()
       } else {
+        ctx.save()
         ctx.globalAlpha /= 2
         ctx.shadowColor = ctx.fillStyle
         ctx.fill()
-        ctx.globalAlpha *= 2
+        ctx.restore()
       }
     }
   }

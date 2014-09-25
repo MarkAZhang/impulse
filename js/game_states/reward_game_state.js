@@ -52,119 +52,11 @@ RewardGameState.prototype.change_mode = function(type) {
   }
 }
 
-RewardGameState.prototype.check_quests = function() {
-  // If this is the tutorial, or we didn't win, do not check quests.
-  if (!this.victory || this.args.is_tutorial) {
-    return;
-  }
-
-  if (this.main_game) {
-    for(var level in this.hive_numbers.game_numbers) {
-      this.check_quests_helper(level, this.hive_numbers.game_numbers[level]);
-    }
-  } else {
-    this.check_quests_helper(this.args.level.level_name, this.args.game_numbers);
-  }
-}
-
-RewardGameState.prototype.check_quests_helper = function(level, game_numbers) {
-  var world = parseInt(level.substring(5, 6))
-  // Check if this game_number is a gold score. Bosses don't count.
-  if ((game_numbers.stars == 3 || this.stars == 3) && level.substring(0, 4) != "BOSS") {
-    // Completed the first gold quest.
-    this.quest_complete("first_gold");
-  }
-  if (world == 1 && game_numbers.combo >= 150) {
-    this.quest_complete("combo");
-  }
-  if (world == 3 && game_numbers.seconds >= 150) {
-    this.quest_complete("survivor");
-  }
-  if (world == 2 && game_numbers.seconds <= 30) {
-    this.quest_complete("fast_time");
-  }
-  if (game_numbers.impulsed == false) {
-    this.quest_complete("pacifist");
-  }
-
-  if (imp_vars.player_data.difficulty_mode == "normal") {
-    var min_victory_type = 3;
-    var victory_types =  ["half", "basic", "silver", "gold"];
-    for (var i = 1; i <= 4; i++) {
-      if (imp_vars.player_data.world_rankings["normal"]["world " + i]) {
-        var victory_type = imp_vars.player_data.world_rankings["normal"]["world " + i].victory_type;
-        if (victory_types.indexOf(victory_type) < min_victory_type) {
-          min_victory_type = victory_types.indexOf(victory_type)
-        }
-      } else {
-        // If a world is missing, then there is no min_victory_type;
-        min_victory_type = -1;
-      }
-    }
-
-    if (min_victory_type >= 0) {
-      this.quest_complete("0star"); 
-    }
-    if (min_victory_type >= 1) {
-      this.quest_complete("1star"); 
-    }
-    if (min_victory_type >= 2) {
-      this.quest_complete("2star"); 
-    }
-    if (min_victory_type == 3) {
-      this.quest_complete("3star"); 
-    }
-  }
-}
 
 // Check whether the quest is already complete. If it isn't, show the reward screen.
 RewardGameState.prototype.quest_complete = function(type) {
-  if (imp_vars.player_data.quests.indexOf(type) == -1) {
-    imp_vars.player_data.quests.push(type);
-    save_game();
-    this.rewards.push({
-      type: "quest",
-      data: {
-        type: type
-      }
-    })
-    for (var i = 0; i < imp_params.quest_data[type].rewards.length; i++) {
-      var reward = imp_params.quest_data[type].rewards[i];
-
-      if (reward == "life") {
-        this.current_lives += 1;
-        this.rewards.push({
-          type: "lives",
-          data: {
-            diff: 1,
-            new_lives: this.current_lives
-          }
-        })
-      }
-      if (reward == "ult") {
-        this.current_ult += 1;
-        this.rewards.push({
-          type: "ult",
-          data: {
-            diff: 1,
-            new_ult: this.current_ult
-          }
-        })
-        if(this.current_ult == 1)  {
-          this.to_tutorial = true
-        }
-      }
-      if (reward == "spark") {
-        this.current_sparks += 1;
-        this.rewards.push({
-          type: "spark_val",
-          data: {
-            diff: 1,
-            new_spark_val: this.current_sparks
-          }
-        })
-      }
-    }
+  if (!is_quest_completed(type)) {
+    set_quest_completed(type)
   }
 }
 
@@ -585,8 +477,6 @@ RewardGameState.prototype.advance_game_state = function() {
 }
 
 RewardGameState.prototype.determine_rewards = function() {
-
-
   if(this.args.is_tutorial) {
     if(this.args.tutorial_type == "first_time_tutorial" || this.args.first_time_tutorial) {
       this.rewards.push({
@@ -620,82 +510,22 @@ RewardGameState.prototype.determine_rewards = function() {
       }
     }
   }
+  if (this.main_game) {
+    if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
+      && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
 
-  var rating = calculate_current_rating()
-  if(rating > this.hive_numbers.original_rating) {
-    this.rewards.push({
-      type: "rating",
-      data: {
-        diff: rating - this.hive_numbers.original_rating,
-        new_rating: rating
+      if (this.hive_numbers.world == 4) {
+        set_quest_completed("final_boss")
+        this.rewards.push({
+          type: "final_victory",
+        })
       }
-    })
-  }
-  if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
-    if (this.hive_numbers.world < 4 && this.hive_numbers.world > 0) {
-      this.quest_complete("beat_hive"+this.hive_numbers.world)
-      this.rewards.push({
-        type: "world_victory",
-        data: this.hive_numbers.world
-      })
-      // Completed the quest for beating this world.
-    }
 
-    if (this.hive_numbers.world == 4) {
-      this.quest_complete("beat_hive"+this.hive_numbers.world)
-      this.rewards.push({
-        type: "final_victory",
-      })
-    }
-
-    this.check_quests();
-    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
-      this.rewards.push({
-        type: "share"
-      });
-    }*/
-    
-    imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
-    save_game();
-  }
-  if(calculate_lives(this.hive_numbers.original_rating) < calculate_lives()) {
-    var diff = calculate_lives() - calculate_lives(this.hive_numbers.original_rating)
-    var new_lives = calculate_lives()
-    this.rewards.push({
-      type: "lives",
-      data: {
-        diff: diff,
-        new_lives: new_lives
-      }
-    })
-  }
-
-  if(calculate_ult(this.hive_numbers.original_rating) < calculate_ult()) {
-    var diff = calculate_ult() - calculate_ult(this.hive_numbers.original_rating)
-    var new_ult = calculate_ult()
-    this.rewards.push({
-      type: "ult",
-      data: {
-        diff: diff,
-        new_ult: new_ult
-      }
-    })
-    if(new_ult == 1)  {
-      this.to_tutorial = true
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
+      save_game();
     }
   }
-
-  if(calculate_spark_val(this.hive_numbers.original_rating) < calculate_spark_val()) {
-    var diff = calculate_spark_val() - calculate_spark_val(this.hive_numbers.original_rating)
-    var new_spark_val = calculate_spark_val()
-    this.rewards.push({
-      type: "spark_val",
-      data: {
-        diff: diff,
-        new_spark_val: new_spark_val
-      }
-    })
-  }
+  
 }
 
 RewardGameState.prototype.on_key_down = function(keyCode) {

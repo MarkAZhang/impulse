@@ -17,6 +17,7 @@ imp_params.quest_data["first_gold"] = {
 
 imp_params.quest_data["high_roller"] = {
 	rewards: ["life"],
+	score_cutoff: 250000,
 	text: ["SCORE 250000 PTS OR MORE",
 		  "ON A SINGLE ENEMY"]
 }
