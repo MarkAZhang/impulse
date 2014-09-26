@@ -130,7 +130,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
     "stunner": [0, 5, 1, 1, 2, 0, 50]
   },
   enemies: {
-    "stunner": [0, 3, 0, 3, 4, 4, 50]
+    "stunner": [0, 3, 0, 3, 4, 8, 50]
   },
   initial_spawn_data_easy: {
     "stunner": 2
@@ -149,7 +149,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
     "easy": [2500, 50000, 300000],
-    "normal": [50000, 300000, 1200000],
+    "normal": [50000, 300000, 800000],
   },
   player_loc: {x: 400, y: 300}
 }
@@ -157,7 +157,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
 imp_params.impulse_level_data['HIVE 1-2'] = {
   enemies: {
     "stunner": [3, 3, 0, 3, 2, 2, 25],
-    "spear": [0, 2.5, 0.5, 1.5, 1, 0, 25],
+    "spear": [0, 2.5, 0.5, 1.5, 2, 0, 25],
   },
 
   enemies_easy: {
@@ -165,7 +165,11 @@ imp_params.impulse_level_data['HIVE 1-2'] = {
     "spear": [0, 5, 1, 1, 1, 0, 25],
   },
   initial_spawn_data: {
-    "spear": 2
+    "spear": 4,
+    "stunner": 2
+  },
+  initial_spawn_data_easy: {
+    "spear": 1
   },
   dominant_enemy: "spear",
   //obstacle_v: [[[103,104],[343,104],[103,245]],[[103,356],[343,496],[103,496]],[[697,245],[457,104],[697,104]],[[697,496],[457,496],[697,356]]],
@@ -176,7 +180,7 @@ imp_params.impulse_level_data['HIVE 1-2'] = {
   cutoff_scores: {
 
     "easy": [10000, 80000, 400000],
-    "normal": [150000, 450000, 1350000],
+    "normal": [150000, 400000, 1000000],
   },
   player_loc: {x: 400, y: 300}
 
@@ -239,8 +243,8 @@ imp_params.impulse_level_data['HIVE 1-4'] = {
 
 imp_params.impulse_level_data['HIVE 1-5'] = {
   enemies: {
-    "spear": [0, 6, 0, 6, 2, 1.5, 15],
-    "tank": [0, 4, 0, 4, 2, 1.5, 25]
+    "spear": [0, 6, 0, 6, 2, 2, 15],
+    "tank": [0, 4, 0, 4, 2, 2, 25]
   },
   // Okay to make spawn higher since it's already hard to die in EASY
   enemies_easy: {
@@ -290,7 +294,7 @@ imp_params.impulse_level_data['HIVE 1-6'] = {
   buffer_radius: 1,
   cutoff_scores: {
     "easy": [40000, 200000, 800000],
-    "normal":   [150000, 500000, 2000000],
+    "normal":   [150000, 500000, 1500000],
   },
   player_loc: {x: 250, y: 150}
 }

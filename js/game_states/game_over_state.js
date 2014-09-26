@@ -283,14 +283,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
         ctx.font = '12px Muli'
         ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2, 430)
+        ctx.fillText(
+          convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
+          imp_vars.levelWidth/2, 430);
       } else {
         ctx.fillStyle = this.color
         ctx.font = '12px Muli'
         ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
         ctx.font = '28px Muli'
         ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2, 430)
-
       }
     }
   }

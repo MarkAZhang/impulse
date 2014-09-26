@@ -30,7 +30,7 @@ imp_params.quest_data["pacifist"] = {
 imp_params.quest_data["blitz_hive1"] = {
 	rewards: ["spark"],
 	text: ["BEAT HIVE 1 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
-	time_cutoff: 3
+	time_cutoff: 300
 }
 
 imp_params.quest_data["blitz_hive2"] = {

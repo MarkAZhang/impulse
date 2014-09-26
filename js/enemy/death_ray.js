@@ -25,7 +25,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.shoot_interval = 1600
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.shoot_interval = 2000
+    this.shoot_interval = 1800
   }
 
   this.extra_adjust = false
@@ -52,7 +52,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.stun_length = 1000
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.stun_length = 1500
+    this.stun_length = 1200
   }
 
 
