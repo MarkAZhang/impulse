@@ -121,8 +121,9 @@ Level.prototype.init = function(data, level_intro_state) {
   }
   this.gateway_size = 4
 
+  this.gateway_pulse_radius = 300                                        
 
-  this.gateway_transition_interval = 500
+  this.gateway_transition_interval = 1000
   this.gateway_transition_duration = null
 
   // structure:
@@ -637,6 +638,28 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     //ctx.restore()
     //ctx.save()
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
+    ctx.strokeStyle = this.bright_color
+    if (this.impulse_game_state.zoom_state == "none") {
+      ctx.save();
+      if (prog > 0.5) {
+        // go from 0.3 to 0.8
+        ctx.globalAlpha = 0.3 + (1 - prog)
+      } else {
+        // go from 0.8 to 0
+        ctx.globalAlpha = Math.max(0, 0 + 1.6 * (prog))
+      }
+      ctx.beginPath();
+      ctx.arc(
+        this.gateway_loc.x * draw_factor,
+        this.gateway_loc.y * draw_factor,
+        this.gateway_pulse_radius * (1 - prog),
+        0,
+        Math.PI * 2
+      )
+      ctx.lineWidth = 2 + 8 * prog;
+      ctx.stroke();
+      ctx.restore();
+    }
   }
   else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 4) {
     ctx.globalAlpha *= 0.7
@@ -646,13 +669,14 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   } else {
     ctx.globalAlpha *= 0.3
   }
-  draw_tessellation_sign(ctx, 
-                         this.world_num,
-                         this.gateway_loc.x * draw_factor,
-                         this.gateway_loc.y * draw_factor,
-                         this.gateway_size * draw_factor,
-                         this.gateway_opened,
-                         0)//this.tessellation_angle)
+  draw_tessellation_sign(
+    ctx, 
+    this.world_num,
+    this.gateway_loc.x * draw_factor,
+    this.gateway_loc.y * draw_factor,
+    this.gateway_size * draw_factor,
+    this.gateway_opened,
+    0)//this.tessellation_angle)
 
 
   if (this.gateway_opened) {

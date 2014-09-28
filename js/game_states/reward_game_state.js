@@ -1,3 +1,6 @@
+// Currently responsible only for first time tutorial and final victory scores after hive 4. Also 
+// Also might stil take user to ult tutorial, but that will soon be deprecated.
+
 RewardGameState.prototype = new GameState
 
 RewardGameState.prototype.constructor = RewardGameState

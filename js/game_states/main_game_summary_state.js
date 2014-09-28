@@ -519,7 +519,7 @@ MainGameSummaryState.prototype.check_quests = function() {
     }
   }
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
+  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0 && this.world_num > 0) {
     set_quest_completed("blitz_hive" + this.world_num); 
   }
 

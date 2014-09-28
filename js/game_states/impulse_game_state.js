@@ -458,7 +458,8 @@ ImpulseGameState.prototype.process = function(dt) {
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 
     this.game_numbers.game_length += dt
-    this.hive_numbers.speed_run_countdown -= dt
+    if (this.world_num > 0)
+      this.hive_numbers.speed_run_countdown -= dt
 
     this.game_numbers.seconds = Math.floor(this.game_numbers.game_length/1000)
     this.level.process(dt)
@@ -883,7 +884,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80);
   }
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && this.main_game && imp_vars.player_data.options.speed_run_countdown) {
+  if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && this.main_game && imp_vars.player_data.options.speed_run_countdown) {
     /*drawSprite(context, imp_vars.sidebarWidth/2 - 20, imp_vars.canvasHeight/2 + 153,
       0, 24, 31, "world"+this.world_num+"_timer");*/
     context.fillStyle = "white";

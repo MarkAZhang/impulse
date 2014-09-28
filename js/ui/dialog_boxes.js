@@ -469,7 +469,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new MessageBox("option_impulse_shadow", this.bright_color, this.world_num))
   this.buttons.push(button)
   var me = this;
-  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && imp_vars.player_data.difficulty_mode == "normal") {
+  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && imp_vars.player_data.difficulty_mode == "normal") {
       button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
       imp_vars.player_data.options.speed_run_countdown = !imp_vars.player_data.options.speed_run_countdown;
     }, function() {
