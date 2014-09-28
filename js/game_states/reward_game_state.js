@@ -25,14 +25,6 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_vars.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
   this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
 
-  this.text_width = 500
-  this.pages = ["use ultimate","ULTIMATE IS A WEAPON OF LAST RESORT",
-    "ULTIMATE WILL BLOW AWAY all enemies # in a moderate distance around you",
-    "Enemies killed by ultimate do not give points",
-    "while ultimate is active, # you will temporarily become much heavier",
-    "you have a limited number of # ultimates per continue # (currently 1)",
-    "If you die after using ultimate, # it is refunded"
-  ]
   this.debug()
   
   this.determine_rewards()
@@ -346,61 +338,9 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.restore();
 }
 
-RewardGameState.prototype.adjust_difficulty_button_border = function() {
-  this.normal_mode_button.border = imp_vars.player_data.difficulty_mode == "easy"
-  this.challenge_mode_button.border = imp_vars.player_data.difficulty_mode == "normal"
-}
-
 RewardGameState.prototype.debug = function() {
   if (false) {
-    this.quest_complete("beat_hive1")
-    /*this.rewards.push({
-      type: "share"
-    })*/
-
-     this.rewards.push({
-      type: "first_time_tutorial"
-     })
-     /*this.rewards.push({
-      type: "select_difficulty"
-     })*/
-     this.rewards.push({
-      type: "rating",
-      data: {
-        diff: 500,
-        new_rating: 1000
-      }
-    })
-     this.rewards.push({
-      type: "lives",
-      data: {
-        diff: 2,
-        new_lives: 5
-      }
-    })
-    this.rewards.push({
-      type: "ult",
-      data: {
-        diff: 1,
-        new_ult: 2
-      }
-    })
-    this.to_tutorial = true
-    this.rewards.push({
-      type: "spark_val",
-      data: {
-        diff: 1,
-        new_spark_val: 15
-      }
-    })
-
-    for (var i = 1; i < 4; i++) {
-      this.rewards.push({
-        type: "world_victory",
-        data: i
-      })  
-    }
-  }
+  } 
 }
 
 RewardGameState.prototype.process = function(dt) {
@@ -458,7 +398,6 @@ RewardGameState.prototype.advance_game_state = function() {
       switch_game_state(new TitleState(true))
     }
   } else if (this.args.is_tutorial) {
-
       if (this.args.tutorial_type == "ult_tutorial") {
         // They MUST have come from world 2. Take them to world 2.
         switch_game_state(new MainGameTransitionState(2, null, null, null, null))    
@@ -488,28 +427,6 @@ RewardGameState.prototype.determine_rewards = function() {
     return
   }
 
-  if(!this.main_game) {
-    if(!this.args.level.is_boss_level) {
-      if(this.victory) {
-        var ans = update_high_score_for_level(this.args.level.level_name, this.args.game_numbers.score, imp_vars.player_data.difficulty_mode)
-        this.high_score = ans.high_score
-        this.stars = ans.stars
-      } else {
-        this.stars = get_stars_for_score_on_level(this.args.level.level_name, this.args.game_numbers.score, imp_vars.player_data.difficulty_mode)
-        this.high_score = false
-      }
-      
-    } else if(this.args.level.boss_victory){
-      if (this.victory) {
-        var ans = update_best_time_for_boss_level(this.args.level.level_name, this.args.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-        this.best_time = ans.best_time
-        this.stars = ans.stars
-      } else {
-        this.best_time = false
-        this.stars = 0
-      }
-    }
-  }
   if (this.main_game) {
     if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
       && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {

@@ -209,9 +209,21 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = 'center'
 
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 400)
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2 - 100, 400)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2, 425)
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2 - 100, 425)
+
+
+      ctx.fillStyle = this.bright_color
+      ctx.font = '12px Muli'
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, 400)
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
+        ctx.font = '28px Muli'
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2 + 100, 425)
+      } else {
+        ctx.font = '24px Muli'
+        ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2 + 100, 425)        
+      }
 
       ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
       ctx.font = '12px Muli'

@@ -721,18 +721,28 @@ function calculate_rating_for_boss_level(level, score, difficulty) {
   return data.max_rating * ratio
 }
 
-function update_high_score_for_level(level, score, difficulty) {
+function update_stats_for_level(level, score, time, difficulty) {
   var ans = {}
   if(score > imp_params.impulse_level_data[level].save_state[difficulty].high_score) {
-      ans.high_score = true
-      imp_params.impulse_level_data[level].save_state[difficulty].high_score = score
+    ans.high_score = true
+    imp_params.impulse_level_data[level].save_state[difficulty].high_score = score
   } else {
     ans.high_score = false
+  }
+
+  if(time < imp_params.impulse_level_data[level].save_state[difficulty].best_time) {
+    ans.best_time = true
+    imp_params.impulse_level_data[level].save_state[difficulty].best_time = time
+  } else {
+    ans.best_time = false
   }
   
   ans.stars = get_stars_for_score_on_level(level, score, difficulty)
   if(ans.high_score) {
     imp_params.impulse_level_data[level].save_state[difficulty].stars = ans.stars
+    save_game()
+  }
+  if(ans.best_time) {
     save_game()
   }
   return ans
@@ -747,7 +757,7 @@ function get_stars_for_score_on_level(level, score, difficulty) {
   return stars
 }
 
-function update_best_time_for_boss_level(level, time, difficulty) {
+function update_stats_for_boss_level(level, time, difficulty) {
   var ans = {}
   if(time < imp_params.impulse_level_data[level].save_state[difficulty].best_time) {
       ans.best_time = true

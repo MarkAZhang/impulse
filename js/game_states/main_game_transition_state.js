@@ -44,20 +44,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.state = "level_intro"
         this.transition_timer = imp_vars.player_data.options.show_transition_screens ? this.last_level_summary_interval : this.level_intro_interval
       }
-      this.compute_last_level_stats()
-      if(!this.victory) {
-        this.last_level_summary_interval *= 0.66
-        this.transition_timer *= 0.66
-        this.level_intro_interval *= 0.66
-        // Reduce lives by 1 if lost and not in tutorial
-        if (this.world_num != 0)
-          this.hive_numbers.lives -= 1
-        this.hive_numbers.last_sparks = this.hive_numbers.sparks
-        this.hive_numbers.last_lives = this.hive_numbers.lives
-        this.hive_numbers.ultimates = this.hive_numbers.last_ultimates
-      } else {
-        this.hive_numbers.last_ultimates = this.hive_numbers.ultimates
-      }
+      this.compute_last_level_stats();
     } else {
       //allows us to skip the last level summary if coming from main game summary state
       this.state = "level_intro"
@@ -92,6 +79,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         return
       }
 
+      // Set the next level to load.
       this.level_loaded = false
       if(loading_game) {
         this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level])
@@ -100,10 +88,10 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
       }
 
       this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode].seen
-
       imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode].seen = true
       save_game()
 
+      // Set up game numbers for next level.
       if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
         this.hive_numbers.game_numbers[this.level.level_name] = {}
         this.hive_numbers.game_numbers[this.level.level_name].visited = true
@@ -114,12 +102,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         save_player_game(this.hive_numbers);  
       }
     } else {
-      // died at last level
-      if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name))
-        this.hive_numbers.game_numbers[this.last_level.level_name] = {}
-      if((typeof this.hive_numbers.game_numbers[this.last_level.level_name].deaths) === undefined)
-        this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
-
       this.level = this.last_level
       this.level.impulse_game_state = null
       imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
@@ -134,7 +116,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
         this.level_intro_interval = 500
     }
   }
-
 
   if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level))
     imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
@@ -174,36 +155,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
   if(this.victory) {
 
-    if(!this.last_level.is_boss_level) {
-      var ans = update_high_score_for_level(this.last_level.level_name, this.game_numbers.score, imp_vars.player_data.difficulty_mode)
-      this.high_score = ans.high_score
-      this.stars = ans.stars
-
-    } else {
-      var ans = update_best_time_for_boss_level(this.last_level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-      this.best_time = ans.best_time
-      this.stars = ans.stars
-    }
-    if(!this.hive_numbers.game_numbers.hasOwnProperty(this.last_level.level_name)) {
-      this.hive_numbers.game_numbers[this.last_level.level_name] = {}
-      this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
-    }
-    if(!this.last_level.is_boss_level) {
-      var stars = 0
-      while(this.game_numbers.score >= imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
-      {
-        stars+=1
-      }
-      this.hive_numbers.game_numbers[this.last_level.level_name].stars  = stars
-      if((typeof this.hive_numbers.game_numbers[this.last_level.level_name].deaths) === undefined)
-        this.hive_numbers.game_numbers[this.last_level.level_name].deaths = 0
-
-    } else {
-      this.hive_numbers.game_numbers[this.last_level.level_name].score = "WIN"
-      this.hive_numbers.game_numbers[this.last_level.level_name].stars = 3
-      this.hive_numbers.game_numbers[this.last_level.level_name].last_time = this.game_numbers.last_time
-    }
-
+    
     this.time_sparks_awarded = Math.floor(this.game_numbers.seconds/5)
     this.combo_sparks_awarded = Math.floor(this.game_numbers.combo/2)
 

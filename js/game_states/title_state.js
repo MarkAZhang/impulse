@@ -32,7 +32,6 @@ function TitleState(last_state) {
   this.trailer_fade_delay = 7000;
 }
 
-
 TitleState.prototype.process = function(dt) {
   this.fader.process(dt);
   this.trailer_fade_in += dt

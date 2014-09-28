@@ -217,28 +217,50 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     if(this.high_score) {
       ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
       ctx.font = '24px Muli'
-      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2, 425)
+      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2 - 100, 425)
     } else {
       var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
       ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 400)
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, 400)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2, 425)
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,
+       imp_vars.levelWidth/2 - 100, 425)
     }
+
+    if(this.best_time) {
+      ctx.fillStyle = this.color
+      ctx.font = '24px Muli'
+      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2 + 100, 425)
+    } else {
+      ctx.fillStyle = this.color
+      ctx.font = '12px Muli'
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, 400)
+      ctx.font = '28px Muli'
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
+        ctx.font = '28px Muli'
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+          imp_vars.levelWidth/2 + 100, 425)
+      } else {
+        ctx.font = '24px Muli'
+        ctx.fillText("UNDEFEATED", 
+          imp_vars.levelWidth/2 + 100, 425)
+      }
+    }
+
     var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
     var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
     for(var i = 0; i < 3; i++) {
-          ctx.font = '24px Muli';
-          ctx.textAlign = "right"
-          ctx.fillStyle = impulse_colors[temp_colors[i]]
-          ctx.shadowColor = ctx.fillStyle
-          ctx.font = '20px Muli';
-          ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], imp_vars.levelWidth/2 + 160, 290 + 35 * i + 7)
-          ctx.textAlign = "left"
-          ctx.font = '20px Muli';
-          ctx.fillText(score_names[i], imp_vars.levelWidth/2 - 160, 290 + 35 * i + 7)
-        }
+      ctx.font = '24px Muli';
+      ctx.textAlign = "right"
+      ctx.fillStyle = impulse_colors[temp_colors[i]]
+      ctx.shadowColor = ctx.fillStyle
+      ctx.font = '20px Muli';
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], imp_vars.levelWidth/2 + 160, 290 + 35 * i + 7)
+      ctx.textAlign = "left"
+      ctx.font = '20px Muli';
+      ctx.fillText(score_names[i], imp_vars.levelWidth/2 - 160, 290 + 35 * i + 7)
+    }
 
   } else {
 

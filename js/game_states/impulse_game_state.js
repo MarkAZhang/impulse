@@ -405,6 +405,7 @@ ImpulseGameState.prototype.process = function(dt) {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
+        this.on_victory();
         this.victory = true
         this.level.boss_victory = true
       } else if(this.zoom_state == "none"){
@@ -1086,6 +1087,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     } else {
       this.game_numbers.score = this.level.cutoff_scores[2];
     }
+    this.on_victory();
     
     if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
       this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
@@ -1106,6 +1108,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
     this.victory = true
+    this.on_victory();
     if(this.is_boss_level)
       this.level.boss_victory = true
     // Advance the level to the next level. 
@@ -1331,6 +1334,23 @@ ImpulseGameState.prototype.game_over = function() {
       visibility_graph: this.visibility_graph,
       victory: this.victory
     }))
+  }
+}
+
+ImpulseGameState.prototype.on_victory = function() {
+  // Check if high score and best time. If so, save.
+  if(!this.level.is_boss_level) {
+    var ans = update_stats_for_level(
+      this.level.level_name, this.game_numbers.score, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+    this.game_numbers.high_score = ans.high_score /* boolean */
+    this.game_numbers.stars = ans.stars
+    this.game_numbers.best_time = ans.best_time /* boolean */
+  } else {
+    var ans = update_stats_for_boss_level(
+      this.level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
+    this.game_numbers.best_time = ans.best_time /* boolean */
+    this.game_numbers.stars = ans.stars
+    this.game_numbers.score = "WIN"
   }
 }
 
