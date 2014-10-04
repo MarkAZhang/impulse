@@ -369,8 +369,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
         imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, {
           labels: true, 
           ult: this.has_ult,
-          sparks: imp_vars.player_data.difficulty_mode == "normal",
-          lives: imp_vars.player_data.difficulty_mode == "normal",
+          sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
+          lives: false, //imp_vars.player_data.difficulty_mode == "normal",
         })
 
       ctx.shadowBlur = 0

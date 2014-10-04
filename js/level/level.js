@@ -245,7 +245,7 @@ Level.prototype.generate_multi = function() {
 Level.prototype.process = function(dt) {
   //handle obstacle visibility
   if (!this.is_boss_level && this.spark_spawn_points.length > 0) {
-    if (imp_vars.player_data.difficulty_mode == "normal") {
+    /*if (imp_vars.player_data.difficulty_mode == "normal") {
       this.spark_duration -= dt
       if(this.spark_loc == null || this.spark_duration < 0) {
         this.generate_spark()
@@ -273,7 +273,7 @@ Level.prototype.process = function(dt) {
           }
         }
       }
-    }
+    }*/
     this.multi_duration -= dt
     if(this.multi_loc == null || this.multi_duration < 0) {
       this.generate_multi()

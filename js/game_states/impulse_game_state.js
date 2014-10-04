@@ -361,25 +361,25 @@ ImpulseGameState.prototype.process = function(dt) {
     if (this.player.dying && this.player.dying_duration > 0 && !this.processed_death) {
       this.processed_death = true
       this.level.prepare_level_for_reset();
-      if (this.hive_numbers.lives > 0) {
+      //if (this.hive_numbers.lives > 0) {
         this.game_numbers.score = 0;
         this.game_numbers.combo = 1;
         this.stars = 0;  
-        if (imp_vars.player_data.difficulty_mode == "normal") {
+        /* if (imp_vars.player_data.difficulty_mode == "normal") {
           this.hive_numbers.lives -= 1
-        }
-      } else if (imp_vars.player_data.difficulty_mode == "normal") {
-        this.out_of_lives = true
-      }
+        } */
+      //} else if (imp_vars.player_data.difficulty_mode == "normal") {
+      //  this.out_of_lives = true
+      //} 
 
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-        if (this.out_of_lives) {
-          save_player_game({});
-        } else {
+        //if (this.out_of_lives) {
+        //  save_player_game({});
+        //} else {
           save_player_game(this.hive_numbers);
-        }
+        //}
       }
     }
 
@@ -951,8 +951,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {
         labels: true, 
         ult: this.has_ult, 
-        sparks: imp_vars.player_data.difficulty_mode == "normal",
-        lives: imp_vars.player_data.difficulty_mode == "normal" && this.main_game,
+        sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
+        lives: false //imp_vars.player_data.difficulty_mode == "normal" && this.main_game,
       })
   }
   //context.font = '12px Muli'

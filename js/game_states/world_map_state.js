@@ -277,10 +277,10 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
         switch_game_state(new MainGameTransitionState(world_num, null, null, null, null, null, false, true))
       }, _this.fade_out_interval_main)}, "world"+world_num)
   this.world_buttons[difficulty][world_num].active = unlocked
-  if (difficulty == "normal") {
+  /*if (difficulty == "normal") {
     this.world_buttons[difficulty][world_num].add_hover_overlay(
       new MessageBox("lives_and_sparks", impulse_colors["world "+world_num+" bright"], world_num));
-  }
+  }*/
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
