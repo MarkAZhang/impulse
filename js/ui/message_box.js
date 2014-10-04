@@ -70,20 +70,23 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 500;
 		this.h = 40;
 	} else if (this.type == "tutorial_move") {
-		this.w = 220;
-		this.h = 40;
+		this.w = 200;
+		this.h = 150;
 	} else if (this.type == "tutorial_impulse") {
 		this.w = 220;
 		this.h = 40;
 	} else if (this.type == "tutorial_pause") {
 		this.w = 220;
 		this.h = 40;
+	} else if (this.type == "tutorial_gateway_move") {
+		this.w = 220;
+		this.h = 80;
 	} else if (this.type == "tutorial_score_points") {
 		this.w = 380;
 		this.h = 40;
 	} else if (this.type == "tutorial_enter_gateway") {
-		this.w = 300;
-		this.h = 40;
+		this.w = 200;
+		this.h = 120;
 	} else if (this.type == "tutorial_void") {
 		this.w = 300;
 		this.h = 40;
@@ -132,7 +135,12 @@ MessageBox.prototype.draw = function(ctx) {
 	if (this.show_box) {
 		ctx.beginPath();
 		ctx.strokeStyle = this.color;
-		ctx.fillStyle = "black"
+		if (this.type.substring(0, 8) == "tutorial") {
+			ctx.fillStyle = "#222"
+		} else {
+			ctx.fillStyle = "black"	
+		}
+		
 		ctx.shadowBlur = 0;
 		ctx.lineWidth = 2;
 		ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
@@ -167,11 +175,12 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_move") {
 		if(imp_vars.player_data.options.control_hand == "right") {
-			this.tutorial_text = "WASD TO MOVE";
-	    }
-	    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
-	    	this.tutorial_text = "ARROW KEYS TO MOVE";
-	    }
+          draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
+        }
+        if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+          draw_arrow_keys(ctx, this.x, this.y, 40, "white")
+        }
+		this.tutorial_text = "MOVE";
 	}
 
 	if (this.type == "tutorial_impulse") {
@@ -214,12 +223,37 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_enter_gateway") {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
 		if(imp_vars.player_data.options.control_hand == "right") {
-			this.tutorial_text = "SPACEBAR TO ENTER GATEWAY";
-        }
-        if(imp_vars.player_data.options.control_hand == "left") {
-        	this.tutorial_text = "SHIFT TO ENTER GATEWAY";
-        }
+	        draw_rounded_rect(ctx, this.x, this.y - 10, 160, 34, 7, "white")
+	        ctx.fillText("SPACEBAR", this.x, this.y - 4)
+	    }
+
+	    if(imp_vars.player_data.options.control_hand == "left") {
+	        draw_rounded_rect(ctx, this.x, this.y - 10, 80, 34, 7, "white")
+	        ctx.fillText("SHIFT", this.x, this.y - 4)
+	    }
+		this.tutorial_text = "ENTER GATEWAY";
+	}
+
+	if (this.type == "tutorial_gateway_move") {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText("MOVE TO THE GATEWAY", this.x, this.y - this.h / 2 + 25);
+		ctx.beginPath();
+	    ctx.moveTo(this.x - 8, this.y);
+	    ctx.lineTo(this.x + 8, this.y);
+	    ctx.lineTo(this.x + 8, this.y + 10);
+	    ctx.lineTo(this.x + 16, this.y + 10);
+	    ctx.lineTo(this.x, this.y + 25);
+	    ctx.lineTo(this.x - 16, this.y + 10);
+	    ctx.lineTo(this.x - 8, this.y + 10);
+	    ctx.closePath()
+	    ctx.fillStyle = "white";
+	    ctx.fill();
 	}
 
 	if (this.type.substring(0, 8) == "tutorial") {
@@ -229,10 +263,12 @@ MessageBox.prototype.draw = function(ctx) {
 	    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
 	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color)
 	    }*/
-		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = this.color;
-		ctx.fillText(this.tutorial_text, this.x, this.y - this.h / 2 + 25);
+	    if (this.tutorial_text) {
+			ctx.textAlign = 'center';
+			ctx.font = "16px Muli";
+			ctx.fillStyle = this.color;
+			ctx.fillText(this.tutorial_text, this.x, this.y + this.h / 2 - 15);
+		}
 	} else if (this.type == "rank_explanation_normal") {
 		var ytop = this.y - this.h/2;
 		/*ctx.textAlign = 'center'

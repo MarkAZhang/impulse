@@ -381,31 +381,48 @@ GatewayMoveTutorialOverlay.prototype.constructor = GatewayMoveTutorialOverlay;
 
 function GatewayMoveTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
+	this.gateway_loc = {
+		x: this.impulse_game_state.level.gateway_loc.x * imp_vars.draw_factor,
+		y: this.impulse_game_state.level.gateway_loc.y * imp_vars.draw_factor};	
+	this.message_box = new MessageBox("tutorial_gateway_move", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.message_box.set_position(this.gateway_loc.x, this.gateway_loc.y - 30);
+	this.message_box.set_visible(true);
+
 }
 
 GatewayMoveTutorialOverlay.prototype.draw = function(ctx) {
-	var loc = {
-		x: this.impulse_game_state.level.gateway_loc.x * imp_vars.draw_factor,
-		y: this.impulse_game_state.level.gateway_loc.y * imp_vars.draw_factor};	
+
+    this.message_box.draw(ctx);
+	return;
+
+	// draws an error but we no longer use it.
+	ctx.globalAlpha *= 0.5
 	var offset = (window.performance.now() % 1500) / 1500;
 	var prog = 0;
-	if (offset > 2/3) {
-		prog = (1 - offset) * 3;
+	if (offset > 1/2) {
+		prog = (1 - offset) * 2;
 	} else {
-		prog = offset * 1.5;
+		prog = offset * 2;
 	}
-	/*draw_arrow(ctx, loc.x - 45, loc.y, 25, "right", "red", false)
-    draw_arrow(ctx, loc.x + 45, loc.y, 25, "left", "red", false)*/
+	/*draw_arrow(ctx, this.gateway_loc.x - 45, this.gateway_loc.y, 25, "right", "red", false)
+    draw_arrow(ctx, this.gateway_loc.x + 45, this.gateway_loc.y, 25, "left", "red", false)*/
     ctx.beginPath();
-    ctx.moveTo(loc.x, loc.y - 122 - prog * 50);
-    ctx.lineTo(loc.x, loc.y - 82 - prog * 50);
-    ctx.lineWidth = 16
-    ctx.strokeStyle = impulse_colors["impulse_blue"]
+    /*ctx.moveTo(this.gateway_loc.x - 8, this.gateway_loc.y - 122 - prog * 50);
+    ctx.lineTo(this.gateway_loc.x + 8, this.gateway_loc.y - 122 - prog * 50);*/
+    ctx.moveTo(this.gateway_loc.x + 16, this.gateway_loc.y - 82 - prog * 50);
+    //ctx.lineTo(this.gateway_loc.x + 16, this.gateway_loc.y - 82 - prog * 50);
+    ctx.lineTo(this.gateway_loc.x, this.gateway_loc.y - 50 - prog * 50);
+    //ctx.lineTo(this.gateway_loc.x - 16, this.gateway_loc.y - 82 - prog * 50);
+    ctx.lineTo(this.gateway_loc.x - 16, this.gateway_loc.y - 82 - prog * 50);
+    ctx.closePath()
+    ctx.lineWidth = 4
+    ctx.fillStyle = "black";
+    ctx.fill();
+    ctx.strokeStyle = "white"
     ctx.stroke();
-    draw_arrow(ctx, loc.x, loc.y - 70 - prog * 50, 50, "down", impulse_colors["impulse_blue"], false)
-    //draw_arrow(ctx, loc.x, loc.y + 45, 25, "up", "red", false)
+    //draw_arrow(ctx, this.gateway_loc.x, this.gateway_loc.y + 45, 25, "up", "red", false)
     /*ctx.beginPath()
-    ctx.arc(loc.x, loc.y, 50, 0, 2 * Math.PI)
+    ctx.arc(this.gateway_loc.x, this.gateway_loc.y, 50, 0, 2 * Math.PI)
     ctx.lineWidth = 8
     ctx.shadowBlur = 0
     ctx.strokeStyle = 'red'

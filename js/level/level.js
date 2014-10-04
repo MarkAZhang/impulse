@@ -639,7 +639,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     //ctx.save()
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
     ctx.strokeStyle = this.bright_color
-    if (this.impulse_game_state.zoom_state == "none") {
+    if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2") {
       ctx.save();
       if (prog > 0.5) {
         // go from 0.3 to 0.8
