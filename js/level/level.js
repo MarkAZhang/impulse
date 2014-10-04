@@ -725,7 +725,7 @@ Level.prototype.draw = function(context, draw_factor) {
       context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
     }
 
-    draw_spark(context, this.spark_loc.x, this.spark_loc.y, this.spark_spin_angle)
+    draw_spark_powerup(context, this.spark_loc.x, this.spark_loc.y)
     context.restore()
 
   }
@@ -740,7 +740,7 @@ Level.prototype.draw = function(context, draw_factor) {
       context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
     }
 
-    draw_multi(context, this.multi_loc.x, this.multi_loc.y, this.spark_spin_angle)
+    draw_multi_powerup(context, this.multi_loc.x, this.multi_loc.y)
     context.restore()
 
   }

@@ -1073,15 +1073,21 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder, a
 }
 
 function draw_spark(context, x, y, angle) {
-
   drawSprite(context, x, y, angle, 25, 25, "spark")
+}
 
+function draw_spark_powerup(context, x, y) {
+  drawSprite(context, x, y, 0, 36, 36, "spark_powerup")
 }
 
 function draw_spark_fragment(context, x, y, angle) {
 
   drawSprite(context, x, y, angle, 12, 12, "spark")
 
+}
+
+function draw_multi_powerup(context, x, y) {
+  drawSprite(context, x, y, 0, 36, 36, "multi_powerup")
 }
 
 
@@ -1360,6 +1366,9 @@ var spriteSheetData = {
   "world2_timer": [241, 211, 48, 61],
   "world3_timer": [189, 277, 48, 62],
   "world4_timer": [241, 277, 48, 62],
+  "spark_powerup": [304, 0, 49, 48],
+  "multi_powerup": [304, 52, 49, 48],
+  "ult_powerup": [304, 105, 49, 48],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],

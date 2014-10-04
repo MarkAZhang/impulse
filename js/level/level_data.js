@@ -130,7 +130,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
     "stunner": [0, 5, 1, 1, 2, 0, 50]
   },
   enemies: {
-    "stunner": [0, 3, 0, 3, 4, 8, 50]
+    "stunner": [0, 1, 0, 1, 4, 4, 50]
   },
   initial_spawn_data_easy: {
     "stunner": 2
@@ -149,7 +149,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
     "easy": [2500, 50000, 300000],
-    "normal": [50000, 300000, 800000],
+    "normal": [50000, 400000, 800000],
   },
   player_loc: {x: 400, y: 300}
 }
