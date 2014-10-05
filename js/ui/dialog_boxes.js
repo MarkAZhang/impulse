@@ -235,7 +235,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.shadowBlur = 0;
   ctx.shadowColor = this.bright_color;
   ctx.fillStyle = this.bright_color;
-  ctx.fillText("PAUSED", this.x, this.y - this.h/2 + 50)
+  ctx.fillText("MENU", this.x, this.y - this.h/2 + 50)
 
   draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
 
@@ -334,7 +334,8 @@ PauseMenu.prototype.quit_tutorial = function() {
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       is_tutorial: true,
-      first_time_tutorial: imp_vars.player_data.first_time
+      first_time_tutorial: imp_vars.player_data.first_time,
+      victory: true
     }))
    clear_dialog_box()
 }

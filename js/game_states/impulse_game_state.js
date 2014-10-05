@@ -857,11 +857,13 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  if (!(this instanceof HowToPlayState) && !this.world_num == 0) {
+  var titleTextY = 30;
+
+  if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal") {
     context.font = "14px Muli"
     context.save()
     context.globalAlpha *= 1
-    context.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "STANDARD MODE", imp_vars.sidebarWidth/2, 15)
+    context.fillText("HARD MODE", imp_vars.sidebarWidth/2, titleTextY + 15)
     context.restore()
   }
 
@@ -871,25 +873,53 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
     type = this.level_name.split(" ")[0]
     if(type != "HOW") {
-      context.fillText(type, imp_vars.sidebarWidth/2, 70)
+      context.fillText(type, imp_vars.sidebarWidth/2, titleTextY + 70)
     } else {
       context.font = '40px Muli'
-      context.fillText("HOW TO", imp_vars.sidebarWidth/2, 70)
+      context.fillText("HOW TO", imp_vars.sidebarWidth/2, titleTextY + 70)
     }
 
     context.font = '80px Muli'
     if(type == "BOSS") {
-      context.fillText(this.world_num, imp_vars.sidebarWidth/2, 140)
+      context.fillText(this.world_num, imp_vars.sidebarWidth/2, titleTextY + 140)
     } else if(type == "HOW") {
       context.font = '60px Muli'
-      context.fillText("PLAY", imp_vars.sidebarWidth/2, 130)
+      context.fillText("PLAY", imp_vars.sidebarWidth/2, titleTextY + 130)
     } else {
-      context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, 140)
+      context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, titleTextY + 140)
     }
   } else if(this.world_num == 0) {
     context.font = '40px Muli'
-    context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, 70)
+    context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, titleTextY + 70)
   }
+
+  var menuY =  25;//imp_vars.canvasHeight / 2 - 70;
+
+  context.beginPath()
+  var w = 190;
+  var h = 30;
+  context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
+  context.lineWidth = 4;
+  context.strokeStyle = this.color
+  context.fillStyle = this.bright_color;
+  context.save();
+  context.globalAlpha /= 2;
+  context.stroke();
+  context.restore();
+  context.font = '16px Muli';
+  context.save();
+  context.globalAlpha *= 0.8;
+  if(imp_vars.player_data.options.control_hand == "right") {
+    context.fillText("PRESS Q FOR MENU", imp_vars.sidebarWidth/2, menuY);
+  } else {
+    context.fillText("PRESS ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
+  }
+  
+  context.restore();
+  /* context.font = '24px Muli';
+  context.fillText("Q", imp_vars.sidebarWidth/2, menuY);
+  context.font = '12px Muli';
+  context.fillText("FOR MENU", imp_vars.sidebarWidth/2, menuY + 17);*/
 
   // draw the game time
   if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
