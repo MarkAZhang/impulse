@@ -9,7 +9,7 @@ var TutorialOverlayManager = function(impulse_game_state) {
 
 TutorialOverlayManager.prototype.on_demand_overlays = [
 	{type: "reset_multiplier", class: ResetMultiplierTutorialOverlay},
-	{type: "one_up", class: OneUpTutorialOverlay}
+	{type: "one_up", class: OneUpTutorialOverlay},
 ]
 
 TutorialOverlayManager.prototype.add_overlays = function() {
@@ -24,8 +24,11 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 	} else if (this.tutorial_level == 3) { 
 		this.overlays.push(new ImpulseTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new KillEnemyTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new ScorePointsTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
 	} else if (this.tutorial_level == 4) {
+		this.overlays.push(new EnemyIncrTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new IncrMultiplierTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new ResetMultiplierTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new OneUpTutorialOverlay(this.impulse_game_state));
@@ -131,8 +134,18 @@ TutorialOverlay.prototype.process_internal = function(dt) {
 		this.duration -= dt;
 	}
 	if (this.hover_overlay) {
-		var pos = this.impulse_game_state.player.body.GetPosition();
-		this.hover_overlay.set_position(pos.x * imp_vars.draw_factor, pos.y * imp_vars.draw_factor);
+		var pos_x = this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor;
+		var pos_y = this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor;
+		if (pos_x < this.hover_overlay.w / 2 + 5) {
+			pos_x = this.hover_overlay.w / 2 + 5;
+		} else if (pos_x > imp_vars.levelWidth - this.hover_overlay.w / 2 - 5) {
+			pos_x = imp_vars.levelWidth - this.hover_overlay.w / 2 - 5;
+		}
+
+		if (pos_y < this.hover_overlay.h + 55) {
+			pos_y += (this.hover_overlay.h + 100);
+		}
+		this.hover_overlay.set_position(pos_x, pos_y);
 	}
 	this.fader.process(dt);
 	this.process(dt);
@@ -210,10 +223,6 @@ VoidTutorialOverlay.prototype.process = function(dt) {
 	this.impulse_game_state.level.flash_obstacles("red", flash_obstacle_prop)*/
 }
 
-VoidTutorialOverlay.prototype.on_expire = function() {
-	this.impulse_game_state.level.flash_obstacles("red", 0)	
-}
-
 ImpulseTutorialOverlay.prototype = new TutorialOverlay;
 
 ImpulseTutorialOverlay.prototype.constructor = ImpulseTutorialOverlay;
@@ -241,7 +250,7 @@ KillEnemyTutorialOverlay.prototype.constructor = KillEnemyTutorialOverlay;
 function KillEnemyTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.hover_overlay = new MessageBox("tutorial_kill_enemy", impulse_game_state.bright_color, impulse_game_state.world_num);
-	this.delay_timer = 10000
+	this.delay_timer = 4000
 }
 
 KillEnemyTutorialOverlay.prototype.draw = function(ctx) {
@@ -284,19 +293,109 @@ ScorePointsTutorialOverlay.prototype.constructor = ScorePointsTutorialOverlay;
 
 function ScorePointsTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
-	this.duration = 3000;
+	this.duration = 5000;
 	this.hover_overlay = new MessageBox("tutorial_score_points", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 
+ScorePointsTutorialOverlay.prototype.is_ready = function() {
+	return this.impulse_game_state.tutorial_signals["enemy_killed"];
+}
+
 ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
+	ctx.fillStyle = "cyan";
+	ctx.strokeStyle = "cyan";
+	ctx.lineWidth = 8;
+	ctx.beginPath();
+	ctx.textAlign = "center"
+	var rw = 120;
+	var rh = 70;
+	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 55 - rh/2 - 20, rw, rh);
+	ctx.stroke();
+	ctx.font = '21px Muli'
+    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 25)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 65)
+
+	/*ctx.beginPath();
+	ctx.rect(imp_vars.levelWidth - 10, 10, 50, 50);
+	ctx.fillStyle = "gray";
+	ctx.strokeStyle = "white";
+	ctx.lineWidth = 2;
+	ctx.fill();
+	ctx.stroke();
+	draw_full_arrow(ctx, imp_vars.levelWidth + 15, 35, 1, "white", "right");
+	ctx.lineWidth = 4;
+	ctx.globalAlpha *= 0.5;
+	ctx.beginPath();
+	ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2);
+	ctx.lineTo(imp_vars.levelWidth - 10, 35);
+	ctx.closePath();
+	ctx.stroke();
+	ctx.fillStyle = "white"
+	ctx.beginPath();
+	ctx.arc(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(imp_vars.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
+	ctx.fill();*/
 }
 
 ScorePointsTutorialOverlay.prototype.process = function(dt) {
 
 }
 
-ScorePointsTutorialOverlay.prototype.satisfaction_criteria = function() {
-	return this.impulse_game_state.tutorial_signals["gateway_opened"];
+EnemyIncrTutorialOverlay.prototype = new TutorialOverlay;
+
+EnemyIncrTutorialOverlay.prototype.constructor = EnemyIncrTutorialOverlay;
+
+function EnemyIncrTutorialOverlay(impulse_game_state) {
+	this.init(impulse_game_state);
+	this.on_demand = true;
+	this.duration = 5000;
+	this.hover_overlay = new MessageBox("tutorial_enemy_incr", impulse_game_state.bright_color, impulse_game_state.world_num);
+}
+
+EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
+
+	ctx.textAlign = "center"
+	ctx.fillStyle = "cyan";
+	ctx.strokeStyle = "cyan";
+	ctx.lineWidth = 8;
+	ctx.beginPath();
+	var rw = 120;
+	var rh = 70;
+	ctx.rect(-imp_vars.sidebarWidth / 2 - rw / 2, imp_vars.canvasHeight - 40 - rh / 2, rw, rh);
+	ctx.stroke();
+    ctx.font = '16px Muli';
+    ctx.fillText("LEVEL TIME",  -imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+    ctx.font = '32px Muli';
+    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);
+	/*ctx.beginPath();
+	ctx.rect(-40, imp_vars.levelHeight - 60, 50, 50);
+	ctx.fillStyle = "gray";
+	ctx.strokeStyle = "white";
+	ctx.lineWidth = 2;
+	ctx.fill();
+	ctx.stroke();
+	draw_full_arrow(ctx, -15, imp_vars.levelHeight - 35, 1, "white", "left");
+	ctx.lineWidth = 4;
+	ctx.globalAlpha *= 0.5;
+	ctx.beginPath();
+	ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2);
+	ctx.lineTo(10, imp_vars.levelHeight - 35);
+	ctx.closePath();
+	ctx.stroke();
+	ctx.fillStyle = "white";
+	ctx.beginPath();
+	ctx.arc(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(10, imp_vars.levelHeight - 35, 3, 0, 2 * Math.PI);
+	ctx.fill();*/
+}
+
+EnemyIncrTutorialOverlay.prototype.process = function(dt) {
+
 }
 
 IncrMultiplierTutorialOverlay.prototype = new TutorialOverlay;
@@ -310,10 +409,51 @@ function IncrMultiplierTutorialOverlay(impulse_game_state) {
 }
 
 IncrMultiplierTutorialOverlay.prototype.is_ready = function() {
-	return this.impulse_game_state.tutorial_signals["enemy_killed"];
+	return this.impulse_game_state.tutorial_signals["enemy_killed"] == "fresh" ||  this.shown;
 }
 
 IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
+	ctx.textAlign = "center"
+	ctx.fillStyle = "cyan";
+	ctx.strokeStyle = "cyan";
+	ctx.lineWidth = 8;
+	ctx.beginPath();
+	var rw = 100;
+	var rh = 100;
+	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, imp_vars.canvasHeight/2 - rh/2 - 20, rw, rh);
+	ctx.stroke();
+    ctx.font = '72px Muli';
+    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, imp_vars.levelWidth + imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+
+	/*var a_loc = {
+		x: imp_vars.levelWidth + 15,
+		y: imp_vars.levelHeight / 2 - 20,
+		w: 50,
+		h: 50
+	};
+
+	ctx.beginPath();
+	ctx.rect(a_loc.x - a_loc.w / 2, a_loc.y - a_loc.h / 2, a_loc.w, a_loc.h);
+	ctx.fillStyle = "gray";
+	ctx.strokeStyle = "white";
+	ctx.lineWidth = 2;
+	ctx.fill();
+	ctx.stroke();
+	draw_full_arrow(ctx, a_loc.x, a_loc.y, 1, "white", "right");
+	ctx.lineWidth = 4;
+	ctx.globalAlpha *= 0.5;
+	ctx.beginPath();
+	ctx.moveTo(this.hover_overlay.x + this.hover_overlay.w / 2, this.hover_overlay.y);
+	ctx.lineTo(a_loc.x - a_loc.w / 2, a_loc.y);
+	ctx.closePath();
+	ctx.stroke();
+	ctx.fillStyle = "white"
+	ctx.beginPath();
+	ctx.arc(this.hover_overlay.x + this.hover_overlay.w / 2, this.hover_overlay.y, 3, 0, 2 * Math.PI);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(a_loc.x - a_loc.w / 2, a_loc.y, 3, 0, 2 * Math.PI);
+	ctx.fill();*/
 }
 
 IncrMultiplierTutorialOverlay.prototype.process = function(dt) {
@@ -331,7 +471,7 @@ function ResetMultiplierTutorialOverlay(impulse_game_state) {
 }
 
 ResetMultiplierTutorialOverlay.prototype.is_ready = function() {
-	return this.impulse_game_state.tutorial_signals["multiplier_reset"];
+	return this.impulse_game_state.tutorial_signals["multiplier_reset"] == "fresh" ||  this.shown;
 }
 
 ResetMultiplierTutorialOverlay.prototype.draw = function(ctx) {

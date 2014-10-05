@@ -73,8 +73,8 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 200;
 		this.h = 150;
 	} else if (this.type == "tutorial_impulse") {
-		this.w = 220;
-		this.h = 40;
+		this.w = 180;
+		this.h = 150;
 	} else if (this.type == "tutorial_pause") {
 		this.w = 220;
 		this.h = 40;
@@ -82,7 +82,10 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 220;
 		this.h = 80;
 	} else if (this.type == "tutorial_score_points") {
-		this.w = 380;
+		this.w = 450;
+		this.h = 40;
+	} else if (this.type == "tutorial_enemy_incr") {
+		this.w = 420;
 		this.h = 40;
 	} else if (this.type == "tutorial_enter_gateway") {
 		this.w = 200;
@@ -94,10 +97,10 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 300;
 		this.h = 40;
 	} else if (this.type == "tutorial_incr_multiplier") {
-		this.w = 350;
+		this.w = 400;
 		this.h = 40;
 	} else if (this.type == "tutorial_reset_multiplier") {
-		this.w = 350;
+		this.w = 400;
 		this.h = 40;
 	} else if (this.type == "tutorial_one_up") {
 		this.w = 250;
@@ -174,8 +177,11 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_move") {
-		if(imp_vars.player_data.options.control_hand == "right") {
+		if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {
           draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
+        }
+		if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
+          draw_arrow_keys(ctx, this.x, this.y, 40, "white")
         }
         if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
           draw_arrow_keys(ctx, this.x, this.y, 40, "white")
@@ -184,11 +190,12 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_impulse") {
-	  if(imp_vars.player_data.options.control_scheme == "mouse") {
-	  	this.tutorial_text = "CLICK TO IMPULSE";
-      } else {
-	  	this.tutorial_text = "ARROW KEYS TO IMPULSE";
-      }
+		if(imp_vars.player_data.options.control_scheme == "mouse") {
+			draw_mouse(ctx, this.x, this.y - 20, 56, 82, "white")
+		} else {
+            draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
+		}
+		this.tutorial_text = "IMPULSE";
 	}
 
 	if (this.type == "tutorial_pause") {
@@ -200,16 +207,21 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_score_points") {
-		this.tutorial_text = "SCORE POINTS TO OPEN GATEWAY"
+		this.tutorial_text = "GET THE GOAL SCORE TO OPEN THE GATEWAY"
 	}
 
 	if (this.type == "tutorial_incr_multiplier") {
-		this.tutorial_text = "KILLING ENEMIES INCREASES MULTIPLIER"
+		this.tutorial_text = "KILLING ENEMIES INCREASES YOUR MULTIPLIER"
 	}
 
 	if (this.type == "tutorial_reset_multiplier") {
-		this.tutorial_text = "TOUCHING ENEMIES RESETS MULTIPLIER"
+		this.tutorial_text = "TOUCHING ENEMIES RESETS YOUR MULTIPLIER"
 	}
+
+	if (this.type == "tutorial_enemy_incr") {
+		this.tutorial_text = "LEVELS GET HARDER OVER TIME"
+	}
+
 	if (this.type == "tutorial_one_up") {
 		this.tutorial_text = "100 SPARKS = 1UP"
 	}
@@ -243,17 +255,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText("MOVE TO THE GATEWAY", this.x, this.y - this.h / 2 + 25);
-		ctx.beginPath();
-	    ctx.moveTo(this.x - 8, this.y);
-	    ctx.lineTo(this.x + 8, this.y);
-	    ctx.lineTo(this.x + 8, this.y + 10);
-	    ctx.lineTo(this.x + 16, this.y + 10);
-	    ctx.lineTo(this.x, this.y + 25);
-	    ctx.lineTo(this.x - 16, this.y + 10);
-	    ctx.lineTo(this.x - 8, this.y + 10);
-	    ctx.closePath()
-	    ctx.fillStyle = "white";
-	    ctx.fill();
+		draw_full_arrow(ctx, this.x, this.y + 12, 1, "white", "down");
 	}
 
 	if (this.type.substring(0, 8) == "tutorial") {

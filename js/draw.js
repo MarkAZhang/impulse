@@ -998,18 +998,17 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.restore();
   context.save();
   context.beginPath()
-  context.shadowBlur = 20;
-  context.shadowColor = color
-
-  context.globalAlpha /= 10
+  //context.shadowBlur = 20;
+  //context.shadowColor = color
   context.rect(x - w * .5, y - h * .5, w , h)
   context.strokeStyle = color
   context.fillStyle = color
-  context.lineWidth = 2
+  context.lineWidth = 4
+  context.save();
+  context.globalAlpha /= 10
   context.fill()
+  context.restore();
   context.stroke()
-
-  context.globalAlpha *= 10
   context.beginPath()
 
   if(up) {
@@ -1021,6 +1020,32 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.fillStyle = color
   context.fill()
   context.restore()
+}
+
+function draw_full_arrow(context, x, y, scale, color, dir) {
+  context.save();
+  context.translate(x, y);
+  context.scale(scale, scale);
+  if(dir == "left") {
+    context.rotate(Math.PI/2);
+  } else if(dir == "up") {
+    context.rotate(2*Math.PI/2);
+  } else if(dir == "right") {
+    context.rotate(3*Math.PI/2);
+  }
+  context.beginPath();
+  context.moveTo(-8, -12);
+  context.lineTo(8, -12);
+  context.lineTo(8, -2);
+  context.lineTo(16, -2);
+  context.lineTo(0, 13);
+  context.lineTo(-16, -2);
+  context.lineTo(-8, -2);
+  context.closePath()
+
+  context.fillStyle = color;
+  context.fill();
+  context.restore();
 }
 
 function draw_arrow(context, x, y, size, dir, color, shadowed) {

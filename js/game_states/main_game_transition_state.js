@@ -251,10 +251,11 @@ MainGameTransitionState.prototype.process = function(dt) {
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn && this.level) {
+    this.bg_drawn = true
+
     bg_canvas.setAttribute("style", "display:none")
     bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
-    this.bg_drawn = true
     bg_ctx.translate(-imp_vars.sidebarWidth, 0)
     draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
   }
@@ -512,7 +513,12 @@ MainGameTransitionState.prototype.on_click = function(keyCode) {
 }
 
 MainGameTransitionState.prototype.load_complete = function() {
+  bg_canvas.setAttribute("style", "display:none")
   this.level_loaded = true
+  imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)
+  this.level.draw_bg(imp_vars.bg_ctx)
+  imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
+  draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
 }
 
 MainGameTransitionState.prototype.check_quests_helper = function(level, game_numbers) {

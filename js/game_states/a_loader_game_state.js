@@ -26,7 +26,6 @@ LoaderGameState.prototype.load_level = function(level_data) {
     return function(event) {
       if (event.data["z"]) {
         _this.load_percentage = event.data["z"]
-
       }
       else if(event.data["a"]) {
         _this.visibility_graph = new VisibilityGraph(

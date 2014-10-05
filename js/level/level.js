@@ -705,7 +705,6 @@ Level.prototype.draw = function(context, draw_factor) {
     context.globalAlpha = this.flash_obstacle_prop;
 
     for(var i = 0; i < this.obstacles.length; i++) {
-      window.console.log(context.globalAlpha)
       var origColor = this.obstacles[i].color;
       this.obstacles[i].color = this.flash_obstacle_color;
       this.obstacles[i].draw(context, imp_vars.draw_factor)
@@ -820,7 +819,6 @@ Level.prototype.open_gateway = function() {
 }
 
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
-
   bg_ctx.save()
   bg_ctx.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   bg_ctx.clip()

@@ -53,7 +53,9 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
   initial_spawn_data: {
   },
   dominant_enemy: "stunner",
-  obstacle_v: [[[60,120],[120,120],[120,420],[680,420],[680,120],[740,120],[740,480],[60,480]],[[180,120],[620,120],[620,360],[560,360],[560,180],[240,180],[240,360],[180,360]]],
+  // Old design which "isolated" the player
+  //obstacle_v: [[[60,120],[120,120],[120,420],[680,420],[680,120],[740,120],[740,480],[60,480]],[[180,120],[620,120],[620,360],[560,360],[560,180],[240,180],[240,360],[180,360]]],
+  obstacle_v: [[[-50,260],[370,260],[370,360],[-50,360]],[[50,420],[751,420],[750,520],[50,520]],[[850,360],[430,360],[430,260],[850,260]]],
   spark_spawn_points: [],
   spawn_points: [],
   buffer_radius: 1,
@@ -62,8 +64,8 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
   cutoff_scores: {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
-  player_loc: {x: 400, y: 520},
-  gateway_loc: {x: 400, y: 300}
+  player_loc: {x: 400, y: 560},
+  gateway_loc: {x: 400, y: 200}
 }
 
 imp_params.impulse_level_data['HIVE 0-3'] = {
@@ -88,10 +90,12 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "normal": [100, 300000, 1200000], // scores are irrelevant.
+    "easy": [1000, 300000, 1200000], // scores are irrelevant.
+    "normal": [1000, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 100, y: 300},
-  gateway_loc: {x: 600, y: 300}
+  gateway_loc: {x: 600, y: 300},
+  show_score_interface: true
 }
 
 imp_params.impulse_level_data['HIVE 0-4'] = {
@@ -116,8 +120,8 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [5000, 10000, 20000],
-    "normal": [5000, 10000, 20000],
+    "easy": [3000, 10000, 20000],
+    "normal": [3000, 10000, 20000],
   },
   player_loc: {x: 400, y: 300},
   spawn_pattern: "spread",

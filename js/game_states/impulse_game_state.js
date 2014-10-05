@@ -153,6 +153,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   if (this.show_tutorial) {
     this.tutorial_overlay_manager = new TutorialOverlayManager(this);
     this.tutorial_signals = {};
+    this.tutorial_signal_timeouts = {};
+    this.tutorial_signal_timeout = 500
   }
 
   if (!this.is_boss_level && this.level) {
@@ -208,6 +210,7 @@ ImpulseGameState.prototype.reset = function() {
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
+  if (this.world_num == 0) return;
   for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
     imp_params.impulse_enemy_stats[enemy].seen += 1
     save_game()
@@ -294,6 +297,14 @@ ImpulseGameState.prototype.process = function(dt) {
     this.last_fps_time = a
   }
   this.fps_counter+=1
+
+  // We don't want any tutorial overlay to trigger way after the event has happened. So we timeout the tutorial signals after a short period.
+  for (var signal in this.tutorial_signal_timeouts) {
+    this.tutorial_signal_timeouts[signal] -= dt;
+    if (this.tutorial_signal_timeouts[signal] < 0) {
+      this.tutorial_signals[signal] = "timeout"
+    }
+  }
   if(!this.pause)
   {
     if (this.show_tutorial) {
@@ -445,7 +456,6 @@ ImpulseGameState.prototype.process = function(dt) {
       }
     }
 
-
     if(this.world_visible && this.world_visibility < 1)
     {
       this.world_visibility = Math.min(1, this.world_visibility + dt/1000)
@@ -490,8 +500,6 @@ ImpulseGameState.prototype.bg_transition = function() {
     this.bg_visible = false
   }
   this.zoom_bg_switch = true
-
-
 }
 
 ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
@@ -591,15 +599,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.draw_score_labels(ctx)
   }
 
-  // Draw the tutorial if applicable.
-  if (this.show_tutorial) {
-    this.tutorial_overlay_manager.draw(ctx);
-  }
-
   ctx.restore()
+
 
   ctx.clearRect(0, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
   ctx.clearRect(imp_vars.canvasWidth - imp_vars.sidebarWidth, 0, imp_vars.sidebarWidth, imp_vars.canvasHeight);
+
+
   if(this.zoom == 1 && this.zoom_state == "none") {
     if(this.draw_interface_timer < 0) {
       this.draw_interface(bg_ctx)
@@ -639,6 +645,15 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   for(var i=0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
+  
+  ctx.save();
+  ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+  this.set_zoom_transparency(ctx);
+  // Draw the tutorial if applicable.
+  if (this.show_tutorial) {
+    this.tutorial_overlay_manager.draw(ctx);
+  }
+  ctx.restore();
 
   this.bg_transition()
 
@@ -871,17 +886,19 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     } else {
       context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, 140)
     }
-  } else if(imp_params.impulse_level_data[this.level_name].show_full_interface) {
+  } else if(this.world_num == 0) {
     context.font = '40px Muli'
     context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, 70)
   }
 
   // draw the game time
-  if (this.world_num != 0) {
+  if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
     context.fillStyle = this.color;
-    context.font = '32px Muli';
     this.game_numbers.last_time = this.convert_seconds_to_time_string(this.game_numbers.seconds);
-    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 80);
+    context.font = '16px Muli';
+    context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+    context.font = '32px Muli';
+    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);
   }
 
   if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && this.main_game && imp_vars.player_data.options.speed_run_countdown) {
@@ -899,18 +916,21 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   }
 
   if(!this.is_boss_level) {
-    if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+    if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface ||
+      imp_params.impulse_level_data[this.level_name].show_score_interface) {
       // draw score
+      context.font = '21px Muli'
+      context.fillText("SCORE", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 10)
       context.font = '40px Muli'
-      context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 46)
+      context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 35)
 
       if(this.stars < 3) {
         context.fillStyle = impulse_colors[this.star_colors[this.stars]]
         //context.shadowColor = context.fillStyle;
         context.font = '21px Muli'
-        context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 15)
+        context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
         context.font = '42px Muli'
-        context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 40)
+        context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
       } else {
         /*context.fillStyle = impulse_colors[this.star_colors[2]]
         context.shadowColor = context.fillStyle;
@@ -962,26 +982,32 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 }
 
 ImpulseGameState.prototype.draw_score_bar = function(ctx) {
-  if (this.world_num == 0 && !imp_params.impulse_level_data[this.level_name].show_full_interface) {
+  if (this.world_num == 0 && !imp_params.impulse_level_data[this.level_name].show_full_interface && 
+    !imp_params.impulse_level_data[this.level_name].show_score_interface) {
     return;
   }
+
   ctx.save()
   this.set_zoom_transparency(ctx)
 
-  draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, this.progress_bar_prop, this.color)
-
   if(!this.is_boss_level) {
+    draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2, 
+      40, imp_vars.canvasHeight * 3/4 - 30, this.progress_bar_prop, this.color, true)
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
     ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
     //ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
     //ctx.shadowBlur = 10;
-    ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+    if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+      ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+    }
   } else {
     if(this.level.boss)
-      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
+      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
+        40, imp_vars.canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
     else
-      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 15, 40, imp_vars.canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
+      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
+        40, imp_vars.canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
   }
   ctx.restore()
 }
@@ -1363,6 +1389,7 @@ ImpulseGameState.prototype.convert_seconds_to_time_string = function(seconds) {
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {
   if (this.show_tutorial) {
-    this.tutorial_signals[signal] = true;
+    this.tutorial_signals[signal] = "fresh";
+    this.tutorial_signal_timeouts[signal] = this.tutorial_signal_timeout
   }
 }
