@@ -860,10 +860,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   var titleTextY = 30;
 
   if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal") {
-    context.font = "14px Muli"
+    context.font = "20px Muli"
     context.save()
     context.globalAlpha *= 1
-    context.fillText("HARD MODE", imp_vars.sidebarWidth/2, titleTextY + 15)
+    context.fillText("HARD MODE", imp_vars.sidebarWidth/2, titleTextY + 170)
     context.restore()
   }
 
@@ -923,26 +923,25 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   // draw the game time
   if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-    context.fillStyle = this.color;
-    this.game_numbers.last_time = this.convert_seconds_to_time_string(this.game_numbers.seconds);
-    context.font = '16px Muli';
-    context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
-    context.font = '32px Muli';
-    context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);
-  }
-
-  if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && this.main_game && imp_vars.player_data.options.speed_run_countdown) {
-    /*drawSprite(context, imp_vars.sidebarWidth/2 - 20, imp_vars.canvasHeight/2 + 153,
-      0, 24, 31, "world"+this.world_num+"_timer");*/
-    context.fillStyle = "white";
-    context.font = '10px Muli';
-    context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 144);
-    context.fillText("CHALLENGE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 155);
-    context.font = '20px Muli';
-    var total_time = this.convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
-    context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 176);
-    context.font = '10px Muli';
-    context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 194);
+    // Show speed run countdown.
+    if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && 
+      this.main_game && imp_vars.player_data.options.speed_run_countdown) {
+      context.fillStyle = this.color
+      context.font = '16px Muli';
+      context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 70);
+      context.fillStyle = "white";
+      context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+      context.font = '32px Muli';
+      var total_time = this.convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
+      context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
+    } else {
+      context.fillStyle = this.color;
+      this.game_numbers.last_time = this.convert_seconds_to_time_string(this.game_numbers.seconds);
+      context.font = '16px Muli';
+      context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+      context.font = '32px Muli';
+      context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
+    }
   }
 
   if(!this.is_boss_level) {

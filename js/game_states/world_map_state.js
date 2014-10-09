@@ -328,6 +328,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   if (!this.is_practice_mode && this.world_unlocked[imp_vars.player_data.difficulty_mode][this.world_num] ) {
     this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   }
+
   
   ctx.font = '13px Muli'
   ctx.fillStyle = "white"

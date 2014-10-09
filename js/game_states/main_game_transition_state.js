@@ -326,8 +326,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 0.3
     draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 130)
     ctx.restore()
-    ctx.font = '40px Muli'
-    ctx.fillText(this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 40)
     ctx.font = '54px Muli'
     ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
     ctx.shadowBlur = 0
