@@ -442,8 +442,7 @@ ImpulseGameState.prototype.process = function(dt) {
 
     if(!this.is_boss_level) {
 
-      var temp_stars = this.stars < 3 ? this.stars : 2
-      var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[temp_stars], 1)
+      var prop = Math.min(this.game_numbers.score/this.level.cutoff_scores[0], 1)
       var adjust_time = this.progress_bar_adjust;
       if (this.player.dying) {
         adjust_time /= 3
@@ -954,12 +953,21 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 35)
 
       if(this.stars < 3) {
-        context.fillStyle = impulse_colors[this.star_colors[this.stars]]
+        
         //context.shadowColor = context.fillStyle;
-        context.font = '21px Muli'
-        context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
-        context.font = '42px Muli'
-        context.fillText(this.level.cutoff_scores[this.stars], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
+        if (this.gateway_unlocked)  {
+          context.fillStyle = this.bright_color
+          context.font = '21px Muli'
+          context.fillText("GATEWAY", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
+          context.font = '42px Muli'
+          context.fillText("OPEN", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
+        } else {
+          context.fillStyle = this.lite_color
+          context.font = '21px Muli'
+          context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
+          context.font = '42px Muli'
+          context.fillText(this.level.cutoff_scores[0], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
+        }
       } else {
         /*context.fillStyle = impulse_colors[this.star_colors[2]]
         context.shadowColor = context.fillStyle;
@@ -1319,48 +1327,22 @@ ImpulseGameState.prototype.set_score_achieve_text = function(text, color, size) 
 
 ImpulseGameState.prototype.check_cutoffs = function() {
 
-  if(this.game_numbers.score >= this.level.cutoff_scores[this.stars])
+  if(this.game_numbers.score >= this.level.cutoff_scores[0] && this.stars == 0)
   {
+    this.stars = 1
+    this.gateway_unlocked = true
+    this.level_redraw_bg = true
+    //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
+    if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
+      this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
+    }
 
-    while(this.game_numbers.score >= this.level.cutoff_scores[this.stars]) {
-      this.stars+=1
-      if(this.stars == 1) {
-        this.gateway_unlocked = true
-        this.level_redraw_bg = true
-        //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
-        if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
-          this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
-        }
-      } else if(this.stars == 2) {
-        if(this.main_game) {
-          this.hive_numbers.lives +=1
-          this.addScoreLabel("1UP", impulse_colors["silver"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-        }
-        this.set_score_achieve_text("SILVER SCORE", impulse_colors["silver"], 24)
-      } else if(this.stars == 3 ) {
-        if(this.main_game) {
-          if(this.hive_numbers.lives < 5) {
-            this.addScoreLabel((5 - this.hive_numbers.lives)+"UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-            this.hive_numbers.lives = 5
-          } else {
-            this.hive_numbers.lives += 1
-            this.addScoreLabel("1UP", impulse_colors["gold"], this.player.body.GetPosition().x, this.player.body.GetPosition().y - 1, 24, 3000)
-          }
-        }
-
-        this.set_score_achieve_text("GOLD SCORE", impulse_colors["gold"], 24)
-      }
-
-      if (this.stars > 0) {
-        if (this instanceof HowToPlayState) {
-          this.gateway_opened()
-        }
-        if (this.show_tutorial) {
-          this.add_tutorial_signal("gateway_opened")
-        }
-      }
-  }
-
+    if (this instanceof HowToPlayState) {
+      this.gateway_opened()
+    }
+    if (this.show_tutorial) {
+      this.add_tutorial_signal("gateway_opened")
+    }
     //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, 40, 3000)
   }
 }
