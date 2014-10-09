@@ -702,8 +702,8 @@ function draw_start_icon(context, x, y, scale, color) {
     
   
   context.beginPath()
-  context.arc(x, y, scale * 3/4, Math.PI * 7/6, Math.PI * 11/6)
-  context.lineWidth = 2
+  context.arc(x, y, scale, Math.PI * 7/6, Math.PI * 11/6)
+  context.lineWidth = Math.ceil(scale / 6)
   context.strokeStyle = color
   context.stroke()
   context.restore()

@@ -8,20 +8,22 @@ function SmallEnemyButton(enemy_name, size, x, y, w, h, color, action) {
   this.size = size
   this.init(x, y, w, h, action, true, color)
   this.enemy_image_size = 30
-
 }
 
 SmallEnemyButton.prototype.additional_draw = function(context) {
   context.save()
   
-  if(this.hover) {
-    context.save();
-    context.beginPath()
-    context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
-    context.globalAlpha *= 0.5;
-    context.fillStyle = this.color;
-    context.fill();
-    context.restore();
+  context.save();
+  context.beginPath()
+  context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+  context.globalAlpha *=  this.hover ? 1 : 0.5;
+  context.fillStyle = this.color;
+  context.fill();
+  context.restore();
+  if (this.bcolor) {
+    context.strokeStyle = this.bcolor;
+    context.lineWidth = 2;
+    context.stroke();
   }
 
   var cur_x = this.x

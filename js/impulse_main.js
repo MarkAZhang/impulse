@@ -291,11 +291,11 @@ function step() {
   }
 
   if(imp_vars.cur_dialog_box!=null) {
-    imp_vars.ctx.beginPath()
-    imp_vars.ctx.globalAlpha = 1
-    imp_vars.ctx.fillStyle = imp_vars.cur_dialog_box.bg_color ? imp_vars.cur_dialog_box.bg_color : "black"
-    imp_vars.ctx.rect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
-    imp_vars.ctx.fill()
+    //imp_vars.ctx.beginPath()
+    //imp_vars.ctx.globalAlpha = 1
+    //imp_vars.ctx.fillStyle = imp_vars.cur_dialog_box.bg_color ? imp_vars.cur_dialog_box.bg_color : "black"
+    //imp_vars.ctx.rect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    //imp_vars.ctx.fill()
     imp_vars.ctx.globalAlpha = 1
     imp_vars.cur_dialog_box.draw(imp_vars.ctx)
   }

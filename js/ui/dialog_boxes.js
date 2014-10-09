@@ -114,11 +114,12 @@ PauseMenu.prototype.add_buttons = function() {
 
   this.buttons = []
   var resume_x_location = 0;
+  var first_row_y = 350;
+  var second_row_y = 500;
   if(this.level_name.slice(0, 11) != "HOW TO PLAY" && this.world_num != 0) {
-    resume_x_location = this.x;
 
     if(!this.level.main_game) {
-      this.restart_button = new IconButton("RETRY", 16, this.x - 173, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.restart_button = new IconButton("RETRY", 16, this.x - 173, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
         _this.restart_practice()
       }}(this), "retry")
       this.buttons.push(this.restart_button)
@@ -130,19 +131,19 @@ PauseMenu.prototype.add_buttons = function() {
         this.restart_button.extra_text = "SHIFT KEY"
       }
 
-      this.quit_button = new IconButton("QUIT", 16, this.x + 180, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.quit_button = new IconButton("QUIT", 16, this.x + 180, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
         _this.quit_practice()
       }}(this), "quit")
       this.buttons.push(this.quit_button)
 
     } else {
-        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x - 170, this.y - this.h/2 + 530, 120, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x + 170, this.y - this.h/2 + second_row_y, 120, 65, this.bright_color, this.bright_color, function(_this) { return function() {
           _this.save_and_quit_main_game()
         }}(this), "save")
 
       this.buttons.push(this.save_and_quit_button)
 
-      this.quit_button = new IconButton("QUIT", 16, this.x + 170, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.quit_button = new IconButton("QUIT", 16, this.x - 170, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
         _this.quit_main_game()
       }}(this), "quit")
       this.buttons.push(this.quit_button)
@@ -150,19 +151,18 @@ PauseMenu.prototype.add_buttons = function() {
 
   } else {
     this.quit_button = new IconButton(this.world_num == 0 && imp_vars.player_data.first_time ? "SKIP TUTORIAL" : "QUIT", 
-        16, this.x + 157, this.y - this.h/2 + 530, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+        16, this.x + 157, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.quit_tutorial()
     }}(this), "quit")
     this.buttons.push(this.quit_button)
 
-    resume_x_location = this.x - 157
   }
 
   // resume button.
-  this.resume_button = new IconButton("RESUME", 16, resume_x_location, this.y - this.h/2 + 530, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.resume_button = new IconButton("RESUME", 24, this.x, this.y - this.h/2 + first_row_y, 150, 100, this.bright_color, this.bright_color, function(_this) { return function() {
 
     _this.game_state.toggle_pause()
-  }}(this), "start")
+  }}(this), "resume")
   this.resume_button.keyCode = imp_params.keys.PAUSE;
   this.resume_button.sKeyCode = imp_params.keys.SECONDARY_PAUSE;
 
@@ -173,7 +173,7 @@ PauseMenu.prototype.add_buttons = function() {
   }
   this.buttons.push(this.resume_button)
 
-  this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + 460, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       set_dialog_box(new OptionsMenu(_this))
     });
@@ -205,14 +205,17 @@ PauseMenu.prototype.add_buttons = function() {
     var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
 
     var cur_x =  this.x + (this.enemy_image_size+10) * diff
-    var cur_y = this.y - this.h/2 + 250 + this.enemy_image_size * h_diff
+    var cur_y = this.y - this.h/2 + 200 + this.enemy_image_size * h_diff
     var _this = this
-    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, this.level.lite_color, (function(enemy, _this) { return function() {
+    var enemy_button = new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, 
+      this.level.lite_color, (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
           set_dialog_box(new EnemyBox(enemy, _this))
         });
       }})(j, this)
-    ))
+    );
+    enemy_button.bcolor = this.bright_color;
+    this.buttons.push(enemy_button);
     i+=1
   }
 }
@@ -235,37 +238,17 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.shadowBlur = 0;
   ctx.shadowColor = this.bright_color;
   ctx.fillStyle = this.bright_color;
-  ctx.fillText("MENU", this.x, this.y - this.h/2 + 50)
+  ctx.fillText("MENU", this.x, this.y - this.h/2 + 100)
 
-  draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
+  //draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
 
-  draw_agents_within_rect(ctx, this.game_state.player, this.game_state.level, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
+  //draw_agents_within_rect(ctx, this.game_state.player, this.game_state.level, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
 
+  ctx.font = '16px Muli';
   if(this.num_enemy_type > 0) {
-    ctx.font = '12px Muli';
-    ctx.fillText("CLICK FOR INFO", this.x, this.y - this.h/2 + 290)
+    ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 150)
   }
 
-  if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-    var temp_colors = [this.lite_color, 'silver', 'gold']
-    var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
-    var score_rewards = ['(UNLOCKS NEXT LEVEL)', "(+1 LIFE)", "(5 LIVES OR +1 LIFE)"]
-    if(!this.is_boss_level) {
-      for(var i = 0; i < 3; i++) {
-        ctx.font = '24px Muli';
-        ctx.textAlign = "right"
-        ctx.fillStyle = impulse_colors[temp_colors[i]]
-        ctx.shadowColor = ctx.fillStyle
-        ctx.font = '25px Muli';
-        ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], this.x + 200, this.y - this.h/2 + 330 + 40 * i + 7)
-        ctx.textAlign = "left"
-        ctx.font = '20px Muli';
-        ctx.fillText(score_names[i], this.x - 200, this.y - this.h/2 + 330 + 40 * i)
-        ctx.font = '12px Muli'
-        ctx.fillText(score_rewards[i], this.x - 200, this.y - this.h/2 + 330 + 40 * i+15)
-      }
-    }
-  }
   ctx.textAlign = "center";
     //var score_color = 0
 
@@ -885,7 +868,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.beginPath()
   ctx.textAlign = "center"
   ctx.fillStyle = this.bright_color
-  ctx.font = '12px Muli'
+  ctx.font = '16px Muli'
   ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 70)
   ctx.font = '30px Muli'
 

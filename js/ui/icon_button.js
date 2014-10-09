@@ -142,6 +142,12 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_start_icon(context, this.x, this.y - this.h/8, 20, this.color)   
     }
+  } else if(this.icon == "resume") {
+    if(this.hover) {
+      draw_start_icon(context, this.x, this.y - this.h/8, 30, this.hover_color)   
+    } else {
+      draw_start_icon(context, this.x, this.y - this.h/8, 30, this.color)   
+    }
   } else if(this.icon == "retry") {
     if(this.hover) {
       draw_retry_icon(context, this.x, this.y - this.h/8, 13, this.hover_color)   
@@ -177,6 +183,12 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.hover_color)   
     } else {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.color)   
+    }
+  } else if(this.icon == "close_dialog") {
+    if(this.hover) {
+      draw_quit_icon(context, this.x, this.y - this.h/6, 36, this.hover_color)   
+    } else {
+      draw_quit_icon(context, this.x, this.y - this.h/6, 36, this.color)   
     }
   } else if (this.icon == "mute_in_game") {
     draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, imp_vars.player_data.options.music_mute)
