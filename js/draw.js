@@ -1760,22 +1760,27 @@ draw_quest_button = function(ctx, x, y, r, type) {
     ctx.save();
     ctx.lineWidth = 3
     draw_ellipse(ctx, x, y - r * 0.2, r/6, r/12, impulse_colors["gold"])
+    ctx.restore();
   }
 
-  if (type.substring(1, 5) == "star") {
+  if (type == "beat_hard") {
     ctx.save()
     ctx.globalAlpha *= 0.1
     drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
     ctx.restore()
-    var stars = parseInt(type.substring(0, 1));
-    var angles_to_draw = [Math.PI * 1.25, Math.PI * 3/2, Math.PI * 1.75];
-    for(var i = 0; i < angles_to_draw.length; i++) {
-      var angle = angles_to_draw[i];
-      drawSprite(ctx, 
-        x + r * 0.6 * Math.cos(angle), 
-        y + r * 0.1 + r * 0.6 * Math.sin(angle), 
-        0, 20, 20, i < stars ? "world"+(stars+1)+"_star" : "world"+(stars+1)+"_starblank")
-    }
-    drawSprite(ctx, x, y + r / 4, 0, r * 0.7, r * 0.7, "ultimate_icon")
+    drawSprite(ctx, x, y, 0, r, r, "ultimate_icon")
+  }
+
+  if (type == "untouchable") {
+    ctx.save()
+    ctx.globalAlpha *= 0.2
+    drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+    ctx.restore()
+    drawSprite(ctx, x, y, 0, r * 0.4, r * 0.4, "player_normal")
+    ctx.save();
+    ctx.lineWidth = 3
+    draw_ellipse(ctx, x, y, r * 0.45, r * 0.45, impulse_colors["gold"])
+    draw_ellipse(ctx, x, y, r * 0.55, r * 0.55, impulse_colors["gold"])
+    ctx.restore();
   }
 }

@@ -30,28 +30,21 @@ QuestGameState.prototype.process = function(dt) {
 QuestGameState.prototype.set_up_quests = function() {
   var quest_size = 50;
 
-  var first_row_x = 150;
+  var first_row_x = 200;
   var first_row_gap = 150;
   this.buttons.push(new QuestButton("beat_hive", imp_vars.levelWidth/2 - 2 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("final_boss", imp_vars.levelWidth/2 - 1 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("first_gold", imp_vars.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("untouchable", imp_vars.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 1 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("high_roller", imp_vars.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
   
-  var second_row_x = 300;
+  var second_row_x = 350;
   var second_row_gap = 150;
-  this.buttons.push(new QuestButton("blitz_hive1", imp_vars.levelWidth/2 - 1.5 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive2", imp_vars.levelWidth/2 - 0.5 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive3", imp_vars.levelWidth/2 + 0.5 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive4", imp_vars.levelWidth/2 + 1.5 * second_row_gap, second_row_x, quest_size, quest_size));
-
-
-  var third_row_x = 450;
-  var third_row_gap = 150;
-
-  this.buttons.push(new QuestButton("1star", imp_vars.levelWidth/2 - 1 * third_row_gap, third_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("2star", imp_vars.levelWidth/2 + 0 * third_row_gap, third_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("3star", imp_vars.levelWidth/2 + 1 * third_row_gap, third_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hard", imp_vars.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive1", imp_vars.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive2", imp_vars.levelWidth/2 - 0 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive3", imp_vars.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive4", imp_vars.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
 }
 
 

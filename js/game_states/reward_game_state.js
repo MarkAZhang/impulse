@@ -370,7 +370,6 @@ RewardGameState.prototype.process = function(dt) {
       }
     }
   }
-
 }
 
 RewardGameState.prototype.next_reward = function() {

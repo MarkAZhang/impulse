@@ -19,32 +19,32 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 360;
 		this.h = 140;
 	} else if (this.type == "final_boss") {
-		this.w = 200;
-		this.h = 120;
+		this.w = 220;
+		this.h = 50;
 	} else if (this.type.substring(0, 10) == "blitz_hive") {
-		this.w = 300;
-		this.h = 150;
+		this.w = 250;
+		this.h = 75;
 	} else if (this.type.substring(0, 9) == "beat_hive") {
 		this.w = 150;
-		this.h = 120;
+		this.h = 50;
 	} else if (this.type == "high_roller") {
 		this.w = 250;
-		this.h = 150;
-	} else if (this.type == "first_gold") {
+		this.h = 75;
+	} else if (this.type == "untouchable") {
 		this.w = 200;
-		this.h = 150;
+		this.h = 75;
 	} else if (this.type == "combo" || this.type == "pacifist" || this.type == "survivor") {
 		this.w = 250;
-		this.h = 150;
+		this.h = 75;
 	} else if (this.type == "fast_time") {
 		this.w = 220;
 		this.h = 150;
 	} else if (this.type == "0star") {
 		this.w = 250;
-		this.h = 120;
-	} else if (this.type == "1star" || this.type == "2star" || this.type == "3star") {
-		this.w = 250;
-		this.h = 150;
+		this.h = 75;
+	} else if (this.type == "beat_hard") {
+		this.w = 180;
+		this.h = 75;
 	} else if (this.type == "option_game_music") {
 		this.w = 300;
 		this.h = 40;
@@ -416,9 +416,8 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = "white";
 		for (var i = 0; i < imp_params.quest_data[this.type].text.length; i++) {
 			var text = imp_params.quest_data[this.type].text[i];
-			ctx.fillText(text, this.x, this.y - this.h / 2 + 40 + i * 24);
+			ctx.fillText(text, this.x, this.y - this.h / 2 + 30 + i * 24);
 		}
-		this.draw_rewards(ctx, this.type);
 	} 
 	ctx.restore();
 };

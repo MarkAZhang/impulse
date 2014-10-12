@@ -10,9 +10,9 @@ imp_params.quest_data["final_boss"] = {
 	text: ["DEFEAT THE FINAL BOSS"]
 }
 
-imp_params.quest_data["first_gold"] = {
+imp_params.quest_data["untouchable"] = {
 	rewards: ["spark"],
-	text: ["GET A GOLD SCORE", "ON ANY LEVEL"]
+	text: ["BEAT ANY HIVE", "WITHOUT GETTING HIT"]
 }
 
 imp_params.quest_data["high_roller"] = {
@@ -29,39 +29,29 @@ imp_params.quest_data["pacifist"] = {
 
 imp_params.quest_data["blitz_hive1"] = {
 	rewards: ["spark"],
-	text: ["BEAT HIVE 1 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	text: ["BEAT HIVE 1 IN HARD MODE", "UNDER 5 MINUTES"],
 	time_cutoff: 300
 }
 
 imp_params.quest_data["blitz_hive2"] = {
 	rewards: ["life"],
-	text: ["BEAT HIVE 2 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	text: ["BEAT HIVE 2 IN HARD MODE", "UNDER 6 MINUTES"],
 	time_cutoff: 400
 }
 
 imp_params.quest_data["blitz_hive3"] = {
 	rewards: ["life", "spark"],
-	text: ["BEAT HIVE 3 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	text: ["BEAT HIVE 3 IN HARD MODE", "UNDER 7 MINUTES"],
 	time_cutoff: 500
 }
 
 imp_params.quest_data["blitz_hive4"] = {
 	rewards: ["life", "spark", "ult"],
-	text: ["BEAT HIVE 4 IN CHALLENGE MODE", "UNDER 5 MINUTES"],
+	text: ["BEAT HIVE 4 IN HARD MODE", "UNDER 8 MINUTES"],
 	time_cutoff: 600
 }
 
-imp_params.quest_data["1star"] = {
+imp_params.quest_data["beat_hard"] = {
 	rewards: ["life", "spark"],
-	text: ["DEFEAT ALL HIVES", "IN CHALLENGE MODE"]
-}
-
-imp_params.quest_data["2star"] = {
-	rewards: ["life", "spark", "ult"],
-	text: ["GET 2-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
-}
-
-imp_params.quest_data["3star"] = {
-	rewards: [],
-	text: ["GET 3-STAR ON ALL HIVES", "IN CHALLENGE MODE"]
+	text: ["DEFEAT ALL HIVES", "IN HARD MODE"]
 }
