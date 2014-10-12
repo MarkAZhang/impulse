@@ -35,6 +35,9 @@ function RewardGameState(hive_numbers, main_game, args) {
   if(this.rewards.length > 0) {
     imp_vars.impulse_music.stop_bg()  
   }
+
+  this.auto_advance_duration = 3000;
+  this.auto_advance_timer = 0;
 }
 
 RewardGameState.prototype.change_mode = function(type) {
@@ -94,7 +97,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     //document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
   }
   // draw tessellation if applicable
-  if (cur_reward.type != "quest" && cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" && cur_reward.type != "share") {
+  if (cur_reward.type != "quest" && cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" &&
+       cur_reward.type != "share") {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
@@ -284,14 +288,14 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "first_time_tutorial") {
-      main_message = "INTRO TUTORIAL COMPLETE"
-
-      message_size = 30
-      draw_tutorial_icon(ctx, imp_vars.levelWidth/2, main_reward_text_y, 30, "white" , false)
-      ctx.font = "16px Muli"
+      ctx.font = "30px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("ARE YOU READY?", imp_vars.levelWidth/2, 150)
+      ctx.fillText("INTRO TUTORIAL COMPLETE", imp_vars.levelWidth/2, 250)
+      ctx.fillStyle = "white"
+      ctx.font = "16px Muli"
+      ctx.fillText("INITIALIZING MAIN GAME...", imp_vars.levelWidth/2, 550)
+      //draw_logo(ctx,imp_vars.levelWidth/2, 250, "", 0.5)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -328,10 +332,12 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = cur_reward.type == "world_victory" ? impulse_colors["world "+(cur_reward.data+1)+ " bright"] : "white"
       ctx.font = "16px Muli"
-      if (cur_reward.type != "ult")
-        ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
-      else
-        ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+      if (cur_reward.type != "first_time_tutorial") {
+        if (cur_reward.type != "ult")
+          ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+        else
+          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)  
+      }
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
@@ -350,13 +356,23 @@ RewardGameState.prototype.process = function(dt) {
 
   if(this.rewards.length == 0) {
     this.advance_game_state()
-    
   }
-
+  if (this.cur_reward_index < this.rewards.length && this.cur_reward_index >= 0) {
+    var cur_reward = this.rewards[this.cur_reward_index]
+    if (cur_reward.type == "first_time_tutorial") {
+      this.auto_advance_timer -= dt;
+      if (this.auto_advance_timer <= 0 && this.transition_state == "none") {
+        this.transition_state = "out"
+        this.transition_timer = this.transition_interval
+      }
+    }
+  }
+  
   this.transition_timer -= dt;
   if(this.transition_timer < 0) {
     if(this.transition_state == "in") {
       this.transition_state = "none"
+      this.auto_advance_timer = this.auto_advance_duration;
     }
     if(this.transition_state == "out") {
       this.next_reward()
@@ -451,7 +467,8 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
   if(this.rewards.length == 0) {
     return
   }
-  if(this.transition_state=="none" && this.rewards[this.cur_reward_index].type != "select_difficulty") {
+  if(this.transition_state=="none" && this.rewards[this.cur_reward_index].type != "select_difficulty" &&
+    this.rewards[this.cur_reward_index].type != "first_time_tutorial") {
     this.transition_state="out";
     this.transition_timer = this.transition_interval
   }  
@@ -460,6 +477,7 @@ RewardGameState.prototype.on_key_down = function(keyCode) {
 RewardGameState.prototype.on_click = function(x, y) {
   if(this.rewards.length == 0 || 
     (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") ||
+     this.rewards[this.cur_reward_index].type == "first_time_tutorial" || 
      this.cur_reward_index >= this.rewards.length) {
     return
   }
