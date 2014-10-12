@@ -130,6 +130,10 @@ BossFourSpawner.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
+  if (other === this.player) {
+    this.impulse_game_state.reset_combo();  
+  }
+
   //if(this.status_duration[1] > 0) return
 
   /*if(other === this.player) {

@@ -33,7 +33,6 @@ Boss.prototype.getLife = function() {
 }
 
 Boss.prototype.get_impulse_extra_factor = function() {
-  console.log(this.impulse_extra_factor);
   return this.impulse_extra_factor;
 }
 

@@ -7,6 +7,7 @@ var HiveNumbers = function(world_num, main_game) {
   this.ultimates = calculate_ult()
   this.continues = 0
   this.spark_val = calculate_spark_val()
+  this.hit = false;
   this.main_game = main_game
   if (world_num > 0) {
     this.speed_run_countdown = imp_params.quest_data["blitz_hive" + world_num].time_cutoff * 1000// in ms

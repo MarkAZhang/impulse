@@ -109,6 +109,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle,
     this.player.confuse(this.short_troll_period)
     imp_vars.impulse_music.play_sound("pwheel")
     this.confused_targets.push({object: this.player, timer: this.confused_duration})
+    this.impulse_game_state.reset_combo();
   }
   else {
     this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),

@@ -552,6 +552,7 @@ BossTwo.prototype.collide_with = function(other) {
     this.player_struck = true
     //other.lin_damp = 2
     other.start_death("absorbed")
+    this.impulse_game_state.reset_combo();
     //other.body.SetLinearDamping(other.lin_damp)
     //setTimeout(function() {
     //  other.lin_damp = 3.5

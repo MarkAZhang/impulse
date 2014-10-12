@@ -1102,8 +1102,10 @@ BossOne.prototype.move = function() {
 BossOne.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
-  if (other == this.player)
+  if (other == this.player) {
     imp_vars.impulse_music.play_sound("b1hit")
+    this.impulse_game_state.reset_combo();
+  }
   if(body == this.body) {
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())

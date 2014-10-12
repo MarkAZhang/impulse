@@ -684,10 +684,9 @@ Enemy.prototype.collide_with = function(other) {
       }
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
-        if(!this.level.is_boss_level && this.status_duration[1] <= 0) {
-          this.impulse_game_state.reset_combo()
-        }
       }
+      // Always reset combo on contact, even when silenced.
+      this.impulse_game_state.reset_combo()
     } else if(other instanceof Enemy) {
         if(other.durations["open"] > 0) {
           this.open(other.durations["open"])

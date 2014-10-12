@@ -895,6 +895,9 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
 BossThree.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
+  if (other === this.player) {
+    this.impulse_game_state.reset_combo();
+  }
   if(body !== this.body) {
     for(var index in this.striking_arms) {
       var data = this.striking_arms[index]
@@ -905,6 +908,7 @@ BossThree.prototype.collide_with = function(other, body) {
           if(other === this.player) {
             var _this = this;
             other.body.ApplyImpulse(new b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+            this.impulse_game_state.reset_combo();            
           } else if(other.type == "harpoonhead") {
             other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {

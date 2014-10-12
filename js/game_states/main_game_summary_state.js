@@ -523,6 +523,10 @@ MainGameSummaryState.prototype.check_quests = function() {
     set_quest_completed("blitz_hive" + this.world_num); 
   }
 
+  if (!this.hive_numbers.hit) {
+    set_quest_completed("untouchable"); 
+  }
+
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
     && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
     if (this.hive_numbers.world < 4 && this.hive_numbers.world > 0) {

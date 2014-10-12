@@ -1357,6 +1357,7 @@ ImpulseGameState.prototype.reset_combo = function() {
   if (this.show_tutorial) {
     this.add_tutorial_signal("multiplier_reset")
   }
+  this.hive_numbers.hit = true;
   this.game_numbers.base_combo = 1
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 }

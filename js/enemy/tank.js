@@ -176,7 +176,6 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
     return
 
   if(other === this.player) {
-
     if(this.status_duration[1] <= 0) {
       this.activated = true
       this.cause_of_death = "hit_player"
@@ -197,6 +196,10 @@ Tank.prototype.explode = function() {
   {
     var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
     this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    // If you get caught in explosion, your combo resets.
+    if (this.cause_of_death != "hit_player") {
+      this.impulse_game_state.reset_combo()
+    }
   }
 
   for(var i = 0; i < this.level.enemies.length; i++)
