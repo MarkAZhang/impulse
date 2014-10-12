@@ -492,6 +492,8 @@ MainGameSummaryState.prototype.delete_game = function() {
 }
 
 MainGameSummaryState.prototype.check_quests = function() {
+  if (this.world_num <= 0) return;
+
   // Check if this game_number is a gold score. Bosses don't count.
   if (imp_vars.player_data.difficulty_mode == "normal") {
     var min_victory_type = 3;
@@ -519,7 +521,7 @@ MainGameSummaryState.prototype.check_quests = function() {
     }
   }
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0 && this.world_num > 0) {
+  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
     set_quest_completed("blitz_hive" + this.world_num); 
   }
 
@@ -529,7 +531,7 @@ MainGameSummaryState.prototype.check_quests = function() {
 
   if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
     && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
-    if (this.hive_numbers.world < 4 && this.hive_numbers.world > 0) {
+    if (this.hive_numbers.world < 4) {
       set_quest_completed("beat_hive")
 
       /*this.rewards.push({

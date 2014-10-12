@@ -958,15 +958,15 @@ ImpulseGameState.prototype.draw_interface = function(context) {
         if (this.gateway_unlocked)  {
           context.fillStyle = this.bright_color
           context.font = '21px Muli'
-          context.fillText("GATEWAY", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
+          context.fillText("GATEWAY", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
           context.font = '42px Muli'
-          context.fillText("OPEN", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
+          context.fillText("OPEN", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
         } else {
           context.fillStyle = this.lite_color
           context.font = '21px Muli'
-          context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 25)
+          context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
           context.font = '42px Muli'
-          context.fillText(this.level.cutoff_scores[0], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 65)
+          context.fillText(this.level.cutoff_scores[0], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
         }
       } else {
         /*context.fillStyle = impulse_colors[this.star_colors[2]]
@@ -1029,7 +1029,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
 
   if(!this.is_boss_level) {
     draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2, 
-      40, imp_vars.canvasHeight * 3/4 - 30, this.progress_bar_prop, this.color, true)
+      40, imp_vars.canvasHeight * 3/4 - 50, this.progress_bar_prop, this.color, true)
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
     ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
@@ -1041,10 +1041,10 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
   } else {
     if(this.level.boss)
       draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
-        40, imp_vars.canvasHeight*3/4 - 30, this.level.boss.getLife(), this.level.boss.color)
+        40, imp_vars.canvasHeight*3/4 - 50, this.level.boss.getLife(), this.level.boss.color)
     else
       draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
-        40, imp_vars.canvasHeight*3/4 - 30, 1, impulse_colors["boss "+this.world_num])
+        40, imp_vars.canvasHeight*3/4 - 50, 1, impulse_colors["boss "+this.world_num])
   }
   ctx.restore()
 }
@@ -1354,7 +1354,7 @@ ImpulseGameState.prototype.increment_combo = function() {
 
 ImpulseGameState.prototype.reset_combo = function() {
   if (this.player.ultimate) return
-  if (this.show_tutorial) {
+  if (this.show_tutorial && !this.level.is_boss_level) {
     this.add_tutorial_signal("multiplier_reset")
   }
   this.hive_numbers.hit = true;

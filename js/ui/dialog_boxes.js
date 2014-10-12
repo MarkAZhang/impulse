@@ -148,13 +148,28 @@ PauseMenu.prototype.add_buttons = function() {
       }}(this), "quit")
       this.buttons.push(this.quit_button)
     }
+    this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new OptionsMenu(_this))
+      });
+    }}(this), "options")
+    this.options_button.bg_color = this.bg_color
+    this.buttons.push(this.options_button)
 
   } else {
     this.quit_button = new IconButton(this.world_num == 0 && imp_vars.player_data.first_time ? "SKIP TUTORIAL" : "QUIT", 
-        16, this.x + 157, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+        16, this.x + 100, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.quit_tutorial()
     }}(this), "quit")
     this.buttons.push(this.quit_button)
+
+    this.options_button = new IconButton("OPTIONS", 16, this.x - 100, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      _this.fader.set_animation("fade_out", function() {
+        set_dialog_box(new OptionsMenu(_this))
+      });
+    }}(this), "options")
+    this.options_button.bg_color = this.bg_color
+    this.buttons.push(this.options_button)
 
   }
 
@@ -173,13 +188,7 @@ PauseMenu.prototype.add_buttons = function() {
   }
   this.buttons.push(this.resume_button)
 
-  this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
-    _this.fader.set_animation("fade_out", function() {
-      set_dialog_box(new OptionsMenu(_this))
-    });
-  }}(this), "options")
-  this.options_button.bg_color = this.bg_color
-  this.buttons.push(this.options_button)
+
 
   var num_row = 12
 

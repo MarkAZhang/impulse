@@ -308,13 +308,13 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.beginPath();
 	ctx.textAlign = "center"
 	var rw = 120;
-	var rh = 70;
-	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 55 - rh/2 - 20, rw, rh);
+	var rh = 80;
+	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
 	ctx.stroke();
 	ctx.font = '21px Muli'
-    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 25)
+    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 65)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
 
 	/*ctx.beginPath();
 	ctx.rect(imp_vars.levelWidth - 10, 10, 50, 50);

@@ -991,7 +991,7 @@ function draw_vprogress_bar(context, x, y, w, h, prop, color, up) {
   context.shadowBlur = 0
 
   context.beginPath()
-  context.rect(x - w * .5 - 60, y - h * .5 - 20, w+120 , h+40)
+  context.rect(x - w * .5, y - h * .5, w, h)
   context.fillStyle ="black"
   context.fill()
 
