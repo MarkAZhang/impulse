@@ -423,14 +423,22 @@ RewardGameState.prototype.advance_game_state = function() {
         switch_game_state(new TitleState(true))  
       }
   } else {
-    switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
-      best_time: this.best_time,
-      high_score: this.high_score,
-      stars: this.stars,
-      victory: this.victory
-    }))
+    if (this.victory) {
+      switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
+        best_time: this.args.game_numbers.best_time,
+        high_score: this.args.game_numbers.high_score,
+        stars: this.stars,
+        victory: this.victory
+      }));
+    } else {
+      if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
+        set_bg("Title Alt" + this.args.world_num, 250, imp_vars.bg_opacity * 0.5)
+      } else {
+        set_bg("Hive 0", imp_vars.bg_opacity)
+      }
+      switch_game_state(new WorldMapState(this.args.world_num, true));  
+    }
   }
-
 }
 
 RewardGameState.prototype.determine_rewards = function() {

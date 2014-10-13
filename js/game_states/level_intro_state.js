@@ -207,10 +207,10 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       score_color = 0
 
       while(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][score_color]) {
-        score_color+=1
+        score_color += 1;
       }
 
-      ctx.fillStyle = score_color > 0 ? impulse_colors[this.star_colors[score_color - 1]] : this.bright_color
+      ctx.fillStyle = this.bright_color
       ctx.textAlign = 'center'
 
       ctx.font = '12px Muli'

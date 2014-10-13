@@ -38,8 +38,6 @@ TitleState.prototype.process = function(dt) {
   process_and_draw_bg(dt);
 }
 
-
-
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
    imp_vars.bg_canvas.setAttribute("style", "")

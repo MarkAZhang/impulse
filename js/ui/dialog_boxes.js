@@ -293,7 +293,6 @@ PauseMenu.prototype.on_click = function(x, y) {
 }
 
 PauseMenu.prototype.quit_practice = function() {
-
   switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level, 

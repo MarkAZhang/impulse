@@ -52,6 +52,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   if(!this.level.is_boss_level) {
     this.high_score = args.high_score
     this.stars = args.stars ? args.stars : 0
+    this.best_time = args.best_time ? args.best_time : 0
 
     if (this.stars < 3)
         this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
@@ -72,7 +73,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   var closest_enemy_type = null
   var closest_prop = -1
 
-  this.drawn_enemies = null
+  /* this.drawn_enemies = null
 
   if(this.level.is_boss_level) {
     this.drawn_enemies = {}
@@ -112,7 +113,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
 
     var cur_x =  imp_vars.levelWidth/2 + (this.enemy_image_size+10) * diff
-    var cur_y = 490 + this.enemy_image_size * h_diff
+    var cur_y = 380 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
@@ -122,7 +123,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
       ))
 
     i+=1
-  }
+  } */
 
   /*if(calculate_current_rating() > this.game_numbers.original_rating) {
     this.higher_rating = true
@@ -175,80 +176,99 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 60, 40, true)
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 150, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.beginPath()
     ctx.fillStyle = this.color
-    ctx.font = '30px Muli'
+    ctx.font = '42px Muli'
     ctx.textAlign = 'center'
 
-    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 70)
+    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 160)
     ctx.fill() 
-    ctx.font = '20px Muli'
-    if(this.stars > 0 && this.victory) {
-      ctx.fillStyle = impulse_colors[this.star_colors[this.stars - 1]]
-      ctx.fillText(this.star_text[this.stars - 1] + " SCORE ACHIEVED", imp_vars.levelWidth/2, 110)
+    ctx.font = '48px Muli';
+    if(this.victory) {
+      ctx.fillStyle = "white"
+      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 220)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 110)
+      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 220)
     }
 
     ctx.fillStyle = this.color
-    ctx.font = '12px Muli'
-    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2, 140)
-    ctx.font = '28px Muli'
-    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, 165)
+    ctx.font = '20px Muli'
+    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, 330)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, 370)
     ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
-    ctx.font = '12px Muli'
-    ctx.fillText("SCORE", imp_vars.levelWidth/2, 185)
+    ctx.font = '20px Muli'
+    ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, 330)
 
-    ctx.font = '28px Muli'
-    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2, 210)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2 - 100, 370)
 
-    ctx.font = '12px Muli'
-    ctx.fillStyle = this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
-    if (this.stars < 3) {
-      ctx.fillText("PROGRESS TO "+this.star_text[Math.max(this.stars, 0)] + " SCORE", imp_vars.levelWidth/2, 235)
+    if (!this.high_score) {
+      ctx.beginPath();
+      ctx.moveTo(250, 390);
+      ctx.lineTo(350, 390);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.color;
+      ctx.stroke();  
     }
-    draw_progress_bar(ctx, imp_vars.levelWidth/2, 250, 200, 15, Math.min(this.game_numbers.score/this.bar_top_score, 1), (this.stars < 3 ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]), impulse_colors["world "+this.world_num+" lite"], false, 0.6)
+    
+    if (!this.best_time) {
+      ctx.beginPath();
+      ctx.moveTo(450, 390);
+      ctx.lineTo(550, 390);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.color;
+      ctx.stroke();  
+    }
 
+    var high_score_y = 395;
+    var score_y = 450;
+    var score_label_y = 420;
 
     if(this.high_score) {
-      ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
-      ctx.font = '24px Muli'
-      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2 - 100, 425)
+      ctx.fillStyle = this.color
+      ctx.font = '16px Muli'
+      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2 - 100, high_score_y)
     } else {
-      var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
-      ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
+      ctx.save();
+      ctx.globalAlpha *= 0.6;
+      ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, 400)
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, score_label_y)
       ctx.font = '28px Muli'
       ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,
-       imp_vars.levelWidth/2 - 100, 425)
+       imp_vars.levelWidth/2 - 100, score_y)
+      ctx.restore();
     }
 
     if(this.best_time) {
       ctx.fillStyle = this.color
-      ctx.font = '24px Muli'
-      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2 + 100, 425)
+      ctx.font = '16px Muli'
+      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2 + 100, high_score_y)
     } else {
+      ctx.save();
+      ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, 400)
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, score_label_y)
       ctx.font = '28px Muli'
       if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
         ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
-          imp_vars.levelWidth/2 + 100, 425)
+          imp_vars.levelWidth/2 + 100, score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED", 
-          imp_vars.levelWidth/2 + 100, 425)
+          imp_vars.levelWidth/2 + 100, score_y)
       }
+      ctx.restore();
     }
 
-    var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
+    /* var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
     var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
     for(var i = 0; i < 3; i++) {
       ctx.font = '24px Muli';
@@ -260,7 +280,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "left"
       ctx.font = '20px Muli';
       ctx.fillText(score_names[i], imp_vars.levelWidth/2 - 160, 290 + 35 * i + 7)
-    }
+    } */
 
   } else {
 
@@ -326,12 +346,12 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("+"+this.rating_diff, imp_vars.levelWidth/2, 450)
   }*/
 
-  if (!this.level.is_boss_level) {
+  /* if (!this.level.is_boss_level) {
     ctx.textAlign = 'center' 
     ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
     ctx.font = '12px Muli'
-    ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 460)
-  }
+    ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 350)
+  } */
 
   for(var i = 0; i < this.buttons.length; i++)
   {
