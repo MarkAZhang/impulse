@@ -57,13 +57,13 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     }
 
   } else {
-    this.state = "world_intro"
+    this.state = "level_intro"
     if(loading_game) {
       this.hive_numbers = hive_numbers
     } else {
       this.hive_numbers = new HiveNumbers(world_num, true)
     }
-    this.transition_timer = this.world_intro_interval
+    this.transition_timer = this.level_intro_interval
   }
   
   if(!this.continued) {
@@ -351,17 +351,21 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = this.bright_color;
       ctx.textAlign = 'center'
 
-      ctx.font = '42px Muli'
+      
       ctx.shadowBlur = 0;
       ctx.shadowColor = "black"
 
       ctx.save()
       ctx.globalAlpha *= 0.3
-      draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 100, 100)
+      draw_tessellation_sign(ctx,this.world_num, imp_vars.levelWidth/2, 300, 100)
       ctx.restore()
-      ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-100)
-      ctx.font = '32px Muli'
-      ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
+      ctx.font = '24px Muli'
+      ctx.save();
+      ctx.globalAlpha *= 0.5;
+      ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 250)
+      ctx.restore();
+      ctx.font = '56px Muli'
+      ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, 320)
 
       /*draw_lives_and_sparks(ctx, 
         Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, 
