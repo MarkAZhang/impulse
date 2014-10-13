@@ -779,6 +779,32 @@ function draw_quest_icon(context, x, y, scale, color) {
   
 }
 
+function draw_delete_icon(context, x, y, scale, color) {
+  context.save()
+  context.shadowBlur = 0
+  context.beginPath()
+  context.moveTo(x - scale * 3/8, y - scale/4)
+  context.lineTo(x + scale * 3/8, y - scale/4)
+  context.moveTo(x - scale/4, y - scale/4)
+  context.lineTo(x - scale/4, y + scale/2)
+  context.lineTo(x + scale/4, y + scale/2)
+  context.lineTo(x + scale/4, y - scale/4)
+  context.moveTo(x - scale/8, y - scale/8)
+  context.lineTo(x - scale/8, y + 3 * scale/8)
+  context.moveTo(x, y - scale/8)
+  context.lineTo(x, y + 3 * scale/8)
+  context.moveTo(x + scale/8, y - scale/8)
+  context.lineTo(x + scale/8, y + 3 * scale/8)
+  context.moveTo(x - scale/8, y - scale/4)
+  context.lineTo(x - scale/8, y - 3 * scale/8)
+  context.lineTo(x + scale/8, y - 3 * scale/8)
+  context.lineTo(x + scale/8, y - scale/4)
+  context.strokeStyle = color
+  context.lineWidth = 2
+  context.stroke()
+  context.restore()
+}
+
 function draw_quit_icon(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0

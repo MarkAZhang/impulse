@@ -184,6 +184,18 @@ IconButton.prototype.draw_icon  = function(context) {
     } else {
       draw_quit_icon(context, this.x, this.y - this.h/6, 24, this.color)   
     }
+  } else if(this.icon == "delete") {
+    if(this.hover) {
+      draw_delete_icon(context, this.x, this.y - this.h/8, 36, this.hover_color)   
+    } else {
+      draw_delete_icon(context, this.x, this.y - this.h/8, 36, this.color)   
+    }
+  } else if(this.icon == "delete_small") {
+    if(this.hover) {
+      draw_delete_icon(context, this.x, this.y - this.h/5, 30, this.hover_color)   
+    } else {
+      draw_delete_icon(context, this.x, this.y - this.h/5, 30, this.color)   
+    }
   } else if(this.icon == "close_dialog") {
     if(this.hover) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 36, this.hover_color)   

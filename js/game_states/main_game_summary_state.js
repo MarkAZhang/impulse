@@ -135,7 +135,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
     this.delete_button = new IconButton("DELETE", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 65, this.lite_color, this.bright_color, function(_this){return function(){
       _this.delete_game()
-    }}(this), "quit")
+    }}(this), "delete_small")
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
     /*if(imp_vars.player_data.options.control_hand == "right") {

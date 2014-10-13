@@ -388,11 +388,11 @@ function OptionsMenu(previous_menu) {
 
   var controls_x_value = this.x
   if (this.previous_menu instanceof TitleState) {
-    this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x + 150, this.y + 120, 200, 80, this.bright_color, "red", function(_this) { return function() {
+    this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x + 150, this.y + 120, 200, 100, this.bright_color, "red", function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
         set_dialog_box(new DeleteDataDialog(_this))
       });
-    }}(this), "quit")
+    }}(this), "delete")
     this.buttons.push(this.delete_button)
     controls_x_value = this.x - 150
   }
@@ -1019,14 +1019,14 @@ function DeleteDataDialog(previous_menu) {
   this.deleted = false
 
   this.buttons = []
-  this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y, 200, 80, "red", "red", function(_this) { return function() {
+  this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x, this.y + 90, 200, 100, "white", "red", function(_this) { return function() {
     _this.clear_data()
     _this.deleted = true
-  }}(this), "quit")
+  }}(this), "delete")
 
   this.buttons.push(this.delete_button)
 
-  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, "red", "red",function(_this) { return function() {
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, "white", "white" ,function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       set_dialog_box(_this.previous_menu)
       _this.previous_menu.draw_bg(); 
@@ -1034,14 +1034,8 @@ function DeleteDataDialog(previous_menu) {
     });
   }}(this), "back")
   this.buttons.push(this.back_button)
-  this.draw_bg();
 
   this.fader.set_animation("fade_in");
-}
-
-DeleteDataDialog.prototype.draw_bg = function() {
-  var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-  draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 4")
 }
 
 DeleteDataDialog.prototype.additional_draw = function(ctx) {
@@ -1049,13 +1043,13 @@ DeleteDataDialog.prototype.additional_draw = function(ctx) {
   if (!this.deleted) {
     ctx.fillStyle = "red"
     ctx.textAlign = "center"
-    ctx.font = "40px Muli"
-        
-    ctx.fillText("ARE YOU SURE", this.x, 100)
     ctx.font = "24px Muli"
-    ctx.fillText(" YOU WANT TO DELETE ALL YOUR GAME DATA?", this.x, 140)
+        
+    ctx.fillText("ARE YOU SURE", this.x, 200)
+    ctx.font = "24px Muli"
+    ctx.fillText(" YOU WANT TO DELETE ALL YOUR GAME DATA?", this.x, 230)
     ctx.font = "16px Muli"
-    ctx.fillText("THIS ACTION CANNOT BE UNDONE.", this.x, 200)
+    ctx.fillText("THIS ACTION CANNOT BE UNDONE.", this.x, 290)
     for(var i = 0; i < this.buttons.length; i++) {
       this.buttons[i].draw(ctx)
     }
@@ -1063,8 +1057,8 @@ DeleteDataDialog.prototype.additional_draw = function(ctx) {
   } else {
     ctx.fillStyle = "red"
     ctx.textAlign = "center"
-    ctx.font = "32px Muli"
-    ctx.fillText("ALL GAME DATA HAS BEEN DELETED", this.x, 120)    
+    ctx.font = "24px Muli"
+    ctx.fillText("ALL GAME DATA HAS BEEN DELETED", this.x, 210)    
     this.back_button.draw(ctx)
   }
   
