@@ -432,7 +432,7 @@ RewardGameState.prototype.advance_game_state = function() {
       }));
     } else {
       if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
-        set_bg("Title Alt" + this.args.world_num, 250, imp_vars.bg_opacity * 0.5)
+        set_bg("Title Alt" + this.args.world_num, imp_vars.bg_opacity * 0.5)
       } else {
         set_bg("Hive 0", imp_vars.bg_opacity)
       }

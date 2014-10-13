@@ -176,41 +176,54 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 150, 80, true)
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
+
+    ctx.save();
+    ctx.globalAlpha *= 0.5;
+    ctx.fillStyle = "white"
+    ctx.font = '20px Muli'
+    if (imp_vars.player_data.difficulty_mode == "normal") {
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
+    }
+    ctx.restore();
 
     ctx.beginPath()
     ctx.fillStyle = this.color
     ctx.font = '42px Muli'
     ctx.textAlign = 'center'
 
-    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 160)
+    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 240)
     ctx.fill() 
     ctx.font = '48px Muli';
     if(this.victory) {
       ctx.fillStyle = "white"
-      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 220)
+      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 220)
+      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 300)
     }
+
+    var score_y = 380;
+    var score_label_y = 420;
 
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, 330)
+    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, 370)
+    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, score_label_y)
     ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
     ctx.font = '20px Muli'
-    ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, 330)
+    ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, score_y)
 
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2 - 100, 370)
+    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2 - 100, score_label_y)
 
+    var line_y = 440
     if (!this.high_score) {
       ctx.beginPath();
-      ctx.moveTo(250, 390);
-      ctx.lineTo(350, 390);
+      ctx.moveTo(250, line_y);
+      ctx.lineTo(350, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.color;
       ctx.stroke();  
@@ -218,16 +231,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     
     if (!this.best_time) {
       ctx.beginPath();
-      ctx.moveTo(450, 390);
-      ctx.lineTo(550, 390);
+      ctx.moveTo(450, line_y);
+      ctx.lineTo(550, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.color;
       ctx.stroke();  
     }
 
-    var high_score_y = 395;
-    var score_y = 450;
-    var score_label_y = 420;
+    var high_score_y = 445;
+    var best_score_y = 500;
+    var best_score_label_y = 470;
 
     if(this.high_score) {
       ctx.fillStyle = this.color
@@ -238,10 +251,10 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, score_label_y)
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
       ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,
-       imp_vars.levelWidth/2 - 100, score_y)
+       imp_vars.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
 
@@ -254,16 +267,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, score_label_y)
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
       if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
         ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
-          imp_vars.levelWidth/2 + 100, score_y)
+          imp_vars.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED", 
-          imp_vars.levelWidth/2 + 100, score_y)
+          imp_vars.levelWidth/2 + 100, best_score_y)
       }
       ctx.restore();
     }
@@ -284,57 +297,82 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   } else {
 
+
+    ctx.globalAlpha /= 3
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 230, 80, true)
+    ctx.globalAlpha *= 3
+
+    ctx.save();
+    ctx.globalAlpha *= 0.5;
+    ctx.fillStyle = "white"
+    ctx.font = '20px Muli'
+    if (imp_vars.player_data.difficulty_mode == "normal") {
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
+    }
+    ctx.restore();
+
+    ctx.beginPath()
+    ctx.fillStyle = this.color
     ctx.textAlign = 'center'
 
-    ctx.shadowBlur = 0;
-    ctx.save()
-    ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 50, 100)
-    ctx.restore()
+    ctx.font = '32px Muli'
+    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_vars.levelWidth/2, 240)
 
-    ctx.font = '24px Muli'
+    ctx.fill() 
+    ctx.font = '48px Muli';
     if (this.level.boss_victory) {
-      ctx.fillStyle = impulse_colors["gold"]
-      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 140)
+      ctx.fillStyle = "white"
+      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("DEFEAT", imp_vars.levelWidth/2, 140)
+      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 300)
     }
 
-    ctx.fillStyle = impulse_colors['world ' + this.world_num + ' bright']
-    ctx.font = '16px Muli'
-    ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 60)
-    ctx.font = '40px Muli'
-    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 20)
-    ctx.font = '24px Muli'
+    var score_y = 380;
+    var score_label_y = 420;
 
-    ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
-    ctx.font = '12px Muli'
-    ctx.fillText("GAME TIME",imp_vars.levelWidth/2, 355)
-    ctx.font = '28px Muli'
-    ctx.fillText(convert_to_time_notation(this.game_numbers.seconds), imp_vars.levelWidth/2, 380)
+    ctx.fillStyle = this.color
+    ctx.font = '20px Muli'
+    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2, score_y)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, score_label_y)
+
+    var line_y = 440
+    
+    if (!this.best_time) {
+      ctx.beginPath();
+      ctx.moveTo(350, line_y);
+      ctx.lineTo(450, line_y);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.color;
+      ctx.stroke();  
+    }
+
+    var high_score_y = 445;
+    var best_score_y = 500;
+    var best_score_label_y = 470;
 
     if(this.best_time) {
-      ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
-      ctx.font = '12px Muli'
-      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2, 400)
+      ctx.fillStyle = this.color
+      ctx.font = '16px Muli'
+      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2, high_score_y)
     } else {
-      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars == 3) {
-        var temp_stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars
-        ctx.fillStyle = temp_stars > 0 ? impulse_colors[this.star_colors[temp_stars - 1]] : this.color
-        ctx.font = '12px Muli'
-        ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
+      ctx.save();
+      ctx.globalAlpha *= 0.6;
+      ctx.fillStyle = this.color
+      ctx.font = '12px Muli'
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2, best_score_label_y)
+      ctx.font = '28px Muli'
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(
-          convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
-          imp_vars.levelWidth/2, 430);
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+          imp_vars.levelWidth/2, best_score_y)
       } else {
-        ctx.fillStyle = this.color
-        ctx.font = '12px Muli'
-        ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 405)
-        ctx.font = '28px Muli'
-        ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2, 430)
+        ctx.font = '24px Muli'
+        ctx.fillText("UNDEFEATED", 
+          imp_vars.levelWidth/2, best_score_y)
       }
+      ctx.restore();
     }
   }
 
