@@ -259,6 +259,9 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       if(!new_button.active) {
         new_button.color = "gray"
       }
+
+      // new_button.add_hover_overlay(new MessageBox("level_preview_" + new_button.level_name, 
+      //  impulse_colors["world " + i + " bright"], i))
     }
   }
 }
@@ -464,6 +467,12 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   if (index > 0 && !this.is_practice_mode) {
     if (!this.is_practice_mode) {
       this.help_buttons[difficulty][index].post_draw(ctx);
+    }
+  }
+
+  if (index > 0 && this.is_practice_mode) {
+    for(var i = 0; i < this.practice_buttons[difficulty][index].length; i++) {
+      this.practice_buttons[difficulty][index][i].post_draw(ctx)
     }
   }
 };

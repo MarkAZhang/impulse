@@ -121,6 +121,9 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 250;
 		this.h = 75;
 		this.show_box = false;
+	} else if (this.type.substring(0, 14) == "level_preview_") {
+		this.w = 200;
+		this.h = 150;
 	} else if (this.type.substring(0, 6) == "quest_") {
 		this.w = 420;
 		this.h = 90;
@@ -352,6 +355,14 @@ MessageBox.prototype.draw = function(ctx) {
 	    draw_save_icon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)   
 		ctx.restore()
 		ctx.fillText("GAME SAVED", this.x, this.y + this.h / 2 - 33);
+	} else if (this.type.substring(0, 14) == "level_preview_") {
+		draw_level_obstacles_within_rect(ctx, this.type.substring(14), this.x, this.y, 200, 150, 
+			impulse_colors['world '+ this.world_num + ' lite'])
+		ctx.beginPath();
+		ctx.rect(this.x - this.w/2, this.y - this.h / 2, this.w, this.h);
+		ctx.lineWidth = 6;
+		ctx.strokeStyle = impulse_colors['world '+ this.world_num + ' lite'];
+		ctx.stroke();
 	} else if (this.type.substring(0, 6) == "quest_")  {
 		ctx.beginPath();
 		ctx.fillStyle = "black"

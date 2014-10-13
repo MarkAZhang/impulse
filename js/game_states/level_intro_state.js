@@ -88,7 +88,7 @@ function LevelIntroState(level_name, world) {
     var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
 
     var cur_x =  imp_vars.levelWidth/2 + (this.enemy_image_size+10) * diff
-    var cur_y = 490 + this.enemy_image_size * h_diff
+    var cur_y = 380 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
@@ -150,7 +150,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   }
   if (!this.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 60, 40, true)
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 90, 40, true)
     ctx.globalAlpha *= 3
 
     ctx.beginPath()
@@ -158,7 +158,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '30px Muli'
     ctx.textAlign = 'center'
 
-    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 70)
+    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 100)
     ctx.fill()
 
     for(var i = 0; i < this.buttons.length; i++)
@@ -166,9 +166,9 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[i].draw(ctx)
     }
 
-    draw_level_obstacles_within_rect(ctx, this.level_name, imp_vars.levelWidth/2, 175, 200, 150, impulse_colors['world '+ this.world_num + ' lite'])
+    draw_level_obstacles_within_rect(ctx, this.level_name, imp_vars.levelWidth/2, 225, 200, 150, impulse_colors['world '+ this.world_num + ' lite'])
     ctx.beginPath()
-    ctx.rect(imp_vars.levelWidth/2 - 100, 100, 200, 150)
+    ctx.rect(imp_vars.levelWidth/2 - 100, 100, 250, 150)
 
     ctx.strokeStyle = "rgba(0, 0, 0, .3)"
     ctx.stroke()
@@ -184,7 +184,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
 
-      var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
+      /*var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
       var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
       if(!this.is_boss_level) {
         for(var i = 0; i < 3; i++) {
@@ -198,7 +198,12 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
           ctx.font = '20px Muli';
           ctx.fillText(score_names[i], imp_vars.levelWidth/2 - 160, 290 + 35 * i + 7)
         }
-      }
+      }*/
+
+      ctx.fillStyle = this.bright_color
+      ctx.font = '12px Muli'
+      ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 350)
+
       score_color = 0
 
       while(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][score_color]) {
@@ -209,25 +214,23 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = 'center'
 
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2 - 100, 400)
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2 - 100, 450)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2 - 100, 425)
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score, imp_vars.levelWidth/2 - 100, 475)
 
 
       ctx.fillStyle = this.bright_color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, 400)
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, 450)
       if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2 + 100, 425)
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), imp_vars.levelWidth/2 + 100, 475)
       } else {
         ctx.font = '24px Muli'
-        ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2 + 100, 425)        
+        ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2 + 100, 475)
       }
 
-      ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
-      ctx.font = '12px Muli'
-      ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 460)
+    
 
     }
   } else {
