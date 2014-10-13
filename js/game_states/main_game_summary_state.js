@@ -67,8 +67,11 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.bright_color = impulse_colors["world "+this.world_num+" bright"]
   this.dark_color = impulse_colors["world "+this.world_num+" dark"]
 
-  this.total_time = Math.ceil((imp_params.quest_data["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
-  this.total_deaths = 0;
+  if (this.world_num > 0) {
+    this.total_time = Math.ceil((imp_params.quest_data["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
+    this.total_deaths = 0;
+  }
+  
   for(var i = 0; i < 8; i++) {
     var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
     if(this.hive_numbers.game_numbers[title]) {

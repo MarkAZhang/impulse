@@ -195,7 +195,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillText(this.level_name, imp_vars.levelWidth/2, 240)
     ctx.fill() 
-    ctx.font = '48px Muli';
+    ctx.font = '36px Muli';
     if(this.victory) {
       ctx.fillStyle = "white"
       ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)

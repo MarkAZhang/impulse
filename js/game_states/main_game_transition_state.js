@@ -15,7 +15,6 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
   this.level_intro_interval = 2200
   this.last_level_summary_interval = 4000
   this.last_level = null
-  this.high_score = false
   this.level_loaded = true
   this.has_ult = has_ult()
   this.world_num = world_num
@@ -382,116 +381,122 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
       ctx.restore()
-
     }
   }
-   else if(this.state == "last_level_summary") {
+  else if(this.state == "last_level_summary") {
+    ctx.save()
     var prog = (this.transition_timer/this.last_level_summary_interval);
 
     ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
+    ctx.globalAlpha /= 3
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 230, 80, true)
+    ctx.globalAlpha *= 3
 
-    ctx.shadowBlur = 0;
+    ctx.save();
+    ctx.globalAlpha *= 0.5;
+    ctx.fillStyle = "white"
+    ctx.font = '20px Muli'
+    if (imp_vars.player_data.difficulty_mode == "normal") {
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
+    }
+    ctx.restore();
 
+    ctx.beginPath()
+    ctx.fillStyle = this.bright_color
+    ctx.font = '42px Muli'
     ctx.textAlign = 'center'
 
-    ctx.font = '30px Muli'
-    if(this.victory) {
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("LEVEL CONQUERED", imp_vars.levelWidth/2, 100)
+    ctx.fillText(this.last_level_name, imp_vars.levelWidth/2, 240)
+    ctx.fill() 
+    ctx.font = '36px Muli';
+    ctx.fillStyle = "white"
+    ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
+
+    var score_y = 380;
+    var score_label_y = 420;
+
+    ctx.fillStyle = this.bright_color
+    ctx.font = '20px Muli'
+    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, score_y)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, score_label_y)
+    ctx.fillStyle = this.bright_color
+    ctx.font = '20px Muli'
+    ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, score_y)
+
+    ctx.font = '42px Muli'
+    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2 - 100, score_label_y)
+
+    var line_y = 440
+    if (!this.game_numbers.high_score) {
+      ctx.beginPath();
+      ctx.moveTo(250, line_y);
+      ctx.lineTo(350, line_y);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.bright_color;
+      ctx.stroke();  
     }
-    else {
-      ctx.fillStyle = 'red'
-      ctx.shadowColor = ctx.fillStyle
-      ctx.fillText("LEVEL FAILED", imp_vars.levelWidth/2, 100)
+    
+    if (!this.game_numbers.best_time) {
+      ctx.beginPath();
+      ctx.moveTo(450, line_y);
+      ctx.lineTo(550, line_y);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = this.bright_color;
+      ctx.stroke();  
     }
 
+    var high_score_y = 445;
+    var best_score_y = 500;
+    var best_score_label_y = 470;
 
-
-    ctx.fillStyle = this.bright_color;
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '40px Muli'
-    ctx.fillText(this.last_level.level_name, imp_vars.levelWidth/2, 150)
-
-    ctx.font = '18px Muli'
-
-    ctx.fillStyle = this.bright_color;
-    ctx.shadowColor = ctx.fillStyle
-
-    if(!this.last_level.is_boss_level) {
-      ctx.fillText("FINAL COMBO", imp_vars.levelWidth/2 + 100, 190)
-      ctx.fillText("LEVEL TIME", imp_vars.levelWidth/2 - 100, 190)
+    if(this.game_numbers.high_score) {
+      ctx.fillStyle = this.bright_color
+      ctx.font = '16px Muli'
+      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2 - 100, high_score_y)
     } else {
-      ctx.fillText("LEVEL TIME", imp_vars.levelWidth/2, 190)
+      ctx.save();
+      ctx.globalAlpha *= 0.6;
+      ctx.fillStyle = this.bright_color
+      ctx.font = '12px Muli'
+      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, best_score_label_y)
+      ctx.font = '28px Muli'
+      ctx.fillText(imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,
+       imp_vars.levelWidth/2 - 100, best_score_y)
+      ctx.restore();
     }
-    ctx.font = '54px Muli'
 
-    if(!this.last_level.is_boss_level) {
-      ctx.fillText(this.game_numbers.combo, imp_vars.levelWidth/2 + 100, 240)
-      ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 - 100, 240)
+    if(this.game_numbers.best_time) {
+      ctx.fillStyle = this.bright_color
+      ctx.font = '16px Muli'
+      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2 + 100, high_score_y)
     } else {
-      ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, 240)
-    }
-
-    ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '24px Muli'
-    if(this.victory) {
-
-      ctx.textAlign = "left"
-      
-
-      if(this.combo_sparks_awarded < 10) {
-        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 85, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 + 75, 267, 0, 20, 20, "spark")
+      ctx.save();
+      ctx.globalAlpha *= 0.6;
+      ctx.fillStyle = this.bright_color
+      ctx.font = '12px Muli'
+      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, best_score_label_y)
+      ctx.font = '28px Muli'
+      if (imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
+        ctx.font = '28px Muli'
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+          imp_vars.levelWidth/2 + 100, best_score_y)
       } else {
-        ctx.fillText(" + "+this.combo_sparks_awarded, imp_vars.levelWidth/2 + 79, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 + 69, 267, 0, 20, 20, "spark")
+        ctx.font = '24px Muli'
+        ctx.fillText("UNDEFEATED", 
+          imp_vars.levelWidth/2 + 100, best_score_y)
       }
+      ctx.restore();
 
-      if(this.time_sparks_awarded < 10) {
-        ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 108, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 - 118, 267, 0, 20, 20, "spark")
-      } else {
-        ctx.fillText(" + "+this.time_sparks_awarded, imp_vars.levelWidth/2 - 114, 275)
-        drawSprite(ctx, imp_vars.levelWidth/2 - 124, 267, 0, 20, 20, "spark")
-      }
+      //draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, {labels: true, ult: this.has_ult})
 
-    } else {
+      ctx.shadowBlur = 0
 
+      ctx.fillStyle = this.lite_color;
+      ctx.font = '12px Muli'
+      ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
     }
-
-    ctx.textAlign = "center"
-
-    if(!this.last_level.is_boss_level) {
-      ctx.fillStyle = this.bright_color;
-      ctx.shadowColor = ctx.fillStyle
-      ctx.font = '24px Muli'
-      //ctx.fillStyle = (this.stars > 0) ? impulse_colors[this.star_colors[this.stars-1]] : this.color
-      ctx.fillText("SCORE", imp_vars.levelWidth/2, 320)
-      ctx.font = '72px Muli'
-      ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2, 390)
-      //var color = (this.stars < 3) ? impulse_colors[this.star_colors[this.stars]] : impulse_colors[this.star_colors[2]]
-      var color = this.bright_color
-      draw_progress_bar(ctx, imp_vars.levelWidth/2, 420, 300, 15,
-       Math.min(this.game_numbers.score/this.bar_top_score, 1), color, color)
-
-      if(this.high_score) {
-        ctx.font = '18px Muli'
-        ctx.fillStyle = this.bright_color
-        ctx.shadowColor = ctx.fillStyle
-        ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2, 455)
-      }
-      
-    }
-
-    //draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, {labels: true, ult: this.has_ult})
-
-    ctx.shadowBlur = 0
-
-    ctx.fillStyle = this.lite_color;
-    ctx.font = '12px Muli'
-    ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
+    ctx.restore();
 
   }
 }
