@@ -14,6 +14,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null, impulsed: false}
   this.hive_numbers = hive_numbers
 
+
   this.main_game = main_game
   if(this.main_game) {
     this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
@@ -61,6 +62,10 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
       imp_vars.impulse_music.play_bg(imp_params.songs["Tessellation"])
     else if (this.world_num != 0)
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
+  }
+
+  if (this.hive_numbers.total_time[this.level_name] === undefined) {
+    this.hive_numbers.total_time[this.level_name] = 0;
   }
 
   this.visibility_graph = visibility_graph
@@ -466,11 +471,13 @@ ImpulseGameState.prototype.process = function(dt) {
     this.player.process(dt)
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 
-    this.game_numbers.game_length += dt
+    this.game_numbers.game_length += dt;
     if (this.world_num > 0)
       this.hive_numbers.speed_run_countdown -= dt
+    this.hive_numbers.total_time[this.level.level_name] += dt;
 
     this.game_numbers.seconds = Math.floor(this.game_numbers.game_length/1000)
+    this.game_numbers.total_time += dt;
     this.level.process(dt)
     for(var i = this.score_labels.length - 1; i >= 0; i--) {
       this.score_labels[i].duration -= dt
@@ -811,6 +818,7 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
 }
 
 ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
+  if (!this.level.boss) return;
   ctx.save()
   var prog = 0
   if (this.first_time && this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval/2) {
@@ -931,11 +939,11 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillStyle = "white";
       context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
       context.font = '32px Muli';
-      var total_time = this.convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
+      var total_time = convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
       context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
     } else {
       context.fillStyle = this.color;
-      this.game_numbers.last_time = this.convert_seconds_to_time_string(this.game_numbers.seconds);
+      this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
       context.font = '16px Muli';
       context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
       context.font = '32px Muli';
@@ -1391,12 +1399,6 @@ ImpulseGameState.prototype.on_victory = function() {
     this.game_numbers.stars = ans.stars
     this.game_numbers.score = "WIN"
   }
-}
-
-ImpulseGameState.prototype.convert_seconds_to_time_string = function(seconds) {
-  var a = seconds % 60;
-  a = a < 10 ? "0"+a : a;
-  return Math.floor(seconds/60)+":"+a;
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

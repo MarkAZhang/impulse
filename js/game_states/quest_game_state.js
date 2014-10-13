@@ -13,7 +13,7 @@ function QuestGameState() {
   });  
   this.fader.set_animation("fade_in");
   this.buttons = [];
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+  this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
     _this.fader.set_animation("fade_out", function() {
       switch_game_state(new TitleState(true))
     });

@@ -67,6 +67,15 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.bright_color = impulse_colors["world "+this.world_num+" bright"]
   this.dark_color = impulse_colors["world "+this.world_num+" dark"]
 
+  this.total_time = Math.ceil((imp_params.quest_data["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
+  this.total_deaths = 0;
+  for(var i = 0; i < 8; i++) {
+    var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
+    if(this.hive_numbers.game_numbers[title]) {
+      this.total_deaths += this.hive_numbers.game_numbers[title].deaths
+    }
+  }
+
   if(victory) {
     this.calculate_deaths()
     this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED"
@@ -111,17 +120,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
           }
         save_game()
     }
-
-    var help_button = new IconButton("", 16, 490, 205, 20, 20, this.lite_color, this.bright_color, function() {}, "help_icon")
-    this.buttons.push(help_button);
-    help_button.add_hover_overlay(new MessageBox("rank_explanation", 
-      this.bright_color, this.world_num));
   }
 
   var _this = this;
 
   if(this.save_screen && !this.just_saved) {
-    this.resume_button = new IconButton("RESUME", 16, 730, imp_vars.levelHeight/2+260, 100, 65, this.lite_color, this.bright_color, function(_this){return function(){
+    this.resume_button = new IconButton("RESUME", 16, 730, imp_vars.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
       _this.resume_game()
     }}(this), "start")
     this.resume_button.shadow = false
@@ -133,7 +137,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }*/
     this.buttons.push(this.resume_button)
 
-    this.delete_button = new IconButton("DELETE", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 65, this.lite_color, this.bright_color, function(_this){return function(){
+    this.delete_button = new IconButton("DELETE", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
       _this.delete_game()
     }}(this), "delete_small")
     this.buttons.push(this.delete_button)
@@ -147,7 +151,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }
     this.delete_button.shift_enabled = true*/
 
-    this.return_to_main_button = new IconButton("EXIT", 16, 70, imp_vars.levelHeight/2 + 260, 60, 65, this.lite_color, this.bright_color, function(_this) { return function() {
+    this.return_to_main_button = new IconButton("EXIT", 16, 70, imp_vars.levelHeight/2 + 260, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.exit_game()
     }}(this), "back")
 
@@ -267,9 +271,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  ctx.globalAlpha *= 0.3
-  draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 130, 150)
-  ctx.globalAlpha /= 0.3
+
 
   ctx.shadowBlur = 0;
 
@@ -278,17 +280,41 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '20px Muli'
   if(this.victory) {
+    ctx.globalAlpha *= 0.3
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 100, 80)
+    ctx.globalAlpha /= 0.3
     ctx.fillStyle = this.bright_color
     ctx.font = '40px Muli'
     ctx.fillText(this.victory_text, imp_vars.levelWidth/2, 130)
   }
   else if(this.save_screen) {
-    ctx.fillStyle = impulse_colors["impulse_blue"]
-    ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 90)
+    ctx.globalAlpha *= 0.3
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 220, 80)
+    ctx.globalAlpha /= 0.3
+    ctx.fillStyle = "white"
+    ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 210)
     ctx.fillStyle = this.bright_color;
     ctx.font = '40px Muli'
-    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
+    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 250)
+    ctx.font = '24px Muli'
+    ctx.fillText(this.hive_numbers.current_level, imp_vars.levelWidth/2, 280);
+
+    ctx.textAlign = 'center'
+
+    ctx.font = '12px Muli'
+    ctx.fillText("TOTAL TIME", imp_vars.levelWidth/2 - 100, 350)
+    ctx.font = '28px Muli'
+    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2 - 100, 375);
+
+    ctx.font = '12px Muli'
+    ctx.fillText("DEATHS", imp_vars.levelWidth/2 + 100, 350)
+    ctx.font = '28px Muli'
+    ctx.fillText(this.total_deaths, imp_vars.levelWidth/2 + 100, 375);
+    
   } else {
+    ctx.globalAlpha *= 0.3
+    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 100, 80)
+    ctx.globalAlpha /= 0.3
     ctx.fillStyle = 'red'
     ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 80)
     ctx.fillStyle = this.bright_color
@@ -308,9 +334,11 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   if(this.victory) {
     ctx.fillStyle = this.bright_color
-    ctx.font = '18px Muli'
-    ctx.fillText("RANK", imp_vars.levelWidth/2, 167)
-    draw_victory_type_icon(ctx, imp_vars.levelWidth/2, 200, this.world_num, this.victory_type, 1.2)
+    ctx.font = '14px Muli'
+    ctx.fillText("TOTAL TIME", imp_vars.levelWidth/2, 167)
+    ctx.font = '24px Muli'
+    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2, 190)
+
   } else if(this.save_screen) {
     draw_lives_and_sparks(ctx, 
       this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
@@ -334,61 +362,62 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("+300", imp_vars.levelWidth/2, 280)
   }*/
 
+  if(!this.save_screen) {
+    ctx.shadowBlur = 0
 
-  ctx.shadowBlur = 0
+    ctx.font = '18px Muli'
+    ctx.textAlign = 'center'
 
-  ctx.font = '18px Muli'
-  ctx.textAlign = 'center'
+    var start_y = 250
+    ctx.fillStyle = this.bright_color;
 
-  var start_y = 290
-  ctx.fillStyle = this.lite_color;
+    ctx.fillText("LEVEL",250, start_y)
+    //ctx.fillText("SCORE", 270, start_y)
+    ctx.fillText("TIME", 390, start_y)
+    //ctx.fillText("COMBO", 510, start_y)
+    ctx.fillText("DEATHS", 530, start_y)
 
-  ctx.fillText("LEVEL",150, start_y)
-  ctx.fillText("SCORE", 270, start_y)
-  ctx.fillText("TIME", 390, start_y)
-  ctx.fillText("COMBO", 510, start_y)
-  ctx.fillText("DEATHS", 630, start_y)
+    for(var i = 0; i < 8; i++) {
+      var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
 
-  for(var i = 0; i < 8; i++) {
-    var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
-
-    var real_title = title;
-    if(i==7) {
-      real_title = this.hive_numbers.boss_name;
-    }
-    var gn;
-    if(this.hive_numbers.game_numbers[title]) {
-      gn = this.hive_numbers.game_numbers[title];
-    } else {
-      gn = {}
-    }
-    ctx.fillStyle = gn.visited ? this.lite_color : "#333";
-    var y = start_y + 30 + 27 * i;
-    ctx.fillText(real_title,150, y)
-
-    if(gn.score != undefined) {
-      if(gn.stars > 0) {
-        ctx.fillStyle = impulse_colors[this.star_colors[gn.stars - 1]]
+      var real_title = title;
+      if(i==7) {
+        real_title = this.hive_numbers.boss_name;
       }
-      ctx.fillText(gn.score, 270, y)
-    } else {
-      ctx.fillText('---', 270, y)
-    }
-    ctx.fillStyle = gn.visited ? this.lite_color : "#333";
-    if(gn.last_time != undefined)
-      ctx.fillText(gn.last_time, 390, y)
-    else {
-      ctx.fillText('---', 390, y)
-    }
-    if(gn.combo != undefined)
-      ctx.fillText(gn.combo, 510, y)
-    else {
-      ctx.fillText('---', 510, y)
-    }
-    if(gn.deaths != undefined)
-      ctx.fillText(gn.deaths, 630, y)
-    else {
-      ctx.fillText('---', 630, y)
+      var gn;
+      if(this.hive_numbers.game_numbers[title]) {
+        gn = this.hive_numbers.game_numbers[title];
+      } else {
+        gn = {}
+      }
+      ctx.fillStyle = gn.visited ? this.bright_color : "#666";
+      var y = start_y + 30 + 27 * i;
+      ctx.fillText(real_title,250, y)
+
+      /*if(gn.score != undefined) {
+        if(gn.stars > 0) {
+          ctx.fillStyle = impulse_colors[this.star_colors[gn.stars - 1]]
+        }
+        ctx.fillText(gn.score, 270, y)
+      } else {
+        ctx.fillText('---', 270, y)
+      }*/
+      ctx.fillStyle = gn.visited ? this.bright_color : "#666";
+      if(this.hive_numbers.total_time[title] != undefined)
+        ctx.fillText(convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time[title] / 1000)), 390, y)
+      else {
+        ctx.fillText('---', 390, y)
+      }
+      /*if(gn.combo != undefined)
+        ctx.fillText(gn.combo, 510, y)
+      else {
+        ctx.fillText('---', 510, y)
+      }*/
+      if(gn.deaths != undefined)
+        ctx.fillText(gn.deaths, 530, y)
+      else {
+        ctx.fillText('---', 530, y)
+      }
     }
   }
 

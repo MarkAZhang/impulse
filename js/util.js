@@ -2,6 +2,12 @@ var eq = function(a, b) {
   return a.x == b.x && a.y == b.y
 }
 
+var convert_seconds_to_time_string = function(seconds) {
+  var a = seconds % 60;
+  a = a < 10 ? "0"+a : a;
+  return Math.floor(seconds/60)+":"+a;
+};
+
 function isVisibleThroughPolygon(v_i, v_j, polygon) {
   var j = polygon.length - 1
   var ans = false

@@ -126,7 +126,7 @@ MainGameTransitionState.prototype.get_next_level_name = function(level, world_nu
     if (world_num == 0) {
       return "HIVE 0-1"
     }
-    return "HIVE "+world_num+"-1"
+    return "HIVE "+world_num+"-7"
   } else {
     if(level.level_number < 7) {
       return "HIVE "+world_num+"-"+(level.level_number+1)
