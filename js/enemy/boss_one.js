@@ -237,6 +237,23 @@ BossOne.prototype.add_arms = function() {
 
 }
 
+BossOne.prototype.additional_death_prep = function() {
+  var body_parts = ["lu", "ll", "lh", "ru", "rl", "rh"];
+  var death_explode_force = 10;
+  this.knockback_red_duration = 0;
+  this.knockback_arm_timers.left = 0;
+  this.knockback_arm_timers.right = 0;
+
+  for (var i = 0; i < body_parts.length; i++) {
+    this.world.DestroyJoint(this.joints[body_parts[i]]);
+    var angle = _atan(this.body.GetPosition(), this.body_parts[body_parts[i]].GetPosition());
+    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    dir.Normalize();
+    dir.Multiply(death_explode_force);
+    this.body_parts[body_parts[i]].ApplyImpulse(dir, this.body_parts[body_parts[i]].GetWorldCenter())
+  }
+}
+
 BossOne.prototype.load_punch_at_player = function(side, pt) {
     this.set_timer(side, this.loading_punch_interval)
     if(side=="left") {

@@ -630,14 +630,23 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying != "accident" && this.dying != "fade" && this.dying != "absorbed") {
     if (this.type == "tank") {
       imp_vars.impulse_music.play_sound("tdeath")  
+    } else if (this.is_boss) {
+      imp_vars.impulse_music.play_sound("tdeath")
+      setTimeout(function() {
+        imp_vars.impulse_music.play_sound("tdeath")
+      }, 150);
+      setTimeout(function() {
+        imp_vars.impulse_music.play_sound("tdeath")
+      }, 300);
     } else if (this.type == "troll" && this.dying == "hit_player" && this.status_duration[1] <= 0) {
       // do nothing if it's a troll hitting a player. there's a different sound.
     } else {
       imp_vars.impulse_music.play_sound("sdeath")
     }
   }
-
-  this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+  if (this.dying != "fade") {
+    this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+  }
 
   this.additional_death_prep(death)
 
@@ -680,7 +689,7 @@ Enemy.prototype.collide_with = function(other) {
         }
       }
       if (this.die_on_player_collision) {
-        this.start_death("hit_player")
+        this.start_death("hit_player");
       }
       if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
