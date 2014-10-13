@@ -340,7 +340,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2, 190)
 
   } else if(this.save_screen) {
-    draw_lives_and_sparks(ctx, 
+    /*draw_lives_and_sparks(ctx, 
       this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
       imp_vars.levelWidth/2, 170, 24, {
         labels: true, 
@@ -352,7 +352,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     if(this.hive_numbers.continues) {
       ctx.fillStyle = "red"
       ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 240)
-    }
+    }*/
   }
 
   /*if(calculate_current_rating() > this.hive_numbers.original_rating || true) {
@@ -371,11 +371,11 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     var start_y = 250
     ctx.fillStyle = this.bright_color;
 
-    ctx.fillText("LEVEL",250, start_y)
+    ctx.fillText("LEVEL",260, start_y)
     //ctx.fillText("SCORE", 270, start_y)
-    ctx.fillText("TIME", 390, start_y)
+    ctx.fillText("TIME", 400, start_y)
     //ctx.fillText("COMBO", 510, start_y)
-    ctx.fillText("DEATHS", 530, start_y)
+    ctx.fillText("DEATHS", 540, start_y)
 
     for(var i = 0; i < 8; i++) {
       var title = i == 7 ? "BOSS "+(this.world_num) : "HIVE "+this.world_num+"-"+(i+1)
@@ -392,7 +392,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       }
       ctx.fillStyle = gn.visited ? this.bright_color : "#666";
       var y = start_y + 30 + 27 * i;
-      ctx.fillText(real_title,250, y)
+      ctx.fillText(real_title,260, y)
 
       /*if(gn.score != undefined) {
         if(gn.stars > 0) {
@@ -404,9 +404,9 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       }*/
       ctx.fillStyle = gn.visited ? this.bright_color : "#666";
       if(this.hive_numbers.total_time[title] != undefined)
-        ctx.fillText(convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time[title] / 1000)), 390, y)
+        ctx.fillText(convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time[title] / 1000)), 400, y)
       else {
-        ctx.fillText('---', 390, y)
+        ctx.fillText('---', 400, y)
       }
       /*if(gn.combo != undefined)
         ctx.fillText(gn.combo, 510, y)
@@ -414,9 +414,9 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
         ctx.fillText('---', 510, y)
       }*/
       if(gn.deaths != undefined)
-        ctx.fillText(gn.deaths, 530, y)
+        ctx.fillText(gn.deaths, 540, y)
       else {
-        ctx.fillText('---', 530, y)
+        ctx.fillText('---', 540, y)
       }
     }
   }

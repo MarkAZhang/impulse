@@ -395,14 +395,14 @@ Player.prototype.process = function(dt) {
       }
       
     }
-    if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
+    /*if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
       if(this.impulse_game_state.hive_numbers.ultimates > 0) {
         this.initiate_ultimate()
         if (!(this.impulse_game_state instanceof HowToPlayState)) {
           this.impulse_game_state.hive_numbers.ultimates -= 1
         }
       }
-    }
+    }*/
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
     if(!this.attacking && this.status_duration[1] <= 0) {
@@ -448,7 +448,7 @@ Player.prototype.process = function(dt) {
         imp_vars.impulse_music.play_sound("impulse")
       }
     }
-    if(!this.ultimate) {
+    /*if(!this.ultimate) {
 
       if(this.iultimate != null) {
         if(this.impulse_game_state.hive_numbers.ultimates > 0) {
@@ -458,7 +458,7 @@ Player.prototype.process = function(dt) {
           }
         }
       }
-    }
+    }*/
 
 
   }

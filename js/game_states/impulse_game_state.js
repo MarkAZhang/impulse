@@ -1010,7 +1010,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fill()
   context.shadowBlur = 0;
   context.save()*/
-  if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+  /*if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
     draw_lives_and_sparks(
       context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
       imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {
@@ -1019,7 +1019,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
         sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
         lives: false //imp_vars.player_data.difficulty_mode == "normal" && this.main_game,
       })
-  }
+  }*/
   //context.font = '12px Muli'
   //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);
 

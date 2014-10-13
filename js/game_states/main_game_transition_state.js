@@ -126,7 +126,7 @@ MainGameTransitionState.prototype.get_next_level_name = function(level, world_nu
     if (world_num == 0) {
       return "HIVE 0-1"
     }
-    return "HIVE "+world_num+"-7"
+    return "HIVE "+world_num+"-1"
   } else {
     if(level.level_number < 7) {
       return "HIVE "+world_num+"-"+(level.level_number+1)
@@ -363,14 +363,14 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '32px Muli'
       ctx.fillText(this.level.level_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2-50)
 
-      draw_lives_and_sparks(ctx, 
+      /*draw_lives_and_sparks(ctx, 
         Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, 
         imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180, 24, {
           labels: true, 
           ult: this.has_ult,
           sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
           lives: false, //imp_vars.player_data.difficulty_mode == "normal",
-        })
+        })*/
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
@@ -481,7 +481,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       
     }
 
-    draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, {labels: true, ult: this.has_ult})
+    //draw_lives_and_sparks(ctx, Math.floor(this.hive_numbers.lives), Math.floor(this.hive_numbers.sparks), this.hive_numbers.ultimates, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 200, 24, {labels: true, ult: this.has_ult})
 
     ctx.shadowBlur = 0
 
