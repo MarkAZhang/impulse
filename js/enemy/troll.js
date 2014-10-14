@@ -52,8 +52,9 @@ function Troll(world, x, y, id, impulse_game_state) {
 Troll.prototype.additional_processing = function(dt) {
 
   var time = (new Date()).getTime()
-  if(this.status_duration[1] <= 0)
-    this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
+  if(this.status_duration[1] <= 0) {
+    this.set_heading(this.actual_heading + 2*Math.PI * dt/this.spin_rate)
+  }
 
   if(time % (this.trolling_time_factor * this.troll_switch_interval) < this.troll_switch_interval) {
     this.silence(this.troll_switch_interval - time % (this.trolling_time_factor * this.troll_switch_interval), true)

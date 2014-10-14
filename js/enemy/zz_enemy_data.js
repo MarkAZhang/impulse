@@ -20,7 +20,7 @@ imp_params.impulse_enemy_stats["dumb_stunner"] = {
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Upon collision, stuns you for a short period",
+    "On collision, stuns you for a short period",
     //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
     //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
@@ -48,7 +48,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Upon collision, stuns you for a short period",
+    "On collision, stuns you for a short period",
     //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
     //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
@@ -76,13 +76,12 @@ imp_params.impulse_enemy_stats["spear"] = {
   enemy_info: [
     "Will dive at you if it has line of sight",
     //"Cannot charge for 1 second after entering the screen # # Cannot charge from off-screen",
-    "When Impulsed, cannot dive for a few moments",
     //"Will cause some knockback upon collision even if not charging",
   ],
   snippet: "charges on sight",
 
   special_ability: "Charges you on sight. Hurls you backward on impact.",
-  other_notes: "Silenced for two seconds upon entering or re-entering stage. When Impulsed, silenced for five seconds.",
+  other_notes: "Silenced for two seconds on entering or re-entering stage. When Impulsed, silenced for five seconds.",
   className: Spear
 }
 
@@ -117,9 +116,9 @@ imp_params.impulse_enemy_stats["tank"] = {
   dies_on_impact: "YES",
 
   enemy_info: [
-    "Explodes upon death or collision with player",
+    "Explodes on death or collision with player",
+    "Will explode on collision with another Tank if recently Impulsed",
     "The explosion radius is outlined around the tank",
-    "Will explode upon collision with another Tank if it has been recently Impulsed",
   ],
   snippet: "explodes on death",
 
@@ -142,8 +141,8 @@ imp_params.impulse_enemy_stats["mote"] = {
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
   dies_on_impact: "YES",
   enemy_info: [
-    "Cannot be Impulsed # # Upon collision, disarms you for a few moments",
-    "To defeat, impulse other enemies into it."
+    "Cannot be Impulsed # # On collision, disarms you for a few moments",
+    "Other enemies can be impulsed into the mote"
   ],
   snippet: "unaffected by impulse",
   className: Mote
@@ -175,8 +174,8 @@ imp_params.impulse_enemy_stats["goo"] = {
   extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1.3, colored: true}],
   dies_on_impact: "YES",
   enemy_info: [
-    "All units within its area of influence are slowed",
-    "When Impulsed, expands its area of influence for a few moments",
+    "All units within its radius are slowed",
+    "When Impulsed, expands its radius for a few moments",
     //"Dies upon collision # # Units immediately regain speed",
     //"When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
@@ -219,17 +218,17 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   draw_polygons: [],
   dies_on_impact: "NO",
   enemy_info: [
-    "Fires its hook at you and # attempts to yank you in # # Can only fire through the void.",
+    "Fires its hook at you and # attempts to yank you in # # Can only fire through the void",
     "The hook range is outlined # around the Harpoon",
-    "If you are hooked, # impulse the harpoon and it will let you go",
-    "Will attempt to avoid you and also avoid the void.",
+    "If you are hooked, # impulse the harpoon to get free",
+    // "Will attempt to avoid you and also avoid the void.",
     "While the hook is detached from the Harpoon, it cannot move",
     //"When Impulsed, the hook is disabled for 2 seconds",
     //"Can latch onto other enemies and will yank them in",
     //"Will actively try to avoid you # # Does not die on collision",
-    "Does not die on collision",
+    // "Does not die on collision",
     //"Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
-    "During boss battles, can fire at any time",
+    "During boss battles, will fire at any time",
   ],
   snippet: "hooks through walls",
 
@@ -286,15 +285,11 @@ imp_params.impulse_enemy_stats["fighter"] = {
   ],
 
   enemy_info: [
-    "Fires bullets at you on sight # # Has a force-field which resists impulse. # Touching this force-field will knock you back.",
-    "To defeat, reflect the bullets back at the hunter with impulse.",
+    "Fires projectiles at you on sight # # Is weak to its own projectiles",
     //"Very resistant to Impulse # # Very weak against the force of its own bullets",
     //"If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
-    "Periodically charges up a Frenzy bar # # When the Hunter has five Frenzy bars, # it will enter Frenzy mode",
-    "During Frenzy mode, moves faster and fires bullets that cannot be Impulsed",
-    "During Frenzy mode, # loses a Frenzy bar whenever it fires # # When the Frenzy bars are depleted, # the Hunter exits Frenzy mode",
-    "Loses one frenzy bar every time it is Impulsed",
-
+    "When its rage meter is full, # the hunter moves faster and its bullets cannot be impulsed",
+    "Impulse the hunter to lower its rage meter"
     //"Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
@@ -368,8 +363,8 @@ imp_params.impulse_enemy_stats["disabler"] = {
   dies_on_impact: "YES",
   enemy_info: [
     //"All units within its area of influence are slowed",
-    "Disables all units within its area of influence",
-    "When Impulsed, expands its area of influence for a few moments",
+    "Disables all units within its radius",
+    "When Impulsed, expands its radius for a few moments",
   //  "Dies upon collision # # Units immediately regain special powers",
   //  "When Impulsed, dramatically expands its area of influence for 3 seconds"
   ],
@@ -423,10 +418,7 @@ imp_params.impulse_enemy_stats["troll"] = {
   [0.25 * Math.cos(Math.PI * 5/3+ 0.22), 0.25 * Math.sin(Math.PI * 5/3+ 0.22)]]},
   ],
   enemy_info: [
-    "Upon collision, # reverses your controls for a few moments",
-    "If Impulsed while active, # reverses your controls for a short period",
-    //"If Impulsed while active, # reverses your movement and Impulse controls for a short period",
-    "Periodically becomes inactive # # Inactive pinwheels will not reverse you and fly farther when Impulsed",
+    "On collision or if impulsed while spinning, # reverses your controls",
     //"Upon collision, reverses you for a few moments",
   ],
   snippet: "reverses your controls",
@@ -469,11 +461,11 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   dies_on_impact: "YES",
   true_name: "boomerang",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
-  other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
+  other_notes: "If the boomerang hits you while not slingshoting, it will still push you back a fair way.",
   className: Slingshot,
   enemy_info: [
     "When Impulsed, latches onto its current position # and slingshots back at you",
-    "While slingshotting, cannot be impulsed",
+    "cannot be impulsed while latched",
   ],
   snippet: "slingshots when impulsed",
 }
@@ -561,9 +553,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],*/
   enemy_info: [
-    "Fires an enormous ray that destroys everything in its path # # The ray has infinite range",
-    "After firing, must recharge for a short period # # During this time, the death ray cannot move",
-    "Does not die on collision"
+    "After firing, must recharge for a short period # # During this time, the deathray cannot move",
   ],
   snippet: "giant death ray",
   dies_on_impact: "NO",
