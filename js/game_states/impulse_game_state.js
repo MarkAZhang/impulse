@@ -221,12 +221,13 @@ ImpulseGameState.prototype.check_new_enemies = function() {
     save_game()
     var difficulty_level = imp_vars.player_data.difficulty_mode
     if(!imp_params.impulse_enemy_stats[enemy].is_boss &&
-        (imp_params.impulse_enemy_stats[enemy].seen <= 1 ||
-         imp_params.impulse_enemy_stats[enemy].seen <= 5 && imp_params.impulse_level_data[this.level.level_name].save_state[difficulty_level].stars == 0)) {
-      this.clear_message()
+        imp_params.impulse_enemy_stats[enemy].seen == 1) {
+
+      set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
+      //this.clear_message()
       this.new_enemy_type = enemy
-      this.new_enemy_timer = this.new_enemy_duration
-      draw_new_enemy_button(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.new_enemy_type)
+      //this.new_enemy_timer = this.new_enemy_duration
+      //draw_new_enemy_button(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.new_enemy_type)
      //set_dialog_box(new NewEnemyDialog())
     }
   }
@@ -1341,9 +1342,9 @@ ImpulseGameState.prototype.check_cutoffs = function() {
     this.gateway_unlocked = true
     this.level_redraw_bg = true
     //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
-    if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
-      this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
-    }
+    //if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
+    //  this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
+    // }
 
     if (this instanceof HowToPlayState) {
       this.gateway_opened()

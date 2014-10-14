@@ -24,6 +24,7 @@ imp_params.impulse_enemy_stats["dumb_stunner"] = {
     //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
     //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
+  snippet: "stuns on collision",
 
   className: DumbStunner
 }
@@ -51,6 +52,8 @@ imp_params.impulse_enemy_stats["stunner"] = {
     //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
     //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
+  true_name: "shocker",
+  snippet: "stuns on collision",
 
   className: Stunner
 }
@@ -76,6 +79,7 @@ imp_params.impulse_enemy_stats["spear"] = {
     "When Impulsed, cannot dive for a few moments",
     //"Will cause some knockback upon collision even if not charging",
   ],
+  snippet: "charges on sight",
 
   special_ability: "Charges you on sight. Hurls you backward on impact.",
   other_notes: "Silenced for two seconds upon entering or re-entering stage. When Impulsed, silenced for five seconds.",
@@ -117,6 +121,7 @@ imp_params.impulse_enemy_stats["tank"] = {
     "The explosion radius is outlined around the tank",
     "Will explode upon collision with another Tank if it has been recently Impulsed",
   ],
+  snippet: "explodes on death",
 
   className: Tank
 }
@@ -140,6 +145,7 @@ imp_params.impulse_enemy_stats["mote"] = {
     "Cannot be Impulsed # # Upon collision, disarms you for a few moments",
     "To defeat, impulse other enemies into it."
   ],
+  snippet: "unaffected by impulse",
   className: Mote
 
 }
@@ -174,6 +180,7 @@ imp_params.impulse_enemy_stats["goo"] = {
     //"Dies upon collision # # Units immediately regain speed",
     //"When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
+  snippet: "slows all nearby units",
   className: Goo
 
 }
@@ -212,7 +219,6 @@ imp_params.impulse_enemy_stats["harpoon"] = {
   draw_polygons: [],
   dies_on_impact: "NO",
   enemy_info: [
-
     "Fires its hook at you and # attempts to yank you in # # Can only fire through the void.",
     "The hook range is outlined # around the Harpoon",
     "If you are hooked, # impulse the harpoon and it will let you go",
@@ -224,8 +230,8 @@ imp_params.impulse_enemy_stats["harpoon"] = {
     "Does not die on collision",
     //"Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
     "During boss battles, can fire at any time",
-
   ],
+  snippet: "hooks through walls",
 
   className: Harpoon
 
@@ -292,7 +298,7 @@ imp_params.impulse_enemy_stats["fighter"] = {
     //"Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
 
-
+  snippet: "weak to projectiles",
 
   dies_on_impact: "NO",
   special_ability: "Fires bullets at you upon sight. Bullets fling you backwards on impact. For every 2 seconds that the Fighter is idle, it loads up a piercing bullet, which cannot be Impulsed.",
@@ -364,10 +370,11 @@ imp_params.impulse_enemy_stats["disabler"] = {
     //"All units within its area of influence are slowed",
     "Disables all units within its area of influence",
     "When Impulsed, expands its area of influence for a few moments",
-    "Colliding with a disabled enemy will not reset your multiplier # # However you will not score points",
   //  "Dies upon collision # # Units immediately regain special powers",
   //  "When Impulsed, dramatically expands its area of influence for 3 seconds"
   ],
+  true_name: "equalizer",
+  snippet: "disables all nearby units",
   special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
   className: Disabler
@@ -422,6 +429,7 @@ imp_params.impulse_enemy_stats["troll"] = {
     "Periodically becomes inactive # # Inactive pinwheels will not reverse you and fly farther when Impulsed",
     //"Upon collision, reverses you for a few moments",
   ],
+  snippet: "reverses your controls",
   //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
   dies_on_impact: "YES",
   special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
@@ -459,6 +467,7 @@ imp_params.impulse_enemy_stats["slingshot"] = {
     //[[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5] ]
   ],
   dies_on_impact: "YES",
+  true_name: "boomerang",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
   other_notes: "If the slingshot hits you while not slingshoting, it will still push you back a fair way.",
   className: Slingshot,
@@ -466,6 +475,7 @@ imp_params.impulse_enemy_stats["slingshot"] = {
     "When Impulsed, latches onto its current position # and slingshots back at you",
     "While slingshotting, cannot be impulsed",
   ],
+  snippet: "slingshots when impulsed",
 }
 
 imp_params.impulse_enemy_stats["orbiter"] = {
@@ -506,6 +516,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   enemy_info: [
     "Intelligently avoids your Impulse # # Will charge at you opportunistically",
   ],
+  snippet: "intelligent and dangerous",
 
   dies_on_impact: "YES",
   special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
@@ -552,8 +563,9 @@ imp_params.impulse_enemy_stats["deathray"] = {
   enemy_info: [
     "Fires an enormous ray that destroys everything in its path # # The ray has infinite range",
     "After firing, must recharge for a short period # # During this time, the death ray cannot move",
-    "DOes not die on collision"
+    "Does not die on collision"
   ],
+  snippet: "giant death ray",
   dies_on_impact: "NO",
   special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
   other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",

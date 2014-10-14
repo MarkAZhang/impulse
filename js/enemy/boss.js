@@ -12,7 +12,7 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
     this.spawn_interval = 6600
   this.require_open = false;
-  this.default_dying_length = 2000;
+  this.default_dying_length = 2000
 
   this.spawn_duration = this.spawn_interval
 

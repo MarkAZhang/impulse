@@ -1631,6 +1631,23 @@ function convert_canvas_to_grayscale(canvas, opacity) {
   return gray_canvas;
 }
 
+draw_enemy_button = function(ctx, x, y, r, type) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+  ctx.fillStyle = "#000"
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, r - 8, 0, 2 * Math.PI, false);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "white";
+  ctx.stroke();
+  ctx.save();
+  ctx.globalAlpha *= 0.2;
+  drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
+  ctx.restore();
+  draw_enemy(ctx, type, x, y, 30)
+}
+
 draw_quest_button = function(ctx, x, y, r, type) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI, false);

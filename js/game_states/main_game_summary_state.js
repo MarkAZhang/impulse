@@ -304,15 +304,19 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.textAlign = 'center'
 
-    ctx.font = '12px Muli'
-    ctx.fillText("TOTAL TIME", imp_vars.levelWidth/2 - 100, 350)
-    ctx.font = '28px Muli'
-    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2 - 100, 375);
+    var score_y = 380;
+    var score_label_y = 420;
 
-    ctx.font = '12px Muli'
-    ctx.fillText("DEATHS", imp_vars.levelWidth/2 + 100, 350)
-    ctx.font = '28px Muli'
-    ctx.fillText(this.total_deaths, imp_vars.levelWidth/2 + 100, 375);
+    ctx.fillStyle = this.bright_color
+    ctx.font = '20px Muli'
+    ctx.fillText("TOTAL TIME ", imp_vars.levelWidth/2 - 100, score_y)
+    ctx.font = '42px Muli'
+    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2 - 100, score_label_y)
+    ctx.fillStyle = this.bright_color
+    ctx.font = '20px Muli'
+    ctx.fillText("DEATHS", imp_vars.levelWidth/2 + 100, score_y)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.total_deaths, imp_vars.levelWidth/2 + 100, score_label_y)
     
   } else {
     ctx.globalAlpha *= 0.3

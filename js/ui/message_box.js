@@ -128,6 +128,10 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 420;
 		this.h = 90;
 		this.show_box = false;
+	} else if (this.type.substring(0, 6) == "enemy_") {
+		this.w = 420;
+		this.h = 90;
+		this.show_box = false;
 	}
 
 	this.opacity = 0;
@@ -384,8 +388,8 @@ MessageBox.prototype.draw = function(ctx) {
 		var type = this.type.substring(6);
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli"
-		ctx.fillStyle = this.color;
-		ctx.fillText("NEW ACHIEVEMENT", this.x + x_shift, this.y - this.h / 2 + 20);
+		ctx.fillStyle = "white";
+		ctx.fillText("NEW ACHIEVEMENT", this.x + x_shift, this.y - this.h / 2 + 30);
 
 		/*ctx.beginPath();
 		ctx.strokeStyle = "white"
@@ -399,9 +403,9 @@ MessageBox.prototype.draw = function(ctx) {
 		for (var i = 0; i < imp_params.quest_data[type].text.length; i++) {
 			quest_text += imp_params.quest_data[type].text[i] + " ";
 		}
-		ctx.fillText(quest_text, this.x + x_shift, this.y - this.h / 2 + 40);
+		ctx.fillText(quest_text, this.x + x_shift, this.y + this.h / 2 - 20);
 
-		var rewards = imp_params.quest_data[type].rewards;
+		/* var rewards = imp_params.quest_data[type].rewards;
 		if (rewards.length > 0) {
 			var reward_gap = 45
 			for (var i = 0; i < rewards.length; i++) {
@@ -415,11 +419,46 @@ MessageBox.prototype.draw = function(ctx) {
 			ctx.font = "10px Muli"
 			ctx.fillText("(HARD MODE ONLY)", this.x + x_shift, this.y + this.h / 2 - 5);
 		}
-		ctx.restore()
+		ctx.restore()*/
 		
 		draw_quest_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 
 		//draw_quest_button = function(ctx, x, y, r, type) {
+	} else if (this.type.substring(0, 6) == "enemy_")  {
+		ctx.beginPath();
+		ctx.fillStyle = "black"
+		ctx.shadowBlur = 0;
+		ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
+		ctx.fill();
+		ctx.beginPath();
+		var x_left_edge = this.x - this.w/2 + 75;
+		ctx.moveTo(this.x + this.w/2, this.y - this.h/2)
+		ctx.lineTo(this.x + this.w/2, this.y + this.h/2)
+		ctx.lineTo(x_left_edge, this.y + this.h/2)
+		ctx.moveTo(this.x + this.w/2, this.y - this.h/2)
+		ctx.lineTo(x_left_edge, this.y - this.h/2)
+		ctx.strokeStyle = "white"
+		ctx.lineWidth = 2;
+		ctx.stroke()
+		var x_shift = 50;
+
+			
+		var type = this.type.substring(6);
+		var true_name = type;
+	    if(imp_params.impulse_enemy_stats[type].true_name) {
+	      true_name = imp_params.impulse_enemy_stats[type].true_name
+		}
+		ctx.textAlign = 'center';
+		ctx.font = "12px Muli"
+		ctx.fillStyle = "white";
+		ctx.fillText("NEW ENEMY", this.x + x_shift, this.y - this.h / 2 + 20);
+		ctx.fillStyle = imp_params.impulse_enemy_stats[type].color
+		ctx.font = "24px Muli"
+		ctx.fillText(true_name.toUpperCase(), this.x + x_shift, this.y - this.h / 2 + 45);
+		ctx.fillStyle = "white";;
+		ctx.font = "16px Muli"
+		ctx.fillText(imp_params.impulse_enemy_stats[type].snippet.toUpperCase(), this.x + x_shift, this.y + this.h / 2 - 15);
+		draw_enemy_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 	} else {
 		// rewards
 		ctx.textAlign = 'center';
