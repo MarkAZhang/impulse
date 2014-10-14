@@ -20,10 +20,10 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.color = "black"
 
   if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
-    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
+    this.shape = imp_params.impulse_enemy_stats[enemy_type].death_polygons[0]
     this.color = imp_params.impulse_enemy_stats[enemy_type].color
     this.original_v_damping = 0.5
-    this.num_fragments = 100
+    this.num_fragments = 50
     this.burst = 10;
     this.waves = 5;
     this.lifespan = 2000;
@@ -70,8 +70,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     var num_frags_in_wave = this.num_fragments / this.waves;
     for(var i = 0; i < num_frags_in_wave; i++) {    
       dir = 2*Math.PI * i / num_frags_in_wave + (Math.random() - 0.5) * 2 * Math.PI / num_frags_in_wave;
-      new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir + 2 * Math.PI/this.num_fragments * i) * j / this.waves * this.burst_force,
-        y: this.original_v_damping * velocity.y + Math.sin(dir + 2 * Math.PI/this.num_fragments * i) * j / this.waves * this.burst_force}
+      new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
+        y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
       this.fragments.push(new Fragment(this.shape, imp_vars.draw_factor/3, {x: loc.x * imp_vars.draw_factor, y: loc.y * imp_vars.draw_factor},
        {x: new_v.x * imp_vars.draw_factor, y: new_v.y * imp_vars.draw_factor}, this.color))

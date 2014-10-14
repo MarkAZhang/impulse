@@ -24,6 +24,9 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.arm_taper = .9
   this.num_arms = 4
 
+  this.absorbed_enemy_types = [];
+
+
   this.arm_full_rotation = 15000
 
   this.spawned = false
@@ -35,8 +38,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.spin_rate = this.arm_full_rotation
 
   this.visibility = 0
-
-  this.dying_length = 2000
 
   this.black_hole_interval = 13400
   this.black_hole_timer = this.black_hole_interval - 1
@@ -396,6 +397,20 @@ BossTwo.prototype.draw = function(context, draw_factor) {
   context.restore()
 }
 
+BossTwo.prototype.additional_death_prep = function() {
+  if (this.absorbed_enemy_types.length == 0) return;
+  // Spawn exactly 10 fragments, generated from the array.
+  for (var i = 0; i < 10; i++) {
+    var type = this.absorbed_enemy_types[Math.floor(this.absorbed_enemy_types.length / 10 * i)];
+    var angle = _atan(this.body.GetPosition(), this.player.body.GetPosition()) + (Math.random() - 0.5) * 2 * Math.PI;
+    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    dir.Normalize();
+    dir.Multiply(100);
+    this.level.add_fragments(type, this.body.GetPosition(), dir);
+
+  }
+}
+
 BossTwo.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
@@ -566,7 +581,9 @@ BossTwo.prototype.collide_with = function(other) {
       other.start_death("absorbed")
       this.growth_factor += this.growth_on_enemy
       this.enemies_struck.push(other)
+      this.absorbed_enemy_types.push(other.type);
     } else {
+      this.absorbed_enemy_types.push("harpoon");
       other.harpoon.start_death("absorbed")
       this.growth_factor += this.growth_on_enemy
       this.enemies_struck.push(other)

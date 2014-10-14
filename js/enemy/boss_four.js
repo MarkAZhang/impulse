@@ -19,8 +19,6 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
-  this.dying_length = 2000
-
   this.red_visibility = 0
 
   this.spawn_interval = 2300
@@ -712,7 +710,6 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
 
 BossFour.prototype.create_body_buds = function() {
   for(var index = 0; index < this.num_buds; index++) {
-
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
     var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon, 
       this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
@@ -726,6 +723,31 @@ BossFour.prototype.create_body_buds = function() {
       body: bud_body,
       size: this.body_bud_radius * (0.8 + 0.2 * bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000))
     })
+  }
+}
+
+BossFour.prototype.additional_death_prep = function() {
+  for(var index = 0; index < this.buds.length; index++) {
+    var bud = this.buds[index];
+    var angle = _atan(this.body.GetPosition(), bud.body.GetPosition());
+    if (bud.type == "body") {
+      var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon, 
+        this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
+         this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle), 
+        3, 0.1, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
+
+      bud_body.SetAngle(angle)
+      this.buds[index].body = bud_body;
+      var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+      dir.Normalize();
+      dir.Multiply(20);
+      bud_body.ApplyImpulse(dir, bud_body.GetWorldCenter())
+    } else if (bud.expand_timer > 0) {
+      var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+      dir.Normalize();
+      dir.Multiply(30);
+      this.buds[index].body.ApplyImpulse(dir, this.buds[index].body.GetWorldCenter())
+    }
   }
 }
 
@@ -760,6 +782,8 @@ BossFour.prototype.repel_enemies = function() {
 }
 
 BossFour.prototype.process_body_buds = function() {
+  // Don't process body buds if dying, so we can explode.
+  if (this.dying) return;
   var size = 0.8 + 0.2 * bezier_interpolate(0.15, 0.85, Math.abs(((1000 - (new Date().getTime()) % 2000)))/1000)
 
   var vertices = []

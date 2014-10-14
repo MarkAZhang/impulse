@@ -55,8 +55,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
-  this.dying_length = 2000
-
   this.turret_firing_interval = 1000
 
   if(imp_vars.player_data.difficulty_mode == "easy") {

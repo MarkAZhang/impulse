@@ -24,8 +24,6 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.body.SetAngle(7 * Math.PI/16)
 
-  this.dying_length = 2000
-
   this.visibility = 0
 
   this.red_visibility = 0
@@ -409,7 +407,11 @@ BossThree.prototype.additional_processing = function(dt) {
   if(this.knockback_red_duration > 0) {
     this.knockback_red_duration -= dt
   }
-  this.process_arm_polygons()
+
+  // Don't re-adjust the arms if dying, so they can explode out.
+  if (!this.dying) {
+    this.process_arm_polygons();
+  }
 }
 
 BossThree.prototype.force_frenzy = function() {
@@ -608,7 +610,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
 
 BossThree.prototype.initialize_arms = function() {
   for(var index = 0; index < this.num_arms; index++) {
-    var arm_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 10, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
+    var arm_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
     arm_body.SetAngle(this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
     this.striking_arms[index] = {
       interval: this.strike_duration,
@@ -619,7 +621,21 @@ BossThree.prototype.initialize_arms = function() {
       charging_prop: this.strike_charging_prop
     }
   }
+}
 
+BossThree.prototype.additional_death_prep = function() {
+  for(var index = 0; index < this.num_arms; index++) {
+    // Need to recreate arms.
+    var arm_body = create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x,
+    this.body.GetPosition().y, 3, 1, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
+    var angle = this.body.GetAngle() + Math.PI/(this.num_arms/2) * index;
+    arm_body.SetAngle(angle);
+    this.striking_arms[index].body = arm_body;
+    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    dir.Normalize();
+    dir.Multiply(10);
+    arm_body.ApplyImpulse(dir, arm_body.GetWorldCenter())
+  }
 }
 
 BossThree.prototype.get_impulse_sensitive_pts = function() {
@@ -662,7 +678,7 @@ BossThree.prototype.draw = function(context, draw_factor) {
   if(this.spawned) {
     for(var index in this.striking_arms) {
 
-      if(this.striking_arms[index].duration > 0) {
+      if(this.striking_arms[index].duration > 0 || this.dying) {
         var tp = this.striking_arms[index].body.GetPosition()
         var angle = this.striking_arms[index].body.GetAngle()
         context.save()
@@ -674,7 +690,6 @@ BossThree.prototype.draw = function(context, draw_factor) {
         drawSprite(context, h_dist/2 * draw_factor, 0, 0,
                   h_dist * draw_factor,v_dist * draw_factor, armSpriteName, negligentiaSprite)
         context.restore()
-
       }
     }
   }

@@ -113,8 +113,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.id = id
   this.dying = false
   this.died = false
-  this.dying_length = 500
-  this.dying_duration = 0
+  this.default_dying_length = 500;
+  this.dying_length = 500;
+  this.dying_duration = 0;
 
   this.status_duration = [0, 0, 0, 0] //[locked, silenced, gooed, lightened], time left for each status
 
@@ -605,7 +606,8 @@ Enemy.prototype.set_heading = function(heading) {
 
 Enemy.prototype.start_death = function(death) {
   this.dying = death
-  this.dying_duration = this.dying_length
+  this.dying_length = (death == "fade") ? 500 : this.default_dying_length;
+  this.dying_duration = this.dying_length;
   this.died = true
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
@@ -646,10 +648,8 @@ Enemy.prototype.start_death = function(death) {
   }
   if (this.dying != "fade") {
     this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+    this.additional_death_prep(death)
   }
-
-  this.additional_death_prep(death)
-
 }
 
 Enemy.prototype.additional_death_prep = function(death) {

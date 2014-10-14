@@ -166,6 +166,7 @@ Level.prototype.reset = function() {
   }
   this.restarting_level = false;
   this.enemies = []
+  this.fragments = []
   this.enemy_counter = 0
   this.spawn_interval = 200
   this.spawn_timer = this.spawn_interval
@@ -714,6 +715,8 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
 
+
+
   if(this.spark_loc) {
     var prog = this.spark_duration/this.spark_life;
     context.save()
@@ -756,6 +759,10 @@ Level.prototype.draw = function(context, draw_factor) {
     context.globalAlpha *= this.enemy_visibility;
   }
 
+  for(var i = 0; i < this.fragments.length; i++) {
+    this.fragments[i].draw(context, draw_factor)
+  }
+
   for(var i = 0; i < this.enemies.length; i++) {
     this.enemies[i].pre_draw(context, draw_factor)
   }
@@ -789,10 +796,6 @@ Level.prototype.draw = function(context, draw_factor) {
     this.enemies[i].final_draw(context, draw_factor)
   }
 
-
-  for(var i = 0; i < this.fragments.length; i++) {
-    this.fragments[i].draw(context, draw_factor)
-  }
   if (this.enemy_visibility != 1) {
     context.restore();
   }

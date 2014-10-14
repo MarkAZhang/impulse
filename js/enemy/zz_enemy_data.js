@@ -578,6 +578,12 @@ imp_params.impulse_enemy_stats["first boss"] = {
   [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]},
   ],
+  death_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
+  [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
+  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]},
+  ],
    /* [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
   [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
@@ -633,6 +639,11 @@ imp_params.impulse_enemy_stats["second boss"] = {
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
+  death_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
+    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
+  [0.5 * Math.cos(Math.PI * 2/4), 0.5 * Math.sin(Math.PI * 2/4)],
+  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
+  [0.5 * Math.cos(Math.PI * 6/4), 0.5 * Math.sin(Math.PI * 6/4)]]}],
 
   dies_on_impact: "NO",
   special_ability: "Exerts a gravity on the field, pulling everything towards it. The closer to the boss, the stronger the pull. The boss has four gravity arms, inside which the gravity is doubled. The boss can also send a massive shockwave through the field.",
@@ -670,7 +681,13 @@ imp_params.impulse_enemy_stats["third boss"] = {
   [Math.cos(Math.PI * 14/8), Math.sin(Math.PI * 14/8)],
   [Math.cos(Math.PI * 15/8), Math.sin(Math.PI * 15/8)]
   ]}],
-  arm_polygon: [{type: "polygon", x: 0, y: 0, r: 4.5, vertices:
+  death_polygons: [{type: "polygon", x: 0, y: 0, r: 4.5, vertices:
+    [[0.8 * Math.cos(Math.PI * 1/3), 0.8 * Math.sin(Math.PI*1/3)],
+    [0.6 * Math.cos(Math.PI * 2/3), 0.6 * Math.sin(Math.PI*2/3)],
+    [0.6 * Math.cos(Math.PI * 4/3), 0.6 * Math.sin(Math.PI*4/3)],
+    [0.8 * Math.cos(Math.PI * 5/3), 0.8 * Math.sin(Math.PI * 5/3)]]}
+  ],
+  arm_polygon: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[0, 0],
   [Math.cos(Math.PI * 0/8), Math.sin(Math.PI * 0/8)],
   [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)]]}
@@ -680,7 +697,7 @@ imp_params.impulse_enemy_stats["third boss"] = {
   other_notes: "Turrets which enter an obstacle cannot attack. Bullets can be reflected by Impulse to hit other enemies, including the boss.",
   className: BossThree
 
-}
+};
 
 imp_params.impulse_enemy_stats["fourth boss"] = {
   color: "#ff0000",
@@ -702,6 +719,13 @@ imp_params.impulse_enemy_stats["fourth boss"] = {
   ],
   body_bud_radius: 2,
   bud_polygon: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
+    [[Math.cos(Math.PI * 0) , Math.sin(Math.PI*0)],
+    [Math.cos(Math.PI * 2/5) , Math.sin(Math.PI * 2/5)],
+    [Math.cos(Math.PI * 4/5) , Math.sin(Math.PI * 4/5)],
+    [Math.cos(Math.PI * 6/5) , Math.sin(Math.PI * 6/5)],
+    [Math.cos(Math.PI * 8/5) , Math.sin(Math.PI * 8/5)]]}
+  ],
+  death_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
     [[Math.cos(Math.PI * 0) , Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 2/5) , Math.sin(Math.PI * 2/5)],
     [Math.cos(Math.PI * 4/5) , Math.sin(Math.PI * 4/5)],
