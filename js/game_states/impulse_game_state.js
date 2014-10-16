@@ -418,7 +418,8 @@ ImpulseGameState.prototype.process = function(dt) {
     }
 
 
-    if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 && this.level.boss.dying == "fade" && !this.player.dying) {
+    if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 &&
+     this.level.boss.dying != "fade" && !this.player.dying) {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"

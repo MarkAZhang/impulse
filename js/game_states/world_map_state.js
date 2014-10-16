@@ -14,6 +14,14 @@ function WorldMapState(world, is_practice_mode) {
   this.cur_start_spark_val = calculate_spark_val()
   this.has_ult = has_ult()
 
+  if (world == -1) {
+    var i = 1;
+    while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+      i += 1
+    }
+  }
+
+
   this.world_num = world
   this.next_world = null;
 
@@ -32,9 +40,10 @@ function WorldMapState(world, is_practice_mode) {
 
   this.difficulties = ["easy", "normal"];
 
-  this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
-
-  this.buttons.push(this.select_difficulty_button);
+  if (imp_vars.player_data.hard_mode_unlocked) {
+    this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
+    this.buttons.push(this.select_difficulty_button);
+  }
 
   this.num_mode_buttons = 5
 

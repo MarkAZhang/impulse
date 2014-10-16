@@ -22,8 +22,10 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.current_lives = calculate_lives();
   this.current_sparks = calculate_spark_val();
   this.current_ult = calculate_ult();
+  this.hard_mode_just_unlocked = false;
   this.stars = 0; // only for practice mode.
   var _this = this;
+  this.initial_difficulty_mode = imp_vars.player_data.difficulty_mode;
 
   this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_vars.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
   this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
@@ -50,14 +52,6 @@ RewardGameState.prototype.change_mode = function(type) {
   }
 }
 
-
-// Check whether the quest is already complete. If it isn't, show the reward screen.
-RewardGameState.prototype.quest_complete = function(type) {
-  if (!is_quest_completed(type)) {
-    set_quest_completed(type)
-  }
-}
-
 RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   if(this.rewards.length == 0) {
     return
@@ -70,6 +64,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
     if (cur_reward.type == "world_victory") {
       draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+(cur_reward.data+1))
+    } else if (cur_reward.type == "final_victory") {
+      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Title Alt4")
     } else {
       draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
     }
@@ -78,6 +74,8 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.save()
   if (cur_reward.type == "world_victory") {
     ctx.globalAlpha *= get_bg_opacity(cur_reward.data + 1);
+  } else if (cur_reward.type == "final_victory") {
+    ctx.globalAlpha *= get_bg_opacity(0) / 2;
   } else {
     ctx.globalAlpha *= get_bg_opacity(0);
   }
@@ -115,32 +113,30 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       message_size = 24
       main_message = "NEW HIVE UNLOCKED"
-      main_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
+      main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
       ctx.fillText("HIVE "+imp_params.tessellation_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
-      message_size = 32
             
-      final_message = imp_vars.player_data.difficulty_mode == "easy" ? "STANDARD MODE COMPLETED" : "CHALLENGE MODE COMPLETED"
-      final_message_teaser = imp_vars.player_data.difficulty_mode == "easy" ? "WELL DONE" : "WICKED SICK"
+      final_message = this.initial_difficulty_mode == "easy" ? "HARD MODE UNLOCKED FOR ALL HIVES" : "CHALLENGE MODE COMPLETED"
+      final_message_teaser = this.initial_difficulty_mode == "easy" ? "THE REAL GAME BEGINS" : "INCREDIBLE"
 
       ctx.textAlign = "center"
-      ctx.fillStyle = impulse_colors["impulse_blue"]  
-      ctx.font = "32px Muli"
+      ctx.fillStyle = "white"
+      ctx.font = "24px Muli"
       ctx.fillText(final_message, imp_vars.levelWidth/2, 240)
       ctx.font = "20px Muli"
-      ctx.fillStyle = "white"
+      ctx.fillStyle = "red" // impulse_colors["impulse_blue"]  
       ctx.fillText(final_message_teaser, imp_vars.levelWidth/2, 280)
 
       ctx.font = "16px Muli"
       ctx.fillStyle = "white"
-      if (imp_vars.player_data.difficulty_mode == "easy") {
-        ctx.fillText("BUT CAN YOU CONQUER CHALLENGE MODE?", imp_vars.levelWidth/2, 400)
+      if (this.initial_difficulty_mode == "easy") {
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_vars.levelWidth/2, 450)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_vars.levelWidth/2, 320)
         // TODO: add sharing
       }
     }
@@ -402,6 +398,19 @@ RewardGameState.prototype.next_reward = function() {
   }
 }
 
+RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
+  // If we just unlocked hard mode, go to 1.
+  var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
+
+  if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
+    set_bg("Title Alt" + go_to_world_num, imp_vars.bg_opacity * 0.5)
+  } else {
+    set_bg("Hive 0", imp_vars.bg_opacity)
+  }
+
+  switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));    
+}
+
 RewardGameState.prototype.advance_game_state = function() {
   if(this.to_tutorial) {
     switch_game_state(new HowToPlayState("ult_tutorial"))
@@ -412,15 +421,19 @@ RewardGameState.prototype.advance_game_state = function() {
       switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
     } else if (this.victory && this.hive_numbers.world == 0 && this.first_time) {
       switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
+    } else if (this.victory && this.hive_numbers.world == 4) {
+      this.switch_to_world_map(false);
+    } else if (this.args.just_saved) {
+      switch_game_state(new TitleState(this));
     } else {
-      switch_game_state(new TitleState(true))
+      this.switch_to_world_map(false);
     }
   } else if (this.args.is_tutorial) {
       if (this.args.tutorial_type == "ult_tutorial") {
         // They MUST have come from world 2. Take them to world 2.
         switch_game_state(new MainGameTransitionState(2, null, null, null, null))    
       } else {
-        switch_game_state(new TitleState(true))  
+        this.switch_to_world_map(false);
       }
   } else {
     if (this.victory) {
@@ -431,12 +444,7 @@ RewardGameState.prototype.advance_game_state = function() {
         victory: this.victory
       }));
     } else {
-      if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
-        set_bg("Title Alt" + this.args.world_num, imp_vars.bg_opacity * 0.5)
-      } else {
-        set_bg("Hive 0", imp_vars.bg_opacity)
-      }
-      switch_game_state(new WorldMapState(this.args.world_num, true));  
+      this.switch_to_world_map(true);
     }
   }
 }
@@ -454,21 +462,25 @@ RewardGameState.prototype.determine_rewards = function() {
   }
 
   if (this.main_game) {
-    if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world] 
-      && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+    if(imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world] 
+      && imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
 
       if (this.hive_numbers.world == 4) {
-        set_quest_completed("final_boss")
         this.rewards.push({
           type: "final_victory",
         })
+        if (this.initial_difficulty_mode == "easy") {
+          imp_vars.player_data.hard_mode_unlocked = true;
+          this.hard_mode_just_unlocked = true;
+          imp_vars.player_data.difficulty_mode = "normal";
+          save_game();
+        }
       }
 
-      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
+      imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
       save_game();
     }
   }
-  
 }
 
 RewardGameState.prototype.on_key_down = function(keyCode) {

@@ -81,7 +81,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   if(victory) {
     this.calculate_deaths()
-    this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED"
+    this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED";
 
     var min_star = 3
     for(level in hive_numbers.game_numbers) {
@@ -590,7 +590,7 @@ MainGameSummaryState.prototype.check_quests = function() {
 }
 
 MainGameSummaryState.prototype.exit_game = function() {
-  switch_game_state( new TitleState(true))
+  switch_game_state(new TitleState(true))
 }
 
 MainGameSummaryState.prototype.go_to_next_state = function() {
@@ -598,7 +598,8 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
     switch_game_state(new RewardGameState(this.hive_numbers, true, 
       {victory: true, 
         is_tutorial: this.world_num == 0,
-        first_time_tutorial: imp_vars.player_data.first_time}))
+        first_time_tutorial: imp_vars.player_data.first_time,
+        just_saved: this.just_saved}))
   /*} else if(this.level) {
     this.hive_numbers.continue()
     switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))*/
@@ -606,6 +607,7 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
     switch_game_state(new RewardGameState(this.hive_numbers, true, 
       {victory: false, 
         is_tutorial: this.world_num == 0,
-        first_time_tutorial: imp_vars.player_data.first_time}))
+        first_time_tutorial: imp_vars.player_data.first_time,
+        just_saved: this.just_saved}))
   }
 }

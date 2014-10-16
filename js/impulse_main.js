@@ -579,6 +579,8 @@ function load_game() {
     load_obj = JSON.parse(localStorage[imp_vars.save_name])
     imp_vars.player_data.first_time = load_obj['first_time'] == false? false: true
   }
+  imp_vars.player_data.hard_mode_unlocked = load_obj['hard_mode_unlocked'] ? true : false;
+
 
   if(!load_obj['levels']) {
     load_obj['levels'] = {}
@@ -729,6 +731,7 @@ function save_game() {
   save_obj['save_data'] = imp_vars.player_data.save_data
   save_obj['options'] = imp_vars.player_data.options
   save_obj['first_time'] = imp_vars.player_data.first_time
+  save_obj['hard_mode_unlocked'] = imp_vars.player_data.hard_mode_unlocked;
   save_obj['tutorial_shown'] = imp_vars.player_data.tutorial_shown;
   save_obj['quests'] = imp_vars.player_data.quests
   localStorage[imp_vars.save_name] = JSON.stringify(save_obj)
