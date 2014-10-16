@@ -579,8 +579,19 @@ function load_game() {
     load_obj = JSON.parse(localStorage[imp_vars.save_name])
     imp_vars.player_data.first_time = load_obj['first_time'] == false? false: true
   }
-  imp_vars.player_data.hard_mode_unlocked = load_obj['hard_mode_unlocked'] ? true : false;
 
+  if (load_obj['hard_mode_unlocked'] !== undefined) {
+    imp_vars.player_data.hard_mode_unlocked = load_obj['hard_mode_unlocked'];
+    if (!imp_vars.player_data.hard_mode_unlocked) {
+      imp_vars.player_data.difficulty_mode = "easy";
+    }
+  } else {
+    // if we don't have a value, but the player has beaten world 4, then it should be unlocked.
+    imp_vars.player_data.hard_mode_unlocked = false;
+    if (imp_vars.player_data.world_rankings["easy"]["world 4"] !== undefined) {
+      imp_vars.player_data.hard_mode_unlocked = true;
+    }
+  }
 
   if(!load_obj['levels']) {
     load_obj['levels'] = {}

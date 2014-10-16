@@ -14,14 +14,6 @@ function WorldMapState(world, is_practice_mode) {
   this.cur_start_spark_val = calculate_spark_val()
   this.has_ult = has_ult()
 
-  if (world == -1) {
-    var i = 1;
-    while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
-      i += 1
-    }
-  }
-
-
   this.world_num = world
   this.next_world = null;
 
