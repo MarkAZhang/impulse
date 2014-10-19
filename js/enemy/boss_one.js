@@ -61,6 +61,11 @@ function BossOne(world, x, y, id, impulse_game_state) {
     this.turret_firing_interval = 1500
   }  
 
+  // Slightly easier to push on easy mode.
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.impulse_extra_factor = 12
+  }
+
   this.turn_rate = 5000
 
   this.red_visibility = 0
@@ -446,6 +451,12 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
   var dir = new b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
 
   var enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
+  if (imp_vars.player_data.difficulty_mode == "easy" && enemy_type == "tank") {
+    // If it's a tank, reroll to reduce number of tanks.
+    if (Math.random() < 0.5) {
+      enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
+    }
+  }
   dir.Normalize()
   var spawn_loc = null;
   if(arm == "left")
