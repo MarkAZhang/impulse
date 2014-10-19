@@ -442,10 +442,13 @@ Level.prototype.initial_spawn = function() {
 
 Level.prototype.spawn_enemy_set = function(enemy_type_list) {
   var pivot_spawn_index = this.pick_pivot_spawn_index();
+  var enemies_left = enemy_type_list.slice(0);
   for (var i = 0; i < enemy_type_list.length; i++) {
     // Spread the spawn around the unit circle.
-    var next_index = pivot_spawn_index + Math.floor(i / enemy_type_list.length * this.spawn_points.length);
-    this.spawn_this_enemy(enemy_type_list[i], next_index);
+    var next_spawn_index = pivot_spawn_index + Math.floor(i / enemy_type_list.length * this.spawn_points.length);
+    var enemy_index = Math.floor(Math.random() * enemies_left.length);
+    this.spawn_this_enemy(enemies_left[enemy_index], next_spawn_index);
+    enemies_left.splice(enemy_index, 1);
   }
 }
 
