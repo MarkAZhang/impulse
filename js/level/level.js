@@ -56,8 +56,9 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.spawn_points = data.spawn_points
 
+  this.order_spawn_points();
+
   this.obstacle_num = data.obstacle_num
-  
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.obstacle_v = data.obstacle_v_easy
@@ -413,36 +414,45 @@ Level.prototype.process = function(dt) {
   }
 }
 
+Level.prototype.order_spawn_points = function() {
+  this.spawn_points.sort(function(a, b) {
+    var angle_a = _atan({x: 400, y: 300}, {x: a[0], y: a[1]});
+    var angle_b = _atan({x: 400, y: 300}, {x: b[0], y: b[1]});
+    return angle_a - angle_b;
+  })
+}
+
 Level.prototype.initial_spawn = function() {
   if(this.initial_spawn_data) {
+    var enemy_type_list = [];
     for(var enemy in this.initial_spawn_data) {
-
-      // re-seed for each type of enemy
-      var spawn_point_index = 0;
-      if (num_enemies_to_spawn > 0) {
-        if(this.spawn_points) {
-          spawn_point_index = this.pick_spawn_index();
-        }
-      }
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
       if(!this.is_boss_level && imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
-      for(var i = 0; i < Math.floor(num_enemies_to_spawn); i++) {
-        this.spawn_this_enemy(enemy, spawn_point_index);
-        spawn_point_index = this.pick_spawn_index(spawn_point_index);
+      for (var i = 0; i < num_enemies_to_spawn; i++) {
+        enemy_type_list.push(enemy);
       }
     }
+    this.spawn_enemy_set(enemy_type_list);
   }
 }
 
-Level.prototype.pick_spawn_index = function(last_index) {
+Level.prototype.spawn_enemy_set = function(enemy_type_list) {
+  var pivot_spawn_index = this.pick_pivot_spawn_index();
+  for (var i = 0; i < enemy_type_list.length; i++) {
+    // Spread the spawn around the unit circle.
+    var next_index = pivot_spawn_index + Math.floor(i / enemy_type_list.length * this.spawn_points.length);
+    this.spawn_this_enemy(enemy_type_list[i], next_index);
+  }
+}
+
+Level.prototype.pick_pivot_spawn_index = function() {
+  // Pick the spawn point furthest from any enemy.
   if (this.spawn_pattern == "spread") {
-    // Pick the spawn point furthest from any enemy.
     var max_distance = 0;
-    // The default is a random spawn point.
     var best_spawn_point = Math.floor(Math.random() * this.spawn_points.length);
     for (var i = 0; i < this.spawn_points.length; i++) {
       var spawn_point = {x: this.spawn_points[i][0] / imp_vars.draw_factor, y: this.spawn_points[i][1] / imp_vars.draw_factor};
@@ -460,16 +470,15 @@ Level.prototype.pick_spawn_index = function(last_index) {
     }
     return best_spawn_point;
   } else {
-    if (last_index == undefined) {
-      return Math.floor(Math.random() * this.spawn_points.length)
-    } else {
-      return last_index + 1;
-    }
+    // The default is a random spawn point.
+    return Math.floor(Math.random() * this.spawn_points.length)
   }
 }
 
 Level.prototype.check_enemy_spawn_timers = function(dt) {
   if (this.is_boss_level) return
+
+  var enemy_type_list = [];
 
   for(var enemy_type in this.enemy_spawners) {
     var enemy_spawner = this.enemy_spawners[enemy_type]
@@ -492,21 +501,12 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
         num_enemies_to_spawn = 0
       }
 
-      // re-seed for each type of enemy. Note that enemies added here are put in the spawn queue, so the "spread" spawning pattern
-      // won't work quite right. To get it to work perfectly, you need to only spawn 1 enemy per round.
-      var spawn_point_index = 0;
-
-      if (num_enemies_to_spawn > 0) {
-        if(this.spawn_points) {
-          spawn_point_index = this.pick_spawn_index();
-        }
-        for(var j = 0; j < Math.floor(num_enemies_to_spawn); j++) {
-          this.spawn_queue.push({type: enemy_type, spawn_point: spawn_point_index})
-          spawn_point_index = this.pick_spawn_index(spawn_point_index);
-        }
+      for (var i = 0; i < num_enemies_to_spawn; i++) {
+        enemy_type_list.push(enemy_type);
       }
     }
   }
+  this.spawn_enemy_set(enemy_type_list);
   if (this.enemies.length == 0 && this.spawn_queue.length == 0) {
     this.skip_enemy_spawn_timers()
   }
