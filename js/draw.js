@@ -1137,8 +1137,19 @@ function draw_spark_fragment(context, x, y, angle) {
 
 }
 
-function draw_multi_powerup(context, x, y) {
-  drawSprite(context, x, y, 0, 36, 36, "multi_powerup")
+function draw_multi_powerup(context, x, y, prog) {
+  drawSprite(context, x + 1, y, 0, 20, 20, "multi_powerup")
+  context.strokeStyle = "white"
+  context.lineWidth = 2;
+  context.save();
+  context.globalAlpha *= 0.5;
+  context.beginPath();
+  context.arc(x, y, 15, -.5* Math.PI, -.5 * Math.PI + 0.001, true)
+  context.stroke();
+  context.restore();
+  context.beginPath();
+  context.arc(x, y, 15, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (1 - prog), true)
+  context.stroke();
 }
 
 
@@ -1417,8 +1428,10 @@ var spriteSheetData = {
   "world2_timer": [241, 211, 48, 61],
   "world3_timer": [189, 277, 48, 62],
   "world4_timer": [241, 277, 48, 62],
-  "spark_powerup": [304, 0, 49, 48],
-  "multi_powerup": [304, 52, 49, 48],
+  //"spark_powerup": [304, 0, 49, 48],
+  "spark_powerup": [310, 6, 37, 36],
+  //"multi_powerup": [304, 52, 49, 48],
+  "multi_powerup": [310, 58, 37, 36],
   "ult_powerup": [304, 105, 49, 48],
 
   "immunitas_arm": [0, 0, 90, 90],

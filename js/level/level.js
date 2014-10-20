@@ -745,7 +745,7 @@ Level.prototype.draw = function(context, draw_factor) {
       context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
     }
 
-    draw_multi_powerup(context, this.multi_loc.x, this.multi_loc.y)
+    draw_multi_powerup(context, this.multi_loc.x, this.multi_loc.y, prog)
     context.restore()
 
   }
