@@ -177,6 +177,7 @@ ImpulseGameState.prototype.reset = function() {
   this.new_enemy_timer = 0
   this.new_enemy_type = null
   this.processed_death = false;
+  this.first_time = false;
   this.out_of_lives = false
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
@@ -472,6 +473,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     this.player.process(dt)
     this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+    this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
 
     this.game_numbers.game_length += dt;
     if (this.world_num > 0)
@@ -945,7 +947,6 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
     } else {
       context.fillStyle = this.color;
-      this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
       context.font = '16px Muli';
       context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
       context.font = '32px Muli';

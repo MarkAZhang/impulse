@@ -942,9 +942,6 @@ BossOne.prototype.draw = function(context, draw_factor) {
     else
       context.globalAlpha *= this.visibility ? this.visibility : 1
 
-
-  
-
   this.draw_arm_piece(this.body_parts["lu"], context, draw_factor, "left")
   this.draw_arm_piece(this.body_parts["ru"], context, draw_factor, "right")
   this.draw_arm_piece(this.body_parts["ll"], context, draw_factor, "left")
