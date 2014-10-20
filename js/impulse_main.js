@@ -522,6 +522,10 @@ function toggle_mute() {
   }
 }
 
+function is_mute() {
+  return imp_vars.impulse_music_mute;
+}
+
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 

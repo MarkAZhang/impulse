@@ -24,6 +24,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.pause = true
   this.ready = false
   this.buttons = []
+
   this.last_fps_time = 0
   this.fps_counter = null
   this.fps = 0
@@ -73,6 +74,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
+
+  this.add_buttons();
 
   this.boss_intro_text_interval = 6000
   this.boss_intro_text_duration = 0
@@ -213,6 +216,21 @@ ImpulseGameState.prototype.reset = function() {
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
  // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
+}
+
+ImpulseGameState.prototype.add_buttons = function() {
+  var button = new CheckboxOptionButton("FULLSCREEN", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 50, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
+    toggleFullScreen();
+  }, function() {
+    return isInFullScreen()
+  });
+  this.buttons.push(button);
+  var button = new CheckboxOptionButton("MUTE", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 20, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
+    toggle_mute();
+  }, function() {
+    return !is_mute();
+  });
+  this.buttons.push(button);
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
@@ -925,7 +943,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   } else {
     context.fillText("PRESS ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
   }
-  
+
   context.restore();
   /* context.font = '24px Muli';
   context.fillText("Q", imp_vars.sidebarWidth/2, menuY);
@@ -939,18 +957,18 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       this.main_game && imp_vars.player_data.options.speed_run_countdown) {
       context.fillStyle = this.color
       context.font = '16px Muli';
-      context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 70);
+      context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 70);
       context.fillStyle = "white";
-      context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+      context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 50);
       context.font = '32px Muli';
       var total_time = convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
-      context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
+      context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 18);  
     } else {
       context.fillStyle = this.color;
       context.font = '16px Muli';
-      context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+      context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 50);
       context.font = '32px Muli';
-      context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);  
+      context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 18);  
     }
   }
 
@@ -1099,10 +1117,18 @@ ImpulseGameState.prototype.on_mouse_down = function(x, y) {
   /*if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
     return
   }*/
-
-  if(!this.pause) {
-    this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
-    //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
+  
+  var preventDefault = false;
+  for(var i = 0; i < this.buttons.length; i++) {
+    if(this.buttons[i].on_click(x, y)) {
+      preventDefault = true;
+    }
+  }
+  if (!preventDefault) {
+    if(!this.pause) {
+      this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+      //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
+    }  
   }
 }
 
