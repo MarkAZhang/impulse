@@ -1,4 +1,4 @@
-ImpulseGameState.prototype = new GameState
+  ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
@@ -219,13 +219,13 @@ ImpulseGameState.prototype.reset = function() {
 }
 
 ImpulseGameState.prototype.add_buttons = function() {
-  var button = new CheckboxOptionButton("FULLSCREEN", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 50, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
+  var button = new CheckboxOptionButton("FULLSCREEN", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 60, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
     toggleFullScreen();
   }, function() {
     return isInFullScreen()
   });
   this.buttons.push(button);
-  var button = new CheckboxOptionButton("MUTE", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 20, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
+  var button = new CheckboxOptionButton("MUTE", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 30, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
     toggle_mute();
   }, function() {
     return !is_mute();
@@ -670,9 +670,12 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   this.draw_score_bar(ctx)
 
+  ctx.save();
+  this.set_zoom_transparency(ctx);
   for(var i=0; i < this.buttons.length; i++) {
     this.buttons[i].draw(ctx)
   }
+  ctx.restore();
   
   ctx.save();
   ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
@@ -886,7 +889,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.color;
   context.textAlign = 'center'
 
-  var titleTextY = 30;
+  var titleTextY = 0;
 
   if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal") {
     context.font = "20px Muli"
@@ -922,20 +925,20 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, titleTextY + 70)
   }
 
-  var menuY =  25;//imp_vars.canvasHeight / 2 - 70;
+  var menuY =  imp_vars.canvasHeight - 85;//imp_vars.canvasHeight / 2 - 70;
 
   context.beginPath()
   var w = 190;
   var h = 30;
-  context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
+  /*context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
   context.lineWidth = 4;
   context.strokeStyle = this.color
-  context.fillStyle = this.bright_color;
   context.save();
   context.globalAlpha /= 2;
   context.stroke();
-  context.restore();
-  context.font = '16px Muli';
+  context.restore();*/
+  context.fillStyle = this.bright_color;
+  context.font = '18px Muli';
   context.save();
   context.globalAlpha *= 0.8;
   if(imp_vars.player_data.options.control_hand == "right") {
@@ -950,25 +953,25 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.font = '12px Muli';
   context.fillText("FOR MENU", imp_vars.sidebarWidth/2, menuY + 17);*/
 
+  var timeY = imp_vars.canvasHeight/2 - 20;
   // draw the game time
   if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
     // Show speed run countdown.
     if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && 
       this.main_game && imp_vars.player_data.options.speed_run_countdown) {
-      context.fillStyle = this.color
+      context.fillStyle = "white"
       context.font = '16px Muli';
-      context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 70);
-      context.fillStyle = "white";
-      context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 50);
+      context.fillText("SPEED RUN", imp_vars.sidebarWidth/2, timeY - 30);
+      context.fillText("TIME LEFT", imp_vars.sidebarWidth/2, timeY - 10);
       context.font = '32px Muli';
       var total_time = convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
-      context.fillText(total_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 18);  
+      context.fillText(total_time, imp_vars.sidebarWidth/2, timeY + 22);  
     } else {
       context.fillStyle = this.color;
       context.font = '16px Muli';
-      context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 50);
+      context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, timeY - 10);
       context.font = '32px Muli';
-      context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 18);  
+      context.fillText(this.game_numbers.last_time, imp_vars.sidebarWidth/2, timeY + 22);
     }
   }
 
@@ -1118,18 +1121,13 @@ ImpulseGameState.prototype.on_mouse_down = function(x, y) {
     return
   }*/
   
-  var preventDefault = false;
   for(var i = 0; i < this.buttons.length; i++) {
-    if(this.buttons[i].on_click(x, y)) {
-      preventDefault = true;
-    }
+    this.buttons[i].on_click(x, y)
   }
-  if (!preventDefault) {
-    if(!this.pause) {
-      this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
-      //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
-    }  
-  }
+  if(!this.pause) {
+    this.player.mouse_down(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
+    //this.last_loc = {x: x - imp_vars.sidebarWidth, y: y}
+  }  
 }
 
 
