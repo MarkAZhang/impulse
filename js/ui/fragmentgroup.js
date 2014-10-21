@@ -25,6 +25,9 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.original_v_damping = 0.5
     this.num_fragments = 50
     this.burst = 10;
+    if (enemy_type == "boss_two") {
+      this.burst = 20;
+    }
     this.waves = 5;
     this.lifespan = 2000;
   } else if(enemy_type=="player") {

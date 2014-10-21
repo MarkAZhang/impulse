@@ -377,7 +377,7 @@ imp_params.impulse_enemy_stats["disabler"] = {
 
 imp_params.impulse_enemy_stats["troll"] = {
   color: "#159d31",
-  density: 1.5,
+  density: 1.3,
   lin_damp: 3,
   effective_radius: 0.7,
   force: 0.38,

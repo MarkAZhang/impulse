@@ -435,8 +435,15 @@ Level.prototype.initial_spawn = function() {
       for (var i = 0; i < num_enemies_to_spawn; i++) {
         enemy_type_list.push(enemy);
       }
+
+      if (this.spawn_pattern == "separate_by_type") {
+        this.spawn_enemy_set(enemy_type_list);    
+        enemy_type_list = [];
+      }
     }
-    this.spawn_enemy_set(enemy_type_list);
+    if (this.spawn_pattern != "separate_by_type") {
+      this.spawn_enemy_set(enemy_type_list);
+    }
   }
 }
 
@@ -504,7 +511,7 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
         num_enemies_to_spawn = 0
       }
 
-      for (var i = 0; i < num_enemies_to_spawn; i++) {
+      for (var i = 1; i <= num_enemies_to_spawn; i++) {
         enemy_type_list.push(enemy_type);
       }
     }

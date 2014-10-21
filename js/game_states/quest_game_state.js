@@ -68,12 +68,12 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillText("ACHIEVEMENTS", imp_vars.levelWidth/2, 50)
   ctx.font = '12px Muli'
   ctx.fillText("MOUSE OVER TO VIEW", imp_vars.levelWidth/2, 75)
-  draw_lives_and_sparks(ctx,
+  /* draw_lives_and_sparks(ctx,
     this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult,
     imp_vars.levelWidth / 2, 
     imp_vars.levelHeight - 50, 
     15, 
-    {labels: true, ult: this.has_ult, lives: false, sparks: false, starting_values: true})
+    {labels: true, ult: this.has_ult, lives: false, sparks: false, starting_values: true}) */
   /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);

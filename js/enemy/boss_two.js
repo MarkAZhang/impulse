@@ -13,12 +13,21 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
+  this.gateway_particles = []
+  this.gateway_particle_gen_interval = 1000
+  this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
+  this.gateway_particle_duration = 2000
+  this.gateway_particles_per_round = 8
+
   this.safe = true
 
   this.arm_core_angle = Math.PI * 3/4
   this.arm_width_angle_min = Math.PI * 3/16
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.arm_width_angle_min = Math.PI * 5/32
+  }
   this.arm_width_angle_max = Math.PI * 1/2
-  this.arm_width_angle = Math.PI * 3/16
+  this.arm_width_angle = this.arm_width_angle_min
   this.arm_width_angle_transition_rate = Math.PI * 1/8
   this.arm_length = 50
   this.arm_taper = .9
@@ -89,11 +98,11 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.shrink_rate = 0.025
 
   this.enemy_spawn_interval = 10000
-  this.enemy_spawn_duration = 1000
+  this.enemy_spawn_duration = 2000
 
   this.spawn_sets = [
     ["stunner", "mote"],
-    ["spear", "harpoon"],
+    ["harpoon", "spear"],
     ["tank", "goo"]
   ]
 
@@ -144,7 +153,8 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.spawn_spawners = true
     var spawner_buffer = 80
     var locs = [/*[spawner_buffer, spawner_buffer], [levelWidth - spawner_buffer, spawner_buffer],*/
-      [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], [spawner_buffer, imp_vars.levelHeight - spawner_buffer]]
+      [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
+      [spawner_buffer, spawner_buffer]]
     for(var i = 0; i < locs.length; i++) {
       var new_spawner = new BossTwoSpawner(locs[i][0], locs[i][1], this, this.impulse_game_state)
       new_spawner.spawn_duration = i/locs.length * new_spawner.spawn_interval
@@ -191,6 +201,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     }
     this.adjust_size()
   }
+  this.process_gateway_particles(dt);
 
   var target_arm_width_angle = this.get_target_arm_width_angle()
   if(this.arm_width_angle != target_arm_width_angle) {
@@ -223,7 +234,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     if (this.level.enemies[i].id == this.id) continue
     var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), this.body.GetPosition())
 
-    var gravity_force = this.enemy_gravity_factor[this.level.enemies[i].type] * this.get_gravity_force(this.level.enemies[i].body.GetPosition())
+    var gravity_force = this.enemy_gravity_factor[this.level.enemies[i].type] * this.get_gravity_force(this.level.enemies[i].body.GetPosition(), true)
 
     if(gravity_force > 0)
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
@@ -269,7 +280,7 @@ BossTwo.prototype.get_target_arm_width_angle = function() {
   return this.arm_width_angle_min + Math.min(1, (this.growth_factor - 1) / 2) * (this.arm_width_angle_max - this.arm_width_angle_min);
 }
 
-BossTwo.prototype.get_gravity_force = function(loc) {
+BossTwo.prototype.get_gravity_force = function(loc, is_enemy) {
 var dist =  p_dist(loc, this.body.GetPosition())
 var polygons = this.get_arm_polygons()
   var inside = false
@@ -279,7 +290,7 @@ var polygons = this.get_arm_polygons()
         return 2 * this.boss_beam_gravity_force
       else if (dist <= this.effective_radius * this.last_growth_factor * this.low_gravity_factor)
         return 1.5 * this.boss_beam_gravity_force
-      return this.boss_beam_gravity_force
+      return is_enemy ? this.boss_beam_gravity_force * 0.5 : this.boss_beam_gravity_force
     }
   }
   if (dist <= this.effective_radius * this.last_growth_factor * this.high_gravity_factor) {
@@ -307,6 +318,8 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
     context.globalAlpha *= 2
   }
+
+  this.draw_gateway_particles(context, draw_factor);
 
   if(this.black_hole_timer < 0 && this.black_hole_timer >= -this.black_hole_duration) {
     var tp = this.body.GetPosition()
@@ -645,3 +658,53 @@ BossTwo.prototype.black_hole = function() {
   }
 }
 
+BossTwo.prototype.process_gateway_particles = function(dt) {
+  for (var i = 0; i < this.gateway_particles.length; i++) {
+    var particle = this.gateway_particles[i];
+    particle.prop += dt / this.gateway_particle_duration;
+    // remove the particle
+    if (particle.prop > 1) {
+      this.gateway_particles.splice(i, 1);
+    }
+  }
+
+  this.gateway_particle_gen_timer -= dt
+
+  if (this.gateway_particle_gen_timer < 0) {
+    this.gateway_particle_gen_timer += this.gateway_particle_gen_interval
+    this.generate_gateway_particles(this.body.GetPosition().x, this.body.GetPosition().y, this.gateway_particles_per_round)
+  }
+}
+
+BossTwo.prototype.generate_gateway_particles = function(x, y, num_particles) {
+  for (var i = 0; i < num_particles; i++) {
+    var angle = Math.PI * 2 * i / num_particles + (Math.random() - 0.5) * Math.PI * 2 / num_particles
+    this.gateway_particles.push({
+      start_x: Math.cos(angle) * this.effective_radius * this.last_growth_factor * this.high_gravity_factor + x,
+      start_y: Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.high_gravity_factor + y,
+      prop: 0
+    });
+  }
+}
+
+BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
+  for(var i = 0; i < this.gateway_particles.length; i++) {
+    var particle = this.gateway_particles[i];
+    ctx.save()
+    if (particle.prop < 0.25) {
+      ctx.globalAlpha *= particle.prop * 4
+    } else { 
+      var temp = (1 - particle.prop) / (0.75)
+      ctx.globalAlpha *= temp
+    }
+    ctx.beginPath()
+    ctx.rect(
+      draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop) - 3,
+      draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop) - 3,
+      6,
+      6)
+    ctx.fillStyle = impulse_colors["world " + this.impulse_game_state.world_num + " bright"]
+    ctx.fill()
+    ctx.restore()
+  }
+}

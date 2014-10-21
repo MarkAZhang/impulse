@@ -1079,9 +1079,11 @@ DeleteDataDialog.prototype.on_click = function(x, y) {
 
 DeleteDataDialog.prototype.clear_data = function() {
   localStorage.removeItem(imp_vars.save_name);
-  var old_player_options = imp_vars.player_data.options
+  var old_player_options = imp_vars.player_data.options;
+  var old_tutorial_shown = imp_vars.player_data.tutorial_shown;
   load_game();
   imp_vars.player_data.options = old_player_options
+  imp_vars.player_data.tutorial_shown = old_tutorial_shown;
   imp_vars.player_data.first_time = false
   save_game();
 }

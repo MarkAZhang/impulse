@@ -54,10 +54,11 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.wheel_spinning_duration = 4000
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.wheel_spinning_duration = 5000 // spin one more round on easy-mode
+    this.wheel_spinning_duration = 6000 // spin one more round on easy-mode
   }
   this.wheel_spinning_timer = this.wheel_spinning_duration
   this.wheel_default_skips = 16
+
   this.wheel_cur_index = 0
 
   this.wheel_state = "gap" // gap, fadein, spinning, activate, fadeout
@@ -481,28 +482,37 @@ BossThree.prototype.process_striking_arms = function() {
     } else {
       var prog = 1 - data.duration/data.interval
       var arm_size = 0
-
-      if(prog > data.charging_prop && prog < data.charging_prop + (1-data.charging_prop) * 0.3) {
-        arm_size = (prog  - data.charging_prop)* 1/((1-data.charging_prop) * 0.3)
-      } else if(prog >= data.charging_prop + (1-data.charging_prop) * 0.3  && prog < data.charging_prop + (1-data.charging_prop) * 0.7) {
-        arm_size = 1
-      } else if(prog >= data.charging_prop + (1-data.charging_prop) * 0.7 ) {
-        arm_size = (1-prog) * 1/((1-data.charging_prop) * 0.3)
+      if(data.max_dist == null) {
+        data.max_dist = p_dist(this.body.GetPosition(), this.player.get_current_position()) + 5
+        if(data.max_dist < 20) data.max_dist += 10
       }
-      if(arm_size > 0) {
+
+      var start_strike_t = data.charging_prop;
+      var finish_strike_t = data.charging_prop + (1-data.charging_prop) * 0.3;
+      var start_retract_t = data.charging_prop + (1-data.charging_prop) * 0.7;
+      var finish_retract_t = 1;
+
+      if (prog < start_strike_t) {
+        arm_size = prog / start_strike_t;
+        data.cur_dist = data.start_dist * (1 - arm_size) + (data.charge_dist) * (arm_size)
+      } else if (prog >= start_strike_t && prog < finish_strike_t) {
+        arm_size = (prog - start_strike_t) / (finish_strike_t - start_strike_t);
+        arm_size = bezier_interpolate(0.15, 0.85, arm_size);
+        data.cur_dist = data.max_dist * (arm_size) + (data.charge_dist) * (1 - arm_size)
         if (!data.sound_played) {
           data.sound_played = true
           imp_vars.impulse_music.play_sound("b3strike")  
         }
+      } else if (prog >= finish_strike_t && prog < start_retract_t) {
+        data.cur_dist = data.max_dist
+      } else if (prog >= start_retract_t && prog < finish_retract_t) {
+        arm_size = (prog - start_retract_t) / (finish_retract_t - start_retract_t);
         arm_size = bezier_interpolate(0.15, 0.85, arm_size);
-        if(data.max_dist == null) {
-          data.max_dist = p_dist(this.body.GetPosition(), this.player.get_current_position()) + 5
-          if(data.max_dist < 20) data.max_dist += 10
+        if (arm_size > 0) {
+          data.cur_dist = data.max_dist * (1 - arm_size) + (data.start_dist) * (arm_size)
+        } else {
+          data.cur_dist = data.start_dist
         }
-        data.cur_dist = data.max_dist * arm_size + (data.start_dist) * (1-arm_size)
-
-      } else {
-        data.cur_dist = data.start_dist
       }
     }
   }
@@ -603,6 +613,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
     this.striking_arms[index].interval = duration
     this.striking_arms[index].max_dist = dist
     this.striking_arms[index].start_dist = this.default_strike_position
+    this.striking_arms[index].charge_dist = 0.8 * this.default_strike_position
     this.striking_arms[index].charging_prop = this.strike_charging_prop
     this.striking_arms[index].sound_played = false
   }
@@ -663,21 +674,9 @@ BossThree.prototype.draw = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
 
-
-   if(this.spawned) {
-    if(this.striking_state == "extend" || this.striking_state == "retract") {
-      var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-    } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
-      var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-    }  
-  }
-  
-
+  var arms_active = [];
   if(this.spawned) {
     for(var index in this.striking_arms) {
-
       if(this.striking_arms[index].duration > 0 || this.dying) {
         var tp = this.striking_arms[index].body.GetPosition()
         var angle = this.striking_arms[index].body.GetAngle()
@@ -690,18 +689,56 @@ BossThree.prototype.draw = function(context, draw_factor) {
         drawSprite(context, h_dist/2 * draw_factor, 0, 0,
                   h_dist * draw_factor,v_dist * draw_factor, armSpriteName, negligentiaSprite)
         context.restore()
+        arms_active.push(index);
       }
     }
   }
 
+  context.save();
+  context.beginPath();
+  var tp = this.body.GetPosition()
+  var cur_radius = this.target_arm_length * draw_factor;
+  if (arms_active.indexOf("0") !== -1) {
+    cur_radius = this.target_arm_length * draw_factor * 0.8;
+  }
+  var angle = this.body.GetAngle();
+  context.moveTo(tp.x * draw_factor + cur_radius * Math.cos(angle), tp.y * draw_factor + cur_radius * Math.sin(angle));
+  for (var i = 0; i < this.num_arms; i++) {
+    var j = (i + 1) % this.num_arms;
+    context.lineTo(tp.x * draw_factor + cur_radius * Math.cos(j * 2 * Math.PI / this.num_arms + angle),
+      tp.y * draw_factor + cur_radius * Math.sin(j * 2 * Math.PI / this.num_arms + angle));
+    var next_radius = this.target_arm_length * draw_factor;
+    if (arms_active.indexOf("" + j) !== -1) {
+      next_radius = this.target_arm_length * draw_factor * 0.8
+    }
+    if (next_radius != cur_radius) {
+      context.lineTo(tp.x * draw_factor + next_radius * Math.cos(j * 2 * Math.PI / this.num_arms + angle),
+        tp.y * draw_factor + next_radius * Math.sin(j * 2 * Math.PI / this.num_arms + angle));
+      cur_radius = next_radius;
+    }
+  }
+  context.closePath();
+  context.clip();
 
+
+  if(this.spawned) {
+    if(this.striking_state == "extend" || this.striking_state == "retract") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
+      var tp = this.body.GetPosition()
+      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+    }  
+  }
+  context.restore();
+  
   if(this.knockback_red_duration > 0) {
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head_red", negligentiaSprite)
   } else {
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", negligentiaSprite)
   }
 
-  /*context.save()
+  /* context.save()
   context.globalAlpha *= 0.3
   for(var i = 0; i < 16; i++) {
     var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
@@ -719,7 +756,7 @@ BossThree.prototype.draw = function(context, draw_factor) {
       angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
     }
   }
-  context.restore()*/
+  context.restore() */
   this.additional_drawing(context, draw_factor)
 
   context.restore()

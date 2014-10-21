@@ -460,11 +460,11 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
   dir.Normalize()
   var spawn_loc = null;
   if(arm == "left")
-    spawn_loc = {x: this.body_parts['lh'].GetPosition().x + dir.x * 5,
-     y: this.body_parts['lh'].GetPosition().y + dir.y * 5}
+    spawn_loc = {x: this.body_parts['lh'].GetPosition().x + dir.x * 3,
+     y: this.body_parts['lh'].GetPosition().y + dir.y * 3}
   if(arm == "right")
-    spawn_loc = {x: this.body_parts['rh'].GetPosition().x + dir.x * 5,
-  y: this.body_parts['rh'].GetPosition().y + dir.y * 5}
+    spawn_loc = {x: this.body_parts['rh'].GetPosition().x + dir.x * 3,
+  y: this.body_parts['rh'].GetPosition().y + dir.y * 3}
   dir.Multiply(this.spawn_force[enemy_type])
   var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
   this.level.spawned_enemies.push(new_enemy)

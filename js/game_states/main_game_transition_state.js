@@ -116,7 +116,8 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
     }
   }
 
-  if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level))
+  if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level)
+    && !(loading_game && this.hive_numbers.current_level && this.hive_numbers.current_level.substring(0, 4) == "BOSS"))
     imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
 }
 
@@ -296,8 +297,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.restore()
   if(!this.first_process) return
 
-
-
   if(this.state == "world_intro") {
 
     var prog = (this.transition_timer/this.world_intro_interval);
@@ -315,11 +314,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowColor = ctx.fillColor
     ctx.fillText("IMPULSE", imp_vars.levelWidth/2, 100)*/
 
-    
-
     ctx.fillStyle = this.bright_color;
     ctx.shadowColor = "black"
-
 
     ctx.save()
     ctx.globalAlpha *= 0.3

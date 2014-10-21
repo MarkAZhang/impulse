@@ -403,12 +403,13 @@ Harpoon.prototype.start_death = function(death) {
       this.impulse_game_state.check_cutoffs()
     }
   }
+  if (this.dying != "fade") {
+    this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
+    this.additional_death_prep(death)
+    imp_vars.impulse_music.play_sound("sdeath")
+  }
 
-  imp_vars.impulse_music.play_sound("sdeath")
-
-  this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
-
-  this.harpoon_head.start_death("normal")
+  this.harpoon_head.start_death(this.dying == "fade" ? "fade" : "accident")
 
 }
 
