@@ -400,9 +400,12 @@ MessageBox.prototype.draw = function(ctx) {
 
 		ctx.font = "12px Muli"
 		var quest_text = ""
-		for (var i = 0; i < imp_params.quest_data[type].text.length; i++) {
-			quest_text += imp_params.quest_data[type].text[i] + " ";
+		if (imp_params.quest_data[type]) {
+			for (var i = 0; i < imp_params.quest_data[type].text.length; i++) {
+				quest_text += imp_params.quest_data[type].text[i] + " ";
+			}	
 		}
+		
 		ctx.fillText(quest_text, this.x + x_shift, this.y + this.h / 2 - 20);
 
 		/* var rewards = imp_params.quest_data[type].rewards;
