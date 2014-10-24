@@ -892,7 +892,6 @@ function draw_note_icon(context, x, y, scale, color) {
 
 function draw_music_icon(context, x, y, scale, color, key_display, mute) {
   context.save()
-  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
 
   context.beginPath()
   context.moveTo(x - scale * 0.3- scale/2 * 0.75, y - scale/2 * 0.6)
@@ -921,17 +920,16 @@ function draw_music_icon(context, x, y, scale, color, key_display, mute) {
     context.arc(x- scale * 0.3 + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
     context.stroke()
   }
-  if(key_display) {
+  /*if(key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
     context.fillText("X", x+scale, y+scale)
-  }
+  }*/
   context.restore()
 }
 
 function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
   context.save()
-  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
   context.beginPath()
   context.globalAlpha /= 2
   context.rect(x - scale * 3/4, y - scale * 3/4, scale * 3/2, scale * 3/2)
@@ -956,11 +954,11 @@ function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
   context.moveTo(x - scale * 1/2, y - scale * 1/2)
   context.lineTo(x + scale * 1/2, y + scale * 1/2)
   context.stroke()
-  if(key_display) {
+  /* if(key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
     context.fillText("C", x+scale, y+scale)
-  }
+  } */
   context.restore()
 }
 

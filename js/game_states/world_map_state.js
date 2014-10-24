@@ -32,7 +32,7 @@ function WorldMapState(world, is_practice_mode) {
 
   this.difficulties = ["easy", "normal"];
 
-  if (imp_vars.player_data.hard_mode_unlocked) {
+  if (true) {
     this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_vars.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
     this.buttons.push(this.select_difficulty_button);
   }

@@ -227,6 +227,16 @@ PauseMenu.prototype.add_buttons = function() {
     this.buttons.push(enemy_button);
     i+=1
   }
+  var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
+    toggleFullScreen(); 
+  }, "fullscreen_in_game");
+  fullscreenButton.add_hover_overlay(new MessageBox("fullscreen_msg", impulse_colors["world 0 bright"], 0))
+  this.buttons.push(fullscreenButton);
+  var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
+     toggle_mute();
+  }, "mute_in_game");
+  muteButton.add_hover_overlay(new MessageBox("mute_msg", impulse_colors["world 0 bright"], 0))
+  this.buttons.push(muteButton);
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
@@ -408,26 +418,27 @@ function OptionsMenu(previous_menu) {
 
   var button_width = 300;
 
-  var button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function(value) {
+  this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function(value) {
     imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.bg_music_volume / 100, 0.5));
-  
-  button.add_hover_overlay(new MessageBox("option_game_music", this.bright_color, this.world_num))
-  this.buttons.push(button)
+  this.music_button.special_mode = imp_vars.impulse_music.mute
+  this.music_button.add_hover_overlay(new MessageBox("option_game_music", this.bright_color, this.world_num))
+  this.buttons.push(this.music_button)
 
-  button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(value) {
+  this.effects_button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(value) {
     imp_vars.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.effects_volume / 100, 0.333));
-  button.add_hover_overlay(new MessageBox("option_sound_effects", this.bright_color, this.world_num))
-  this.buttons.push(button)
+  this.effects_button.special_mode = imp_vars.impulse_music.mute
+  this.effects_button.add_hover_overlay(new MessageBox("option_sound_effects", this.bright_color, this.world_num))
+  this.buttons.push(this.effects_button)
 
-  button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
+  this.fullscreen_button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
     toggleFullScreen();
   }, function() {
     return isInFullScreen()
   });
-  button.add_hover_overlay(new MessageBox("option_fullscreen", this.bright_color, this.world_num))
-  this.buttons.push(button)
+  this.fullscreen_button.add_hover_overlay(new MessageBox("option_fullscreen", this.bright_color, this.world_num))
+  this.buttons.push(this.fullscreen_button)
 
   button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
     imp_vars.player_data.options.explosions = !imp_vars.player_data.options.explosions
@@ -512,6 +523,15 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   //this.effects_volume_slider.draw(ctx)
 
   ctx.restore()
+}
+
+OptionsMenu.prototype.sendFullscreenSignal = function(isFullscreen) {
+  this.fullscreen_button.checkbox.checked = isFullscreen;
+}
+
+OptionsMenu.prototype.sendMuteSignal = function(isMute) {
+  this.effects_button.special_mode = isMute;
+  this.music_button.special_mode = isMute;
 }
 
 
@@ -1061,8 +1081,6 @@ DeleteDataDialog.prototype.additional_draw = function(ctx) {
     ctx.fillText("ALL GAME DATA HAS BEEN DELETED", this.x, 210)    
     this.back_button.draw(ctx)
   }
-  
-  
 }
 
 DeleteDataDialog.prototype.on_mouse_move = function(x, y) {

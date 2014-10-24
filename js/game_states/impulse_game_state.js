@@ -1,4 +1,4 @@
-  ImpulseGameState.prototype = new GameState
+ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
@@ -74,8 +74,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.dark_color = impulse_colors["world "+this.world_num +" dark"];
   this.lite_color = impulse_colors["world "+this.world_num +" lite"];
   this.bright_color = impulse_colors["world "+this.world_num +" bright"];
-
-  this.add_buttons();
 
   this.boss_intro_text_interval = 6000
   this.boss_intro_text_duration = 0
@@ -216,21 +214,6 @@ ImpulseGameState.prototype.reset = function() {
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
  // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
-}
-
-ImpulseGameState.prototype.add_buttons = function() {
-  var button = new CheckboxOptionButton("FULLSCREEN", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 60, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
-    toggleFullScreen();
-  }, function() {
-    return isInFullScreen()
-  });
-  this.buttons.push(button);
-  var button = new CheckboxOptionButton("MUTE", imp_vars.sidebarWidth / 2, imp_vars.levelHeight - 30, imp_vars.sidebarWidth * 0.8, 30, this.bright_color, function(on) {
-    toggle_mute();
-  }, function() {
-    return !is_mute();
-  });
-  this.buttons.push(button);
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
@@ -925,7 +908,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, titleTextY + 70)
   }
 
-  var menuY =  imp_vars.canvasHeight - 85;//imp_vars.canvasHeight / 2 - 70;
+  var menuY = imp_vars.canvasHeight - 15;//imp_vars.canvasHeight / 2 - 70;
 
   context.beginPath()
   var w = 190;
@@ -940,11 +923,11 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   context.fillStyle = this.bright_color;
   context.font = '18px Muli';
   context.save();
-  context.globalAlpha *= 0.8;
+  context.globalAlpha *= 0.4;
   if(imp_vars.player_data.options.control_hand == "right") {
-    context.fillText("PRESS Q FOR MENU", imp_vars.sidebarWidth/2, menuY);
+    context.fillText("Q FOR MENU", imp_vars.sidebarWidth/2, menuY);
   } else {
-    context.fillText("PRESS ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
+    context.fillText("ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
   }
 
   context.restore();
@@ -1222,7 +1205,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     }
   } 
   // USED FOR TRAILER RECORDING
-  /*else if (keyCode == 69) {
+  else if (keyCode == 69) {
     this.zoom_to_player = !this.zoom_to_player
     if (this.zoom_to_player) {
       this.zoom = 1.7
@@ -1234,7 +1217,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.fade_state = "none"
       this.zoom_bg_switch = false
     }
-  } */else
+  } else
     this.player.keyDown(keyCode)  //even if paused, must still process
 }
 

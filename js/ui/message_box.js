@@ -18,6 +18,12 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "rank_explanation_normal") {
 		this.w = 360;
 		this.h = 140;
+	} else if (this.type == "fullscreen_msg") {
+		this.w = 230;
+		this.h = 40;
+	} else if (this.type == "mute_msg") {
+		this.w = 130;
+		this.h = 40;
 	} else if (this.type == "final_boss") {
 		this.w = 220;
 		this.h = 50;
@@ -265,7 +271,17 @@ MessageBox.prototype.draw = function(ctx) {
 		draw_full_arrow(ctx, this.x, this.y + 12, 1, "white", "down");
 	}
 
-	if (this.type.substring(0, 8) == "tutorial") {
+	if (this.type == "fullscreen_msg") {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText("TOGGLE FULLSCREEN (F)", this.x, this.y - this.h / 2 + 25);
+	} else if (this.type == "mute_msg") {
+		ctx.textAlign = 'center';
+		ctx.font = "16px Muli";
+		ctx.fillStyle = this.color;
+		ctx.fillText("MUTE (M)", this.x, this.y - this.h / 2 + 25);
+	} else if (this.type.substring(0, 8) == "tutorial") {
 		/*if(imp_vars.player_data.options.control_hand == "right") {
 	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color, ["W", "A", "S", "D"])
 	    }

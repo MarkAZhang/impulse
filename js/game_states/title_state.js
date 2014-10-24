@@ -304,6 +304,16 @@ TitleState.prototype.setup_main_menu = function() {
   }
   
   this.buttons["menu"].push(difficulty_change_button)*/
+  var fullscreenButton = new IconButton("", 20, imp_vars.levelWidth - 20, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
+    toggleFullScreen(); 
+  }, "fullscreen_in_game");
+  fullscreenButton.add_hover_overlay(new MessageBox("fullscreen_msg", impulse_colors["world 0 bright"], 0))
+  this.buttons["menu"].push(fullscreenButton);
+  var muteButton = new IconButton("", 20, imp_vars.levelWidth - 50, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
+     toggle_mute();
+  }, "mute_in_game");
+  muteButton.add_hover_overlay(new MessageBox("mute_msg", impulse_colors["world 0 bright"], 0))
+  this.buttons["menu"].push(muteButton);
 }
 
 TitleState.prototype.change_mode = function(type) {

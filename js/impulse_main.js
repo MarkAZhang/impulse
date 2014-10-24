@@ -512,13 +512,21 @@ function toggleFullScreen() {
             document.webkitExitFullscreen ();
         }
     }
+  if (imp_vars.cur_dialog_box && imp_vars.cur_dialog_box instanceof OptionsMenu) {
+    imp_vars.cur_dialog_box.sendFullscreenSignal(!isFullScreen);
+  }
 }
 
 function toggle_mute() {
   if(!imp_vars.impulse_music.mute) {
     imp_vars.impulse_music.mute_bg()
+    imp_vars.impulse_music.mute_effects(true);
   } else {
     imp_vars.impulse_music.unmute_bg()
+    imp_vars.impulse_music.mute_effects(false)
+  }
+  if (imp_vars.cur_dialog_box && imp_vars.cur_dialog_box instanceof OptionsMenu) {
+    imp_vars.cur_dialog_box.sendMuteSignal(imp_vars.impulse_music.mute);
   }
 }
 
@@ -543,9 +551,9 @@ function on_key_down(event) {
     toggle_mute()    
   }
 
-  /*if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
+  if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
     toggleFullScreen()
-  }*/
+  }
 
   if(imp_vars.cur_dialog_box) {
     imp_vars.cur_dialog_box.on_key_down(keyCode)

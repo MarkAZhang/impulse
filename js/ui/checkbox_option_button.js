@@ -10,7 +10,6 @@ function CheckboxOptionButton(text, x, y, w, h, color, action, check_verifier) {
 
   this.action = function() {
     action(this.checkbox.checked);
-    this.checkbox.checked = !this.checkbox.checked;
   }
 }
 
@@ -27,4 +26,3 @@ CheckboxOptionButton.prototype.additional_draw = function(ctx) {
   this.checkbox.draw(ctx);
   ctx.restore();
 }
-
