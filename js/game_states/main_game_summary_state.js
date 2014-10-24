@@ -545,16 +545,6 @@ MainGameSummaryState.prototype.check_quests = function() {
         min_victory_type = -1;
       }
     }
-
-    if (min_victory_type >= 1) {
-      set_quest_completed("1star")
-    }
-    if (min_victory_type >= 2) {
-      set_quest_completed("2star"); 
-    }
-    if (min_victory_type == 3) {
-      set_quest_completed("3star"); 
-    }
   }
 
   if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {

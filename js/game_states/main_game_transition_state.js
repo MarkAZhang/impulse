@@ -527,10 +527,7 @@ MainGameTransitionState.prototype.load_complete = function() {
 MainGameTransitionState.prototype.check_quests_helper = function(level, game_numbers) {
   var world = parseInt(level.substring(5, 6))
   // Check if this game_number is a gold score. Bosses don't count.
-  if ((game_numbers.stars == 3 || this.stars == 3) && level.substring(0, 4) != "BOSS") {
-    // Completed the first gold quest.
-    set_quest_completed("first_gold")
-  }
+  
   if (game_numbers.impulsed == false) {
     set_quest_completed("pacifist")
   }
