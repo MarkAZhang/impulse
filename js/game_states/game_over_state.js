@@ -11,7 +11,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.bg_drawn = false
   this.victory = args.victory
   this.color = impulse_colors['world '+ this.world_num + ' bright']
-  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, this.color, function(_this){
+  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, "white", function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       _this.fader.set_animation("fade_out", function() {
@@ -28,7 +28,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     this.restart_button.extra_text = "SHIFT KEY"
   }
 
- this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, this.color, function(_this){return function(){
+ this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new WorldMapState(_this.world_num, true))

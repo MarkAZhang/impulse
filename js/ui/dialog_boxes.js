@@ -116,10 +116,14 @@ PauseMenu.prototype.add_buttons = function() {
   var resume_x_location = 0;
   var first_row_y = 350;
   var second_row_y = 500;
+  var hover_color = "white";
+  if (this.world_num == 0 || this.world_num == undefined) {
+    hover_color = impulse_colors["impulse_blue"];
+  }
   if(this.level_name.slice(0, 11) != "HOW TO PLAY" && this.world_num != 0) {
 
     if(!this.level.main_game) {
-      this.restart_button = new IconButton("RETRY", 16, this.x - 173, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.restart_button = new IconButton("RETRY", 16, this.x - 173, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
         _this.restart_practice()
       }}(this), "retry")
       this.buttons.push(this.restart_button)
@@ -131,24 +135,24 @@ PauseMenu.prototype.add_buttons = function() {
         this.restart_button.extra_text = "SHIFT KEY"
       }
 
-      this.quit_button = new IconButton("QUIT", 16, this.x + 180, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.quit_button = new IconButton("QUIT", 16, this.x + 180, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
         _this.quit_practice()
       }}(this), "quit")
       this.buttons.push(this.quit_button)
 
     } else {
-        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x + 170, this.y - this.h/2 + second_row_y, 120, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+        this.save_and_quit_button = new IconButton("SAVE & QUIT", 16, this.x + 170, this.y - this.h/2 + second_row_y, 120, 65, this.bright_color, hover_color, function(_this) { return function() {
           _this.save_and_quit_main_game()
         }}(this), "save")
 
       this.buttons.push(this.save_and_quit_button)
 
-      this.quit_button = new IconButton("QUIT", 16, this.x - 170, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+      this.quit_button = new IconButton("QUIT", 16, this.x - 170, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
         _this.quit_main_game()
       }}(this), "quit")
       this.buttons.push(this.quit_button)
     }
-    this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+    this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
         set_dialog_box(new OptionsMenu(_this))
       });
@@ -158,12 +162,12 @@ PauseMenu.prototype.add_buttons = function() {
 
   } else {
     this.quit_button = new IconButton(this.world_num == 0 && imp_vars.player_data.first_time ? "SKIP TUTORIAL" : "QUIT", 
-        16, this.x + 100, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+        16, this.x + 100, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.quit_tutorial()
     }}(this), "quit")
     this.buttons.push(this.quit_button)
 
-    this.options_button = new IconButton("OPTIONS", 16, this.x - 100, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+    this.options_button = new IconButton("OPTIONS", 16, this.x - 100, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
         set_dialog_box(new OptionsMenu(_this))
       });
@@ -174,7 +178,7 @@ PauseMenu.prototype.add_buttons = function() {
   }
 
   // resume button.
-  this.resume_button = new IconButton("RESUME", 24, this.x, this.y - this.h/2 + first_row_y, 150, 100, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.resume_button = new IconButton("RESUME", 24, this.x, this.y - this.h/2 + first_row_y, 150, 100, this.bright_color, hover_color, function(_this) { return function() {
 
     _this.game_state.toggle_pause()
   }}(this), "resume")
@@ -230,12 +234,10 @@ PauseMenu.prototype.add_buttons = function() {
   var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
     toggleFullScreen(); 
   }, "fullscreen_in_game");
-  fullscreenButton.add_hover_overlay(new MessageBox("fullscreen_msg", impulse_colors["world 0 bright"], 0))
   this.buttons.push(fullscreenButton);
   var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
      toggle_mute();
   }, "mute_in_game");
-  muteButton.add_hover_overlay(new MessageBox("mute_msg", impulse_colors["world 0 bright"], 0))
   this.buttons.push(muteButton);
 }
 
@@ -366,6 +368,11 @@ function OptionsMenu(previous_menu) {
 
   this.options_y_line_up = 133
 
+  var hover_color = "white";
+  if (this.world_num == 0 || this.world_num == undefined) {
+    hover_color = impulse_colors["impulse_blue"];
+  }
+
   this.previous_menu = previous_menu
   if (this.previous_menu instanceof PauseMenu) {
     this.bg_color = this.previous_menu.bg_color
@@ -380,7 +387,7 @@ function OptionsMenu(previous_menu) {
     this.draw_bg();
   }
   
-  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
   _this.fader.set_animation("fade_out", function() {
     if(_this.previous_menu instanceof PauseMenu) {
       _this.previous_menu.add_buttons()
@@ -407,7 +414,7 @@ function OptionsMenu(previous_menu) {
     controls_x_value = this.x - 150
   }
   this.buttons.push(this.back_button)
-  this.controls_button = new IconButton("CHANGE CONTROLS", 20, controls_x_value, this.y + 120, 200, 100, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.controls_button = new IconButton("CHANGE CONTROLS", 20, controls_x_value, this.y + 120, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       set_dialog_box(new ControlsMenu(_this))
     });
@@ -418,67 +425,68 @@ function OptionsMenu(previous_menu) {
 
   var button_width = 300;
 
-  this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, function(value) {
+  this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, "white", function(value) {
     imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.bg_music_volume / 100, 0.5));
   this.music_button.special_mode = imp_vars.impulse_music.mute
-  this.music_button.add_hover_overlay(new MessageBox("option_game_music", this.bright_color, this.world_num))
+  this.music_button.add_hover_overlay(new MessageBox("option_game_music", "white", this.world_num))
   this.buttons.push(this.music_button)
 
-  this.effects_button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, function(value) {
+  this.effects_button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, "white", function(value) {
     imp_vars.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.effects_volume / 100, 0.333));
   this.effects_button.special_mode = imp_vars.impulse_music.mute
-  this.effects_button.add_hover_overlay(new MessageBox("option_sound_effects", this.bright_color, this.world_num))
+  this.effects_button.add_hover_overlay(new MessageBox("option_sound_effects", "white", this.world_num))
   this.buttons.push(this.effects_button)
 
-  this.fullscreen_button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, function(on) {
+  this.fullscreen_button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, "white", function(on) {
     toggleFullScreen();
   }, function() {
     return isInFullScreen()
   });
-  this.fullscreen_button.add_hover_overlay(new MessageBox("option_fullscreen", this.bright_color, this.world_num))
+  this.fullscreen_button.add_hover_overlay(new MessageBox("option_fullscreen", "white", this.world_num))
+  this.fullscreen_button.change_checkbox_on_click = false;
   this.buttons.push(this.fullscreen_button)
 
-  button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.explosions = !imp_vars.player_data.options.explosions
   }, function() {
     return imp_vars.player_data.options.explosions;
   });
-  button.add_hover_overlay(new MessageBox("option_particle_effects", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_particle_effects", "white", this.world_num))
   this.buttons.push(button)
 
-  button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.score_labels = !imp_vars.player_data.options.score_labels
   }, function() {
     return imp_vars.player_data.options.score_labels;
   });
-  button.add_hover_overlay(new MessageBox("option_score_labels", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_score_labels", "white", this.world_num))
   this.buttons.push(button)
 
-  button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
   }, function() {
     return imp_vars.player_data.options.multiplier_display;
   });
-  button.add_hover_overlay(new MessageBox("option_multiplier_display", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_multiplier_display", "white", this.world_num))
   this.buttons.push(button)
 
-  button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, function(on) {
+  button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
   }, function() {
     return imp_vars.player_data.options.impulse_shadow;
   });
-  button.add_hover_overlay(new MessageBox("option_impulse_shadow", this.bright_color, this.world_num))
+  button.add_hover_overlay(new MessageBox("option_impulse_shadow", "white", this.world_num))
   this.buttons.push(button)
   var me = this;
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && imp_vars.player_data.difficulty_mode == "normal") {
-      button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, function(on) {
+      button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
       imp_vars.player_data.options.speed_run_countdown = !imp_vars.player_data.options.speed_run_countdown;
     }, function() {
       return imp_vars.player_data.options.speed_run_countdown;
     });
-    button.add_hover_overlay(new MessageBox("option_speed_run", this.bright_color, this.world_num))
+    button.add_hover_overlay(new MessageBox("option_speed_run", "white", this.world_num))
     this.buttons.push(button)
   }
 
@@ -596,10 +604,15 @@ function ControlsMenu(previous_menu) {
 
   this.world_num = previous_menu.world_num
 
+  var hover_color = "white";
+  if (this.world_num == 0 || this.world_num == undefined) {
+    hover_color = impulse_colors["impulse_blue"];
+  }
+
   this.current_hand = imp_vars.player_data.options.control_hand
   this.current_scheme = imp_vars.player_data.options.control_scheme
   var _this = this;
-  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       set_dialog_box(_this.previous_menu)
       _this.previous_menu.fader.set_animation("fade_in");
@@ -609,21 +622,21 @@ function ControlsMenu(previous_menu) {
 
   this.control_buttons = {}
 
-  this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "left"
     imp_vars.player_data.options.control_scheme = "mouse"
     save_game()
     set_key_bindings()
   }}(this), "left_mouse")
 
-  this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "keyboard"
     save_game()
     set_key_bindings()
   }}(this), "keyboard")
 
-  this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "mouse"
     save_game()
@@ -811,6 +824,11 @@ function EnemyBox(enemy_name, previous_menu) {
     this.world_num = previous_menu.world_num
   }
 
+  var hover_color = "white";
+  if (this.world_num == 0 || this.world_num == undefined) {
+    hover_color = impulse_colors["impulse_blue"];
+  }
+
   this.previous_menu = previous_menu
 
   this.enemy_name = enemy_name
@@ -827,7 +845,7 @@ function EnemyBox(enemy_name, previous_menu) {
   this.seen = imp_params.impulse_enemy_stats[this.enemy_name].seen
 
   this.w = 600
-  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+  this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       if(_this.previous_menu instanceof DialogBox) {
         set_dialog_box(_this.previous_menu)
