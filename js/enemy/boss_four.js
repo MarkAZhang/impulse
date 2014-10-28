@@ -26,15 +26,23 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.spawned = false
 
-  this.spawn_laser_angle = Math.PI/2
+  this.anger_level = 0;
+  this.anger_level_max = 5;
+  this.anger_level_cooloff_period = 1000;
+  this.anger_level_cooloff_timer = 0;
 
-  this.spawn_laser_revolution = 20000
+  this.spawn_laser_angle = Math.PI/2
+  this.spawn_laser_colors = ["#000000", "#110000", "#660000", "#990000", "#cc0000", "#ff0000"];
+  this.spawn_laser_flare_prop = 0;
+  this.spawn_laser_flare_transition_period_base = 250;
+
+  this.spawn_laser_revolution_base = 20000
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.spawn_laser_revolution = 30000    
+    this.spawn_laser_revolution_base = 30000    
   }
 
-  this.spawn_laser_radius = .2
+  this.spawn_laser_radius_base = 0.2
 
   this.spawner_spawn_count = {
    "stunner" : 8,
@@ -82,7 +90,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
  }
 
 
- this.spawn_order = ["stunner", "spear", "harpoon", "fighter", "troll", "goo", "orbiter", "deathray", "slingshot", "mote", "tank", "disabler", ]
+ this.spawn_order = ["stunner", "spear", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "mote", "tank", "disabler", ]
  this.spawn_counter = 0
 
  this.possible_spawn_sets = [
@@ -175,14 +183,6 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100
 
-  this.impulse_extra_factor_min = 5;
-  this.impulse_extra_factor_max = 30;
-  this.impulse_extra_factor_time_to_max = 120000;
-  if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.impulse_extra_factor_time_to_max = 90000;
-  }
-  this.impulse_extra_factor = this.impulse_extra_factor_min;
-
   this.darkness_interval = 25000
   this.darkness_timer = this.darkness_interval - 1
   // The time it takes for the darkness to spread.
@@ -228,7 +228,29 @@ BossFour.prototype.draw = function(context, draw_factor) {
   var tp = this.body.GetPosition()
 
   //if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head", adrogantiaSprite)
+    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
+      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head", adrogantiaSprite)
+
+
+  if (this.anger_level > 0) {
+    context.save();
+    context.beginPath();
+    var angle = this.body.GetAngle();
+    context.moveTo(tp.x*draw_factor + this.effective_radius * draw_factor * Math.cos(angle),
+      tp.y*draw_factor + this.effective_radius * draw_factor * Math.sin(angle))
+    for (var i = 1; i <= this.anger_level; i++) {
+      context.lineTo(tp.x*draw_factor + this.effective_radius * draw_factor * Math.cos(angle + i * Math.PI * 2 / 5),
+      tp.y*draw_factor + this.effective_radius * draw_factor * Math.sin(angle + i * Math.PI * 2 / 5))
+    }
+    if (this.anger_level < 5) {
+      context.lineTo(tp.x*draw_factor, tp.y*draw_factor);
+    }
+    context.closePath();
+    context.clip();
+    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
+      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head_red", adrogantiaSprite)
+    context.restore();
+  }
   //} else {
   //  drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", negligentiaSprite)
   //}
@@ -411,11 +433,25 @@ BossFour.prototype.additional_processing = function(dt) {
     this.visibility = 1
   }
 
-  if (this.impulse_extra_factor < this.impulse_extra_factor_max) {
-    this.impulse_extra_factor += (this.impulse_extra_factor_max - this.impulse_extra_factor_min) * dt / this.impulse_extra_factor_time_to_max
-    this.impulse_extra_factor = Math.min(this.impulse_extra_factor, this.impulse_extra_factor_max);
+  if (this.anger_level > 0) {
+    this.anger_level_cooloff_timer -= dt;
+    if (this.anger_level_cooloff_timer < 0) {
+      this.anger_level_cooloff_timer = this.anger_level_cooloff_period
+      this.anger_level -= 1;
+    }
   }
 
+  if (this.cur_object != null && this.cur_object instanceof BossFourSpawner && this.cur_object.status_duration[1] <= 0) {
+    this.spawn_laser_flare_prop += dt/this.get_spawn_laser_flare_transition_period();
+    if (this.spawn_laser_flare_prop > 1) {
+      this.spawn_laser_flare_prop = 1;
+    }
+  } else if (this.spawn_laser_flare_prop > 0) {
+    this.spawn_laser_flare_prop -= dt/this.spawn_laser_flare_transition_period_base;
+    if (this.spawn_laser_flare_prop < 0) {
+      this.spawn_laser_flare_prop = 0;
+    }
+  }
 
   if(this.do_initial_spawn) {
     this.create_initial_attack_buds()
@@ -535,7 +571,7 @@ BossFour.prototype.additional_processing = function(dt) {
 
   this.spawner_timer -= dt*/
 
-  this.spawn_laser_angle += dt / this.spawn_laser_revolution * Math.PI * 2
+  this.spawn_laser_angle += dt / this.get_spawn_laser_revolution() * Math.PI * 2
 
   this.get_object_hit()
   if (imp_vars.player_data.difficulty_mode == "normal") {
@@ -817,7 +853,9 @@ BossFour.prototype.draw_body_buds = function(context, draw_factor) {
       context.save()
       //context.translate(tp.x * draw_factor, tp.y * draw_factor)
       //context.rotate(angle)
-      drawSprite(context, tp.x* draw_factor, tp.y* draw_factor, angle, bud.size * draw_factor * 2, bud.size* draw_factor * 2, "adrogantia_body_bud", adrogantiaSprite)
+      drawSprite(context, tp.x* draw_factor, tp.y* draw_factor, angle,
+        bud.size * draw_factor * 2, bud.size* draw_factor * 2,
+        bud.loc < this.anger_level ? "adrogantia_body_bud_red" : "adrogantia_body_bud", adrogantiaSprite)
 
       /*var vertices = bud.body.GetFixtureList().m_shape.m_vertices
 
@@ -1033,13 +1071,11 @@ BossFour.prototype.get_object_hit = function() {
     }
 
   if(object instanceof BossFourSpawner && object.id != this.cur_object.id && object.spawned) {
-
     object.spawn_enemy()
   }
 
   this.cur_object = object
   this.cur_dist = dist
-
 }
 
 BossFour.prototype.get_two_laser_locs = function() {
@@ -1069,22 +1105,28 @@ BossFour.prototype.pre_draw = function(context, draw_factor) {
     if(this.spawned) {
       context.beginPath()
       var laser_dist = this.cur_dist != null ? this.cur_dist : 100
-      context.moveTo((this.body.GetPosition().x + this.spawn_laser_radius * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor,
-       (this.body.GetPosition().y + this.spawn_laser_radius * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
-      context.lineTo((this.body.GetPosition().x + this.spawn_laser_radius * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
-       (this.body.GetPosition().y + this.spawn_laser_radius * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
-      context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
-        (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.spawn_laser_radius * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
-      context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.spawn_laser_radius * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor,
-        (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.spawn_laser_radius * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
+      context.moveTo((this.body.GetPosition().x + this.get_spawn_laser_radius() * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor,
+       (this.body.GetPosition().y + this.get_spawn_laser_radius() * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
+      context.lineTo((this.body.GetPosition().x + this.get_spawn_laser_radius() * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
+       (this.body.GetPosition().y + this.get_spawn_laser_radius() * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
+      context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.get_spawn_laser_radius() * Math.cos(this.spawn_laser_angle - Math.PI/2)) * draw_factor,
+        (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.get_spawn_laser_radius() * Math.sin(this.spawn_laser_angle - Math.PI/2)) * draw_factor)
+      context.lineTo((this.body.GetPosition().x + laser_dist * Math.cos(this.spawn_laser_angle) +this.get_spawn_laser_radius() * Math.cos(this.spawn_laser_angle + Math.PI/2)) * draw_factor,
+        (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.get_spawn_laser_radius() * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
       context.closePath()
-      context.globalAlpha *= 0.5
-      context.fillStyle = "black"
+
+      context.globalAlpha *= 0.5 
+      context.fillStyle = this.spawn_laser_colors[this.anger_level];
       context.fill()
-      //context.strokeStyle = "black"
-      //context.lineWidth = 2
-      //context.stroke()
-      context.globalAlpha = 1
+      context.globalAlpha *= 2;
+      if (this.spawn_laser_flare_prop > 0) {
+        context.save();
+        context.globalAlpha *= this.spawn_laser_flare_prop;
+        context.fillStyle = "red";
+        context.fill();
+        context.restore();
+      }
+      
     }
     context.restore()
 
@@ -1133,11 +1175,35 @@ BossFour.prototype.get_impulse_sensitive_pts = function() {
   return ans
 }
 
+BossFour.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
+  this.knockback_red_duration = this.knockback_red_interval
+  if (this.anger_level < this.anger_level_max) {
+    this.anger_level += 1;
+  }
+  this.anger_level_cooloff_timer = this.anger_level_cooloff_period;
+}
+
 BossFour.prototype.explode = function() {
 
+}
+
+BossFour.prototype.get_spawn_laser_revolution = function() {
+  return this.spawn_laser_revolution_base * Math.pow(0.8, this.anger_level);
+}
+
+BossFour.prototype.get_spawn_laser_radius = function() {
+  return this.spawn_laser_radius_base * Math.pow(1.2, this.anger_level);
 }
 
 BossFour.prototype.get_time_factor = function() {
   //spawn increases by 30% for every minute
   return 1 + (this.impulse_game_state.game_numbers.seconds/60) * .2
+}
+
+BossFour.prototype.get_spawn_bonus = function() {
+  return 1 + 0.2 * this.anger_level;
+}
+
+BossFour.prototype.get_spawn_laser_flare_transition_period = function() {
+  return this.spawn_laser_flare_transition_period_base * Math.pow(0.8, this.anger_level);
 }

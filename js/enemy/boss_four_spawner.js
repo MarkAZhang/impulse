@@ -28,7 +28,7 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
   this.spawn_action_period = 1000
   this.spawn_action_timer = 0
 
-  this.spawn_expand_factor = 2
+  this.spawn_expand_factor = 3
   this.impulse_extra_factor = 2
   this.tank_force = 100
 
@@ -54,8 +54,9 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
     imp_vars.impulse_music.play_sound("b4spawneract")  
 		var ray_angle = _atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
-    var exit_points = Math.max(this.spawn_number, 4)
-    for(var i = 0; i < this.spawn_number; i++) {
+    var spawn_number = this.spawn_number * this.parent.get_spawn_bonus();
+    var exit_points = Math.max(spawn_number, 4)
+    for(var i = 0; i < spawn_number; i++) {
 
       if(this.level.enemy_numbers[this.enemy_type] + i >= this.level.enemies_data[this.enemy_type][6]) {
         //prevents over_spawn
@@ -164,8 +165,8 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.globalAlpha *= 1-prog
   drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
   
-  if(this.status_duration[1] > 0)
-    context.globalAlpha *= 0.5
+  /* if(this.status_duration[1] > 0)
+    context.globalAlpha *= 0.5 */
 
   //draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color
   draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
