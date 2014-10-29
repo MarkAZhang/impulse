@@ -581,7 +581,7 @@ function switch_game_state_helper(game_state) {
 
 
 function load_game() {
-
+  window.console.log("LOADING GAME");
   var load_obj = {}
   if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
     imp_vars.player_data.first_time = true
@@ -600,7 +600,9 @@ function load_game() {
   } else {
     // if we don't have a value, but the player has beaten world 4, then it should be unlocked.
     imp_vars.player_data.hard_mode_unlocked = false;
-    if (imp_vars.player_data.world_rankings["easy"]["world 4"] !== undefined) {
+    if (imp_vars.player_data.world_rankings && 
+        imp_vars.player_data.world_rankings["easy"] && 
+        imp_vars.player_data.world_rankings["easy"]["world 4"] !== undefined) {
       imp_vars.player_data.hard_mode_unlocked = true;
     }
   }
@@ -623,6 +625,7 @@ function load_game() {
         "normal": {}
     }
   }
+  window.console.log("LOADING GAME 2");
 
   var default_options = {
       effects_volume: 100,
@@ -658,6 +661,7 @@ function load_game() {
       "normal": {}
     }
   }
+  window.console.log("LOADING GAME 3");
 
   imp_vars.player_data.save_data = load_obj['save_data']
 
@@ -695,6 +699,7 @@ function load_game() {
 
   calculate_stars('easy')
   calculate_stars('normal')
+  window.console.log("DONE LOADING GAME");
 
 }
 
