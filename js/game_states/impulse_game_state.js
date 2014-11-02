@@ -943,9 +943,9 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     } else {
       context.fillText("ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
     }
+    context.restore();
   }
 
-  context.restore();
   /* context.font = '24px Muli';
   context.fillText("Q", imp_vars.sidebarWidth/2, menuY);
   context.font = '12px Muli';
