@@ -111,6 +111,9 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "tutorial_one_up") {
 		this.w = 250;
 		this.h = 40;
+	} else if (this.type == "tutorial_kill_boss") {
+		this.w = 250;
+		this.h = 40;
 	} else if (this.type == "lives_and_sparks") {
 		this.w = 150;
 		this.h = 110;
@@ -152,7 +155,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.beginPath();
 		ctx.strokeStyle = this.color;
 		if (this.type.substring(0, 8) == "tutorial") {
-			ctx.fillStyle = "#222"
+			ctx.fillStyle = "#111"
 		} else {
 			ctx.fillStyle = "black"	
 		}
@@ -237,6 +240,10 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_one_up") {
 		this.tutorial_text = "100 SPARKS = 1UP"
+	}
+
+	if (this.type == "tutorial_kill_boss") {
+		this.tutorial_text = "PUSH THE BOSS INTO THE VOID"
 	}
 
 	if (this.type == "tutorial_void") {

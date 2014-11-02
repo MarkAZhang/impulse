@@ -13,15 +13,20 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 ]
 
 TutorialOverlayManager.prototype.add_overlays = function() {
+	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
+    imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
+		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));	
+	}
+
 	if (this.tutorial_level == 1) {
 		this.overlays.push(new MoveTutorialOverlay(this.impulse_game_state));	
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
-	} else if (this.tutorial_level == 2) { 
+	} else if (this.tutorial_level == 2) {
 		this.overlays.push(new VoidTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
-	} else if (this.tutorial_level == 3) { 
+	} else if (this.tutorial_level == 3) {
 		this.overlays.push(new ImpulseTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new KillEnemyTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new ScorePointsTutorialOverlay(this.impulse_game_state));
@@ -623,4 +628,20 @@ GatewayEnterTutorialOverlay.prototype.draw = function(ctx) {
 }
 
 GatewayEnterTutorialOverlay.prototype.process = function(dt) {
+}
+
+KillBossTutorialOverlay.prototype = new TutorialOverlay;
+
+KillBossTutorialOverlay.prototype.constructor = KillBossTutorialOverlay;
+
+function KillBossTutorialOverlay(impulse_game_state) {
+	this.init(impulse_game_state);
+	this.duration = 3000;
+	this.hover_overlay = new MessageBox("tutorial_kill_boss", impulse_game_state.bright_color, impulse_game_state.world_num);
+}
+
+KillBossTutorialOverlay.prototype.draw = function(ctx) {
+}
+
+KillBossTutorialOverlay.prototype.process = function(dt) {
 }

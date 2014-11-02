@@ -156,6 +156,13 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   // if this is world zero. show the tutorial.
   this.show_tutorial = (this.world_num == 0 || 
     imp_vars.player_data.tutorial_shown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
+
+  if (this.is_boss_level && this.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
+    imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
+    this.show_tutorial = true
+  }
+
+    
   if (this.show_tutorial) {
     this.tutorial_overlay_manager = new TutorialOverlayManager(this);
     this.tutorial_signals = {};
@@ -207,6 +214,13 @@ ImpulseGameState.prototype.reset = function() {
   imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)
   this.progress_bar_prop = 0
   this.boss_intro_text_activated = false
+
+  if (this.is_boss_level && this.show_tutorial) {
+    this.tutorial_overlay_manager = new TutorialOverlayManager(this);
+    this.tutorial_signals = {};
+    this.tutorial_signal_timeouts = {};
+    this.tutorial_signal_timeout = 500
+  }
   
   if (!this.is_boss_level && this.level) {
     this.check_cutoffs();
@@ -595,11 +609,11 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   }  
 
   // if it's the first boss and they've never beaten it, show the arrow.
-  if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && 
+  /* if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && 
     this.main_game && this.zoom == 1 && this.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
     imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
       this.draw_boss_hint(ctx)
-  }
+  } */
 
   /*ctx.translate(-(imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
   /*ctx.translate(-this.camera_center.x * (1-this.zoom) * 2, -this.camera_center.y * (1-this.zoom) * 2);*/
@@ -874,7 +888,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   var titleTextY = 0;
 
-  if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal") {
+  if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal" && !this.is_boss_level) {
     context.font = "20px Muli"
     context.save()
     context.globalAlpha *= 1
@@ -883,7 +897,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   }
 
   // Draw the level name.
-  if (this.world_num != 0) {
+  if (this.world_num != 0 && !this.is_boss_level) {
     context.font = '64px Muli'
 
     type = this.level_name.split(" ")[0]
@@ -910,24 +924,25 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   var menuY = imp_vars.canvasHeight - 15;//imp_vars.canvasHeight / 2 - 70;
 
-  context.beginPath()
-  var w = 190;
-  var h = 30;
-  /*context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
-  context.lineWidth = 4;
-  context.strokeStyle = this.color
-  context.save();
-  context.globalAlpha /= 2;
-  context.stroke();
-  context.restore();*/
-  context.fillStyle = this.bright_color;
-  context.font = '18px Muli';
-  context.save();
-  context.globalAlpha *= 0.4;
-  if(imp_vars.player_data.options.control_hand == "right") {
-    context.fillText("Q FOR MENU", imp_vars.sidebarWidth/2, menuY);
-  } else {
-    context.fillText("ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
+  if (!this.is_boss_level) {
+    var w = 190;
+    var h = 30;
+    /*context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
+    context.lineWidth = 4;
+    context.strokeStyle = this.color
+    context.save();
+    context.globalAlpha /= 2;
+    context.stroke();
+    context.restore();*/
+    context.fillStyle = this.bright_color;
+    context.font = '18px Muli';
+    context.save();
+    context.globalAlpha *= 0.4;
+    if(imp_vars.player_data.options.control_hand == "right") {
+      context.fillText("Q FOR MENU", imp_vars.sidebarWidth/2, menuY);
+    } else {
+      context.fillText("ENTER FOR MENU", imp_vars.sidebarWidth/2, menuY);  
+    }
   }
 
   context.restore();
@@ -949,7 +964,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.font = '32px Muli';
       var total_time = convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
       context.fillText(total_time, imp_vars.sidebarWidth/2, timeY + 22);  
-    } else {
+    } else if (!this.is_boss_level) {
       context.fillStyle = this.color;
       context.font = '16px Muli';
       context.fillText("LEVEL TIME", imp_vars.sidebarWidth/2, timeY - 10);
@@ -990,13 +1005,13 @@ ImpulseGameState.prototype.draw_interface = function(context) {
         context.fillText("WIN", canvasWidth - imp_vars.sidebarWidth/2, canvasHeight - 40)*/
       }
     }
-  } else {
+  } /* else {
     context.fillStyle = impulse_colors["boss "+this.world_num]
     //context.shadowColor = context.fillStyle;
     context.font = '36px Muli'
     context.fillText("DISTANCE",imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 55)
     context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
-  }
+  } */
 
   /*draw_star(context, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
   /*context.beginPath()
@@ -1053,14 +1068,14 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
       ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
     }
-  } else {
+  } /* else {
     if(this.level.boss)
       draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
         40, imp_vars.canvasHeight*3/4 - 50, this.level.boss.getLife(), this.level.boss.color)
     else
       draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
         40, imp_vars.canvasHeight*3/4 - 50, 1, impulse_colors["boss "+this.world_num])
-  }
+  } */
   ctx.restore()
 }
 
