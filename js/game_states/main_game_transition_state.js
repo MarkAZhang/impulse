@@ -124,7 +124,7 @@ function MainGameTransitionState(world_num, level, victory, final_game_numbers, 
 MainGameTransitionState.prototype.get_next_level_name = function(level, world_num) {
   if(!level) {
     if (world_num == 0) {
-      return "HIVE 0-1"
+      return "HIVE 0-3"
     }
     return "HIVE "+world_num+"-1"
   } else {

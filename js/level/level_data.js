@@ -120,8 +120,8 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [3000, 10000, 20000],
-    "normal": [3000, 10000, 20000],
+    "easy": [2000, 10000, 20000],
+    "normal": [2000, 10000, 20000],
   },
   player_loc: {x: 400, y: 300},
   spawn_pattern: "spread",

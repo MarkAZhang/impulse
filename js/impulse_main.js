@@ -581,7 +581,6 @@ function switch_game_state_helper(game_state) {
 
 
 function load_game() {
-  window.console.log("LOADING GAME");
   var load_obj = {}
   if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
     imp_vars.player_data.first_time = true
@@ -625,7 +624,6 @@ function load_game() {
         "normal": {}
     }
   }
-  window.console.log("LOADING GAME 2");
 
   var default_options = {
       effects_volume: 100,
@@ -661,7 +659,6 @@ function load_game() {
       "normal": {}
     }
   }
-  window.console.log("LOADING GAME 3");
 
   imp_vars.player_data.save_data = load_obj['save_data']
 
@@ -699,7 +696,6 @@ function load_game() {
 
   calculate_stars('easy')
   calculate_stars('normal')
-  window.console.log("DONE LOADING GAME");
 
 }
 

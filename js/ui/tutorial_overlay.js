@@ -25,6 +25,7 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 		this.overlays.push(new ImpulseTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new KillEnemyTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new ScorePointsTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new ScorePointsReminderTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
 	} else if (this.tutorial_level == 4) {
@@ -340,8 +341,34 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.fill();*/
 }
 
-ScorePointsTutorialOverlay.prototype.process = function(dt) {
+ScorePointsReminderTutorialOverlay.prototype = new TutorialOverlay;
 
+ScorePointsReminderTutorialOverlay.prototype.constructor = ScorePointsReminderTutorialOverlay;
+
+function ScorePointsReminderTutorialOverlay(impulse_game_state) {
+	this.init(impulse_game_state);
+	this.hover_overlay = new MessageBox("tutorial_score_points", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.delay_timer = 5000
+}
+
+ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
+	ctx.fillStyle = "cyan";
+	ctx.strokeStyle = "cyan";
+	ctx.lineWidth = 8;
+	ctx.beginPath();
+	ctx.textAlign = "center"
+	var rw = 120;
+	var rh = 80;
+	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+	ctx.stroke();
+	ctx.font = '21px Muli'
+    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
+    ctx.font = '42px Muli'
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
+}
+
+ScorePointsReminderTutorialOverlay.prototype.satisfaction_criteria = function() {
+	return this.impulse_game_state.tutorial_signals["gateway_opened"];
 }
 
 EnemyIncrTutorialOverlay.prototype = new TutorialOverlay;
@@ -364,12 +391,12 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.beginPath();
 	var rw = 120;
 	var rh = 70;
-	ctx.rect(-imp_vars.sidebarWidth / 2 - rw / 2, imp_vars.canvasHeight - 40 - rh / 2, rw, rh);
+	ctx.rect(-imp_vars.sidebarWidth / 2 - rw / 2, imp_vars.canvasHeight/2 - 20 - rh / 2, rw, rh);
 	ctx.stroke();
     ctx.font = '16px Muli';
-    ctx.fillText("LEVEL TIME",  -imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 50);
+    ctx.fillText("LEVEL TIME",  -imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 30);
     ctx.font = '32px Muli';
-    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 18);
+    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 2);
 	/*ctx.beginPath();
 	ctx.rect(-40, imp_vars.levelHeight - 60, 50, 50);
 	ctx.fillStyle = "gray";
