@@ -267,7 +267,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
 
   ctx.font = '16px Muli';
   if(this.num_enemy_type > 0) {
-    ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 150)
+    ctx.fillText("DETAILED ENEMY INFO", this.x, this.y - this.h/2 + 165)
   }
 
   ctx.textAlign = "center";
@@ -949,22 +949,21 @@ EnemyBox.prototype.additional_draw = function(ctx) {
       ctx.beginPath()
       ctx.shadowBlur = 5
       ctx.arc(this.x - 25 * offset, this.y - this.h/2 + 515, 4, 0, 2*Math.PI, true)
-      ctx.fillStyle = this.color
+      
       if(this.cur_page == i) {
-        ctx.fillStyle = this.lite_color
+        ctx.fillStyle = this.bright_color
         ctx.shadowColor = ctx.fillStyle
         ctx.fill()
       } else {
         ctx.save()
-        ctx.globalAlpha /= 2
+        ctx.globalAlpha *= 0.5
+        ctx.fillStyle = this.color
         ctx.shadowColor = ctx.fillStyle
         ctx.fill()
         ctx.restore()
       }
     }
   }
-
- 
 
   //ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
   //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, imp_params.impulse_enemy_stats[this.enemy_name].color)

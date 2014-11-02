@@ -235,7 +235,7 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_enemy_incr") {
-		this.tutorial_text = "LEVELS GET HARDER OVER TIME"
+		this.tutorial_text = "ENEMIES SPAWN FASTER OVER TIME"
 	}
 
 	if (this.type == "tutorial_one_up") {

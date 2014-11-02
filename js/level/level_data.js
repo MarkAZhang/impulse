@@ -282,7 +282,7 @@ imp_params.impulse_level_data['HIVE 1-6'] = {
   },
   enemies_easy: {
     "stunner": [0, 6, 2, 2, 1, 0, 25],
-    "tank": [0, 8, 3, 2, 1, 0, 25]
+    "tank": [0, 6, 2, 2, 1, 0, 25]
   },
   initial_spawn_data: {
     "tank": 4
@@ -298,7 +298,7 @@ imp_params.impulse_level_data['HIVE 1-6'] = {
   spark_spawn_points: [[50, 240], [400, 15], [400, 585], [750, 360]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [40000, 200000, 800000],
+    "easy": [50000, 200000, 800000],
     "normal":   [150000, 500000, 1500000],
   },
   player_loc: {x: 250, y: 150}
