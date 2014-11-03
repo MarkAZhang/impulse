@@ -11,6 +11,9 @@ function BossFourAttacker(world, x, y, id, impulse_game_state,size) {
   this.size = size
   this.default_heading = false
   this.tank_force = 100
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.tank_force = 70
+  }
   this.spawner_hit_force = 200
 
   this.dir = null

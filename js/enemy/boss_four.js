@@ -114,44 +114,6 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.laser_check_counter = this.laser_check_timer
   this.laser_check_diff = Math.PI/4
 
-  this.shoot_interval = 5000
-
-  this.shoot_durations = [this.shoot_interval,this.shoot_interval/2]
-
-  this.aim_proportion = .25
-
-  this.fire_interval = 200
-
-  this.fire_durations = [this.fire_interval, this.fire_interval]
-
-  this.ray_angles = [null, null] //the angle of the ray
-  this.fire_angles = [null, null] //the boss angle when the ray fired
-
-  this.ray_radius = 2
-  this.ray_buffer_radius = 0
-  this.ray_polygons = [[], []]
-
-  this.ray_locs = [null, null]
-
-  this.ray_aimer_polygons = [[], []]
-
-  this.ray_force = 500
-
-  this.aimed = [false, false]
-  this.fired = [false, false]
-
-  this.spawn_count = 1
-
-  this.laser_colors = ["rgb(0, 229, 238)", "rgb(255, 20, 147)"]//first is crippler, second is deathray
-
-  this.laser_polygon =
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/3), Math.sin(Math.PI * 1/3)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]
-
   this.lin_damp = 10
   this.body.SetLinearDamping(10)
 
@@ -160,6 +122,12 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.num_buds = 5
   this.buds = []
+
+  this.spawner_bud_frequency = 4;
+
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.spawner_bud_frequency = 4;
+  }
 
   this.attack_bud_expand_period = 10000
 
@@ -170,6 +138,11 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.attack_bud_charging = false
   this.attack_bud_charge_period = 1250
   this.attack_bud_charge_timer = this.attack_bud_charge_period
+  this.attack_bud_cooldown_timer = 0
+  this.attack_bud_cooldown_period = 1000
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    this.attack_bud_cooldown_period = 1500
+  }
 
   this.initial_spawn = false
   this.do_initial_spawn = true
@@ -182,6 +155,10 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.bud_count = 0
 
   this.tank_force = 100
+
+  if (imp_vars.player_data.difficulty_mode) {
+    this.tank_force = 70
+  }
 
   this.darkness_interval = 25000
   this.darkness_timer = this.darkness_interval - 1
@@ -433,6 +410,10 @@ BossFour.prototype.additional_processing = function(dt) {
     this.visibility = 1
   }
 
+  if (this.attack_bud_cooldown_timer > 0) {
+    this.attack_bud_cooldown_timer -= dt;
+  }
+
   if (this.anger_level > 0) {
     this.anger_level_cooloff_timer -= dt;
     if (this.anger_level_cooloff_timer < 0) {
@@ -446,6 +427,7 @@ BossFour.prototype.additional_processing = function(dt) {
     if (this.spawn_laser_flare_prop > 1) {
       this.spawn_laser_flare_prop = 1;
     }
+    this.spawn_laser_flare_transition_period = 250;
   } else if (this.spawn_laser_flare_prop > 0) {
     this.spawn_laser_flare_prop -= dt/this.spawn_laser_flare_transition_period_base;
     if (this.spawn_laser_flare_prop < 0) {
@@ -742,6 +724,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     this.target_spawn_angle = null
     imp_vars.impulse_music.play_sound("b4spawner")  
   }
+  this.attack_bud_cooldown_timer = this.attack_bud_cooldown_period;
 }
 
 BossFour.prototype.create_body_buds = function() {
@@ -896,15 +879,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
     // determine the bud type for this bud
     this.bud_count += 1
 
-    var regulator = 4
-
-    // If we're half-dead, and number of spawners is too high, slow down.
-    if(this.getLife() < 0.5 && this.getNumberSpawners() > 3) regulator *= 1.5
-
-    // If there aren't many spawners, spawn them faster.
-    if(this.getNumberSpawners() < 2) regulator = 3
-
-    if(this.bud_count % regulator == 0) {
+    if(this.bud_count % this.spawner_bud_frequency == 0) {
       bud.type = "spawn"  
     } else {
       bud.type = "attack"  
@@ -970,7 +945,7 @@ BossFour.prototype.create_initial_attack_buds = function() {
 }
 
 BossFour.prototype.process_attack_buds = function(dt) {
- 
+  var possible_attack_buds = []
   for(var i in this.buds) {
 
     var bud = this.buds[i]
@@ -996,27 +971,26 @@ BossFour.prototype.process_attack_buds = function(dt) {
           bud.body.SetPosition(new_position)
           bud.expand_timer -= dt
 
-          if(bud.expand_timer < 0 && !this.ready_attack_bud) {
-            this.ready_attack_bud = bud
-            this.attack_bud_angle = (index)/this.num_buds * Math.PI * 2 
-
-            //bud.enemy.dir = {x: bud.body.GetPosition().x - this.body.GetPosition().x, y: bud.body.GetPosition().y - this.body.GetPosition().y}
-            //bud.body = null
-            //bud.delay = 0
+          if(this.attack_bud_cooldown_timer <= 0 &&  bud.expand_timer < 0 && !this.ready_attack_bud) {
+            // Prioritize spawn buds.
+            if (bud.type == "spawn") {
+              this.ready_attack_bud = bud;
+              this.attack_bud_angle = (index)/this.num_buds * Math.PI * 2;
+            } else {
+              possible_attack_buds.push(i)  
+            }
           }
-          // adjust bud
         }
-
       }
-
-      /*var index = this.buds[i].loc
-      var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
-      bud.body.GetFixtureList().m_shape.m_vertices = vertices
-      bud.body.SetPosition({x: this.body.GetPosition().x + (this.effective_radius + size * 1.5) * Math.cos(Math.PI/5)  * Math.cos(angle),
-        y: this.body.GetPosition().y + (this.effective_radius + size * 1.5) * Math.cos(Math.PI/5) * Math.sin(angle)})
-      bud.body.SetAngle(angle)*/
     }
   }
+  if (possible_attack_buds.length > 0 && !this.ready_attack_bud) {
+    var index = possible_attack_buds[Math.floor(Math.random()* possible_attack_buds.length)];
+    var bud = this.buds[index];
+    this.ready_attack_bud = bud
+    this.attack_bud_angle = (index)/this.num_buds * Math.PI * 2 
+  }
+  
 }
 
 
@@ -1156,7 +1130,6 @@ BossFour.prototype.collide_with = function(other) {
     return
 
   if(other === this.player) {
-
     var tank_angle = _atan(this.body.GetPosition(), this.player.get_current_position())
     this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     this.impulse_game_state.reset_combo();

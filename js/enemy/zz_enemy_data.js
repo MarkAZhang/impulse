@@ -523,7 +523,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
   lin_damp: 6,
   effective_radius: 1,
   force: 7.2,
-  score_value: 10000,
+  score_value: 7500,
   attack_rating: 10,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 1.5, vertices:
@@ -703,7 +703,7 @@ imp_params.impulse_enemy_stats["third boss"] = {
 
 imp_params.impulse_enemy_stats["fourth boss"] = {
   color: "#ff0000",
-  density: 4,
+  density: 3,
   lin_damp: 8,
   effective_radius: 4,
   force: 0,

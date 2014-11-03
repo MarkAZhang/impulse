@@ -21,14 +21,14 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.safe = true
   this.within_bounds = false
 
-  this.shoot_interval = 1600
+  this.shoot_interval = 1000
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.shoot_interval = 1800
+    this.shoot_interval = 1400
   }
 
   this.extra_adjust = false
-  this.adjust_position_factor = 1;
+  this.adjust_position_factor = 0.5;
 
   this.shoot_duration = this.shoot_interval
 
@@ -49,9 +49,9 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.turret_arm_angle = 0
 
-  this.stun_length = 1000
+  this.stun_length = 1500
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.stun_length = 1400
+    this.stun_length = 2000
   }
 
 
