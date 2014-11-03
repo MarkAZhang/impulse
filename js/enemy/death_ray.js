@@ -21,7 +21,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.safe = true
   this.within_bounds = false
 
-
   this.shoot_interval = 1600
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -52,7 +51,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.stun_length = 1000
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.stun_length = 1200
+    this.stun_length = 1400
   }
 
 
@@ -333,7 +332,7 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
 
         var vis = this.fire_duration > this.fire_interval/2 ? this.fire_interval - this.fire_duration : this.fire_duration
         vis /= (this.fire_interval/2)
-        context.globalAlpha = vis
+        context.globalAlpha *= vis
 
         context.beginPath()
 

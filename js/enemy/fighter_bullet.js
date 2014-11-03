@@ -29,6 +29,9 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
   this.adjust_position_enabled = false
 
   this.bullet_enemy_factor = 150;
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    this.bullet_enemy_factor = 75
+  }
 
   this.parent_id = parent_id
 
@@ -86,7 +89,7 @@ FighterBullet.prototype.collide_with = function(other) {
         var factor = 1;
 
         if(other.id == this.parent_id) {
-          factor *= 1.5
+          factor *= 3
         } else if (other instanceof Fighter) {
           factor *= 0.7
         } else if (other instanceof Orbiter) {
