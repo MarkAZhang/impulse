@@ -15,7 +15,7 @@ function Stunner(world, x, y, id, impulse_game_state) {
   this.do_yield = false
 
   if (imp_vars.player_data.difficulty_mode == "normal") {
-  	this.force *= 1.2;
+  	this.force *= 1.3;
   }
 
   /*if(this.impulse_game_state.level.level_name == "HIVE 1-1" ||

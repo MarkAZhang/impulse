@@ -76,7 +76,6 @@ Spear.prototype.additional_processing = function(dt) {
 }
 
 Spear.prototype.player_hit_proc = function() {
-
   if(this.status_duration[1] <= 0) {
     var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))

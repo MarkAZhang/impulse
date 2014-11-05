@@ -29,13 +29,13 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.times_shot = 0
 
-  this.lighten_interval = 20000
+  this.lighten_interval = 9000
 
   this.turret_enemy_threshold = 30
 
   this.lighten_timer = this.lighten_interval - 1
 
-  this.lighten_duration = 6000
+  this.lighten_duration = 4000
 
   this.lightened = false
 
@@ -63,7 +63,10 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   // Slightly easier to push on easy mode.
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.impulse_extra_factor = 12
+    this.impulse_extra_factor = 20
+  } else {
+    // Impulse is HIGHER on normal mode because touching the boss is death.
+    this.impulse_extra_factor = 15
   }
 
   this.turn_rate = 5000
@@ -72,7 +75,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 100)
 
-  this.boss_force = 40
+  this.boss_force = 30
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.boss_force = 30  
@@ -204,7 +207,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.first_turret = true
 
-  this.impulse_extra_factor = 20
 }
 
 //

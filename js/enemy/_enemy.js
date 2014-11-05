@@ -700,7 +700,12 @@ Enemy.prototype.collide_with = function(other) {
         if(other.durations["open"] > 0) {
           this.open(other.durations["open"])
         }
+      this.enemy_hit_proc(other);
     }
+}
+
+Enemy.prototype.enemy_hit_proc = function(other) {
+
 }
 
 Enemy.prototype.player_hit_proc = function() {
