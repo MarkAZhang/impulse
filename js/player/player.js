@@ -92,6 +92,9 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.silence_duration = 0
   this.silence_interval = 0
 
+  this.gooed_damping_factor = 5;
+  this.gooed_force_boost = 1.7;
+
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse, bulk], time left for each status
@@ -309,7 +312,7 @@ Player.prototype.process = function(dt) {
   }
   if(this.status_duration[2] > 0) {
     this.status_duration[2] -= dt
-    this.body.SetLinearDamping(this.lin_damp * 3)
+    this.body.SetLinearDamping(this.lin_damp * this.gooed_damping_factor)
     this.gooed = true
   } else if(this.gooed){
     this.body.SetLinearDamping(this.lin_damp)
@@ -509,7 +512,12 @@ Player.prototype.process = function(dt) {
               {
                 var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                 this.enemies_hit.push(this.level.enemies[i].id)
-                this.level.enemies[i].process_impulse(this.attack_loc, this.impulse_force, angle)
+                var force = this.impulse_force;
+                // If it's a goo-ed Harpoon.
+                if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].status_duration[2] > 0) {
+                  force *= 2;
+                }
+                this.level.enemies[i].process_impulse(this.attack_loc, force, angle)
                 break
               }
               if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
@@ -575,6 +583,11 @@ Player.prototype.process = function(dt) {
     if(this.status_duration[4] > 0) {
       f_x *= -1
       f_y *= -1
+    }
+
+    if(this.status_duration[2] > 0) {
+      f_x *= this.gooed_force_boost
+      f_y *= this.gooed_force_boost
     }
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
 

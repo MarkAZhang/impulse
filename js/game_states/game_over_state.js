@@ -184,6 +184,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.font = '20px Muli'
     if (imp_vars.player_data.difficulty_mode == "normal") {
+      ctx.textAlign = 'center'
       ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
     }
     ctx.restore();

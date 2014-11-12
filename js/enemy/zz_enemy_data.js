@@ -186,10 +186,10 @@ imp_params.impulse_enemy_stats["goo"] = {
 
 imp_params.impulse_enemy_stats["harpoon"] = {
   color: "#00aa00",
-  density: 6,
+  density: 5,
   lin_damp: 6,
   effective_radius: 0.7,
-  force: 5.4,
+  force: 4.5,
   score_value: 3000,
   attack_rating: 6,
   batch_enemy_image: true,

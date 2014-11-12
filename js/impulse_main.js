@@ -1,6 +1,6 @@
 var imp_vars = {
   god_mode: false,
-  dev: true,
+  dev: false,
   step_id: 0,
   canvasWidth: 0,
   canvasHeight: 0,

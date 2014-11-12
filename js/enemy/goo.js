@@ -19,7 +19,12 @@ function Goo(world, x, y, id, impulse_game_state) {
   this.do_yield = false
 
   this.goo_radius_small = 3;
-  this.goo_radius_big = 10;
+
+  this.goo_radius_big = 11;
+
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    this.goo_radius_big = 10;
+  }
 
   this.goo_radius = this.goo_radius_small
 
