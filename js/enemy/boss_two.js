@@ -73,7 +73,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.high_gravity_factor = 2.5//1.5
   this.low_gravity_factor = 4//3
 
-  this.boss_high_gravity_force = .75
+  this.boss_high_gravity_force = 0.9
   this.boss_low_gravity_force = .3
   this.boss_beam_gravity_force = 1.2
   // In easy mode, the player is heavier. Need to make boss stronger, else it's just too easy.
@@ -284,25 +284,27 @@ BossTwo.prototype.get_target_arm_width_angle = function() {
 }
 
 BossTwo.prototype.get_gravity_force = function(loc, is_enemy) {
-var dist =  p_dist(loc, this.body.GetPosition())
-var polygons = this.get_arm_polygons()
+  var dist =  p_dist(loc, this.body.GetPosition())
+  var polygons = this.get_arm_polygons()
   var inside = false
+  var gravity_force = 0;
   for(var j = 0; j < polygons.length; j++) {
     if(pointInPolygon(polygons[j], loc)) {
-      if (dist <= this.effective_radius * this.last_growth_factor * this.high_gravity_factor)
-        return 2 * this.boss_beam_gravity_force
-      else if (dist <= this.effective_radius * this.last_growth_factor * this.low_gravity_factor)
-        return 1.5 * this.boss_beam_gravity_force
-      return is_enemy ? this.boss_beam_gravity_force * 0.5 : this.boss_beam_gravity_force
+      gravity_force += this.boss_beam_gravity_force;
+      break;
     }
   }
   if (dist <= this.effective_radius * this.last_growth_factor * this.high_gravity_factor) {
-    return this.boss_high_gravity_force
+    gravity_force += this.boss_high_gravity_force
   }
   else if (dist <= this.effective_radius * this.last_growth_factor * this.low_gravity_factor) {
-    return this.boss_low_gravity_force
+    gravity_force += this.boss_low_gravity_force
   }
 
+  if (is_enemy) {
+    gravity_force *= 0.5;
+  }
+  return gravity_force;
 }
 BossTwo.prototype.pre_draw = function(context, draw_factor) {
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return

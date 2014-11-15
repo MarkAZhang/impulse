@@ -89,29 +89,48 @@ var dist =  p_dist(loc, {x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw
 BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
   var exit_points = 6
 
-    var enemy_num = this.enemies_to_spawn[enemy_type]
+  var enemy_num = this.enemies_to_spawn[enemy_type]
 
-    if (imp_vars.player_data.difficulty_mode == "easy") {
-      enemy_num = this.enemies_to_spawn_easy[enemy_type]      
-    }
+  if (imp_vars.player_data.difficulty_mode == "easy") {
+    enemy_num = this.enemies_to_spawn_easy[enemy_type]      
+  }
+  var j = 0;
 
-    if(this.level.enemy_numbers[enemy_type] + 1 <= this.level.enemies_data[enemy_type][6]) {
+  if(this.level.enemy_numbers[enemy_type] + 1 <= this.level.enemies_data[enemy_type][6]) {
 
-      for(var i = 0; i < enemy_num; i++) {
-        var ray_angle = _atan({x: this.x/imp_vars.draw_factor, y: this.y/imp_vars.draw_factor}, this.boss.body.GetPosition())
-
-        var loc = [(this.x + this.size/2 * Math.cos(ray_angle))/imp_vars.draw_factor,
-        (this.y + this.size/2 * Math.sin(ray_angle))/imp_vars.draw_factor]
-
-        var temp_enemy = new (imp_params.impulse_enemy_stats[enemy_type].className)(this.world, loc[0], loc[1],
-        this.level.enemy_counter, this.impulse_game_state)
-
-        if(temp_enemy.type == "harpoon") {
-          temp_enemy.dire_harpoon = true
-        }
-        this.level.spawned_enemies.push(temp_enemy)
-
-        this.level.enemy_counter +=1
+    for(var i = 0; i < enemy_num; i++) {
+      // coordinates in box2d world, not canvas.
+      var world_x =  this.x/imp_vars.draw_factor;
+      var world_y =  this.y/imp_vars.draw_factor;
+      var ray_angle = _atan({x: world_x, y: world_y}, this.boss.body.GetPosition())
+       // find a direction that isn't close to the wall
+      var angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
+      while(!isVisible({x: world_x, y: world_y},
+        {x: world_x + 10 * Math.cos(angle),
+          y: world_y + 10 * Math.sin(angle)},
+          this.level.obstacle_edges
+        )) 
+      {
+          j += 1
+          angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
       }
+
+
+      var loc = [(this.x + this.size/2 * Math.cos(angle))/imp_vars.draw_factor,
+      (this.y + this.size/2 * Math.sin(angle))/imp_vars.draw_factor]
+
+      var temp_enemy = new (imp_params.impulse_enemy_stats[enemy_type].className)(this.world, loc[0], loc[1],
+      this.level.enemy_counter, this.impulse_game_state)
+      temp_enemy.body.SetAngle(angle);
+
+      if(temp_enemy.type == "harpoon") {
+        temp_enemy.dire_harpoon = true
+      }
+      this.level.spawned_enemies.push(temp_enemy)
+
+      this.level.enemy_counter +=1
+
+      j += 1;
     }
+  }
 }
