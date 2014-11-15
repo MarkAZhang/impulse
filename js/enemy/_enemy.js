@@ -122,6 +122,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.durations = {}
   this.durations["open"] = 0
   this.durations["impulsed"] = 0
+  this.durations["invincible"] = 0
 
   this.is_enemy = true
 
@@ -605,6 +606,9 @@ Enemy.prototype.set_heading = function(heading) {
 }
 
 Enemy.prototype.start_death = function(death) {
+  if (this.durations["invincible"] > 0) {
+    return;
+  }
   this.dying = death
   this.dying_length = (death == "fade") ? 500 : this.default_dying_length;
   this.dying_duration = this.dying_length;
@@ -661,7 +665,6 @@ Enemy.prototype.collide_with = function(other) {
 
   if(this.dying)//ensures the collision effect only activates once
     return
-
 
     var transfer_factor = 0.2
     if(this.durations["open"] > 0) {
@@ -981,6 +984,10 @@ Enemy.prototype.ulted = function(first_ult_call) {
 Enemy.prototype.stun = function(dur) {
   this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
   this.status_duration[1] = Math.max(dur, this.status_duration[1])
+}
+
+Enemy.prototype.invincible = function(dur) {
+  this.durations["invincible"] = Math.max(dur, this.durations["invincible"])
 }
 
 Enemy.prototype.silence = function(dur, color_silence) {

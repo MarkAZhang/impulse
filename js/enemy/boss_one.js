@@ -472,6 +472,7 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
   this.level.spawned_enemies.push(new_enemy)
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
   new_enemy.stun(this.max_turret_timer + 2000)
+  new_enemy.invincible(this.max_turret_timer + 2000)
   if(enemy_type == "stunner")
     new_enemy.open(1500)
   new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
