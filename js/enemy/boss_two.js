@@ -364,7 +364,6 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     context.globalAlpha *= 2
   }
 
-  this.draw_gateway_particles(context, draw_factor);
 
   if(this.black_hole_timer < 0 && this.black_hole_timer >= -this.black_hole_duration) {
     var tp = this.body.GetPosition()
@@ -395,8 +394,11 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
   if(this.black_hole_timer > 0) {
+    context.save();
+    context.globalAlpha *= 0.7;
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
     0, 90 * aura_factor * this.last_growth_factor * this.high_gravity_factor, 90 * aura_factor *this.last_growth_factor * this.high_gravity_factor, "consumendi_aura", consumendiSprite)
+    context.restore();
   }
 
   context.save()
@@ -419,6 +421,7 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
 
   this.draw_glows(context, draw_factor)
 
+  this.draw_gateway_particles(context, draw_factor);
   context.restore()
 }
 

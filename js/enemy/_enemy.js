@@ -606,7 +606,7 @@ Enemy.prototype.set_heading = function(heading) {
 }
 
 Enemy.prototype.start_death = function(death) {
-  if (this.durations["invincible"] > 0) {
+  if (this.durations["invincible"] > 0 && death == "hit_player") {
     return;
   }
   this.dying = death
