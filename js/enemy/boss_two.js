@@ -48,14 +48,14 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
-  this.black_hole_interval = 13400
+  this.black_hole_interval = 13500
   this.black_hole_timer = this.black_hole_interval - 1
   this.black_hole_duration = 2000
   this.black_hole_radius = 0
   this.black_hole_force = 10
   this.black_hole_player_factor = 1
   this.black_hole_switch_time = 1000
-  this.black_hole_expand_prop = 0.7
+  this.black_hole_expand_prop = 0.9
   this.black_hole_sound_played = false
 
   this.knockback_red_interval = 150
@@ -83,7 +83,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
     this.boss_beam_gravity_force *= 1.5
   }
 
-
   this.spawn_spawners = false
   this.spawners = []
 
@@ -97,17 +96,25 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.shrink_rate = 0.025
 
-  this.enemy_spawn_interval = 10000
+  this.enemy_spawn_interval = 12000
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.enemy_spawn_interval = 12000
   }
   this.enemy_spawn_duration = 2000
 
   this.spawn_sets = [
-    ["stunner", "mote"],
+    ["stunner", "tank"],
     ["harpoon", "spear"],
-    ["tank", "goo"]
+    ["mote", "goo"]
   ]
+
+  if (imp_vars.player_data.difficulty_mode == "normal") {
+    this.spawn_sets = [
+      ["stunner", "stunner", "tank", "goo"],
+      ["harpoon", "spear", "spear", "tank"],
+      ["mote", "goo", "tank", "harpoon"]
+    ]
+  }
 
   this.enemy_gravity_factor = {
     "stunner": 0.4,
@@ -149,15 +156,20 @@ BossTwo.prototype.adjust_size = function() {
 
 BossTwo.prototype.additional_processing = function(dt) {
 
-
-
   // spawn spawners if necessary
   if(!this.spawn_spawners) {
     this.spawn_spawners = true
     var spawner_buffer = 80
-    var locs = [/*[spawner_buffer, spawner_buffer], [levelWidth - spawner_buffer, spawner_buffer],*/
-      [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
+    var locs = [[imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
       [spawner_buffer, spawner_buffer]]
+    if (imp_vars.player_data.difficulty_mode == "normal") {
+      locs = [
+        [spawner_buffer, spawner_buffer],
+        [imp_vars.levelWidth - spawner_buffer, spawner_buffer],
+        [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
+        [spawner_buffer, imp_vars.levelHeight - spawner_buffer]
+      ];
+    }
     for(var i = 0; i < locs.length; i++) {
       var new_spawner = new BossTwoSpawner(locs[i][0], locs[i][1], this, this.impulse_game_state)
       new_spawner.spawn_duration = i/locs.length * new_spawner.spawn_interval
@@ -186,8 +198,9 @@ BossTwo.prototype.additional_processing = function(dt) {
   if(this.enemy_spawn_duration < 0) {
     this.enemy_spawn_duration = this.enemy_spawn_interval
 
-    this.spawners[0].spawn_enemies(this.spawn_sets[this.spawn_pattern_counter][0])
-    this.spawners[1].spawn_enemies(this.spawn_sets[this.spawn_pattern_counter][1])
+    for (var i = 0; i < this.spawners.length; i++) {
+      this.spawners[i].spawn_enemies(this.spawn_sets[this.spawn_pattern_counter][i])  
+    }
     this.spawn_pattern_counter += 1
     this.spawn_pattern_counter = this.spawn_pattern_counter % this.spawn_sets.length
   }
@@ -228,7 +241,6 @@ BossTwo.prototype.additional_processing = function(dt) {
     else {
       this.small_exploding_duration -= dt
     }
-
   }
 
   this.arm_core_angle += Math.PI * 2 * dt / (this.arm_full_rotation / this.last_growth_factor)
@@ -265,7 +277,7 @@ BossTwo.prototype.additional_processing = function(dt) {
         this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (prop/this.black_hole_expand_prop))
       else
         this.black_hole_radius = this.effective_radius * (this.last_growth_factor * this.low_gravity_factor * (1 - (prop-this.black_hole_expand_prop)/(1-this.black_hole_expand_prop)))
-      this.black_hole()
+      //this.black_hole()
     }
     if(this.black_hole_timer < -this.black_hole_duration) {
       this.black_hole_timer = this.black_hole_interval
@@ -283,7 +295,35 @@ BossTwo.prototype.get_target_arm_width_angle = function() {
   return this.arm_width_angle_min + Math.min(1, (this.growth_factor - 1) / 2) * (this.arm_width_angle_max - this.arm_width_angle_min);
 }
 
+BossTwo.prototype.get_black_hole_force = function(loc, is_enemy) {
+  var black_hole_factor = 5
+
+  if(-this.black_hole_timer/this.black_hole_duration < this.black_hole_expand_prop) {
+    black_hole_factor = 0.12
+  }
+
+  if(p_dist(this.body.GetPosition(), loc) <= this.effective_radius * this.low_gravity_factor)
+  {
+    black_hole_force = this.black_hole_force * black_hole_factor 
+    if (!is_enemy) {
+      black_hole_force *= this.black_hole_player_factor;
+    }
+    
+  } else {
+    black_hole_force = -1
+  }
+
+  return black_hole_force;
+}
+
 BossTwo.prototype.get_gravity_force = function(loc, is_enemy) {
+  if (this.black_hole_timer < 0) {
+    // Check if the black hole force applies. If so, return it.
+    var black_hole_force = this.get_black_hole_force(loc, is_enemy);
+    if (black_hole_force !== -1) {
+      return black_hole_force
+    }
+  }
   var dist =  p_dist(loc, this.body.GetPosition())
   var polygons = this.get_arm_polygons()
   var inside = false
@@ -302,7 +342,7 @@ BossTwo.prototype.get_gravity_force = function(loc, is_enemy) {
   }
 
   if (is_enemy) {
-    gravity_force *= 0.5;
+    gravity_force *= 0.3;
   }
   return gravity_force;
 }
@@ -622,10 +662,10 @@ BossTwo.prototype.get_impulse_sensitive_pts = function() {
 
 BossTwo.prototype.black_hole = function() {
 
-  var black_hole_factor = 1
+  var black_hole_factor = 5
 
   if(-this.black_hole_timer/this.black_hole_duration < this.black_hole_expand_prop) {
-    black_hole_factor = 0.05
+    black_hole_factor = 0.12
   }
   var black_hole_force = 0
 
@@ -642,8 +682,6 @@ BossTwo.prototype.black_hole = function() {
 
     this.player.body.ApplyImpulse(new b2Vec2(black_hole_force * Math.cos(tank_angle),
     black_hole_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
-
-    this.player_gravity_force += black_hole_force
   }
 
   for(var i = 0; i < this.level.enemies.length; i++)
@@ -667,13 +705,22 @@ BossTwo.prototype.process_gateway_particles = function(dt) {
   for (var i = 0; i < this.gateway_particles.length; i++) {
     var particle = this.gateway_particles[i];
     particle.prop += dt / this.gateway_particle_duration;
-    // remove the particle
+    if (this.black_hole_timer < 0) {
+      // double time!
+      particle.prop += dt / this.gateway_particle_duration;
+    }
+  }
+  for (var i = this.gateway_particles.length - 1; i >= 0; i--) {
+    var particle = this.gateway_particles[i];
     if (particle.prop > 1) {
       this.gateway_particles.splice(i, 1);
     }
   }
 
   this.gateway_particle_gen_timer -= dt
+  if (this.black_hole_timer < 0) {
+    this.gateway_particle_gen_timer -= dt
+  }
 
   if (this.gateway_particle_gen_timer < 0) {
     this.gateway_particle_gen_timer += this.gateway_particle_gen_interval
@@ -685,14 +732,15 @@ BossTwo.prototype.generate_gateway_particles = function(x, y, num_particles) {
   for (var i = 0; i < num_particles; i++) {
     var angle = Math.PI * 2 * i / num_particles + (Math.random() - 0.5) * Math.PI * 2 / num_particles
     this.gateway_particles.push({
-      start_x: Math.cos(angle) * this.effective_radius * this.last_growth_factor * this.high_gravity_factor + x,
-      start_y: Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.high_gravity_factor + y,
+      start_x: Math.cos(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor + x,
+      start_y: Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor + y,
       prop: 0
     });
   }
 }
 
 BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
+  var particle_shape = imp_params.impulse_enemy_stats[this.type].death_polygons[0];
   for(var i = 0; i < this.gateway_particles.length; i++) {
     var particle = this.gateway_particles[i];
     ctx.save()
@@ -702,14 +750,14 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
       var temp = (1 - particle.prop) / (0.75)
       ctx.globalAlpha *= temp
     }
-    ctx.beginPath()
-    ctx.rect(
-      draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop) - 3,
-      draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop) - 3,
-      6,
-      6)
-    ctx.fillStyle = impulse_colors["world " + this.impulse_game_state.world_num + " bright"]
-    ctx.fill()
+    if (this.black_hole_timer >= 0) {
+      ctx.globalAlpha *= 0.5;
+    }
+    var pointer_angle = _atan({x: particle.start_x, y: particle.start_y},
+                              {x: this.body.GetPosition().x, y: this.body.GetPosition().y});
+    var x = draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop);
+    var y = draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop);
+    draw_shape(ctx, x, y, particle_shape, 2, impulse_colors["world " + this.impulse_game_state.world_num + " bright"], 1, pointer_angle)
     ctx.restore()
   }
 }

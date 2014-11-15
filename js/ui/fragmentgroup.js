@@ -12,8 +12,6 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
 
   var velocity_adjustment_factor = Math.min(1, 10/Math.sqrt(Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y+0.01)))
 
-
-
   //decrease the velocity some so that the explosion looks good
   velocity = {x: velocity.x * velocity_adjustment_factor, y: velocity.y * velocity_adjustment_factor}
   this.lifespan = 1000

@@ -13,19 +13,19 @@ var BossTwoSpawner = function(x, y, boss, impulse_game_state) {
   this.visibility = 0
 
   this.enemies_to_spawn = {
-    "stunner": 3,
-    "spear": 3,
+    "stunner": 1,
+    "spear": 1,
     "tank": 2,
-    "mote": 2,
+    "mote": 1,
     "goo": 1,
-    "harpoon": 2
+    "harpoon": 1
   }
 
   this.enemies_to_spawn_easy = {
     "stunner": 3,
     "spear": 3,
     "tank": 2,
-    "mote": 1,
+    "mote": 2,
     "goo": 1,
     "harpoon": 1
   }

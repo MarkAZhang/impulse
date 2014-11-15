@@ -875,7 +875,9 @@ Level.prototype.process_gateway_particles = function(dt) {
   for (var i = 0; i < this.gateway_particles.length; i++) {
     var particle = this.gateway_particles[i];
     particle.prop += dt / this.gateway_particle_duration;
-    // remove the particle
+  }
+  for (var i = this.gateway_particles.length - 1; i >= 0; i--) {
+    var particle = this.gateway_particles[i];
     if (particle.prop > 1) {
       this.gateway_particles.splice(i, 1);
     }
