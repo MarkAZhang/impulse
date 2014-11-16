@@ -326,7 +326,7 @@ Fighter.prototype.modify_movement_vector = function(dir) {
     dir.Multiply(this.slow_force)
   }
   else {
-    if(this.fighter_status == "frenzy" && this.status_duration[1] <= 0 && !this.has_sight_of_player) {
+    if(this.fighter_status == "frenzy" && this.status_duration[1] <= 0) {
       dir.Multiply(this.fast_factor)
     }
 
