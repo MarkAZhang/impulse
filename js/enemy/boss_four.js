@@ -422,7 +422,7 @@ BossFour.prototype.additional_processing = function(dt) {
     }
   }
 
-  if (this.cur_object != null && this.cur_object instanceof BossFourSpawner && this.cur_object.status_duration[1] <= 0) {
+  if (this.cur_object != null && this.cur_object instanceof BossFourSpawner && !this.cur_object.is_silenced()) {
     this.spawn_laser_flare_prop += dt/this.get_spawn_laser_flare_transition_period();
     if (this.spawn_laser_flare_prop > 1) {
       this.spawn_laser_flare_prop = 1;

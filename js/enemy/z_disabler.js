@@ -39,12 +39,12 @@ function Disabler(world, x, y, id, impulse_game_state) {
 }
 
 Disabler.prototype.check_area_of_effect = function() {
-  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
+  if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
     this.area_effect(this.player)
   }
 
   for(var j = 0; j < this.level.enemies.length; j++) {
-    if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
+    if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
     {
       if(this.level.enemies[j].className != this.className)
         this.area_effect(this.level.enemies[j])

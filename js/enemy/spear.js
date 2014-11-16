@@ -34,7 +34,7 @@ Spear.prototype.move = function() {
 
   if(this.player.dying) return //stop moving once player dies
 
-  if(this.status_duration[0] > 0) return //locked
+  if(this.is_locked()) return //locked
     
   if (isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.path = [this.player.body.GetPosition()]
@@ -64,7 +64,7 @@ Spear.prototype.modify_movement_vector = function(dir) {
     {
       dir.Multiply(this.fast_factor)
     }
-    if(this.status_duration[2] > 0) {
+    if(this.is_gooed()) {
       dir.Multiply(this.slow_factor)
     }
     dir.Multiply(this.force)
@@ -72,11 +72,11 @@ Spear.prototype.modify_movement_vector = function(dir) {
 }
 
 Spear.prototype.additional_processing = function(dt) {
-  this.special_mode = !this.dying && this.path && this.path.length == 1 && (this.status_duration[1] <= 0) && this.entered_arena
+  this.special_mode = !this.dying && this.path && this.path.length == 1 && !this.is_silenced() && this.entered_arena
 }
 
 Spear.prototype.player_hit_proc = function() {
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
     var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
     this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
@@ -90,19 +90,6 @@ Spear.prototype.process_impulse_specific = function(attack_loc, impulse_force, h
     this.recovery_timer = this.stun_length
   }
 }
-
-
-Spear.prototype.stun = function(dur) {
-  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-  this.silence(dur)
-}
-
-Spear.prototype.silence = function(dur, color_silence) {
-  if(color_silence)
-    this.color_silenced = color_silence
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
-}
-
 
 Spear.prototype.additional_drawing = function(context, draw_factor) {
   
@@ -125,7 +112,7 @@ Spear.prototype.bulk_draw = function(context, draw_factor, num) {
     return
   }
   if(num == 1) {
-    if(this.recovery_timer > 0 && !this.dying && !(this.status_duration[0] > 0)) {
+    if(this.recovery_timer > 0 && !this.dying && !this.is_locked()) {
       bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
     }
   }

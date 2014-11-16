@@ -27,7 +27,7 @@ function Mote(world, x, y, id, impulse_game_state) {
 }
 
 Mote.prototype.player_hit_proc = function() {
-  if(this.status_duration[1] <= 0)
+  if(!this.is_silenced())
     this.player.silence(this.silence_duration, true)
 }
 
@@ -36,7 +36,7 @@ Mote.prototype.additional_processing = function(dt) {
 }
 
 Mote.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
-	if(this.status_duration[1] > 0) {
+	if(this.is_silenced()) {
 		this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
     if (!ultimate)

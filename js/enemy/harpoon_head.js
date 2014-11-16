@@ -7,6 +7,9 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
   if(world === undefined) return
 
   this.harpoon = harpoon
+  if (harpoon) {
+    this.status_duration = this.harpoon.status_duration
+  }
 
   this.type="harpoonhead"
 
@@ -18,7 +21,6 @@ function HarpoonHead(world, x, y, id, impulse_game_state, harpoon) {
 }
 
 HarpoonHead.prototype.additional_processing = function(other) {
-  this.status_duration = this.harpoon.status_duration
 }
 
 HarpoonHead.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {

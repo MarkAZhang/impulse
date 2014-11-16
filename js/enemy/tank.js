@@ -53,7 +53,7 @@ function Tank(world, x, y, id, impulse_game_state) {
 
 Tank.prototype.additional_processing = function(dt) {
 
-  this.special_mode = this.status_duration[1] <= 0
+  this.special_mode = !this.is_silenced();
   //this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 
   if (this.tank_collision_fudge_timer > 0) {
@@ -99,7 +99,7 @@ Tank.prototype.check_death = function()
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
-      if(this.status_duration[1] <= 0 && this.durations["volatile"] > 0) {
+      if(!this.is_silenced() && this.durations["volatile"] > 0) {
         this.activated = true
         this.cause_of_death = "kill"
       }
@@ -119,7 +119,7 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, 
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   if(!ultimate) 
     this.open(this.open_period)
-  if (this.status_duration[2] > 0) {
+  if (this.is_gooed()) {
     this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
   } else {
     if (imp_vars.player_data.difficulty_mode == "easy") {
@@ -130,7 +130,7 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, 
     
   }
 
-  if (this.tank_collision_fudge_timer > 0 && !this.dying && !this.activated && this.status_duration[1] <= 0) {
+  if (this.tank_collision_fudge_timer > 0 && !this.dying && !this.activated && !this.is_silenced()) {
     this.activated = true
     this.cause_of_death = "kill"
   }
@@ -142,7 +142,7 @@ Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hi
 
 Tank.prototype.collide_with = function(other, this_body, other_body) {
   if(other instanceof Tank) {
-    if (this.durations["volatile"] > 0 && !this.dying && !this.activated && this.status_duration[1] <= 0)
+    if (this.durations["volatile"] > 0 && !this.dying && !this.activated && !this.is_silenced())
     {
       this.activated = true
       this.cause_of_death = "kill"
@@ -153,30 +153,11 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
     }
   } 
 
-  /*if(other instanceof BossOne && this.durations["open"] > 0 && !this.dying && !this.activated)
-  {
-
-    if(this.status_duration[1] <= 0) {
-      console.log(this.level.boss)
-      console.log(other_body)
-      console.log(this.level.boss.body)
-      if(this.level.boss && other_body == this.level.boss.body) {
-        this.activated = true
-        this.cause_of_death = "kill"
-        var angle = _atan(this.body.GetPosition(), other.body.GetPosition())
-        other_body.ApplyImpulse(new b2Vec2(this.tank_force * 80 * Math.cos(angle), this.tank_force * 80 * Math.sin(angle)), other.body.GetPosition())
-      }
-    }
-    else {
-      this.start_death("kill")
-    }
-  }*/
-
   if(this.dying || this.activated)//ensures the collision effect only activates once
     return
 
   if(other === this.player) {
-    if(this.status_duration[1] <= 0) {
+    if(!this.is_silenced()) {
       this.activated = true
       this.cause_of_death = "hit_player"
       this.impulse_game_state.reset_combo()
@@ -224,7 +205,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
   var this_angle = this.body.GetAngle() + Math.PI/4;
 
   var lighten_multiplier = 1;
-  if(this.status_duration[3] > 0) {
+  if(this.is_lightened()) {
     lighten_multiplier /= this.lighten_factor
   }
 
@@ -235,7 +216,7 @@ Tank.prototype.additional_drawing = function(context, draw_factor, latest_color)
     context.lineWidth = 5
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * (this.bomb_factor * (1 - this.detonate_timer/this.detonate_duration)) * draw_factor, 0, 2*Math.PI*0.999)
     context.stroke()
-  } else if(this.status_duration[1] <=0 && this.durations["volatile"] > 0) {
+  } else if(!this.is_silenced() && this.durations["volatile"] > 0) {
     context.beginPath()
     context.strokeStyle = "red"
     context.lineWidth = 2
@@ -261,7 +242,7 @@ Tank.prototype.bulk_draw = function(context, draw_factor, num) {
   if (this.dying) {
     return
   }
-  if(this.durations["volatile"] <= 0 && this.status_duration[1] <= 0) {
+  if(this.durations["volatile"] <= 0 && !this.is_silenced()) {
     context.moveTo(this.body.GetPosition().x*draw_factor +  this.effective_radius * this.bomb_factor * draw_factor, this.body.GetPosition().y*draw_factor)
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.effective_radius * this.bomb_factor * draw_factor, 0, 2*Math.PI*0.999)
   }
@@ -284,13 +265,13 @@ Tank.prototype.get_current_status = function() {
   }
 
   if(!this.dying) {
-    if(this.status_duration[0] > 0) {
+    if(this.is_locked()) {
       return 'stunned';
     } else if(this.color_silenced) {
       return 'silenced'
     } if(this.durations["volatile"] > 0) {
       return "volatile"
-    } else if(this.status_duration[2] > 0) {
+    } else if(this.is_gooed()) {
       return "gooed"
     }
     if(this.durations["impulsed"] > 0) {

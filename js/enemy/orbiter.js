@@ -125,8 +125,8 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.silence(100, true)
   }
 
-  this.attack_mode = (this.player.attacking && !this.player.point_in_impulse_angle(this.body.GetPosition())) || this.player.status_duration[0]  > 0 || this.player.status_duration[1] > 0 || this.player.status_duration[4] > 0
-  this.charging = this.attack_mode && !this.dying && this.path && this.path.length == 1 && this.path[0] == this.player.body.GetPosition() && (this.status_duration[1] <= 0) && this.entered_arena
+  this.attack_mode = (this.player.attacking && !this.player.point_in_impulse_angle(this.body.GetPosition())) || this.player.is_locked() || this.player.is_silenced() || this.player.is_confused()
+  this.charging = this.attack_mode && !this.dying && this.path && this.path.length == 1 && this.path[0] == this.player.body.GetPosition() && !this.is_silenced() && this.entered_arena
   this.cautious = !this.charging
 }
 
@@ -211,7 +211,7 @@ Orbiter.prototype.move = function() {
 
   if(this.player.dying) return //stop moving once player dies
 
-  if(this.status_duration[0] > 0) return //locked
+  if(this.is_locked()) return
 
 
   this.pathfinding_counter += 1
@@ -271,24 +271,19 @@ Orbiter.prototype.modify_movement_vector = function(dir) {
     dir.Multiply(this.fast_factor)
     dir.Multiply(this.force)
   } else {
-    if((this.in_poly && this.cautious && this.in_poly_slow_duration > 0) || this.status_duration[2] > 0 )//move cautiously...isn't very effective in preventing accidental deaths
+    if((this.in_poly && this.cautious && this.in_poly_slow_duration > 0) || this.is_gooed())//move cautiously...isn't very effective in preventing accidental deaths
     {
       dir.Multiply(this.slow_force)
     }
     else
     {
-      if (this.status_duration[2] > 0) {
+      if (this.is_gooed()) {
         dir.Multiply(this.goo_extra_force_factor)
 
       }
       dir.Multiply(this.force)
     }
   }
-
-  
-  //if(this.status_duration[1] > 0) { // if silenced, cannot move
-  //  dir.Multiply(0)
-  //}
 }
 
 Orbiter.prototype.move_to = function(endPt) {
@@ -334,7 +329,7 @@ Orbiter.prototype.bulk_draw = function(context, draw_factor, num) {
     return
   }
   if(num == 1) {
-    if(this.recovery_timer > 0 && !this.dying && !(this.status_duration[0] > 0)) {
+    if(this.recovery_timer > 0 && !this.dying && !this.is_locked()) {
       bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
     }
   }

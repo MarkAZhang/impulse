@@ -67,6 +67,8 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.ultimate = null
   this.impulse_angle = 0
 
+  this.has_lightened_properties = false
+
   this.enemies_hit = [] //stores ids of enemies hit
   this.ultimate_enemies_hit = [] //stores ids of enemies hit
 
@@ -253,6 +255,30 @@ Player.prototype.confuse= function(dur) {
   this.status_duration[4] = Math.max(dur, this.status_duration[4])
 }
 
+Player.prototype.is_locked = function() {
+  return this.status_duration[0] > 0;
+};
+
+Player.prototype.is_silenced = function() {
+  return this.status_duration[1] > 0;
+}
+
+Player.prototype.is_gooed = function() {
+  return this.status_duration[2] > 0; 
+}
+
+Player.prototype.is_lightened = function() {
+  return this.status_duration[3] > 0;
+}
+
+Player.prototype.is_confused = function() {
+  return this.status_duration[4] > 0;
+}
+
+Player.prototype.is_bulked = function() {
+  return this.status_duration[5] > 0;
+}
+
 Player.prototype.mouse_down= function(pos) {
   this.last_mouse_down = (new Date()).getTime()
   this.mouse_pressed = true
@@ -319,8 +345,8 @@ Player.prototype.process = function(dt) {
   }
   if (this.status_duration[3] > 0){
     this.status_duration[3] -= dt
-    if(!this.is_lightened) {
-      this.is_lightened = true
+    if(!this.has_lightened_properties) {
+      this.has_lightened_properties = true
       var fixtures = this.body.GetFixtureList()
       if (fixtures.length === undefined) {
         fixtures = [fixtures]
@@ -334,8 +360,8 @@ Player.prototype.process = function(dt) {
     }
   }
   else {
-    if(this.is_lightened) {
-      this.is_lightened = false
+    if(this.has_lightened_properties) {
+      this.has_lightened_properties = false
       var fixtures = this.body.GetFixtureList()
       if (fixtures.length === undefined) {
         fixtures = [fixtures]
@@ -382,7 +408,7 @@ Player.prototype.process = function(dt) {
   cur_time = (new Date()).getTime()
 
   if(imp_vars.player_data.options.control_scheme == "mouse") {
-    if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && this.status_duration[1] <= 0)
+    if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && !this.is_silenced())
     {
       this.attacking = true
       this.impulse_game_state.game_numbers.impulsed = true;
@@ -408,7 +434,7 @@ Player.prototype.process = function(dt) {
     }*/
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
-    if(!this.attacking && this.status_duration[1] <= 0) {
+    if(!this.attacking && !this.is_silenced()) {
       var earliest_key_press = 0
       if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
       if(this.iright != null && this.iright > earliest_key_press) earliest_key_press = this.iright
@@ -441,7 +467,7 @@ Player.prototype.process = function(dt) {
         else if(this.idown != null) {
           this.attack_angle = Math.PI * 1/2
         }
-        if (this.status_duration[4] > 0) {
+        if (this.is_confused()) {
           this.attack_angle += Math.PI
         }
         this.attacking = true
@@ -468,7 +494,7 @@ Player.prototype.process = function(dt) {
 
   this.body.SetAngle(this.impulse_angle)
 
-  if (this.status_duration[4] > 0) {
+  if (this.is_confused()) {
     this.impulse_angle += Math.PI
   }
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
@@ -493,7 +519,7 @@ Player.prototype.process = function(dt) {
     {
       for(var i = 0; i < this.level.enemies.length; i++)
       {
-        if(this.level.enemies[i] instanceof Mote && this.level.enemies[i].status_duration[1] <= 0) continue
+        if(this.level.enemies[i] instanceof Mote && !this.level.enemies[i].is_silenced()) continue
 
         if(this.level.enemies[i] instanceof Slingshot && this.level.enemies[i].empowered) continue
 
@@ -514,10 +540,10 @@ Player.prototype.process = function(dt) {
                 this.enemies_hit.push(this.level.enemies[i].id)
                 var force = this.impulse_force;
                 // If it's a goo-ed Harpoon.
-                if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].status_duration[2] > 0) {
+                if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].is_gooed()) {
                   force *= 2;
                 }
-                if(this.level.enemies[i].is_lightened) {
+                if(this.level.enemies[i].is_lightened()) {
                   force *= 2.5;
                 }
                 this.level.enemies[i].process_impulse(this.attack_loc, force, angle)
@@ -570,7 +596,7 @@ Player.prototype.process = function(dt) {
     }
   }
 
-  if(this.status_duration[0] <= 0)
+  if(!this.is_locked())
   {
     var f = this.force
     var f_x = 0
@@ -583,12 +609,12 @@ Player.prototype.process = function(dt) {
 
     var force = Math.abs(f_x)+Math.abs(f_y)==2 ? f/Math.sqrt(2) : f;
 
-    if(this.status_duration[4] > 0) {
+    if(this.is_confused()) {
       f_x *= -1
       f_y *= -1
     }
 
-    if(this.status_duration[2] > 0) {
+    if(this.is_gooed()) {
       f_x *= this.gooed_force_boost
       f_y *= this.gooed_force_boost
     }
@@ -604,9 +630,9 @@ Player.prototype.process = function(dt) {
 }
 
 Player.prototype.readjust_force = function() {
-  if(this.status_duration[5] > 0) {
+  if(this.is_bulked()) {
     this.force = this.true_force * this.bulk_factor
-  } else if (this.status_duration[3] > 0){
+  } else if (this.is_lightened()){
       this.force = this.true_force/this.lighten_factor/this.lighten_factor
   }
   else {
@@ -828,19 +854,19 @@ Player.prototype.draw = function(context) {
           this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
           this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, 
           "player_gray")
-      } else if(this.status_duration[0] > 0)
+      } else if(this.is_locked())
       {
         this.draw_player_sprite(context, "player_red");
       }
-      else if(this.status_duration[4] > 0)
+      else if(this.is_confused())
       {
         this.draw_player_sprite(context, "player_green");
       }
-      else if(this.status_duration[1] > 0)
+      else if(this.is_silenced())
       {
         this.draw_player_sprite(context, "player_gray");
       }
-      else if(this.status_duration[2] > 0)
+      else if(this.is_gooed())
       {
         this.draw_player_sprite(context, "player_yellow");
       }
@@ -871,7 +897,7 @@ Player.prototype.draw = function(context) {
 
     var lighten_factor = this.get_lighten_factor()
 
-    if(this.status_duration[3] > 0) {
+    if(this.is_gooed()) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor,
        this.radius* lighten_factor * imp_vars.draw_factor, 0, 2* Math.PI, false)
@@ -885,14 +911,14 @@ Player.prototype.draw = function(context) {
       context.save();
       var prog = this.appear_timer / this.appear_duration;
       context.globalAlpha *= Math.max(0, 1 - prog);
-      if (this.status_duration[1] <= 0 && imp_vars.player_data.options.control_scheme == "mouse") {
+      if (!this.is_silenced() && imp_vars.player_data.options.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 
         context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.impulse_radius * lighten_factor* imp_vars.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
         context.lineTo(this.body.GetPosition().x*imp_vars.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*imp_vars.draw_factor)
         context.lineTo(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor)
         context.fill()
-      } else if(this.status_duration[1] <= 0 && imp_vars.player_data.options.control_scheme == "keyboard") {
+      } else if(!this.is_silenced() && imp_vars.player_data.options.control_scheme == "keyboard") {
         context.beginPath()
         context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.impulse_radius * lighten_factor *imp_vars.draw_factor, 0, 2 * Math.PI)
         context.globalAlpha /= 6
@@ -967,7 +993,7 @@ Player.prototype.draw_player_sprite = function(ctx, name) {
 }
 
 Player.prototype.get_lighten_factor = function() {
-  if(this.status_duration[3] <= 0)
+  if(!this.is_lightened())
     return 1
 
   var prog = this.status_duration[3]/this.last_lighten

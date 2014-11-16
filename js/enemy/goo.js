@@ -85,7 +85,7 @@ Goo.prototype.additional_processing = function(dt) {
     }
   }
 
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
     this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
     this.force = imp_params.impulse_enemy_stats[this.type].force
   } else {
@@ -97,12 +97,12 @@ Goo.prototype.additional_processing = function(dt) {
 }
 
 Goo.prototype.check_area_of_effect = function() {
-  if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
+  if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
     this.area_effect(this.player)
   }
 
   for(var j = 0; j < this.level.enemies.length; j++) {
-    if(this.status_duration[1] <= 0 && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
+    if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
     {
       if(this.level.enemies[j].className != this.className)
         this.area_effect(this.level.enemies[j])
@@ -119,8 +119,7 @@ Goo.prototype.area_effect = function(obj) {
 }
 
 Goo.prototype.final_draw = function(context, draw_factor) {
-
-  if(this.status_duration[1] > 0) {
+  if(this.is_silenced()) {
     return
   }
 
@@ -144,7 +143,7 @@ Goo.prototype.final_draw = function(context, draw_factor) {
 
 Goo.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
 
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
       if(this.goo_state == "shrinking") {
         this.goo_state_timer = this.goo_change_transition - this.goo_state_timer;
         this.goo_state = "expanding"
@@ -162,7 +161,7 @@ Goo.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit
 Goo.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
-  if(this.goo_state != "small" && this.status_duration[1] <= 0)
+  if(this.goo_state != "small" && !this.is_silenced())
   {
     dir.Multiply(this.slow_factor)
   }

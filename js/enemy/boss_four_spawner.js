@@ -111,20 +111,19 @@ BossFourSpawner.prototype.set_size = function(size) {
 
 
 BossFourSpawner.prototype.additional_drawing = function(context, draw_factor) {
-  if(this.status_duration[1] > 0 && this.color_silenced && !this.dying) {
+  if(this.is_silenced() && this.color_silenced && !this.dying) {
     context.beginPath()
     context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 1.5, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (this.status_duration[1] / this.last_stun), true)
     context.lineWidth = 2
     context.strokeStyle = "red";
     context.stroke()
   }
-
 }
+
+BossFourSpawner.prototype.super_silence = Enemy.prototype.silence;
 BossFourSpawner.prototype.silence = function(dur, color_silence) {
-  if(color_silence)
-    this.color_silenced = color_silence
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.last_stun = this.status_duration[1]
+  this.super_silence();
+  this.last_stun = dur;
 }
 
 BossFourSpawner.prototype.collide_with = function(other) {
@@ -134,8 +133,6 @@ BossFourSpawner.prototype.collide_with = function(other) {
   if (other === this.player) {
     this.impulse_game_state.reset_combo();  
   }
-
-  //if(this.status_duration[1] > 0) return
 
   /*if(other === this.player) {
 
@@ -153,7 +150,7 @@ BossFourSpawner.prototype.process_impulse = function(attack_loc, impulse_force, 
 }
 
 BossFourSpawner.prototype.spawn_enemy = function() {
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
   	this.spawn = true
     this.spawn_action_timer = this.spawn_action_period
   }
@@ -165,9 +162,6 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.globalAlpha *= 1-prog
   drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
   
-  /* if(this.status_duration[1] > 0)
-    context.globalAlpha *= 0.5 */
-
   //draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color
   draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
   /*context.beginPath()

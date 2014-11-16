@@ -55,12 +55,12 @@ FighterBullet.prototype.collide_with = function(other) {
     return
   if(other === this.player) {
     this.start_death("hit_player")
-    if(this.status_duration[1] <= 0) {
+    if(!this.is_silenced()) {
       imp_vars.impulse_music.play_sound("fbullethit")
       var vel = this.body.GetLinearVelocity().Copy()
       vel.Normalize()
       //_atan(this.body.GetPosition(), this.player.body.GetPosition())
-      if(this.player.status_duration[2] > 0) {
+      if(this.player.is_gooed() > 0) {
         vel.Multiply(this.bullet_force * this.bullet_goo_factor)
         this.player.body.ApplyImpulse(vel, this.player.body.GetWorldCenter())
       } else {
@@ -77,7 +77,7 @@ FighterBullet.prototype.collide_with = function(other) {
     this.start_death("hit_enemy")
 
     if(other.id != this.parent_id || this.reflected) {
-      if(this.status_duration[1] <= 0) {
+      if(!this.is_silenced()) {
         imp_vars.impulse_music.play_sound("fbullethit")
         if(other instanceof Fighter) {
           other.frenzy_charge = 0
@@ -109,7 +109,7 @@ FighterBullet.prototype.collide_with = function(other) {
 
 FighterBullet.prototype.move = function() {
 
-  if (this.status_duration[2] > 0) {
+  if (this.is_gooed()) {
     this.body.ApplyImpulse(new b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())  
   } else {
     this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())  

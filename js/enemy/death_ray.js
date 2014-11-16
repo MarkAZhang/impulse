@@ -72,13 +72,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.die_on_player_collision = false
 }
 
-DeathRay.prototype.stun = function(dur) {
-  this.status_duration[0] = Math.max(dur, this.status_duration[0]) //so that a short stun does not shorten a long stun
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
-  this.recovery_timer = dur
-  this.recovery_interval = dur
-}
-
 DeathRay.prototype.additional_processing = function(dt) {
 
   //if(!this.turret_mode && this.turret_timer <= 0) {
@@ -104,12 +97,11 @@ DeathRay.prototype.additional_processing = function(dt) {
   }
 
   this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor)
-  //this.special_mode = this.safe && this.within_bounds && this.status_duration[1] <= 0
 
   if (this.recovery_timer > 0) {
     this.recovery_timer -= dt
   }
-  if(this.status_duration[1] > 0) {
+  if(this.is_silenced()) {
     this.reset_ray()
     return
   }
@@ -139,7 +131,9 @@ DeathRay.prototype.additional_processing = function(dt) {
     if(this.fire_duration <= 0) {
       //reset everything
       this.reset_ray()
-      this.stun(this.stun_length)
+      this.stun(this.stun_length);
+      this.recovery_timer = this.stun_length;
+      this.recovery_interval = this.stun_length;
     }
     else {
       this.fire_duration = Math.max(this.fire_duration - dt, 0)
@@ -150,10 +144,10 @@ DeathRay.prototype.additional_processing = function(dt) {
         this.fired = true
         if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
           var factor = 1
-          if(this.player.status_duration[5] > 0 && !this.player.ultimate) {
+          if(this.player.is_bulked() && !this.player.ultimate) {
             factor *= 10
           }
-          if(this.player.status_duration[2] > 0) {
+          if(this.player.is_gooed() > 0) {
             factor *= 0.25
           }
           this.player.body.ApplyImpulse(new b2Vec2(factor * this.ray_force * Math.cos(this.ray_angle), factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
@@ -287,7 +281,7 @@ DeathRay.prototype.move = function() {
 DeathRay.prototype.pre_draw = function(context, draw_factor) {
 
 
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
     var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
     context.save()
     context.globalAlpha *= (1-prog)
@@ -375,13 +369,6 @@ DeathRay.prototype.get_color_for_status = function(status) {
   return this.get_additional_color_for_status(status)
 }
 
-DeathRay.prototype.silence = function(dur, color_silence) {
-  if(color_silence) {
-    this.color_silenced = true
-  }
-  this.status_duration[1] = Math.max(dur, this.status_duration[1])
-}
-
 DeathRay.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
@@ -403,11 +390,11 @@ DeathRay.prototype.modify_movement_vector = function(dir) {
   }
   else {
 
-    if (this.status_duration[1] > 0) {
+    if (this.is_silenced()) {
       dir.Multiply(0.5)
     }
 
-    if(this.status_duration[2] > 0) {
+    if(this.is_gooed()) {
       dir.Multiply(this.slow_factor)
     }
     dir.Multiply(this.force)

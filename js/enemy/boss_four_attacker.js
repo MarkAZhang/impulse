@@ -55,7 +55,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
   if(this.dying)//ensures the collision effect only activates once
     return
 
-  if(this.status_duration[1] > 0) return
+  if(this.is_silenced()) return
 
 
   if(other === this.player) {

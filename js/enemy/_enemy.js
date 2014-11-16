@@ -64,7 +64,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.shapes = []
   this.shape_points = []
 
-  this.is_lightened = false
+  this.has_lightened_properties = false
 
   this.impulsed_duration = 500
 
@@ -318,8 +318,8 @@ Enemy.prototype.process = function(enemy_index, dt) {
   if (this.status_duration[3] > 0){
     this.status_duration[3] -= dt
 
-    if(!this.is_lightened) {
-      this.is_lightened = true
+    if(!this.has_lightened_properties) {
+      this.has_lightened_properties = true
 
       var fixtures = this.body.GetFixtureList()
       if (fixtures.length === undefined) {
@@ -341,8 +341,8 @@ Enemy.prototype.process = function(enemy_index, dt) {
     }
   }
   else {
-    if(this.is_lightened) {
-      this.is_lightened = false
+    if(this.has_lightened_properties) {
+      this.has_lightened_properties = false
       var fixtures = this.body.GetFixtureList()
       if (fixtures.length === undefined) {
         fixtures = [fixtures]
@@ -410,13 +410,12 @@ Enemy.prototype.process_entered_arena = function() {
     this.recovery_timer -= dt;
     this.silence(100, true)
   }
-
 }
 
 Enemy.prototype.adjust_position = function() {
   this.adjust_position_counter += 1
 
-  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank") || this.status_duration[1] > 0) return
+  if(!this.adjust_position_enabled || (this.durations["open"] > 0 && this.type == "tank") || this.is_silenced()) return
   if(this.adjust_position_counter > this.adjust_position_freq) {
     this.adjust_position_counter = 0
 
@@ -477,7 +476,7 @@ Enemy.prototype.get_target_point = function() {
 Enemy.prototype.move = function() {
   if(this.player.dying) return //stop moving once player dies
 
-  if(this.status_duration[0] > 0) return //locked
+  if(this.is_locked()) return;
 
   this.pathfinding_counter+=1
   if (this.pathfinding_counter % 4 == 0 || this.pathfinding_counter >= this.pathfinding_delay) {
@@ -570,26 +569,7 @@ Enemy.prototype.move_to = function(endPt) {
 }
 
 Enemy.prototype.modify_movement_vector = function(dir) {
-  //apply impulse to move enemy
-  /*var in_poly = false
-  for(var i = 0; i < this.level.boundary_polygons.length; i++)
-  {
-    if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
-    {
-      in_poly = true
-    }
-  }
-
-  this.in_poly = in_poly
-
-  if((this.in_poly && this.cautious && this.in_poly_slow_duration > 0) || this.status_duration[2] > 0 )//move cautiously...isn't very effective in preventing accidental deaths
-  {
-    dir.Multiply(this.slow_force)
-  }
-  else
-  {*/
-    dir.Multiply(this.force)
-  //}
+  dir.Multiply(this.force)
 }
 
 Enemy.prototype.set_heading_to = function(point) {
@@ -644,7 +624,7 @@ Enemy.prototype.start_death = function(death) {
       setTimeout(function() {
         imp_vars.impulse_music.play_sound("tdeath")
       }, 300);
-    } else if (this.type == "troll" && this.dying == "hit_player" && this.status_duration[1] <= 0) {
+    } else if (this.type == "troll" && this.dying == "hit_player" && !this.is_silenced()) {
       // do nothing if it's a troll hitting a player. there's a different sound.
     } else {
       imp_vars.impulse_music.play_sound("sdeath")
@@ -682,7 +662,7 @@ Enemy.prototype.collide_with = function(other) {
     }
 
     if(other === this.player) {
-      if(this.impulse_game_state.is_boss_level && !this.is_lightened) {
+      if(this.impulse_game_state.is_boss_level && !this.is_lightened()) {
         if(this.body.GetLinearVelocity().Length() > 50) {
           var player_transfer_factor = 0.5
           var magnitude = this.body.GetLinearVelocity()
@@ -694,7 +674,7 @@ Enemy.prototype.collide_with = function(other) {
       if (this.die_on_player_collision) {
         this.start_death("hit_player");
       }
-      if(this.status_duration[1] <= 0 || this.hit_proc_on_silenced) {//do not proc if silenced
+      if(!this.is_silenced() || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
       }
       // Always reset combo on contact, even when silenced.
@@ -780,7 +760,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
    var radius_factor = this.dying && this.dying != "fade"? (1 + this.death_radius * prog) : 1; // if dying, will expand
 
    var my_size = size
-   if(this.status_duration[3] > 0) {
+   if(this.is_lightened()) {
 
       var prog = this.status_duration[3]/this.last_lighten
       var lighten_factor = 1
@@ -798,137 +778,11 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
-  
   context.drawImage(imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
-  if(this.status_duration[3] > 0) {
-    context.drawImage( imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
-  }
   context.restore()
-  /*if(this.adjust_position_polygon) {
-    context.beginPath()
-    context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, size, 0, 2 * Math.PI * 0.999)
-    context.strokeStyle = "white"
-    context.stroke()
-    context.beginPath()
-    context.moveTo(this.body.GetPosition().x  * draw_factor, this.body.GetPosition().y * draw_factor)
-    context.lineTo(this.body.GetPosition().x  * draw_factor+ Math.cos(this.adjust_position_angle) * 50, this.body.GetPosition().y  * draw_factor+ Math.sin(this.adjust_position_angle) * 50)
-    context.stroke()
-  }*/
 
   this.additional_drawing(context, draw_factor)
-
-  // for(var k = 0; k < this.shapes.length; k++) {
-
-  //   if(this.shape_polygons[k].visible === false) continue
-
-  //   // fade out if dying
-  //   if (this.dying)
-  //     context.globalAlpha *= (1 - prog)
-  //   else
-  //     context.globalAlpha *= this.visibility ? this.visibility : 1
-
-  //   var cur_shape = this.shapes[k]
-  //   var cur_shape_points = this.shape_points[k]
-  //   var cur_color = this.shape_polygons[k].color ? this.shape_polygons[k].color : this.color
-
-  //   // draw the shape
-  //   context.beginPath()
-
-  //   var radius_factor = this.dying ? (1 + this.death_radius * prog) : 1; // if dying, will expand
-  //   /*if(cur_shape instanceof b2CircleShape) {
-  //     //draw circle shape
-  //       context.arc((this.body.GetPosition().x+ cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ cur_shape.GetLocalPosition().y)*draw_factor, (cur_shape.GetRadius()*draw_factor) * (radius_factor), 0, 2*Math.PI, true)
-  //   }*/
-  //   if(cur_shape instanceof b2PolygonShape) {
-  //     //draw polygon shape
-  //     var lighten_factor = 1
-
-  //     if(this.status_duration[3] > 0) {
-
-  //       var prog = this.status_duration[3]/this.last_lighten
-  //       if(prog < .1)
-  //       {
-  //         var transition = 1 - prog/.1
-  //         lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
-  //       } else if(prog > .9) {
-  //         var transition = (prog - .9)/.1
-  //         lighten_factor = (this.lighten_start) * transition + (this.lighten_finish) * (1-transition)
-  //       } else {
-  //         lighten_factor = this.lighten_finish
-  //       }
-
-  //     }
-
-  //     context.moveTo((tp.x+cur_shape_points[0].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[0].y*(radius_factor)*lighten_factor)*draw_factor)
-  //     for(var i = 1; i < cur_shape_points.length; i++)
-  //     {
-  //       context.lineTo((tp.x+cur_shape_points[i].x*(radius_factor)*lighten_factor)*draw_factor, (tp.y+cur_shape_points[i].y*(radius_factor)*lighten_factor)*draw_factor)
-  //     }
-  //   }
-  //   context.closePath()
-
-  //   if (!this.interior_color ) {
-  //     context.globalAlpha *= 0.7;
-  //   }
-
-
-  //   context.fillStyle = this.get_color_with_status(this.interior_color)
-
-  //   latest_color = context.fillStyle
-
-  //   context.fill()
-
-
-
-
-  //   // revert transparency
-  //   if (!this.interior_color ) {
-  //     context.globalAlpha /= 0.7;
-  //   }
-
-
-  //   if(this.interior_color && context.fillStyle == this.interior_color)
-  //     context.strokeStyle = cur_color
-  //   else
-  //     context.strokeStyle = context.fillStyle
-
-  //   if(this.status_duration[3] > 0) {
-  //     context.strokeStyle = "black"
-  //   }
-
-
-  //   context.lineWidth = this.dying ? (1 - prog) * 2 : 2
-  //   context.stroke()
-
-  //   // give enemies a tiny of the level color
-  //   /*context.strokeStyle = this.level.color;
-  //   context.fillStyle = this.level.color;
-  //   context.globalAlpha = .3;
-  //   context.stroke();
-  //   context.fill();
-  //   context.globalAlpha = 1;*/
-
-  //   /*if(this.special_mode && !this.dying) {
-  //     context.globalAlpha = this.sp_visibility
-  //     context.beginPath()
-  //     if(this.shape instanceof b2CircleShape) {
-  //       context.arc((this.body.GetPosition().x+ 2*cur_shape.GetLocalPosition().x)*draw_factor, (this.body.GetPosition().y+ 2*cur_shape.GetLocalPosition().y)*draw_factor, 0, 2*Math.PI, true)
-  //     }
-
-  //     if(this.shape instanceof b2PolygonShape) {
-  //       context.moveTo((tp.x+cur_shape_points[0].x * 2)*draw_factor, (tp.y+cur_shape_points[0].y * 2)*draw_factor)
-  //       for(var i = 1; i < cur_shape_points.length; i++) {
-  //         context.lineTo((tp.x+cur_shape_points[i].x * 2)*draw_factor, (tp.y+cur_shape_points[i].y * 2)*draw_factor)
-  //       }
-  //       context.closePath()
-  //     }
-  //     context.lineWidth = 1
-  //     context.strokeStyle = cur_color
-  //     context.stroke()
-  //   }*/
-  // }
-
 }
 
 
@@ -997,11 +851,11 @@ Enemy.prototype.silence = function(dur, color_silence) {
 }
 
 Enemy.prototype.lock = function(dur) {
-this.status_duration[0] = Math.max(dur, this.status_duration[0])
+  this.status_duration[0] = Math.max(dur, this.status_duration[0])
 }
 
 Enemy.prototype.goo = function(dur) {
-this.status_duration[2] = Math.max(dur, this.status_duration[2])
+  this.status_duration[2] = Math.max(dur, this.status_duration[2])
 }
 
 Enemy.prototype.lighten = function(dur) {
@@ -1013,6 +867,30 @@ Enemy.prototype.lighten = function(dur) {
 
 Enemy.prototype.open = function(dur) {
   this.durations["open"] = Math.max(dur, this.durations["open"])
+}
+
+Enemy.prototype.is_locked = function() {
+  return this.status_duration[0] > 0;
+};
+
+Enemy.prototype.is_silenced = function() {
+  return this.status_duration[1] > 0;
+}
+
+Enemy.prototype.is_gooed = function() {
+  return this.status_duration[2] > 0; 
+}
+
+Enemy.prototype.is_lightened = function() {
+  return this.status_duration[3] > 0;
+}
+
+Enemy.prototype.is_opened = function() {
+  return this.durations["open"] > 0;
+}
+
+Enemy.prototype.is_invincible = function() {
+  return this.durations["invincible"] > 0;
 }
 
 /*Enemy.prototype.check_player_intersection = function(other) {
@@ -1104,11 +982,11 @@ Enemy.prototype.get_current_status = function() {
       if(this.durations["impulsed"] > 0) {
         return "impulsed"
       }
-      if(this.status_duration[0] > 0) {
+      if(this.is_locked()) {
         return 'stunned';
       } else if(this.color_silenced) {
         return 'silenced'
-      } else if(this.status_duration[2] > 0) {
+      } else if(this.is_gooed()) {
         return "gooed"
       }
     }
@@ -1127,24 +1005,6 @@ Enemy.prototype.get_current_color_with_status = function(orig_color) {
   if(cur_color == this.color && orig_color) return orig_color
 
   return cur_color
-  /*if (this.durations["open"] > 0) {
-        context.fillStyle = impulse_colors["impulse_blue"]
-      } else */
-  /*  if(!this.dying) {
-      if(this.durations["impulsed"] > 0) {
-        return impulse_colors["impulse_blue"]
-      }
-      if(this.status_duration[0] > 0) {
-        return 'gray';
-      } else if(this.color_silenced) {
-        return 'gray'
-      } else if(this.status_duration[2] > 0) {
-        return "#e6c43c"
-      }
-    }
-    if(orig_color)
-      return orig_color
-    return this.color;*/
 }
 
 

@@ -48,10 +48,10 @@ Slingshot.prototype.enemy_move = Enemy.prototype.move
 
 Slingshot.prototype.move = function() {
   if(this.slingshot_mode) {
-    if(this.status_duration[0] <= 0) {
+    if(!this.is_locked()) {
       var dir = new b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
       dir.Multiply(this.slingshot_multiplier)
-      if(this.status_duration[2] > 0)
+      if(this.is_gooed())
         dir.Multiply(this.slow_factor)
       this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
@@ -65,7 +65,7 @@ Slingshot.prototype.move = function() {
 }
 
 Slingshot.prototype.modify_movement_vector = function(dir) {
-  if(this.status_duration[2] > 0) {
+  if(this.is_gooed()) {
     dir.Multiply(this.slow_factor)
   }
   if (!this.first_time_in_arena) {
@@ -76,7 +76,7 @@ Slingshot.prototype.modify_movement_vector = function(dir) {
 
 Slingshot.prototype.additional_processing = function(dt) {
 
-  if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.status_duration[1] > 0) {
+  if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.is_silenced()) {
     this.slingshot_mode = false
     this.lin_damp = this.orig_lin_damp
   }
@@ -89,7 +89,7 @@ Slingshot.prototype.additional_processing = function(dt) {
   this.special_mode = this.empowered_duration > 0
 
   this.color = this.empowered_duration > 0 ? "red" : this.real_color
-  this.empowered = this.empowered_duration > 0 && this.status_duration[1] <= 0
+  this.empowered = this.empowered_duration > 0 && !this.is_silenced()
 
   if(this.slingshot_duration > 0)
   {
@@ -122,7 +122,7 @@ Slingshot.prototype.player_hit_proc = function() {
 
 Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
 
-  if(this.status_duration[1] <= 0) {
+  if(!this.is_silenced()) {
     this.slingshot_point = this.body.GetPosition().Copy()
     this.slingshot_mode = true
     this.slingshot_duration = this.slingshot_interval
@@ -135,11 +135,11 @@ Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_forc
 Slingshot.prototype.get_current_status = function() {
 
   if(!this.dying) {
-      if(this.status_duration[0] > 0) {
+      if(this.is_locked()) {
         return 'stunned';
       } else if(this.color_silenced) {
         return 'silenced'
-      } else if(this.status_duration[2] > 0) {
+      } else if(this.is_gooed()) {
         return "gooed"
       }
     }
