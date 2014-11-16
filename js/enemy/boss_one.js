@@ -35,7 +35,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.lighten_timer = this.lighten_interval - 1
 
-  this.lighten_duration = 4000
+  this.lighten_duration = 3000
 
   this.lightened = false
 
@@ -55,10 +55,10 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.visibility = 0
 
-  this.turret_firing_interval = 1000
+  this.turret_firing_interval = 500
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.turret_firing_interval = 1500
+    this.turret_firing_interval = 750
   }  
 
   // Slightly easier to push on easy mode.
@@ -78,7 +78,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.boss_force = 30
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.boss_force = 30  
+    this.boss_force = 20
   }
 
   this.joint_padding = 1
@@ -189,10 +189,10 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.punch_exploded = false
 
-  this.max_turret_interval = 10000
+  this.max_turret_interval = 4000
   this.max_punching_interval = 12000
   this.max_punching_interval_with_no_enemies = 6000
-  this.max_turret_timer = this.max_turret_interval/2
+  this.max_turret_timer = this.max_turret_interval
   this.max_punching_timer = this.max_punching_interval
 
   this.require_open = false
@@ -1146,10 +1146,12 @@ BossOne.prototype.collide_with = function(other, body) {
       force *= 1.5
     // hit while turret and not hands
     } else if(body != this.body_parts["lh"] && body != this.body_parts["rh"]){
-      force *= 2
+      force *= 1.5
     // hit hands while turret
+    } else if (other == this.player) {
+      force *= 1.25
     } else {
-      force *= 1
+      force = 0;
     }
     other.body.ApplyImpulse(new b2Vec2(force *  Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
@@ -1227,7 +1229,7 @@ BossOne.prototype.switch_to_turret = function() {
   this.punch_target_pts["left"] = null
   this.punch_target_pts["right"] = null
   if(this.first_turret) {
-    this.max_turret_timer /= 2
+    this.max_turret_timer *= 0.75
     this.first_turret = false
   }
 }

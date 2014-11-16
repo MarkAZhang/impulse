@@ -326,6 +326,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         fixtures = [fixtures]
       }
 
+
       for(var i = 0; i < fixtures.length; i++) {
         var vertices = this.body.GetFixtureList().m_shape.m_vertices
         for(var j = 0; j < vertices.length; j++)
@@ -356,7 +357,6 @@ Enemy.prototype.process = function(enemy_index, dt) {
       }
       this.body.ResetMassData()
       this.force = imp_params.impulse_enemy_stats[this.type].force
-
     }
   }
   if(this.pointer_visibility < 1) {

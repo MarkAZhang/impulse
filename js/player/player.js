@@ -517,6 +517,9 @@ Player.prototype.process = function(dt) {
                 if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].status_duration[2] > 0) {
                   force *= 2;
                 }
+                if(this.level.enemies[i].is_lightened) {
+                  force *= 2.5;
+                }
                 this.level.enemies[i].process_impulse(this.attack_loc, force, angle)
                 break
               }
