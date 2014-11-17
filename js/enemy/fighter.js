@@ -126,12 +126,6 @@ Fighter.prototype.additional_processing = function(dt) {
     this.player_collision_buffer_timer = this.player_collision_buffer_interval
   }
 
-  if (this.is_silenced()) {
-    this.body.SetLinearDamping(this.lin_damp * 0.5)
-  } else {
-    this.body.SetLinearDamping(this.lin_damp)
-  }
-
   if (this.player_collision_buffer_timer > 0) {
     this.player_collision_buffer_timer -= dt
   }

@@ -546,6 +546,9 @@ Player.prototype.process = function(dt) {
                 if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].is_gooed()) {
                   force *= 2;
                 }
+                if(this.level.enemies[i] instanceof Fighter && this.level.enemies[i].is_disabled()) {
+                  force *= 3;
+                }
                 if(this.level.enemies[i].is_lightened()) {
                   force *= 2.5;
                 }
