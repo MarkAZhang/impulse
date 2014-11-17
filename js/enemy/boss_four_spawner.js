@@ -85,6 +85,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
       var force = new b2Vec2(Math.cos(angle), Math.sin(angle))
       force.Multiply(this.push_force)
       temp_enemy.body.ApplyImpulse(force, temp_enemy.body.GetWorldCenter())
+      temp_enemy.set_heading(angle);
       temp_enemy.pathfinding_counter = temp_enemy.pathfinding_delay
 
   		this.level.spawned_enemies.push(temp_enemy)

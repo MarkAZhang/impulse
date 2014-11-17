@@ -14,6 +14,8 @@ function Troll(world, x, y, id, impulse_game_state) {
 
   this.trolling = false
 
+  this.fast_factor = 3;
+
   this.troll_switch_interval = 400
   this.trolling_time_factor = 4
 
@@ -161,4 +163,12 @@ Troll.prototype.bulk_draw = function(context, draw_factor, num) {
 Troll.prototype.bulk_draw_end = function(context, draw_factor, num) {
   context.stroke()
   context.restore()
+}
+
+Troll.prototype.modify_movement_vector = function(dir) {
+  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+    dir.Multiply(this.fast_factor)
+  }
+
+  dir.Multiply(this.force);
 }

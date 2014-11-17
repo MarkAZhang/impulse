@@ -121,7 +121,7 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
 
       var temp_enemy = new (imp_params.impulse_enemy_stats[enemy_type].className)(this.world, loc[0], loc[1],
       this.level.enemy_counter, this.impulse_game_state)
-      temp_enemy.body.SetAngle(angle);
+      temp_enemy.set_heading(angle);
 
       if(temp_enemy.type == "harpoon") {
         temp_enemy.dire_harpoon = true

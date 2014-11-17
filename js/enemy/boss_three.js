@@ -78,7 +78,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.strike_frenzy_duration = 4500
   this.strike_frenzy_timer = this.strike_frenzy_duration
-  this.strike_frenzy_speedup = 0.75
+  this.strike_frenzy_speedup = 0.8
 
   this.extra_gap = 0
 
@@ -100,27 +100,45 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.current_wheel_set = this.generate_wheel_set()
 
   this.spawn_queue = []
-  this.spawn_enemy_interval = 200
-  this.spawn_enemy_timer = this.spawn_enemy_interval
+  this.spawn_enemy_timer = 0;
   this.wheel_effect_activated = false
 
+  this.spawn_enemy_intervals = {
+    "stunner" : 150,
+    "spear" : 200,
+    "tank" : 200,
+    "mote" : 200,
+    "goo" : 200,
+    "harpoon" : 200,
+    "disabler" : 200,
+    "fighter" : 200,
+    "troll" : 200,
+  }
+
   this.spawn_count = {
-   "stunner" : 12,
-   "spear" : 9,
-   "tank" : 5,
-   "mote" : 9,
+   "stunner" : 14,
+   "spear" : 12,
+   "tank" : 10,
+   "mote" : 6,
    "goo" : 1,
-   "harpoon" : 5,
+   "harpoon" : 6,
    "disabler" : 1,
-   "fighter" : 3,
-   "troll" : 9,
+   "fighter" : 4,
+   "troll" : 10,
  }
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    for(var enemy in this.spawn_count) {
-      this.spawn_count[enemy] *= 0.5
-      this.spawn_count[enemy] = Math.ceil(this.spawn_count[enemy])
-    }
+      this.spawn_count = {
+       "stunner" : 6,
+       "spear" : 5,
+       "tank" : 3,
+       "mote" : 5,
+       "goo" : 1,
+       "harpoon" : 3,
+       "disabler" : 1,
+       "fighter" : 2,
+       "troll" : 5,
+     }
   }
 
  this.spawn_force = {
@@ -353,11 +371,11 @@ BossThree.prototype.additional_processing = function(dt) {
 
     if(this.wheel_activate_timer < 0) {
       if(!this.wheel_effect_activated) {
-        var type = this.current_wheel_set[this.wheel_cur_index]
+        var type = this.current_wheel_set[this.wheel_cur_index];
         if(type != "frenzy") {
           for(var i = 0; i < this.spawn_count[type]; i++) {
             this.spawn_queue.push(type)
-            this.wheel_activate_timer += this.spawn_enemy_interval
+            this.wheel_activate_timer += this.spawn_enemy_intervals[type];
           }
         } else {
           this.striking_state = "frenzy"
@@ -402,7 +420,7 @@ BossThree.prototype.additional_processing = function(dt) {
     if(this.spawn_enemy_timer < 0) {
       this.spawn_this_enemy(this.spawn_queue[0])
       this.spawn_queue.splice(0, 1)
-      this.spawn_enemy_timer = this.spawn_enemy_interval
+      this.spawn_enemy_timer = this.spawn_enemy_intervals[this.current_wheel_set[this.wheel_cur_index]]
     }
   }
   if(this.knockback_red_duration > 0) {
@@ -591,8 +609,15 @@ BossThree.prototype.strike_at_player = function() {
     var index2 = Math.floor(Math.random() * choices.length)
     this.strike_with_arm(choices[index2], dist, this.strike_duration * this.strike_frenzy_speedup)
     choices.splice(index2, 1)
-    var index3 = Math.floor(Math.random() * choices.length)
-    this.strike_with_arm(choices[index3], dist, this.strike_duration * this.strike_frenzy_speedup)
+    
+    if (choices.indexOf(arm) !== -1 && Math.random() < 0.5) {
+      this.strike_with_arm(arm, dist, this.strike_duration * this.strike_frenzy_speedup);
+    } else {
+      var index3 = Math.floor(Math.random() * choices.length);
+      this.strike_with_arm(choices[index3], dist, this.strike_duration * this.strike_frenzy_speedup);
+    }
+    
+    
   }
 }
 
@@ -907,32 +932,44 @@ BossThree.prototype.draw_special_attack_timer = function(context, draw_factor) {
 }
 
 BossThree.prototype.spawn_this_enemy = function(enemy_type) {
+  var angle = _atan(this.body.GetPosition(), this.player.get_current_position());
 
-  var angle = _atan(this.body.GetPosition(), this.player.get_current_position())
-  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor,
-    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.25)* imp_vars.draw_factor}
+  var spread = 0;
+
+  if(enemy_type == "stunner" && Math.random() < 0.7)
+    spread = Math.PI/4;
+  if(enemy_type == "spear" && Math.random() < 0.7)
+    spread = Math.PI/8;
+  if((enemy_type == "tank") && Math.random() < 0.9)
+    spread = Math.PI;
+  if((enemy_type == "mote") && Math.random() < 0.7)
+    spread = Math.PI;
+  if((enemy_type == "troll") && Math.random() < 0.7)
+    spread = Math.PI;
+  if((enemy_type == "harpoon"))
+    spread = Math.PI * 0.5;
+  if((enemy_type == "fighter") && Math.random() < 0.5)
+    spread = Math.PI * 0.5;
+
+  if (spread != 0) {
+    angle += Math.random() * spread - spread / 2;
+  }
+
+  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* imp_vars.draw_factor,
+    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* imp_vars.draw_factor}
 
   var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_vars.draw_factor, spawn_loc.y/imp_vars.draw_factor, this.level.enemy_counter, this.impulse_game_state)
-  this.level.spawned_enemies.push(new_enemy)
-  this.level.enemy_counter += 1
-  if(enemy_type == "stunner" && Math.random() < 0.7)
-    angle += Math.random()*Math.PI/4 - Math.PI/8
-  if(enemy_type == "spear" && Math.random() < 0.7)
-    angle += Math.random()*Math.PI/4 - Math.PI/8
-  if((enemy_type == "tank") && Math.random() < 0.7)
-    angle += Math.random()*Math.PI * 0.7 - Math.PI * 0.35
-  if((enemy_type == "mote") && Math.random() < 0.7)
-    angle += Math.random()*Math.PI - Math.PI * 0.5
-  if((enemy_type == "troll") && Math.random() < 0.7)
-    angle += Math.random()*Math.PI * 0.8 - Math.PI * 0.4
-  if((enemy_type == "harpoon"))
-    angle += Math.random()*Math.PI/10 - Math.PI/20
   var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
-  new_enemy.body.SetAngle(angle)
+  new_enemy.set_heading(angle);
+  this.level.spawned_enemies.push(new_enemy)
+  this.level.enemy_counter += 1
+  // disable initial silence.
+  new_enemy.entered_arena = true;
+  new_enemy.recovery_timer = 0;
   
-  
+ 
   new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
   new_enemy.entered_arena_delay = 0
   new_enemy.entered_arena_timer = 0

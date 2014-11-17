@@ -108,6 +108,7 @@ Fighter.prototype.get_current_status = function() {
 Fighter.prototype.additional_processing = function(dt) {
   if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
     imp_vars.impulse_music.play_sound("ffrenzy")
+    window.console.log("PLAYIN FRENZY");
     this.fighter_status = "frenzy"
 
 
