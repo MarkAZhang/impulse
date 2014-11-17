@@ -94,6 +94,8 @@ Fighter.prototype.get_current_status = function() {
         return 'silenced'
       } else if(this.is_gooed()) {
         return "gooed"
+      } else if (this.is_disabled()) {
+        return 'silenced';
       }
       if(this.durations["impulsed"] > 0) {
         return "impulsed"
@@ -305,7 +307,6 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-
   if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }

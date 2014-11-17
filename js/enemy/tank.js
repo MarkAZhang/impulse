@@ -273,6 +273,8 @@ Tank.prototype.get_current_status = function() {
       return "volatile"
     } else if(this.is_gooed()) {
       return "gooed"
+    } else if (this.is_disabled()) {
+      return 'silenced';
     }
     if(this.durations["impulsed"] > 0) {
       return "impulsed"

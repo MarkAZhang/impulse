@@ -363,7 +363,7 @@ imp_params.impulse_enemy_stats["disabler"] = {
   dies_on_impact: "YES",
   enemy_info: [
     //"All units within its area of influence are slowed",
-    "Disables all units within its radius",
+    "Disables all units within its radius. # # Touching disabled units will not reset your multiplier.",
     "When Impulsed, expands its radius for a few moments",
   //  "Dies upon collision # # Units immediately regain special powers",
   //  "When Impulsed, dramatically expands its area of influence for 3 seconds"

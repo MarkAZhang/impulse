@@ -141,6 +141,8 @@ Slingshot.prototype.get_current_status = function() {
         return 'silenced'
       } else if(this.is_gooed()) {
         return "gooed"
+      } else if (this.is_disabled()) {
+        return 'silenced';
       }
     }
 

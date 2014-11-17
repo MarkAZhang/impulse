@@ -13,7 +13,7 @@ function Disabler(world, x, y, id, impulse_game_state) {
   this.do_yield = false
 
   this.goo_radius_small = 3;
-  this.goo_radius_big = 9;
+  this.goo_radius_big = 8;
 
   if(imp_vars.player_data.difficulty_mode == "easy") 
     this.goo_radius_big = 8
@@ -59,13 +59,13 @@ Disabler.prototype.check_area_of_effect = function() {
 Disabler.prototype.area_effect = function(obj) {
   
   if(obj.type == "harpoonhead") {
-    obj.harpoon.silence(100, true)
+    obj.harpoon.disable(100)
   }
   else if(obj === this.player) {
     obj.bulk(100)
     obj.silence(100)
   } else {
-    obj.silence(100, true)
+    obj.disable(100)
   }
 }
 

@@ -123,6 +123,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.durations["open"] = 0
   this.durations["impulsed"] = 0
   this.durations["invincible"] = 0
+  this.durations["disabled"] = 0
 
   this.is_enemy = true
 
@@ -677,8 +678,10 @@ Enemy.prototype.collide_with = function(other) {
       if(!this.is_silenced() || this.hit_proc_on_silenced) {//do not proc if silenced
         this.player_hit_proc()
       }
-      // Always reset combo on contact, even when silenced.
-      this.impulse_game_state.reset_combo()
+      // Always reset combo on contact, even when silenced. However, do not reset when inside disabler.
+      if (!this.is_disabled()) {
+        this.impulse_game_state.reset_combo()
+      }
     } else if(other instanceof Enemy) {
         if(other.durations["open"] > 0) {
           this.open(other.durations["open"])
@@ -869,12 +872,20 @@ Enemy.prototype.open = function(dur) {
   this.durations["open"] = Math.max(dur, this.durations["open"])
 }
 
+Enemy.prototype.disable = function(dur) {
+  this.durations["disabled"] = Math.max(dur, this.durations["disabled"])
+}
+
 Enemy.prototype.is_locked = function() {
   return this.status_duration[0] > 0;
 };
 
 Enemy.prototype.is_silenced = function() {
-  return this.status_duration[1] > 0;
+  return this.status_duration[1] > 0 || this.durations["disabled"] > 0;
+}
+
+Enemy.prototype.is_disabled = function() {
+  return this.durations["disabled"] > 0;
 }
 
 Enemy.prototype.is_gooed = function() {
@@ -988,6 +999,8 @@ Enemy.prototype.get_current_status = function() {
         return 'silenced'
       } else if(this.is_gooed()) {
         return "gooed"
+      } else if (this.is_disabled()) {
+        return 'silenced';
       }
     }
 

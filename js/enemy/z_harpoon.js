@@ -24,6 +24,8 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   this.death_radius = 2
 
+  this.fast_factor = 3
+
   // Estimated harpoon length.
   this.harpoon_length = 17
   if(imp_vars.player_data.difficulty_mode == "easy") {
@@ -109,6 +111,9 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.extra_adjust = false
   this.adjust_position_factor = 1;
 
+  if(imp_vars.player_data.difficulty_mode == "normal") {
+    this.adjust_position_factor = 0.8;
+  }
   this.orbiter_checks = [0, -1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
 
   this.has_bulk_draw = true
@@ -332,6 +337,14 @@ Harpoon.prototype.process_death = function(enemy_index, dt) {
   }
 
   return false
+}
+
+Harpoon.prototype.modify_movement_vector = function(dir) {
+  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+    dir.Multiply(this.fast_factor)
+  }
+
+  dir.Multiply(this.force);
 }
 
 Harpoon.prototype.start_death = function(death) {

@@ -379,8 +379,11 @@ Player.prototype.process = function(dt) {
     this.status_duration[4] -= dt
   }
 
-  if(this.status_duration[5] > 0) {
-    this.status_duration[5] -= dt
+  if (this.status_duration[5] > 0) {
+    this.status_duration[5] -= dt;
+  }
+
+  if(this.status_duration[5] > 0 && !this.bulked) {
     var fixtures = this.body.GetFixtureList()
     if (fixtures.length === undefined) {
       fixtures = [fixtures]
@@ -392,7 +395,7 @@ Player.prototype.process = function(dt) {
     this.readjust_force()
     this.body.ResetMassData()
     this.bulked = true
-  } else if(this.bulked){
+  } else if(this.status_duration[5] <= 0 && this.bulked){
     this.bulked = false
     var fixtures = this.body.GetFixtureList()
     if (fixtures.length === undefined) {
