@@ -90,6 +90,9 @@ FighterBullet.prototype.collide_with = function(other) {
 
         if(other.id == this.parent_id) {
           factor *= 1.5
+          if (other.is_gooed()) {
+            factor *= 2;
+          }
         } else if (other instanceof Fighter) {
           factor *= 0.7
         } else if (other instanceof Orbiter) {

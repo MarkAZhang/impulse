@@ -88,6 +88,10 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
       temp_enemy.set_heading(angle);
       temp_enemy.pathfinding_counter = temp_enemy.pathfinding_delay
 
+      // disable initial silence.
+      temp_enemy.entered_arena = true;
+      temp_enemy.recovery_timer = 0;
+
   		this.level.spawned_enemies.push(temp_enemy)
 
       this.level.enemy_counter +=1
@@ -123,7 +127,7 @@ BossFourSpawner.prototype.additional_drawing = function(context, draw_factor) {
 
 BossFourSpawner.prototype.super_silence = Enemy.prototype.silence;
 BossFourSpawner.prototype.silence = function(dur, color_silence) {
-  this.super_silence();
+  this.super_silence(dur, color_silence);
   this.last_stun = dur;
 }
 
