@@ -26,7 +26,8 @@ imp_vars.debug = {
   god_mode_enabled: true,
   god_mode: false,
   dev: false,
-  old_menu: false
+  old_menu: false,
+  story_mode: false
 };
 
 if (window.location.host === 'localhost') {
@@ -548,6 +549,7 @@ function on_key_down(event) {
   if(keyCode == imp_params.keys.GOD_MODE_KEY && imp_vars.debug.god_mode_enabled) { //G = god mode
     if (imp_vars.debug.god_mode == false) {
       imp_vars.debug.god_mode = true
+      imp_vars.debug.story_mode = true;
       set_popup_message("god_mode_alert", 2500, "white", 0)
       if (imp_vars.cur_game_state instanceof WorldMapState) {
         imp_vars.cur_game_state.set_up_buttons();

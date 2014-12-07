@@ -1431,9 +1431,9 @@ var spriteSheetData = {
   //"multi_powerup": [304, 52, 49, 48],
   "multi_powerup": [310, 58, 37, 36],
   "ult_powerup": [304, 105, 49, 48],
-  "pink_one": [300, 201, 40, 40].
+  "pink_one": [300, 201, 40, 40],
   "dark_one": [301, 240, 40, 41],
-  "dark_aura": [300, 299, 100, 101]
+  "dark_aura": [300, 299, 100, 101],
 
   "immunitas_arm": [0, 0, 90, 90],
   "immunitas_arm_red": [150, 135, 90, 90],
