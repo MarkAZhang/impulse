@@ -147,7 +147,7 @@ TitleState.prototype.setup_main_menu = function() {
   this.buttons["menu"] = []
   var button_color = "white"//impulse_colors["impulse_blue"]
 
-  if(imp_vars.dev) {
+  if(imp_vars.debug.dev && imp_vars.debug.old_menu) {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2-30, 200, 100, button_color, "blue",
     function(){
       var i = 1;

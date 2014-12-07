@@ -1,6 +1,4 @@
 var imp_vars = {
-  god_mode: false,
-  dev: false,
   step_id: 0,
   canvasWidth: 0,
   canvasHeight: 0,
@@ -23,6 +21,16 @@ var imp_vars = {
   bg_opacity: 0.3,
   switch_bg_duration: null,
   share_button_open: true // button starts out as open.
+};
+imp_vars.debug = {
+  god_mode_enabled: true,
+  god_mode: false,
+  dev: false,
+  old_menu: false
+};
+
+if (window.location.host === 'localhost') {
+  imp_vars.debug.dev = true;
 }
 
 window["impulse_main"] =  function() {
@@ -537,9 +545,9 @@ function is_mute() {
 function on_key_down(event) {
   var keyCode = event==null? window.event.keyCode : event.keyCode;
 
-  if(keyCode == imp_params.keys.GOD_MODE_KEY) { //G = god mode
-    if (imp_vars.god_mode == false) {
-      imp_vars.god_mode = true
+  if(keyCode == imp_params.keys.GOD_MODE_KEY && imp_vars.debug.god_mode_enabled) { //G = god mode
+    if (imp_vars.debug.god_mode == false) {
+      imp_vars.debug.god_mode = true
       set_popup_message("god_mode_alert", 2500, "white", 0)
       if (imp_vars.cur_game_state instanceof WorldMapState) {
         imp_vars.cur_game_state.set_up_buttons();
