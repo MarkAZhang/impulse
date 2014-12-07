@@ -27,7 +27,7 @@ function WorldButton(world, size, x, y, w, h, color, action) {
   }
 
   if(available) {
-    if(!imp_params.impulse_level_data["HIVE "+this.world+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.dev){
+    if(!imp_params.impulse_level_data["HIVE "+this.world+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.debug.dev){
       this.set_active(false)
       this.state = "locked"
     }

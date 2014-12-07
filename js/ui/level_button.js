@@ -15,7 +15,7 @@ function LevelButton(level_name, size, x, y, w, h, color, world) {
   this.init(x, y, w, h, action, true, color)
   if(imp_params.impulse_level_data[level_name]) {
 
-  if(!imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.dev) {
+  if(!imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].seen && !imp_vars.debug.dev) {
       this.set_active(false)
       this.state = "locked"
     }

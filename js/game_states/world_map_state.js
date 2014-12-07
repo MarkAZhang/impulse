@@ -115,9 +115,9 @@ WorldMapState.prototype.set_up_buttons = function() {
     this.world_unlocked[difficulty] = {
       0: true,
       1: true,
-      2: imp_vars.player_data.world_rankings[difficulty]["world 1"] || imp_vars.dev || imp_vars.god_mode,
-      3: imp_vars.player_data.world_rankings[difficulty]["world 2"] || imp_vars.dev || imp_vars.god_mode,
-      4: imp_vars.player_data.world_rankings[difficulty]["world 3"] || imp_vars.dev || imp_vars.god_mode,
+      2: imp_vars.player_data.world_rankings[difficulty]["world 1"] || imp_vars.debug.dev || imp_vars.debug.god_mode,
+      3: imp_vars.player_data.world_rankings[difficulty]["world 2"] || imp_vars.debug.dev || imp_vars.debug.god_mode,
+      4: imp_vars.player_data.world_rankings[difficulty]["world 3"] || imp_vars.debug.dev || imp_vars.debug.god_mode,
     }
   }
   
@@ -256,7 +256,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
       new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen || 
-        (j == 0 && this.world_unlocked[difficulty][i]) || (imp_vars.dev || imp_vars.god_mode)
+        (j == 0 && this.world_unlocked[difficulty][i]) || (imp_vars.debug.dev || imp_vars.debug.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"
       }
