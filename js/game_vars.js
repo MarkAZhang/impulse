@@ -32,6 +32,8 @@ var imp_params = {
     "b4spawner": "effects/b4spawner",
     "b4attacker": "effects/b4attacker",
     "b4darkness": "effects/b4darkness",
+    "dark_diag": "effects/dark_diag",
+    "dark_anger": "effects/dark_anger",
   },
   multisounds: {
     "b3tick": {

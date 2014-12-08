@@ -47,7 +47,8 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
       y: 300,
       msg: 'one'
     }
-  ]
+  ],
+  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 0-2'] = {
@@ -72,14 +73,7 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 560},
-  gateway_loc: {x: 400, y: 200},
-  dark_ones: [
-    {
-      x: 400,
-      y: 410,
-      msg: 'two'
-    }
-  ]
+  gateway_loc: {x: 400, y: 200}
 }
 
 imp_params.impulse_level_data['HIVE 0-3'] = {
@@ -120,7 +114,8 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
       y: 485,
       msg: 'three'
     }
-  ]
+  ],
+  dark_ones_after_gateway: true
 }
 
 imp_params.impulse_level_data['HIVE 0-4'] = {
@@ -171,7 +166,8 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
       y: 130,
       msg: 'four'
     }
-  ]
+  ],
+  dark_ones_after_gateway: true
 }
 
 imp_params.impulse_level_data['HIVE 1-1'] = {

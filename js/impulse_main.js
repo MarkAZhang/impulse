@@ -27,7 +27,7 @@ imp_vars.debug = {
   god_mode_enabled: true,
   god_mode: false,
   dev: false,
-  old_menu: true,
+  old_menu: false,
   story_mode: false
 };
 
