@@ -247,7 +247,7 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_void") {
-		this.tutorial_text = "DO NOT TOUCH THE VOID"
+		this.tutorial_text = "TOUCHING THE VOID WILL KILL YOU"
 	}
 
 	if (this.type == "tutorial_kill_enemy") {

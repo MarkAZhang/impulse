@@ -797,7 +797,7 @@ function set_up_enemy_images() {
   for(var i in imp_params.impulse_enemy_stats) {
     if(imp_params.impulse_enemy_stats[i].batch_enemy_image) {
       var temp_enemy = new (imp_params.impulse_enemy_stats[i].className)(null, 0, 0, 0, null)
-      imp_params.impulse_enemy_stats[i].images = temp_enemy.generate_images()    
+      imp_params.impulse_enemy_stats[i].images = temp_enemy.generate_images();
     }
   }
 }

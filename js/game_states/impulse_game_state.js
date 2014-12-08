@@ -590,6 +590,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.player.draw(ctx)
   }
 
+  this.level.final_draw(ctx, imp_vars.draw_factor)
 
   if(this.level_redraw_bg) {
 
@@ -678,7 +679,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
   this.set_zoom_transparency(ctx);
   // Draw the tutorial if applicable.
-  if (this.show_tutorial) {
+  if (this.show_tutorial && !imp_vars.dark_one_speaks) {
     this.tutorial_overlay_manager.draw(ctx);
   }
   ctx.restore();

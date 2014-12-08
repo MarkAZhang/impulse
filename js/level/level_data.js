@@ -40,7 +40,14 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 200, y: 300},
-  gateway_loc: {x: 600, y: 300}
+  gateway_loc: {x: 600, y: 300},
+  dark_ones: [
+    {
+      x: 400,
+      y: 300,
+      msg: 'one'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 0-2'] = {
@@ -55,7 +62,7 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
   dominant_enemy: "stunner",
   // Old design which "isolated" the player
   //obstacle_v: [[[60,120],[120,120],[120,420],[680,420],[680,120],[740,120],[740,480],[60,480]],[[180,120],[620,120],[620,360],[560,360],[560,180],[240,180],[240,360],[180,360]]],
-  obstacle_v: [[[-50,260],[370,260],[370,360],[-50,360]],[[50,420],[751,420],[750,520],[50,520]],[[850,360],[430,360],[430,260],[850,260]]],
+  obstacle_v: [[[-50,260],[370,260],[370,360],[-50,360]],[[50,460],[751,460],[750,520],[50,520]],[[850,360],[430,360],[430,260],[850,260]]],
   spark_spawn_points: [],
   spawn_points: [],
   buffer_radius: 1,
@@ -65,7 +72,14 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 560},
-  gateway_loc: {x: 400, y: 200}
+  gateway_loc: {x: 400, y: 200},
+  dark_ones: [
+    {
+      x: 400,
+      y: 410,
+      msg: 'two'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 0-3'] = {
@@ -82,8 +96,7 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
     "dumb_stunner": 1
   },
   dominant_enemy: "dumb_stunner",
-  obstacle_v: [[[-50, -50], [850, -50], [850, 200], [-50, 200]], [[-50, 400], [850, 400], [850, 650], [-50, 650]],
-    [[50, -50], [50, 650], [-50, 650], [-50, -50]], [[750, -50], [750, 650], [850, 650], [850, -50]]],
+  obstacle_v:  [[[50,-50],[50,650],[-50,650],[-50,-50]],[[750,-50],[750,650],[850,650],[850,-50]],[[847,200],[516,200],[516,30],[285,30],[285,200],[-53,200],[-53,-50],[847,-51]],[[-47,400],[284,400],[284,570],[516,570],[516,400],[853,400],[853,650],[-47,651]]],
   spark_spawn_points: [],
   spawn_points: [[200, 300]],
   buffer_radius: 1,
@@ -95,7 +108,19 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
   },
   player_loc: {x: 100, y: 300},
   gateway_loc: {x: 600, y: 300},
-  show_score_interface: true
+  show_score_interface: true,
+  dark_ones: [
+    {
+      x: 400,
+      y: 115,
+      msg: 'three'
+    },
+    {
+      x: 400,
+      y: 485,
+      msg: 'three'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 0-4'] = {
@@ -112,9 +137,8 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
     "dumb_stunner": 4
   },
   dominant_enemy: "dumb_stunner",
-  obstacle_v: [[[-50, -50], [850, -50], [850, 50], [-50, 50]], [[-50, 550], [850, 550], [850, 650], [-50, 650]],
-    [[50, -50], [50, 650], [-50, 650], [-50, -50]], [[750, -50], [750, 650], [850, 650], [850, -50]]],
-  spark_spawn_points: [[200, 200], [600, 200], [200, 400], [600, 400]],
+  obstacle_v:  [[[-50,-51],[850,-51],[850,52],[522,50],[522,129],[278,129],[278,50],[-50,50]],[[-50,550],[278,550],[278,471],[522,471],[522,550],[850,548],[850,651],[-50,651]],[[50,651],[-50,649],[-50,-50],[50,-50],[50,219],[122,219],[122,380],[50,380]],[[750,-51],[850,-49],[850,650],[750,650],[750,381],[678,381],[678,220],[750,220]]],
+  spark_spawn_points: [[300, 200], [300, 400], [500, 200], [500, 400]],
   spawn_points: [[300, 300], [500, 300], [400, 200], [400, 400]],
   buffer_radius: 1,
   max_rating: 50,
@@ -125,7 +149,29 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
   },
   player_loc: {x: 400, y: 300},
   spawn_pattern: "spread",
-  show_full_interface: true
+  show_full_interface: true,
+  dark_ones: [
+    {
+      x: 165,
+      y: 130,
+      msg: 'four'
+    },
+    {
+      x: 165,
+      y: 470,
+      msg: 'four'
+    },
+    {
+      x: 635,
+      y: 470,
+      msg: 'four'
+    },
+    {
+      x: 635,
+      y: 130,
+      msg: 'four'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 1-1'] = {

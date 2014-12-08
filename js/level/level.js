@@ -35,6 +35,10 @@ Level.prototype.init = function(data, level_intro_state) {
   }
   this.enemy_numbers = {}
   this.level_name = data.level_name
+  this.dark_ones_data = data.dark_ones
+  this.dark_ones = [];
+  this.dark_ones_spawned = false;
+  this.dark_ones_visited = 0;
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.spark_spawn_points = data.spark_spawn_points_easy
@@ -334,6 +338,10 @@ Level.prototype.process = function(dt) {
     this.obstacles_visible_timer -= dt
   }
 
+  for (var i = 0; i < this.dark_ones.length; i++) {
+    this.dark_ones[i].process(dt);
+  }
+
   this.dead_enemies = []
   this.spawned_enemies = []
   this.expired_enemies = []
@@ -445,7 +453,23 @@ Level.prototype.initial_spawn = function() {
       this.spawn_enemy_set(enemy_type_list);
     }
   }
+  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.god_mode) {
+    for (var i = 0; i < this.dark_ones_data.length; i++) {
+      var data = this.dark_ones_data[i];
+      this.spawn_dark_one(data);
+    }
+    this.dark_ones_spawned = true;
+  }
 }
+
+Level.prototype.spawn_dark_one = function (data) {
+  if (this.restarting_level) {
+    return
+  }
+  var dark_one = new DarkOne(data.x, data.y, this.impulse_game_state, data.msg)
+
+  this.dark_ones.push(dark_one);
+};
 
 Level.prototype.spawn_enemy_set = function(enemy_type_list) {
   var pivot_spawn_index = this.pick_pivot_spawn_index();
@@ -806,6 +830,10 @@ Level.prototype.draw = function(context, draw_factor) {
     this.enemies[i].final_draw(context, draw_factor)
   }
 
+  for (var i = 0; i < this.dark_ones.length; i++) {
+    this.dark_ones[i].draw(context);
+  }
+
   if (this.enemy_visibility != 1) {
     context.restore();
   }
@@ -824,6 +852,12 @@ Level.prototype.draw = function(context, draw_factor) {
 
   context.restore()
 }
+
+Level.prototype.final_draw = function(context, draw_factor) {
+  for (var i = 0; i < this.dark_ones.length; i++) {
+    this.dark_ones[i].final_draw(context);
+  }
+};
 
 Level.prototype.open_gateway = function() {
 
@@ -855,8 +889,8 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillRect(775, 275, 25, 50);
   } else if (this.level_name == "HIVE 0-3") {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
-    bg_ctx.fillRect(0, 0, 800, 200);
-    bg_ctx.fillRect(0, 400, 800, 200);
+    bg_ctx.fillRect(0, 0, 50, 600);
+    bg_ctx.fillRect(750, 0, 50, 600);
   } else if (this.level_name == "HIVE 0-4") {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(0, 0, 800, 50);

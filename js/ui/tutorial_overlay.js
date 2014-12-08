@@ -383,7 +383,7 @@ EnemyIncrTutorialOverlay.prototype.constructor = EnemyIncrTutorialOverlay;
 function EnemyIncrTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.on_demand = true;
-	this.duration = 5000;
+	this.duration = 3000;
 	this.hover_overlay = new MessageBox("tutorial_enemy_incr", impulse_game_state.bright_color, impulse_game_state.world_num);
 }
 

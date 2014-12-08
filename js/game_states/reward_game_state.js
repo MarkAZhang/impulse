@@ -402,7 +402,7 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   // If we just unlocked hard mode, go to 1.
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
+  if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time && go_to_world_num !== 0) {
     set_bg("Title Alt" + go_to_world_num, imp_vars.bg_opacity * 0.5)
   } else {
     set_bg("Hive 0", imp_vars.bg_opacity)

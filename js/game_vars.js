@@ -134,6 +134,7 @@ impulse_colors['silver'] = "#c0c0c0"
 impulse_colors['impulse_target_blue'] = "rgba(0, 128, 255, 0.2)"
 impulse_colors['impulse_blue'] = "rgb(0, 128, 255)"
 impulse_colors['impulse_blue_dark'] = "#13527e"
+impulse_colors['rose'] = "#ff66cc";
 impulse_colors['gold'] = "#edb900"
 
 

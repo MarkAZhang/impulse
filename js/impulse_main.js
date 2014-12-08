@@ -20,13 +20,14 @@ var imp_vars = {
   minified: true,
   bg_opacity: 0.3,
   switch_bg_duration: null,
-  share_button_open: true // button starts out as open.
+  share_button_open: true, // button starts out as open.
+  dark_one_speaks: false
 };
 imp_vars.debug = {
   god_mode_enabled: true,
   god_mode: false,
   dev: false,
-  old_menu: false,
+  old_menu: true,
   story_mode: false
 };
 
