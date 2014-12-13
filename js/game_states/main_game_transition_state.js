@@ -126,6 +126,9 @@ MainGameTransitionState.prototype.get_next_level_name = function(level, world_nu
     if (world_num == 0) {
       return "HIVE 0-1"
     }
+    if (imp_vars.debug.show_zero_level || this.show_zero_level(world_num)) {
+        return "HIVE "+world_num+"-0"
+    }
     return "HIVE "+world_num+"-1"
   } else {
     if(level.level_number < 7) {
@@ -134,6 +137,12 @@ MainGameTransitionState.prototype.get_next_level_name = function(level, world_nu
       return "BOSS "+world_num
     }
   }
+}
+
+MainGameTransitionState.prototype.show_zero_level = function (world_num) {
+  // Easy difficulty, and we've never played this world before.
+  return imp_vars.player_data.difficulty_mode == "easy" &&
+         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen
 }
 
 MainGameTransitionState.prototype.compute_last_level_stats = function() {

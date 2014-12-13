@@ -28,7 +28,8 @@ imp_vars.debug = {
   god_mode: false,
   dev: false,
   old_menu: false,
-  story_mode: false
+  story_mode: false,
+  show_zero_level: true
 };
 
 if (window.location.host === 'localhost') {

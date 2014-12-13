@@ -95,6 +95,28 @@ DarkOne.prototype.draw_message = function (ctx) {
     ctx.fillStyle = "red";
     ctx.fillText('I will crush you into the Void.', 400, 300);
   }
+  if (this.msg == "hive_one_open") {
+    ctx.fillText('It\'s too much trouble.', 400, 270);
+    ctx.fillText('I\'m content with', 400, 300);
+    ctx.fillText('the way things are.', 400, 330);
+  }
+  if (this.msg == "hive_two_open") {
+    ctx.fillText('Just a little more and', 400, 270);
+    ctx.fillText('I think I can obtain', 400, 300);
+    ctx.fillText('fulfillment.', 400, 330);
+  }
+
+  if (this.msg == "hive_three_open") {
+    ctx.fillText('Why should I be', 400, 270);
+    ctx.fillText('responsible for', 400, 300);
+    ctx.fillText('someone else\s problem?', 400, 330);
+  }
+
+  if (this.msg == "hive_four_open") {
+    ctx.fillText('I\'m not wrong!', 400, 270);
+    ctx.fillText('You\'re wrong.', 400, 300);
+    ctx.fillText('There is no other way.', 400, 330);
+  }
   ctx.restore();
 };
 

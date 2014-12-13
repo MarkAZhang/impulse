@@ -170,6 +170,37 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
   dark_ones_after_gateway: true
 }
 
+imp_params.impulse_level_data['HIVE 1-0'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 400, y: 500},
+  gateway_loc: {x: 400, y: 300},
+  dark_ones: [
+    {
+      x: 400,
+      y: 150,
+      msg: 'hive_one_open'
+    }
+  ],
+  dark_ones_after_gateway: false
+}
+
 imp_params.impulse_level_data['HIVE 1-1'] = {
   enemies_easy: {
     //"stunner": [0, 4, 1.75, 2, 50]
@@ -395,6 +426,37 @@ imp_params.impulse_level_data['BOSS 1'] = {
   player_loc: {x: 400, y: 550},
   defeat_time: 40
 
+}
+
+imp_params.impulse_level_data['HIVE 2-0'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 400, y: 500},
+  gateway_loc: {x: 400, y: 300},
+  dark_ones: [
+    {
+      x: 400,
+      y: 150,
+      msg: 'hive_two_open'
+    }
+  ],
+  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 2-1'] = {
@@ -660,6 +722,37 @@ imp_params.impulse_level_data['BOSS 2'] = {
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
   defeat_time: 60
+}
+
+imp_params.impulse_level_data['HIVE 3-0'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 400, y: 500},
+  gateway_loc: {x: 400, y: 300},
+  dark_ones: [
+    {
+      x: 400,
+      y: 150,
+      msg: 'hive_three_open'
+    }
+  ],
+  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 3-1'] = {
@@ -1026,6 +1119,37 @@ imp_params.impulse_level_data['BOSS 3'] = {
     "third boss": 1
   },
 
+}
+
+imp_params.impulse_level_data['HIVE 4-0'] = {
+  enemies_easy: {
+  },
+  enemies: {
+  },
+  initial_spawn_data_easy: {
+  },
+  initial_spawn_data: {
+  },
+  dominant_enemy: "stunner",
+  obstacle_v: [[[-25,-25],[400,-25],[400,25],[25,25],[25,300],[-25,300]],[[-25,300],[25,300],[25,575],[400,575],[400,625],[-25,625]],[[825,300],[775,300],[775,25],[400,25],[400,-25],[825,-25]],[[825,625],[400,625],[400,575],[775,575],[775,300],[825,300]]],
+  spark_spawn_points: [],
+  spawn_points: [],
+  buffer_radius: 1,
+  max_rating: 50,
+  //cutoff_scores: [100, 500, 1000],
+  cutoff_scores: {
+    "normal": [0, 300000, 1200000], // scores are irrelevant.
+  },
+  player_loc: {x: 400, y: 500},
+  gateway_loc: {x: 400, y: 300},
+  dark_ones: [
+    {
+      x: 400,
+      y: 150,
+      msg: 'hive_four_open'
+    }
+  ],
+  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 4-1'] = {
