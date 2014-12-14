@@ -34,9 +34,9 @@ QuestGameState.prototype.set_up_quests = function() {
   var first_row_gap = 150;
   this.buttons.push(new QuestButton("beat_hive", imp_vars.levelWidth/2 - 2 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("final_boss", imp_vars.levelWidth/2 - 1 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("untouchable", imp_vars.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("high_roller", imp_vars.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 1 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("high_roller", imp_vars.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("untouchable", imp_vars.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
   
   var second_row_x = 350;
   var second_row_gap = 150;
