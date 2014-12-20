@@ -418,9 +418,9 @@ RewardGameState.prototype.advance_game_state = function() {
   else if (this.main_game) {
     if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
       // Immediately move to the next world.
-      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
+      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))    
     } else if (this.victory && this.hive_numbers.world == 0 && this.first_time) {
-      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, null))    
+      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))    
     } else if (this.victory && this.hive_numbers.world == 4) {
       this.switch_to_world_map(false);
     } else if (this.args.just_saved) {
@@ -428,13 +428,6 @@ RewardGameState.prototype.advance_game_state = function() {
     } else {
       this.switch_to_world_map(false);
     }
-  } else if (this.args.is_tutorial) {
-      if (this.args.tutorial_type == "ult_tutorial") {
-        // They MUST have come from world 2. Take them to world 2.
-        switch_game_state(new MainGameTransitionState(2, null, null, null, null))    
-      } else {
-        this.switch_to_world_map(false);
-      }
   } else {
     if (this.victory) {
       switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {

@@ -5,7 +5,8 @@ SliderOptionButton.prototype.constructor = SliderOptionButton
 function SliderOptionButton(text, x, y, w, h, color, hcolor, action, starting_value) {
   this.text = text;
   this.init(x, y, w + 90, h, function(){}, false, color)
-  this.slider = new Slider(this.x + this.w/2 - 65, this.y, 100, 5, this.color)
+  this.slider_x = this.x + this.w/2 - 65;
+  this.slider = new Slider(this.slider_x, this.y, 100, 5, this.color)
   this.slider.value = starting_value
   this.slider.onselect = action
   this.hcolor = hcolor;
@@ -31,7 +32,7 @@ SliderOptionButton.prototype.additional_draw = function(ctx) {
   ctx.fillText(this.text, this.x - this.w/2 + 55, this.y + 7);
   if (this.special_mode) {
     ctx.textAlign = 'center'
-    ctx.fillText(this.special_text, this.x + this.w/2 - 20, this.y + 7);
+    ctx.fillText(this.special_text, this.slider_x, this.y + 7);
   } else {
     this.slider.draw(ctx)
   }

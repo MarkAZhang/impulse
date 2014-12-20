@@ -518,7 +518,7 @@ MainGameSummaryState.prototype.resume_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
   this.hive_numbers.original_rating = calculate_current_rating() // set to current rating when restarting game
-  switch_game_state(new MainGameTransitionState(this.world_num, null, null, null, null, this.hive_numbers, true, true))
+  switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
@@ -590,9 +590,6 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
         is_tutorial: this.world_num == 0,
         first_time_tutorial: imp_vars.player_data.first_time,
         just_saved: this.just_saved}))
-  /*} else if(this.level) {
-    this.hive_numbers.continue()
-    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory, null, this.visibility_graph, this.hive_numbers))*/
   } else {
     switch_game_state(new RewardGameState(this.hive_numbers, true, 
       {victory: false, 

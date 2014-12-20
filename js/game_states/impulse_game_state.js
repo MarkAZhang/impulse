@@ -2,19 +2,15 @@ ImpulseGameState.prototype = new GameState
 
 ImpulseGameState.prototype.constructor = ImpulseGameState
 
-function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game, first_time) {
+function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_game) {
 
   if(world == null || world == undefined) return
 
-  this.init(world, level, visibility_graph, first_time, hive_numbers, main_game)
+  this.init(world, level, visibility_graph, hive_numbers, main_game)
 }
 
-ImpulseGameState.prototype.init = function(world, level, visibility_graph, first_time, hive_numbers, main_game) {
-
-  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null, impulsed: false}
+ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_numbers, main_game) {
   this.hive_numbers = hive_numbers
-
-
   this.main_game = main_game
   if(this.main_game) {
     this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
@@ -64,7 +60,15 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
     else if (this.world_num != 0)
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
   }
-
+  // Set up game numbers for next level.
+  if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
+    this.hive_numbers.game_numbers[this.level.level_name] = {}
+    this.hive_numbers.game_numbers[this.level.level_name].visited = true
+    this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
+  }
+  this.game_numbers = this.hive_numbers.game_numbers[this.level.level_name];
+  this.reset_game_numbers();
+  
   if (this.hive_numbers.total_time[this.level_name] === undefined) {
     this.hive_numbers.total_time[this.level_name] = 0;
   }
@@ -79,7 +83,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.boss_intro_text_duration = 0
 
   this.processed_death = false
-  this.out_of_lives = false
   //add walls
 
   this.addWalls()
@@ -111,12 +114,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
   this.zoom_target_scale = 1
   this.zoom = 0.1
   this.zoom_bg_switch = true;
-  this.first_time = first_time;
-  if(this.first_time) {
-    this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
-  } else {
-    this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.fast_zoom_transition_period)
-  }
+  this.first_time = true;
+  this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
 
 
   this.fade_state = "in"
@@ -180,13 +179,12 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, first
 }
 
 ImpulseGameState.prototype.reset = function() {
-  this.game_numbers = {score: 0, combo: 1, base_combo: 1, seconds: 0, kills: 0, game_length: 0, last_time: null}
+  this.reset_game_numbers();
   this.new_enemy_duration = 10000
   this.new_enemy_timer = 0
   this.new_enemy_type = null
   this.processed_death = false;
   this.first_time = false;
-  this.out_of_lives = false
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
   this.world = new b2World(gravity, doSleep);
@@ -228,6 +226,17 @@ ImpulseGameState.prototype.reset = function() {
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
  // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
+}
+
+ImpulseGameState.prototype.reset_game_numbers = function () {
+  this.game_numbers.score = 0;
+  this.game_numbers.combo = 1;
+  this.game_numbers.base_combo = 1;
+  this.game_numbers.seconds = 0;
+  this.game_numbers.kills = 0;
+  this.game_numbers.game_length = 0;
+  this.game_numbers.last_time = null;
+  this.game_numbers.impulsed = false;
 }
 
 ImpulseGameState.prototype.check_new_enemies = function() {
@@ -398,53 +407,30 @@ ImpulseGameState.prototype.process = function(dt) {
         this.game_numbers.score = 0;
         this.game_numbers.combo = 1;
         this.stars = 0;  
-        /* if (imp_vars.player_data.difficulty_mode == "normal") {
-          this.hive_numbers.lives -= 1
-        } */
-      //} else if (imp_vars.player_data.difficulty_mode == "normal") {
-      //  this.out_of_lives = true
-      //} 
 
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-        //if (this.out_of_lives) {
-        //  save_player_game({});
-        //} else {
-          save_player_game(this.hive_numbers);
-        //}
+        save_player_game(this.hive_numbers);
       }
     }
 
-    if((this.player.dying && this.player.dying_duration < 0) || this.exit_tutorial)
+    if((this.player.dying && this.player.dying_duration < 0))
     {
-      if (this.exit_tutorial || (this.out_of_lives && this.main_game)) {
-        if(this.zoom_state == "none" && this.zoom == 1) {
-          this.zoom_out({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 0.1, this.fast_zoom_transition_period)
-          this.fade_state = "out"
-        } else if(this.zoom_state == "none"){
-          this.ready = false
-          this.game_over();
-        }
-      } else {
-        this.reset();
-        this.make_player();
-      }
+      this.reset();
+      this.make_player();
       return;
     }
 
-
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 &&
-     this.level.boss.dying != "fade" && !this.player.dying) {
+        this.level.boss.dying != "fade" && !this.player.dying) {
       if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
         this.on_victory();
-        this.victory = true
-        this.level.boss_victory = true
       } else if(this.zoom_state == "none"){
         this.ready = false
-        this.game_over();
+        this.level_defeated();
       }
       return;
     }
@@ -456,9 +442,7 @@ ImpulseGameState.prototype.process = function(dt) {
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
-        this.game_over(true);
-        
-   
+        this.level_defeated();
       }
       return;
     }
@@ -1063,7 +1047,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
       40, imp_vars.canvasHeight * 3/4 - 50, this.progress_bar_prop, this.color, true)
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
-    ctx.fillStyle = this.get_combo_color(this.game_numbers.combo)
+    ctx.fillStyle = "white"
     //ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
     //ctx.shadowBlur = 10;
     if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
@@ -1078,22 +1062,6 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
         40, imp_vars.canvasHeight*3/4 - 50, 1, impulse_colors["boss "+this.world_num])
   } */
   ctx.restore()
-}
-
-ImpulseGameState.prototype.get_combo_color = function(combo) {
-  return "white"
-  /*var tcombo = 100;
-  var hperiod = 400;
-  if(combo < tcombo) {
-    var prog = combo/tcombo;
-    var red = Math.round(190*(1-prog) + 0*prog);
-    var green = Math.round(190*(1-prog) + 128*prog);
-    var blue= Math.round(190*(1-prog) + 255*prog);
-
-    return "rgb("+red+","+green+","+blue+")";
-  }
-
-  return this.get_combo_color((tcombo-0.01)*(Math.abs(hperiod - this.game_numbers.game_length%(2*hperiod))/hperiod))*/
 }
 
 ImpulseGameState.prototype.transform_to_zoomed_space = function(pt) {
@@ -1180,22 +1148,10 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 90 && imp_vars.debug.dev) {//Z - insta-victory if debug is on.
     this.victory = true
-    if(this.is_boss_level) {
-      this.level.boss_victory = true
-    } else {
+    if (!this.is_boss_level) {
       this.game_numbers.score = this.level.cutoff_scores[2];
     }
     this.on_victory();
-    
-    if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
-      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
-      for(var attribute in this.game_numbers)
-        this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
-      save_player_game(this.hive_numbers);
-      set_popup_message("saved_alert", 1500, "white", this.world_num)  
-    } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
-      save_player_game({});
-    }
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
     if ((this.is_boss_level && this.victory) || this.out_of_lives) {
@@ -1205,20 +1161,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     }
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[imp_vars.player_data.difficulty_mode]["bronze"]) {
-    this.victory = true
     this.on_victory();
-    if(this.is_boss_level)
-      this.level.boss_victory = true
-    // Advance the level to the next level. 
-    if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
-      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
-      for(var attribute in this.game_numbers)
-        this.hive_numbers.game_numbers[this.level.level_name][attribute] = this.game_numbers[attribute]
-      save_player_game(this.hive_numbers);
-      set_popup_message("saved_alert", 1000, "white", this.world_num)
-    } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
-      save_player_game({});
-    }
   } 
   // USED FOR TRAILER RECORDING
   else if (keyCode == 69 && imp_vars.debug.dev) { // E KEY
@@ -1396,9 +1339,9 @@ ImpulseGameState.prototype.reset_combo = function() {
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 }
 
-ImpulseGameState.prototype.game_over = function() {
+ImpulseGameState.prototype.level_defeated = function() {
   if (this.main_game) {
-    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.victory || this.level.boss_victory, this.game_numbers, this.visibility_graph, this.hive_numbers))
+    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, false))
   } else {
     switch_game_state(new RewardGameState(this.hive_numbers, this.main_game, {
       game_numbers: this.game_numbers,
@@ -1412,19 +1355,58 @@ ImpulseGameState.prototype.game_over = function() {
 
 ImpulseGameState.prototype.on_victory = function() {
   // Check if high score and best time. If so, save.
-  if(!this.level.is_boss_level) {
-    var ans = update_stats_for_level(
-      this.level.level_name, this.game_numbers.score, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-    this.game_numbers.high_score = ans.high_score /* boolean */
-    this.game_numbers.stars = ans.stars
-    this.game_numbers.best_time = ans.best_time /* boolean */
+  if(!this.is_boss_level) {
+    this.update_save_data_for_level();
   } else {
-    var ans = update_stats_for_boss_level(
-      this.level.level_name, this.game_numbers.seconds, imp_vars.player_data.difficulty_mode)
-    this.game_numbers.best_time = ans.best_time /* boolean */
-    this.game_numbers.stars = ans.stars
-    this.game_numbers.score = "WIN"
+    this.update_save_data_for_boss_level();
   }
+  this.victory = true
+  if(this.is_boss_level) {
+    this.level.boss_victory = true
+  }
+  if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
+    // Advance the level to the next level. 
+    this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
+    save_player_game(this.hive_numbers);
+    set_popup_message("saved_alert", 1000, "white", this.world_num)
+  } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
+    save_player_game({});
+  }
+}
+
+ImpulseGameState.prototype.update_save_data_for_level = function () {
+  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode];
+  var new_score = this.game_numbers.score;
+  var new_time = this.game_numbers.seconds;
+  
+  if (new_score > save_state.high_score) {
+    this.game_numbers.high_score = true
+    save_state.high_score = new_score
+  } else {
+    this.game_numbers.high_score = false
+  }
+
+  if (new_time < save_state.best_time) {
+    this.game_numbers.best_time = true
+    save_state.best_time = new_time
+  } else {
+    this.game_numbers.best_time = false;
+  }
+
+  save_game()
+}
+
+ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
+  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[imp_vars.player_data.difficulty_mode];
+  var new_time = this.game_numbers.seconds;
+  if (new_time < save_state.best_time) {
+    this.game_numbers.best_time = true
+    save_state.best_time = new_time
+  } else {
+    this.game_numbers.best_time = false;
+  }
+
+  save_game()
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

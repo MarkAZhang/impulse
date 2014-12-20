@@ -84,26 +84,13 @@ function WorldMapState(world, is_practice_mode) {
   this.gateway_size = 5
   this.gateway_particles_per_round = 8
 
+  // If this is the first time, take the player to the tutorial.
   if (imp_vars.player_data.first_time) {
     // If we don't set timeout, the click event will set world map state back to the game state.
     setTimeout(function() {
-      switch_game_state(new MainGameTransitionState(0, null, null, null, null, null, false, true))
+      switch_game_state(new MainGameTransitionState(0, null, null, null, false))
     });
   }
-
-  this.help_buttons = {}
-  /* for (var j = 0; j < this.difficulties.length; j++) {
-    var difficulty = this.difficulties[j];
-    this.help_buttons[difficulty] = {}
-    for (var i = 1; i <= 4; i++) {
-      var help_button = new IconButton("", 16, 470, 422, 20, 20, 
-        impulse_colors["world " + i + " bright"], 
-        impulse_colors["world " + i + " bright"], 
-        function() {}, "help_icon")
-      this.help_buttons[difficulty][i] = help_button;
-      help_button.add_hover_overlay(new MessageBox("rank_explanation", impulse_colors["world " + i + " bright"], i));
-    }
-  } */
 }
 
 WorldMapState.prototype.set_up_buttons = function() {
@@ -143,11 +130,6 @@ WorldMapState.prototype.set_up_buttons = function() {
 
 WorldMapState.prototype.set_up_world_map = function(difficulty) {
     var _this = this;
-    /*this.world_buttons[1] = new SmallButton("I. HIVE IMMUNITAS", 20, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2-100, 200, 200, impulse_colors["boss 1"], impulse_colors["boss 1"],
-     function(){_this.fade_out_duration = _this.fade_out_interval; _this.fade_out_color = impulse_colors["world 1 dark"];
-      setTimeout(function(){
-        switch_game_state(new MainGameTransitionState(1, null, null, null, null))
-      }, 500)})*/
     for (var i = 0; i <= 4; i++) {
       this.set_up_world_icon(i, imp_vars.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)
     }
@@ -278,13 +260,9 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
       var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
       _this.draw_world_bg(world_bg_ctx)
       setTimeout(function(){
-        switch_game_state(new MainGameTransitionState(world_num, null, null, null, null, null, false, true))
+        switch_game_state(new MainGameTransitionState(world_num, null, null, null, false))
       }, _this.fade_out_interval_main)}, "world"+world_num)
   this.world_buttons[difficulty][world_num].active = unlocked
-  /*if (difficulty == "normal") {
-    this.world_buttons[difficulty][world_num].add_hover_overlay(
-      new MessageBox("lives_and_sparks", impulse_colors["world "+world_num+" bright"], world_num));
-  }*/
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
