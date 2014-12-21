@@ -60,7 +60,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     else if (this.world_num != 0)
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
   }
-  // Set up game numbers for next level.
+  // Set up game numbers for level.
   if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
     this.hive_numbers.game_numbers[this.level.level_name] = {}
     this.hive_numbers.game_numbers[this.level.level_name].visited = true
@@ -1364,13 +1364,16 @@ ImpulseGameState.prototype.on_victory = function() {
   if(this.is_boss_level) {
     this.level.boss_victory = true
   }
-  if (this.main_game && this.world_num > 0 && !this.is_boss_level) {
-    // Advance the level to the next level. 
-    this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
-    save_player_game(this.hive_numbers);
-    set_popup_message("saved_alert", 1000, "white", this.world_num)
-  } else if (this.main_game && this.world_num > 0 && this.is_boss_level) {
-    save_player_game({});
+  if (this.main_game) {
+    if (!this.is_boss_level) {
+      this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
+      // Advance the level to the next level. 
+      save_player_game(this.hive_numbers);
+      set_popup_message("saved_alert", 1000, "white", this.world_num)
+    } else {
+      // Clear the game data.
+      save_player_game({});
+    }
   }
 }
 

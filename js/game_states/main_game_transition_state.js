@@ -16,9 +16,8 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
   if (hive_numbers && level) {
     this.game_numbers = this.hive_numbers.game_numbers[level.level_name];
   }
-  this.first_process = false
+  this.has_processed_once = false
 
-  this.world_intro_interval = 3700
   this.level_intro_interval = 2200
   this.last_level_summary_interval = 4000
   this.last_level = null
@@ -32,16 +31,19 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
   this.buttons = []
   this.bg_drawn = false
   this.first_time = false
-  this.is_level_zero = false;
+  this.going_to_level_zero = false;
 
   // Set the next game state.
-  if(level) {
+  if(level && !this.is_level_zero(level.level_name)) {
     this.last_level = level
     this.last_level_name = level.level_name
 
     this.state = "last_level_summary"
     this.transition_timer = this.last_level_summary_interval
     this.compute_last_level_stats();
+  } else if (level && this.is_level_zero(level.level_name)) {
+    this.state = "level_intro"
+    this.transition_timer = this.level_intro_interval
   } else {
     this.state = "level_intro"
     if(loading_saved_game) {
@@ -95,7 +97,7 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
     return "HIVE 0-1"
   }
   if (imp_vars.debug.show_zero_level || this.show_zero_level(world_num)) {
-      this.is_level_zero = true;
+      this.going_to_level_zero = true;
       return "HIVE "+world_num+"-0"
   }
   return "HIVE "+world_num+"-1"
@@ -114,90 +116,47 @@ MainGameTransitionState.prototype.show_zero_level = function (world_num) {
 }
 
 MainGameTransitionState.prototype.compute_last_level_stats = function() {
-  var stars = 0
-  if(!this.last_level.is_boss_level) {
-    while(this.game_numbers.score > imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][stars])
-    {
-      stars+=1
-    }
-  }
-  this.stars = stars
-
-  if(!this.last_level.is_boss_level) {
-    if (this.stars < 3)
-      this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
-    else
-      this.bar_top_score = imp_params.impulse_level_data[this.last_level.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
-  }
-
-  this.time_sparks_awarded = Math.floor(this.game_numbers.seconds/5)
-  this.combo_sparks_awarded = Math.floor(this.game_numbers.combo/2)
-
-  this.target_sparks = this.hive_numbers.sparks + this.time_sparks_awarded + this.combo_sparks_awarded;
-  this.target_lives = this.hive_numbers.lives
-  while(this.target_sparks >= 100) {
-    this.target_sparks -= 100;
-    this.target_lives += 1
-  }
   this.check_completed_quests(this.last_level.level_name, this.hive_numbers.game_numbers[this.last_level.level_name])
 }
 
-MainGameTransitionState.prototype.process = function(dt) {
-  this.first_process = true
-
+MainGameTransitionState.prototype.maybe_switch_states = function () {
   // if last level of tutorial, go to summary state.
   if(this.world_num == 0 && this.last_level && this.last_level.level_name == "HIVE 0-4") {
     switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
-    return
+    return true;
   }
 
   // if tutorial, skip the transition state. Also, if this is the first time, go directly to impulse game state.
-  if(this.world_num == 0) {
+  if(this.world_num == 0 || this.going_to_level_zero) {
     if(this.level_loaded) {
       switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
     }  
-    return
+    return true;
   }
 
   if(this.last_level && this.last_level.is_boss_level) {
     switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
-    return
+    return true;
   }
 
-  // adjust sparks based on prog
-  var prog = (this.transition_timer/this.last_level_summary_interval);
+  return false;
+}
 
-  if(this.state == "last_level_summary" && prog > 0.3 &&  prog < 0.7) {
-      this.hive_numbers.sparks += (dt)/(0.4 * this.last_level_summary_interval) * (this.time_sparks_awarded+this.combo_sparks_awarded);
-      if(this.hive_numbers.sparks >= 100) {
-        this.hive_numbers.sparks -= 100;
-        this.hive_numbers.lives += 1;
-      }
-  } else if(this.state == "last_level_summary" && prog < 0.3) {
-    this.hive_numbers.sparks = Math.floor(this.target_sparks);
-    this.hive_numbers.lives = Math.floor(this.target_lives);
-    this.hive_numbers.last_sparks = this.hive_numbers.sparks
-    this.hive_numbers.last_lives = this.hive_numbers.lives
+MainGameTransitionState.prototype.process = function(dt) {
+  if (this.maybe_switch_states()) {
+    return;
   }
+  this.has_processed_once = true
 
   // Pause in the middle of the current state until the level is loaded.
-  if(this.level_loaded || (this.state == "world_intro" && this.transition_timer >= this.world_intro_interval/2) ||
+  if(this.level_loaded ||
     (this.state == "last_level_summary" && this.transition_timer >= this.last_level_summary_interval/2) ||
     (this.state == "level_intro" && this.transition_timer >= this.level_intro_interval/2)) {
     this.transition_timer -= dt;
   }
 
   if(this.transition_timer < 0) {
-    if(this.state == "world_intro" && this.level_loaded) {
-      // If this is the tutorial, do not show the level intro.
-      // If this is level zero, also do not show level intro.
-      if (this.world_num == 0 || this.is_level_zero) {
-        switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
-      } else {
-        this.state = "level_intro"
-        this.transition_timer = this.level_intro_interval
-      }
-    } else if(this.state == "last_level_summary" && this.level_loaded) {
+    if(this.state == "last_level_summary" && this.level_loaded) {
       if(this.level.is_boss_level) {
         imp_vars.impulse_music.stop_bg()
       }
@@ -243,46 +202,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
-  if(!this.first_process) return
+  if(!this.has_processed_once) return
 
-  if(this.state == "world_intro") {
-
-    var prog = (this.transition_timer/this.world_intro_interval);
-
-    ctx.save()
-    ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
-
-
-    ctx.textAlign = 'center'
-    ctx.shadowBlur = 0;
-
-    /*ctx.font = '24px Muli'
-
-    ctx.fillStyle = impulse_colors["impulse_blue_dark"]
-    ctx.shadowColor = ctx.fillColor
-    ctx.fillText("IMPULSE", imp_vars.levelWidth/2, 100)*/
-
-    ctx.fillStyle = this.bright_color;
-    ctx.shadowColor = "black"
-
-    ctx.save()
-    ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx,this.world_num,imp_vars.levelWidth/2, imp_vars.levelHeight/2, 130)
-    ctx.restore()
-    ctx.font = '54px Muli'
-    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2+25)
-    ctx.shadowBlur = 0
-    ctx.fillStyle = this.lite_color;
-    ctx.shadowColor = ctx.fillStyle
-    ctx.font = '12px Muli'
-    if(!this.level_loaded) {
-      ctx.fillText("LOADING LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
-    } else {
-      ctx.fillText("PRESS ANY KEY TO SKIP", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 270)
-    }
-    ctx.restore()
-
-  } else if(this.state == "level_intro") {
+  if(this.state == "level_intro") {
 
     if(!this.level.is_boss_level) {
       ctx.save()
@@ -436,7 +358,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
 MainGameTransitionState.prototype.on_key_down = function(keyCode) {
   if(this.level_loaded) {
-    this.world_intro_interval /=4
     this.level_intro_interval /=4
     this.last_level_summary_interval /=4
     this.transition_timer /=4
@@ -445,7 +366,6 @@ MainGameTransitionState.prototype.on_key_down = function(keyCode) {
 
 MainGameTransitionState.prototype.on_click = function(keyCode) {
   if(this.level_loaded) {
-    this.world_intro_interval /= 4
     this.level_intro_interval /= 4
     this.last_level_summary_interval /= 4
     this.transition_timer /= 4
@@ -462,11 +382,14 @@ MainGameTransitionState.prototype.load_complete = function() {
   draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
 }
 
-MainGameTransitionState.prototype.check_completed_quests = function(level, game_numbers) {
-  var world = parseInt(level.substring(5, 6))
-  // Check if this game_number is a gold score. Bosses don't count.
-  
-  if (game_numbers.impulsed == false) {
+MainGameTransitionState.prototype.is_level_zero = function(level_name) {
+  return (parseInt(level_name.substring(7, 8)) === 0);
+}
+
+MainGameTransitionState.prototype.check_completed_quests = function(level_name, game_numbers) {
+  var world = parseInt(level_name.substring(5, 6))
+
+  if (world != 0 && !this.is_level_zero(level_name) && game_numbers.impulsed == false) {
     set_quest_completed("pacifist")
   }
 }
