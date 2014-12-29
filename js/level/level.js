@@ -35,6 +35,7 @@ Level.prototype.init = function(data, level_intro_state) {
   }
   this.enemy_numbers = {}
   this.level_name = data.level_name
+  this.is_level_zero = (parseInt(this.level_name.substring(7, 8)) === 0);
   this.dark_ones_data = data.dark_ones
   this.dark_ones = [];
   this.dark_ones_spawned = false;
@@ -446,7 +447,7 @@ Level.prototype.initial_spawn = function() {
       }
 
       if (this.spawn_pattern == "separate_by_type") {
-        this.spawn_enemy_set(enemy_type_list);    
+        this.spawn_enemy_set(enemy_type_list);
         enemy_type_list = [];
       }
     }
@@ -454,7 +455,7 @@ Level.prototype.initial_spawn = function() {
       this.spawn_enemy_set(enemy_type_list);
     }
   }
-  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.god_mode && !this.dark_ones_after_gateway) {
+  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.story_mode && !this.dark_ones_after_gateway) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
       this.spawn_dark_one(data);
@@ -889,7 +890,8 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     this.obstacles[i].draw(bg_ctx, imp_vars.draw_factor)
   }
 
-  if (this.is_boss_level) {
+  // Draw any additional rectangles to hide obstacle seams.
+  if (this.is_boss_level || this.is_level_zero) {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(375, 0, 50, 25);
     bg_ctx.fillRect(375, 575, 50, 25);
@@ -905,12 +907,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillRect(0, 550, 800, 50);
   }
 
-  //if(this.gateway_loc && !omit_gateway) {
-  //  this.draw_gateway(bg_ctx, imp_vars.draw_factor)
-  //}
   bg_ctx.restore()
-  //bg_ctx.clearRect(-100, 0, 100, imp_vars.levelHeight)
-  //bg_ctx.clearRect(imp_vars.levelWidth, 0, 100, imp_vars.levelHeight)
 }
 
 Level.prototype.process_gateway_particles = function(dt) {

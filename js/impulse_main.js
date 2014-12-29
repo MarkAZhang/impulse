@@ -34,6 +34,7 @@ imp_vars.debug = {
 
 if (window.location.host === 'localhost') {
   imp_vars.debug.dev = true;
+  imp_vars.debug.story_mode = true;
 }
 
 window["impulse_main"] =  function() {

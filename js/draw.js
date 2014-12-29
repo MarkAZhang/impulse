@@ -1581,10 +1581,6 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
       ctx.drawImage(bg, 0, 0, w, h, x, y, w, h)
     }
   }
-  /*ctx.rect(xLow + 5, yLow + 5, xHigh - xLow - 10, yHigh - yLow - 10)
-  ctx.strokeStyle = "white"
-  ctx.lineWidth = 10
-  ctx.stroke();*/
   ctx.restore()
 
 }

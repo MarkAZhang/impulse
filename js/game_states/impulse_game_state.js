@@ -116,7 +116,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.zoom_bg_switch = true;
   this.first_time = true;
   this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
-
+  this.is_level_zero = (parseInt(this.level_name.substring(7, 8)) === 0);
 
   this.fade_state = "in"
   this.victory = false
@@ -475,7 +475,7 @@ ImpulseGameState.prototype.process = function(dt) {
     this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
 
     this.game_numbers.game_length += dt;
-    if (this.world_num > 0)
+    if (this.world_num > 0 && !this.is_level_zero)
       this.hive_numbers.speed_run_countdown -= dt
     this.hive_numbers.total_time[this.level.level_name] += dt;
 
@@ -857,6 +857,9 @@ ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
 }
 
 ImpulseGameState.prototype.draw_interface = function(context) {
+  if (this.is_level_zero) {
+    return;
+  }
 
   context.save()
   context.globalAlpha = 1;
@@ -873,7 +876,21 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   var titleTextY = 0;
 
-  if (!(this instanceof HowToPlayState) && !this.world_num == 0 && imp_vars.player_data.difficulty_mode == "normal" && !this.is_boss_level) {
+  var showHardMode = this.world_num != 0 && imp_vars.player_data.difficulty_mode == "normal" &&
+    !this.is_boss_level;
+
+  var showLevelName = !this.is_boss_level;
+
+  var showMenuHint = !this.is_boss_level;
+
+  var showGameTime = this.world_num != 0 || 
+    imp_params.impulse_level_data[this.level_name].show_full_interface;
+
+  var showScoreLabels = !this.is_boss_level && (!this.world_num == 0 ||
+    imp_params.impulse_level_data[this.level_name].show_full_interface ||
+    imp_params.impulse_level_data[this.level_name].show_score_interface);
+
+  if (showHardMode) {
     context.font = "20px Muli"
     context.save()
     context.globalAlpha *= 1
@@ -882,43 +899,32 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   }
 
   // Draw the level name.
-  if (this.world_num != 0 && !this.is_boss_level) {
-    context.font = '64px Muli'
-
-    type = this.level_name.split(" ")[0]
-    if(type != "HOW") {
-      context.fillText(type, imp_vars.sidebarWidth/2, titleTextY + 70)
-    } else {
+  if (showLevelName) {
+    if (this.world_num == 0) {
       context.font = '40px Muli'
-      context.fillText("HOW TO", imp_vars.sidebarWidth/2, titleTextY + 70)
-    }
-
-    context.font = '80px Muli'
-    if(type == "BOSS") {
-      context.fillText(this.world_num, imp_vars.sidebarWidth/2, titleTextY + 140)
-    } else if(type == "HOW") {
-      context.font = '60px Muli'
-      context.fillText("PLAY", imp_vars.sidebarWidth/2, titleTextY + 130)
+      context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, titleTextY + 70)
     } else {
-      context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, titleTextY + 140)
+      context.font = '64px Muli'
+      type = this.level_name.split(" ")[0]
+      context.fillText(type, imp_vars.sidebarWidth/2, titleTextY + 70)
+
+      context.font = '80px Muli'
+      if(type == "BOSS") {
+        context.fillText(this.world_num, imp_vars.sidebarWidth/2, titleTextY + 140)
+      } else if(type == "HOW") {
+        context.font = '60px Muli'
+        context.fillText("PLAY", imp_vars.sidebarWidth/2, titleTextY + 130)
+      } else {
+        context.fillText(this.level_name.slice(5, this.level_name.length), imp_vars.sidebarWidth/2, titleTextY + 140)
+      }
     }
-  } else if(this.world_num == 0) {
-    context.font = '40px Muli'
-    context.fillText("TUTORIAL", imp_vars.sidebarWidth/2, titleTextY + 70)
-  }
+  } 
 
   var menuY = imp_vars.canvasHeight - 15;//imp_vars.canvasHeight / 2 - 70;
 
-  if (!this.is_boss_level) {
+  if (showMenuHint) {
     var w = 190;
     var h = 30;
-    /*context.rect(imp_vars.sidebarWidth/2 - w/2, menuY - 5 - h/2, w, h);
-    context.lineWidth = 4;
-    context.strokeStyle = this.color
-    context.save();
-    context.globalAlpha /= 2;
-    context.stroke();
-    context.restore();*/
     context.fillStyle = this.bright_color;
     context.font = '18px Muli';
     context.save();
@@ -931,15 +937,10 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.restore();
   }
 
-  /* context.font = '24px Muli';
-  context.fillText("Q", imp_vars.sidebarWidth/2, menuY);
-  context.font = '12px Muli';
-  context.fillText("FOR MENU", imp_vars.sidebarWidth/2, menuY + 17);*/
-
   var timeY = imp_vars.canvasHeight/2 - 20;
   // draw the game time
-  if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-    // Show speed run countdown.
+  if (showGameTime) {
+    // Show speed run countdown, even if in boss.
     if (imp_vars.player_data.difficulty_mode == "normal" && this.world_num > 0 && 
       this.main_game && imp_vars.player_data.options.speed_run_countdown) {
       context.fillStyle = "white"
@@ -958,84 +959,37 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     }
   }
 
-  if(!this.is_boss_level) {
-    if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface ||
-      imp_params.impulse_level_data[this.level_name].show_score_interface) {
-      // draw score
+  if(showScoreLabels) {
+    // draw score
+    context.font = '21px Muli'
+    context.fillText("SCORE", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 10)
+    context.font = '40px Muli'
+    context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 35)
+
+    if (this.gateway_unlocked)  {
+      context.fillStyle = this.bright_color
       context.font = '21px Muli'
-      context.fillText("SCORE", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 10)
-      context.font = '40px Muli'
-      context.fillText(this.game_numbers.score, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 35)
-
-      if(this.stars < 3) {
-        
-        //context.shadowColor = context.fillStyle;
-        if (this.gateway_unlocked)  {
-          context.fillStyle = this.bright_color
-          context.font = '21px Muli'
-          context.fillText("GATEWAY", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
-          context.font = '42px Muli'
-          context.fillText("OPEN", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
-        } else {
-          context.fillStyle = this.lite_color
-          context.font = '21px Muli'
-          context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
-          context.font = '42px Muli'
-          context.fillText(this.level.cutoff_scores[0], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
-        }
-      } else {
-        /*context.fillStyle = impulse_colors[this.star_colors[2]]
-        context.shadowColor = context.fillStyle;
-        context.font = '60px Muli'
-        context.fillText("WIN", canvasWidth - imp_vars.sidebarWidth/2, canvasHeight - 40)*/
-      }
+      context.fillText("GATEWAY", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
+      context.font = '42px Muli'
+      context.fillText("OPEN", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
+    } else {
+      context.fillStyle = this.lite_color
+      context.font = '21px Muli'
+      context.fillText("GOAL", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 45)
+      context.font = '42px Muli'
+      context.fillText(this.level.cutoff_scores[0], imp_vars.canvasWidth - imp_vars.sidebarWidth/2, 85)
     }
-  } /* else {
-    context.fillStyle = impulse_colors["boss "+this.world_num]
-    //context.shadowColor = context.fillStyle;
-    context.font = '36px Muli'
-    context.fillText("DISTANCE",imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 55)
-    context.fillText("LEFT", imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20)
-  } */
-
-  /*draw_star(context, 150, 22, 15, impulse_colors[this.star_colors[temp_stars]])*/
-  /*context.beginPath()
-
-  context.rect(350, 2, 100, topbarHeight-4)
-  context.fillStyle = "white"
-  context.globalAlpha = .6
-  context.fill()
-  context.globalAlpha = 1*/
-
-
-
- 
-  /*context.beginPath()
-  context.fillStyle = "white"
-  context.font = '20px Muli'
-  context.fillText("FPS: "+this.fps, imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
-  context.fill()
-  context.shadowBlur = 0;
-  context.save()*/
-  /*if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-    draw_lives_and_sparks(
-      context, this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates, 
-      imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 60, 24, {
-        labels: true, 
-        ult: this.has_ult, 
-        sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
-        lives: false //imp_vars.player_data.difficulty_mode == "normal" && this.main_game,
-      })
-  }*/
-  //context.font = '12px Muli'
-  //context.fillText("ESC TO PAUSE", imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20);
-
+  }
   context.restore()
 }
 
 ImpulseGameState.prototype.draw_score_bar = function(ctx) {
   if (this.world_num == 0 && !imp_params.impulse_level_data[this.level_name].show_full_interface && 
     !imp_params.impulse_level_data[this.level_name].show_score_interface) {
+    return;
+  }
+
+  if (this.is_level_zero) {
     return;
   }
 
