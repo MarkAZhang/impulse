@@ -50,6 +50,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.level.impulse_game_state = this
     this.level.reset() //we re-use the level
     this.level_name = this.level.level_name
+    this.is_level_zero = (parseInt(this.level_name.substring(7, 8)) === 0);
     this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
     this.make_player()
     if(this.level_name == "BOSS 4") {
@@ -57,8 +58,11 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     }
     else if(this.level_name.slice(0, 4) == "BOSS")
       imp_vars.impulse_music.play_bg(imp_params.songs["Tessellation"])
-    else if (this.world_num != 0)
+    else if (this.world_num != 0 && !this.is_level_zero) {
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
+    } else {
+      imp_vars.impulse_music.play_bg(imp_params.songs["Menu"]);
+    }
   }
   // Set up game numbers for level.
   if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
@@ -116,7 +120,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.zoom_bg_switch = true;
   this.first_time = true;
   this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 1, this.slow_zoom_transition_period)
-  this.is_level_zero = (parseInt(this.level_name.substring(7, 8)) === 0);
 
   this.fade_state = "in"
   this.victory = false

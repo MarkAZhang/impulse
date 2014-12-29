@@ -5,6 +5,7 @@ var Level = function(data, impulse_game_state) {
 Level.prototype.init = function(data, level_intro_state) {
 
   this.world_num = level_intro_state.world_num
+
   this.level_intro_state = level_intro_state
   this.impulse_game_state = null
   this.spawn_pattern = data.spawn_pattern;
@@ -36,6 +37,10 @@ Level.prototype.init = function(data, level_intro_state) {
   this.enemy_numbers = {}
   this.level_name = data.level_name
   this.is_level_zero = (parseInt(this.level_name.substring(7, 8)) === 0);
+  if (this.is_level_zero) {
+    this.world_num = 0;
+  }
+
   this.dark_ones_data = data.dark_ones
   this.dark_ones = [];
   this.dark_ones_spawned = false;
@@ -73,10 +78,10 @@ Level.prototype.init = function(data, level_intro_state) {
     this.obstacle_v = data.obstacle_v
   }
   this.get_obstacle_vertices = data.get_obstacle_vertices
-  this.color = impulse_colors["world "+this.level_intro_state.world_num]
-  this.dark_color = impulse_colors["world "+this.level_intro_state.world_num+" dark"]
-  this.lite_color = impulse_colors["world "+this.level_intro_state.world_num+" lite"]
-  this.bright_color = impulse_colors["world "+this.level_intro_state.world_num+" bright"]
+  this.color = impulse_colors["world "+level_intro_state.world_num]
+  this.dark_color = impulse_colors["world "+level_intro_state.world_num+" dark"]
+  this.lite_color = impulse_colors["world "+level_intro_state.world_num+" lite"]
+  this.bright_color = impulse_colors["world "+level_intro_state.world_num+" bright"]
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
@@ -468,7 +473,7 @@ Level.prototype.spawn_dark_one = function (data) {
   if (this.restarting_level) {
     return
   }
-  var dark_one = new DarkOne(data.x, data.y, this.impulse_game_state, data.msg, this.dark_ones_after_gateway)
+  var dark_one = new DarkOne(data.x, data.y, this.impulse_game_state, data.msg, data.size, this.dark_ones_after_gateway)
 
   this.dark_ones.push(dark_one);
 };
@@ -639,7 +644,15 @@ Level.prototype.generate_obstacles = function() {
   for(var i = 0; i < this.obstacle_num; i++)
   {
     var temp_v = this.get_obstacle_vertices(i)
-    this.obstacles.push(new BasicObstacle(temp_v, this.lite_color, this.dark_color))
+    if (this.is_level_zero) {
+      this.obstacles.push(new BasicObstacle(temp_v,
+        impulse_colors["world "+this.world_num+" lite"],
+        impulse_colors["world "+this.world_num+" dark"]))
+    } else {
+      this.obstacles.push(new BasicObstacle(temp_v, 
+        impulse_colors["world "+this.level_intro_state.world_num+" lite"],
+        impulse_colors["world "+this.level_intro_state.world_num+" dark"]))
+    }
     this.obstacle_polygons.push(temp_v)
     for(var j = 0; j < temp_v.length; j++) {
       this.obstacle_vertices.push(temp_v[j])
@@ -676,7 +689,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     //ctx.save()
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
     ctx.strokeStyle = this.bright_color
-    if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2") {
+    if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2" && !this.is_level_zero) {
       ctx.save();
       if (prog > 0.5) {
         // go from 0.3 to 0.8
@@ -708,7 +721,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   }
   draw_tessellation_sign(
     ctx, 
-    this.world_num,
+    this.level_intro_state.world_num,
     this.gateway_loc.x * draw_factor,
     this.gateway_loc.y * draw_factor,
     this.gateway_size * draw_factor,
@@ -879,12 +892,34 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   bg_ctx.clip()
 
-  if(this.level_intro_state.world_num != null)
-    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.level_intro_state.world_num)
-  else {
+  if(this.world_num != null && !this.is_level_zero)
+    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+  else if (this.world_num != null && this.is_level_zero) {
+    bg_ctx.save();
+    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0");
+    bg_ctx.restore();
+  } else {
     bg_ctx.fillStyle = impulse_colors["world 0 bright"]
     bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   }
+
+  if (this.is_level_zero) {
+    bg_ctx.save();
+    var r = 0.15;
+    var x = this.gateway_loc.x * imp_vars.draw_factor;
+    var y = this.gateway_loc.y * imp_vars.draw_factor;
+    draw_bg(bg_ctx, x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r, 
+      x + imp_vars.levelWidth * r, y + imp_vars.levelHeight * r,
+      "Hive "+this.level_intro_state.world_num);
+    bg_ctx.restore();
+    bg_ctx.beginPath();
+    bg_ctx.rect(x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r,
+      2 * imp_vars.levelWidth * r, 2 * imp_vars.levelHeight * r);
+    bg_ctx.lineWidth = 2;
+    bg_ctx.strokeStyle = impulse_colors["world " + this.level_intro_state.world_num + " dark"];
+    bg_ctx.stroke();
+  }
+
 
   for(var i = 0; i < this.obstacles.length; i++) {
     this.obstacles[i].draw(bg_ctx, imp_vars.draw_factor)
@@ -905,6 +940,15 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(0, 0, 800, 50);
     bg_ctx.fillRect(0, 550, 800, 50);
+  }
+
+  if (this.is_level_zero) {
+    bg_ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"];
+    bg_ctx.textAlign = "center";
+    bg_ctx.font = "32px Muli";
+    bg_ctx.fillText(imp_params.hive_names[this.level_intro_state.world_num], 400, 150);
+    bg_ctx.font = "16px Muli";
+    bg_ctx.fillText("8 LEVELS", 400, 170);
   }
 
   bg_ctx.restore()
@@ -957,7 +1001,11 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
       draw_factor * (particle.start_y * (1 - particle.prop) + this.gateway_loc.y * particle.prop) - 3,
       6,
       6)
-    ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
+    if (this.is_level_zero) {
+      ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"]
+    } else {
+      ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
+    }
     ctx.fill()
     ctx.restore()
   }

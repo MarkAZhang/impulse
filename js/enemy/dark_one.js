@@ -1,15 +1,12 @@
-var DarkOne = function(x, y, impulse_game_state, msg, fade_in) {
+var DarkOne = function(x, y, impulse_game_state, msg, radius, fade_in) {
   this.msg = msg;
   this.loc = {
     x: x / imp_vars.draw_factor,
     y: y / imp_vars.draw_factor
   };
   this.impulse_game_state = impulse_game_state;
-  if (msg == "one") {
-    this.aura_radius = 250;
-  } else {
-    this.aura_radius = 125;
-  }
+  this.aura_radius = radius;
+
 
   this.display_msg = false;
   this.fade_ratio = 1;
@@ -96,26 +93,22 @@ DarkOne.prototype.draw_message = function (ctx) {
     ctx.fillText('I will crush you into the Void.', 400, 300);
   }
   if (this.msg == "hive_one_open") {
-    ctx.fillText('It\'s too much trouble.', 400, 270);
-    ctx.fillText('I\'m content with', 400, 300);
-    ctx.fillText('the way things are.', 400, 330);
+    ctx.fillText('I\'m not scared, I swear.', 400, 285);
+    ctx.fillText('I\'m fine with how things are.', 400, 315);
   }
   if (this.msg == "hive_two_open") {
-    ctx.fillText('Just a little more and', 400, 270);
-    ctx.fillText('I think I can obtain', 400, 300);
-    ctx.fillText('fulfillment.', 400, 330);
+    ctx.fillText('A little more can\'t hurt, right?', 400, 285);
+    ctx.fillText('It will bring me joy.', 400, 315);
   }
 
   if (this.msg == "hive_three_open") {
-    ctx.fillText('Why should I be', 400, 270);
-    ctx.fillText('responsible for', 400, 300);
-    ctx.fillText('someone else\s problem?', 400, 330);
+    ctx.fillText('Oh, I\'m aware.', 400, 285);
+    ctx.fillText('I just don\'t care enough.', 400, 315);
   }
 
   if (this.msg == "hive_four_open") {
-    ctx.fillText('I\'m not wrong!', 400, 270);
-    ctx.fillText('You\'re wrong.', 400, 300);
-    ctx.fillText('There is no other way.', 400, 330);
+    ctx.fillText('I\'m not wrong. You\'re wrong.', 400, 285);
+    ctx.fillText('And I will make you vanish.', 400, 315);
   }
   ctx.restore();
 };

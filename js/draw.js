@@ -1572,19 +1572,20 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   var h = bg.height;
   ctx.save()
 
+  ctx.beginPath();
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
   ctx.clip()
-
-  
-  for(var x = xLow; x < xHigh; x+=w) {
-    for(var y = yLow; y < yHigh; y+=h) {
-      ctx.drawImage(bg, 0, 0, w, h, x, y, w, h)
+  var widthTiles = Math.ceil((xHigh - xLow) / w);
+  var heightTiles = Math.ceil((yHigh - yLow) / h);
+  for(var x = 0; x < widthTiles; x+=1) {
+    for(var y = 0; y < heightTiles; y+=1) {
+      var startX = (xHigh + xLow) / 2 - widthTiles * w / 2;
+      var startY = (yHigh + yLow) / 2 - heightTiles * h / 2;
+      ctx.drawImage(bg, 0, 0, w, h, startX + x * w, startY + y * h, w, h)
     }
   }
   ctx.restore()
-
 }
-
 
 function draw_victory_type_icon(ctx, x, y, world_num, victory_type, scale) {
   if (victory_type == "half") {

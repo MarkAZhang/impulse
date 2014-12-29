@@ -45,6 +45,7 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
     {
       x: 400,
       y: 300,
+      size: 250,
       msg: 'one'
     }
   ],
@@ -107,11 +108,13 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
     {
       x: 400,
       y: 115,
+      size: 125,
       msg: 'three'
     },
     {
       x: 400,
       y: 485,
+      size: 125,
       msg: 'three'
     }
   ],
@@ -149,21 +152,25 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
     {
       x: 165,
       y: 130,
+      size: 125,
       msg: 'four'
     },
     {
       x: 165,
       y: 470,
+      size: 125,
       msg: 'four'
     },
     {
       x: 635,
       y: 470,
+      size: 125,
       msg: 'four'
     },
     {
       x: 635,
       y: 130,
+      size: 125,
       msg: 'four'
     }
   ],
@@ -190,11 +197,12 @@ imp_params.impulse_level_data['HIVE 1-0'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 500},
-  gateway_loc: {x: 400, y: 300},
+  gateway_loc: {x: 400, y: 350},
   dark_ones: [
     {
       x: 400,
       y: 150,
+      size: 200,
       msg: 'hive_one_open'
     }
   ],
@@ -448,11 +456,12 @@ imp_params.impulse_level_data['HIVE 2-0'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 500},
-  gateway_loc: {x: 400, y: 300},
+  gateway_loc: {x: 400, y: 350},
   dark_ones: [
     {
       x: 400,
       y: 150,
+      size: 200,
       msg: 'hive_two_open'
     }
   ],
@@ -744,11 +753,12 @@ imp_params.impulse_level_data['HIVE 3-0'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 500},
-  gateway_loc: {x: 400, y: 300},
+  gateway_loc: {x: 400, y: 350},
   dark_ones: [
     {
       x: 400,
       y: 150,
+      size: 200,
       msg: 'hive_three_open'
     }
   ],
@@ -1141,11 +1151,12 @@ imp_params.impulse_level_data['HIVE 4-0'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 500},
-  gateway_loc: {x: 400, y: 300},
+  gateway_loc: {x: 400, y: 350},
   dark_ones: [
     {
       x: 400,
       y: 150,
+      size: 200,
       msg: 'hive_four_open'
     }
   ],
