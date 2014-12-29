@@ -585,10 +585,8 @@ function on_key_up(event) {
 }
 
 function switch_game_state(game_state) {
-  setTimeout(function() {
-    imp_vars.cur_game_state.dispose();
-    imp_vars.cur_game_state = game_state
-  }, 0);
+  imp_vars.cur_game_state.dispose();
+  imp_vars.cur_game_state = game_state
 }
 
 function switch_game_state_helper(game_state) {

@@ -58,9 +58,13 @@ DarkOne.prototype.final_draw = function (ctx) {
 
 DarkOne.prototype.draw_message = function (ctx) {
   ctx.save();
+  ctx.globalAlpha *= 0.3;
+  drawSprite(ctx, 400, 300, 0, 400, 200, "white_glow")
+  ctx.restore();
+  ctx.save();
   ctx.font = '20px Muli';
   ctx.textAlign = 'center';
-  ctx.fillStyle = impulse_colors["rose"];
+  ctx.fillStyle = "black";
   if (this.msg == "one") {
     ctx.fillText('I\'ve told you a thousand times.', 400, 285);
     ctx.fillText('I don\'t need to be saved.', 400, 315);

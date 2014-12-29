@@ -80,12 +80,11 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
   if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level) &&
       !(loading_saved_game && this.hive_numbers.current_level &&
       this.hive_numbers.current_level.substring(0, 4) == "BOSS")) {
-    if (this.is_level_zero) {
+    if (this.is_level_zero(this.level.level_name)) {
       imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
     } else {
       imp_vars.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
     }
-
   }
 }
 
