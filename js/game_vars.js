@@ -90,6 +90,12 @@ var imp_params = {
     3: "NEGLIGENTIA",
     4: "ADROGANTIA"
   },
+  hive_names: {
+    1: "HIVE OF HIDING",
+    2: "HIVE OF EATING",
+    3: "HIVE OF LAUGHING",
+    4: "HIVE OF PURGING"
+  },
   life_upgrades: [
     {life: 4, rating: 500},
     {life: 5, rating: 1000},

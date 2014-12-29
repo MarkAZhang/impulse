@@ -40,9 +40,9 @@ function WorldMapState(world, is_practice_mode) {
   this.num_mode_buttons = 5
 
   this.requirements = {
-    2: "DEFEAT "+imp_params.tessellation_names[1] + " TO UNLOCK",
-    3: "DEFEAT "+imp_params.tessellation_names[2] + " TO UNLOCK",
-    4: "DEFEAT "+imp_params.tessellation_names[3] + " TO UNLOCK"  
+    2: "DEFEAT HIVE 1 TO UNLOCK",
+    3: "DEFEAT HIVE 2 TO UNLOCK",
+    4: "DEFEAT HIVE 3 TO UNLOCK"
   }
 
   this.offsets = {
@@ -420,7 +420,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   ctx.font = "42px Muli"
   ctx.textAlign = "center"
   if (index > 0) {
-    ctx.fillText("HIVE "+imp_params.tessellation_names[index], imp_vars.levelWidth/2, this.world_button_y - 125)
+    ctx.fillText(imp_params.hive_names[index], imp_vars.levelWidth/2, this.world_button_y - 125)
   } else {
     ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, this.world_button_y - 125)  
   }
@@ -436,7 +436,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
         ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
       } else if(this.mode_buttons[difficulty][i].active) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText("HIVE "+imp_params.tessellation_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+        ctx.fillText(imp_params.hive_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
       }
     }
   }

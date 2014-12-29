@@ -116,7 +116,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
-      ctx.fillText("HIVE "+imp_params.tessellation_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
+      ctx.fillText(imp_params.hive_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
