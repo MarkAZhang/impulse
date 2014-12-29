@@ -1321,7 +1321,7 @@ ImpulseGameState.prototype.on_victory = function() {
   if(this.is_boss_level) {
     this.level.boss_victory = true
   }
-  if (this.main_game) {
+  if (this.main_game && this.world_num > 0) {
     if (!this.is_boss_level) {
       this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
       // Advance the level to the next level. 
