@@ -1078,3 +1078,6 @@ Enemy.prototype.generate_images = function() {
 
 }
 
+Enemy.prototype.dispose = function () {
+
+};

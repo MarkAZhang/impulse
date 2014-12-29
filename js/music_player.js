@@ -100,12 +100,14 @@ MusicPlayer.prototype.unmute_bg = function() {
   }
 }
 
-MusicPlayer.prototype.change_bg_volume = function(volume) {
+MusicPlayer.prototype.change_bg_volume = function(volume, save) {
   imp_vars.player_data.options.bg_music_volume = volume
   if(this.cur_song && !this.mute) {
     this.sounds[this.cur_song].setVolume(imp_vars.player_data.options.bg_music_volume);
   }
-  save_game()
+  if (save) {
+    save_game()
+  }
 }
 
 MusicPlayer.prototype.change_effects_volume = function(volume) {

@@ -1013,5 +1013,10 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
 
 Level.prototype.create_enemy_images = function(enemy) {
 
+}
 
+Level.prototype.dispose = function() {
+  for (var i = 0; i < this.dark_ones.length; i++) {
+    this.dark_ones[i].dispose();
+  }
 }

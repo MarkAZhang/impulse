@@ -426,7 +426,7 @@ function OptionsMenu(previous_menu) {
   var button_width = 300;
 
   this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, "white", function(value) {
-    imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100)) // sqrt it to get a better curve
+    imp_vars.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100), true) // sqrt it to get a better curve
   }, Math.pow(imp_vars.player_data.options.bg_music_volume / 100, 0.5));
   this.music_button.special_mode = imp_vars.impulse_music.mute
   this.music_button.add_hover_overlay(new MessageBox("option_game_music", "white", this.world_num))

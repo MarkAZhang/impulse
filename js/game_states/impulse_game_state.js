@@ -1375,3 +1375,7 @@ ImpulseGameState.prototype.add_tutorial_signal = function(signal) {
     this.tutorial_signal_timeouts[signal] = this.tutorial_signal_timeout
   }
 }
+
+ImpulseGameState.prototype.dispose = function() {
+  this.level.dispose();
+}

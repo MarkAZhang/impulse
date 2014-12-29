@@ -127,13 +127,13 @@ DarkOne.prototype.process = function (dt) {
         imp_vars.impulse_music.play_sound("dark_diag")
       }
       this.bg_volume = imp_vars.player_data.options.bg_music_volume;
-      imp_vars.impulse_music.change_bg_volume(this.bg_volume * 0.1);
+      imp_vars.impulse_music.change_bg_volume(this.bg_volume * 0.1, false);
     }
   } else if (this.display_msg == true) {
     this.fade_out = true;
     this.display_msg = false;
     imp_vars.dark_one_speaks = false;
-    imp_vars.impulse_music.change_bg_volume(this.bg_volume);
+    imp_vars.impulse_music.change_bg_volume(this.bg_volume, false);
   }
 
   if (this.fade_out && this.fade_ratio > 0) {
@@ -145,5 +145,11 @@ DarkOne.prototype.process = function (dt) {
       this.fade_ratio = 1;
       this.fade_in = false;
     }
+  }
+}
+
+DarkOne.prototype.dispose = function () {
+  if (this.display_msg == true) {
+    imp_vars.impulse_music.change_bg_volume(this.bg_volume, false);
   }
 }

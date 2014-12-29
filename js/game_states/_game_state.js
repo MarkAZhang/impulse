@@ -13,6 +13,6 @@ GameState.prototype.on_right_mouse_down = function(x, y) {}
 GameState.prototype.on_right_mouse_up = function(x, y) {}
 GameState.prototype.on_key_down = function(keyCode) {}
 GameState.prototype.on_key_up = function(keyCode) {}
-
+GameState.prototype.dispose = function() {}
 GameState.prototype.on_visibility_change = function(event_type) {
 }
