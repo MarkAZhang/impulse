@@ -105,6 +105,9 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   this.world_visibility = 1
 
+  this.shaking = false;
+  this.shaking_timer = 0;
+
   this.camera_center = {x: imp_vars.levelWidth/2, y: imp_vars.levelHeight/2}
   //this.zoom = 0.1
 
@@ -129,16 +132,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.draw_interface_timer = this.draw_interface_interval
 
   this.level_redraw_bg = false
-
-  this.new_enemy_duration = 30000
-  this.new_enemy_timer = 0
-  this.new_enemy_type = null
-
-  this.score_achieve_duration = 5000
-  this.score_achieve_timer = 0
-  this.score_achieve_type = null
-  this.score_achieve_color = null
-  this.score_achieve_size = null
 
   this.message_canvas = document.createElement('canvas');
   this.message_canvas.width = 120
@@ -183,9 +176,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
 ImpulseGameState.prototype.reset = function() {
   this.reset_game_numbers();
-  this.new_enemy_duration = 10000
-  this.new_enemy_timer = 0
-  this.new_enemy_type = null
   this.processed_death = false;
   this.first_time = false;
   var gravity = new b2Vec2(000, 000);
@@ -198,11 +188,6 @@ ImpulseGameState.prototype.reset = function() {
   contactListener.PreSolve = this.filter_collisions
   this.world.SetContactListener(contactListener);
 
-  this.score_achieve_duration = 10000
-  this.score_achieve_timer = 0
-  this.score_achieve_type = null
-  this.score_achieve_color = null
-  this.score_achieve_size = null
   this.stars = 0
   this.gateway_unlocked = false
   this.victory = false
@@ -252,11 +237,6 @@ ImpulseGameState.prototype.check_new_enemies = function() {
         imp_params.impulse_enemy_stats[enemy].seen == 1) {
 
       set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
-      //this.clear_message()
-      this.new_enemy_type = enemy
-      //this.new_enemy_timer = this.new_enemy_duration
-      //draw_new_enemy_button(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.new_enemy_type)
-     //set_dialog_box(new NewEnemyDialog())
     }
   }
 }
@@ -310,11 +290,6 @@ ImpulseGameState.prototype.check_pause = function() {
   }
 }
 
-ImpulseGameState.prototype.clear_message = function() {
-  this.new_enemy_type = null
-  this.score_achieve_text= null
-}
-
 ImpulseGameState.prototype.process = function(dt) {
   if(!this.ready) return
   if(this.fps_counter == null)
@@ -341,6 +316,10 @@ ImpulseGameState.prototype.process = function(dt) {
   }
   if(!this.pause)
   {
+    if (this.shaking_timer > 0) {
+      this.shaking = true;
+      this.shaking_timer -= dt;
+    }
     if (this.show_tutorial) {
       this.tutorial_overlay_manager.process(dt);
       if(this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
@@ -349,24 +328,6 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     this.check_pause()
     this.draw_interface_timer -= dt
-
-    if(this.new_enemy_timer > 0) {
-      this.new_enemy_timer -= dt
-    } else if (this.new_enemy_type) {
-      this.clear_message()
-    }
-
-    if(this.score_achieve_timer > 0) {
-      this.score_achieve_timer -= dt
-    } else if (this.score_achieve_text) {
-      this.clear_message()
-    }
-
-    /*if (this.game_numbers.seconds >= 4) {
-      this.zoom_to_player = true
-      this.zoom = 1.7
-      this.zoom_state = "player"
-    }*/
 
     // ZOOM TO PLAYER, WAS USED DURING TRAILER RECORDING
     if (!this.zoom_to_player) {
@@ -527,12 +488,6 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
   if (this.pause) return
-  /*context.save();*/
-
-  /*ctx.scale(this.zoom, this.zoom)
-  ctx.translate((canvasWidth/2 - (this.camera_center.x)*this.zoom)/this.zoom, (canvasHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
-  ctx.drawImage(bg_canvas, imp_vars.sidebarWidth*this.zoom, 0)
-  ctx.setTransform(1, 0, 0, 1, 0, 0);*/
 
   this.additional_draw(ctx, bg_ctx)
   ctx.save();
@@ -547,8 +502,19 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.scale(this.zoom, this.zoom)
   ctx.translate((imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
-  /*ctx.translate(this.camera_center.x * (1-this.zoom) * 2, this.camera_center.y * (1-this.zoom) * 2);*/
-  /*ctx.translate(this.camera_center.x * this.zoom, this.camera_center.y * this.zoom)*/
+
+  if (this.shaking_timer > 0) {
+    var x = 4 * Math.random() - 2;
+    var y = 4 * Math.random() - 2;
+    ctx.translate(x, y);
+    bg_canvas.style.left = x + 'px';
+    bg_canvas.style.top = y + 'px'; 
+  } else if (this.shaking) {
+    this.shaking = false;
+    bg_canvas.style.left = '0px';
+    bg_canvas.style.top = '0px';
+  }
+
   ctx.beginPath();
   if(this.zoom_state != "none" ) {
     ctx.rect(2, 2, imp_vars.levelWidth-4, imp_vars.levelHeight-4);
@@ -596,18 +562,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.draw_boss_text(ctx)
   }  
 
-  // if it's the first boss and they've never beaten it, show the arrow.
-  /* if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval && 
-    this.main_game && this.zoom == 1 && this.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
-    imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
-      this.draw_boss_hint(ctx)
-  } */
-
-  /*ctx.translate(-(imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, -(imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
-  /*ctx.translate(-this.camera_center.x * (1-this.zoom) * 2, -this.camera_center.y * (1-this.zoom) * 2);*/
-  /*ctx.scale(1/this.zoom, 1/this.zoom)*/
-
-  /*ctx.translate(-imp_vars.sidebarWidth, 0)*/
   if(!this.is_boss_level) {
     this.draw_score_labels(ctx)
   }
@@ -626,31 +580,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     }
   } else {
     this.draw_interface(ctx)
-  }
-  if (!this.world_num == 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) { 
-    if(this.new_enemy_type != null) {
-      ctx.save()
-      this.set_zoom_transparency(ctx)
-      if (this.new_enemy_timer < 500) {
-        ctx.globalAlpha *= Math.max(0, this.new_enemy_timer / 500) 
-      } else if (this.new_enemy_timer > this.new_enemy_duration - 500) {
-        ctx.globalAlpha *= Math.max(0, (this.new_enemy_duration - this.new_enemy_timer) / 500) 
-      }
-      ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2, 120, 160)
-      ctx.restore()
-    }
-
-    if(this.score_achieve_text != null) {
-      ctx.save()
-      this.set_zoom_transparency(ctx)
-      if (this.score_achieve_timer < 500) {
-        ctx.globalAlpha *= Math.max(0, this.score_achieve_timer / 500) 
-      } else if (this.score_achieve_timer > this.score_achieve_duration - 500) {
-        ctx.globalAlpha *= Math.max(0, (this.score_achieve_duration - this.score_achieve_timer) / 500) 
-      }
-      ctx.drawImage(this.message_canvas, 0, 0, 120, 160, imp_vars.sidebarWidth/2 - 60, imp_vars.canvasHeight/2 - 30, 120, 160)
-      ctx.restore()
-    }
   }
 
   this.draw_score_bar(ctx)
@@ -817,14 +746,8 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
   ctx.textAlign = 'center'
 
   ctx.font = '42px Muli'
-  //ctx.shadowBlur = 20;
-  //ctx.shadowColor = "black"
-
   ctx.fillText(this.hive_numbers.boss_name, imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 150)
   ctx.fill()
-
-  //ctx.shadowBlur = 0
-
 }
 
 ImpulseGameState.prototype.draw_boss_hint = function(ctx) {
@@ -1010,14 +933,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
       ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
     }
-  } /* else {
-    if(this.level.boss)
-      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
-        40, imp_vars.canvasHeight*3/4 - 50, this.level.boss.getLife(), this.level.boss.color)
-    else
-      draw_vprogress_bar(ctx, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2,
-        40, imp_vars.canvasHeight*3/4 - 50, 1, impulse_colors["boss "+this.world_num])
-  } */
+  }
   ctx.restore()
 }
 
@@ -1040,11 +956,6 @@ ImpulseGameState.prototype.on_mouse_move = function(x, y) {
 
 ImpulseGameState.prototype.on_mouse_down = function(x, y) {
 
-  // Ignore mouse dowsn on the new enemy message box.
-  /*if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
-    return
-  }*/
-  
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
@@ -1071,17 +982,7 @@ ImpulseGameState.prototype.reset_player_state = function() {
 ImpulseGameState.prototype.on_mouse_up = function(x, y) {
   if(this.pause) return
 
-  // Process a click on the new enemy message box.
-  /*if(this.new_enemy_type != null && Math.abs(x - imp_vars.sidebarWidth/2) < 120 && Math.abs(y - (imp_vars.canvasHeight/2 + 60)) < 160) {
-      imp_params.impulse_enemy_stats[this.new_enemy_type].seen += 5 // do not show any more if this is clicked
-      var _this = this
-      setTimeout(function() {set_dialog_box(new EnemyBox(_this.new_enemy_type, new PauseMenu(_this.level, _this.world_num, _this.game_numbers, _this, _this.visibility_graph)))}, 50)
-      this.pause = true
-      this.reset_player_state()
-      this.new_enemy_timer = 2000
-  } else {*/
   this.player.mouse_up(this.transform_to_zoomed_space({x: x - imp_vars.sidebarWidth, y: y}))
-  //}
 }
 
 ImpulseGameState.prototype.on_right_mouse_up = function(x, y) {
@@ -1180,13 +1081,10 @@ ImpulseGameState.prototype.handle_collisions = function(contact) {
 
   if(!first || !second) return
 
-
-
   first["owner"].collide_with(second["owner"], first["body"], second["body"])
   second["owner"].collide_with(first["owner"], second["body"], first["body"])
 
   //contact.SetEnabled(false)
-
 }
 
 ImpulseGameState.prototype.handle_collisions_on_end_contact = function(contact) {
@@ -1204,7 +1102,6 @@ ImpulseGameState.prototype.handle_collisions_on_end_contact = function(contact) 
   second["owner"].collide_with(first["owner"], second["body"], first["body"])
 
   //contact.SetEnabled(false)
-
 }
 
 ImpulseGameState.prototype.filter_collisions = function(contact) {
@@ -1250,15 +1147,6 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
   this.score_labels.push(temp_score_label)
 }
 
-ImpulseGameState.prototype.set_score_achieve_text = function(text, color, size) {
-  this.clear_message()
-  this.score_achieve_text = text
-  this.score_achieve_timer = this.score_achieve_duration
-  this.score_achieve_color = color
-  this.score_achieve_size = size
-  draw_score_achieved_box(this.message_ctx, 60, 80, 120, 160, this.bright_color, this.score_achieve_text, this.score_achieve_color, this.score_achieve_size, this.world_num)
-}
-
 ImpulseGameState.prototype.check_cutoffs = function() {
 
   if(this.game_numbers.score >= this.level.cutoff_scores[0] && this.stars == 0)
@@ -1266,10 +1154,6 @@ ImpulseGameState.prototype.check_cutoffs = function() {
     this.stars = 1
     this.gateway_unlocked = true
     this.level_redraw_bg = true
-    //this.addScoreLabel("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], imp_vars.levelWidth/2/draw_factor, imp_vars.levelHeight/2/draw_factor, 24, 3000)
-    //if (this.level.cutoff_scores[0] != 0) { // if this is a tutorial where the gateway is immediately unlocked, do not show.
-    //  this.set_score_achieve_text("GATEWAY UNLOCKED", impulse_colors["world "+this.world_num+" bright"], 18)
-    // }
 
     if (this instanceof HowToPlayState) {
       this.gateway_opened()
@@ -1354,6 +1238,10 @@ ImpulseGameState.prototype.update_save_data_for_level = function () {
   }
 
   save_game()
+}
+
+ImpulseGameState.prototype.shake_level = function (dur) {
+  this.shaking_timer = dur;
 }
 
 ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
