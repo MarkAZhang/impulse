@@ -928,10 +928,10 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   // Draw any additional rectangles to hide obstacle seams.
   if (this.is_boss_level || this.is_level_zero) {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
-    bg_ctx.fillRect(375, 0, 50, 25);
-    bg_ctx.fillRect(375, 575, 50, 25);
-    bg_ctx.fillRect(0, 275, 25, 50);
-    bg_ctx.fillRect(775, 275, 25, 50);
+    bg_ctx.fillRect(375, 0, 50, 22);
+    bg_ctx.fillRect(375, 578, 50, 22);
+    bg_ctx.fillRect(0, 275, 22, 50);
+    bg_ctx.fillRect(778, 275, 22, 50);
   } else if (this.level_name == "HIVE 0-3") {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(0, 0, 50, 600);

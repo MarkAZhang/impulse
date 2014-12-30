@@ -17,7 +17,7 @@ BasicObstacle.prototype.process = function() {
 
 BasicObstacle.prototype.draw = function(context, draw_factor) {
 
-
+  context.save();
   context.beginPath()
 
   context.shadowOffsetX = 0;
@@ -31,12 +31,19 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
     context.lineTo(this.verticeSet[i].x*draw_factor, this.verticeSet[i].y*draw_factor)
   }
   context.closePath()
+  context.clip();
   context.fillStyle = this.darkColor;
   //var vertices =
   context.strokeStyle = this.color
   context.lineWidth = 6
+  context.fill();
   context.stroke()
-  context.fill()
-  context.shadowBlur = 0;
+  context.restore();
+  context.save();
+  // The last clip doesn't seem to obey the parent clipping region.
+  // This appears to be a bug.
+  context.beginPath();
+  context.clip();
+  context.restore();
 }
 
