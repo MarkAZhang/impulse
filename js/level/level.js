@@ -133,7 +133,7 @@ Level.prototype.init = function(data, level_intro_state) {
   }
   this.gateway_size = 4
 
-  this.gateway_pulse_radius = 300                                        
+  this.gateway_pulse_radius = 300
 
   this.gateway_transition_interval = 1000
   this.gateway_transition_duration = null
@@ -207,7 +207,7 @@ Level.prototype.reset = function() {
     );
     this.enemy_numbers[i] = 0
   }
-  
+
   this.dead_enemies = []
   this.expired_enemies = []
   this.spawned_enemies = []
@@ -649,7 +649,7 @@ Level.prototype.generate_obstacles = function() {
         impulse_colors["world "+this.world_num+" lite"],
         impulse_colors["world "+this.world_num+" dark"]))
     } else {
-      this.obstacles.push(new BasicObstacle(temp_v, 
+      this.obstacles.push(new BasicObstacle(temp_v,
         impulse_colors["world "+this.level_intro_state.world_num+" lite"],
         impulse_colors["world "+this.level_intro_state.world_num+" dark"]))
     }
@@ -720,7 +720,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
     ctx.globalAlpha *= 0.3
   }
   draw_tessellation_sign(
-    ctx, 
+    ctx,
     this.level_intro_state.world_num,
     this.gateway_loc.x * draw_factor,
     this.gateway_loc.y * draw_factor,
@@ -889,12 +889,20 @@ Level.prototype.open_gateway = function() {
 
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
+  bg_ctx.beginPath();
   bg_ctx.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  bg_ctx.fillStyle = this.dark_color;
+  bg_ctx.fill();
   bg_ctx.clip()
 
-  if(this.world_num != null && !this.is_level_zero)
+  if(this.world_num != null && !this.is_level_zero) {
+    bg_ctx.save();
+    if (this.is_boss_level) {
+      bg_ctx.globalAlpha *= 0.5;
+    }
     draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
-  else if (this.world_num != null && this.is_level_zero) {
+    bg_ctx.restore();
+  } else if (this.world_num != null && this.is_level_zero) {
     bg_ctx.save();
     draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0");
     bg_ctx.restore();
@@ -908,7 +916,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     var r = 0.15;
     var x = this.gateway_loc.x * imp_vars.draw_factor;
     var y = this.gateway_loc.y * imp_vars.draw_factor;
-    draw_bg(bg_ctx, x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r, 
+    draw_bg(bg_ctx, x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r,
       x + imp_vars.levelWidth * r, y + imp_vars.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
     bg_ctx.restore();
@@ -991,7 +999,7 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
     ctx.save()
     if (particle.prop < 0.25) {
       ctx.globalAlpha *= particle.prop * 4
-    } else { 
+    } else {
       var temp = (1 - particle.prop) / (0.75)
       ctx.globalAlpha *= temp
     }

@@ -21,8 +21,13 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.red_visibility = 0
 
-  this.spawn_interval = 2300
+  this.spawn_interval = 1000
+  if (this.impulse_game_state.first_time && this.impulse_game_state.main_game) {
+    this.spawn_interval = 2300
+  }
   this.spawn_duration = this.spawn_interval
+  this.spawn_particle_duration = 1500 * this.spawn_interval / 6600;
+  this.spawn_particle_interval = 250 * this.spawn_interval / 6600;
 
   this.spawned = false
 
