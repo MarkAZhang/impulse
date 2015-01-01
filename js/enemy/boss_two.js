@@ -67,8 +67,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.spawned_harpoons = false
 
-  this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 2)
-
   //this.high_gravity_factor = 1.25//.25
   this.high_gravity_factor = 2.5//1.5
   this.low_gravity_factor = 4//3
@@ -154,19 +152,19 @@ BossTwo.prototype.adjust_size = function() {
   this.body.ResetMassData()
 }
 
-BossTwo.prototype.additional_processing = function(dt) {
+BossTwo.prototype.boss_specific_additional_processing = function(dt) {
 
   // spawn spawners if necessary
   if(!this.spawn_spawners) {
     this.spawn_spawners = true
     var spawner_buffer = 80
-    var locs = [[imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
+    var locs = [[imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer],
       [spawner_buffer, spawner_buffer]]
     if (imp_vars.player_data.difficulty_mode == "normal") {
       locs = [
         [spawner_buffer, spawner_buffer],
         [imp_vars.levelWidth - spawner_buffer, spawner_buffer],
-        [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer], 
+        [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer],
         [spawner_buffer, imp_vars.levelHeight - spawner_buffer]
       ];
     }
@@ -199,7 +197,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     this.enemy_spawn_duration = this.enemy_spawn_interval
 
     for (var i = 0; i < this.spawners.length; i++) {
-      this.spawners[i].spawn_enemies(this.spawn_sets[this.spawn_pattern_counter][i])  
+      this.spawners[i].spawn_enemies(this.spawn_sets[this.spawn_pattern_counter][i])
     }
     this.spawn_pattern_counter += 1
     this.spawn_pattern_counter = this.spawn_pattern_counter % this.spawn_sets.length
@@ -270,7 +268,7 @@ BossTwo.prototype.additional_processing = function(dt) {
     if(this.black_hole_timer < 0) {
       if (!this.black_hole_sound_played) {
         this.black_hole_sound_played = true
-        imp_vars.impulse_music.play_sound("b2bhole")  
+        imp_vars.impulse_music.play_sound("b2bhole")
       }
       var prop = -this.black_hole_timer/this.black_hole_duration
       if(prop < this.black_hole_expand_prop)
@@ -304,11 +302,11 @@ BossTwo.prototype.get_black_hole_force = function(loc, is_enemy) {
 
   if(p_dist(this.body.GetPosition(), loc) <= this.effective_radius * this.low_gravity_factor)
   {
-    black_hole_force = this.black_hole_force * black_hole_factor 
+    black_hole_force = this.black_hole_force * black_hole_factor
     if (!is_enemy) {
       black_hole_force *= this.black_hole_player_factor;
     }
-    
+
   } else {
     black_hole_force = -1
   }
@@ -597,14 +595,14 @@ BossTwo.prototype.get_arm_polygons = function() {
   for(var i = 0; i < this.num_arms; i++) {
     var polygon = []
     polygon.push({x: this.body.GetPosition().x, y: this.body.GetPosition().y})
-    polygon.push({x: this.body.GetPosition().x + this.arm_length * this.arm_taper * 
-      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2), 
+    polygon.push({x: this.body.GetPosition().x + this.arm_length * this.arm_taper *
+      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2),
       y: this.body.GetPosition().y + this.arm_length * this.arm_taper *
       Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle - this.arm_width_angle/2)})
 
-    polygon.push({x: this.body.GetPosition().x + this.arm_length * 
-      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2), 
-      y: this.body.GetPosition().y + this.arm_length * 
+    polygon.push({x: this.body.GetPosition().x + this.arm_length *
+      Math.cos(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2),
+      y: this.body.GetPosition().y + this.arm_length *
       Math.sin(Math.PI * 2 * i / this.num_arms + this.arm_core_angle + this.arm_width_angle/2)})
 
     polygons.push(polygon)
@@ -623,7 +621,7 @@ BossTwo.prototype.collide_with = function(other) {
   if(other.dying) return
 
   if(other === this.player) {
-    imp_vars.impulse_music.play_sound("b2eat")  
+    imp_vars.impulse_music.play_sound("b2eat")
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
     //other.lin_damp = 2
@@ -637,7 +635,7 @@ BossTwo.prototype.collide_with = function(other) {
     //other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
   else if(other !== this.player) {
-    imp_vars.impulse_music.play_sound("b2eat")  
+    imp_vars.impulse_music.play_sound("b2eat")
     if(other.type != "harpoonhead") {
       other.start_death("absorbed")
       this.growth_factor += this.growth_on_enemy
@@ -749,7 +747,7 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
     ctx.save()
     if (particle.prop < 0.25) {
       ctx.globalAlpha *= particle.prop * 4
-    } else { 
+    } else {
       var temp = (1 - particle.prop) / (0.75)
       ctx.globalAlpha *= temp
     }

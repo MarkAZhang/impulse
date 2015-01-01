@@ -39,7 +39,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.spawn_laser_revolution_base = 20000
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.spawn_laser_revolution_base = 30000    
+    this.spawn_laser_revolution_base = 30000
   }
 
   this.spawn_laser_radius_base = 0.2
@@ -92,7 +92,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.spawn_order = ["stunner", "spear", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "mote", "tank", "disabler", ]
   if (imp_vars.player_data.difficulty_mode == "normal") {
-    this.spawn_order = ["spear", "mote", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "stunner", "tank", "disabler"]   
+    this.spawn_order = ["spear", "mote", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "stunner", "tank", "disabler"]
   }
 
   this.spawn_counter = 0
@@ -118,9 +118,6 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.laser_check_counter = this.laser_check_timer
   this.laser_check_diff = Math.PI/4
 
-  this.lin_damp = 10
-  this.body.SetLinearDamping(10)
-
   this.laser_target_visible = true
   this.laser_target_visibility = 1
 
@@ -139,7 +136,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.attack_bud_expand_period = 10000
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.attack_bud_expand_period = 12000    
+    this.attack_bud_expand_period = 12000
   }
 
   this.attack_bud_charging = false
@@ -181,7 +178,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.darkness_canvas.width = 200;
   this.darkness_canvas.height = 200;
   // The angle at which to draw the darkness. When the darkness spreads, it should no longer rotate with the boss.
-  this.darkness_angle = 0; 
+  this.darkness_angle = 0;
 
   this.darkness_canvas_ctx.beginPath()
 
@@ -243,7 +240,7 @@ BossFour.prototype.draw = function(context, draw_factor) {
   context.restore()
 }
 
-BossFour.prototype.final_draw = function(context, draw_factor) {
+BossFour.prototype.boss_specific_final_draw = function(context, draw_factor) {
   context.save();
   context.globalAlpha = 1;
   this.draw_blindness_overlay(context, draw_factor);
@@ -266,7 +263,7 @@ BossFour.prototype.draw_blindness_overlay = function(context, draw_factor) {
   } else if (this.darkness_timer > -this.darkness_spreading_duration) {
     if (!this.darkness_sound_played) {
       this.darkness_sound_played = true
-      imp_vars.impulse_music.play_sound("b4darkness")  
+      imp_vars.impulse_music.play_sound("b4darkness")
     }
     var prog = (this.darkness_timer / -this.darkness_spreading_duration);
     var r = (this.effective_radius * (1 - prog) + 60 * prog) * draw_factor;
@@ -405,18 +402,7 @@ BossFour.prototype.additional_drawing = function(context, draw_factor) {
   */
 }
 
-BossFour.prototype.additional_processing = function(dt) {
-
-  if(this.spawn_duration > 0) {
-    this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
-    this.visibility = 1 - this.spawn_duration / this.spawn_interval
-    return
-  }
-  else if(this.spawned == false){
-    this.spawned = true
-    this.visibility = 1
-  }
-
+BossFour.prototype.boss_specific_additional_processing = function(dt) {
   if (this.attack_bud_cooldown_timer > 0) {
     this.attack_bud_cooldown_timer -= dt;
   }
@@ -449,7 +435,7 @@ BossFour.prototype.additional_processing = function(dt) {
   this.process_attack_buds(dt)
 
   this.repel_enemies()
-  
+
   if (this.darkness_timer < 0 && this.darkness_timer > -this.darkness_spreading_duration) {
     var prog = (this.darkness_timer / -this.darkness_spreading_duration);
     this.level.enemy_visibility = 1 - prog;
@@ -472,7 +458,7 @@ BossFour.prototype.additional_processing = function(dt) {
 
       var cur_angle = this.body.GetAngle();
       if(this.ready_attack_bud.type == "attack") {
-        
+
         var target_angle =  angle_closest_to(cur_angle,_atan(this.body.GetPosition(), this.player.get_current_position()) - this.attack_bud_angle);
 
       } else if(this.ready_attack_bud.type == "spawn") {
@@ -487,13 +473,13 @@ BossFour.prototype.additional_processing = function(dt) {
         }
       }
       var angle_between = small_angle_between(cur_angle, target_angle)
-      
+
       var turn_rate = this.turn_rate;
 
       if(angle_between < Math.PI * 2 * dt/turn_rate) {
         this.body.SetAngle(target_angle)
         this.attack_bud_charging = true
-        
+
         if(this.initial_spawn) {
           this.attack_bud_charge_timer = 0
         } else {
@@ -501,29 +487,16 @@ BossFour.prototype.additional_processing = function(dt) {
           this.ready_attack_bud.enemy.firing = true
         }
       } else {
-        if(target_angle > cur_angle) { 
+        if(target_angle > cur_angle) {
           this.body.SetAngle(this.body.GetAngle() + Math.PI * 2 * dt/turn_rate)
         } else {
           this.body.SetAngle(this.body.GetAngle() - Math.PI * 2 * dt/turn_rate)
         }
-      }     
+      }
     }
 
-    
 
-  }
-  /*if(this.laser_target_visible && this.laser_target_visibility < 1)
-    {
-      this.laser_target_visibility = Math.min(1, this.laser_target_visibility + dt/1000)
-    }
-    else if(!this.laser_target_visible && this.laser_target_visibility > 0)
-    {
-      this.laser_target_visibility = Math.max(0, this.laser_target_visibility - dt/1000)
-    }*/
 
-  if(this.spawner_timer <= this.spawner_interval - 500) {
-
-    this.lin_damp = imp_params.impulse_enemy_stats["fourth boss"].lin_damp
   }
 
   this.process_body_buds()
@@ -567,7 +540,7 @@ BossFour.prototype.additional_processing = function(dt) {
     this.darkness_timer -= dt;
 
     if (this.darkness_timer < 0) {
-      
+
 
       if (this.darkness_timer < -(this.darkness_spreading_duration + this.darkness_duration + this.darkness_vanish_duration)) {
         this.darkness_timer = this.darkness_interval;
@@ -715,13 +688,13 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.body = null
     bud.delay = 0
     this.ready_attack_bud = null
-    this.attack_bud_charging = false  
+    this.attack_bud_charging = false
     bud.enemy.body.ResetMassData()
     bud.enemy = null
-    imp_vars.impulse_music.play_sound("b4attacker")  
+    imp_vars.impulse_music.play_sound("b4attacker")
   } else if(bud.type == "spawn"){
     this.ready_attack_bud = null
-    this.attack_bud_charging = false  
+    this.attack_bud_charging = false
     bud.delay = 0
     bud.body = null
     var angle = _atan(this.body.GetPosition(), bud.enemy.body.GetPosition())
@@ -736,7 +709,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.enemy.body.ResetMassData()
     bud.enemy = null
     this.target_spawn_angle = null
-    imp_vars.impulse_music.play_sound("b4spawner")  
+    imp_vars.impulse_music.play_sound("b4spawner")
   }
   this.attack_bud_cooldown_timer = this.attack_bud_cooldown_period;
 }
@@ -744,9 +717,9 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
 BossFour.prototype.create_body_buds = function() {
   for(var index = 0; index < this.num_buds; index++) {
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
-    var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon, 
+    var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon,
       this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
-       this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle), 
+       this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
       3, 10, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
 
     bud_body.SetAngle(angle)
@@ -764,9 +737,9 @@ BossFour.prototype.additional_death_prep = function() {
     var bud = this.buds[index];
     var angle = _atan(this.body.GetPosition(), bud.body.GetPosition());
     if (bud.type == "body") {
-      var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon, 
+      var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon,
         this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
-         this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle), 
+         this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
         3, 0.1, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
 
       bud_body.SetAngle(angle)
@@ -894,9 +867,9 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
     this.bud_count += 1
 
     if(this.bud_count % this.spawner_bud_frequency == 0) {
-      bud.type = "spawn"  
+      bud.type = "spawn"
     } else {
-      bud.type = "attack"  
+      bud.type = "attack"
     }
   }
   window.console.log("GENERATING BUD " + bud.type)
@@ -980,7 +953,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
           var offset_radius = this.effective_radius + size
           var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
             y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}
-          
+
           bud.enemy.set_size(size)
           bud.body.SetAngle(angle)
           bud.body.SetPosition(new_position)
@@ -994,7 +967,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
               this.ready_attack_bud = bud;
               this.attack_bud_angle = (index)/this.num_buds * Math.PI * 2;
             } else {
-              possible_attack_buds.push(i)  
+              possible_attack_buds.push(i)
             }*/
           }
         }
@@ -1005,7 +978,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
     var ready_index = this.ready_bud_queue.splice(0, 1)[0];
     var bud = this.buds[ready_index];
     this.ready_attack_bud = bud
-    this.attack_bud_angle = (ready_index)/this.num_buds * Math.PI * 2 
+    this.attack_bud_angle = (ready_index)/this.num_buds * Math.PI * 2
   }
 }
 
@@ -1105,7 +1078,7 @@ BossFour.prototype.pre_draw = function(context, draw_factor) {
         (this.body.GetPosition().y + laser_dist * Math.sin(this.spawn_laser_angle) +this.get_spawn_laser_radius() * Math.sin(this.spawn_laser_angle + Math.PI/2)) * draw_factor)
       context.closePath()
 
-      context.globalAlpha *= 0.5 
+      context.globalAlpha *= 0.5
       context.fillStyle = this.spawn_laser_colors[this.anger_level];
       context.fill()
       context.globalAlpha *= 2;
@@ -1116,7 +1089,7 @@ BossFour.prototype.pre_draw = function(context, draw_factor) {
         context.fill();
         context.restore();
       }
-      
+
     }
     context.restore()
 

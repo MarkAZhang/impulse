@@ -90,7 +90,7 @@ DarkOne.prototype.draw_message = function (ctx) {
     ctx.fillText('I don\'t need to be saved.', 400, 300);
   }
   if (this.msg == "four" && this.impulse_game_state.level.dark_ones_visited == 3) {
-    ctx.fillText('I DON\'T NEED TO BE SAVED', 400, 300);
+    ctx.fillText('I don\'t need to be saved.', 400, 300);
   }
   if (this.msg == "four" && this.impulse_game_state.level.dark_ones_visited == 4) {
     ctx.fillStyle = "red";

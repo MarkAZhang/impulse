@@ -112,7 +112,7 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 250;
 		this.h = 40;
 	} else if (this.type == "tutorial_kill_boss") {
-		this.w = 250;
+		this.w = 300;
 		this.h = 40;
 	} else if (this.type == "lives_and_sparks") {
 		this.w = 150;
@@ -157,9 +157,9 @@ MessageBox.prototype.draw = function(ctx) {
 		if (this.type.substring(0, 8) == "tutorial") {
 			ctx.fillStyle = "#111"
 		} else {
-			ctx.fillStyle = "black"	
+			ctx.fillStyle = "black"
 		}
-		
+
 		ctx.shadowBlur = 0;
 		ctx.lineWidth = 2;
 		ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
@@ -358,11 +358,11 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = "white";
 		ctx.fillText("STARTING VALUES", this.x, this.y - this.h / 2 + 20);
 	  draw_lives_and_sparks(
-	      ctx, this.lives, this.spark_val, this.ultimates, 
+	      ctx, this.lives, this.spark_val, this.ultimates,
 	      this.x, this.y + 5, 20, {
 	        labels: true,
 	        starting_values: true,
-	        ult: this.has_ult, 
+	        ult: this.has_ult,
 	        sparks: true,
 	        lives: true
 	      })
@@ -379,11 +379,11 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = this.color;
 		ctx.save()
 		ctx.globalAlpha *= 0.5
-	    draw_save_icon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)   
+	    draw_save_icon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)
 		ctx.restore()
 		ctx.fillText("GAME SAVED", this.x, this.y + this.h / 2 - 33);
 	} else if (this.type.substring(0, 14) == "level_preview_") {
-		draw_level_obstacles_within_rect(ctx, this.type.substring(14), this.x, this.y, 200, 150, 
+		draw_level_obstacles_within_rect(ctx, this.type.substring(14), this.x, this.y, 200, 150,
 			impulse_colors['world '+ this.world_num + ' lite'])
 		ctx.beginPath();
 		ctx.rect(this.x - this.w/2, this.y - this.h / 2, this.w, this.h);
@@ -407,7 +407,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.lineWidth = 2;
 		ctx.stroke()
 		var x_shift = 50;
-			
+
 		var type = this.type.substring(6);
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli"
@@ -426,9 +426,9 @@ MessageBox.prototype.draw = function(ctx) {
 		if (imp_params.quest_data[type]) {
 			for (var i = 0; i < imp_params.quest_data[type].text.length; i++) {
 				quest_text += imp_params.quest_data[type].text[i] + " ";
-			}	
+			}
 		}
-		
+
 		ctx.fillText(quest_text, this.x + x_shift, this.y + this.h / 2 - 20);
 
 		/* var rewards = imp_params.quest_data[type].rewards;
@@ -446,7 +446,7 @@ MessageBox.prototype.draw = function(ctx) {
 			ctx.fillText("(HARD MODE ONLY)", this.x + x_shift, this.y + this.h / 2 - 5);
 		}
 		ctx.restore()*/
-		
+
 		draw_quest_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 
 		//draw_quest_button = function(ctx, x, y, r, type) {
@@ -468,7 +468,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.stroke()
 		var x_shift = 50;
 
-			
+
 		var type = this.type.substring(6);
 		var true_name = type;
 	    if(imp_params.impulse_enemy_stats[type].true_name) {
@@ -494,7 +494,7 @@ MessageBox.prototype.draw = function(ctx) {
 			var text = imp_params.quest_data[this.type].text[i];
 			ctx.fillText(text, this.x, this.y - this.h / 2 + 30 + i * 24);
 		}
-	} 
+	}
 	ctx.restore();
 };
 
@@ -522,7 +522,7 @@ MessageBox.prototype.draw_rewards = function(ctx, type) {
 	} else {
 		ctx.font = "12px Muli";
 		ctx.fillStyle = impulse_colors["impulse_blue"];
-		ctx.textAlign = 'center';	
+		ctx.textAlign = 'center';
 		ctx.fillText("NEW UPCOMING GAME MODE", this.x, reward_y)
 	}
 }

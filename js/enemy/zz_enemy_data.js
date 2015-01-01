@@ -704,7 +704,7 @@ imp_params.impulse_enemy_stats["third boss"] = {
 imp_params.impulse_enemy_stats["fourth boss"] = {
   color: "#ff0000",
   density: 3,
-  lin_damp: 8,
+  lin_damp: 10,
   effective_radius: 4,
   force: 0,
   attack_rating: 10,

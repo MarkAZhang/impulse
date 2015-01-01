@@ -224,17 +224,8 @@ BossThree.prototype.generate_wheel_set = function() {
   return wheel_set
 }
 
-BossThree.prototype.additional_processing = function(dt) {
-  if(this.spawn_duration > 0) {
-    this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
-    this.visibility = 1 - this.spawn_duration / this.spawn_interval
-    return
-  }
-  else if(this.spawned == false){
-    this.spawned = true
-    this.visibility = 1
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
-  }
+BossThree.prototype.boss_specific_additional_processing = function(dt) {
+
     if(this.rotating) {
       if(this.rotation_dir % 2 == 0)
         this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
@@ -337,7 +328,7 @@ BossThree.prototype.additional_processing = function(dt) {
     if (this.last_wheel_index_with_sound != this.wheel_cur_index) {
       // play the sound if it's the first time on this index
       this.last_wheel_index_with_sound = this.wheel_cur_index
-      imp_vars.impulse_music.play_sound("b3tick")  
+      imp_vars.impulse_music.play_sound("b3tick")
     }
 
     if(this.wheel_spinning_timer <= 0) {
@@ -519,7 +510,7 @@ BossThree.prototype.process_striking_arms = function() {
         data.cur_dist = data.max_dist * (arm_size) + (data.charge_dist) * (1 - arm_size)
         if (!data.sound_played) {
           data.sound_played = true
-          imp_vars.impulse_music.play_sound("b3strike")  
+          imp_vars.impulse_music.play_sound("b3strike")
         }
       } else if (prog >= finish_strike_t && prog < start_retract_t) {
         data.cur_dist = data.max_dist
@@ -609,15 +600,15 @@ BossThree.prototype.strike_at_player = function() {
     var index2 = Math.floor(Math.random() * choices.length)
     this.strike_with_arm(choices[index2], dist, this.strike_duration * this.strike_frenzy_speedup)
     choices.splice(index2, 1)
-    
+
     if (choices.indexOf(arm) !== -1 && Math.random() < 0.5) {
       this.strike_with_arm(arm, dist, this.strike_duration * this.strike_frenzy_speedup);
     } else {
       var index3 = Math.floor(Math.random() * choices.length);
       this.strike_with_arm(choices[index3], dist, this.strike_duration * this.strike_frenzy_speedup);
     }
-    
-    
+
+
   }
 }
 
@@ -753,10 +744,10 @@ BossThree.prototype.draw = function(context, draw_factor) {
     } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
       var tp = this.body.GetPosition()
       drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
-    }  
+    }
   }
   context.restore();
-  
+
   if(this.knockback_red_duration > 0) {
     drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head_red", negligentiaSprite)
   } else {
@@ -968,8 +959,8 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   // disable initial silence.
   new_enemy.entered_arena = true;
   new_enemy.recovery_timer = 0;
-  
- 
+
+
   new_enemy.pathfinding_counter = 2 * new_enemy.pathfinding_delay //immediately look for path
   new_enemy.entered_arena_delay = 0
   new_enemy.entered_arena_timer = 0
@@ -997,7 +988,7 @@ BossThree.prototype.collide_with = function(other, body) {
           if(other === this.player) {
             var _this = this;
             other.body.ApplyImpulse(new b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
-            this.impulse_game_state.reset_combo();            
+            this.impulse_game_state.reset_combo();
           } else if(other.type == "harpoonhead") {
             other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {
@@ -1036,13 +1027,13 @@ BossThree.prototype.activate_wheel = function() {
   this.wheel_state = "activate"
   this.wheel_activate_timer = this.wheel_activate_duration
   this.wheel_effect_activated = false
-  imp_vars.impulse_music.play_sound("b3select")  
+  imp_vars.impulse_music.play_sound("b3select")
 }
 
 BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
   this.knockback_red_duration = this.knockback_red_interval
   if(this.wheel_state == "spinning") {
-    this.activate_wheel()  
+    this.activate_wheel()
     this.extra_gap = this.wheel_spinning_timer
   }
 }

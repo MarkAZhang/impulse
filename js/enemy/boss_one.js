@@ -59,7 +59,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   if(imp_vars.player_data.difficulty_mode == "easy") {
     this.turret_firing_interval = 750
-  }  
+  }
 
   // Slightly easier to push on easy mode.
   if (imp_vars.player_data.difficulty_mode == "easy") {
@@ -508,7 +508,7 @@ BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
   return this.world.CreateJoint(joint)
 }
 
-BossOne.prototype.additional_processing = function(dt) {
+BossOne.prototype.boss_specific_additional_processing = function(dt) {
 
   this.start_time += dt
 
@@ -517,17 +517,6 @@ BossOne.prototype.additional_processing = function(dt) {
     if (this.max_punching_timer > this.max_punching_interval_with_no_enemies) {
       this.max_punching_timer = this.max_punching_interval_with_no_enemies
     }
-  }
-
-  if(this.spawn_duration > 0) {
-    this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
-    this.visibility = 1 - this.spawn_duration / this.spawn_interval
-    return
-  }
-  else if(this.spawned == false){
-    this.spawned = true
-    this.visibility = 1
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
   }
 
   //console.log("LH: "+this.joints["lh"].GetJointAngle()+"RH: "+this.joints["rh"].GetJointAngle()+"LL: "+this.joints["ll"].GetJointAngle()
@@ -698,7 +687,7 @@ BossOne.prototype.additional_processing = function(dt) {
       if (this.lightened)  {
         // in order to play the sound at the right moment, we'll allow the boss's punches to lose the lighten bonus early.
         this.lightened = false
-        imp_vars.impulse_music.play_sound("b1grow")  
+        imp_vars.impulse_music.play_sound("b1grow")
       }
     }
 
@@ -718,10 +707,10 @@ BossOne.prototype.additional_processing = function(dt) {
     }
     else if(this.lighten_timer < 0) {
       this.red_visibility = 1
-    }  
+    }
   }
 
-  
+
 }
 
 BossOne.prototype.process_punching = function(arm) {
@@ -936,7 +925,6 @@ BossOne.prototype.draw_glows = function(context, draw_factor) {
 BossOne.prototype.draw = function(context, draw_factor) {
 
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
-
 
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
   context.save()

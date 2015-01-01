@@ -15,6 +15,10 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.default_dying_length = 2000
 
   this.spawn_duration = this.spawn_interval
+  this.aura_radius = 600;
+
+  this.initial_dark_aura_ratio = 0;
+  this.initial_dark_aura_inflection_prop = 0.3;
 
 }
 
@@ -31,6 +35,49 @@ Boss.prototype.getLife = function() {
   var dist = Math.min(775/imp_vars.draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/imp_vars.draw_factor)
   var dist2 = Math.min(575/imp_vars.draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/imp_vars.draw_factor)
   return Math.min(dist, dist2)/(275/imp_vars.draw_factor)
+
+}
+
+Boss.prototype.additional_processing = function (dt) {
+
+  if(this.spawn_duration > 0) {
+    this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
+    var ratio = 1 - this.spawn_duration / this.spawn_interval
+    this.visibility = bezier_interpolate(0.15, 0.3, ratio);
+
+    if (ratio < this.initial_dark_aura_inflection_prop) {
+      this.initial_dark_aura_ratio = ratio / this.initial_dark_aura_inflection_prop;
+    } else {
+      this.initial_dark_aura_ratio = 1 - (ratio - this.initial_dark_aura_inflection_prop) /
+        (1 - this.initial_dark_aura_inflection_prop);
+    }
+    return
+  }
+  else if(this.spawned == false){
+    this.spawned = true
+    this.visibility = 1
+  }
+
+  this.boss_specific_additional_processing(dt);
+}
+
+Boss.prototype.boss_specific_additional_processing = function(dt) {
+
+}
+
+Boss.prototype.final_draw = function(context, draw_factor) {
+  if (!this.spawned) {
+    var ratio  = bezier_interpolate(0.7, 0.85, this.initial_dark_aura_ratio);
+    var loc = this.body.GetPosition();
+    drawSprite(context, loc.x * draw_factor,
+      loc.y * draw_factor,
+      0, this.aura_radius * ratio, this.aura_radius * ratio, "dark_aura")
+  }
+
+  this.boss_specific_final_draw(context, draw_factor);
+}
+
+Boss.prototype.boss_specific_final_draw = function(context, draw_factor) {
 
 }
 
