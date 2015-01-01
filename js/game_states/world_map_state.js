@@ -221,6 +221,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
           _this.fade_out_interval = _this.fade_out_interval_practice
           _this.fade_out_duration = _this.fade_out_interval;
           _this.fade_out_color = impulse_colors["world "+ index +" dark"];
+          _this.transition_to_world_num = index;
           var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
           _this.draw_world_bg(world_bg_ctx)
           setTimeout(function(){

@@ -7,7 +7,7 @@ Boss.prototype.constructor = Boss
 Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.enemy_init(world, x, y, id, impulse_game_state)
-  this.spawn_interval = 1000
+  this.spawn_interval = 6000
   this.impulse_extra_factor = 10
   if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
     this.spawn_interval = 6600
@@ -18,12 +18,19 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.aura_radius = 600;
 
   this.initial_dark_aura_ratio = 0;
-  this.initial_dark_aura_inflection_prop = 0.3;
+  this.initial_dark_aura_inflection_prop = 0.9;
 
+  this.spawn_particles = [];
+  this.spawn_particle_interval = 250;
+  this.spawn_particle_num = 5;
+  this.spawn_particle_timer = 0;
+  this.spawn_particle_spawn_radius = 30;
+  this.spawn_particle_radius = 50;
+  this.spawn_particle_duration = 1500;
+  this.spawn_particle_travel_prop = 0.6;
 }
 
 Boss.prototype.enemy_init = Enemy.prototype.init
-
 
 
 Boss.prototype.is_boss = true
@@ -46,14 +53,22 @@ Boss.prototype.additional_processing = function (dt) {
     this.visibility = bezier_interpolate(0.15, 0.3, ratio);
 
     if (ratio < this.initial_dark_aura_inflection_prop) {
-      this.initial_dark_aura_ratio = ratio / this.initial_dark_aura_inflection_prop;
+      this.initial_dark_aura_ratio =
+        bezier_interpolate(0.7, 0.85, ratio / this.initial_dark_aura_inflection_prop);
     } else {
-      this.initial_dark_aura_ratio = 1 - (ratio - this.initial_dark_aura_inflection_prop) /
+      this.initial_dark_aura_ratio = 1 + 2 * (ratio - this.initial_dark_aura_inflection_prop) /
         (1 - this.initial_dark_aura_inflection_prop);
+    }
+
+    this.spawn_particle_timer -= dt;
+    this.process_spawn_particles(dt);
+    if (this.spawn_particle_timer < 0) {
+      this.generate_spawn_particles(this.body.GetPosition());
+      this.spawn_particle_timer = this.spawn_particle_interval;
     }
     return
   }
-  else if(this.spawned == false){
+  else if(this.spawned == false) {
     this.spawned = true
     this.visibility = 1
   }
@@ -61,17 +76,86 @@ Boss.prototype.additional_processing = function (dt) {
   this.boss_specific_additional_processing(dt);
 }
 
+Boss.prototype.generate_spawn_particles = function (loc) {
+  for (var i = 0; i < this.spawn_particle_num; i++) {
+    var r = this.aura_radius / imp_vars.draw_factor * this.initial_dark_aura_ratio;
+    var angle = Math.PI * 2 * i / this.spawn_particle_num + (Math.random() - 0.5) * Math.PI * 2 / this.spawn_particle_num
+    this.spawn_particles.push({
+      start_x: Math.cos(angle) * r + loc.x,
+      start_y: Math.sin(angle) * r + loc.y,
+      prop: 0
+    });
+  }
+}
+
+Boss.prototype.process_spawn_particles = function (dt) {
+  for (var i = 0; i < this.spawn_particles.length; i++) {
+    var particle = this.spawn_particles[i];
+    particle.prop += dt / this.spawn_particle_duration;
+  }
+  for (var i = this.spawn_particles.length - 1; i >= 0; i--) {
+    var particle = this.spawn_particles[i];
+    if (particle.prop > 1) {
+      this.spawn_particles.splice(i, 1);
+    }
+  }
+}
+
+Boss.prototype.draw_spawn_particles = function(ctx, draw_factor) {
+  var particle_shape = imp_params.impulse_enemy_stats[this.type].death_polygons[0];
+  for(var i = 0; i < this.spawn_particles.length; i++) {
+    var particle = this.spawn_particles[i];
+    ctx.save()
+    if (particle.prop < 0.25) {
+      ctx.globalAlpha *= particle.prop * 4
+    } else {
+      var temp = (1 - particle.prop) / (0.75)
+      ctx.globalAlpha *= temp
+    }
+    if (this.black_hole_timer >= 0) {
+      ctx.globalAlpha *= 0.5;
+    }
+    ctx.globalAlpha *= this.get_dark_aura_opacity();
+    var x = (particle.start_x * (1 - particle.prop * this.spawn_particle_travel_prop) +
+      this.body.GetPosition().x * particle.prop * (this.spawn_particle_travel_prop));
+    var y = (particle.start_y * (1 - particle.prop * this.spawn_particle_travel_prop) +
+      this.body.GetPosition().y * particle.prop * (this.spawn_particle_travel_prop));
+    drawSprite(ctx, x * draw_factor,
+      y * draw_factor,
+      0, this.spawn_particle_radius * particle.prop,
+      this.spawn_particle_radius * Math.min(particle.prop * 2, 1), "dark_aura");
+
+    ctx.restore()
+  }
+}
+
 Boss.prototype.boss_specific_additional_processing = function(dt) {
 
 }
 
+Boss.prototype.get_dark_aura_opacity = function () {
+  if (this.spawned) return 0;
+  var ratio = 1 - this.spawn_duration / this.spawn_interval
+  if (ratio > this.initial_dark_aura_inflection_prop) {
+    return 1 - (ratio - this.initial_dark_aura_inflection_prop) /
+      (1 - this.initial_dark_aura_inflection_prop);
+  }
+  return 1;
+}
+
 Boss.prototype.final_draw = function(context, draw_factor) {
   if (!this.spawned) {
-    var ratio  = bezier_interpolate(0.7, 0.85, this.initial_dark_aura_ratio);
+    context.save();
+    this.draw_spawn_particles(context, draw_factor);
+    // Draw the spawning animation.
     var loc = this.body.GetPosition();
+    context.globalAlpha *= this.get_dark_aura_opacity();
+
     drawSprite(context, loc.x * draw_factor,
       loc.y * draw_factor,
-      0, this.aura_radius * ratio, this.aura_radius * ratio, "dark_aura")
+      0, this.aura_radius * this.initial_dark_aura_ratio,
+      this.aura_radius * this.initial_dark_aura_ratio, "dark_aura")
+    context.restore();
   }
 
   this.boss_specific_final_draw(context, draw_factor);
