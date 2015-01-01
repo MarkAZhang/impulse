@@ -41,7 +41,7 @@ TitleState.prototype.process = function(dt) {
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
    imp_vars.bg_canvas.setAttribute("style", "")
-   set_bg("Hive 0", imp_vars.bg_opacity)
+   set_bg("Hive 0", imp_vars.hive0_bg_opacity)
    this.bg_drawn = true
   }
 
@@ -194,7 +194,7 @@ TitleState.prototype.setup_main_menu = function() {
         }
         
         if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
-          switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+          switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
         } else if (imp_vars.player_data.first_time) {
           switch_bg(impulse_colors["world 0 dark"], 150, 1)
         }
@@ -215,7 +215,7 @@ TitleState.prototype.setup_main_menu = function() {
         }
 
         if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal") {
-          switch_bg("Title Alt" + i, 250, imp_vars.bg_opacity * 0.5)
+          switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
         }
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i, true))

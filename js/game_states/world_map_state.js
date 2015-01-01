@@ -19,6 +19,7 @@ function WorldMapState(world, is_practice_mode) {
 
   this.cur_difficulty_mode = imp_vars.player_data.difficulty_mode;
   this.next_difficulty_mode = null;
+  this.transition_to_world_num = null;
 
   this.buttons = []
   var _this = this
@@ -27,7 +28,7 @@ function WorldMapState(world, is_practice_mode) {
     _this.fader.set_animation("fade_out", function() {
       switch_game_state(new TitleState(_this));
     });
-    switch_bg("Hive 0", 250, imp_vars.bg_opacity)      
+    switch_bg("Hive 0", 250, imp_vars.hive0_bg_opacity)
   }, "back"));
 
   this.difficulties = ["easy", "normal"];
@@ -96,7 +97,7 @@ function WorldMapState(world, is_practice_mode) {
 WorldMapState.prototype.set_up_buttons = function() {
 
   this.world_unlocked = {};
-  
+
   for (var i = 0; i < this.difficulties.length; i++) {
     var difficulty = this.difficulties[i];
     this.world_unlocked[difficulty] = {
@@ -107,7 +108,7 @@ WorldMapState.prototype.set_up_buttons = function() {
       4: imp_vars.player_data.world_rankings[difficulty]["world 3"] || imp_vars.debug.dev || imp_vars.debug.god_mode,
     }
   }
-  
+
   this.world_buttons = {}
   // the things you select at the bottom
   this.mode_buttons = {}
@@ -123,8 +124,8 @@ WorldMapState.prototype.set_up_buttons = function() {
       this.set_up_world_map(this.difficulties[i])
     } else {
       this.set_up_practice_buttons(this.difficulties[i])
-      this.set_up_world_icon(0, imp_vars.levelWidth/2, this.world_button_y, true, this.difficulties[i])  
-    }  
+      this.set_up_world_icon(0, imp_vars.levelWidth/2, this.world_button_y, true, this.difficulties[i])
+    }
   }
 }
 
@@ -143,7 +144,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
   // Get the number of buttons to show.
   for(var i = 2; i < this.num_mode_buttons; i++) {
     if(i > 1 && !this.world_unlocked[difficulty][i]) {
-      break;     
+      break;
     } else {
       num_buttons_to_show += 1;
     }
@@ -164,7 +165,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
         }
       };
     })(i)
-    this.mode_buttons[difficulty].push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))  
+    this.mode_buttons[difficulty].push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_vars.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))
   }
 }
 
@@ -172,7 +173,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
 WorldMapState.prototype.update_on_difficulty_change = function(difficulty) {
   if (this.cur_difficulty_mode != difficulty) {
     var _this = this;
-    // If the current world isn't unlocked in the new difficulty, change to the latest that is unlocked.    
+    // If the current world isn't unlocked in the new difficulty, change to the latest that is unlocked.
     var i = this.world_num;
     while (i > 1 && !this.world_unlocked[difficulty][i]) {
       i -= 1;
@@ -193,9 +194,9 @@ WorldMapState.prototype.update_bg = function(index, difficulty) {
     index = this.world_num;
   }
   if (index != 0 && difficulty == "normal") {
-    switch_bg("Title Alt" + index, 250, imp_vars.bg_opacity * 0.5)      
+    switch_bg("Title Alt" + index, 250, get_world_map_bg_opacity(index))
   } else {
-    switch_bg("Hive 0", 250, imp_vars.bg_opacity)
+    switch_bg("Hive 0", 250, imp_vars.hive0_bg_opacity)
   }
 }
 
@@ -218,7 +219,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       var callback = (function(level, index) {
         return function() {
           _this.fade_out_interval = _this.fade_out_interval_practice
-          _this.fade_out_duration = _this.fade_out_interval; 
+          _this.fade_out_duration = _this.fade_out_interval;
           _this.fade_out_color = impulse_colors["world "+ index +" dark"];
           var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
           _this.draw_world_bg(world_bg_ctx)
@@ -228,23 +229,18 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
         }
 
       })(level_name, i)
-      /*var x = imp_vars.levelWidth/2 + ((-3.5 + j) * diff);
-      var y = imp_vars.levelHeight/2+130;*/
       var x = imp_vars.levelWidth/2 + ((-1.5 + (j % 4)) * 150);
-      var y = j >= 4 ? imp_vars.levelHeight/2+100  : imp_vars.levelHeight/2 
+      var y = j >= 4 ? imp_vars.levelHeight/2+100  : imp_vars.levelHeight/2
 
       var new_button = new IconButton(j+1, 30, x, y, 75, 75, this_color, this_color, callback, "practice"+i);
       new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
-      new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen || 
+      new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen ||
         (j == 0 && this.world_unlocked[difficulty][i]) || (imp_vars.debug.dev || imp_vars.debug.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"
       }
-
-      // new_button.add_hover_overlay(new MessageBox("level_preview_" + new_button.level_name, 
-      //  impulse_colors["world " + i + " bright"], i))
     }
   }
 }
@@ -255,8 +251,9 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
   this.world_buttons[difficulty][world_num] = new IconButton(text, 50, x, y, 150, 150, impulse_colors["world "+world_num+" bright"], impulse_colors["world "+world_num+" bright"],
     function(){
       _this.fade_out_interval = _this.fade_out_interval_main
-      _this.fade_out_duration = _this.fade_out_interval; 
+      _this.fade_out_duration = _this.fade_out_interval;
       _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
+      _this.transition_to_world_num = world_num;
       var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
       _this.draw_world_bg(world_bg_ctx)
       setTimeout(function(){
@@ -279,7 +276,10 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.fade_out_color
     ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
     ctx.globalAlpha *= get_bg_opacity(this.world_num)
-    ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    if (!should_show_level_zero(this.transition_to_world_num) &&
+      !imp_vars.debug.show_zero_level) {
+      ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    }
     ctx.restore()
   }
   ctx.save()
@@ -297,7 +297,6 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    //switch_bg("Title Alt1", 500, imp_vars.bg_opacity / 2)
     this.bg_drawn = true
   }
 
@@ -311,7 +310,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     this.draw_gateway_particles(ctx, imp_vars.draw_factor);
   }
 
-  
+
   ctx.font = '13px Muli'
   ctx.fillStyle = "white"
   ctx.fillText("SELECT HIVE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 215)
@@ -344,7 +343,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
         ctx.save()
         ctx.textAlign = "center"
         ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
-          imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"], 
+          imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"],
           index,
           imp_vars.player_data.world_rankings[difficulty]["world "+index]["deaths"])
         ctx.font = '18px Muli'
@@ -407,11 +406,11 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
     if (this.is_practice_mode) {
       ctx.fillStyle = "white"
       ctx.font = "20px Muli"
-      ctx.fillText("PRACTICE MODE", imp_vars.levelWidth/2, this.world_button_y - 170)  
+      ctx.fillText("PRACTICE MODE", imp_vars.levelWidth/2, this.world_button_y - 170)
     } else if (imp_vars.player_data.difficulty_mode == "normal") {
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
-      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, this.world_button_y - 170)  
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, this.world_button_y - 170)
     }
   }
 
@@ -422,7 +421,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   if (index > 0) {
     ctx.fillText(imp_params.hive_names[index], imp_vars.levelWidth/2, this.world_button_y - 125)
   } else {
-    ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, this.world_button_y - 125)  
+    ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, this.world_button_y - 125)
   }
 
   // mode buttons
@@ -433,10 +432,10 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
       ctx.font = '15px Muli'
       if (i == 0) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+        ctx.fillText("TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 8)
       } else if(this.mode_buttons[difficulty][i].active) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText(imp_params.hive_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)  
+        ctx.fillText(imp_params.hive_names[i], imp_vars.levelWidth/2, imp_vars.levelHeight - 8)
       }
     }
   }
@@ -477,7 +476,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   }
   var difficulty = imp_vars.player_data.difficulty_mode;
   if (!this.is_practice_mode) {
-    this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)  
+    this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)
   } else {
     if (this.world_num != 0) {
       for(var i = 0; i < this.practice_buttons[difficulty][this.world_num].length; i++) {
@@ -487,7 +486,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
       this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)
     }
   }
-  
+
   for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
     this.mode_buttons[difficulty][i].on_mouse_move(x, y)
   }
@@ -495,7 +494,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   /* if(this.world_num > 0 && imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world " + this.world_num)) {
     this.help_buttons[difficulty][this.world_num].on_mouse_move(x, y);
   } */
-  
+
 }
 
 WorldMapState.prototype.on_click = function(x, y) {
@@ -505,17 +504,17 @@ WorldMapState.prototype.on_click = function(x, y) {
   }
   var difficulty = imp_vars.player_data.difficulty_mode;
   if (!this.is_practice_mode) {
-    this.world_buttons[difficulty][this.world_num].on_click(x, y)  
+    this.world_buttons[difficulty][this.world_num].on_click(x, y)
   } else {
     if (this.world_num != 0) {
       for(var i = 0; i < this.practice_buttons[difficulty][this.world_num].length; i++) {
         this.practice_buttons[difficulty][this.world_num][i].on_click(x, y)
       }
     } else {
-      this.world_buttons[difficulty][this.world_num].on_click(x, y)  
-    }  
+      this.world_buttons[difficulty][this.world_num].on_click(x, y)
+    }
   }
-  
+
   for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
     this.mode_buttons[difficulty][i].on_click(x, y)
   }

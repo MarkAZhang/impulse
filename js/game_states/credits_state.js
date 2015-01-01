@@ -40,7 +40,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    set_bg("Hive 0", imp_vars.bg_opacity)
+    set_bg("Hive 0", imp_vars.hive0_bg_opacity)
     this.bg_drawn = true
   }
   /*ctx.globalAlpha = .3

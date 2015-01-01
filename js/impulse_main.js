@@ -19,6 +19,7 @@ var imp_vars = {
   impulse_music: null,
   minified: true,
   bg_opacity: 0.3,
+  hive0_bg_opacity: 0.6 /* hive0 gets rendered differently, needs to be brighter */,
   switch_bg_duration: null,
   share_button_open: true, // button starts out as open.
   dark_one_speaks: false
@@ -117,7 +118,7 @@ function set_up_game_buttons() {
   }, "mute_in_game"))
 
   imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
-    toggle_pause() 
+    toggle_pause()
   }, "pause_in_game"))
 
   imp_params.game_buttons.push(new IconButton("", 16, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 30, 30, this.color, this.bright_color, function() {
@@ -212,9 +213,9 @@ function switch_bg(bg_file, duration, alpha) {
       alt_title_bg_ctx.fillStyle = bg_file;
       alt_title_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
     } else {
-      draw_bg(alt_title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)  
+      draw_bg(alt_title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
     }
-    
+
     imp_vars.alt_bg_alpha = alpha;
     imp_vars.alt_bg_file = bg_file;
   }
@@ -227,7 +228,7 @@ function set_bg(bg_file, alpha) {
     title_bg_ctx.fillStyle = bg_file;
     title_bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight);
   } else {
-    draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)  
+    draw_bg(title_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, bg_file)
   }
   imp_vars.bg_alpha = alpha;
   imp_vars.bg_file = bg_file;
@@ -420,7 +421,7 @@ function on_mouse_up(event) {
       imp_vars.cur_game_state.on_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
     } else {
       imp_vars.cur_game_state.on_mouse_up(mPos.x, mPos.y)
-    }  
+    }
   } else if(event.button == 2) {
     if(imp_vars.cur_dialog_box) {
       imp_vars.cur_dialog_box.on_right_mouse_up(mPos.x, mPos.y)
@@ -430,9 +431,9 @@ function on_mouse_up(event) {
       imp_vars.cur_game_state.on_right_mouse_up(mPos.x - imp_vars.sidebarWidth, mPos.y)
     } else {
       imp_vars.cur_game_state.on_right_mouse_up(mPos.x, mPos.y)
-    }  
+    }
   }
-  
+
 }
 
 function on_click(event) {
@@ -458,7 +459,7 @@ function on_click(event) {
         imp_params.game_buttons[i].on_click(mPos.x, mPos.y)
       }
       imp_vars.cur_game_state.on_click(mPos.x, mPos.y)
-    }  
+    }
   } else if(event.button == 2) {
     if(imp_vars.cur_dialog_box) {
       imp_vars.cur_dialog_box.on_right_click(mPos.x, mPos.y)
@@ -468,9 +469,9 @@ function on_click(event) {
       imp_vars.cur_game_state.on_right_click(mPos.x - imp_vars.sidebarWidth, mPos.y)
     } else {
       imp_vars.cur_game_state.on_right_click(mPos.x, mPos.y)
-    }  
+    }
   }
-  
+
 
 }
 
@@ -558,10 +559,10 @@ function on_key_down(event) {
         imp_vars.cur_game_state.set_up_buttons();
       }
     }
-  }  
+  }
 
   if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
-    toggle_mute()    
+    toggle_mute()
   }
 
   if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
@@ -613,8 +614,8 @@ function load_game() {
   } else {
     // if we don't have a value, but the player has beaten world 4, then it should be unlocked.
     imp_vars.player_data.hard_mode_unlocked = false;
-    if (imp_vars.player_data.world_rankings && 
-        imp_vars.player_data.world_rankings["easy"] && 
+    if (imp_vars.player_data.world_rankings &&
+        imp_vars.player_data.world_rankings["easy"] &&
         imp_vars.player_data.world_rankings["easy"]["world 4"] !== undefined) {
       imp_vars.player_data.hard_mode_unlocked = true;
     }
@@ -726,7 +727,7 @@ function load_level_data(difficulty_level, load_obj) {
         imp_params.impulse_level_data[i].save_state[difficulty_level].best_time = load_obj['levels'][i]["save_state"][difficulty_level]["best_time"]
 
         if(i.slice(0, 4) == "HIVE") {
-          var stars = 0  
+          var stars = 0
           while(imp_params.impulse_level_data[i].save_state[difficulty_level].high_score >= imp_params.impulse_level_data[i].cutoff_scores[difficulty_level][stars])
           {
             stars+=1
@@ -734,13 +735,13 @@ function load_level_data(difficulty_level, load_obj) {
           imp_params.impulse_level_data[i].save_state[difficulty_level].stars = stars
          } else {
             if(imp_params.impulse_level_data[i].save_state[difficulty_level].best_time < 1000) {
-              imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 3 
+              imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 3
             } else {
               imp_params.impulse_level_data[i].save_state[difficulty_level].stars = 0
             }
-          
+
          }
-        
+
       }
       else {
         imp_params.impulse_level_data[i].save_state[difficulty_level].high_score = 0
@@ -781,7 +782,7 @@ function save_level_data(difficulty_level, save_obj) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
       if(!(save_obj['levels'].hasOwnProperty(i))) {
         save_obj['levels'][i] = {}
-        save_obj['levels'][i]["save_state"] = {}        
+        save_obj['levels'][i]["save_state"] = {}
       }
 
       save_obj['levels'][i]["save_state"][difficulty_level] = {}
@@ -889,14 +890,34 @@ function set_quest_completed(name) {
   }
 }
 
+function should_show_level_zero(world_num) {
+  // Easy difficulty, and we've never played this world before.
+  return imp_vars.player_data.difficulty_mode == "easy" &&
+         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen;
+}
+
 function get_bg_opacity(world) {
-  if (world == 2) {
-    return 0.5;
-  }
-  if (world == 3) {
-    return 0.4;
-  }
-  return imp_vars.bg_opacity;
+  // Return opacity for the background in world menus.
+  var opacity_array = [
+    imp_vars.hive0_bg_opacity,
+    imp_vars.bg_opacity,
+    0.8,
+    0.4,
+    imp_vars.bg_opacity
+  ];
+  return opacity_array[world];
+}
+
+function get_world_map_bg_opacity(world) {
+  // Return opacity for the background in world-map state.
+  var opacity_array = [
+    imp_vars.hive0_bg_opacity,
+    0.2,
+    0.35,
+    0.3,
+    0.25,
+  ];
+  return opacity_array[world];
 }
 
 function share_on_facebook_dialog() {
@@ -915,7 +936,7 @@ function open_share_dialog() {
 
 function close_share_dialog() {
   if (imp_vars.share_button_open && document.getElementById("at4-scc") && share_dialog_is_open()) {
-    document.getElementById("at4-scc").click() 
+    document.getElementById("at4-scc").click()
   }
 }
 

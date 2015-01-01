@@ -54,7 +54,7 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
     }
     this.transition_timer = this.level_intro_interval
   }
-  
+
   if(this.last_level && this.last_level.is_boss_level) {
     // do not do the following if we have beat the last level.. will transfer to summary_state later
     return
@@ -73,6 +73,7 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
   }
 
   if(this.level.is_boss_level) {
+    // Still give the player a moment before the BOSS, but we won't display anything in draw().
     this.level_intro_interval = 1000
   }
 
@@ -103,7 +104,7 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
   if (world_num == 0) {
     return "HIVE 0-1"
   }
-  if (imp_vars.debug.show_zero_level || this.show_zero_level(world_num)) {
+  if (imp_vars.debug.show_zero_level || should_show_level_zero(world_num)) {
       this.going_to_level_zero = true;
       return "HIVE "+world_num+"-0"
   }
@@ -116,14 +117,13 @@ MainGameTransitionState.prototype.load_next_level = function () {
   this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level])
 }
 
-MainGameTransitionState.prototype.show_zero_level = function (world_num) {
-  // Easy difficulty, and we've never played this world before.
-  return imp_vars.player_data.difficulty_mode == "easy" &&
-         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[imp_vars.player_data.difficulty_mode].seen
-}
-
 MainGameTransitionState.prototype.compute_last_level_stats = function() {
   this.check_completed_quests(this.last_level.level_name, this.hive_numbers.game_numbers[this.last_level.level_name])
+}
+
+MainGameTransitionState.prototype.should_skip_transition_state = function () {
+  // Should skip the transition state entirely as soon as the level is loaded.
+  return this.world_num == 0 || this.going_to_level_zero;
 }
 
 MainGameTransitionState.prototype.maybe_switch_states = function () {
@@ -134,10 +134,10 @@ MainGameTransitionState.prototype.maybe_switch_states = function () {
   }
 
   // if tutorial, skip the transition state. Also, if this is the first time, go directly to impulse game state.
-  if(this.world_num == 0 || this.going_to_level_zero) {
+  if(this.should_skip_transition_state()) {
     if(this.level_loaded) {
       switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
-    }  
+    }
     return true;
   }
 
@@ -176,6 +176,9 @@ MainGameTransitionState.prototype.process = function(dt) {
 }
 
 MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
+  // When we should_skip_transition_state, we still need these lines so that the bg_canvas is set to
+  // invisible. At the start of this state, the bgcanvas may still have a bg, if we don't hide this,
+  // there will be a flicker while in this state.
   if(!this.bg_drawn && this.level) {
     this.bg_drawn = true
 
@@ -186,22 +189,22 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
 
-  if(this.world_num == 0) {
-    return
+  if (this.should_skip_transition_state()) {
+    return;
   }
 
   ctx.save()
-  
+
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
   if (this.state == "level_intro") {
     var prog = (this.transition_timer/this.level_intro_interval);
     if (prog < 0.5) {
-      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)  
+      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
     }
   } else if (this.state == "last_level_summary") {
     var prog = (this.transition_timer/this.last_level_summary_interval);
     if (prog > 0.5) {
-      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)  
+      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
     }
   }
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
@@ -220,7 +223,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = this.bright_color;
       ctx.textAlign = 'center'
 
-      
+
       ctx.shadowBlur = 0;
       ctx.shadowColor = "black"
 
@@ -268,7 +271,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.fillText(this.last_level_name, imp_vars.levelWidth/2, 240)
-    ctx.fill() 
+    ctx.fill()
     ctx.font = '36px Muli';
     ctx.fillStyle = "white"
     ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
@@ -295,16 +298,16 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.lineTo(350, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.bright_color;
-      ctx.stroke();  
+      ctx.stroke();
     }
-    
+
     if (!this.game_numbers.best_time) {
       ctx.beginPath();
       ctx.moveTo(450, line_y);
       ctx.lineTo(550, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.bright_color;
-      ctx.stroke();  
+      ctx.stroke();
     }
 
     var high_score_y = 445;
@@ -340,11 +343,11 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
           imp_vars.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
-        ctx.fillText("UNDEFEATED", 
+        ctx.fillText("UNDEFEATED",
           imp_vars.levelWidth/2 + 100, best_score_y)
       }
       ctx.restore();

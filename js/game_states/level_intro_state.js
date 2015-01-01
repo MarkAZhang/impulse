@@ -36,9 +36,9 @@ function LevelIntroState(level_name, world) {
       imp_vars.bg_file = null
       // TODO: transition the bg.
       if (imp_vars.player_data.difficulty_mode == "normal") {
-        set_bg("Title Alt" + _this.world_num, imp_vars.bg_opacity * 0.5)
+        set_bg("Title Alt" + _this.world_num, get_world_map_bg_opacity(_this.world_num))
       } else {
-        set_bg("Hive 0", imp_vars.bg_opacity)
+        set_bg("Hive 0", imp_vars.hive0_bg_opacity)
       }
     });
   }}(this), "back"))

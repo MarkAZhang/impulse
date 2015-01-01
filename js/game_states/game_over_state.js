@@ -33,16 +33,16 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new WorldMapState(_this.world_num, true))
         if (imp_vars.player_data.difficulty_mode == "normal") {
-          set_bg("Title Alt" + _this.world_num, imp_vars.bg_opacity * 0.5)
+          set_bg("Title Alt" + _this.world_num, get_world_map_bg_opacity(_this.world_num))
         } else {
-          set_bg("Hive 0", imp_vars.bg_opacity)
+          set_bg("Hive 0", imp_vars.hive0_bg_opacity)
         }
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new TitleState(true))
-        set_bg("Hive 0", imp_vars.bg_opacity)
+        set_bg("Hive 0", imp_vars.hive0_bg_opacity)
       });
     }
   }}(this), "back"))
