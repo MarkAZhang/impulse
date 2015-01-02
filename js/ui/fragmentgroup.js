@@ -3,6 +3,7 @@ var FragmentGroup = function(enemy_type, loc, velocity, shadowed) {
 }
 
 FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
+  var BOSS_FRAGMENT_LIFESPAN = 5000;
   this.shadowed = shadowed ? true : false;
   this.fragments = []
   if(enemy_type == "spark" || enemy_type == "multi") {
@@ -27,7 +28,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
       this.burst = 20;
     }
     this.waves = 5;
-    this.lifespan = 2000;
+    this.lifespan = BOSS_FRAGMENT_LIFESPAN;
   } else if(enemy_type=="player") {
     this.shape =
       {type: "circle", x: 0, y: 0, r: Player.prototype.radius}
@@ -69,13 +70,23 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
 
   for (var j = 0; j < this.waves; j++) {
     var num_frags_in_wave = this.num_fragments / this.waves;
-    for(var i = 0; i < num_frags_in_wave; i++) {    
+    for(var i = 0; i < num_frags_in_wave; i++) {
       dir = 2*Math.PI * i / num_frags_in_wave + (Math.random() - 0.5) * 2 * Math.PI / num_frags_in_wave;
       new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
         y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
       this.fragments.push(new Fragment(this.shape, imp_vars.draw_factor/3, {x: loc.x * imp_vars.draw_factor, y: loc.y * imp_vars.draw_factor},
        {x: new_v.x * imp_vars.draw_factor, y: new_v.y * imp_vars.draw_factor}, this.color))
+    }
+    if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
+      for(var i = 0; i < num_frags_in_wave; i++) {
+        dir = 2*Math.PI * i / num_frags_in_wave + (Math.random() - 0.5) * 2 * Math.PI / num_frags_in_wave;
+        new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
+          y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
+
+        this.fragments.push(new Fragment("shadow", imp_vars.draw_factor/3, {x: loc.x * imp_vars.draw_factor, y: loc.y * imp_vars.draw_factor},
+         {x: new_v.x * imp_vars.draw_factor, y: new_v.y * imp_vars.draw_factor}, this.color))
+      }
     }
   }
 }
@@ -143,6 +154,14 @@ Fragment.prototype.draw = function(context, prog) {
 
     context.restore()
 
+  } else if(this.shape == "shadow" ) {
+    context.save()
+    context.globalAlpha *= prog;
+    drawSprite(context, this.loc.x,
+      this.loc.y,
+      0, 150 * prog,
+      150 * prog, "dark_aura");
+    context.restore();
   } else {
     context.save()
     var pointer_angle = _atan({x: 0, y: 0}, this.velocity)

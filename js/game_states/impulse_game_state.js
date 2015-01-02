@@ -31,7 +31,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.bg_drawn = false
   this.has_ult = has_ult()
   this.boss_intro_text_activated = false
-
+  this.boss_after_death_actions = false;
 
   this.stars = 0
   this.world_num = world
@@ -211,6 +211,8 @@ ImpulseGameState.prototype.reset = function() {
   if (!this.is_boss_level && this.level) {
     this.check_cutoffs();
   }
+
+  this.boss_after_death_actions = false;
  // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
  // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
  // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
@@ -387,16 +389,19 @@ ImpulseGameState.prototype.process = function(dt) {
     }
 
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 &&
-        this.level.boss.dying != "fade" && !this.player.dying) {
-      if(this.zoom_state == "none" && this.zoom == 1) {
+        this.level.boss.dying != "fade" && !this.player.dying && !this.boss_after_death_actions) {
+      this.boss_after_death_actions = true;
+      imp_vars.impulse_music.stop_bg()
+      this.level.open_gateway()
+      // This automatically advances the level after the boss is dead.
+      /* if(this.zoom_state == "none" && this.zoom == 1) {
         this.zoom_in({x:imp_vars.levelWidth/2, y:imp_vars.levelHeight/2}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
         this.on_victory();
       } else if(this.zoom_state == "none"){
         this.ready = false
         this.level_defeated();
-      }
-      return;
+      } */
     }
 
     if(this.victory)

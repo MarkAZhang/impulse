@@ -677,16 +677,15 @@ Level.prototype.generate_obstacle_edges = function() {
 }
 
 Level.prototype.draw_gateway = function(ctx, draw_factor) {
-  if(this.is_boss_level) return
+  if(this.is_boss_level) {
+    if (!this.impulse_game_state.boss_after_death_actions) {
+      return;
+    }
+  }
   ctx.save()
 
   if(this.gateway_transition_duration != null && this.world_num <= 4) {
     var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
-    //ctx.globalAlpha *= 0.5*(1-prog)
-    //drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-    //  (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
-    //ctx.restore()
-    //ctx.save()
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
     ctx.strokeStyle = this.bright_color
     if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2" && !this.is_level_zero) {
@@ -736,7 +735,6 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
 }
 
 Level.prototype.pre_draw = function(context, draw_factor) {
-
     if(this.gateway_loc) {
       this.draw_gateway(context, draw_factor)
     }

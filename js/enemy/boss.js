@@ -12,7 +12,7 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
     this.spawn_interval = 6600
   this.require_open = false;
-  this.default_dying_length = 2000
+  this.default_dying_length = 5000
 
   this.spawn_duration = this.spawn_interval
   this.aura_radius = 600;
@@ -25,10 +25,10 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   }
 
   this.spawn_particles = [];
-  this.spawn_particle_num = 5;
+  this.spawn_particle_num = 10;
   this.spawn_particle_timer = 0;
-  this.spawn_particle_spawn_radius = 30;
-  this.spawn_particle_radius = 50;
+  this.spawn_particle_radius = 30;
+  this.spawn_particle_radius_max = 60;
   this.spawn_particle_duration = 1500 * this.spawn_interval / 6600;
   this.spawn_particle_interval = 250 * this.spawn_interval / 6600;
   this.spawn_particle_travel_prop = 0.6;
@@ -88,7 +88,7 @@ Boss.prototype.additional_processing = function (dt) {
 
 Boss.prototype.generate_spawn_particles = function (loc) {
   for (var i = 0; i < this.spawn_particle_num; i++) {
-    var r = this.aura_radius / imp_vars.draw_factor * this.initial_dark_aura_ratio;
+    var r = this.aura_radius / imp_vars.draw_factor * this.initial_dark_aura_ratio * 0.5 + 5;
     var angle = Math.PI * 2 * i / this.spawn_particle_num + (Math.random() - 0.5) * Math.PI * 2 / this.spawn_particle_num
     this.spawn_particles.push({
       start_x: Math.cos(angle) * r + loc.x,
@@ -130,10 +130,12 @@ Boss.prototype.draw_spawn_particles = function(ctx, draw_factor) {
       this.body.GetPosition().x * particle.prop * (this.spawn_particle_travel_prop));
     var y = (particle.start_y * (1 - particle.prop * this.spawn_particle_travel_prop) +
       this.body.GetPosition().y * particle.prop * (this.spawn_particle_travel_prop));
+    var ratio = 1 - this.spawn_duration / this.spawn_interval
+    var r = this.spawn_particle_radius * (1 - ratio) + this.spawn_particle_radius_max * ratio;
     drawSprite(ctx, x * draw_factor,
       y * draw_factor,
-      0, this.spawn_particle_radius * particle.prop,
-      this.spawn_particle_radius * Math.min(particle.prop * 2, 1), "dark_aura");
+      0, r * Math.min(particle.prop * 2, 1),
+      r * Math.min(particle.prop * 2, 1), "dark_aura");
 
     ctx.restore()
   }
