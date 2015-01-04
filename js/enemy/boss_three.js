@@ -650,7 +650,7 @@ BossThree.prototype.initialize_arms = function() {
   }
 }
 
-BossThree.prototype.additional_death_prep = function() {
+BossThree.prototype.additional_death_prep_specific = function() {
   for(var index = 0; index < this.num_arms; index++) {
     // Need to recreate arms.
     var arm_body = create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x,

@@ -432,7 +432,15 @@ imp_params.impulse_level_data['BOSS 1'] = {
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
-  defeat_time: 40
+  defeat_time: 40,
+  dark_ones: [
+    {
+      x: 400,
+      y: 200,
+      size: 125,
+      msg: 'hive_one_close'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 2-0'] = {
@@ -729,7 +737,15 @@ imp_params.impulse_level_data['BOSS 2'] = {
   spawn_points: [[60,62],[60,539],[740,62],[740,539]],
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
-  defeat_time: 60
+  defeat_time: 60,
+  dark_ones: [
+    {
+      x: 400,
+      y: 200,
+      size: 125,
+      msg: 'hive_two_close'
+    }
+  ]
 }
 
 imp_params.impulse_level_data['HIVE 3-0'] = {
@@ -1127,6 +1143,14 @@ imp_params.impulse_level_data['BOSS 3'] = {
   initial_spawn_data: {
     "third boss": 1
   },
+  dark_ones: [
+    {
+      x: 400,
+      y: 200,
+      size: 125,
+      msg: 'hive_three_close'
+    }
+  ]
 
 }
 
@@ -1486,6 +1510,14 @@ imp_params.impulse_level_data['BOSS 4'] = {
   initial_spawn_data: {
     "fourth boss": 1
   },
+  dark_ones: [
+    {
+      x: 400,
+      y: 200,
+      size: 125,
+      msg: 'hive_four_close'
+    }
+  ]
 
 }
 

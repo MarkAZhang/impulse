@@ -50,6 +50,12 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.original_v_damping = 1
     this.shape = enemy_type
 
+  } else if (enemy_type == "dark_one") {
+    this.num_fragments = 50
+    this.burst = 10
+    this.original_v_damping = 1
+    this.shape = "dark_one_shadow"
+    this.waves = 5;
   } else {
     this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
     this.color = imp_params.impulse_enemy_stats[enemy_type].color
@@ -161,6 +167,14 @@ Fragment.prototype.draw = function(context, prog) {
       this.loc.y,
       0, 150 * prog,
       150 * prog, "dark_aura");
+    context.restore();
+  } else if(this.shape == "dark_one_shadow" ) {
+    context.save()
+    context.globalAlpha *= prog;
+    drawSprite(context, this.loc.x,
+      this.loc.y,
+      0, 75 * prog,
+      75 * prog, "dark_aura");
     context.restore();
   } else {
     context.save()

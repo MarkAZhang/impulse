@@ -460,7 +460,8 @@ Level.prototype.initial_spawn = function() {
       this.spawn_enemy_set(enemy_type_list);
     }
   }
-  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.story_mode && !this.dark_ones_after_gateway) {
+  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.story_mode &&
+    !this.dark_ones_after_gateway && !this.is_boss_level) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
       this.spawn_dark_one(data);
@@ -477,6 +478,10 @@ Level.prototype.spawn_dark_one = function (data) {
 
   this.dark_ones.push(dark_one);
 };
+
+Level.prototype.add_dark_one = function (dark_one) {
+  this.dark_ones.push(dark_one);
+}
 
 Level.prototype.spawn_enemy_set = function(enemy_type_list) {
   var pivot_spawn_index = this.pick_pivot_spawn_index();
@@ -572,7 +577,7 @@ Level.prototype.skip_enemy_spawn_timers = function() {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-  if(enemy_type == "player" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
+  if(enemy_type == "player" || enemy_type == "shadow" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
     || (this.total_fragments < this.max_fragments && imp_vars.player_data.options.explosions)) {
       this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
       this.total_fragments += 4;
@@ -876,7 +881,7 @@ Level.prototype.open_gateway = function() {
 
   this.gateway_transition_duration = this.gateway_transition_interval
   this.gateway_opened = true
-  if (this.dark_ones_after_gateway) {
+  if (this.dark_ones_after_gateway && !this.is_boss_level) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
       this.spawn_dark_one(data);

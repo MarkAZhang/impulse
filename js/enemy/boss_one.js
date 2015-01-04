@@ -206,7 +206,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.start_time = 0
 
   this.first_turret = true
-
 }
 
 //
@@ -242,7 +241,7 @@ BossOne.prototype.add_arms = function() {
 
 }
 
-BossOne.prototype.additional_death_prep = function() {
+BossOne.prototype.additional_death_prep_specific = function() {
   var body_parts = ["lu", "ll", "lh", "ru", "rl", "rh"];
   var death_explode_force = 10;
   this.knockback_red_duration = 0;

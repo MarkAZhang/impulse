@@ -456,7 +456,7 @@ BossTwo.prototype.draw = function(context, draw_factor) {
   context.restore()
 }
 
-BossTwo.prototype.additional_death_prep = function() {
+BossTwo.prototype.additional_death_prep_specific = function() {
   if (this.absorbed_enemy_types.length == 0) return;
   // Spawn exactly 10 fragments, generated from the array.
   for (var i = 0; i < 10; i++) {

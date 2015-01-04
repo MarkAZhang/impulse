@@ -177,6 +177,20 @@ Boss.prototype.boss_specific_final_draw = function(context, draw_factor) {
 
 }
 
+Boss.prototype.additional_death_prep = function () {
+  var data = this.impulse_game_state.level.dark_ones_data[0];
+  var dark_one = new DarkOne(this.body.GetPosition().x * imp_vars.draw_factor,
+   this.body.GetPosition().y * imp_vars.draw_factor,
+   this.impulse_game_state, data.msg, data.size, false)
+  this.impulse_game_state.level.add_dark_one(dark_one);
+  dark_one.move_to(data.x, data.y, 4000);
+  dark_one.opacity = 0.7;
+  dark_one.explode = true;
+  this.additional_death_prep_specific();
+}
+
+Boss.prototype.additional_death_prep_specific = function () {}
+
 Boss.prototype.get_impulse_extra_factor = function() {
   return this.impulse_extra_factor;
 }

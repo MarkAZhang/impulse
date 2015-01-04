@@ -737,7 +737,7 @@ BossFour.prototype.create_body_buds = function() {
   }
 }
 
-BossFour.prototype.additional_death_prep = function() {
+BossFour.prototype.additional_death_prep_specific = function() {
   for(var index = 0; index < this.buds.length; index++) {
     var bud = this.buds[index];
     var angle = _atan(this.body.GetPosition(), bud.body.GetPosition());
