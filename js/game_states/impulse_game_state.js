@@ -44,6 +44,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   var gravity = new b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
   this.world = new b2World(gravity, doSleep);
+  this.hive0bg_transition = false;
 
   if(level) {
     this.level = level
@@ -137,6 +138,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.message_canvas.width = 120
   this.message_canvas.height = 160
   this.message_ctx = this.message_canvas.getContext('2d');
+
+  this.hive0bg_canvas = document.createElement('canvas');
 
   if(level && !(this instanceof HowToPlayState)) {
     this.check_new_enemies()
@@ -285,6 +288,16 @@ ImpulseGameState.prototype.loading_screen = function() {
   ctx.fill()
 }
 
+ImpulseGameState.prototype.transition_to_hive0bg = function (dur) {
+  this.hive0bg_transition = true;
+  this.hive0bg_transition_interval = dur;
+  this.hive0bg_transition_timer = dur;
+  this.hive0bg_canvas.width = imp_vars.levelWidth;
+  this.hive0bg_canvas.height = imp_vars.levelHeight;
+  var hive0bg_ctx = this.hive0bg_canvas.getContext('2d');
+  draw_bg(hive0bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+}
+
 ImpulseGameState.prototype.check_pause = function() {
   if(document.webkitHidden) {
     this.pause = true
@@ -321,6 +334,13 @@ ImpulseGameState.prototype.process = function(dt) {
     if (this.shaking_timer > 0) {
       this.shaking = true;
       this.shaking_timer -= dt;
+    }
+    if (this.hive0bg_transition_timer > 0) {
+      this.hive0bg_transition_timer -= dt;
+    } else if (this.hive0bg_transition) {
+      this.hive0bg_transition = false;
+      draw_bg(imp_vars.bg_ctx,
+        imp_vars.sidebarWidth, 0, imp_vars.levelWidth + imp_vars.sidebarWidth, imp_vars.levelHeight, "Hive 0")
     }
     if (this.show_tutorial) {
       this.tutorial_overlay_manager.process(dt);
@@ -530,6 +550,13 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   this.set_zoom_transparency(ctx);
   if(this.zoom_state != "none") {
     ctx.drawImage(bg_canvas, imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  }
+
+  if (this.hive0bg_transition) {
+    ctx.save();
+    ctx.globalAlpha *= 1 - this.hive0bg_transition_timer / this.hive0bg_transition_interval;
+    ctx.drawImage(this.hive0bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    ctx.restore();
   }
 
   this.level.pre_draw(ctx, imp_vars.draw_factor )

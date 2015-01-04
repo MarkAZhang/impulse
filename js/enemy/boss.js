@@ -186,6 +186,8 @@ Boss.prototype.additional_death_prep = function () {
   dark_one.move_to(data.x, data.y, 4000);
   dark_one.opacity = 0.7;
   dark_one.explode = true;
+  this.impulse_game_state.level.clear_obstacles();
+  this.impulse_game_state.transition_to_hive0bg(5000);
   this.additional_death_prep_specific();
 }
 

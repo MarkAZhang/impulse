@@ -687,12 +687,16 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
       return;
     }
   }
+  var world_num = this.level_intro_state.world_num;
+  if (this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
+    world_num = 0;
+  }
   ctx.save()
 
   if(this.gateway_transition_duration != null && this.world_num <= 4) {
     var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
-    ctx.strokeStyle = this.bright_color
+    ctx.strokeStyle = impulse_colors["world "+world_num+" bright"]
     if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2" && !this.is_level_zero) {
       ctx.save();
       if (prog > 0.5) {
@@ -725,7 +729,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   }
   draw_tessellation_sign(
     ctx,
-    this.level_intro_state.world_num,
+    world_num,
     this.gateway_loc.x * draw_factor,
     this.gateway_loc.y * draw_factor,
     this.gateway_size * draw_factor,
@@ -898,11 +902,12 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.fill();
   bg_ctx.clip()
 
-  if(this.world_num != null && !this.is_level_zero) {
+  if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
-    if (this.is_boss_level) {
-      bg_ctx.globalAlpha *= 0.5;
-    }
+    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+    bg_ctx.restore();
+  } else if(this.world_num != null && !this.is_level_zero) {
+    bg_ctx.save();
     draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
     bg_ctx.restore();
   } else if (this.world_num != null && this.is_level_zero) {
@@ -937,7 +942,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   }
 
   // Draw any additional rectangles to hide obstacle seams.
-  if (this.is_boss_level || this.is_level_zero) {
+  if ((this.is_boss_level || this.is_level_zero) && this.obstacle_polygons.length > 0) {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(375, 0, 50, 22);
     bg_ctx.fillRect(375, 578, 50, 22);
@@ -1012,7 +1017,9 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
       draw_factor * (particle.start_y * (1 - particle.prop) + this.gateway_loc.y * particle.prop) - 3,
       6,
       6)
-    if (this.is_level_zero) {
+    if (this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
+      ctx.fillStyle = impulse_colors["world 0 bright"];
+    } else if (this.is_level_zero) {
       ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"]
     } else {
       ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
@@ -1024,6 +1031,15 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
 
 Level.prototype.create_enemy_images = function(enemy) {
 
+}
+
+Level.prototype.clear_obstacles = function () {
+  // Only really used for boss level.
+  this.boundary_polygons = []; //the polygons that enemies use to calculate pathfinding
+  this.obstacle_polygons = []; //the actual polygons that kill players and enemies
+  this.obstacles = []
+  this.obstacle_edges = []
+  this.obstacle_vertices = []
 }
 
 Level.prototype.dispose = function() {

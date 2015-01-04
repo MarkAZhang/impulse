@@ -100,7 +100,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.mouse_pos = {x: 0, y: 0}//keeps track of last mouse position on player's part
   this.status = "normal"  //currently unused
   this.status_duration = [0, 0, 0, 0, 0, 0] //[locked, silenced, gooed, lighten, confuse, bulk], time left for each status
-  
+
   this.slow_factor = .3
   this.dying = false
   this.dying_length = 1000
@@ -264,7 +264,7 @@ Player.prototype.is_silenced = function() {
 }
 
 Player.prototype.is_gooed = function() {
-  return this.status_duration[2] > 0; 
+  return this.status_duration[2] > 0;
 }
 
 Player.prototype.is_lightened = function() {
@@ -420,12 +420,12 @@ Player.prototype.process = function(dt) {
       this.attack_duration = this.attack_length
       imp_vars.impulse_music.play_sound("impulse")
       if (this.impulse_game_state instanceof HowToPlayState) {
-        this.impulse_game_state.player_impulsed()  
+        this.impulse_game_state.player_impulsed()
       }
       if (this.impulse_game_state.show_tutorial) {
         this.impulse_game_state.add_tutorial_signal("player_impulsed")
       }
-      
+
     }
     /*if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
       if(this.impulse_game_state.hive_numbers.ultimates > 0) {
@@ -504,7 +504,6 @@ Player.prototype.process = function(dt) {
   {
     if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
-
       this.start_death()
       break
     }
@@ -597,7 +596,7 @@ Player.prototype.process = function(dt) {
     else
     {
       this.process_ultimate(false)
-      
+
       this.ultimate_duration -= dt
     }
   }
@@ -692,12 +691,12 @@ Player.prototype.process_ultimate = function(final_strike) {
               if (this_enemy.type == "slingshot") {
                 enemy_factor *= 2
               }
-              this_enemy.process_impulse(this.ultimate_loc, 
+              this_enemy.process_impulse(this.ultimate_loc,
                 prop * ultimate_force * enemy_factor * this_enemy.body.GetMass() * (data.lin_damp), angle, true)
 
               break
             }
-            
+
         }
         if(this_enemy instanceof Harpoon && this_enemy.harpoon_state == "engaged" && this_enemy.harpooned_target == this) {
           this_enemy.disengage_harpoon()
@@ -806,8 +805,8 @@ Player.prototype.draw_ultimate = function(context) {
       if(prop > 0.4) {
         context.globalAlpha *= (1 - prop)/(0.4) < 0 ? 0 : (1-prop)/(0.4);
       }
-      drawSprite(context, 
-        this.ultimate_loc.x * imp_vars.draw_factor, 
+      drawSprite(context,
+        this.ultimate_loc.x * imp_vars.draw_factor,
         this.ultimate_loc.y * imp_vars.draw_factor,  0,
         this.ultimate_radius * prop * imp_vars.draw_factor * 2, this.ultimate_radius * prop * imp_vars.draw_factor * 2,
         "generated_ultimate", imp_params.ultimate_image)
@@ -818,7 +817,7 @@ Player.prototype.draw_ultimate = function(context) {
 
 Player.prototype.pre_draw = function(context) {
   if(!this.dying) {
-    this.draw_ultimate(context);    
+    this.draw_ultimate(context);
   }
 }
 
@@ -842,10 +841,10 @@ Player.prototype.draw = function(context) {
     context.save()
     if(this.confuse_duration > 0) {
       var prop = Math.max(((this.confuse_interval-this.confuse_duration) / this.confuse_interval), 0)
-      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "#24ac40") 
+      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "#24ac40")
     } else if(this.silence_duration > 0) {
       var prop = Math.max(((this.silence_interval-this.silence_duration) / this.silence_interval), 0)
-      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "gray") 
+      draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.radius, prop, "gray")
     }
 
     if (!this.appearing) {
@@ -853,12 +852,12 @@ Player.prototype.draw = function(context) {
 
         var lighten_factor = this.get_lighten_factor()
         drawSprite(
-          context, 
-          this.ultimate_loc.x*imp_vars.draw_factor, 
-          this.ultimate_loc.y*imp_vars.draw_factor, 
-          (this.body.GetAngle()), 
+          context,
+          this.ultimate_loc.x*imp_vars.draw_factor,
+          this.ultimate_loc.y*imp_vars.draw_factor,
+          (this.body.GetAngle()),
           this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
-          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, 
+          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
           "player_gray")
       } else if(this.is_locked())
       {
@@ -931,7 +930,7 @@ Player.prototype.draw = function(context) {
         context.lineWidth = 2
         context.strokeStyle = impulse_colors["impulse_blue"]
         context.stroke()
-        
+
       }
       context.restore();
     }
