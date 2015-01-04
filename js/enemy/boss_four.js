@@ -29,6 +29,11 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.spawn_particle_duration = 1500 * this.spawn_interval / 6600;
   this.spawn_particle_interval = 250 * this.spawn_interval / 6600;
 
+  // Need to reset shake_level since the spawn_interval is shorter.
+  if (this.impulse_game_state.first_time && this.impulse_game_state.level.main_game) {
+    this.impulse_game_state.shake_level(this.spawn_interval);
+  }
+
   this.spawned = false
 
   this.anger_level = 0;

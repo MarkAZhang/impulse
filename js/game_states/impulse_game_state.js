@@ -108,6 +108,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   this.shaking = false;
   this.shaking_timer = 0;
+  this.shaking_interval = 0;
+  this.shaking_intensity_max = 2;
 
   this.camera_center = {x: imp_vars.levelWidth/2, y: imp_vars.levelHeight/2}
   //this.zoom = 0.1
@@ -411,7 +413,6 @@ ImpulseGameState.prototype.process = function(dt) {
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 &&
         this.level.boss.dying != "fade" && !this.player.dying && !this.boss_after_death_actions) {
       this.boss_after_death_actions = true;
-      imp_vars.impulse_music.stop_bg()
       this.level.open_gateway()
       this.gateway_unlocked = true;
       // This automatically advances the level after the boss is dead.
@@ -530,8 +531,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.translate((imp_vars.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (imp_vars.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
 
   if (this.shaking_timer > 0) {
-    var x = 4 * Math.random() - 2;
-    var y = 4 * Math.random() - 2;
+    var prog = Math.max(0, this.shaking_timer / this.shaking_interval);
+    var s = this.shaking_intensity_max * prog;
+    var x = Math.ceil(2 * s * Math.random() - s);
+    var y = Math.ceil(2 * s * Math.random() - s);
     ctx.translate(x, y);
     bg_canvas.style.left = x + 'px';
     bg_canvas.style.top = y + 'px';
@@ -1247,6 +1250,7 @@ ImpulseGameState.prototype.update_save_data_for_level = function () {
 
 ImpulseGameState.prototype.shake_level = function (dur) {
   this.shaking_timer = dur;
+  this.shaking_interval = dur;
 }
 
 ImpulseGameState.prototype.update_save_data_for_boss_level = function () {

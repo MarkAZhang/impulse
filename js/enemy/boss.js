@@ -32,6 +32,10 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.spawn_particle_duration = 1500 * this.spawn_interval / 6600;
   this.spawn_particle_interval = 250 * this.spawn_interval / 6600;
   this.spawn_particle_travel_prop = 0.6;
+
+  if (this.impulse_game_state.first_time && this.impulse_game_state.level.main_game) {
+    this.impulse_game_state.shake_level(this.spawn_interval);
+  }
 }
 
 Boss.prototype.enemy_init = Enemy.prototype.init
@@ -188,6 +192,8 @@ Boss.prototype.additional_death_prep = function () {
   dark_one.explode = true;
   this.impulse_game_state.level.clear_obstacles();
   this.impulse_game_state.transition_to_hive0bg(5000);
+  this.impulse_game_state.shake_level(3000);
+  imp_vars.impulse_music.stop_bg()
   this.additional_death_prep_specific();
 }
 

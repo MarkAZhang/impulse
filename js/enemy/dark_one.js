@@ -169,10 +169,14 @@ DarkOne.prototype.process = function (dt) {
     if (!this.visited) {
       this.visited = true;
       this.impulse_game_state.level.dark_ones_visited += 1;
+      var volume;
+      if (this.msg.substring(this.msg.length - 5, this.msg.length) === "close") {
+        volume = 50;
+      }
       if (this.msg == "four" && this.impulse_game_state.level.dark_ones_visited == 4) {
-        imp_vars.impulse_music.play_sound("dark_anger")
+        imp_vars.impulse_music.play_sound("dark_anger", volume);
       } else {
-        imp_vars.impulse_music.play_sound("dark_diag")
+        imp_vars.impulse_music.play_sound("dark_diag", volume);
       }
       this.bg_volume = imp_vars.player_data.options.bg_music_volume;
       imp_vars.impulse_music.change_bg_volume(this.bg_volume * 0.1, false);

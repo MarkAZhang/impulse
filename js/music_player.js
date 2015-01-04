@@ -16,11 +16,11 @@ MusicPlayer.prototype.initialize_multisounds = function() {
   }
 }
 
-MusicPlayer.prototype.play_sound = function(sound) {
-  this.play(imp_params.sounds[sound])
+MusicPlayer.prototype.play_sound = function(sound, volume) {
+  this.play(imp_params.sounds[sound], volume)
 }
 
-MusicPlayer.prototype.play = function(file) {
+MusicPlayer.prototype.play = function(file, volume) {
   if(this.effects_mute) return
   if(file in this.multisounds) {
     this.play_multisound(file);
@@ -30,10 +30,14 @@ MusicPlayer.prototype.play = function(file) {
   if(!(file in this.sounds)) {
     this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
   }
-  
+
   this.sounds[file].play();
   //this.sounds[file].setVolume(1);//imp_vars.player_data.options.effects_volume);
-  this.sounds[file].setVolume(imp_vars.player_data.options.effects_volume);
+  if (volume) {
+    this.sounds[file].setVolume(volume);
+  } else {
+    this.sounds[file].setVolume(imp_vars.player_data.options.effects_volume);
+  }
 }
 
 MusicPlayer.prototype.mute_effects = function(mute) {
@@ -46,7 +50,7 @@ MusicPlayer.prototype.play_multisound = function(file) {
 
   for(var i = 0; i < this.multisounds[file].length; i++) {
     if(!this.multisounds[file][i]) {
-      
+
       this.sounds[file+i].play();
       this.sounds[file+i].setVolume(imp_vars.player_data.options.effects_volume);
       this.multisounds[file][i] = true;
