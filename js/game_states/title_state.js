@@ -30,6 +30,15 @@ function TitleState(last_state) {
   this.trailer_fade_in = 0;
   this.trailer_fade_total = 8000;
   this.trailer_fade_delay = 7000;
+
+  if (imp_vars.debug.is_beta) {
+    this.feedback_button = new SmallButton(
+    "HELP US IMPROVE THE BETA", 20, 400, 570, 200, 50, impulse_colors["impulse_blue_dark"],
+      impulse_colors["impulse_blue"], function() {
+        window.open('http://goo.gl/forms/dmZlmtpJd0');
+    });
+    this.buttons["menu"].push(this.feedback_button);
+  }
 }
 
 TitleState.prototype.process = function(dt) {
@@ -63,16 +72,20 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
 
     if(this.last_state == null) {
       ctx.globalAlpha = Math.min(Math.max(this.fade_in_duration/this.fade_interval, 0), 1)
-      bg_canvas.setAttribute("style", "opacity:"+ctx.globalAlpha)  
+      bg_canvas.setAttribute("style", "opacity:"+ctx.globalAlpha)
     } else if(this.last_state instanceof WorldMapState) {
       ctx.globalAlpha = Math.min(Math.max(this.fade_in_duration/this.fade_interval, 0), 1)
       this.draw_bg(bg_ctx, (ctx.globalAlpha * 0.07 + 0.03))
     }
-    
+
   }*/
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
-  draw_logo(ctx,imp_vars.levelWidth/2, 150, "MARK ZHANG")
+  if (imp_vars.debug.is_beta) {
+    draw_logo(ctx,imp_vars.levelWidth/2, 150, "BETA")
+  } else {
+    draw_logo(ctx,imp_vars.levelWidth/2, 150, "")
+  }
 
   // TEXT FOR TRAILER
   /*ctx.save()
@@ -81,7 +94,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '24px Muli'
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.fillText('PLAY FOR FREE AT', 400, 420)
-  
+
   ctx.font = '20px Muli'
   ctx.fillText("www.play-impulse.com", 400, 450)
   ctx.font = '12px Muli'
@@ -124,7 +137,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = 'center'
   ctx.fillStyle = "white"
   ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "NORMAL MODE", imp_vars.levelWidth/2, 70)*/
-  
+
   ctx.restore()
 
 }
@@ -179,8 +192,8 @@ TitleState.prototype.setup_main_menu = function() {
 
       //close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
-      
-      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] && 
+
+      if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] &&
          imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
         //setTimeout(function(){
           _this.fader.set_animation("fade_out", function() {
@@ -192,7 +205,7 @@ TitleState.prototype.setup_main_menu = function() {
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
-        
+
         if (_this.fader.animation == null && imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time) {
           switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
         } else if (imp_vars.player_data.first_time) {
@@ -220,7 +233,7 @@ TitleState.prototype.setup_main_menu = function() {
         _this.fader.set_animation("fade_out", function() {
           switch_game_state(new WorldMapState(i, true))
         });
-        
+
         /*if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode].game_numbers) {
           _this.fader.set_animation("fade_out", function() {
             switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
@@ -258,7 +271,7 @@ TitleState.prototype.setup_main_menu = function() {
       }, "tutorial"))
     }*/
 
-    this.buttons["menu"].push(new IconButton("ACHIEVEMENTS", 16, 
+    this.buttons["menu"].push(new IconButton("ACHIEVEMENTS", 16,
       imp_vars.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
@@ -271,7 +284,7 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new CreditsState())
       });
     }, "credit"))
- 
+
 
 
     /*this.buttons["menu"].push(new IconButton("SHARE", 16, imp_vars.levelWidth - 50, imp_vars.levelHeight - 50, 100, 70, impulse_colors["impulse_blue"], impulse_colors["impulse_blue"],function(){
@@ -281,7 +294,7 @@ TitleState.prototype.setup_main_menu = function() {
     }, "fb"))*/
   }
 
-  
+
   this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
   this.easy_mode_button = new SmallButton("NORMAL MODE", 20, imp_vars.levelWidth/2-100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
 
@@ -296,16 +309,16 @@ TitleState.prototype.setup_main_menu = function() {
   /*if (imp_vars.player_data.difficulty_mode == "easy") {
     var difficulty_change_button = new IconButton("NORMAL MODE", 16, imp_vars.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
-    }, "normal_mode")  
+    }, "normal_mode")
   } else {
     var difficulty_change_button = new IconButton("CHALLENGE MODE", 16, imp_vars.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
-    }, "challenge_mode")  
+    }, "challenge_mode")
   }
-  
+
   this.buttons["menu"].push(difficulty_change_button)*/
   var fullscreenButton = new IconButton("", 20, imp_vars.levelWidth - 20, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
-    toggleFullScreen(); 
+    toggleFullScreen();
   }, "fullscreen_in_game");
   fullscreenButton.add_hover_overlay(new MessageBox("fullscreen_msg", impulse_colors["world 0 bright"], 0))
   this.buttons["menu"].push(fullscreenButton);

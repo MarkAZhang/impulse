@@ -31,7 +31,7 @@ function draw_empty_star(context, x, y, r, color) {
 function draw_prog_circle(context, x, y, r, prog, color, width) {
   context.beginPath()
   context.arc(x*imp_vars.draw_factor, y*imp_vars.draw_factor, (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
-  context.lineWidth = width ? width : 2 
+  context.lineWidth = width ? width : 2
   context.strokeStyle = color
   context.stroke()
 }
@@ -39,7 +39,7 @@ function draw_prog_circle(context, x, y, r, prog, color, width) {
 function bulk_draw_prog_circle(context, x, y, r, prog) {
   context.moveTo(x*imp_vars.draw_factor, y*imp_vars.draw_factor - (r*imp_vars.draw_factor) * 2)
   context.arc(x*imp_vars.draw_factor,
-              y*imp_vars.draw_factor, 
+              y*imp_vars.draw_factor,
               (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
 }
 
@@ -193,7 +193,7 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
     context.strokeStyle = "black"
     context.lineWidth = 3
     context.globalAlpha = 1
-    context.stroke()  
+    context.stroke()
   }
 
   var extra_lines =  imp_params.impulse_enemy_stats[type].extra_rendering_lines
@@ -233,11 +233,11 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
     var draw_scale = size
   } else {
     //var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
-    var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)  
+    var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)
   }
-  
+
   draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
-  
+
   context.restore()
 }
 
@@ -265,15 +265,15 @@ function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
 
   //context.translate(draw_scale, draw_scale)
   //context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
- 
+
    /*for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
       if(imp_params.impulse_enemy_stats[enemy_name].interior_color) {
-        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, imp_params.impulse_enemy_stats[enemy_name].interior_color)  
+        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, imp_params.impulse_enemy_stats[enemy_name].interior_color)
       } else {
-        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)  
+        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)
       }
-      
+
     }*/
 
     var this_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
@@ -284,7 +284,7 @@ function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
         if(!this_shape.colored) {
-          draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")  
+          draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")
         } else {
           draw_shape(context, 0, 0, this_shape, draw_scale, this_color)
         }
@@ -307,13 +307,13 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
    }
    for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
       var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
-      draw_shape(context, x, y, this_shape, draw_scale, color)  
-      
+      draw_shape(context, x, y, this_shape, draw_scale, color)
+
     }
     if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
-        draw_shape(context, x, y, this_shape, draw_scale, color)  
+        draw_shape(context, x, y, this_shape, draw_scale, color)
       }
     }
 
@@ -342,7 +342,7 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
 
 
   var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
-  
+
   draw_enemy_helper(context, enemy_name, size * factor/2, "normal")
   context.restore()
 }
@@ -386,7 +386,7 @@ function draw_tessellation_sign(context, tessellation, x, y, size, glow, rotate)
       }
       drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
     }
-    
+
     context.restore()
     context.save()
 
@@ -466,10 +466,10 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
 
 function draw_bare_mouse(context, x, y, w, h, color) {
   context.save()
-  
+
   context.fillStyle = color
   draw_rounded_rect(context, x, y, w, h, h*0.25, color)
-  
+
   context.beginPath()
   context.moveTo(x - w/2, y - h/6)
   context.lineTo(x + w/2, y - h/6)
@@ -495,7 +495,7 @@ function draw_mouse(context, x, y, w, h, color) {
   context.beginPath()
   context.rect(x - w/2, y - h/2, w/2, h/3)
   context.globalAlpha *= 0.5
-  
+
   context.fill()
   context.restore()
   context.save()
@@ -524,7 +524,7 @@ function draw_right_mouse(context, x, y, w, h, color) {
   context.beginPath()
   context.rect(x, y - h/2, w/2, h/3)
   context.globalAlpha *= 0.5
-  
+
   context.fill()
   context.restore()
   context.save()
@@ -567,7 +567,7 @@ function draw_fb_icon(context, x, y, scale, color) {
   context.fillStyle = color
   context.font = "20px Muli"
   context.fillText("f", x, y + scale/4);
-  context.restore()  
+  context.restore()
 }
 
 function draw_pause_icon(context, x, y, scale, color, key_display) {
@@ -699,15 +699,15 @@ function draw_back_icon(context, x, y, scale, color) {
 function draw_start_icon(context, x, y, scale, color) {
   context.save()
   draw_player_icon(context, x, y, scale/2, color)
-    
-  
+
+
   context.beginPath()
   context.arc(x, y, scale, Math.PI * 7/6, Math.PI * 11/6)
   context.lineWidth = Math.ceil(scale / 6)
   context.strokeStyle = color
   context.stroke()
   context.restore()
-  
+
 }
 
 function draw_player_icon(context, x, y, scale, color) {
@@ -734,7 +734,7 @@ function draw_loading_icon(context, x, y, scale, color, prog) {
   context.strokeStyle = color
   context.stroke()
   context.restore()
-  
+
 }
 
 function draw_save_icon(context, x, y, scale, color) {
@@ -752,12 +752,12 @@ function draw_save_icon(context, x, y, scale, color) {
   context.lineWidth = 5
   context.stroke()
   context.beginPath()
-  context.moveTo(x - scale * 0.35, y - scale * 0.15)  
+  context.moveTo(x - scale * 0.35, y - scale * 0.15)
   context.lineTo(x + scale * 0.35, y - scale * 0.15)
   context.lineTo(x, y + scale * 0.2)
   context.fill()
   context.restore()
-  
+
 }
 function draw_quest_icon(context, x, y, scale, color) {
   context.save()
@@ -770,13 +770,13 @@ function draw_quest_icon(context, x, y, scale, color) {
   context.stroke()
   context.beginPath()
   context.lineWidth = 4
-  context.moveTo(x, y - scale * 0.4)  
+  context.moveTo(x, y - scale * 0.4)
   context.lineTo(x, y + scale * 0.2)
   context.moveTo(x, y + scale * 0.3)
   context.lineTo(x, y + scale * 0.4)
   context.stroke()
   context.restore()
-  
+
 }
 
 function draw_delete_icon(context, x, y, scale, color) {
@@ -991,10 +991,10 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_
     context.closePath()
   }
   context.globalAlpha *= alpha
-  
+
   context.fillStyle = color
   if(interior_color && interior_color != "none") {
-    context.fillStyle = interior_color  
+    context.fillStyle = interior_color
   } else {
     context.globalAlpha /= 3
   }
@@ -1164,9 +1164,8 @@ function draw_multi_fragment(context, x, y, angle) {
 }
 
 function draw_logo(context, x, y, text, scale) {
-
   context.save()
-  context.textAlign = "center"
+
   context.shadowColor = impulse_colors["impulse_blue"]
   context.shadowBlur = 0
   context.fillStyle = "white"//impulse_colors["impulse_blue"]
@@ -1177,10 +1176,16 @@ function draw_logo(context, x, y, text, scale) {
   context.drawImage(logoSprite, x - logoSprite.width/2 * logoScale, y - logoSprite.height * 0.75 * logoScale, logoSprite.width * logoScale, logoSprite.height * logoScale)
 
   if(text) {
-    context.font = '16px Muli'
-  //context.globalAlpha /= 2
-  context.fillText(text, x, y + 40)
-  //context.globalAlpha *= 2
+    context.globalAlpha /= 2
+    if (text === "BETA") {
+      context.font = '24px Muli'
+      context.textAlign = "right"
+      context.fillText(text, x + logoSprite.width/2 * logoScale - 20, y + 40)
+    } else {
+      context.font = '20px Muli'
+      context.textAlign = "center"
+      context.fillText(text, x, y + 40)
+    }
   }
   context.restore()
 
@@ -1221,7 +1226,7 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
     }
 
     if (piece == "sparks") {
-      drawSprite(context, x_loc + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")    
+      drawSprite(context, x_loc + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")
       context.fillText(sparks, x_loc, y + size * 1.6)
     }
 
@@ -1237,8 +1242,8 @@ function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, ar
 
     if (piece == "sparks") {
       if (args.starting_values) {
-        context.fillText("SPARK", x_loc, y - size * 1.3)  
-        context.fillText("VALUE", x_loc, y - size * 0.8)  
+        context.fillText("SPARK", x_loc, y - size * 1.3)
+        context.fillText("VALUE", x_loc, y - size * 0.8)
       } else
         context.fillText("SPARKS", x_loc, y - size * 0.8)
     }
@@ -1271,7 +1276,7 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   if (!polygons) {
     polygons = imp_params.impulse_level_data[level_name].obstacle_v
   }
-  
+
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
@@ -1309,25 +1314,25 @@ function get_ultimate_canvas() {
   ult_canvas_ctx.globalAlpha = 1
   // Commented out section is a more intricate Ultimate design which seems out of place in the art style.
   /*for ( var i = 0; i < 16; i++) {
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.25 * Math.cos(i * Math.PI * 2 / 16), 
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.25 * Math.cos(i * Math.PI * 2 / 16),
                                ult_canvas.height/2 + ult_canvas.width * 0.25 * Math.sin(i * Math.PI * 2 / 16),
-                               Math.PI * 2 / 16 * i, 18, 32, "ultimate")    
+                               Math.PI * 2 / 16 * i, 18, 32, "ultimate")
   }*/
   var number_shards = 48
   for ( var i = 0; i < number_shards; i++) {
     var radius = i % 2 ? ult_canvas.width * 0.4 : ult_canvas.width * 0.42
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + radius * Math.cos(i * Math.PI * 2 / number_shards), 
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + radius * Math.cos(i * Math.PI * 2 / number_shards),
                                ult_canvas.height/2 + radius * Math.sin(i * Math.PI * 2 / number_shards),
                                Math.PI * 2 / number_shards * i, 32, 18, "ultimate_shard")
-    /*drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.33 * Math.cos(i * Math.PI * 2 / 32), 
+    /*drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.33 * Math.cos(i * Math.PI * 2 / 32),
                                ult_canvas.height/2 + ult_canvas.width * 0.33 * Math.sin(i * Math.PI * 2 / 32),
                                Math.PI * 2 / 32 * i, 18, 32, "ultimate_shard")    */
   }
 
   /*for ( var i = 0; i < 32; i++) {
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.4 * Math.cos(i * Math.PI * 2 / 32), 
+    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.4 * Math.cos(i * Math.PI * 2 / 32),
                                ult_canvas.height/2 + ult_canvas.width * 0.4 * Math.sin(i * Math.PI * 2 / 32),
-                               Math.PI * 2 / 32 * i, 36, 64, "ultimate")    
+                               Math.PI * 2 / 32 * i, 36, 64, "ultimate")
   }*/
   return ult_canvas
 
@@ -1670,7 +1675,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
   ctx.arc(x, y, r - 8, 0, 2 * Math.PI, false);
   ctx.lineWidth = 4;
   ctx.strokeStyle = "white";
-  ctx.stroke(); 
+  ctx.stroke();
   if (type == "beat_hive") {
     draw_tessellation_sign(ctx, 1, x, y, r * 0.6, true, 0);
     ctx.beginPath()
@@ -1709,7 +1714,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
 
     drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
 
-    
+
     ctx.beginPath()
     ctx.arc(x, y - r/2, r * 0.75, Math.PI/3, 2 * Math.PI/3, false);
     ctx.strokeStyle = impulse_colors["impulse_blue"]
@@ -1717,8 +1722,8 @@ draw_quest_button = function(ctx, x, y, r, type) {
     var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
     for(var i = 0; i < angles_to_draw.length; i++) {
       var angle = angles_to_draw[i];
-      drawImageWithRotation(ctx, 
-        x + r * 0.9 * Math.cos(angle), 
+      drawImageWithRotation(ctx,
+        x + r * 0.9 * Math.cos(angle),
         y - r / 2 + r * 0.9 * Math.sin(angle),
       angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
     }
@@ -1732,7 +1737,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
 
     drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
 
-    
+
     ctx.beginPath()
     ctx.arc(x, y - r/2, r * 0.75, Math.PI/3, 2 * Math.PI/3, false);
     ctx.strokeStyle = impulse_colors["impulse_blue"]
@@ -1740,8 +1745,8 @@ draw_quest_button = function(ctx, x, y, r, type) {
     var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
     for(var i = 0; i < angles_to_draw.length; i++) {
       var angle = angles_to_draw[i];
-      drawImageWithRotation(ctx, 
-        x + r * 0.9 * Math.cos(angle), 
+      drawImageWithRotation(ctx,
+        x + r * 0.9 * Math.cos(angle),
         y - r / 2 + r * 0.9 * Math.sin(angle),
       angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
     }
@@ -1754,7 +1759,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
     ctx.restore()
 
     drawSprite(ctx, x, y - r/4, 0, r * 0.4, r * 0.4, "player_normal")
-    
+
     ctx.beginPath()
     ctx.arc(x, y - r/2, r * 0.65, Math.PI/3, 2 * Math.PI/3, false);
     ctx.strokeStyle = impulse_colors["impulse_blue"]
@@ -1764,7 +1769,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
     ctx.textAlign = "center"
     ctx.font = "12px Muli"
     ctx.fillText("250K", x, y + r/2)
-    
+
   }
 
   if (type.substring(0, 10) == "blitz_hive") {
@@ -1792,11 +1797,11 @@ draw_quest_button = function(ctx, x, y, r, type) {
     drawSprite(ctx, x, y, 0, r * 0.4, r * 0.4, "player_normal")
     for(var i = 0; i < 8; i++) {
       var angle = Math.PI * 2 * i / 4 + Math.PI/4;
-      drawImageWithRotation(ctx, 
-        x + r * 0.5 * Math.cos(angle), 
+      drawImageWithRotation(ctx,
+        x + r * 0.5 * Math.cos(angle),
         y + r * 0.5 * Math.sin(angle),
       Math.PI/2 + angle, 15, 15, imp_params.impulse_enemy_stats["spear"].images["normal"]);
-    } 
+    }
   }
 
   if (type == "fast_time") {

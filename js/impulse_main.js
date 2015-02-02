@@ -31,11 +31,15 @@ imp_vars.debug = {
   dev: false,
   old_menu: false,
   story_mode: false,
-  show_zero_level: false
+  show_zero_level: false,
+  is_beta: false
 };
 
 if (window.location.host === 'localhost' && window.location.search.indexOf("dev=1") !== -1) {
   imp_vars.debug.dev = true;
+}
+if (window.location.host.indexOf("beta") !== -1) {
+  imp_vars.debug.is_beta = true;
 }
 
 window["impulse_main"] =  function() {
