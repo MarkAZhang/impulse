@@ -59,7 +59,7 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
     // do not do the following if we have beat the last level.. will transfer to summary_state later
     return
   }
-  if(this.world_num == 0 && this.last_level && this.last_level.level_name == "HIVE 0-4") {
+  if(this.world_num == 0 && this.last_level && this.last_level.level_name == imp_vars.last_tutorial_level) {
     // do not do the following if we have beat the last tutorial level.. will transfer to summary_state later
     return
   }
@@ -104,7 +104,7 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
   if (world_num == 0) {
     return "HIVE 0-1"
   }
-  if (imp_vars.debug.show_zero_level || should_show_level_zero(world_num)) {
+  if (imp_vars.debug.show_zero_level && should_show_level_zero(world_num)) {
       this.going_to_level_zero = true;
       return "HIVE "+world_num+"-0"
   }
@@ -128,7 +128,7 @@ MainGameTransitionState.prototype.should_skip_transition_state = function () {
 
 MainGameTransitionState.prototype.maybe_switch_states = function () {
   // if last level of tutorial, go to summary state.
-  if(this.world_num == 0 && this.last_level && this.last_level.level_name == "HIVE 0-4") {
+  if(this.world_num == 0 && this.last_level && this.last_level.level_name == imp_vars.last_tutorial_level) {
     switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return true;
   }

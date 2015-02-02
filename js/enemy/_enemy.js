@@ -36,7 +36,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.gooed_lin_damp_factor = 3
 
-  this.destroyable_timer = 
+  this.destroyable_timer =
 
   this.pointer_visibility = 0
 
@@ -191,9 +191,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 }
 
 Enemy.prototype.check_death = function() {
-  
+
   // if the enemy does not die on open, return it to its original spawn point.
-  
+
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
@@ -433,7 +433,7 @@ Enemy.prototype.adjust_position = function() {
         } else {
           var closest_vertex = closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
           if(closest_vertex.dist < imp_params.impulse_level_data[this.level.level_name].buffer_radius) {
-            var angle = _atan(closest_vertex.v, this.body.GetPosition())  
+            var angle = _atan(closest_vertex.v, this.body.GetPosition())
             in_polygon = true
           }
         }
@@ -581,7 +581,7 @@ Enemy.prototype.set_heading = function(heading) {
   this.heading_timer -= 1
   if(this.heading_timer <= 0) {
     this.body.SetAngle(heading)
-    this.heading_timer = this.heading_gap 
+    this.heading_timer = this.heading_gap
   }
   this.actual_heading = heading
 }
@@ -616,7 +616,7 @@ Enemy.prototype.start_death = function(death) {
 
   if(this.dying != "accident" && this.dying != "fade" && this.dying != "absorbed") {
     if (this.type == "tank") {
-      imp_vars.impulse_music.play_sound("tdeath")  
+      imp_vars.impulse_music.play_sound("tdeath")
     } else if (this.is_boss) {
       imp_vars.impulse_music.play_sound("tdeath")
       setTimeout(function() {
@@ -682,6 +682,9 @@ Enemy.prototype.collide_with = function(other) {
       if (!this.is_disabled()) {
         this.impulse_game_state.reset_combo()
       }
+      if (this.impulse_game_state.show_tutorial) {
+        this.impulse_game_state.add_tutorial_signal("enemy_touched")
+      }
     } else if(other instanceof Enemy) {
         if(other.durations["open"] > 0) {
           this.open(other.durations["open"])
@@ -697,10 +700,10 @@ Enemy.prototype.enemy_hit_proc = function(other) {
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
   if(imp_vars.player_data.difficulty_mode == "easy") {
-    this.player.stun(300)  
+    this.player.stun(300)
   }
   if(imp_vars.player_data.difficulty_mode == "normal") {
-    this.player.stun(500)  
+    this.player.stun(500)
   }
 }
 
@@ -889,7 +892,7 @@ Enemy.prototype.is_disabled = function() {
 }
 
 Enemy.prototype.is_gooed = function() {
-  return this.status_duration[2] > 0; 
+  return this.status_duration[2] > 0;
 }
 
 Enemy.prototype.is_lightened = function() {
@@ -1062,7 +1065,7 @@ Enemy.prototype.generate_images = function() {
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
-    var cur_color = this.get_color_for_status(status) 
+    var cur_color = this.get_color_for_status(status)
     if (!cur_color) cur_color = this.color
 
     var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}

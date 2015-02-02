@@ -229,11 +229,11 @@ PauseMenu.prototype.add_buttons = function() {
     this.buttons.push(enemy_button);
     i+=1
   }
-  var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
+  var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
     toggleFullScreen();
   }, "fullscreen_in_game");
   this.buttons.push(fullscreenButton);
-  var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, "white", function() {
+  var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
      toggle_mute();
   }, "mute_in_game");
   this.buttons.push(muteButton);

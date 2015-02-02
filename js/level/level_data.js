@@ -49,24 +49,29 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
       msg: 'one'
     }
   ],
-  dark_ones_after_gateway: false
+  dark_ones_after_gateway: false,
+  impulse_disabled: true
 }
 
 imp_params.impulse_level_data['HIVE 0-2'] = {
   enemies_easy: {
+    "dumb_stunner": [0, 1, 0, 1, 0, 0, 2],
   },
   enemies: {
+    "dumb_stunner": [0, 1, 0, 1, 0, 0, 2],
   },
   initial_spawn_data_easy: {
+    "dumb_stunner": 2
   },
   initial_spawn_data: {
+    "dumb_stunner": 2
   },
   dominant_enemy: "stunner",
   // Old design which "isolated" the player
   //obstacle_v: [[[60,120],[120,120],[120,420],[680,420],[680,120],[740,120],[740,480],[60,480]],[[180,120],[620,120],[620,360],[560,360],[560,180],[240,180],[240,360],[180,360]]],
   obstacle_v: [[[-50,260],[370,260],[370,360],[-50,360]],[[50,460],[751,460],[750,520],[50,520]],[[850,360],[430,360],[430,260],[850,260]]],
   spark_spawn_points: [],
-  spawn_points: [],
+  spawn_points: [[25, 490], [775, 490]],
   buffer_radius: 1,
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
@@ -74,7 +79,8 @@ imp_params.impulse_level_data['HIVE 0-2'] = {
     "normal": [0, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 400, y: 560},
-  gateway_loc: {x: 400, y: 200}
+  gateway_loc: {x: 400, y: 200},
+  impulse_disabled: true
 }
 
 imp_params.impulse_level_data['HIVE 0-3'] = {

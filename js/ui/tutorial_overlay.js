@@ -15,15 +15,16 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 TutorialOverlayManager.prototype.add_overlays = function() {
 	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
     imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
-		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));	
+		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));
 	}
 
 	if (this.tutorial_level == 1) {
-		this.overlays.push(new MoveTutorialOverlay(this.impulse_game_state));	
+		this.overlays.push(new MoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
 	} else if (this.tutorial_level == 2) {
 		this.overlays.push(new VoidTutorialOverlay(this.impulse_game_state));
+		this.overlays.push(new TouchEnemyTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayMoveTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new GatewayEnterTutorialOverlay(this.impulse_game_state));
 	} else if (this.tutorial_level == 3) {
@@ -41,7 +42,7 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 	} else {
 		for (var i = 0; i < this.on_demand_overlays.length; i++) {
 			if (imp_vars.player_data.tutorial_shown.indexOf(this.on_demand_overlays[i].type) == -1) {
-				this.overlays.push(new this.on_demand_overlays[i].class(this.impulse_game_state));	
+				this.overlays.push(new this.on_demand_overlays[i].class(this.impulse_game_state));
 			}
 		}
 	}
@@ -75,7 +76,7 @@ TutorialOverlayManager.prototype.process = function(dt) {
 		this.overlays.shift();
 		while(this.overlays.length > 0 && this.overlays[0].is_satisfied()) {
 			this.overlays.shift();
-		}	
+		}
 	}
 }
 
@@ -168,7 +169,7 @@ TutorialOverlay.prototype.process_internal = function(dt) {
 TutorialOverlay.prototype.on_expire = function() {}
 
 // Whether the player has completed the action to satisfy this overlay.
-TutorialOverlay.prototype.satisfaction_criteria = function() { 
+TutorialOverlay.prototype.satisfaction_criteria = function() {
 	return false;
 }
 
@@ -178,7 +179,7 @@ TutorialOverlay.prototype.is_satisfied = function() {
 }
 
 // Whether it's time to remove the overlay. This occurs after the fade-out has occurred.
-TutorialOverlay.prototype.is_expired = function() { 
+TutorialOverlay.prototype.is_expired = function() {
 	return this.expired;
 }
 
@@ -227,6 +228,26 @@ VoidTutorialOverlay.prototype.process = function(dt) {
 		flash_obstacle_prop = 1;
 	}
 	this.impulse_game_state.level.flash_obstacles("red", flash_obstacle_prop)*/
+}
+
+TouchEnemyTutorialOverlay.prototype = new TutorialOverlay;
+
+TouchEnemyTutorialOverlay.prototype.constructor = TouchEnemyTutorialOverlay;
+
+function TouchEnemyTutorialOverlay(impulse_game_state) {
+	this.init(impulse_game_state);
+	this.hover_overlay = new MessageBox("tutorial_enemy_touch", impulse_game_state.bright_color, impulse_game_state.world_num);
+	this.duration = 3000
+}
+
+TouchEnemyTutorialOverlay.prototype.draw = function(ctx) {
+}
+
+TouchEnemyTutorialOverlay.prototype.process = function(dt) {
+}
+
+TouchEnemyTutorialOverlay.prototype.is_ready = function() {
+	return this.impulse_game_state.tutorial_signals["enemy_touched"] == "fresh" ||  this.shown;
 }
 
 ImpulseTutorialOverlay.prototype = new TutorialOverlay;
@@ -555,7 +576,7 @@ function GatewayMoveTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.gateway_loc = {
 		x: this.impulse_game_state.level.gateway_loc.x * imp_vars.draw_factor,
-		y: this.impulse_game_state.level.gateway_loc.y * imp_vars.draw_factor};	
+		y: this.impulse_game_state.level.gateway_loc.y * imp_vars.draw_factor};
 	this.message_box = new MessageBox("tutorial_gateway_move", impulse_game_state.bright_color, impulse_game_state.world_num);
 	this.message_box.set_position(this.gateway_loc.x, this.gateway_loc.y - 30);
 	this.message_box.set_visible(true);

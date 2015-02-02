@@ -9,6 +9,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.level_intro_state = level_intro_state
   this.impulse_game_state = null
   this.spawn_pattern = data.spawn_pattern;
+  this.impulse_disabled = data.impulse_disabled;
 
   // If the player has died, we tell the level to blow up enemies and other maintenance to prepare for restart.
   this.restarting_level = false;
@@ -885,7 +886,7 @@ Level.prototype.open_gateway = function() {
 
   this.gateway_transition_duration = this.gateway_transition_interval
   this.gateway_opened = true
-  if (this.dark_ones_after_gateway && !this.is_boss_level) {
+  if (imp_vars.debug.story_mode && this.dark_ones_after_gateway && !this.is_boss_level) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
       this.spawn_dark_one(data);
@@ -950,12 +951,12 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillRect(778, 275, 22, 50);
   } else if (this.level_name == "HIVE 0-3") {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
-    bg_ctx.fillRect(0, 0, 50, 600);
-    bg_ctx.fillRect(750, 0, 50, 600);
+    bg_ctx.fillRect(0, 0, 47, 600);
+    bg_ctx.fillRect(753, 0, 47, 600);
   } else if (this.level_name == "HIVE 0-4") {
     bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
-    bg_ctx.fillRect(0, 0, 800, 50);
-    bg_ctx.fillRect(0, 550, 800, 50);
+    bg_ctx.fillRect(0, 0, 800, 47);
+    bg_ctx.fillRect(0, 553, 800, 47);
   }
 
   if (this.is_level_zero) {

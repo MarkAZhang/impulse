@@ -22,7 +22,8 @@ var imp_vars = {
   hive0_bg_opacity: 0.6 /* hive0 gets rendered differently, needs to be brighter */,
   switch_bg_duration: null,
   share_button_open: true, // button starts out as open.
-  dark_one_speaks: false
+  dark_one_speaks: false,
+  last_tutorial_level: "HIVE 0-4"
 };
 imp_vars.debug = {
   god_mode_enabled: true,
@@ -30,12 +31,11 @@ imp_vars.debug = {
   dev: false,
   old_menu: false,
   story_mode: false,
-  show_zero_level: true
+  show_zero_level: false
 };
 
-if (window.location.host === 'localhost') {
+if (window.location.host === 'localhost' && window.location.search.indexOf("dev=1") !== -1) {
   imp_vars.debug.dev = true;
-  imp_vars.debug.story_mode = true;
 }
 
 window["impulse_main"] =  function() {

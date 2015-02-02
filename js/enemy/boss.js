@@ -182,14 +182,16 @@ Boss.prototype.boss_specific_final_draw = function(context, draw_factor) {
 }
 
 Boss.prototype.additional_death_prep = function () {
-  var data = this.impulse_game_state.level.dark_ones_data[0];
-  var dark_one = new DarkOne(this.body.GetPosition().x * imp_vars.draw_factor,
-   this.body.GetPosition().y * imp_vars.draw_factor,
-   this.impulse_game_state, data.msg, data.size, false)
-  this.impulse_game_state.level.add_dark_one(dark_one);
-  dark_one.move_to(data.x, data.y, 4000);
-  dark_one.opacity = 0.7;
-  dark_one.explode = true;
+  if (imp_vars.debug.story_mode) {
+    var data = this.impulse_game_state.level.dark_ones_data[0];
+    var dark_one = new DarkOne(this.body.GetPosition().x * imp_vars.draw_factor,
+    this.body.GetPosition().y * imp_vars.draw_factor,
+    this.impulse_game_state, data.msg, data.size, false)
+    this.impulse_game_state.level.add_dark_one(dark_one);
+    dark_one.move_to(data.x, data.y, 4000);
+    dark_one.opacity = 0.7;
+    dark_one.explode = true;
+  }
   this.impulse_game_state.level.clear_obstacles();
   this.impulse_game_state.transition_to_hive0bg(5000);
   this.impulse_game_state.shake_level(3000);

@@ -410,90 +410,7 @@ Player.prototype.process = function(dt) {
 
   cur_time = (new Date()).getTime()
 
-  if(imp_vars.player_data.options.control_scheme == "mouse") {
-    if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && !this.is_silenced())
-    {
-      this.attacking = true
-      this.impulse_game_state.game_numbers.impulsed = true;
-      this.attack_loc = this.body.GetPosition().Copy()
-      this.attack_angle = this.impulse_angle
-      this.attack_duration = this.attack_length
-      imp_vars.impulse_music.play_sound("impulse")
-      if (this.impulse_game_state instanceof HowToPlayState) {
-        this.impulse_game_state.player_impulsed()
-      }
-      if (this.impulse_game_state.show_tutorial) {
-        this.impulse_game_state.add_tutorial_signal("player_impulsed")
-      }
-
-    }
-    /*if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
-      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
-        this.initiate_ultimate()
-        if (!(this.impulse_game_state instanceof HowToPlayState)) {
-          this.impulse_game_state.hive_numbers.ultimates -= 1
-        }
-      }
-    }*/
-    this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
-  } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
-    if(!this.attacking && !this.is_silenced()) {
-      var earliest_key_press = 0
-      if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
-      if(this.iright != null && this.iright > earliest_key_press) earliest_key_press = this.iright
-      if(this.iup != null && this.iup > earliest_key_press) earliest_key_press = this.iup
-      if(this.idown != null && this.idown > earliest_key_press) earliest_key_press = this.idown
-
-
-      if(earliest_key_press != 0 && (new Date().getTime() - earliest_key_press > 40)) {
-        if(this.ileft != null && this.iup != null) {
-          this.attack_angle = Math.PI * 5/4
-        }
-        else if(this.ileft != null && this.idown != null) {
-          this.attack_angle = Math.PI * 3/4
-        }
-        else if(this.iright != null && this.iup != null) {
-          this.attack_angle = Math.PI * 7/4
-        }
-        else if(this.iright != null && this.idown != null) {
-          this.attack_angle = Math.PI * 1/4
-        }
-        else if(this.ileft != null) {
-          this.attack_angle = Math.PI
-        }
-        else if(this.iright != null) {
-          this.attack_angle = 0
-        }
-        else if(this.iup != null) {
-          this.attack_angle = Math.PI * 3/2
-        }
-        else if(this.idown != null) {
-          this.attack_angle = Math.PI * 1/2
-        }
-        if (this.is_confused()) {
-          this.attack_angle += Math.PI
-        }
-        this.attacking = true
-        this.impulse_game_state.game_numbers.impulsed = true;
-        this.attack_loc = this.body.GetPosition().Copy()
-        this.attack_duration = this.attack_length
-        imp_vars.impulse_music.play_sound("impulse")
-      }
-    }
-    /*if(!this.ultimate) {
-
-      if(this.iultimate != null) {
-        if(this.impulse_game_state.hive_numbers.ultimates > 0) {
-          this.initiate_ultimate()
-          if (!(this.impulse_game_state instanceof HowToPlayState)) {
-            this.impulse_game_state.hive_numbers.ultimates -= 1
-          }
-        }
-      }
-    }*/
-
-
-  }
+  this.maybe_start_impulse();
 
   this.body.SetAngle(this.impulse_angle)
 
@@ -630,6 +547,83 @@ Player.prototype.process = function(dt) {
     }
     if (this.impulse_game_state.show_tutorial && (f_x != 0 || f_y != 0)) {
       this.impulse_game_state.add_tutorial_signal("player_moved")
+    }
+  }
+}
+
+Player.prototype.maybe_start_impulse = function () {
+  if (this.level.impulse_disabled) {
+    return;
+  }
+  if(imp_vars.player_data.options.control_scheme == "mouse") {
+    if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && !this.is_silenced())
+    {
+      this.attacking = true
+      this.impulse_game_state.game_numbers.impulsed = true;
+      this.attack_loc = this.body.GetPosition().Copy()
+      this.attack_angle = this.impulse_angle
+      this.attack_duration = this.attack_length
+      imp_vars.impulse_music.play_sound("impulse")
+      if (this.impulse_game_state instanceof HowToPlayState) {
+        this.impulse_game_state.player_impulsed()
+      }
+      if (this.impulse_game_state.show_tutorial) {
+        this.impulse_game_state.add_tutorial_signal("player_impulsed")
+      }
+
+    }
+    /*if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
+      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
+        this.initiate_ultimate()
+        if (!(this.impulse_game_state instanceof HowToPlayState)) {
+          this.impulse_game_state.hive_numbers.ultimates -= 1
+        }
+      }
+    }*/
+    this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
+  } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
+    if(!this.attacking && !this.is_silenced()) {
+      var earliest_key_press = 0
+      if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
+      if(this.iright != null && this.iright > earliest_key_press) earliest_key_press = this.iright
+      if(this.iup != null && this.iup > earliest_key_press) earliest_key_press = this.iup
+      if(this.idown != null && this.idown > earliest_key_press) earliest_key_press = this.idown
+
+
+      if(earliest_key_press != 0 && (new Date().getTime() - earliest_key_press > 40)) {
+        if(this.ileft != null && this.iup != null) {
+          this.attack_angle = Math.PI * 5/4
+        }
+        else if(this.ileft != null && this.idown != null) {
+          this.attack_angle = Math.PI * 3/4
+        }
+        else if(this.iright != null && this.iup != null) {
+          this.attack_angle = Math.PI * 7/4
+        }
+        else if(this.iright != null && this.idown != null) {
+          this.attack_angle = Math.PI * 1/4
+        }
+        else if(this.ileft != null) {
+          this.attack_angle = Math.PI
+        }
+        else if(this.iright != null) {
+          this.attack_angle = 0
+        }
+        else if(this.iup != null) {
+          this.attack_angle = Math.PI * 3/2
+        }
+        else if(this.idown != null) {
+          this.attack_angle = Math.PI * 1/2
+        }
+        if (this.is_confused()) {
+          this.attack_angle += Math.PI
+        }
+        this.attacking = true
+        this.impulse_game_state.game_numbers.impulsed = true;
+        this.attack_loc = this.body.GetPosition().Copy()
+        this.attack_duration = this.attack_length
+        imp_vars.impulse_music.play_sound("impulse")
+      }
     }
   }
 }
@@ -912,7 +906,7 @@ Player.prototype.draw = function(context) {
     }
     context.beginPath()
 
-    if(imp_vars.player_data.options.impulse_shadow) {
+    if(imp_vars.player_data.options.impulse_shadow && !this.level.impulse_disabled) {
       context.save();
       var prog = this.appear_timer / this.appear_duration;
       context.globalAlpha *= Math.max(0, 1 - prog);

@@ -93,11 +93,14 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "tutorial_enemy_incr") {
 		this.w = 420;
 		this.h = 40;
+	} else if (this.type == "tutorial_enemy_touch") {
+		this.w = 350;
+		this.h = 40;
 	} else if (this.type == "tutorial_enter_gateway") {
 		this.w = 200;
 		this.h = 120;
 	} else if (this.type == "tutorial_void") {
-		this.w = 300;
+		this.w = 350;
 		this.h = 40;
 	} else if (this.type == "tutorial_kill_enemy") {
 		this.w = 300;
@@ -236,6 +239,10 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_enemy_incr") {
 		this.tutorial_text = "ENEMIES SPAWN FASTER OVER TIME"
+	}
+
+	if (this.type == "tutorial_enemy_touch") {
+		this.tutorial_text = "TOUCHING THIS ENEMY WILL STUN YOU"
 	}
 
 	if (this.type == "tutorial_one_up") {
