@@ -445,6 +445,7 @@ RewardGameState.prototype.advance_game_state = function() {
 RewardGameState.prototype.determine_rewards = function() {
   if(this.args.is_tutorial) {
     if(this.args.tutorial_type == "first_time_tutorial" || this.args.first_time_tutorial) {
+      send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.args.skipped});
       this.rewards.push({
         type: "first_time_tutorial"
       })

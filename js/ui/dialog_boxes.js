@@ -336,7 +336,8 @@ PauseMenu.prototype.quit_tutorial = function() {
       visibility_graph: this.game_state.visibility_graph,
       is_tutorial: true,
       first_time_tutorial: imp_vars.player_data.first_time,
-      victory: true
+      victory: true,
+      skipped: true
     }))
    clear_dialog_box()
 }

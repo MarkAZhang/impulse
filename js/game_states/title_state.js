@@ -10,13 +10,11 @@ function TitleState(last_state) {
     "options" : []
   }
   var _this = this
-  this.image = new Image()
   this.bg_drawn = false
   this.visibility = 0;
 
   this.state = "menu"
 
-  this.image.src = 'impulse_logo.png'
   this.setup_main_menu()
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
@@ -54,9 +52,6 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
    this.bg_drawn = true
   }
 
-  //ctx.globalAlpha = .3
-  //ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
-  //ctx.globalAlpha = 1
   ctx.save()
 
   if (this.fader.get_current_animation() == "fade_in") {

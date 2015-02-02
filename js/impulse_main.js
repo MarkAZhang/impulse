@@ -603,6 +603,7 @@ function load_game() {
   var load_obj = {}
   if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
     imp_vars.player_data.first_time = true
+    send_logging_to_server('STARTED GAME', {});
     load_obj["difficulty_mode"] = "easy"
   }
   else {
@@ -922,6 +923,16 @@ function get_world_map_bg_opacity(world) {
     0.25,
   ];
   return opacity_array[world];
+}
+
+function send_logging_to_server(msg, tags) {
+  if (window.location.host === 'localhost') {
+    window.console.log('LOGGING');
+    window.console.log(msg);
+    window.console.log(tags);
+  } else {
+    Raven.captureMessage(msg, tags);
+  }
 }
 
 function share_on_facebook_dialog() {
