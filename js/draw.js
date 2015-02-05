@@ -1188,7 +1188,15 @@ function draw_logo(context, x, y, text, scale) {
     }
   }
   context.restore()
+}
 
+function draw_porcelain_logo(context, x, y, scale) {
+  context.save()
+
+  var logoScale = scale ? scale : 0.25;
+  context.drawImage(porcelainLogoSprite, x - porcelainLogoSprite.width/2 * logoScale, y - porcelainLogoSprite.height * 0.75 * logoScale, porcelainLogoSprite.width * logoScale, porcelainLogoSprite.height * logoScale)
+
+  context.restore()
 }
 
 function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, args) {
@@ -1499,6 +1507,7 @@ var consumendiSprite = loadSprite("art/consumendi_sprite.png")
 var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
 var adrogantiaSprite = loadSprite("art/adrogantia_sprite.png")
 var logoSprite = loadSprite("art/logo.png")
+var porcelainLogoSprite = loadSprite("art/porcelain_logo.png")
 
 var tessellation_glow_map = {
   "0": "white_glow",

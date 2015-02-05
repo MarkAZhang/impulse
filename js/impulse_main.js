@@ -109,7 +109,7 @@ window["impulse_main"] =  function() {
     /*if(imp_vars.player_data.first_time) {
       imp_vars.cur_game_state = new HowToPlayState("first_time_tutorial")
     } else {*/
-    imp_vars.cur_game_state = new TitleState(null)
+    imp_vars.cur_game_state = new IntroState(null)
     //}
     imp_vars.last_time = (new Date()).getTime();
     step()

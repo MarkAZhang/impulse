@@ -2,29 +2,34 @@ CreditsState.prototype = new GameState
 
 CreditsState.prototype.constructor = CreditsState
 
-function CreditsState() {
+function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
+  this.after_main_game = after_main_game;
+  this.main_game_hive_numbers = main_game_hive_numbers;
+  this.main_game_args = main_game_args;
   this.bg_drawn = false
   this.start_clicked = false
   this.buttons = []
   var _this = this
-  this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
-    _this.fader.set_animation("fade_out", function() {
-      switch_game_state(new TitleState(_this));
-    });
-  }, "back"))
-  this.image = new Image()
 
-  this.image.src = 'impulse_logo.png'
+
   this.buttons.push(new IconButton("KEVIN MACLEOD", 16, imp_vars.levelWidth/2 - 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
   this.buttons.push(new IconButton("MATT MCFARLAND", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
   this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, imp_vars.levelWidth/2 + 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
   this.buttons.push(new IconButton("JAY SALVAT", 16, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
   this.buttons.push(new IconButton("ERIN CATTO", 16, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
-  this.buttons[1].extra_text = "MAIN MENU MUSIC"
-  this.buttons[2].extra_text = "ALL OTHER MUSIC"
-  this.buttons[3].extra_text = "TEXTURES"
-  this.buttons[4].extra_text = "AUDIO API"
-  this.buttons[5].extra_text = "PHYSICS ENGINE"
+  this.buttons[0].extra_text = "MAIN MENU MUSIC"
+  this.buttons[1].extra_text = "ALL OTHER MUSIC"
+  this.buttons[2].extra_text = "TEXTURES"
+  this.buttons[3].extra_text = "AUDIO API"
+  this.buttons[4].extra_text = "PHYSICS ENGINE"
+
+  if (!this.after_main_game) {
+    this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
+      _this.fader.set_animation("fade_out", function() {
+        switch_game_state(new TitleState(_this));
+      });
+    }, "back"))
+  }
 
   this.fader = new Fader({
     "fade_in": 250,
@@ -43,10 +48,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     set_bg("Hive 0", imp_vars.hive0_bg_opacity)
     this.bg_drawn = true
   }
-  /*ctx.globalAlpha = .3
-  /*ctx.drawImage(this.image, imp_vars.levelWidth/2 - this.image.width/2, imp_vars.levelHeight/2 - 100 - this.image.height/2 - 15)*/
-  //ctx.globalAlpha = 1
-  
+
   ctx.save()
 
   if (this.fader.get_current_animation() == "fade_in") {
@@ -55,20 +57,27 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  draw_logo(ctx,imp_vars.levelWidth/2, 150, "CREDITS")
-  
-  ctx.font = '20px Muli'
-  ctx.fillStyle = "white"//impulse_colors["impulse_blue"]
+  draw_porcelain_logo(ctx, 400, 180);
+  ctx.font = '16px Muli'
+  ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.globalAlpha *= 1
+  ctx.fillText("CREATED BY", imp_vars.levelWidth/2, 60)
+  ctx.fillText("WITH CREDIT TO", imp_vars.levelWidth/2, 260)
   /*ctx.fillText("Music by Matt McFarland", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 20)
   ctx.fillText("Some textures from SubtlePatterns.com", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 30)
   ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
   ctx.fillText("Based on the Box2dWeb Physics Engine", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 130)
   ctx.fillText("Game design, UI design, programming, art", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180)
   ctx.fillText("and everything else by Mark Zhang", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 210)*/
-  ctx.globalAlpha /= 1
+  if (this.after_main_game) {
+    ctx.save();
+    ctx.globalAlpha *= 0.5;
+    ctx.font = '16px Muli'
+    ctx.fillStyle = impulse_colors["impulse_blue"];
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30);
+    ctx.restore();
+  }
 
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -90,3 +99,11 @@ CreditsState.prototype.on_click = function(x, y) {
   }
 }
 
+CreditsState.prototype.on_key_down = function (keyCode) {
+  if (this.after_main_game) {
+    var _this = this;
+    this.fader.set_animation("fade_out", function() {
+      switch_game_state(new RewardGameState(_this.main_game_hive_numbers, true, _this.main_game_args));
+    });
+  }
+}

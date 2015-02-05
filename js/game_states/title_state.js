@@ -77,9 +77,9 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
   if (imp_vars.debug.is_beta) {
-    draw_logo(ctx,imp_vars.levelWidth/2, 150, "BETA")
+    draw_logo(ctx,imp_vars.levelWidth/2, 200, "BETA")
   } else {
-    draw_logo(ctx,imp_vars.levelWidth/2, 150, "")
+    draw_logo(ctx,imp_vars.levelWidth/2, 200, "")
   }
 
   // TEXT FOR TRAILER

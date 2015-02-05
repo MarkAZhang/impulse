@@ -601,12 +601,23 @@ MainGameSummaryState.prototype.exit_game = function() {
 
 MainGameSummaryState.prototype.go_to_next_state = function() {
   if(this.victory) {
-    switch_game_state(new RewardGameState(this.hive_numbers, true,
-      {victory: true,
-        is_tutorial: this.world_num == 0,
-        first_time_tutorial: imp_vars.player_data.first_time,
-        skipped: false,
-        just_saved: this.just_saved}))
+    if (this.world_num === 4 &&
+        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 4"] &&
+        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 4"]["first_victory"]) {
+      switch_game_state(new CreditsState(true, this.hive_numbers,
+        {victory: true,
+          is_tutorial: this.world_num == 0,
+          first_time_tutorial: imp_vars.player_data.first_time,
+          skipped: false,
+          just_saved: this.just_saved}))
+    } else {
+      switch_game_state(new RewardGameState(this.hive_numbers, true,
+        {victory: true,
+          is_tutorial: this.world_num == 0,
+          first_time_tutorial: imp_vars.player_data.first_time,
+          skipped: false,
+          just_saved: this.just_saved}))
+    }
   } else {
     switch_game_state(new RewardGameState(this.hive_numbers, true,
       {victory: false,
