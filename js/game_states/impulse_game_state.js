@@ -1015,7 +1015,7 @@ ImpulseGameState.prototype.toggle_pause = function() {
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
 
-  if(keyCode == 90 && imp_vars.debug.dev) {//Z - insta-victory if debug is on.
+  if(keyCode == 90 && (imp_vars.debug.dev || imp_vars.debug.instant_victory_enabled)) {//Z - insta-victory if debug is on.
     this.victory = true
     if (!this.is_boss_level) {
       this.game_numbers.score = this.level.cutoff_scores[2];
