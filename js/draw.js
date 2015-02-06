@@ -1193,7 +1193,7 @@ function draw_logo(context, x, y, text, scale) {
 function draw_porcelain_logo(context, x, y, scale) {
   context.save()
 
-  var logoScale = scale ? scale : 0.25;
+  var logoScale = scale ? scale : 1;
   context.drawImage(porcelainLogoSprite, x - porcelainLogoSprite.width/2 * logoScale, y - porcelainLogoSprite.height * 0.75 * logoScale, porcelainLogoSprite.width * logoScale, porcelainLogoSprite.height * logoScale)
 
   context.restore()
