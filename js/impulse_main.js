@@ -932,7 +932,7 @@ function send_logging_to_server(msg, tags) {
     window.console.log(msg);
     window.console.log(tags);
   } else {
-    Raven.captureMessage(msg, tags);
+    window["Raven"]["captureMessage"](msg, tags);
   }
 }
 
