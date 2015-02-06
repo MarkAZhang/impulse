@@ -82,7 +82,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   if(victory) {
     this.calculate_deaths()
     this.send_logging();
-    this.victory_text = "HIVE " + this.hive_numbers.boss_name+" DEFEATED";
+    this.victory_text = imp_params.hive_names[this.world_num]+" DEFEATED";
 
     var min_star = 3
     for(level in hive_numbers.game_numbers) {
