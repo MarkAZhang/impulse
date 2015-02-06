@@ -644,9 +644,6 @@ BossFour.prototype.generate_target_spawn_angle = function() {
         y: this.body.GetPosition().y + Math.sin(angle) * distance}
     var dist = Math.min(775/imp_vars.draw_factor - test_point.x, test_point.x - 25/imp_vars.draw_factor)
     var dist2 = Math.min(575/imp_vars.draw_factor - test_point.y, test_point.y - 25/imp_vars.draw_factor)
-    window.console.log("CHECKING");
-    window.console.log(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges))
-    window.console.log(Math.min(dist, dist2));
 
     // One of these three angles MUST work.
     if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 5) {
@@ -882,7 +879,6 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
       bud.type = "attack"
     }
   }
-  window.console.log("GENERATING BUD " + bud.type)
   var index = bud.loc
   var angle = (index)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
 
