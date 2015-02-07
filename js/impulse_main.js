@@ -39,7 +39,7 @@ imp_vars.debug = {
 if (window.location.host === 'localhost' && window.location.search.indexOf("dev=1") !== -1) {
   imp_vars.debug.dev = true;
 }
-if (window.location.host.indexOf("beta") !== -1) {
+if (window.location.pathname.indexOf("beta") !== -1) {
   imp_vars.debug.is_beta = true;
 }
 
