@@ -697,7 +697,6 @@ function load_game() {
     }
     // Verify load object options are valid. Replace with default if not.
     else if(!isValidOptionValue(option, load_obj['options'][option])) {
-      window.console.log(option + 'was not valid!');
       load_obj['options'][option] = default_options[option];
     }
   }
@@ -714,7 +713,18 @@ function load_game() {
   imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'] ? load_obj['difficulty_mode'] : "normal";
   imp_vars.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
   imp_vars.player_data.tutorial_shown = load_obj['tutorial_shown'] ? load_obj['tutorial_shown'] : [];
-  imp_vars.player_data.options = load_obj["options"]
+  imp_vars.player_data.options = {
+    effects_volume: load_obj['options']['effects_volume'],
+    bg_music_volume: load_obj['options']['bg_music_volume'],
+    explosions: load_obj['options']['explosions'],
+    score_labels: load_obj['options']['score_labels'],
+    progress_circle: load_obj['options']['progress_circle'],
+    multiplier_display: load_obj['options']['multiplier_display'],
+    impulse_shadow: load_obj['options']['impulse_shadow'],
+    speed_run_countdown: load_obj['options']['speed_run_countdown'],
+    control_hand: load_obj['options']['control_hand'],
+    control_scheme: load_obj['options']['control_scheme']
+  };
   imp_vars.player_data.quests = load_obj["quests"]
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
@@ -802,7 +812,18 @@ function save_game() {
   save_obj['difficulty_mode'] = imp_vars.player_data.difficulty_mode
   save_obj['world_rankings'] = imp_vars.player_data.world_rankings
   save_obj['save_data'] = imp_vars.player_data.save_data
-  save_obj['options'] = imp_vars.player_data.options
+  save_obj['options'] = {
+    'effects_volume': imp_vars.player_data.options.effects_volume,
+    'bg_music_volume': imp_vars.player_data.options.bg_music_volume,
+    'explosions': imp_vars.player_data.options.explosions,
+    'score_labels': imp_vars.player_data.options.score_labels,
+    'progress_circle': imp_vars.player_data.options.progress_circle,
+    'multiplier_display': imp_vars.player_data.options.multiplier_display,
+    'impulse_shadow': imp_vars.player_data.options.impulse_shadow,
+    'speed_run_countdown': imp_vars.player_data.options.speed_run_countdown,
+    'control_hand': imp_vars.player_data.options.control_hand,
+    'control_scheme': imp_vars.player_data.options.control_scheme
+  };
   save_obj['first_time'] = imp_vars.player_data.first_time
   save_obj['hard_mode_unlocked'] = imp_vars.player_data.hard_mode_unlocked;
   save_obj['tutorial_shown'] = imp_vars.player_data.tutorial_shown;

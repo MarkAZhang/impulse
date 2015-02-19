@@ -449,6 +449,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.explosions = !imp_vars.player_data.options.explosions
+    save_game();
   }, function() {
     return imp_vars.player_data.options.explosions;
   });
@@ -457,6 +458,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.score_labels = !imp_vars.player_data.options.score_labels
+    save_game();
   }, function() {
     return imp_vars.player_data.options.score_labels;
   });
@@ -465,6 +467,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.multiplier_display = !imp_vars.player_data.options.multiplier_display
+    save_game();
   }, function() {
     return imp_vars.player_data.options.multiplier_display;
   });
@@ -473,6 +476,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, "white", function(on) {
     imp_vars.player_data.options.impulse_shadow = !imp_vars.player_data.options.impulse_shadow
+    save_game();
   }, function() {
     return imp_vars.player_data.options.impulse_shadow;
   });
@@ -480,8 +484,9 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(button)
   var me = this;
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && imp_vars.player_data.difficulty_mode == "normal") {
-      button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
+    button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
       imp_vars.player_data.options.speed_run_countdown = !imp_vars.player_data.options.speed_run_countdown;
+      save_game();
     }, function() {
       return imp_vars.player_data.options.speed_run_countdown;
     });
