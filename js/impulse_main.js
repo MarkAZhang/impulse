@@ -641,23 +641,39 @@ function load_game() {
 
   if(!load_obj['world_rankings']) {
     load_obj['world_rankings'] = {
-        "easy": {},
-        "normal": {}
+        'easy': {},
+        'normal': {}
     }
   }
 
+  // These need to be explicitly named because the values can change across minifications.
   var default_options = {
-      effects_volume: 100,
-      bg_music_volume: 100,
-      explosions: true,
-      score_labels: true,
-      progress_circle: false,
-      multiplier_display: false,
-      impulse_shadow: true,
-      speed_run_countdown: false,
-      control_hand: "right",
-      control_scheme: "mouse",
+      'effects_volume': 100,
+      'bg_music_volume': 100,
+      'explosions': true,
+      'score_labels': true,
+      'progress_circle': false,
+      'multiplier_display': false,
+      'impulse_shadow': true,
+      'speed_run_countdown': false,
+      'control_hand': 'right',
+      'control_scheme': 'mouse',
     }
+
+  function isValidOptionValue (optionName, optionValue) {
+    if (['bg_music_volume', 'effects_volume'].indexOf(optionName) !== -1) {
+      return typeof optionValue === 'number';
+    } else if (['explosions', 'score_labels', 'progress_circle', 'multiplier_display',
+      'impulse_shadow', 'speed_run_countdown'].indexOf(optionName) !== -1) {
+      return typeof optionValue === 'boolean'
+    } else if (optionName === 'control_hand') {
+      return ['right', 'left'].indexOf(optionValue) !== -1;
+    } else if (optionName === 'control_scheme') {
+      return ['mouse', 'keyboard'].indexOf(optionValue) !== -1;
+    } else {
+      return false;
+    }
+  }
 
   if(!load_obj['options']) {
     //default options
@@ -671,6 +687,18 @@ function load_game() {
   for(var option in default_options) {
     if(!load_obj['options'].hasOwnProperty(option)) {
       load_obj['options'][option] = default_options[option]
+    }
+  }
+
+  for (var option in load_obj['options']) {
+    // Remove extraneous or obsolete options from load object.
+    if(!default_options.hasOwnProperty(option)) {
+      delete default_options[option];
+    }
+    // Verify load object options are valid. Replace with default if not.
+    else if(!isValidOptionValue(option, load_obj['options'][option])) {
+      window.console.log(option + 'was not valid!');
+      load_obj['options'][option] = default_options[option];
     }
   }
 
