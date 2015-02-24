@@ -33,6 +33,9 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.boss_intro_text_activated = false
   this.boss_after_death_actions = false;
 
+  // Is the multiplier mechanic enabled in this game?
+  this.combo_enabled = imp_vars.player_data.difficulty_mode == "normal";
+
   this.stars = 0
   this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
@@ -463,7 +466,9 @@ ImpulseGameState.prototype.process = function(dt) {
       this.world_visibility = Math.max(0, this.world_visibility - dt/1000)
     }
     this.player.process(dt)
-    this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+    if (this.combo_enabled) {
+      this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+    }
     this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
 
     this.game_numbers.game_length += dt;
@@ -939,10 +944,10 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
     ctx.fillStyle = "white"
-    //ctx.shadowColor = this.get_combo_color(this.game_numbers.combo);
-    //ctx.shadowBlur = 10;
-    if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
-      ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+    if (this.combo_enabled) {
+      if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+        ctx.fillText("x"+this.game_numbers.combo, imp_vars.canvasWidth - imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+      }
     }
   }
   ctx.restore()
@@ -1177,16 +1182,19 @@ ImpulseGameState.prototype.check_cutoffs = function() {
 }
 
 ImpulseGameState.prototype.increment_combo = function() {
-  this.game_numbers.base_combo += 1
-  this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+  if (this.combo_enabled) {
+    this.game_numbers.base_combo += 1
+    this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+  }
 }
 
 ImpulseGameState.prototype.reset_combo = function() {
   if (this.player.ultimate) return
+  this.hive_numbers.hit = true;
+  if (!this.combo_enabled) return;
   if (this.show_tutorial && !this.level.is_boss_level) {
     this.add_tutorial_signal("multiplier_reset")
   }
-  this.hive_numbers.hit = true;
   this.game_numbers.base_combo = 1
   this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
 }

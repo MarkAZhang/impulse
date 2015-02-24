@@ -258,7 +258,7 @@ Level.prototype.generate_multi = function() {
 
 Level.prototype.process = function(dt) {
   //handle obstacle visibility
-  if (!this.is_boss_level && this.spark_spawn_points.length > 0) {
+  if (!this.is_boss_level && this.spark_spawn_points.length > 0 && this.impulse_game_state.combo_enabled) {
     /*if (imp_vars.player_data.difficulty_mode == "normal") {
       this.spark_duration -= dt
       if(this.spark_loc == null || this.spark_duration < 0) {
