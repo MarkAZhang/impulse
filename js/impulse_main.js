@@ -23,7 +23,7 @@ var imp_vars = {
   switch_bg_duration: null,
   share_button_open: true, // button starts out as open.
   dark_one_speaks: false,
-  last_tutorial_level: "HIVE 0-4"
+  last_tutorial_level: "HIVE 0-3"
 };
 imp_vars.debug = {
   god_mode_enabled: true,
