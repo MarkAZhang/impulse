@@ -1242,3 +1242,9 @@ BossOne.prototype.explode = function() {
   }
 }
 
+BossOne.prototype.get_impulse_extra_factor = function() {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    return this.impulse_extra_factor * 2;
+  }
+  return this.impulse_extra_factor;
+}

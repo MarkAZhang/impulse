@@ -104,8 +104,8 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [1000, 300000, 1200000], // scores are irrelevant.
-    "normal": [1000, 300000, 1200000], // scores are irrelevant.
+    "easy": [200, 300000, 1200000], // scores are irrelevant.
+    "normal": [200, 300000, 1200000], // scores are irrelevant.
   },
   player_loc: {x: 100, y: 300},
   gateway_loc: {x: 600, y: 300},
@@ -218,7 +218,7 @@ imp_params.impulse_level_data['HIVE 1-0'] = {
 imp_params.impulse_level_data['HIVE 1-1'] = {
   enemies_easy: {
     //"stunner": [0, 4, 1.75, 2, 50]
-    "stunner": [0, 5, 1, 1, 2, 0, 50]
+    "stunner": [0, 4, 1, 1, 2, 0, 50]
   },
   enemies: {
     "stunner": [0, 1.5, 0.5, 1, 4, 2, 50]
@@ -239,7 +239,7 @@ imp_params.impulse_level_data['HIVE 1-1'] = {
   max_rating: 50,
   //cutoff_scores: [100, 500, 1000],
   cutoff_scores: {
-    "easy": [2500, 50000, 300000],
+    "easy": [600, 50000, 300000],
     "normal": [500000, 400000, 800000],
   },
   player_loc: {x: 400, y: 300}
@@ -269,17 +269,16 @@ imp_params.impulse_level_data['HIVE 1-2'] = {
   buffer_radius: 1,
   cutoff_scores: {
 
-    "easy": [15000, 80000, 400000],
+    "easy": [2500, 80000, 400000],
     "normal": [500000, 400000, 1000000],
   },
   player_loc: {x: 400, y: 300}
-
 }
 
 imp_params.impulse_level_data['HIVE 1-3'] = {
   enemies_easy: {
     "stunner": [0, 2.5, 0.5, 1, 2, 0, 40],
-    "spear": [30, 6, 1.5, 1.5, 1, 0, 15],
+    "spear": [15, 6, 1.5, 1.5, 1, 0, 15],
   },
   enemies: {
     "stunner": [0, 3, 1, 1, 4, 0, 50],
@@ -299,7 +298,7 @@ imp_params.impulse_level_data['HIVE 1-3'] = {
   spark_spawn_points: [[400, 50], [50, 300], [400, 550], [750, 300]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [20000, 120000, 600000],
+    "easy": [2500, 120000, 600000],
     "normal": [500000, 300000, 1200000],
   },
   player_loc: {x: 400, y: 400}
@@ -326,13 +325,13 @@ imp_params.impulse_level_data['HIVE 1-4'] = {
   spark_spawn_points: [[400, 125], [400, 475], [125,300], [675, 300], [177, 145], [623, 145], [177, 455], [623, 455]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy":  [30000, 200000, 750000],
+    "easy":  [4000, 200000, 750000],
     "normal":  [750000, 400000, 1500000],
   },
   player_loc: {x: 400, y: 300}
 }
 
-imp_params.impulse_level_data['HIVE 1-5'] = {
+imp_params.impulse_level_data['HIVE 1-6'] = {
   enemies: {
     "spear": [0, 7, 0, 7, 2, 1.5, 15],
     "tank": [1, 5, 0, 5, 3, 2, 25]
@@ -355,13 +354,13 @@ imp_params.impulse_level_data['HIVE 1-5'] = {
   spark_spawn_points: [[66, 528], [66, 72], [734, 528], [66, 528]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy":   [40000, 200000, 600000],
+    "easy":   [7500, 200000, 600000],
     "normal":   [1000000, 400000, 1250000],
   },
   player_loc: {x: 400, y: 300}
 }
 
-imp_params.impulse_level_data['HIVE 1-6'] = {
+imp_params.impulse_level_data['HIVE 1-5'] = {
   enemies: {
     "stunner": [2, 6, 0, 6, 3, 2, 25],
     "tank": [0, 8, 0, 8, 2, 3, 25]
@@ -384,7 +383,7 @@ imp_params.impulse_level_data['HIVE 1-6'] = {
   spark_spawn_points: [[50, 240], [400, 15], [400, 585], [750, 360]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [50000, 200000, 800000],
+    "easy": [4000, 200000, 800000],
     "normal":   [1000000, 500000, 1500000],
   },
   player_loc: {x: 250, y: 150}
@@ -418,7 +417,7 @@ imp_params.impulse_level_data['HIVE 1-7'] = {
   spark_spawn_points: [[75, 145], [235, 34], [565, 34], [725, 145], [725, 455], [565, 566], [235, 566], [75, 455]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [50000, 150000, 750000],
+    "easy": [5000, 150000, 750000],
     "normal":   [1000000, 400000, 1500000],
   },
   player_loc: {x: 400, y: 450}
@@ -506,7 +505,7 @@ imp_params.impulse_level_data['HIVE 2-1'] = {
   spawn_points: [[100, 700], [700, 700]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [60000, 200000, 750000],
+    "easy": [5000, 200000, 750000],
     "normal":   [1250000, 450000, 1750000],
   },
   spawn_pattern: "separate_by_type",
@@ -536,6 +535,7 @@ imp_params.impulse_level_data['HIVE 2-2'] = {
   spark_spawn_points: [[95,85],[295, 85], [505, 85], [705, 85], [95, 515], [295, 515], [505, 515], [705,515]],
   buffer_radius: 1,
   cutoff_scores: {
+    "easy": [5000, 200000, 750000],
     "normal":   [1250000, 300000, 1500000],
   },
   player_loc: {x: 400, y: 300}
@@ -572,7 +572,7 @@ imp_params.impulse_level_data['HIVE 2-3'] = {
  },
  spawn_pattern: "separate_by_type",
   cutoff_scores: {
-    "easy":  [80000, 300000, 1000000],
+    "easy":  [10000, 300000, 1000000],
     "normal":  [1000000, 600000, 2000000],
   },
   player_loc: {x:400, y:300}
@@ -614,7 +614,7 @@ imp_params.impulse_level_data['HIVE 2-4'] = {
   spark_spawn_points: [[400, 120], [180, 460], [620, 460]],
   buffer_radius: 1,
     cutoff_scores: {
-    "easy":  [60000, 200000, 800000],
+    "easy":  [7500, 200000, 800000],
     "normal":  [1000000, 500000, 2000000],
   },
   spawn_pattern: "separate_by_type",
@@ -646,7 +646,7 @@ imp_params.impulse_level_data['HIVE 2-5'] = {
   spawn_points: [[100, -50], [700, -50], [100, 650], [700, 650]],
   spark_spawn_points: [[100, 50], [100, 300], [100, 550],[700, 50], [700, 300],[700, 550]],
   cutoff_scores: {
-    "easy":   [80000, 300000, 1000000],
+    "easy":   [7500, 300000, 1000000],
     "normal":   [1000000, 600000, 2000000],
   },
 
@@ -679,7 +679,7 @@ imp_params.impulse_level_data['HIVE 2-6'] = {
   },
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [90000, 250000, 600000],
+    "easy": [7500, 250000, 600000],
     "normal": [1250000, 500000, 1250000],
   },
 
@@ -709,7 +709,7 @@ imp_params.impulse_level_data['HIVE 2-7'] = {
   spark_spawn_points: [[200, 93], [600, 93], [200, 507], [600, 507]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy":[100000, 300000, 1000000],
+    "easy":[7500, 300000, 1000000],
     "normal":[1500000, 750000, 2250000],
   },
   initial_spawn_data_easy: {
@@ -812,7 +812,7 @@ imp_params.impulse_level_data['HIVE 3-1'] = {
   spark_spawn_points: [[586, 50], [83, 88], [205, 548], [715, 515], [728, 260], [83, 330]],
   buffer_radius: 0.8,
    cutoff_scores: {
-    "easy":[125000, 400000, 1000000],
+    "easy":[10000, 400000, 1000000],
     "normal":[1500000, 750000, 2250000],
   },
   initial_spawn_data: {
@@ -885,7 +885,7 @@ imp_params.impulse_level_data['HIVE 3-2'] = {
   spark_spawn_points: [[190,84],[613,89],[610,521],[186,503]],//[[145, 198], [302, 65], [506, 44], [637, 200], [659, 402], [498, 534], [292, 558], [159, 400]],
   buffer_radius: 1,
      cutoff_scores: {
-  "easy":[125000, 300000, 1000000],
+  "easy":[12500, 300000, 1000000],
   "normal":[1500000, 800000, 2000000],
   },
   initial_spawn_data: {
@@ -928,7 +928,7 @@ imp_params.impulse_level_data['HIVE 3-3'] = {
   spark_spawn_points: [[100,402],[700,402], [250,196],[550,193]],
   buffer_radius: 1.3,
   cutoff_scores: {
-    "easy": [125000, 300000, 900000],
+    "easy": [12500, 300000, 900000],
     "normal": [1500000, 600000, 1750000]
   },
   initial_spawn_data: {
@@ -970,8 +970,8 @@ imp_params.impulse_level_data['HIVE 3-4'] = {
   spawn_points: [[-692,162],[958,574],[-114,43],[958,327],[-139,277],[941,70],[-125,530],[105,743],[-125,530],[344,745],[456,-148],[597,738],[203,-140]],
   spark_spawn_points: [[159,48],[646,551],[151,544],[653,58]],
   buffer_radius: 0.8,
-       cutoff_scores: {
-
+  cutoff_scores: {
+    "easy": [15000, 600000, 2000000],
     "normal": [1500000, 600000, 2000000],
   },
   player_loc: {x: 400, y: 300},
@@ -1022,7 +1022,7 @@ imp_params.impulse_level_data['HIVE 3-6'] = {
   spark_spawn_points: [[223,58],[223,543],[577,58],[577,543]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy":  [200000, 400000, 900000],
+    "easy":  [25000, 400000, 900000],
     "normal":  [1500000, 600000, 1750000],
   },
 
@@ -1066,7 +1066,7 @@ imp_params.impulse_level_data['HIVE 3-5'] = {
   spark_spawn_points: [[318,106],[482,495],[214,222],[586,379],[202,383],[598,218]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy":   [200000, 400000, 800000],
+    "easy":   [20000, 400000, 800000],
     "normal":   [1500000, 750000, 1500000],
   },
   initial_spawn_data: {
@@ -1115,7 +1115,7 @@ imp_params.impulse_level_data['HIVE 3-7'] = {
   spark_spawn_points: [[104,420],[696,181],[339,151],[461,450]],
   buffer_radius: 1.5,
   cutoff_scores: {
-    "easy":[250000, 500000, 1000000],
+    "easy":[25000, 500000, 1000000],
     "normal":[2000000, 800000, 2000000],
   },
   initial_spawn_data: {
@@ -1211,7 +1211,7 @@ imp_params.impulse_level_data['HIVE 4-1'] = {
   obstacle_v: [[[-7,472],[61,471],[96,527],[61,581],[-7,581],[-41,526]],[[93,299],[59,354],[-9,354],[-44,300],[-9,244],[59,245]],[[329,74],[363,19],[431,19],[466,73],[431,129],[363,128]],[[621,466],[553,467],[518,411],[553,357],[621,357],[655,412]],[[841,526],[807,581],[739,581],[704,527],[739,471],[807,472]],[[179,135],[247,134],[282,190],[247,244],[179,244],[145,189]],[[145,412],[179,357],[247,357],[282,411],[247,467],[179,466]],[[741,245],[809,244],[844,300],[809,354],[741,354],[707,299]],[[744,20],[812,19],[847,75],[812,129],[744,129],[710,74]],[[330,303],[364,248],[432,248],[467,302],[432,358],[364,357]],[[363,473],[431,472],[466,528],[431,582],[363,582],[329,527]],[[655,189],[621,244],[553,244],[518,190],[553,134],[621,135]],[[90,74],[56,129],[-12,129],[-47,75],[-12,19],[56,20]]] ,
   buffer_radius: 0.5,
   cutoff_scores: {
-    "easy": [250000, 600000, 1500000],
+    "easy": [25000, 600000, 1500000],
     "normal": [2000000, 1250000, 3000000],
   },
   initial_spawn_data: {
@@ -1253,7 +1253,7 @@ imp_params.impulse_level_data['HIVE 4-2'] = {
   buffer_radius: 1,
         cutoff_scores: {
 
-    "normal": [2000000, 1500000, 3000000],
+    "normal": [25000, 1500000, 3000000],
   },
   initial_spawn_data: {
     "stunner": 2,
@@ -1293,7 +1293,7 @@ imp_params.impulse_level_data['HIVE 4-3'] = {
   spawn_points: [[-100,-100],[-100,700],[900,700],[900,-100]],
   buffer_radius: 1.3,
   cutoff_scores: {
-    "normal":  [2000000, 1200000, 2500000],
+    "normal":  [25000, 1200000, 2500000],
   },
   initial_spawn_data: {
     "orbiter": 2,
@@ -1330,7 +1330,7 @@ imp_params.impulse_level_data['HIVE 4-4'] = {
   spark_spawn_points: [[99,164],[99,437],[701,164],[701,437],[400,165],[400,436]],
   buffer_radius: 1,
   cutoff_scores: {
-    "normal":   [2000000, 1000000, 2000000],
+    "normal":   [25000, 1000000, 2000000],
   },
   initial_spawn_data: {
     "troll": 2,
@@ -1373,7 +1373,7 @@ imp_params.impulse_level_data['HIVE 4-6'] = {
   spark_spawn_points: [[337,429],[461,171],[461,76],[338,524]],
   buffer_radius: 1,
   cutoff_scores: {
-    "easy": [300000, 1000000, 2500000],
+    "easy": [30000, 1000000, 2500000],
     "normal": [2000000, 1000000, 2500000],
   },
   initial_spawn_data: {
@@ -1413,7 +1413,7 @@ imp_params.impulse_level_data['HIVE 4-5'] = {
   buffer_radius: 0.8,
   cutoff_scores: {
 
-    "normal": [2000000, 1200000, 2500000],
+    "normal": [30000, 1200000, 2500000],
   },
   initial_spawn_data: {
     "deathray": 1,
@@ -1475,7 +1475,7 @@ imp_params.impulse_level_data['HIVE 4-7'] = {
   buffer_radius: 1,
 
   cutoff_scores: {
-    "easy":  [300000, 600000, 1250000],
+    "easy":  [40000, 600000, 1250000],
     "normal":  [2500000, 1250000, 2500000],
   },
   initial_spawn_data: {

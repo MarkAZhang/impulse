@@ -1175,3 +1175,10 @@ BossFour.prototype.get_spawn_bonus = function() {
 BossFour.prototype.get_spawn_laser_flare_transition_period = function() {
   return this.spawn_laser_flare_transition_period_base * Math.pow(0.8, this.anger_level);
 }
+
+BossFour.prototype.get_impulse_extra_factor = function() {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    return this.impulse_extra_factor * 2;
+  }
+  return this.impulse_extra_factor;
+}

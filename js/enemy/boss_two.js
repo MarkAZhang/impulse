@@ -762,3 +762,10 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
     ctx.restore()
   }
 }
+
+BossTwo.prototype.get_impulse_extra_factor = function() {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    return this.impulse_extra_factor * 1.5;
+  }
+  return this.impulse_extra_factor;
+}

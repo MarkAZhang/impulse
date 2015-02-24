@@ -1585,9 +1585,14 @@ function draw_bg(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   var w = bg.width;
   var h = bg.height;
   ctx.save()
-
   ctx.beginPath();
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
+  if (spriteName.substring(0, 4) === "Hive" &&
+      parseInt(spriteName.substring(5, 6)) !== 0) {
+    ctx.fillStyle = "#111"//impulse_colors['world ' + parseInt(spriteName.substring(5, 6))];
+    ctx.fill();
+    ctx.globalAlpha *= 0.5;
+  }
   ctx.clip()
   var widthTiles = Math.ceil((xHigh - xLow) / w);
   var heightTiles = Math.ceil((yHigh - yLow) / h);

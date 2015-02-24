@@ -1037,3 +1037,10 @@ BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_forc
     this.extra_gap = this.wheel_spinning_timer
   }
 }
+
+BossThree.prototype.get_impulse_extra_factor = function() {
+  if(imp_vars.player_data.difficulty_mode == "easy") {
+    return this.impulse_extra_factor * 1.5;
+  }
+  return this.impulse_extra_factor;
+}
