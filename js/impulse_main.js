@@ -33,7 +33,8 @@ imp_vars.debug = {
   story_mode: false,
   show_zero_level: false,
   is_beta: false,
-  instant_victory_enabled: false
+  instant_victory_enabled: false,
+  hide_pause_menu: false
 };
 
 if (window.location.host === 'localhost' && window.location.search.indexOf("dev=1") !== -1) {

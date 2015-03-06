@@ -24,7 +24,7 @@ DialogBox.prototype.process = function(dt) {
 }
 
 DialogBox.prototype.draw = function(ctx) {
-
+  if (imp_vars.debug.hide_pause_menu) return;
   ctx.save();
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(imp_vars.sidebarWidth, 0, imp_vars.levelWidth, imp_vars.levelHeight)
@@ -240,7 +240,6 @@ PauseMenu.prototype.add_buttons = function() {
 }
 
 PauseMenu.prototype.additional_draw = function(ctx) {
-
   ctx.save()
   ctx.beginPath()
   ctx.textAlign = "center";

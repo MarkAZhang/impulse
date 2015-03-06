@@ -520,7 +520,7 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
-  if (this.pause) return
+  if (this.pause && !imp_vars.debug.hide_pause_menu) return
 
   this.additional_draw(ctx, bg_ctx)
   ctx.save();
