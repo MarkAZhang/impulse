@@ -64,9 +64,6 @@ function WorldMapState(world, is_practice_mode) {
   this.fade_out_interval = null
   this.fade_out_duration = null
 
-  this.cur_rating = calculate_current_rating()
-  this.next_upgrade = calculate_next_upgrade()
-
   this.fader = new Fader({
     "fade_in": 250,
     "fade_across": 250,
@@ -214,7 +211,6 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
         level_name = "BOSS "+i
       }
       var _this = this;
-      //var this_color = impulse_colors[colors[imp_params.impulse_level_data[level_name].save_state[difficulty].stars]]
       var this_color = impulse_colors["world "+i+" bright"];
       var callback = (function(level, index) {
         return function() {
@@ -338,69 +334,13 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   }
 
   if (index > 0) {
-    if (!this.is_practice_mode) {
-      // draw stuff like rank and continues below the world button
-      /* if(imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world "+index)) {
-        ctx.save()
-        ctx.textAlign = "center"
-        ctx.fillStyle = MainGameSummaryState.prototype.get_victory_color(
-          imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"],
-          index,
-          imp_vars.player_data.world_rankings[difficulty]["world "+index]["deaths"])
-        ctx.font = '18px Muli'
-        ctx.fillText('RANK', this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 100)
-        ctx.font = '36px Muli'
-        ctx.save()
-        var victory_type = imp_vars.player_data.world_rankings[difficulty]["world "+index]["victory_type"]
-        draw_victory_type_icon(ctx, this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 120, index, victory_type, 1)
-        ctx.restore()
-        this.help_buttons[difficulty][index].draw(ctx);
-        if(victory_type == "half") {
-          ctx.font = '11px Muli'
-          ctx.fillText("CONTINUES USED: "+imp_vars.player_data.world_rankings[difficulty]["world "+index]["continues"]
-            , this.world_buttons[difficulty][index].x, this.world_buttons[difficulty][index].y + 150)
-        }
-        if(victory_type == "gold") {
-          ctx.font = '11px Muli'
-          ctx.fillText("DEATHS: "+imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+index]["deaths"]
-            , this.world_buttons[index].x, this.world_buttons[index].y + 80)
-        }
-        ctx.restore()
-      } */
-    } else {
-      /*ctx.font = '13px Muli'
-      ctx.fillStyle = "white"
-      ctx.fillText("SELECT A PRACTICE LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 50)*/
-      // draw the practice buttons
-      /*ctx.save()
-      ctx.globalAlpha *= 0.3
-      for(var i = 0; i < this.practice_buttons[index].length; i++) {
-        if(!this.practice_buttons[index][i].active) continue
-        if(i > 0) {
-
-          ctx.beginPath()
-          ctx.moveTo(this.practice_buttons[index][i-1].x + this.offsets[index], this.practice_buttons[index][i-1].y)
-          ctx.lineTo(this.practice_buttons[index][i].x - this.offsets[index], this.practice_buttons[index][i].y)
-          ctx.lineWidth = 6
-          ctx.strokeStyle = impulse_colors['boss '+(index)]
-          ctx.stroke()
-        }
-      }
-      ctx.restore()*/
+    if (this.is_practice_mode) {
       if (index != 0) {
         for(var i = 0; i < this.practice_buttons[difficulty][index].length; i++) {
           this.practice_buttons[difficulty][index][i].draw(ctx)
         }
       }
     }
-
-    // draw labels.
-    /*ctx.textAlign = 'center'
-    ctx.font = '16px Muli'
-    ctx.fillStyle = impulse_colors["world "+index+" bright"]
-    ctx.fillText("PRACTICE", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
-    ctx.font = '10px Muli'
-    ctx.fillText("SELECT A LEVEL", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 95)*/
   }
 
   if(index != 0) {
@@ -443,11 +383,6 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   if (!this.is_practice_mode || index == 0) {
     this.world_buttons[difficulty][index].post_draw(ctx)
   }
-  /* if (index > 0 && !this.is_practice_mode) {
-    if (!this.is_practice_mode) {
-      this.help_buttons[difficulty][index].post_draw(ctx);
-    }
-  } */
 
   if (index > 0 && this.is_practice_mode) {
     for(var i = 0; i < this.practice_buttons[difficulty][index].length; i++) {
@@ -491,11 +426,6 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.mode_buttons[difficulty].length; i++) {
     this.mode_buttons[difficulty][i].on_mouse_move(x, y)
   }
-
-  /* if(this.world_num > 0 && imp_vars.player_data.world_rankings[difficulty].hasOwnProperty("world " + this.world_num)) {
-    this.help_buttons[difficulty][this.world_num].on_mouse_move(x, y);
-  } */
-
 }
 
 WorldMapState.prototype.on_click = function(x, y) {

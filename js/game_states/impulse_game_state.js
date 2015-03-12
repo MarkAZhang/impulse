@@ -36,7 +36,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   // Is the multiplier mechanic enabled in this game?
   this.combo_enabled = imp_vars.player_data.difficulty_mode == "normal";
 
-  this.stars = 0
   this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
   this.score_goal_messages = ["BRONZE: ", "SILVER: ", "GOLD: "]
@@ -161,8 +160,9 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.show_tutorial = (this.is_tutorial_level ||
     imp_vars.player_data.tutorial_shown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
 
+  // if we've never beaten the first boss, show the tutorial
   if (this.is_boss_level && this.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
-    imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
+    imp_params.impulse_level_data[this.level_name].save_state["easy"].best_time === 1000) {
     this.show_tutorial = true
   }
 
@@ -197,7 +197,6 @@ ImpulseGameState.prototype.reset = function() {
   contactListener.PreSolve = this.filter_collisions
   this.world.SetContactListener(contactListener);
 
-  this.stars = 0
   this.gateway_unlocked = false
   this.victory = false
   this.level.reset()
@@ -398,7 +397,6 @@ ImpulseGameState.prototype.process = function(dt) {
       //if (this.hive_numbers.lives > 0) {
         this.game_numbers.score = 0;
         this.game_numbers.combo = 1;
-        this.stars = 0;
 
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
@@ -1165,9 +1163,8 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
 
 ImpulseGameState.prototype.check_cutoffs = function() {
 
-  if(this.game_numbers.score >= this.level.cutoff_scores[0] && this.stars == 0)
-  {
-    this.stars = 1
+  // Pulse the gateway every time an enemy is killed after reaching the score.
+  if(this.game_numbers.score >= this.level.cutoff_scores[0]) {
     this.gateway_unlocked = true
     this.level_redraw_bg = true
 
@@ -1177,7 +1174,6 @@ ImpulseGameState.prototype.check_cutoffs = function() {
     if (this.show_tutorial) {
       this.add_tutorial_signal("gateway_opened")
     }
-    //this.addScoreLabel(this.cutoff_messages[this.stars-1], impulse_colors[this.star_colors[this.stars-1]], imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, 40, 3000)
   }
 }
 

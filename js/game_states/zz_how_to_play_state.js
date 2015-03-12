@@ -19,7 +19,6 @@ function HowToPlayState(mode) {
   this.transition_interval = 500
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
-  this.cur_rating = calculate_current_rating()
 }
 
 HowToPlayState.prototype.load_level = LoaderGameState.prototype.load_level
@@ -121,7 +120,7 @@ HowToPlayState.prototype.additional_processing = function(dt) {
     } else {
       this.advance_page_timer -= dt
     }
-  } 
+  }
 
   this.transition_timer -= dt;
   if(this.transition_timer < 0 && this.transition_state != "none" && this.zoom == 1) {
@@ -130,7 +129,7 @@ HowToPlayState.prototype.additional_processing = function(dt) {
     }
     else if(this.transition_state == "out") {
       this.setPage(this.cur_page + 1)
-     
+
       if (this.cur_page == 2 && this.mode == "ult_tutorial") {
         this.exit_button.y = 550
       }
@@ -155,7 +154,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
   }
 
   if(this.mode == "first_time_tutorial") {
-    
+
     ctx.font = '24px Muli'
     ctx.textAlign = "center"
     ctx.fillStyle = "white"
@@ -369,7 +368,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
 
     if(this.cur_page == 9 + this.ult_page_offset) {
 
-      this.draw_sparks_page(ctx) 
+      this.draw_sparks_page(ctx)
     }
     if(this.has_ult) {
 
@@ -377,11 +376,11 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.textAlign = 'center'
       if(this.cur_page == 7) {
         this.draw_first_ult_page(ctx)
-      }    
+      }
       if(this.cur_page == 8) {
-       
+
         this.draw_second_ult_page(ctx)
-      }    
+      }
     }
 
     if(this.cur_page == 10 + this.ult_page_offset) {
@@ -389,12 +388,12 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       if(imp_vars.player_data.options.control_hand == "right") {
         draw_rounded_rect(ctx, 250, 406, 55, 55, 10, "white")
-        ctx.fillText("Q", 250, 412)  
+        ctx.fillText("Q", 250, 412)
       } else if(imp_vars.player_data.options.control_hand == "left") {
         draw_rounded_rect(ctx, 250, 406, 125, 55, 10, "white")
-        ctx.fillText("ENTER", 250, 412)  
+        ctx.fillText("ENTER", 250, 412)
       }
-      
+
       draw_rounded_rect(ctx, 400, 406, 55, 55, 10, "white")
       ctx.fillText("X", 400, 412)
       draw_rounded_rect(ctx, 550, 406, 55, 55, 10, "white")
@@ -407,7 +406,7 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
       ctx.fillText("ENEMY INFO AND GAME OPTIONS IN THE PAUSE MENU", 400, 530)
     }
 
-    
+
      if(this.cur_page == 11 + this.ult_page_offset) {
 
       this.exit_button.draw(ctx)
@@ -467,10 +466,10 @@ HowToPlayState.prototype.additional_draw = function(ctx, bg_ctx) {
     }
     if(this.cur_page == 1) {
       this.draw_first_ult_page(ctx)
-    }    
+    }
     if(this.cur_page == 2) {
       this.draw_second_ult_page(ctx)
-    }    
+    }
   }
 
   ctx.restore()
@@ -522,17 +521,17 @@ HowToPlayState.prototype.draw_arrow_with_base = function(ctx, x, y, size, color,
 }
 
 HowToPlayState.prototype.draw_multiplier_page = function(ctx) {
-  
+
   ctx.font = '24px Muli'
   ctx.fillStyle = "white"
   ctx.fillText("YOUR MULTIPLIER INCREASES THE POINTS", 400, 340)
   ctx.fillText("YOU GET FROM KILLING ENEMIES", 400, 375)
 
-  
+
   var y_value = 450
 
   ctx.fillStyle = impulse_colors["impulse_blue"]
-  ctx.font = '48px Muli'  
+  ctx.font = '48px Muli'
   ctx.fillText('100', 250, y_value)
 
   ctx.fillStyle = "white"
@@ -578,14 +577,14 @@ HowToPlayState.prototype.draw_multiplier_page_two = function(ctx) {
   ctx.fillStyle = "white"
   ctx.font = '16px Muli'
   ctx.fillText("KILLING ENEMIES", 250, 360)
-  ctx.fillStyle = impulse_colors["impulse_blue"]  
+  ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.font = '36px Muli'
   ctx.fillText("INCREASES", 250, 400)
   ctx.fillStyle = "white"
   ctx.font = '16px Muli'
   ctx.fillText("YOUR MULTIPLIER", 250, 430)
 
-  
+
   ctx.fillText("TOUCHING ENEMIES", 550, 360)
   ctx.fillStyle = "red"
   ctx.font = '36px Muli'
@@ -822,7 +821,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.shadowColor = "red"
         ctx.fillStyle = "red"
       }
-      
+
       if (this.mode == "normal_tutorial") {
         ctx.font = '20px Muli'
         ctx.textAlign = "center"
@@ -838,7 +837,7 @@ HowToPlayState.prototype.draw_enter_gateway_page  = function(ctx) {
         ctx.fillStyle = "red"
 
       }
-      
+
       ctx.fillStyle = "white"
       //ctx.shadowColor = "white"
       //ctx.shadowBlur = 10
@@ -928,19 +927,19 @@ HowToPlayState.prototype.draw_contexts = function() {
 HowToPlayState.prototype.draw_picture_bg_on_canvas = function(ctx) {
   var boundary_y = 75
   ctx.save()
-  
+
   ctx.beginPath()
   ctx.rect(0, 0, 150, boundary_y)
   ctx.fillStyle = this.dark_color
   ctx.fill()
-  draw_bg(ctx, 0, boundary_y, 150, 150, "Hive 0") 
+  draw_bg(ctx, 0, boundary_y, 150, 150, "Hive 0")
   ctx.beginPath()
   ctx.moveTo(0, boundary_y)
   ctx.lineTo(150, boundary_y)
   ctx.lineWidth = 6
   ctx.strokeStyle = impulse_colors['world 0 lite']
   ctx.stroke()
-  
+
   ctx.restore()
 }
 
@@ -1015,7 +1014,7 @@ HowToPlayState.prototype.setPage = function(page) {
 
   if((this.mode == "normal_tutorial" && page == 3 && this.cur_page != 3) ||
       (this.mode == "first_time_tutorial" && page == 2)) {
-  
+
     this.temp_fragments = new FragmentGroup("player", {x: 75/imp_vars.draw_factor, y: 73/imp_vars.draw_factor}, {x:0, y:0}, false)
     this.temp_fragments.process(300)
   }

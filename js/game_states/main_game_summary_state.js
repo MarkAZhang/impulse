@@ -2,32 +2,6 @@ MainGameSummaryState.prototype = new GameState
 
 MainGameSummaryState.prototype.constructor = MainGameSummaryState
 
-// Kept for the purpose of converting old ranks to the new victory type.
-MainGameSummaryState.prototype.rank_cutoffs = {
-    "F": 0,
-    "D": 10,
-    "D+": 11,
-    "C-": 13,
-    "C": 14,
-    "C+": 15,
-    "B-": 16,
-    "B": 17,
-    "B+": 18,
-    "A-": 20,
-    "A": 21,
-    "A+": 22,
-    "S": 24,
-    "S+": 25 //special
-  }
-
-MainGameSummaryState.prototype.victory_types = [
-  "half",
-  "basic",
-  "silver",
-  "gold",
-];
-
-
 function MainGameSummaryState(world_num, victory, hive_numbers, level, visibility_graph, save_screen, just_saved) {
 
   this.just_saved = just_saved
@@ -55,12 +29,8 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.transition_state = "in"
   this.buttons = []
 
-  this.victory_type = "half"
-
   this.shift_down_time = 0
   this.ctrl_down_time = 0
-
-  this.victory_color = "red"
 
   this.color = impulse_colors["world "+this.world_num]
   this.lite_color = impulse_colors["world "+this.world_num+" lite"]
@@ -83,46 +53,13 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     this.calculate_deaths()
     this.send_logging();
     this.victory_text = imp_params.hive_names[this.world_num]+" DEFEATED";
-
-    var min_star = 3
-    for(level in hive_numbers.game_numbers) {
-      if (hive_numbers.game_numbers[level].stars < min_star) {
-        min_star = hive_numbers.game_numbers[level].stars;
-      }
-    }
-
-    if(!hive_numbers.continues) {
-      this.victory_type = this.victory_types[min_star]
-      this.hive_numbers.victory_type = this.victory_type
-    }
-
-    this.victory_color = this.get_victory_color(this.victory_type, world_num, this.total_deaths)
-
-    var victory_data = imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num]
-
-    // don't  make the player feel bad if this is their first play-through
-    if (victory_data === undefined && this.victory_type == "half") {
-      this.victory_color = impulse_colors["world "+world_num+" bright"]
-    }
-
-    if (victory_data && victory_data["rank"]) {
-      var victory_type = MainGameSummaryState.prototype.convert_rank_to_victory_type(victory_data["rank"]);
-      MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type(difficulty, world, victory_type);
-    }
-
-    if(!victory_data ||
-      this.victory_types.indexOf(this.victory_type) > this.victory_types.indexOf(victory_data["victory_type"]) ||
-      (this.victory_type == victory_data["victory_type"] &&
-      ((this.victory_type == "half" && hive_numbers.continues < victory_data["continues"]) ||
-       (this.victory_type == "gold" && this.total_deaths < victory_data["deaths"])))) {
-        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] =
-          {
-            "victory_type": this.victory_type,
-            "continues": hive_numbers.continues,
-            "deaths": this.total_deaths,
-            "first_victory": victory_data === undefined
-          }
-        save_game()
+    if (!imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world " + this.world_num]) {
+      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] =
+        {
+          "defeated": true,
+          "first_victory": true
+        }
+      save_game()
     }
   }
 
@@ -195,46 +132,6 @@ MainGameSummaryState.prototype.send_logging = function () {
   });
 };
 
-MainGameSummaryState.prototype.convert_rank_to_victory_type = function(rank) {
-  var stars = MainGameSummaryState.prototype.rank_cutoffs[rank];
-  var victory_type = "half"
-  if (stars > 0) {
-    victory_type = "basic"
-  }
-  if (stars >= 16) {
-    victory_type = "silver"
-  }
-  if (stars >= 24) {
-    victory_type = "gold"
-  }
-  return victory_type
-}
-
-MainGameSummaryState.prototype.overwrite_rank_data_with_victory_type = function(difficulty, world, victory_type) {
-  imp_vars.player_data.world_rankings[difficulty][world] = {
-    "victory_type": victory_type,
-    "continues": victory_type == "half" ? 1 : 0,
-    "deaths": 9,
-    "first_victory": true
-  }
-  save_game()
-}
-
-MainGameSummaryState.prototype.get_victory_color = function(victory_type, world_num, total_deaths) {
-
-  /*var victory_colors = [
-    impulse_colors["world "+world_num+" bright"],
-    impulse_colors["world "+world_num+" bright"],
-    impulse_colors["silver"],
-    impulse_colors["gold"]
-  ];*/
-
-  // Special color if no deaths and gold clear.
-
-  return impulse_colors["world "+world_num+" bright"]
-  //return victory_colors[this.victory_types.indexOf(victory_type)];
-}
-
 MainGameSummaryState.prototype.calculate_deaths = function() {
   var deaths = 0;
   for(var i = 0; i < 8; i++) {
@@ -289,8 +186,6 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   {
     this.buttons[i].draw(ctx)
   }
-
-
 
   ctx.shadowBlur = 0;
 
@@ -362,28 +257,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '24px Muli'
     ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2, 190)
 
-  } else if(this.save_screen) {
-    /*draw_lives_and_sparks(ctx,
-      this.hive_numbers.lives, this.hive_numbers.sparks, this.hive_numbers.ultimates,
-      imp_vars.levelWidth/2, 170, 24, {
-        labels: true,
-        ult: this.has_ult,
-        sparks: false, //imp_vars.player_data.difficulty_mode == "normal",
-        lives: false //imp_vars.player_data.difficulty_mode == "normal",
-      });
-    ctx.font = '16px Muli'
-    if(this.hive_numbers.continues) {
-      ctx.fillStyle = "red"
-      ctx.fillText("CONTINUES: "+Math.floor(this.hive_numbers.continues), imp_vars.levelWidth/2, 240)
-    }*/
   }
-
-  /*if(calculate_current_rating() > this.hive_numbers.original_rating || true) {
-      ctx.font = '12px Muli'
-      ctx.fillText("RATING", imp_vars.levelWidth/2, 240)
-      ctx.font = '36px Muli'
-      ctx.fillText("+300", imp_vars.levelWidth/2, 280)
-  }*/
 
   if(!this.save_screen) {
     ctx.shadowBlur = 0
@@ -417,25 +291,13 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
       var y = start_y + 30 + 27 * i;
       ctx.fillText(real_title,260, y)
 
-      /*if(gn.score != undefined) {
-        if(gn.stars > 0) {
-          ctx.fillStyle = impulse_colors[this.star_colors[gn.stars - 1]]
-        }
-        ctx.fillText(gn.score, 270, y)
-      } else {
-        ctx.fillText('---', 270, y)
-      }*/
       ctx.fillStyle = gn.visited ? this.bright_color : "#666";
       if(this.hive_numbers.total_time[title] != undefined)
         ctx.fillText(convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time[title] / 1000)), 400, y)
       else {
         ctx.fillText('---', 400, y)
       }
-      /*if(gn.combo != undefined)
-        ctx.fillText(gn.combo, 510, y)
-      else {
-        ctx.fillText('---', 510, y)
-      }*/
+
       if(gn.deaths != undefined)
         ctx.fillText(gn.deaths, 540, y)
       else {
@@ -533,7 +395,6 @@ MainGameSummaryState.prototype.process = function(dt) {
 MainGameSummaryState.prototype.resume_game = function() {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
   save_game()
-  this.hive_numbers.original_rating = calculate_current_rating() // set to current rating when restarting game
   switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
 }
 
@@ -545,23 +406,6 @@ MainGameSummaryState.prototype.delete_game = function() {
 
 MainGameSummaryState.prototype.check_quests = function() {
   if (this.world_num <= 0) return;
-
-  // Check if this game_number is a gold score. Bosses don't count.
-  if (imp_vars.player_data.difficulty_mode == "normal") {
-    var min_victory_type = 3;
-    var victory_types =  ["half", "basic", "silver", "gold"];
-    for (var i = 1; i <= 4; i++) {
-      if (imp_vars.player_data.world_rankings["normal"]["world " + i]) {
-        var victory_type = imp_vars.player_data.world_rankings["normal"]["world " + i].victory_type;
-        if (victory_types.indexOf(victory_type) < min_victory_type) {
-          min_victory_type = victory_types.indexOf(victory_type)
-        }
-      } else {
-        // If a world is missing, then there is no min_victory_type;
-        min_victory_type = -1;
-      }
-    }
-  }
 
   if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
     set_quest_completed("blitz_hive" + this.world_num);

@@ -96,28 +96,7 @@ var imp_params = {
     3: "HIVE OF LAUGHING",
     4: "HIVE OF PURGING"
   },
-  life_upgrades: [
-    {life: 4, rating: 500},
-    {life: 5, rating: 1000},
-    {life: 6, rating: 2000},
-    {life: 7, rating: 5000},
-    {life: 8, rating: 7000},
-    {life: 9, rating: 10000}
-  ],
-  ult_upgrades: [
-    {ult: 1, rating: 50},
-    {ult: 2, rating: 3000},
-    {ult: 3, rating: 8000},
-  ],
-  spark_upgrades: [
-    {spark_val: 11, rating: 200},
-    {spark_val: 12, rating: 750},
-    {spark_val: 13, rating: 1500},
-    {spark_val: 14, rating: 4000},
-    {spark_val: 15, rating: 6000},
-    {spark_val: 16, rating: 9000},
-  ],
-  
+
   keys: {
 
   },

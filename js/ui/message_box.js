@@ -12,13 +12,7 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	this.visible = false;
 	this.message_only = false;
 	this.show_box = true
-	if (this.type == "rank_explanation") {
-		this.w = 360;
-		this.h = 105;
-	} else if (this.type == "rank_explanation_normal") {
-		this.w = 360;
-		this.h = 140;
-	} else if (this.type == "fullscreen_msg") {
+	if (this.type == "fullscreen_msg") {
 		this.w = 230;
 		this.h = 40;
 	} else if (this.type == "mute_msg") {
@@ -308,52 +302,6 @@ MessageBox.prototype.draw = function(ctx) {
 			ctx.fillStyle = this.color;
 			ctx.fillText(this.tutorial_text, this.x, this.y + this.h / 2 - 15);
 		}
-	} else if (this.type == "rank_explanation_normal") {
-		var ytop = this.y - this.h/2;
-		/*ctx.textAlign = 'center'
-		ctx.font = "20px Muli"
-		ctx.fillStyle = "white";
-	    ctx.fillText("RANK", this.x, ytop + 20);*/
-	    var ysep = 30;
-	    var ypaddingtop = 30;
-	    var xright = this.x + this.w/2 - 10;
-	    var xpaddingright = 10;
-	    var victorytypeiconleft = 50;
-	    var yvictorytypeoffset = 7;
-
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop, this.world_num, "half", 0.8);
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop + ysep, this.world_num, "basic", 0.8);
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop + 2 * ysep, this.world_num, "silver", 0.8);
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop + 3 * ysep, this.world_num, "gold", 0.8);
-		ctx.textAlign = 'right';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-	    ctx.fillText("ONE OR MORE CONTINUES", xright - xpaddingright, ytop + ypaddingtop);
-	    ctx.fillText("NO CONTINUES USED", xright - xpaddingright, ytop + ypaddingtop + ysep);
-	    ctx.fillText("SILVER SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 2 * ysep);
-	    ctx.fillText("GOLD SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 3 * ysep);
-	} else if (this.type == "rank_explanation") {
-		var ytop = this.y - this.h/2;
-		/*ctx.textAlign = 'center'
-		ctx.font = "20px Muli"
-		ctx.fillStyle = "white";
-	    ctx.fillText("RANK", this.x, ytop + 20);*/
-	    var ysep = 30;
-	    var ypaddingtop = 30;
-	    var xright = this.x + this.w/2 - 10;
-	    var xpaddingright = 10;
-	    var victorytypeiconleft = 50;
-	    var yvictorytypeoffset = 7;
-
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop, this.world_num, "basic", 0.8);
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop + 1 * ysep, this.world_num, "silver", 0.8);
-		draw_victory_type_icon(ctx, this.x - this.w/2 + victorytypeiconleft , ytop - yvictorytypeoffset + ypaddingtop + 2 * ysep, this.world_num, "gold", 0.8);
-		ctx.textAlign = 'right';
-		ctx.font = "16px Muli";
-		ctx.fillStyle = "white";
-	    ctx.fillText("DEFEAT HIVE", xright - xpaddingright, ytop + ypaddingtop);
-	    ctx.fillText("SILVER SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 1 * ysep);
-	    ctx.fillText("GOLD SCORE ON EVERY LEVEL", xright - xpaddingright, ytop + ypaddingtop + 2 * ysep);
 	} else if (this.type.substring(0, 6) == "option") {
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";

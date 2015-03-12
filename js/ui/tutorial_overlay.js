@@ -14,7 +14,7 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 
 TutorialOverlayManager.prototype.add_overlays = function() {
 	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
-    imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state[imp_vars.player_data.difficulty_mode].stars < 3) {
+    imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state["easy"].best_time === 1000) {
 		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));
 	}
 
@@ -341,7 +341,7 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.font = '21px Muli'
     ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
 
 	/*ctx.beginPath();
 	ctx.rect(imp_vars.levelWidth - 10, 10, 50, 50);
@@ -390,7 +390,7 @@ ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.font = '21px Muli'
     ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[this.impulse_game_state.stars], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
 }
 
 ScorePointsReminderTutorialOverlay.prototype.satisfaction_criteria = function() {

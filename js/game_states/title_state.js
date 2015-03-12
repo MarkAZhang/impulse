@@ -24,7 +24,6 @@ function TitleState(last_state) {
     "fade_out": 250
   });
   this.fader.set_animation("fade_in");
-  //open_share_dialog();
   this.trailer_fade_in = 0;
   this.trailer_fade_total = 8000;
   this.trailer_fade_delay = 7000;
@@ -108,31 +107,6 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
     this.buttons[this.state][i].post_draw(ctx)
   }
 
-  /*ctx.font = '20px Muli'
-  draw_empty_star(ctx, imp_vars.levelWidth - 20, imp_vars.levelHeight - 15, 15, "black")
-  ctx.textAlign = 'right'
-  ctx.fillStyle = 'black'
-  ctx.fillText(imp_vars.player_data.stars[imp_vars.player_data.difficulty_mode], imp_vars.levelWidth - 40, imp_vars.levelHeight - 10)*/
-
-  /*ctx.font = '20px Muli'
-  ctx.textAlign = 'right'
-  ctx.fillStyle = "white"
-  ctx.fillText("RATING", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 50)
-  ctx.font = '72px Muli'
-  ctx.fillText(this.cur_rating, imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 120)
-  if(this.next_upgrade != null) {
-    ctx.font = '10px Muli'
-    ctx.fillText("NEXT UPGRADE IN", imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 155)
-    ctx.font = '36px Muli'
-    ctx.fillText((this.next_upgrade - this.cur_rating), imp_vars.levelWidth/2 + 200, imp_vars.levelHeight/2 + 193)
-  }*/
-
-  /*ctx.font = '15px Muli'
-  ctx.globalAlpha = 0.9
-  ctx.textAlign = 'center'
-  ctx.fillStyle = "white"
-  ctx.fillText(imp_vars.player_data.difficulty_mode == "normal" ? "CHALLENGE MODE" : "NORMAL MODE", imp_vars.levelWidth/2, 70)*/
-
   ctx.restore()
 
 }
@@ -168,13 +142,15 @@ TitleState.prototype.setup_main_menu = function() {
         switch_game_state(new WorldMapState(i))
       }
     }))
-    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-    //this.buttons["menu"].push(new SmallButton("CREDITS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new CreditsState())}))
-    //this.buttons["menu"].push(new SmallButton("FIFTEEN SECOND GAME", 20, imp_vars.levelWidth/2,
-    //      imp_vars.levelHeight/2+70, 200, 50, function(){switch_game_state(new
-    //        ImpulseGameState(ctx, "SURVIVAL"))}))
+    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",
+      function(){
+        var i = 1;
+        while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
+          i += 1
+        }
+        switch_game_state(new WorldMapState(i, true));
+      }));
     this.buttons["menu"].push(new SmallButton("TUTORIAL", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue", function(){switch_game_state(new HowToPlayState("normal_tutorial"))}))
-    //this.buttons["menu"].push(new SmallButton("ENCYCLOPEDIA", 20, imp_vars.levelWidth/2, imp_vars.levelHeight/2+220, 200, 50, button_color, "blue",function(){switch_game_state(new EnemiesInfoState())}))
     this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
     this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
     this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
@@ -185,7 +161,6 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new IconButton("START GAME", 20, imp_vars.player_data.first_time ? imp_vars.levelWidth/2 : imp_vars.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
 
-      //close_share_dialog();
       //_this.fade_out_duration = _this.fade_interval;
 
       if(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] &&
@@ -215,7 +190,6 @@ TitleState.prototype.setup_main_menu = function() {
     if (!imp_vars.player_data.first_time) {
       this.buttons["menu"].push(new IconButton("PRACTICE", 20, imp_vars.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
       function(){
-        //close_share_dialog();
         //_this.fade_out_duration = _this.fade_interval;
         var i = 1;
         while(i < 4 && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+i]) {
@@ -256,15 +230,6 @@ TitleState.prototype.setup_main_menu = function() {
         set_dialog_box(new OptionsMenu(_this))
       });
     }, "gear"))
-
-    /*if (!imp_vars.player_data.first_time) {
-      //this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_vars.levelWidth/2 - 100, imp_vars.levelHeight/2+20, 200, 50, button_color, "blue",function(){switch_game_state(new ClassicSelectState())}))
-      this.buttons["menu"].push(new IconButton("TUTORIAL", 16, imp_vars.levelWidth/2 - 80, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"], function(){
-          _this.fader.set_animation("fade_out", function() {
-            switch_game_state(new HowToPlayState("normal_tutorial"))
-          });
-      }, "tutorial"))
-    }*/
 
     this.buttons["menu"].push(new IconButton("ACHIEVEMENTS", 16,
       imp_vars.levelWidth/2,
@@ -329,7 +294,6 @@ TitleState.prototype.change_mode = function(type) {
 
   save_game();
   this.set_difficulty_button_underline();
-  calculate_stars(imp_vars.player_data.difficulty_mode)
 }
 
 TitleState.prototype.set_difficulty_button_underline = function() {

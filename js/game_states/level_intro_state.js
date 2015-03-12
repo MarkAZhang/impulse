@@ -21,10 +21,10 @@ function LevelIntroState(level_name, world) {
     imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
     imp_vars.bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
     imp_vars.bg_ctx.globalAlpha *= get_bg_opacity(0);
-    draw_bg(imp_vars.bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+_this.world_num)   
+    draw_bg(imp_vars.bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+_this.world_num)
     imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
     imp_vars.bg_canvas.setAttribute("style", "")
-    
+
 
     _this.fader.set_animation("fade_out_to_main", function() {
       if(_this.world_num) {
@@ -42,9 +42,6 @@ function LevelIntroState(level_name, world) {
       }
     });
   }}(this), "back"))
-
-  this.star_colors = ['bronze', 'silver', 'gold']
-  this.stars = imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score.stars
 
   this.drawn_enemies = null
 
@@ -156,7 +153,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.font = '18px Muli'
     if (imp_vars.player_data.difficulty_mode == "normal") {
-      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 100)    
+      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 100)
     }
 
     ctx.beginPath()
@@ -238,7 +235,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
         ctx.fillText("UNDEFEATED", imp_vars.levelWidth/2 + 100, 505)
       }
 
-    
+
 
     }
   } else {
@@ -258,7 +255,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(imp_params.tessellation_names[this.world_num], imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 20)
     ctx.font = '24px Muli'
 
-    if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].stars == 3) {
+    if(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_vars.levelWidth/2, 390)
       ctx.font = '28px Muli'
@@ -275,7 +272,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   }
   ctx.restore();
 }
-  
+
 LevelIntroState.prototype.on_mouse_move = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++)
   {

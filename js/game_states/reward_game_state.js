@@ -23,7 +23,6 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.current_sparks = calculate_spark_val();
   this.current_ult = calculate_ult();
   this.hard_mode_just_unlocked = false;
-  this.stars = 0; // only for practice mode.
   var _this = this;
   this.initial_difficulty_mode = imp_vars.player_data.difficulty_mode;
 
@@ -433,7 +432,6 @@ RewardGameState.prototype.advance_game_state = function() {
       switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
         best_time: this.args.game_numbers.best_time,
         high_score: this.args.game_numbers.high_score,
-        stars: this.stars,
         victory: this.victory
       }));
     } else {

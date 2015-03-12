@@ -51,24 +51,14 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
   if(!this.level.is_boss_level) {
     this.high_score = args.high_score
-    this.stars = args.stars ? args.stars : 0
     this.best_time = args.best_time ? args.best_time : 0
-
-    if (this.stars < 3)
-        this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][this.stars]
-      else
-        this.bar_top_score = imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][2]
-
-    this.stars_gained = 0
   } else {
     this.best_time = args.best_time ? args.best_time : 0
-    this.stars = args.stars ? args.stars : 0
   }
 
   imp_vars.player_data.total_kills += this.game_numbers.kills
 
   save_game()
-  calculate_stars(imp_vars.player_data.difficulty_mode)
 
   var closest_enemy_type = null
   var closest_prop = -1
@@ -125,11 +115,6 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     i+=1
   } */
 
-  /*if(calculate_current_rating() > this.game_numbers.original_rating) {
-    this.higher_rating = true
-    this.rating_diff = calculate_current_rating() - this.game_numbers.original_rating
-  }*/
-
   this.star_colors = ["world "+this.world_num+" bright", "silver", "gold"]
   this.star_text = ["GATEWAY", "SILVER", "GOLD"]
 
@@ -166,7 +151,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
   ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
   ctx.restore()
-  
+
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
@@ -195,7 +180,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.fillText(this.level_name, imp_vars.levelWidth/2, 240)
-    ctx.fill() 
+    ctx.fill()
     ctx.font = '36px Muli';
     if(this.victory) {
       ctx.fillStyle = "white"
@@ -213,7 +198,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, score_y)
     ctx.font = '42px Muli'
     ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, score_label_y)
-    ctx.fillStyle = this.stars > 0 ? impulse_colors[this.star_colors[this.stars - 1]] : this.color
+    ctx.fillStyle = this.color
     ctx.font = '20px Muli'
     ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, score_y)
 
@@ -227,16 +212,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.lineTo(350, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.color;
-      ctx.stroke();  
+      ctx.stroke();
     }
-    
+
     if (!this.best_time) {
       ctx.beginPath();
       ctx.moveTo(450, line_y);
       ctx.lineTo(550, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.color;
-      ctx.stroke();  
+      ctx.stroke();
     }
 
     var high_score_y = 445;
@@ -272,30 +257,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
           imp_vars.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
-        ctx.fillText("UNDEFEATED", 
+        ctx.fillText("UNDEFEATED",
           imp_vars.levelWidth/2 + 100, best_score_y)
       }
       ctx.restore();
     }
-
-    /* var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
-    var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
-    for(var i = 0; i < 3; i++) {
-      ctx.font = '24px Muli';
-      ctx.textAlign = "right"
-      ctx.fillStyle = impulse_colors[temp_colors[i]]
-      ctx.shadowColor = ctx.fillStyle
-      ctx.font = '20px Muli';
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_vars.player_data.difficulty_mode][i], imp_vars.levelWidth/2 + 160, 290 + 35 * i + 7)
-      ctx.textAlign = "left"
-      ctx.font = '20px Muli';
-      ctx.fillText(score_names[i], imp_vars.levelWidth/2 - 160, 290 + 35 * i + 7)
-    } */
-
   } else {
 
 
@@ -320,7 +290,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '32px Muli'
     ctx.fillText(imp_params.tessellation_names[this.world_num], imp_vars.levelWidth/2, 240)
 
-    ctx.fill() 
+    ctx.fill()
     ctx.font = '48px Muli';
     if (this.level.boss_victory) {
       ctx.fillStyle = "white"
@@ -340,14 +310,14 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, score_label_y)
 
     var line_y = 440
-    
+
     if (!this.best_time) {
       ctx.beginPath();
       ctx.moveTo(350, line_y);
       ctx.lineTo(450, line_y);
       ctx.lineWidth = 3;
       ctx.strokeStyle = this.color;
-      ctx.stroke();  
+      ctx.stroke();
     }
 
     var high_score_y = 445;
@@ -367,31 +337,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time), 
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
           imp_vars.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'
-        ctx.fillText("UNDEFEATED", 
+        ctx.fillText("UNDEFEATED",
           imp_vars.levelWidth/2, best_score_y)
       }
       ctx.restore();
     }
   }
-
-  /*if(this.higher_rating) {
-    ctx.fillStyle = 'black'
-    ctx.font = "16px Muli"
-    ctx.fillText("RATING", imp_vars.levelWidth/2, 400)
-    ctx.font = "48px Muli"
-    ctx.fillText("+"+this.rating_diff, imp_vars.levelWidth/2, 450)
-  }*/
-
-  /* if (!this.level.is_boss_level) {
-    ctx.textAlign = 'center' 
-    ctx.fillStyle = impulse_colors['world '+ this.world_num + ' lite']
-    ctx.font = '12px Muli'
-    ctx.fillText("ENEMIES",  imp_vars.levelWidth/2, 350)
-  } */
 
   for(var i = 0; i < this.buttons.length; i++)
   {
