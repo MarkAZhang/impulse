@@ -1121,20 +1121,6 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder, a
   }
 }
 
-function draw_spark(context, x, y, angle) {
-  drawSprite(context, x, y, angle, 25, 25, "spark")
-}
-
-function draw_spark_powerup(context, x, y) {
-  drawSprite(context, x, y, 0, 36, 36, "spark_powerup")
-}
-
-function draw_spark_fragment(context, x, y, angle) {
-
-  drawSprite(context, x, y, angle, 12, 12, "spark")
-
-}
-
 function draw_multi_powerup(context, x, y, prog) {
   drawSprite(context, x + 1, y, 0, 20, 20, "multi_powerup")
   context.strokeStyle = "white"
@@ -1199,70 +1185,6 @@ function draw_porcelain_logo(context, x, y, scale) {
   context.restore()
 }
 
-function draw_lives_and_sparks(context, lives, sparks, ultimates, x, y, size, args) {
-
-  var pieces_to_draw = [];
-
-  if (args.lives) {
-    pieces_to_draw.push("lives")
-  }
-  if (args.sparks) {
-    pieces_to_draw.push("sparks")
-  }
-  if (args.ult) {
-    pieces_to_draw.push("ult")
-  }
-
-  var xgap = size * 1.8;
-
-  context.save()
-  for (var i = 0; i < pieces_to_draw.length; i++) {
-    var piece = pieces_to_draw[i];
-    var x_loc = x - (pieces_to_draw.length - 1) / 2 * xgap + i * xgap;
-
-    context.font = size+'px Muli'
-    context.fillStyle = (piece == "ult") ? "white" : impulse_colors["impulse_blue"]
-    context.shadowBlur = 0
-    context.textAlign = 'center'
-    if(args.shadow) {
-      context.shadowBlur = 10
-      context.shadowColor = context.fillStyle
-    }
-    if (piece == "lives") {
-      drawSprite(context, x_loc, y, 0, 1.3 * size, 1.3 * size, "lives_icon")
-      context.fillText(lives, x_loc, y + size * 1.6)
-    }
-
-    if (piece == "sparks") {
-      drawSprite(context, x_loc + size * 0.05, y + size * 0.05, 0, 0.8 * size, 0.8 * size, "spark")
-      context.fillText(sparks, x_loc, y + size * 1.6)
-    }
-
-    if (piece == "ult") {
-      drawSprite(context, x_loc, y, 0, 1.2 * size, 1.2 * size, "ultimate_icon")
-      context.fillText(ultimates, x_loc, y + size * 1.6)
-    }
-    context.font = Math.max(8, (size/3))+'px Muli'
-
-    if (piece == "lives") {
-       context.fillText("LIVES", x_loc, y - size * 0.8)
-    }
-
-    if (piece == "sparks") {
-      if (args.starting_values) {
-        context.fillText("SPARK", x_loc, y - size * 1.3)
-        context.fillText("VALUE", x_loc, y - size * 0.8)
-      } else
-        context.fillText("SPARKS", x_loc, y - size * 0.8)
-    }
-
-    if (piece == "ult") {
-      context.fillText("ULT", x_loc, y - size * 0.8)
-    }
-  }
-  context.restore()
-}
-
 function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
 
   context.save()
@@ -1309,41 +1231,6 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.strokeStyle = border_color
   context.stroke()
   context.restore()
-}
-
-function get_ultimate_canvas() {
-  var ult_canvas = document.createElement('canvas');
-  ult_canvas.width = 400
-  ult_canvas.height = 400
-
-  var ult_canvas_ctx = ult_canvas.getContext('2d');
-  ult_canvas_ctx.globalAlpha = 0.2
-  drawSprite(ult_canvas_ctx, ult_canvas.width/2, ult_canvas.height/2, 0, ult_canvas.width * 0.7, ult_canvas.height * 0.7, "ultimate")
-  ult_canvas_ctx.globalAlpha = 1
-  // Commented out section is a more intricate Ultimate design which seems out of place in the art style.
-  /*for ( var i = 0; i < 16; i++) {
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.25 * Math.cos(i * Math.PI * 2 / 16),
-                               ult_canvas.height/2 + ult_canvas.width * 0.25 * Math.sin(i * Math.PI * 2 / 16),
-                               Math.PI * 2 / 16 * i, 18, 32, "ultimate")
-  }*/
-  var number_shards = 48
-  for ( var i = 0; i < number_shards; i++) {
-    var radius = i % 2 ? ult_canvas.width * 0.4 : ult_canvas.width * 0.42
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + radius * Math.cos(i * Math.PI * 2 / number_shards),
-                               ult_canvas.height/2 + radius * Math.sin(i * Math.PI * 2 / number_shards),
-                               Math.PI * 2 / number_shards * i, 32, 18, "ultimate_shard")
-    /*drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.33 * Math.cos(i * Math.PI * 2 / 32),
-                               ult_canvas.height/2 + ult_canvas.width * 0.33 * Math.sin(i * Math.PI * 2 / 32),
-                               Math.PI * 2 / 32 * i, 18, 32, "ultimate_shard")    */
-  }
-
-  /*for ( var i = 0; i < 32; i++) {
-    drawSprite(ult_canvas_ctx, ult_canvas.width/2 + ult_canvas.width * 0.4 * Math.cos(i * Math.PI * 2 / 32),
-                               ult_canvas.height/2 + ult_canvas.width * 0.4 * Math.sin(i * Math.PI * 2 / 32),
-                               Math.PI * 2 / 32 * i, 36, 64, "ultimate")
-  }*/
-  return ult_canvas
-
 }
 
 function draw_agents_within_rect(context, player, level, x, y, w, h, border_color) {
@@ -1415,12 +1302,11 @@ var spriteSheetData = {
   "spark": [0, 41, 40, 40],
   "multi": [0, 81, 40, 40],
   "white_glow": [40, 40, 100, 100],
-  "ultimate": [148, 41, 150, 150],
+  "white_gateway": [148, 41, 150, 150],
   "lives_icon": [0, 0, 40, 40],
   "sparks_icon": [0, 41, 40, 40],
-  "ultimate_icon": [0, 155, 42, 42],
-  "ultimate_icon_blue": [43, 155, 42, 42],
-  "ultimate_shard": [0, 121, 18, 32],
+  "white_flower": [0, 155, 42, 42],
+  "blue_flower": [43, 155, 42, 42],
   "world1_starblank": [85, 199, 41, 38],
   "world1_starhalf": [127, 199, 19, 38],
   "world1_star": [127, 199, 41, 38],
@@ -1439,9 +1325,7 @@ var spriteSheetData = {
   "world2_timer": [241, 211, 48, 61],
   "world3_timer": [189, 277, 48, 62],
   "world4_timer": [241, 277, 48, 62],
-  //"spark_powerup": [304, 0, 49, 48],
   "spark_powerup": [310, 6, 37, 36],
-  //"multi_powerup": [304, 52, 49, 48],
   "multi_powerup": [310, 58, 37, 36],
   "ult_powerup": [304, 105, 49, 48],
   "pink_one": [300, 201, 40, 40],
@@ -1498,8 +1382,6 @@ var spriteSheetData = {
   "adrogantia_glow": [340, 0, 135, 135],
   "adrogantia_logo": [476, 0, 125, 125],
   "adrogantia_logo_gray": [476, 125, 125, 125],
-
-  "generated_ultimate": [0, 0, 400, 400]
 }
 
 var immunitasSprite = loadSprite("art/immunitas_sprite.png")
@@ -1517,7 +1399,7 @@ var tessellation_glow_map = {
   "4": "adrogantia_glow"
 }
 var tessellation_logo_map = {
-  "0": "ultimate",
+  "0": "white_gateway",
   "1": "immunitas_arm",
   "2": "consumendi_logo",
   "3": "negligentia_logo",
@@ -1843,7 +1725,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
     ctx.globalAlpha *= 0.1
     drawSprite(ctx, x, y, 0, r * 1.2, r * 1.2, "white_glow")
     ctx.restore()
-    drawSprite(ctx, x, y, 0, r, r, "ultimate_icon")
+    drawSprite(ctx, x, y, 0, r, r, "white_flower")
   }
 
   if (type == "untouchable") {

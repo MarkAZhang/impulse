@@ -77,14 +77,14 @@ DeathRay.prototype.additional_processing = function(dt) {
   //if(!this.turret_mode && this.turret_timer <= 0) {
   //  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
   //} else if(this.turret_mode && this.turret_timer >= 1) {
-    
+
   //} else if(this.turret_mode){
   //  this.turret_arm_angle = this.body.GetAngle();
   //}
 
   if(this.aimed) {
     this.set_heading(this.ray_angle)
-  } else 
+  } else
     this.set_heading(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
 
   if(this.safe != p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
@@ -96,7 +96,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.destroyable_timer -= dt
   }
 
-  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor) 
+  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor)
 
   if (this.recovery_timer > 0) {
     this.recovery_timer -= dt
@@ -144,7 +144,7 @@ DeathRay.prototype.additional_processing = function(dt) {
         this.fired = true
         if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
           var factor = 1
-          if(this.player.is_bulked() && !this.player.ultimate) {
+          if(this.player.is_bulked()) {
             factor *= 10
           }
           if(this.player.is_gooed() > 0) {
@@ -192,7 +192,7 @@ DeathRay.prototype.reset_ray = function() {
 DeathRay.prototype.aim_ray = function() {
   this.ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.shoot_duration = this.shoot_interval * this.aim_proportion
-  
+
 
 /*  this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_size * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
    y: this.body.GetPosition().y + this.ray_size * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
@@ -216,16 +216,13 @@ DeathRay.prototype.get_ray_polygon = function() {
   return ray_polygon
 }
 
-DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
 
-  if(!ultimate) {
-    this.open(this.open_period)
-    this.durations["impulsed"] += this.impulsed_duration
-  }
+  this.open(this.open_period)
+  this.durations["impulsed"] += this.impulsed_duration
   this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
-  if (!ultimate || this.is_boss)
-    this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 }
 
 DeathRay.prototype.get_target_point = function() {
@@ -246,7 +243,7 @@ DeathRay.prototype.enemy_move = Enemy.prototype.move
 
 DeathRay.prototype.move = function() {
   if(this.aimed) return // cannot move if aimed
-    
+
   if(!this.safe) {// && this.turret_timer == 0) {
     if(this.path == null) {
       this.pathfinding_counter = 2 * this.pathfinding_delay
@@ -358,8 +355,6 @@ DeathRay.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return this.impulsed_color
-  } else if(status == "ulted") {
-    return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
   } else if(status.slice(0, 5) == "world") {

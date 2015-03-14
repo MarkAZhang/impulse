@@ -6,7 +6,7 @@ function ChallengeModeIntroState() {
   this.fader = new Fader({
     "fade_in": 500,
     "fade_out": 250
-  });  
+  });
   this.fader.set_animation("fade_in");
   this.buttons = [];
   this.buttons.push(new IconButton("BACK", 16, 70, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
@@ -56,11 +56,11 @@ ChallengeModeIntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = "white"
 
   ctx.fillText("CHALLENGE MODE", imp_vars.levelWidth/2, 150)
-  drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
+  drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "white_flower")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);
   ctx.fillText("FOR EXPERIENCED PLAYERS.", imp_vars.levelWidth/2, 325);
-  
+
   ctx.fillText("IF THIS IS YOUR FIRST TIME,", imp_vars.levelWidth/2, 400);
   ctx.fillText("YOU MAY WANT TO TRY NORMAL MODE FIRST.", imp_vars.levelWidth/2, 425);
   for(var i = 0; i < this.buttons.length; i++)

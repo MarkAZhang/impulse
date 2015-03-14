@@ -12,10 +12,6 @@ function ImpulseGameState(world, level, visibility_graph, hive_numbers, main_gam
 ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_numbers, main_game) {
   this.hive_numbers = hive_numbers
   this.main_game = main_game
-  if(this.main_game) {
-    this.hive_numbers.sparks = Math.floor(this.hive_numbers.sparks);
-    this.hive_numbers.lives = Math.floor(this.hive_numbers.lives);
-  }
 
   this.pause = true
   this.ready = false
@@ -29,7 +25,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.score_label_rise = 30
   this.buffer_radius = 1 //primarily for starting player location
   this.bg_drawn = false
-  this.has_ult = has_ult()
   this.boss_intro_text_activated = false
   this.boss_after_death_actions = false;
 
@@ -69,13 +64,13 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     }
   }
   // Set up game numbers for level.
-  if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
+  if(this.level && !this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
     this.hive_numbers.game_numbers[this.level.level_name] = {}
     this.hive_numbers.game_numbers[this.level.level_name].visited = true
     this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
+    this.game_numbers = this.hive_numbers.game_numbers[this.level.level_name];
+    this.reset_game_numbers();
   }
-  this.game_numbers = this.hive_numbers.game_numbers[this.level.level_name];
-  this.reset_game_numbers();
 
   if (this.hive_numbers.total_time[this.level_name] === undefined) {
     this.hive_numbers.total_time[this.level_name] = 0;
@@ -101,7 +96,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   contactListener.EndContact = this.handle_collisions_on_end_contact
   this.world.SetContactListener(contactListener);
   this.pause = false
-  this.ready = true
+  if (this.level)
+    this.ready = true
 
   this.bg_visible = false
 
@@ -146,7 +142,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   this.hive0bg_canvas = document.createElement('canvas');
 
-  if(level && !(this instanceof HowToPlayState)) {
+  if(level) {
     this.check_new_enemies()
   }
 
@@ -177,10 +173,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   if (!this.is_boss_level && this.level) {
     this.check_cutoffs();
   }
-
-  if (this.world_num == 0 && this.hive_numbers) {
-    this.hive_numbers.lives = 99;
-  }
 }
 
 ImpulseGameState.prototype.reset = function() {
@@ -200,7 +192,7 @@ ImpulseGameState.prototype.reset = function() {
   this.gateway_unlocked = false
   this.victory = false
   this.level.reset()
-  if(this.level && !(this instanceof HowToPlayState)) {
+  if(this.level) {
     this.check_new_enemies()
   }
   imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
@@ -394,9 +386,8 @@ ImpulseGameState.prototype.process = function(dt) {
     if (this.player.dying && this.player.dying_duration > 0 && !this.processed_death) {
       this.processed_death = true
       this.level.prepare_level_for_reset();
-      //if (this.hive_numbers.lives > 0) {
-        this.game_numbers.score = 0;
-        this.game_numbers.combo = 1;
+      this.game_numbers.score = 0;
+      this.game_numbers.combo = 1;
 
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
@@ -763,16 +754,8 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
 
       ctx.globalAlpha *= prog
       ctx.fillStyle = this.score_labels[i].color
-      if (this.score_labels[i].is_sparks) {
-        ctx.textAlign = 'left'
-        drawSprite(ctx, this.score_labels[i].x * imp_vars.draw_factor + 20,
-            this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise - 7
-            , 0, this.score_labels[i].size * 0.8, this.score_labels[i].size * 0.8, "spark")
-        ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor - 25, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
-      } else {
-        ctx.textAlign = 'center'
-        ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
-      }
+      ctx.textAlign = 'center'
+      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_vars.draw_factor, this.score_labels[i].y * imp_vars.draw_factor - (1 - prog) * this.score_label_rise)
       ctx.restore()
     }
 }
@@ -1026,7 +1009,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     this.on_victory();
   }
   if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
-    if ((this.is_boss_level && this.victory) || this.out_of_lives) {
+    if ((this.is_boss_level && this.victory)) {
       // Do not allow player to pause if they've beaten the boss.
     } else {
       this.toggle_pause()
@@ -1154,10 +1137,10 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
   }
 }
 
-ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size, duration, is_sparks) {
+ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size, duration) {
   var this_duration = duration ? duration : this.score_label_duration
   var max_duration = duration ? duration : this.score_label_duration
-  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this_duration, max_duration: max_duration, size: font_size, is_sparks: is_sparks}
+  var temp_score_label = {text: str, color: color, x: x, y: y, duration: this_duration, max_duration: max_duration, size: font_size}
   this.score_labels.push(temp_score_label)
 }
 
@@ -1167,10 +1150,6 @@ ImpulseGameState.prototype.check_cutoffs = function() {
   if(this.game_numbers.score >= this.level.cutoff_scores[0]) {
     this.gateway_unlocked = true
     this.level_redraw_bg = true
-
-    if (this instanceof HowToPlayState) {
-      this.gateway_opened()
-    }
     if (this.show_tutorial) {
       this.add_tutorial_signal("gateway_opened")
     }
@@ -1185,7 +1164,6 @@ ImpulseGameState.prototype.increment_combo = function() {
 }
 
 ImpulseGameState.prototype.reset_combo = function() {
-  if (this.player.ultimate) return
   this.hive_numbers.hit = true;
   if (!this.combo_enabled) return;
   if (this.show_tutorial && !this.level.is_boss_level) {
@@ -1256,7 +1234,6 @@ ImpulseGameState.prototype.update_save_data_for_level = function () {
   } else {
     this.game_numbers.best_time = false;
   }
-
   save_game()
 }
 

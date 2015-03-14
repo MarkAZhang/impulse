@@ -19,9 +19,6 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
-  this.current_lives = calculate_lives();
-  this.current_sparks = calculate_spark_val();
-  this.current_ult = calculate_ult();
   this.hard_mode_just_unlocked = false;
   var _this = this;
   this.initial_difficulty_mode = imp_vars.player_data.difficulty_mode;
@@ -140,21 +137,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       }
     }
 
-    /*if(cur_reward.type == "share") {
-      ctx.textAlign = "center"
-      ctx.font = "24px Muli"
-      ctx.fillStyle = "white"
-      draw_logo(ctx,imp_vars.levelWidth/2, 200, "")
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.font = "20px Muli"
-      ctx.fillStyle = "white"
-      ctx.fillText("IF YOU'RE ENJOYING THE GAME", imp_vars.levelWidth/2, 300)
-      ctx.fillText("PLEASE HELP SPREAD THE WORD", imp_vars.levelWidth/2, 340)
-      //draw_spark(ctx, 230, 467, 0)
-      //draw_spark(ctx, 570, 467, 0)
-    }*/
-
-
     if(cur_reward.type == "rating") {
 
       main_message = "YOUR SKILL RATING WENT UP"
@@ -173,60 +155,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText(cur_reward.data.new_rating, imp_vars.levelWidth/2, new_values_text_y + 25)
     }
 
-    if(cur_reward.type == "lives") {
-      main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
-      main_message = "EXTRA LIFE"
-
-      ctx.textAlign = "center"
-      ctx.fillStyle = "white"
-      ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
-
-      drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "lives_icon")
-      ctx.font = "72px Muli"
-
-      ctx.font = '12px Muli'
-      ctx.fillStyle = "white"
-      var x_separation = 50
-      ctx.fillText("LIVES", imp_vars.levelWidth/2 - x_separation, new_values_text_y - 30)
-      drawSprite(ctx, imp_vars.levelWidth/2 - x_separation, new_values_text_y - 8, 0, 30, 30, "lives_icon")
-      ctx.fillText("LIVES", imp_vars.levelWidth/2 + x_separation, new_values_text_y - 30)
-      drawSprite(ctx, imp_vars.levelWidth/2 + x_separation, new_values_text_y - 8, 0, 30, 30, "lives_icon")
-
-      ctx.font = '36px Muli'
-      ctx.fillText(cur_reward.data.new_lives - cur_reward.data.diff, imp_vars.levelWidth/2 - x_separation, new_values_text_y + 40)
-      draw_arrow(ctx, imp_vars.levelWidth/2, new_values_text_y, 20, "right", "white", false)
-
-      ctx.fillText(cur_reward.data.new_lives, imp_vars.levelWidth/2 + x_separation, new_values_text_y + 40)
-    }
-
-    if(cur_reward.type == "ult") {
-      ctx.textAlign = "center"
-      main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
-      main_message = "EXTRA ULTIMATE"
-
-      ctx.fillStyle = "white"
-      ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
-
-      drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate_icon")
-      ctx.font = "72px Muli"
-
-      ctx.font = '12px Muli'
-      ctx.fillStyle = 'white'
-      var x_separation = 50
-      ctx.fillText("ULT", imp_vars.levelWidth/2 - x_separation, new_values_text_y - 30)
-      drawSprite(ctx, imp_vars.levelWidth/2 - x_separation, new_values_text_y - 8, 0, 30, 30, "ultimate_icon")
-      ctx.fillText("ULT", imp_vars.levelWidth/2 + x_separation, new_values_text_y - 30)
-      drawSprite(ctx, imp_vars.levelWidth/2 + x_separation, new_values_text_y - 8, 0, 30, 30, "ultimate_icon")
-
-      ctx.font = '36px Muli'
-      ctx.fillText(cur_reward.data.new_ult - cur_reward.data.diff, imp_vars.levelWidth/2 - x_separation, new_values_text_y + 40)
-      draw_arrow(ctx, imp_vars.levelWidth/2, new_values_text_y, 20, "right", "white", false)
-
-      ctx.fillText(cur_reward.data.new_ult, imp_vars.levelWidth/2 + x_separation, new_values_text_y + 40)
-    }
-
     if(cur_reward.type == "quest") {
       var tessellation_num = 0
       ctx.save()
@@ -239,7 +167,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("CHALLENGE COMPLETE!", imp_vars.levelWidth/2, 120)
 
 
-      //drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "ultimate_icon")
       draw_quest_button(ctx, imp_vars.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
       ctx.font = '24px Muli'
@@ -249,37 +176,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.fillText(text, imp_vars.levelWidth / 2, main_reward_text_y + 150 + i * 36);
       }
 
-    }
-
-    if(cur_reward.type == "spark_val") {
-      main_message_teaser = "YOU HAVE EARNED AN UPGRADE!"
-      main_message = "SPARK VALUE INCREASED"
-
-      ctx.textAlign = 'center'
-      ctx.fillStyle = "white"
-      ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2 - 25, main_reward_text_y + 20)
-
-      drawSprite(ctx, imp_vars.levelWidth/2 + 35, main_reward_text_y, 0, 40, 40, "sparks_icon")
-      ctx.font = "72px Muli"
-
-      ctx.font = '12px Muli'
-      ctx.fillStyle = 'white'
-      var x_separation = 50
-      ctx.fillStyle = "white"
-      ctx.fillText("SPARK", imp_vars.levelWidth/2 - x_separation, new_values_text_y - 40)
-      ctx.fillText("VALUE", imp_vars.levelWidth/2 - x_separation, new_values_text_y - 25)
-      drawSprite(ctx, imp_vars.levelWidth/2 - x_separation, new_values_text_y - 6, 0, 22, 22, "sparks_icon")
-
-      ctx.fillText("SPARK", imp_vars.levelWidth/2 + x_separation, new_values_text_y - 40)
-      ctx.fillText("VALUE", imp_vars.levelWidth/2 + x_separation, new_values_text_y - 25)
-      drawSprite(ctx, imp_vars.levelWidth/2 + x_separation, new_values_text_y - 6, 0, 22, 22, "sparks_icon")
-
-      ctx.font = '36px Muli'
-      ctx.fillText(cur_reward.data.new_spark_val - cur_reward.data.diff, imp_vars.levelWidth/2 - x_separation, new_values_text_y + 40)
-      draw_arrow(ctx, imp_vars.levelWidth/2, new_values_text_y, 20, "right", "white", false)
-
-      ctx.fillText(cur_reward.data.new_spark_val, imp_vars.levelWidth/2 + x_separation, new_values_text_y + 40)
     }
 
     if(cur_reward.type == "first_time_tutorial") {
@@ -300,12 +196,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
       this.normal_mode_button.draw(ctx)
       this.challenge_mode_button.draw(ctx)
-
-      //draw_tutorial_icon(ctx, imp_vars.levelWidth/2, main_reward_text_y, 30, "white" , false)
-      //ctx.font = "24px Muli"
-      //ctx.textAlign = "center"
-      //ctx.fillStyle = "white"
-
     }
 
     // write a main message if it applies
@@ -411,10 +301,7 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
 }
 
 RewardGameState.prototype.advance_game_state = function() {
-  if(this.to_tutorial) {
-    switch_game_state(new HowToPlayState("ult_tutorial"))
-  }
-  else if (this.main_game) {
+  if (this.main_game) {
     if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
       // Immediately move to the next world.
       switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))

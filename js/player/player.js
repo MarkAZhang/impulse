@@ -64,13 +64,11 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.iright = null
   this.idown = null
   this.iup = null
-  this.ultimate = null
   this.impulse_angle = 0
 
   this.has_lightened_properties = false
 
   this.enemies_hit = [] //stores ids of enemies hit
-  this.ultimate_enemies_hit = [] //stores ids of enemies hit
 
   this.attacking = false
   this.attack_start = 0
@@ -78,15 +76,6 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.attack_angle = 0
   this.attack_length = 500
   this.attack_duration = 0
-
-  this.ultimate = false
-  this.ultimate_start = 0
-  this.ultimate_loc = {}
-  this.ultimate_length = 1000
-  this.ultimate_duration = 0
-  this.ultimate_radius = 20
-  this.ultimate_factor = 250 // multiple of the enemy's force
-  this.ultimate_width = 1/32
 
   // used for status timers
   this.confuse_duration = 0
@@ -148,7 +137,6 @@ Player.prototype.keyDown = function(keyCode) {
       this.iright = null
       this.iup = null
       this.idown = null
-      this.iultimate = null
       break
     case imp_params.keys.ILEFT_KEY:
       this.ileft = (new Date()).getTime()
@@ -161,9 +149,6 @@ Player.prototype.keyDown = function(keyCode) {
       break;
     case imp_params.keys.IDOWN_KEY:
       this.idown = (new Date()).getTime()
-      break;
-    case imp_params.keys.ULTIMATE_KEY:
-      this.iultimate = (new Date()).getTime()
       break;
   }
 }
@@ -195,9 +180,6 @@ Player.prototype.keyUp = function(keyCode) {
     case imp_params.keys.IDOWN_KEY:
       this.idown = null
       break;
-    case imp_params.keys.ULTIMATE_KEY:
-      this.iultimate = null
-    break
     case imp_params.keys.PAUSE:
     case imp_params.keys.SECONDARY_PAUSE:
       this.up = false
@@ -208,7 +190,6 @@ Player.prototype.keyUp = function(keyCode) {
       this.iright = null
       this.iup = null
       this.idown = null
-      this.iultimate = null
       break
   }
 }
@@ -298,18 +279,6 @@ Player.prototype.right_mouse_up= function(pos) {
 }
 
 Player.prototype.process = function(dt) {
- if(this.dying && this.dying_duration < 0)
-  {
-    /*if(this.impulse_game_state instanceof ImpulseGameState) {
-      this.impulse_game_state.game_over()
-      return
-    }
-    else if(this.impulse_game_state instanceof HowToPlayState) {
-      this.impulse_game_state.reload_world()
-      return
-    }*/
-  }
-
   if(this.dying )
   {
     this.dying_duration -= dt
@@ -504,20 +473,6 @@ Player.prototype.process = function(dt) {
     }
   }
 
-  if(this.ultimate) {
-    if(this.ultimate_duration < 0)
-    {
-      this.process_ultimate(true)
-      this.finish_ultimate()
-    }
-    else
-    {
-      this.process_ultimate(false)
-
-      this.ultimate_duration -= dt
-    }
-  }
-
   if(!this.is_locked())
   {
     var f = this.force
@@ -541,10 +496,6 @@ Player.prototype.process = function(dt) {
       f_y *= this.gooed_force_boost
     }
     this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
-
-    if (this.impulse_game_state instanceof HowToPlayState && (f_x != 0 || f_y != 0)) {
-      this.impulse_game_state.player_moved()
-    }
     if (this.impulse_game_state.show_tutorial && (f_x != 0 || f_y != 0)) {
       this.impulse_game_state.add_tutorial_signal("player_moved")
     }
@@ -564,22 +515,11 @@ Player.prototype.maybe_start_impulse = function () {
       this.attack_angle = this.impulse_angle
       this.attack_duration = this.attack_length
       imp_vars.impulse_music.play_sound("impulse")
-      if (this.impulse_game_state instanceof HowToPlayState) {
-        this.impulse_game_state.player_impulsed()
-      }
       if (this.impulse_game_state.show_tutorial) {
         this.impulse_game_state.add_tutorial_signal("player_impulsed")
       }
 
     }
-    /*if((this.right_mouse_pressed || cur_time - this.last_right_mouse_down < 100) && !this.ultimate) {
-      if(this.impulse_game_state.hive_numbers.ultimates > 0) {
-        this.initiate_ultimate()
-        if (!(this.impulse_game_state instanceof HowToPlayState)) {
-          this.impulse_game_state.hive_numbers.ultimates -= 1
-        }
-      }
-    }*/
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
   } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
     if(!this.attacking && !this.is_silenced()) {
@@ -639,98 +579,8 @@ Player.prototype.readjust_force = function() {
   }
 }
 
-Player.prototype.initiate_ultimate = function() {
-
-  imp_vars.impulse_music.play_sound("ult")
-  this.ultimate = true
-  this.ultimate_loc = this.body.GetPosition().Copy()
-  this.ultimate_duration = this.ultimate_length
-  this.bulk(this.ultimate_length)
-  this.stun(this.ultimate_length)
-  this.body.SetLinearVelocity(new b2Vec2(0, 0))
-  if (this.level.is_boss_level) {
-    this.body.SetPosition(new b2Vec2(-1000, -1000))
-  }
-}
-
-Player.prototype.process_ultimate = function(final_strike) {
-
-  for(var i = 0; i < this.level.enemies.length; i++)
-    {
-      var this_enemy = this.level.enemies[i]
-      if(!this_enemy.dying)//enemy has not been hit
-      {
-        var impulse_sensitive_points = this_enemy.get_impulse_sensitive_pts()
-        var final_strike_factor = final_strike ? 1 : 0.002
-        var ultimate_force = final_strike_factor * this.ultimate_factor
-
-        for(var j = 0; j < impulse_sensitive_points.length; j++) {
-            if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
-            {
-              var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-              // reset open duration since you should not score points
-              if (this.ultimate_enemies_hit.indexOf(this_enemy.id) == -1) {
-                this.ultimate_enemies_hit.push(this_enemy.id)
-                this_enemy.ulted(true /*first_ult_call*/)
-              } else {
-                this_enemy.ulted(false /*first_ult_call*/)
-              }
-              var data = imp_params.impulse_enemy_stats[this_enemy.type]
-              var prop = 1 //Math.min(p_dist(impulse_sensitive_points[j], this.ultimate_loc)/this.ultimate_radius * 1.5, 1)
-
-              // Less for bosses.
-              var enemy_factor =  this_enemy.is_boss ? 0.02/this_enemy.impulse_extra_factor : 1;
-
-              // Slightly more for Slingshots. Lighter enemies tend to not get thrown as far.
-              if (this_enemy.type == "slingshot") {
-                enemy_factor *= 2
-              }
-              this_enemy.process_impulse(this.ultimate_loc,
-                prop * ultimate_force * enemy_factor * this_enemy.body.GetMass() * (data.lin_damp), angle, true)
-
-              break
-            }
-
-        }
-        if(this_enemy instanceof Harpoon && this_enemy.harpoon_state == "engaged" && this_enemy.harpooned_target == this) {
-          this_enemy.disengage_harpoon()
-        }
-      }
-
-      // if Harpoon, also check the Head
-      if(this_enemy instanceof Harpoon && this_enemy.harpoon_state != "inactive") {
-        var this_harpoon_head = this_enemy.harpoon_head;
-        var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
-
-        for(var j = 0; j < impulse_sensitive_points.length; j++) {
-          if (this.point_in_ultimate_dist(impulse_sensitive_points[j], this_enemy.body.GetLinearVelocity().Length() > 20))
-          {
-            var angle = _atan(this.ultimate_loc, impulse_sensitive_points[j])//not sure if it should be this point
-            this_harpoon_head.process_impulse(this.ultimate_loc, ultimate_force * 2, angle)
-          }
-        }
-      }
-    }
-}
-
-Player.prototype.finish_ultimate = function() {
-  this.ultimate = false
-  this.ultimate_enemies_hit = []
-  if (this.impulse_game_state instanceof HowToPlayState) {
-    this.impulse_game_state.player_ulted()
-  }
-  if (this.level.is_boss_level) {
-    this.body.SetPosition(this.ultimate_loc)
-  }
-}
-
 Player.prototype.get_current_position = function() {
-  if (!this.ultimate) {
-    return this.body.GetPosition()
-  } else {
-    return this.ultimate_loc
-  }
-
+  return this.body.GetPosition()
 }
 
 Player.prototype.point_in_impulse_angle = function(pt) {
@@ -763,57 +613,7 @@ Player.prototype.point_in_impulse_dist = function(pt, fast) {
    && dist <= this.impulse_radius * lighten_factor * (((this.attack_length - this.attack_duration)/this.attack_length) + speedy_factor)
 }
 
-Player.prototype.point_in_ultimate_dist = function(pt) {
-  var dist = this.ultimate_loc.Copy()
-  dist.Subtract(pt)
-  dist = dist.Normalize()
-  var prop = bezier_interpolate(0.15, 0.5,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length))
-
-  return dist <= this.ultimate_radius * prop
-}
-
-Player.prototype.draw_ultimate = function(context) {
-
-  context.save()
-  if (this.dying) {
-      var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
-      context.globalAlpha *= (1 - prog)
-  }
-
-  if(this.ultimate && this.ultimate_duration > 0) {
-    context.save()
-    context.globalAlpha *= 0.3;
-    var gray = Math.min(2 - Math.abs((this.ultimate_duration - this.ultimate_length/2)/(this.ultimate_length/4)), 1)
-    context.globalAlpha *= gray/2
-    context.fillStyle = "white"
-    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
-
-    context.restore()
-      var cur_time = (new Date()).getTime()
-      context.shadowBlur = 10;
-      context.shadowColor = "#ccc";
-      context.globalAlpha *= 0.5
-      var prop = //Math.pow(((this.ultimate_length - this.ultimate_duration)/this.ultimate_length),3)//
-      bezier_interpolate(0.1, 0.5,((this.ultimate_length - this.ultimate_duration)/this.ultimate_length));
-
-      if(prop > 0.4) {
-        context.globalAlpha *= (1 - prop)/(0.4) < 0 ? 0 : (1-prop)/(0.4);
-      }
-      drawSprite(context,
-        this.ultimate_loc.x * imp_vars.draw_factor,
-        this.ultimate_loc.y * imp_vars.draw_factor,  0,
-        this.ultimate_radius * prop * imp_vars.draw_factor * 2, this.ultimate_radius * prop * imp_vars.draw_factor * 2,
-        "generated_ultimate", imp_params.ultimate_image)
-  }
-
-  context.restore()
-}
-
-Player.prototype.pre_draw = function(context) {
-  if(!this.dying) {
-    this.draw_ultimate(context);
-  }
-}
+Player.prototype.pre_draw = function(context) {}
 
 Player.prototype.draw = function(context) {
   if(this.dying) {
@@ -821,17 +621,6 @@ Player.prototype.draw = function(context) {
   }
   else {
 
-    this.draw_ultimate(context);
-
-    /*context.beginPath()
-
-    context.strokeStyle = this.color
-    context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.shape.GetRadius()*imp_vars.draw_factor, 0, 2*Math.PI, true)
-    context.lineWidth = 2
-    context.stroke()
-    context.globalAlpha = .5
-    context.fillStyle = this.color
-    context.fill()*/
     context.save()
     if(this.confuse_duration > 0) {
       var prop = Math.max(((this.confuse_interval-this.confuse_duration) / this.confuse_interval), 0)
@@ -842,18 +631,7 @@ Player.prototype.draw = function(context) {
     }
 
     if (!this.appearing) {
-      if(this.ultimate) {
-
-        var lighten_factor = this.get_lighten_factor()
-        drawSprite(
-          context,
-          this.ultimate_loc.x*imp_vars.draw_factor,
-          this.ultimate_loc.y*imp_vars.draw_factor,
-          (this.body.GetAngle()),
-          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
-          this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor,
-          "player_gray")
-      } else if(this.is_locked())
+      if (this.is_locked())
       {
         this.draw_player_sprite(context, "player_red");
       }

@@ -111,13 +111,6 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 	} else if (this.type == "tutorial_kill_boss") {
 		this.w = 300;
 		this.h = 40;
-	} else if (this.type == "lives_and_sparks") {
-		this.w = 150;
-		this.h = 110;
-		this.has_ult = has_ult();
-		this.lives = calculate_lives()
-	    this.ultimates = calculate_ult()
-		this.spark_val = calculate_spark_val()
 	} else if (this.type == "god_mode_alert") {
 		this.w = 250;
 		this.h = 40;
@@ -239,10 +232,6 @@ MessageBox.prototype.draw = function(ctx) {
 		this.tutorial_text = "TOUCHING THIS ENEMY WILL STUN YOU"
 	}
 
-	if (this.type == "tutorial_one_up") {
-		this.tutorial_text = "100 SPARKS = 1UP"
-	}
-
 	if (this.type == "tutorial_kill_boss") {
 		this.tutorial_text = "PUSH THE BOSS INTO THE VOID"
 	}
@@ -307,20 +296,6 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.option_text, this.x, this.y - this.h / 2 + 25);
-	} else if (this.type == "lives_and_sparks") {
-		ctx.textAlign = 'center';
-		ctx.font = "12px Muli";
-		ctx.fillStyle = "white";
-		ctx.fillText("STARTING VALUES", this.x, this.y - this.h / 2 + 20);
-	  draw_lives_and_sparks(
-	      ctx, this.lives, this.spark_val, this.ultimates,
-	      this.x, this.y + 5, 20, {
-	        labels: true,
-	        starting_values: true,
-	        ult: this.has_ult,
-	        sparks: true,
-	        lives: true
-	      })
 	} else if (this.message_only) {
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";
@@ -386,22 +361,6 @@ MessageBox.prototype.draw = function(ctx) {
 
 		ctx.fillText(quest_text, this.x + x_shift, this.y + this.h / 2 - 20);
 
-		/* var rewards = imp_params.quest_data[type].rewards;
-		if (rewards.length > 0) {
-			var reward_gap = 45
-			for (var i = 0; i < rewards.length; i++) {
-				reward = rewards[i];
-				this.draw_reward(ctx, this.x + x_shift - reward_gap * ((rewards.length - 1) / 2 - i), this.y + this.h / 2 - 25, reward);
-			}
-		}
-		ctx.save()
-		if (rewards.length > 1 || (rewards.length == 1 && rewards[0] != "ult")) {
-			ctx.globalAlpha *= 0.5
-			ctx.font = "10px Muli"
-			ctx.fillText("(HARD MODE ONLY)", this.x + x_shift, this.y + this.h / 2 - 5);
-		}
-		ctx.restore()*/
-
 		draw_quest_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 
 		//draw_quest_button = function(ctx, x, y, r, type) {
@@ -452,52 +411,6 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 	ctx.restore();
 };
-
-MessageBox.prototype.draw_rewards = function(ctx, type) {
-	ctx.font = "12px Muli";
-	var reward_y = this.y + this.h / 2 - 20
-	ctx.beginPath();
-	ctx.moveTo(this.x - this.w/2 + 10, reward_y - 40);
-	ctx.lineTo(this.x + this.w/2 - 10, reward_y - 40);
-	ctx.strokeStyle = "white"
-	ctx.lineWidth = 1;
-	ctx.stroke();
-	if (this.completed) {
-		ctx.fillText("COMPLETED", this.x, reward_y - 20);
-	} else {
-		ctx.fillText("REWARD", this.x, reward_y - 20);
-	}
-	var rewards = imp_params.quest_data[this.type].rewards;
-	if (rewards.length > 0) {
-		var reward_gap = 45
-		for (var i = 0; i < rewards.length; i++) {
-			reward = rewards[i];
-			this.draw_reward(ctx, this.x - reward_gap * ((rewards.length - 1) / 2 - i), reward_y, reward);
-		}
-	} else {
-		ctx.font = "12px Muli";
-		ctx.fillStyle = impulse_colors["impulse_blue"];
-		ctx.textAlign = 'center';
-		ctx.fillText("NEW UPCOMING GAME MODE", this.x, reward_y)
-	}
-}
-
-MessageBox.prototype.draw_reward = function(ctx, x, y, type) {
-	var size = 18;
-	ctx.font = "15px Muli";
-	ctx.fillStyle = "white";
-	ctx.textAlign = 'center';
-	ctx.fillText("+1", x - size/2, y + 5);
-	if (type == "spark") {
-		drawSprite(ctx, x + size/2, y, 0, 0.8 * size, 0.8 * size, "sparks_icon")
-	}
-	if (type == "life") {
-		drawSprite(ctx, x + size/2, y, 0, size, size, "lives_icon")
-	}
-	if (type == "ult") {
-		drawSprite(ctx, x + size/2, y, 0, size, size, "ultimate_icon")
-	}
-}
 
 MessageBox.prototype.set_visible = function(visibility) {
 	this.visible = visibility;

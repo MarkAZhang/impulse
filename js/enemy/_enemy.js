@@ -160,7 +160,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.last_lighten = 0
 
-  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "ulted", "white", "world1", "world2", "world3", "world4", "black"]
+  this.statuses = ["normal", "impulsed", "stunned", "silenced", "gooed", "lighten", "white", "world1", "world2", "world3", "world4", "black"]
   this.additional_statuses = []
 
   this.adjust_position_counter = 0
@@ -207,9 +207,6 @@ Enemy.prototype.check_death = function() {
       if (this.durations["open"] <= 0 && this.require_open) {
         this.start_death("accident")
       } else {
-        if (this.impulse_game_state instanceof HowToPlayState) {
-          this.impulse_game_state.enemy_killed()
-        }
         if (this.impulse_game_state.show_tutorial) {
           this.impulse_game_state.add_tutorial_signal("enemy_killed")
         }
@@ -817,28 +814,16 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 
 }
 
-Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
-  if(!ultimate) {
-    this.open(this.open_period)
-    this.durations["impulsed"] += this.impulsed_duration
-  }
+Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.open(this.open_period)
+  this.durations["impulsed"] += this.impulsed_duration
   this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
-  if (!ultimate || this.is_boss)
-    this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
+  this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 }
 
 Enemy.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
 
-}
-
-Enemy.prototype.ulted = function(first_ult_call) {
-  this.stun(2000)
-  this.durations["open"] = 0
-  this.durations["ulted"] = 2000
-  if (first_ult_call) {
-    this.body.SetLinearVelocity(new b2Vec2(0, 0));
-  }
 }
 
 Enemy.prototype.stun = function(dur) {
@@ -990,9 +975,6 @@ Enemy.prototype.draw_additional_image = function(context, color) {
 Enemy.prototype.get_current_status = function() {
 
   if(!this.dying) {
-      if (this.durations["ulted"] > 0) {
-        return "ulted"
-      }
       if(this.durations["impulsed"] > 0) {
         return "impulsed"
       }
@@ -1035,8 +1017,6 @@ Enemy.prototype.get_color_for_status = function(status) {
     return "#e6c43c"
   } else if(status == "impulsed") {
     return this.impulsed_color
-  } else if(status == "ulted") {
-    return impulse_colors["impulse_blue"]
   } else if(status == "white") {
     return "white"
   } else if(status == "black") {

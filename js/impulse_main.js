@@ -98,21 +98,14 @@ window["impulse_main"] =  function() {
         return false;     // cancel default menu
     }
 
-    //addVisibilityListener()
-
     centerCanvas()
     load_game()
     set_up_enemy_images()
-    set_up_player_images()
     set_up_title_bg()
     set_up_game_buttons()
     set_key_bindings()
     imp_vars.impulse_music = new MusicPlayer()
-    /*if(imp_vars.player_data.first_time) {
-      imp_vars.cur_game_state = new HowToPlayState("first_time_tutorial")
-    } else {*/
-    imp_vars.cur_game_state = new IntroState(null)
-    //}
+    imp_vars.cur_game_state = new IntroState()
     imp_vars.last_time = (new Date()).getTime();
     step()
 }
@@ -136,10 +129,6 @@ function toggle_pause() {
   if (imp_vars.cur_game_state instanceof ImpulseGameState) {
     imp_vars.cur_game_state.toggle_pause()
   }
-}
-
-function set_up_player_images() {
-  imp_params.ultimate_image = get_ultimate_canvas()
 }
 
 function centerCanvas() {
@@ -559,43 +548,6 @@ function switch_game_state_helper(game_state) {
 function save_player_game(hive_number) {
   imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = hive_number
   save_game();
-}
-
-function has_ult() {
-  return calculate_ult() >= 1;
-}
-
-function calculate_lives() {
-  var life = 3;
-  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
-    var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("life") != -1) {
-      life += 1;
-    }
-  }
-  return life
-}
-
-function calculate_ult() {
-  var ult = 0;
-  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
-    var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("ult") != -1) {
-      ult += 1;
-    }
-  }
-  return ult;
-}
-
-function calculate_spark_val() {
-  var spark_val = 10;
-  for (var i = 0; i < imp_vars.player_data.quests.length; i++) {
-    var quest = imp_vars.player_data.quests[i];
-    if (imp_params.quest_data[quest] && imp_params.quest_data[quest].rewards.indexOf("spark") != -1) {
-      spark_val += 1;
-    }
-  }
-  return spark_val
 }
 
 function is_quest_completed(name) {

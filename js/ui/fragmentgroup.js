@@ -6,7 +6,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   var BOSS_FRAGMENT_LIFESPAN = 5000;
   this.shadowed = shadowed ? true : false;
   this.fragments = []
-  if(enemy_type == "spark" || enemy_type == "multi") {
+  if(enemy_type == "multi") {
     velocity = {x: 0, y: 0}
   }
   this.waves = 1;
@@ -44,7 +44,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.num_fragments = 4
     this.burst = 2
 
-  } else if(enemy_type == "spark" ||  enemy_type == "multi") {
+  } else if(enemy_type == "multi") {
     this.num_fragments = 6
     this.burst = 20
     this.original_v_damping = 1
@@ -149,13 +149,11 @@ Fragment.prototype.process = function(dt) {
 }
 
 Fragment.prototype.draw = function(context, prog) {
-  if(this.shape == "spark" || this.shape == "multi") {
+  if(this.shape == "multi") {
     context.save()
     context.globalAlpha *= prog
     var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
-    if(this.shape == "spark")
-      draw_spark_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor, pointer_angle)
-    else if(this.shape == "multi")
+    if(this.shape == "multi")
       draw_multi_fragment(context, this.loc.x/imp_vars.draw_factor, this.loc.y/imp_vars.draw_factor, pointer_angle)
 
     context.restore()

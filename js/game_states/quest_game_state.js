@@ -3,14 +3,10 @@ QuestGameState.prototype = new GameState
 QuestGameState.prototype.constructor = QuestGameState
 
 function QuestGameState() {
-  this.cur_start_lives = calculate_lives()
-  this.cur_start_ult = calculate_ult()
-  this.cur_start_spark_val = calculate_spark_val()
-  this.has_ult = has_ult();
   this.fader = new Fader({
     "fade_in": 500,
     "fade_out": 250
-  });  
+  });
   this.fader.set_animation("fade_in");
   this.buttons = [];
   this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
@@ -37,7 +33,7 @@ QuestGameState.prototype.set_up_quests = function() {
   this.buttons.push(new QuestButton("high_roller", imp_vars.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("pacifist", imp_vars.levelWidth/2 + 1 * first_row_gap, first_row_x, quest_size, quest_size));
   this.buttons.push(new QuestButton("untouchable", imp_vars.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
-  
+
   var second_row_x = 350;
   var second_row_gap = 150;
   this.buttons.push(new QuestButton("beat_hard", imp_vars.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
@@ -68,19 +64,7 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillText("ACHIEVEMENTS", imp_vars.levelWidth/2, 50)
   ctx.font = '12px Muli'
   ctx.fillText("MOUSE OVER TO VIEW", imp_vars.levelWidth/2, 75)
-  /* draw_lives_and_sparks(ctx,
-    this.cur_start_lives, this.cur_start_spark_val, this.cur_start_ult,
-    imp_vars.levelWidth / 2, 
-    imp_vars.levelHeight - 50, 
-    15, 
-    {labels: true, ult: this.has_ult, lives: false, sparks: false, starting_values: true}) */
-  /*drawSprite(ctx, imp_vars.levelWidth/2, 210, 0, 60, 60, "ultimate_icon")
-  ctx.font = '18px Muli'
-  ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_vars.levelWidth/2, 300);
-  ctx.fillText("FOR EXPERIENCED PLAYERS.", imp_vars.levelWidth/2, 325);
-  
-  ctx.fillText("IF THIS IS YOUR FIRST TIME,", imp_vars.levelWidth/2, 400);
-  ctx.fillText("YOU MAY WANT TO TRY NORMAL MODE FIRST.", imp_vars.levelWidth/2, 425);*/
+
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)

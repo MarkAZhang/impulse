@@ -169,7 +169,7 @@ Fighter.prototype.additional_processing = function(dt) {
         }
       }
     }
-    if(this.shoot_fade_out[i] && this.shoot_durations[i] < -this.shoot_fade_out_prop * 
+    if(this.shoot_fade_out[i] && this.shoot_durations[i] < -this.shoot_fade_out_prop *
       (this.fighter_status == "normal" ? this.shoot_interval : this.frenzy_shoot_interval)) {
       this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval + this.shoot_durations[i]) : this.frenzy_shoot_interval
       this.shoot_fade_out[i] = false
@@ -178,7 +178,7 @@ Fighter.prototype.additional_processing = function(dt) {
       this.shoot_durations[i] -= dt
     }
   }
-  
+
 
   if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
     this.frenzy_charge += dt / this.frenzy_charge_interval;
@@ -215,7 +215,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         context.beginPath()
         context.arc(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor,
           this.effective_radius * 2 * draw_factor,
-          -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24 + (2 * Math.PI/this.frenzy_charge_bars - Math.PI/12) * prop, 
+          -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24 + (2 * Math.PI/this.frenzy_charge_bars - Math.PI/12) * prop,
           -Math.PI/2 + Math.PI * 2 * i / this.frenzy_charge_bars + Math.PI/24, true)
         context.lineWidth = 5
         context.strokeStyle = "red"
@@ -223,7 +223,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
       }
     }
 
-    
+
 
     context.restore();
 
@@ -239,7 +239,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         if (this.actual_heading)
           draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
         else
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())   
+          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
 
         if(this.shoot_durations[i] > 0 && loaded_prop > 0) {
           context.beginPath()
@@ -248,7 +248,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
           context.lineWidth = 2
           context.strokeStyle = this.color
           context.stroke()
-        }    
+        }
         context.restore()
       // draw fading bullet
       } else if (this.shoot_durations[i] < 0) {
@@ -259,7 +259,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         if (this.actual_heading)
           draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
         else
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())        
+          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
         context.beginPath()
         context.arc(cur_bullet_loc.x*draw_factor, cur_bullet_loc.y*draw_factor,
           (this.effective_radius*draw_factor) * 1, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999)
@@ -354,11 +354,10 @@ Fighter.prototype.explode = function() {
   }
 }
 
-Fighter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
-  if(!ultimate) 
-    this.open(this.open_period)
+Fighter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
+  this.open(this.open_period)
   var factor = 1.5
-  if (!this.is_silenced() && !ultimate) {
+  if (!this.is_silenced()) {
     factor = 0.6
   }
   this.body.ApplyImpulse(new b2Vec2(factor*impulse_force*Math.cos(hit_angle), factor*impulse_force*Math.sin(hit_angle)),

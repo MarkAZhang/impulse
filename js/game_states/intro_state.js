@@ -2,7 +2,7 @@ IntroState.prototype = new GameState
 
 IntroState.prototype.constructor = IntroState
 
-function IntroState(last_state) {
+function IntroState() {
 
   imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
   this.bg_drawn = false;

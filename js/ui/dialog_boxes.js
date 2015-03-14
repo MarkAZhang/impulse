@@ -649,7 +649,6 @@ function ControlsMenu(previous_menu) {
   this.buttons.push(this.control_buttons["left mouse"])
   this.buttons.push(this.control_buttons["right mouse"])
   this.buttons.push(this.control_buttons["right keyboard"])
-  this.has_ult = has_ult()
   /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
     imp_vars.player_data.options.control_hand = "right"
     imp_vars.player_data.options.control_scheme = "keyboard"
@@ -737,15 +736,8 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   if(currentControls == "right mouse") {
     draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
     ctx.fillText("MOVE", this.x - 200, this.y - this.h/2 + 360)
-    if(this.has_ult) {
-      draw_mouse(ctx, this.x, this.y - this.h/2 + 270, 75, 100, this.bright_color)
-      ctx.fillText("IMPULSE", this.x, this.y - this.h/2 + 360)
-      draw_right_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 75, 100, this.bright_color)
-      ctx.fillText("ULTIMATE", this.x + 200, this.y - this.h/2 + 360)
-    } else {
-      draw_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 75, 100, this.bright_color)
-      ctx.fillText("IMPULSE", this.x + 200, this.y - this.h/2 + 360)
-    }
+    draw_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 75, 100, this.bright_color)
+    ctx.fillText("IMPULSE", this.x + 200, this.y - this.h/2 + 360)
 
     draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.bright_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
@@ -754,15 +746,8 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
 
   if(currentControls == "left mouse") {
-    if(this.has_ult) {
-      draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270,  75, 100, this.bright_color)
-      ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
-      draw_right_mouse(ctx, this.x, this.y - this.h/2 + 270,  75, 100, this.bright_color)
-      ctx.fillText("ULTIMATE", this.x, this.y - this.h/2 + 360)
-    } else {
-      draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270,  75, 100, this.bright_color)
-      ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
-    }
+    draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270,  75, 100, this.bright_color)
+    ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
 
     draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
     ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)
@@ -776,14 +761,6 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   if(currentControls == "right keyboard") {
     draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
     ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
-
-    if(this.has_ult) {
-      draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 280, 45, 45, 10, this.bright_color)
-      ctx.font = "18px Muli"
-      ctx.fillText("F", this.x, this.y - this.h/2 + 286)
-      ctx.fillText("ULTIMATE", this.x, this.y - this.h/2 + 360)
-    }
-
 
     draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
     ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)

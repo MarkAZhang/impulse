@@ -8,8 +8,7 @@ var TutorialOverlayManager = function(impulse_game_state) {
 }
 
 TutorialOverlayManager.prototype.on_demand_overlays = [
-	{type: "reset_multiplier", class: ResetMultiplierTutorialOverlay},
-	{type: "one_up", class: OneUpTutorialOverlay},
+	{type: "reset_multiplier", class: ResetMultiplierTutorialOverlay}
 ]
 
 TutorialOverlayManager.prototype.add_overlays = function() {
@@ -38,7 +37,6 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 		this.overlays.push(new EnemyIncrTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new IncrMultiplierTutorialOverlay(this.impulse_game_state));
 		this.overlays.push(new ResetMultiplierTutorialOverlay(this.impulse_game_state));
-		this.overlays.push(new OneUpTutorialOverlay(this.impulse_game_state));
 	} else {
 		for (var i = 0; i < this.on_demand_overlays.length; i++) {
 			if (imp_vars.player_data.tutorial_shown.indexOf(this.on_demand_overlays[i].type) == -1) {
@@ -536,34 +534,6 @@ ResetMultiplierTutorialOverlay.prototype.process = function(dt) {
 ResetMultiplierTutorialOverlay.prototype.on_expire = function() {
 	if(imp_vars.player_data.tutorial_shown.indexOf("reset_multiplier") == -1) {
 		imp_vars.player_data.tutorial_shown.push("reset_multiplier");
-		save_game();
-	}
-}
-
-OneUpTutorialOverlay.prototype = new TutorialOverlay;
-
-OneUpTutorialOverlay.prototype.constructor = OneUpTutorialOverlay;
-
-function OneUpTutorialOverlay(impulse_game_state) {
-	this.init(impulse_game_state);
-	this.duration = 3000;
-	this.on_demand = true;
-	this.hover_overlay = new MessageBox("tutorial_one_up", impulse_game_state.bright_color, impulse_game_state.world_num);
-}
-
-OneUpTutorialOverlay.prototype.is_ready = function() {
-	return this.impulse_game_state.tutorial_signals["got_spark"];
-}
-
-OneUpTutorialOverlay.prototype.draw = function(ctx) {
-}
-
-OneUpTutorialOverlay.prototype.process = function(dt) {
-}
-
-OneUpTutorialOverlay.prototype.on_expire = function() {
-	if(imp_vars.player_data.tutorial_shown.indexOf("one_up") == -1) {
-		imp_vars.player_data.tutorial_shown.push("one_up");
 		save_game();
 	}
 }

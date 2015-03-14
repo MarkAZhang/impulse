@@ -9,11 +9,6 @@ function WorldMapState(world, is_practice_mode) {
   this.bg_drawn = false
   this.color = "white"//impulse_colors["impulse_blue"]
 
-  this.cur_start_lives = calculate_lives()
-  this.cur_start_ult = calculate_ult()
-  this.cur_start_spark_val = calculate_spark_val()
-  this.has_ult = has_ult()
-
   this.world_num = world
   this.next_world = null;
 

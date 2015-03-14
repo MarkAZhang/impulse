@@ -21,7 +21,7 @@ function Troll(world, x, y, id, impulse_game_state) {
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
     this.troll_switch_interval = 600
-    this.trolling_time_factor = 3    
+    this.trolling_time_factor = 3
   }
   this.troll_switch_timer = this.troll_switch_interval
 
@@ -101,7 +101,7 @@ Troll.prototype.additional_drawing = function(context, draw_factor, latest_color
   context.restore()
 }
 
-Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   if(!this.is_silenced() && this.entered_arena) {
     this.body.ApplyImpulse(new b2Vec2(.3 * impulse_force*Math.cos(hit_angle), .3 * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
@@ -114,8 +114,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle,
     this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   }
-  if(!ultimate) 
-    this.open(this.open_period)
+  this.open(this.open_period)
   this.durations["impulsed"] += this.impulsed_duration
 }
 

@@ -114,20 +114,19 @@ Tank.prototype.check_death = function()
 }
 
 
-Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle, ultimate) {
+Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   this.durations["impulsed"] += this.impulsed_duration
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
-  if(!ultimate) 
-    this.open(this.open_period)
+  this.open(this.open_period)
   if (this.is_gooed()) {
-    this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+    this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
   } else {
     if (imp_vars.player_data.difficulty_mode == "easy") {
-      this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+      this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     } else {
-      this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())  
+      this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     }
-    
+
   }
 
   if (this.tank_collision_fudge_timer > 0 && !this.dying && !this.activated && !this.is_silenced()) {
@@ -147,11 +146,11 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
       this.activated = true
       this.cause_of_death = "kill"
     } else {
-      // If we've collided with a tank, but we haven't received the impulse, 
+      // If we've collided with a tank, but we haven't received the impulse,
       // it's possible that the impulse is about to hit. Give a short grace period.
       this.tank_collision_fudge_timer = this.tank_collision_fudge_period;
     }
-  } 
+  }
 
   if(this.dying || this.activated)//ensures the collision effect only activates once
     return

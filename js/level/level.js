@@ -49,14 +49,11 @@ Level.prototype.init = function(data, level_intro_state) {
   this.dark_ones_after_gateway = data.dark_ones_after_gateway;
 
   if (imp_vars.player_data.difficulty_mode == "easy") {
-    this.spark_spawn_points = data.spark_spawn_points_easy
+    this.multi_spawn_points = data.multi_spawn_points_easy
   }
-  if (!this.spark_spawn_points) {
-    this.spark_spawn_points = data.spark_spawn_points
+  if (!this.multi_spawn_points) {
+    this.multi_spawn_points = data.multi_spawn_points
   }
-
-  this.spark_spin_angle = 0
-  this.spark_spin_rate = 8000
 
   this.pick_alt_path = data.pick_alt_path
 
@@ -214,10 +211,6 @@ Level.prototype.reset = function() {
   this.spawned_enemies = []
   this.spawn_queue = [] //enemies that need to be spawned
   this.initial_spawn_done = false
-  this.spark_loc = null
-  this.spark_duration = null
-  this.spark_life = 10000
-  this.spark_value = null
 
   this.multi_loc = null
   this.multi_duration = null
@@ -225,31 +218,14 @@ Level.prototype.reset = function() {
   this.multi_value = null
 }
 
-Level.prototype.generate_spark = function() {
-  if (!this.spark_spawn_points || this.spark_spawn_points.length == 0) return
-  var spark_index = Math.floor(Math.random() * this.spark_spawn_points.length)
-  this.spark_loc = {x: this.spark_spawn_points[spark_index][0], y: this.spark_spawn_points[spark_index][1]};
-  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
-
-
-  while(p_dist(player_loc,  this.spark_loc) < 125 || (this.multi_loc && this.multi_loc.x == this.spark_loc.x && this.multi_loc.y == this.spark_loc.y)) {
-    spark_index+=1
-    spark_index = spark_index % this.spark_spawn_points.length
-    this.spark_loc =  {x: this.spark_spawn_points[spark_index][0], y: this.spark_spawn_points[spark_index][1]};
-  }
-
-  this.spark_duration = this.spark_life
-  this.spark_value = 1
-}
-
 Level.prototype.generate_multi = function() {
-  var multi_index = Math.floor(Math.random() * this.spark_spawn_points.length)
-  this.multi_loc = {x: this.spark_spawn_points[multi_index][0], y: this.spark_spawn_points[multi_index][1]};
+  var multi_index = Math.floor(Math.random() * this.multi_spawn_points.length)
+  this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
   var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
-  while(p_dist(player_loc,  this.multi_loc) < 125 || (this.spark_loc && this.multi_loc.x == this.spark_loc.x && this.multi_loc.y == this.spark_loc.y)) {
+  while(p_dist(player_loc,  this.multi_loc) < 125) {
     multi_index+=1
-    multi_index = multi_index % this.spark_spawn_points.length
-    this.multi_loc = {x: this.spark_spawn_points[multi_index][0], y: this.spark_spawn_points[multi_index][1]};
+    multi_index = multi_index % this.multi_spawn_points.length
+    this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
   }
 
   this.multi_duration = this.multi_life
@@ -258,43 +234,15 @@ Level.prototype.generate_multi = function() {
 
 Level.prototype.process = function(dt) {
   //handle obstacle visibility
-  if (!this.is_boss_level && this.spark_spawn_points.length > 0 && this.impulse_game_state.combo_enabled) {
-    /*if (imp_vars.player_data.difficulty_mode == "normal") {
-      this.spark_duration -= dt
-      if(this.spark_loc == null || this.spark_duration < 0) {
-        this.generate_spark()
-      } else {
-        var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
-        if(p_dist(player_loc, this.spark_loc) < 25) {
-          imp_vars.impulse_music.play_sound("sparks")
-            this.impulse_game_state.hive_numbers.sparks += this.impulse_game_state.hive_numbers.spark_val;
-          if(this.impulse_game_state.hive_numbers.sparks >= 100) {
-            this.impulse_game_state.hive_numbers.sparks -= 100;
-            this.impulse_game_state.hive_numbers.lives += 1
-            this.impulse_game_state.addScoreLabel("1UP", impulse_colors["impulse_blue"], this.impulse_game_state.player.body.GetPosition().x, this.impulse_game_state.player.body.GetPosition().y - 1, 24, 3000)
-          }
+  if (!this.is_boss_level && this.multi_spawn_points.length > 0 && this.impulse_game_state.combo_enabled) {
 
-          //this.add_fragments("spark", {x: this.spark_loc.x, y: this.spark_loc.y})
-          this.impulse_game_state.addScoreLabel(
-            "+" + this.impulse_game_state.hive_numbers.spark_val,
-            impulse_colors["impulse_blue"],
-            this.spark_loc.x / imp_vars.draw_factor,
-            this.spark_loc.y / imp_vars.draw_factor,
-            20, 2000, true);
-          this.generate_spark()
-          if (this.impulse_game_state.show_tutorial) {
-            this.impulse_game_state.add_tutorial_signal("got_spark")
-          }
-        }
-      }
-    }*/
     this.multi_duration -= dt
     if(this.multi_loc == null || this.multi_duration < 0) {
       this.generate_multi()
     } else {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
       if(p_dist(player_loc, this.multi_loc) < 25) {
-        imp_vars.impulse_music.play_sound("sparks")
+        imp_vars.impulse_music.play_sound("multi")
         this.impulse_game_state.game_numbers.base_combo += 5
         this.impulse_game_state.game_numbers.combo =
           this.impulse_game_state.game_numbers.base_combo + Math.floor(this.impulse_game_state.game_numbers.seconds/10)
@@ -309,8 +257,6 @@ Level.prototype.process = function(dt) {
         this.generate_multi()
       }
     }
-
-    this.spark_spin_angle += Math.PI * 2 * dt / this.spark_spin_rate
   }
 
   if(this.gateway_transition_duration != null) {
@@ -540,14 +486,6 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
-      if (this.impulse_game_state instanceof HowToPlayState && this.double_spawn) {
-        num_enemies_to_spawn *= 2
-      }
-
-      if (this.impulse_game_state instanceof HowToPlayState && this.no_spawn) {
-        num_enemies_to_spawn = 0
-      }
-
       for (var i = 1; i <= num_enemies_to_spawn; i++) {
         enemy_type_list.push(enemy_type);
       }
@@ -578,7 +516,7 @@ Level.prototype.skip_enemy_spawn_timers = function() {
 
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
-  if(enemy_type == "player" || enemy_type == "shadow" || enemy_type == "spark" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
+  if(enemy_type == "player" || enemy_type == "shadow" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
     || (this.total_fragments < this.max_fragments && imp_vars.player_data.options.explosions)) {
       this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
       this.total_fragments += 4;
@@ -722,9 +660,6 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   }
   else if(this.impulse_game_state && this.gateway_opened && this.world_num <= 4) {
     ctx.globalAlpha *= 0.7
-    //ctx.globalAlpha *= 1
-    //drawSprite(ctx,  this.gateway_loc.x*draw_factor, this.gateway_loc.y*draw_factor,
-    //  (Math.PI/4), this.gateway_size * 4 * draw_factor, this.gateway_size * 4 * draw_factor, tessellation_glow_map[this.world_num], tessellation_sprite_map[this.world_num])
   } else {
     ctx.globalAlpha *= 0.3
   }
@@ -769,24 +704,6 @@ Level.prototype.draw = function(context, draw_factor) {
       this.obstacles[i].color = origColor;
     }
     context.restore();
-  }
-
-
-
-
-  if(this.spark_loc) {
-    var prog = this.spark_duration/this.spark_life;
-    context.save()
-    context.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.7)
-
-    // if restarting level, force the spark to fade.
-    if (this.restarting_level) {
-      context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
-    }
-
-    draw_spark_powerup(context, this.spark_loc.x, this.spark_loc.y)
-    context.restore()
-
   }
 
   if(this.multi_loc) {

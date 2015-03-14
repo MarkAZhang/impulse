@@ -14,11 +14,9 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.visibility_graph = visibility_graph
   this.world_num = world_num
   this.victory = victory
-  this.has_ult = has_ult()
 
   if(save_screen) {
-    this.hive_numbers = HiveNumbers.prototype.clone(imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode])
-    this.hive_numbers.adjust_values()
+    this.hive_numbers = imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode]
     save_game()
     this.world_num = this.hive_numbers.world
     this.victory = null

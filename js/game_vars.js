@@ -17,7 +17,7 @@ var imp_params = {
     "impulse": "effects/impulse",
     "pdeath": "effects/pdeath",
     "ffrenzy": "effects/ffrenzy",
-    "sparks": "effects/sparks",
+    "multi": "effects/multi",
     "ult": "effects/ult",
     "pwheel": "effects/pwheel",
     "goo": "effects/goo",
@@ -222,7 +222,6 @@ function set_key_bindings() {
       RESUME_GAME_KEY: 82,
       DELETE_GAME_KEY: 68,
       NEXT_KEY: 32,
-      ULTIMATE_KEY: 69
     }
   }
 }
