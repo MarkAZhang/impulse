@@ -57,12 +57,12 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.turret_firing_interval = 500
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.turret_firing_interval = 750
   }
 
   // Slightly easier to push on easy mode.
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.impulse_extra_factor = 20
   } else {
     // Impulse is HIGHER on normal mode because touching the boss is death.
@@ -77,7 +77,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.boss_force = 30
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.boss_force = 20
   }
 
@@ -452,7 +452,7 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
   var dir = new b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
 
   var enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
-  if (imp_vars.player_data.difficulty_mode == "easy" && enemy_type == "tank") {
+  if (imp_params.player_data.difficulty_mode == "easy" && enemy_type == "tank") {
     // If it's a tank, reroll to reduce number of tanks.
     if (Math.random() < 0.5) {
       enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
@@ -671,10 +671,10 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     }
   }
 
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
     if(this.lighten_timer < 0 && this.lighten_timer > -this.lighten_duration * 0.9 && !this.lightened) {
       this.lightened = true
-      imp_vars.impulse_music.play_sound("b1shrink")
+      imp_params.impulse_music.play_sound("b1shrink")
 
       if(this.shoot_duration > this.shoot_interval/this.shoot_speedup_factor) {
         this.shoot_duration = this.shoot_interval/this.shoot_speedup_factor
@@ -686,7 +686,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
       if (this.lightened)  {
         // in order to play the sound at the right moment, we'll allow the boss's punches to lose the lighten bonus early.
         this.lightened = false
-        imp_vars.impulse_music.play_sound("b1grow")
+        imp_params.impulse_music.play_sound("b1grow")
       }
     }
 
@@ -1091,7 +1091,7 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
+    context.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight)
   }
 
   context.restore()
@@ -1116,7 +1116,7 @@ BossOne.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
   if (other == this.player) {
-    imp_vars.impulse_music.play_sound("b1hit")
+    imp_params.impulse_music.play_sound("b1hit")
     this.impulse_game_state.reset_combo();
   }
   if(body == this.body) {
@@ -1243,7 +1243,7 @@ BossOne.prototype.explode = function() {
 }
 
 BossOne.prototype.get_impulse_extra_factor = function() {
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     return this.impulse_extra_factor * 2;
   }
   return this.impulse_extra_factor;

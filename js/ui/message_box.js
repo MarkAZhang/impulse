@@ -183,20 +183,20 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_move") {
-		if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "mouse") {
+		if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "mouse") {
           draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
         }
-		if(imp_vars.player_data.options.control_hand == "right" && imp_vars.player_data.options.control_scheme == "keyboard") {
+		if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "keyboard") {
           draw_arrow_keys(ctx, this.x, this.y, 40, "white")
         }
-        if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+        if(imp_params.player_data.options.control_hand == "left" && imp_params.player_data.options.control_scheme == "mouse") {
           draw_arrow_keys(ctx, this.x, this.y, 40, "white")
         }
 		this.tutorial_text = "MOVE";
 	}
 
 	if (this.type == "tutorial_impulse") {
-		if(imp_vars.player_data.options.control_scheme == "mouse") {
+		if(imp_params.player_data.options.control_scheme == "mouse") {
 			draw_mouse(ctx, this.x, this.y - 20, 56, 82, "white")
 		} else {
             draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
@@ -205,9 +205,9 @@ MessageBox.prototype.draw = function(ctx) {
 	}
 
 	if (this.type == "tutorial_pause") {
-	  if(imp_vars.player_data.options.control_hand == "right") {
+	  if(imp_params.player_data.options.control_hand == "right") {
 	  	this.tutorial_text = "ESC TO PAUSE";
-      } else if(imp_vars.player_data.options.control_hand == "left") {
+      } else if(imp_params.player_data.options.control_hand == "left") {
       	this.tutorial_text = "ENTER TO PAUSE";
       }
 	}
@@ -248,12 +248,12 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
-		if(imp_vars.player_data.options.control_hand == "right") {
+		if(imp_params.player_data.options.control_hand == "right") {
 	        draw_rounded_rect(ctx, this.x, this.y - 10, 160, 34, 7, "white")
 	        ctx.fillText("SPACEBAR", this.x, this.y - 4)
 	    }
 
-	    if(imp_vars.player_data.options.control_hand == "left") {
+	    if(imp_params.player_data.options.control_hand == "left") {
 	        draw_rounded_rect(ctx, this.x, this.y - 10, 80, 34, 7, "white")
 	        ctx.fillText("SHIFT", this.x, this.y - 4)
 	    }
@@ -279,10 +279,10 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = this.color;
 		ctx.fillText("MUTE (M)", this.x, this.y - this.h / 2 + 25);
 	} else if (this.type.substring(0, 8) == "tutorial") {
-		/*if(imp_vars.player_data.options.control_hand == "right") {
+		/*if(imp_params.player_data.options.control_hand == "right") {
 	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color, ["W", "A", "S", "D"])
 	    }
-	    if(imp_vars.player_data.options.control_hand == "left" && imp_vars.player_data.options.control_scheme == "mouse") {
+	    if(imp_params.player_data.options.control_hand == "left" && imp_params.player_data.options.control_scheme == "mouse") {
 	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color)
 	    }*/
 	    if (this.tutorial_text) {

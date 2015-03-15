@@ -23,7 +23,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 1200
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.shoot_interval = 1400
   }
 
@@ -50,7 +50,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.turret_arm_angle = 0
 
   this.stun_length = 2000
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.stun_length = 2000
   }
 
@@ -96,7 +96,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.destroyable_timer -= dt
   }
 
-  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_vars.draw_factor)
+  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_params.draw_factor)
 
   if (this.recovery_timer > 0) {
     this.recovery_timer -= dt
@@ -138,7 +138,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     else {
       this.fire_duration = Math.max(this.fire_duration - dt, 0)
       //fire the ray
-      imp_vars.impulse_music.play_sound("deathray")
+      imp_params.impulse_music.play_sound("deathray")
       if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
         var ray_polygon = this.get_ray_polygon()
         this.fired = true
@@ -229,11 +229,11 @@ DeathRay.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
     var point = get_nearest_spawn_point(this, this.player, this.impulse_game_state.level_name)
-    return {x: point.x/imp_vars.draw_factor, y: point.y/imp_vars.draw_factor}
+    return {x: point.x/imp_params.draw_factor, y: point.y/imp_params.draw_factor}
   }
   else {
     if(this.goalPt == null) {
-      this.goalPt = {x: this.level.get_starting_loc().x/imp_vars.draw_factor, y: this.level.get_starting_loc().y/imp_vars.draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
+      this.goalPt = {x: this.level.get_starting_loc().x/imp_params.draw_factor, y: this.level.get_starting_loc().y/imp_params.draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
     }
     return this.goalPt
   }
@@ -367,7 +367,7 @@ DeathRay.prototype.get_color_for_status = function(status) {
 DeathRay.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
-  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 

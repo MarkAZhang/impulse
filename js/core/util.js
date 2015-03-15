@@ -121,7 +121,7 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return false//lines are collinear. For the purposes of our imp_vars.cur_game_state.visibility_graph, this does not count as an intersection
+      return false//lines are collinear. For the purposes of our imp_params.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -140,7 +140,7 @@ function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return null//lines are collinear. For the purposes of our imp_vars.cur_game_state.visibility_graph, this does not count as an intersection
+      return null//lines are collinear. For the purposes of our imp_params.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -314,7 +314,7 @@ function getBoundaryPolygon(polygon, radius) {
 
 function check_bounds(buffer, pt, draw_factor) {
   var factor = draw_factor ? draw_factor : 1;
-  return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_vars.levelWidth/factor - buffer && pt.y <= (imp_vars.levelHeight)/factor - buffer;
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_params.levelWidth/factor - buffer && pt.y <= (imp_params.levelHeight)/factor - buffer;
 }
 
 function get_safest_spawn_point(object, player, level_name) {
@@ -328,7 +328,7 @@ function get_safest_spawn_point(object, player, level_name) {
   var angle_to_player = _atan(object.body.GetPosition(), player.body.GetPosition())
 
   for(var i = 0; i < spawn_points.length; i++){
-    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_vars.draw_factor, y: spawn_points[i][1]/imp_vars.draw_factor}))
+    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}))
     var diff = Math.abs(angle - angle_to_player)
     if(diff > best_value) {
       best_value = diff
@@ -336,7 +336,7 @@ function get_safest_spawn_point(object, player, level_name) {
     }
   }
 
-  return {x: best_point[0]/imp_vars.draw_factor, y: best_point[1]/imp_vars.draw_factor}
+  return {x: best_point[0]/imp_params.draw_factor, y: best_point[1]/imp_params.draw_factor}
 
 }
 
@@ -351,7 +351,7 @@ function get_nearest_spawn_point(object, player, level_name) {
 
 
   for(var i = 0; i < spawn_points.length; i++){
-    var dist = p_dist({x: spawn_points[i][0]/imp_vars.draw_factor, y: spawn_points[i][1]/imp_vars.draw_factor}, object.body.GetPosition())
+    var dist = p_dist({x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}, object.body.GetPosition())
     if(dist < best_value) {
       best_value = dist
       best_point = spawn_points[i]
@@ -381,11 +381,11 @@ function get_nearest_spawn_point(object, player, level_name) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
-  var r_point = {x:Math.random()*(imp_vars.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_vars.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
+  var r_point = {x:Math.random()*(imp_params.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_params.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
-  for(var k = 0; k < imp_vars.cur_game_state.level.boundary_polygons.length; k++)
+  for(var k = 0; k < imp_params.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(imp_vars.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && pointInPolygon(imp_params.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -394,7 +394,7 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
-  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
+  if(imp_params.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
@@ -403,11 +403,11 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
 
 //gets random point that is not inside a boundary polygon
 function getRandomCentralValidLocation(testPoint) {
-  var r_point = {x:Math.random()*(imp_vars.levelWidth/2/imp_vars.draw_factor)+imp_vars.levelWidth/4/imp_vars.draw_factor, y: Math.random()*((imp_vars.levelHeight)/2/imp_vars.draw_factor)+(imp_vars.levelHeight)/4/imp_vars.draw_factor}
+  var r_point = {x:Math.random()*(imp_params.levelWidth/2/imp_params.draw_factor)+imp_params.levelWidth/4/imp_params.draw_factor, y: Math.random()*((imp_params.levelHeight)/2/imp_params.draw_factor)+(imp_params.levelHeight)/4/imp_params.draw_factor}
   var inPoly = false
-  for(var k = 0; k < imp_vars.cur_game_state.level.boundary_polygons.length; k++)
+  for(var k = 0; k < imp_params.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(imp_vars.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && pointInPolygon(imp_params.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -416,7 +416,7 @@ function getRandomCentralValidLocation(testPoint) {
   {
     return getRandomCentralValidLocation(testPoint)
   }
-  if(imp_vars.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
+  if(imp_params.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomCentralValidLocation(testPoint)
   }
@@ -427,13 +427,13 @@ function getRandomOutsideLocation(buffer, range) {
   var x_anchor, y_anchor
   if(Math.random() < .5)
   {
-    x_anchor = Math.random() < .5 ? -buffer-range : imp_vars.levelWidth/imp_vars.draw_factor + buffer
-    y_anchor = Math.random() * ((imp_vars.levelHeight)/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
+    x_anchor = Math.random() < .5 ? -buffer-range : imp_params.levelWidth/imp_params.draw_factor + buffer
+    y_anchor = Math.random() * ((imp_params.levelHeight)/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
   }
   else
   {
-    y_anchor = Math.random() < .5 ? -buffer-range : (imp_vars.levelHeight)/imp_vars.draw_factor + buffer
-    x_anchor = Math.random() * (imp_vars.levelWidth/imp_vars.draw_factor + 2 * buffer + range) - (buffer + range)
+    y_anchor = Math.random() < .5 ? -buffer-range : (imp_params.levelHeight)/imp_params.draw_factor + buffer
+    x_anchor = Math.random() * (imp_params.levelWidth/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
   }
 
   //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay

@@ -1,27 +1,27 @@
 function load_game() {
   var load_obj = {}
-  if(localStorage[imp_vars.save_name]===undefined || localStorage[imp_vars.save_name] === null) {
-    imp_vars.player_data.first_time = true
+  if(localStorage[imp_params.save_name]===undefined || localStorage[imp_params.save_name] === null) {
+    imp_params.player_data.first_time = true
     send_logging_to_server('STARTED GAME', {});
     load_obj["difficulty_mode"] = "easy"
   }
   else {
-    load_obj = JSON.parse(localStorage[imp_vars.save_name])
-    imp_vars.player_data.first_time = load_obj['first_time'] == false? false: true
+    load_obj = JSON.parse(localStorage[imp_params.save_name])
+    imp_params.player_data.first_time = load_obj['first_time'] == false? false: true
   }
 
   if (load_obj['hard_mode_unlocked'] !== undefined) {
-    imp_vars.player_data.hard_mode_unlocked = load_obj['hard_mode_unlocked'];
-    if (!imp_vars.player_data.hard_mode_unlocked) {
-      imp_vars.player_data.difficulty_mode = "easy";
+    imp_params.player_data.hard_mode_unlocked = load_obj['hard_mode_unlocked'];
+    if (!imp_params.player_data.hard_mode_unlocked) {
+      imp_params.player_data.difficulty_mode = "easy";
     }
   } else {
     // if we don't have a value, but the player has beaten world 4, then it should be unlocked.
-    imp_vars.player_data.hard_mode_unlocked = false;
-    if (imp_vars.player_data.world_rankings &&
-        imp_vars.player_data.world_rankings["easy"] &&
-        imp_vars.player_data.world_rankings["easy"]["world 4"] !== undefined) {
-      imp_vars.player_data.hard_mode_unlocked = true;
+    imp_params.player_data.hard_mode_unlocked = false;
+    if (imp_params.player_data.world_rankings &&
+        imp_params.player_data.world_rankings["easy"] &&
+        imp_params.player_data.world_rankings["easy"]["world 4"] !== undefined) {
+      imp_params.player_data.hard_mode_unlocked = true;
     }
   }
 
@@ -106,12 +106,12 @@ function load_game() {
     }
   }
 
-  imp_vars.player_data.save_data = load_obj['save_data']
+  imp_params.player_data.save_data = load_obj['save_data']
 
-  imp_vars.player_data.difficulty_mode = load_obj['difficulty_mode'] ? load_obj['difficulty_mode'] : "normal";
-  imp_vars.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
-  imp_vars.player_data.tutorial_shown = load_obj['tutorial_shown'] ? load_obj['tutorial_shown'] : [];
-  imp_vars.player_data.options = {
+  imp_params.player_data.difficulty_mode = load_obj['difficulty_mode'] ? load_obj['difficulty_mode'] : "normal";
+  imp_params.player_data.total_kills = load_obj['total_kills'] ? load_obj['total_kills'] : 0
+  imp_params.player_data.tutorial_shown = load_obj['tutorial_shown'] ? load_obj['tutorial_shown'] : [];
+  imp_params.player_data.options = {
     effects_volume: load_obj['options']['effects_volume'],
     bg_music_volume: load_obj['options']['bg_music_volume'],
     explosions: load_obj['options']['explosions'],
@@ -123,11 +123,11 @@ function load_game() {
     control_hand: load_obj['options']['control_hand'],
     control_scheme: load_obj['options']['control_scheme']
   };
-  imp_vars.player_data.quests = load_obj["quests"]
+  imp_params.player_data.quests = load_obj["quests"]
   load_level_data("easy", load_obj)
   load_level_data("normal", load_obj)
 
-  imp_vars.player_data.world_rankings = load_obj['world_rankings']
+  imp_params.player_data.world_rankings = load_obj['world_rankings']
 
   for(i in imp_params.impulse_enemy_stats) {
     //load if enemies are seen
@@ -168,27 +168,27 @@ function save_game() {
     save_obj['enemies_seen'][i] = imp_params.impulse_enemy_stats[i].seen
     save_obj['enemies_killed'][i] = imp_params.impulse_enemy_stats[i].kills
   }
-  save_obj['total_kills'] = imp_vars.player_data.total_kills
-  save_obj['difficulty_mode'] = imp_vars.player_data.difficulty_mode
-  save_obj['world_rankings'] = imp_vars.player_data.world_rankings
-  save_obj['save_data'] = imp_vars.player_data.save_data
+  save_obj['total_kills'] = imp_params.player_data.total_kills
+  save_obj['difficulty_mode'] = imp_params.player_data.difficulty_mode
+  save_obj['world_rankings'] = imp_params.player_data.world_rankings
+  save_obj['save_data'] = imp_params.player_data.save_data
   save_obj['options'] = {
-    'effects_volume': imp_vars.player_data.options.effects_volume,
-    'bg_music_volume': imp_vars.player_data.options.bg_music_volume,
-    'explosions': imp_vars.player_data.options.explosions,
-    'score_labels': imp_vars.player_data.options.score_labels,
-    'progress_circle': imp_vars.player_data.options.progress_circle,
-    'multiplier_display': imp_vars.player_data.options.multiplier_display,
-    'impulse_shadow': imp_vars.player_data.options.impulse_shadow,
-    'speed_run_countdown': imp_vars.player_data.options.speed_run_countdown,
-    'control_hand': imp_vars.player_data.options.control_hand,
-    'control_scheme': imp_vars.player_data.options.control_scheme
+    'effects_volume': imp_params.player_data.options.effects_volume,
+    'bg_music_volume': imp_params.player_data.options.bg_music_volume,
+    'explosions': imp_params.player_data.options.explosions,
+    'score_labels': imp_params.player_data.options.score_labels,
+    'progress_circle': imp_params.player_data.options.progress_circle,
+    'multiplier_display': imp_params.player_data.options.multiplier_display,
+    'impulse_shadow': imp_params.player_data.options.impulse_shadow,
+    'speed_run_countdown': imp_params.player_data.options.speed_run_countdown,
+    'control_hand': imp_params.player_data.options.control_hand,
+    'control_scheme': imp_params.player_data.options.control_scheme
   };
-  save_obj['first_time'] = imp_vars.player_data.first_time
-  save_obj['hard_mode_unlocked'] = imp_vars.player_data.hard_mode_unlocked;
-  save_obj['tutorial_shown'] = imp_vars.player_data.tutorial_shown;
-  save_obj['quests'] = imp_vars.player_data.quests
-  localStorage[imp_vars.save_name] = JSON.stringify(save_obj)
+  save_obj['first_time'] = imp_params.player_data.first_time
+  save_obj['hard_mode_unlocked'] = imp_params.player_data.hard_mode_unlocked;
+  save_obj['tutorial_shown'] = imp_params.player_data.tutorial_shown;
+  save_obj['quests'] = imp_params.player_data.quests
+  localStorage[imp_params.save_name] = JSON.stringify(save_obj)
 }
 
 

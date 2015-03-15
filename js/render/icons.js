@@ -11,7 +11,7 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
   if(key_display) {
     context.font = "10px Muli"
     context.textAlign = "center"
-    if(imp_vars.player_data.options.control_hand == "left") {
+    if(imp_params.player_data.options.control_hand == "left") {
       context.fillText("ENTER", x+scale, y+scale)
     } else {
       context.fillText("Q", x+scale, y+scale)

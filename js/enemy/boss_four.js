@@ -48,7 +48,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.spawn_laser_revolution_base = 20000
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.spawn_laser_revolution_base = 30000
   }
 
@@ -101,7 +101,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
 
   this.spawn_order = ["stunner", "spear", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "mote", "tank", "disabler", ]
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
     this.spawn_order = ["spear", "mote", "fighter", "orbiter", "troll", "goo", "harpoon", "deathray", "slingshot", "stunner", "tank", "disabler"]
   }
 
@@ -139,13 +139,13 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.spawner_bud_frequency = 4;
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.spawner_bud_frequency = 4;
   }
 
   this.attack_bud_expand_period = 10000
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.attack_bud_expand_period = 12000
   }
 
@@ -154,7 +154,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
   this.attack_bud_charge_timer = this.attack_bud_charge_period
   this.attack_bud_cooldown_timer = 0
   this.attack_bud_cooldown_period = 1000
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.attack_bud_cooldown_period = 1500
   }
 
@@ -170,7 +170,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100
 
-  if (imp_vars.player_data.difficulty_mode) {
+  if (imp_params.player_data.difficulty_mode) {
     this.tank_force = 70
   }
 
@@ -273,7 +273,7 @@ BossFour.prototype.draw_blindness_overlay = function(context, draw_factor) {
   } else if (this.darkness_timer > -this.darkness_spreading_duration) {
     if (!this.darkness_sound_played) {
       this.darkness_sound_played = true
-      imp_vars.impulse_music.play_sound("b4darkness")
+      imp_params.impulse_music.play_sound("b4darkness")
     }
     var prog = (this.darkness_timer / -this.darkness_spreading_duration);
     var r = (this.effective_radius * (1 - prog) + 60 * prog) * draw_factor;
@@ -546,7 +546,7 @@ BossFour.prototype.boss_specific_additional_processing = function(dt) {
   this.spawn_laser_angle += dt / this.get_spawn_laser_revolution() * Math.PI * 2
 
   this.get_object_hit()
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
     this.darkness_timer -= dt;
 
     if (this.darkness_timer < 0) {
@@ -642,8 +642,8 @@ BossFour.prototype.generate_target_spawn_angle = function() {
     var distance = 15
     var test_point = {x: this.body.GetPosition().x + Math.cos(angle) * distance,
         y: this.body.GetPosition().y + Math.sin(angle) * distance}
-    var dist = Math.min(775/imp_vars.draw_factor - test_point.x, test_point.x - 25/imp_vars.draw_factor)
-    var dist2 = Math.min(575/imp_vars.draw_factor - test_point.y, test_point.y - 25/imp_vars.draw_factor)
+    var dist = Math.min(775/imp_params.draw_factor - test_point.x, test_point.x - 25/imp_params.draw_factor)
+    var dist2 = Math.min(575/imp_params.draw_factor - test_point.y, test_point.y - 25/imp_params.draw_factor)
 
     // One of these three angles MUST work.
     if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 5) {
@@ -698,7 +698,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     this.attack_bud_charging = false
     bud.enemy.body.ResetMassData()
     bud.enemy = null
-    imp_vars.impulse_music.play_sound("b4attacker")
+    imp_params.impulse_music.play_sound("b4attacker")
   } else if(bud.type == "spawn"){
     this.ready_attack_bud = null
     this.attack_bud_charging = false
@@ -716,7 +716,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.enemy.body.ResetMassData()
     bud.enemy = null
     this.target_spawn_angle = null
-    imp_vars.impulse_music.play_sound("b4spawner")
+    imp_params.impulse_music.play_sound("b4spawner")
   }
   this.attack_bud_cooldown_timer = this.attack_bud_cooldown_period;
 }
@@ -890,7 +890,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
     new_enemy = new BossFourAttacker(this.world, new_position.x, new_position.y, this.level.enemy_counter, this.impulse_game_state, 0.1)
   else {
     var spawn_type = this.get_next_enemy_type()
-    var spawn_count = imp_vars.player_data.difficulty_mode == "easy" ? this.spawner_spawn_count_easy[spawn_type] : this.spawner_spawn_count[spawn_type];
+    var spawn_count = imp_params.player_data.difficulty_mode == "easy" ? this.spawner_spawn_count_easy[spawn_type] : this.spawner_spawn_count[spawn_type];
     new_enemy = new BossFourSpawner(this.world, new_position.x, new_position.y, this.level.enemy_counter, this.impulse_game_state, spawn_type, spawn_count, this.spawner_spawn_force[spawn_type], this, 0.1)
   }
   bud.body = new_enemy.body
@@ -1177,7 +1177,7 @@ BossFour.prototype.get_spawn_laser_flare_transition_period = function() {
 }
 
 BossFour.prototype.get_impulse_extra_factor = function() {
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     return this.impulse_extra_factor * 2;
   }
   return this.impulse_extra_factor;

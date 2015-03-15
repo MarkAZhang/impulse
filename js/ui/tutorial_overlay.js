@@ -12,7 +12,7 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 ]
 
 TutorialOverlayManager.prototype.add_overlays = function() {
-	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_vars.player_data.difficulty_mode == "easy" &&
+	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_params.player_data.difficulty_mode == "easy" &&
     imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state["easy"].best_time === 1000) {
 		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));
 	}
@@ -39,7 +39,7 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 		this.overlays.push(new ResetMultiplierTutorialOverlay(this.impulse_game_state));
 	} else {
 		for (var i = 0; i < this.on_demand_overlays.length; i++) {
-			if (imp_vars.player_data.tutorial_shown.indexOf(this.on_demand_overlays[i].type) == -1) {
+			if (imp_params.player_data.tutorial_shown.indexOf(this.on_demand_overlays[i].type) == -1) {
 				this.overlays.push(new this.on_demand_overlays[i].class(this.impulse_game_state));
 			}
 		}
@@ -139,12 +139,12 @@ TutorialOverlay.prototype.process_internal = function(dt) {
 		this.duration -= dt;
 	}
 	if (this.hover_overlay) {
-		var pos_x = this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor;
-		var pos_y = this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor;
+		var pos_x = this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor;
+		var pos_y = this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor;
 		if (pos_x < this.hover_overlay.w / 2 + 5) {
 			pos_x = this.hover_overlay.w / 2 + 5;
-		} else if (pos_x > imp_vars.levelWidth - this.hover_overlay.w / 2 - 5) {
-			pos_x = imp_vars.levelWidth - this.hover_overlay.w / 2 - 5;
+		} else if (pos_x > imp_params.levelWidth - this.hover_overlay.w / 2 - 5) {
+			pos_x = imp_params.levelWidth - this.hover_overlay.w / 2 - 5;
 		}
 
 		if (pos_y < this.hover_overlay.h + 55) {
@@ -334,26 +334,26 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.textAlign = "center"
 	var rw = 120;
 	var rh = 80;
-	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+	ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
 	ctx.stroke();
 	ctx.font = '21px Muli'
-    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
+    ctx.fillText("GOAL", imp_params.levelWidth + imp_params.sidebarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_params.levelWidth + imp_params.sidebarWidth/2, 85)
 
 	/*ctx.beginPath();
-	ctx.rect(imp_vars.levelWidth - 10, 10, 50, 50);
+	ctx.rect(imp_params.levelWidth - 10, 10, 50, 50);
 	ctx.fillStyle = "gray";
 	ctx.strokeStyle = "white";
 	ctx.lineWidth = 2;
 	ctx.fill();
 	ctx.stroke();
-	draw_full_arrow(ctx, imp_vars.levelWidth + 15, 35, 1, "white", "right");
+	draw_full_arrow(ctx, imp_params.levelWidth + 15, 35, 1, "white", "right");
 	ctx.lineWidth = 4;
 	ctx.globalAlpha *= 0.5;
 	ctx.beginPath();
 	ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2);
-	ctx.lineTo(imp_vars.levelWidth - 10, 35);
+	ctx.lineTo(imp_params.levelWidth - 10, 35);
 	ctx.closePath();
 	ctx.stroke();
 	ctx.fillStyle = "white"
@@ -361,7 +361,7 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.arc(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
 	ctx.fill();
 	ctx.beginPath();
-	ctx.arc(imp_vars.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
+	ctx.arc(imp_params.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
 	ctx.fill();*/
 }
 
@@ -383,12 +383,12 @@ ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.textAlign = "center"
 	var rw = 120;
 	var rh = 80;
-	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+	ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
 	ctx.stroke();
 	ctx.font = '21px Muli'
-    ctx.fillText("GOAL", imp_vars.levelWidth + imp_vars.sidebarWidth/2, 45)
+    ctx.fillText("GOAL", imp_params.levelWidth + imp_params.sidebarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_vars.levelWidth + imp_vars.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_params.levelWidth + imp_params.sidebarWidth/2, 85)
 }
 
 ScorePointsReminderTutorialOverlay.prototype.satisfaction_criteria = function() {
@@ -415,25 +415,25 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.beginPath();
 	var rw = 120;
 	var rh = 70;
-	ctx.rect(-imp_vars.sidebarWidth / 2 - rw / 2, imp_vars.canvasHeight/2 - 20 - rh / 2, rw, rh);
+	ctx.rect(-imp_params.sidebarWidth / 2 - rw / 2, imp_params.canvasHeight/2 - 20 - rh / 2, rw, rh);
 	ctx.stroke();
     ctx.font = '16px Muli';
-    ctx.fillText("LEVEL TIME",  -imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 - 30);
+    ctx.fillText("LEVEL TIME",  -imp_params.sidebarWidth/2, imp_params.canvasHeight/2 - 30);
     ctx.font = '32px Muli';
-    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2 + 2);
+    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_params.sidebarWidth/2, imp_params.canvasHeight/2 + 2);
 	/*ctx.beginPath();
-	ctx.rect(-40, imp_vars.levelHeight - 60, 50, 50);
+	ctx.rect(-40, imp_params.levelHeight - 60, 50, 50);
 	ctx.fillStyle = "gray";
 	ctx.strokeStyle = "white";
 	ctx.lineWidth = 2;
 	ctx.fill();
 	ctx.stroke();
-	draw_full_arrow(ctx, -15, imp_vars.levelHeight - 35, 1, "white", "left");
+	draw_full_arrow(ctx, -15, imp_params.levelHeight - 35, 1, "white", "left");
 	ctx.lineWidth = 4;
 	ctx.globalAlpha *= 0.5;
 	ctx.beginPath();
 	ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2);
-	ctx.lineTo(10, imp_vars.levelHeight - 35);
+	ctx.lineTo(10, imp_params.levelHeight - 35);
 	ctx.closePath();
 	ctx.stroke();
 	ctx.fillStyle = "white";
@@ -441,7 +441,7 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.arc(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
 	ctx.fill();
 	ctx.beginPath();
-	ctx.arc(10, imp_vars.levelHeight - 35, 3, 0, 2 * Math.PI);
+	ctx.arc(10, imp_params.levelHeight - 35, 3, 0, 2 * Math.PI);
 	ctx.fill();*/
 }
 
@@ -471,14 +471,14 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
 	ctx.beginPath();
 	var rw = 100;
 	var rh = 100;
-	ctx.rect(imp_vars.levelWidth + imp_vars.sidebarWidth/2 - rw/2, imp_vars.canvasHeight/2 - rh/2 - 20, rw, rh);
+	ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, imp_params.canvasHeight/2 - rh/2 - 20, rw, rh);
 	ctx.stroke();
     ctx.font = '72px Muli';
-    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, imp_vars.levelWidth + imp_vars.sidebarWidth/2, imp_vars.canvasHeight/2)
+    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, imp_params.levelWidth + imp_params.sidebarWidth/2, imp_params.canvasHeight/2)
 
 	/*var a_loc = {
-		x: imp_vars.levelWidth + 15,
-		y: imp_vars.levelHeight / 2 - 20,
+		x: imp_params.levelWidth + 15,
+		y: imp_params.levelHeight / 2 - 20,
 		w: 50,
 		h: 50
 	};
@@ -532,8 +532,8 @@ ResetMultiplierTutorialOverlay.prototype.process = function(dt) {
 }
 
 ResetMultiplierTutorialOverlay.prototype.on_expire = function() {
-	if(imp_vars.player_data.tutorial_shown.indexOf("reset_multiplier") == -1) {
-		imp_vars.player_data.tutorial_shown.push("reset_multiplier");
+	if(imp_params.player_data.tutorial_shown.indexOf("reset_multiplier") == -1) {
+		imp_params.player_data.tutorial_shown.push("reset_multiplier");
 		save_game();
 	}
 }
@@ -545,8 +545,8 @@ GatewayMoveTutorialOverlay.prototype.constructor = GatewayMoveTutorialOverlay;
 function GatewayMoveTutorialOverlay(impulse_game_state) {
 	this.init(impulse_game_state);
 	this.gateway_loc = {
-		x: this.impulse_game_state.level.gateway_loc.x * imp_vars.draw_factor,
-		y: this.impulse_game_state.level.gateway_loc.y * imp_vars.draw_factor};
+		x: this.impulse_game_state.level.gateway_loc.x * imp_params.draw_factor,
+		y: this.impulse_game_state.level.gateway_loc.y * imp_params.draw_factor};
 	this.message_box = new MessageBox("tutorial_gateway_move", impulse_game_state.bright_color, impulse_game_state.world_num);
 	this.message_box.set_position(this.gateway_loc.x, this.gateway_loc.y - 30);
 	this.message_box.set_visible(true);

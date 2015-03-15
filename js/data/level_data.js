@@ -1550,7 +1550,7 @@ for(i in imp_params.impulse_level_data) {
       var ans = ob_v[index]
       var ans_array = []
       for(var i = 0; i < ans.length; i++) {
-        ans_array.push(new b2Vec2(ans[i][0]/imp_vars.draw_factor, ans[i][1]/imp_vars.draw_factor))
+        ans_array.push(new b2Vec2(ans[i][0]/imp_params.draw_factor, ans[i][1]/imp_params.draw_factor))
       }
 
       return ans_array
@@ -1558,7 +1558,20 @@ for(i in imp_params.impulse_level_data) {
   }
 }
 
+imp_params.tessellation_names = {
+  1: "IGNAVIAM",
+  2: "CONSUMENDI",
+  3: "NEGLIGENTIA",
+  4: "ADROGANTIA"
+};
+imp_params.hive_names = {
+  1: "HIVE OF HIDING",
+  2: "HIVE OF EATING",
+  3: "HIVE OF LAUGHING",
+  4: "HIVE OF PURGING"
+};
 
+imp_params.last_tutorial_level = 'HIVE 0-3';
 
 //imp_params.world_cutoffs = {}
 //imp_params.impulse_level_cutoffs = {}

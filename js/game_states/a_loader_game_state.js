@@ -10,15 +10,15 @@ LoaderGameState.prototype.load_level = function(level_data) {
 
   level.generate_obstacles()
 
-  if(imp_vars.minified)
+  if(imp_params.minified)
     var visibility_graph_worker = new Worker("js/lib/worker.js")
   else
     var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker_real.js")
   visibility_graph_worker.postMessage({"a": level.boundary_polygons, /*polygons*/
      "b": level.obstacle_edges, /*obstacle_edges*/
-     "c": imp_vars.draw_factor, /*draw_factor*/
-     "d": imp_vars.levelWidth, /*levelWidth*/
-     "e": imp_vars.levelHeight}) /*levelHeight*/
+     "c": imp_params.draw_factor, /*draw_factor*/
+     "d": imp_params.levelWidth, /*levelWidth*/
+     "e": imp_params.levelHeight}) /*levelHeight*/
 
   this.load_percentage = 0
 
@@ -29,7 +29,7 @@ LoaderGameState.prototype.load_level = function(level_data) {
       }
       else if(event.data["a"]) {
         _this.visibility_graph = new VisibilityGraph(
-          level, 
+          level,
           event.data["a"], /*poly_edges*/
           event.data["b"], /*vertices*/
           event.data["c"], /*edges*/

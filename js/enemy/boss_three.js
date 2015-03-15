@@ -33,17 +33,17 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.boss_force = 200
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.boss_force = 120
   }
   this.num_arms = 16
   this.striking_arms = {}
   this.strike_duration = 2200 // this is how long the strike lasts, with the first part of it being the "charge"
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.strike_duration = 2800
   }
   this.strike_interval = 1500 // every interval, we add a new strike
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.strike_interval = 2000
   }
   this.strike_timer = this.strike_interval
@@ -53,7 +53,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.spin_rate = 16*this.strike_duration * (1 - this.strike_charging_prop)
 
   this.wheel_spinning_duration = 4000
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.wheel_spinning_duration = 6000 // spin one more round on easy-mode
   }
   this.wheel_spinning_timer = this.wheel_spinning_duration
@@ -127,7 +127,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
    "troll" : 10,
  }
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
       this.spawn_count = {
        "stunner" : 6,
        "spear" : 5,
@@ -233,7 +233,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
         this.body.SetAngle(this.body.GetAngle() - 2*Math.PI * dt/this.spin_rate)
     }
 
-  if(imp_vars.player_data.difficulty_mode == "normal") {
+  if(imp_params.player_data.difficulty_mode == "normal") {
     if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
       this.silence_timer = 0;
       this.silenced = true
@@ -328,7 +328,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
     if (this.last_wheel_index_with_sound != this.wheel_cur_index) {
       // play the sound if it's the first time on this index
       this.last_wheel_index_with_sound = this.wheel_cur_index
-      imp_vars.impulse_music.play_sound("b3tick")
+      imp_params.impulse_music.play_sound("b3tick")
     }
 
     if(this.wheel_spinning_timer <= 0) {
@@ -510,7 +510,7 @@ BossThree.prototype.process_striking_arms = function() {
         data.cur_dist = data.max_dist * (arm_size) + (data.charge_dist) * (1 - arm_size)
         if (!data.sound_played) {
           data.sound_played = true
-          imp_vars.impulse_music.play_sound("b3strike")
+          imp_params.impulse_music.play_sound("b3strike")
         }
       } else if (prog >= finish_strike_t && prog < start_retract_t) {
         data.cur_dist = data.max_dist
@@ -812,7 +812,7 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
+    context.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight)
     context.restore()
   }
 
@@ -946,10 +946,10 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
     angle += Math.random() * spread - spread / 2;
   }
 
-  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* imp_vars.draw_factor,
-    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* imp_vars.draw_factor}
+  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* imp_params.draw_factor,
+    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* imp_params.draw_factor}
 
-  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_vars.draw_factor, spawn_loc.y/imp_vars.draw_factor, this.level.enemy_counter, this.impulse_game_state)
+  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_params.draw_factor, spawn_loc.y/imp_params.draw_factor, this.level.enemy_counter, this.impulse_game_state)
   var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
@@ -1016,7 +1016,7 @@ BossThree.prototype.collide_with = function(other, body) {
   } else {
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     var factor = 1
-    if(other === this.player && imp_vars.player_data.difficulty_mode == "easy") {
+    if(other === this.player && imp_params.player_data.difficulty_mode == "easy") {
       factor = 0.5
     }
     other.body.ApplyImpulse(new b2Vec2(this.boss_force * factor * Math.cos(boss_angle), this.boss_force * factor * Math.sin(boss_angle)), other.body.GetWorldCenter())
@@ -1027,7 +1027,7 @@ BossThree.prototype.activate_wheel = function() {
   this.wheel_state = "activate"
   this.wheel_activate_timer = this.wheel_activate_duration
   this.wheel_effect_activated = false
-  imp_vars.impulse_music.play_sound("b3select")
+  imp_params.impulse_music.play_sound("b3select")
 }
 
 BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {
@@ -1039,7 +1039,7 @@ BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_forc
 }
 
 BossThree.prototype.get_impulse_extra_factor = function() {
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     return this.impulse_extra_factor * 1.5;
   }
   return this.impulse_extra_factor;

@@ -1,71 +1,62 @@
 body{
-           background:#000;
-           margin: 0px;
-           padding: 0px;
-         }
-         #canvas_container {
-            position: absolute;
-            z-index: 2;
-         }
-         #bg_canvas_container {
-            position: absolute;
-            z-index: 1;
-         }
-         #canvas {
-            outline: none;
-            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-         }
-         #bg_canvas {
-            outline: none;
-            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-            position: relative;
-        }
-        :-webkit-full-screen {
-        background-color: black;
-        z-index: 2147483647;
-        }
-        @font-face {
-            font-family: Muli;
-            src: local(Century Gothic), local(Futura), url('../font/Muli-Light.ttf');
-        }
+  background:#000;
+  margin: 0px;
+  padding: 0px;
+}
+#canvas_container {
+  position: absolute;
+  z-index: 2;
+}
+#bg_canvas_container {
+  position: absolute;
+  z-index: 1;
+}
+#canvas {
+  outline: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+#bg_canvas {
+  outline: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  position: relative;
+}
+:-webkit-full-screen {
+  background-color: black;
+  z-index: 2147483647;
+}
+@font-face {
+  font-family: Muli;
+  src: local(Century Gothic), local(Futura), url('../font/Muli-Light.ttf');
+}
+#message{
+  font-family: "Muli";
+  display: none;
+  color: #ffffff;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  z-index: 3;
+  text-align: center;
+}
 
-        #message{
-            font-family: "Muli";
-            display: none;
-            color: #ffffff;
-            position: absolute;
-            left: 100px;
-            top: 100px;
-            z-index: 3;
-            text-align: center;
-        }
+#banner {
+  font-size: 72px;
+  margin-bottom: 65px;
+}
 
-        #banner {
-            font-size: 72px;
-            margin-bottom: 65px;
-        }
+#warning {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
 
-        #warning {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
+#warning2 {
+  margin-bottom: 40px;
+  font-size: 16px;
+}
 
-        #warning2 {
-            margin-bottom: 40px;
-            font-size: 16px;
-        }
-
-        .button {
-            cursor: pointer;
-        }
-        .button:hover {
-            text-decoration: underline;
-        }
-        /*#addthis-inline {
-            z-index: 10;
-            position: absolute;
-            left: -webkit-calc(50% - 92px);
-            top: 450px;
-            opacity: 0;
-            display: none;
-        }*/
+.button {
+  cursor: pointer;
+}
+.button:hover {
+  text-decoration: underline;
+}

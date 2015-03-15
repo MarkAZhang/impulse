@@ -16,7 +16,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.victory = victory
 
   if(save_screen) {
-    this.hive_numbers = imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode]
+    this.hive_numbers = imp_params.player_data.save_data[imp_params.player_data.difficulty_mode]
     save_game()
     this.world_num = this.hive_numbers.world
     this.victory = null
@@ -51,8 +51,8 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     this.calculate_deaths()
     this.send_logging();
     this.victory_text = imp_params.hive_names[this.world_num]+" DEFEATED";
-    if (!imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world " + this.world_num]) {
-      imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] =
+    if (!imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world " + this.world_num]) {
+      imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+this.world_num] =
         {
           "defeated": true,
           "first_victory": true
@@ -64,11 +64,11 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   var _this = this;
 
   if(this.save_screen && !this.just_saved) {
-    this.resume_button = new IconButton("RESUME", 16, 730, imp_vars.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
+    this.resume_button = new IconButton("RESUME", 16, 730, imp_params.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
       _this.resume_game()
     }}(this), "start")
     this.resume_button.shadow = false
-    /*if(imp_vars.player_data.options.control_hand == "right") {
+    /*if(imp_params.player_data.options.control_hand == "right") {
       this.resume_button.underline_index = 0
     } else {
       this.resume_button.extra_text = "RIGHT ARROW"
@@ -76,12 +76,12 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }*/
     this.buttons.push(this.resume_button)
 
-    this.delete_button = new IconButton("DELETE", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
+    this.delete_button = new IconButton("DELETE", 16, imp_params.levelWidth/2, imp_params.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
       _this.delete_game()
     }}(this), "delete_small")
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
-    /*if(imp_vars.player_data.options.control_hand == "right") {
+    /*if(imp_params.player_data.options.control_hand == "right") {
       this.delete_button.underline_index = 0
     this.delete_button.extra_text= "SHIFT+"
     } else {
@@ -90,13 +90,13 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
     }
     this.delete_button.shift_enabled = true*/
 
-    this.return_to_main_button = new IconButton("EXIT", 16, 70, imp_vars.levelHeight/2 + 260, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
+    this.return_to_main_button = new IconButton("EXIT", 16, 70, imp_params.levelHeight/2 + 260, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.exit_game()
     }}(this), "back")
 
     this.buttons.push(this.return_to_main_button)
     /*this.return_to_main_button.shadow = false
-    if(imp_vars.player_data.options.control_hand == "right") {
+    if(imp_params.player_data.options.control_hand == "right") {
       this.return_to_main_button.underline_index = 0
     } else {
       this.return_to_main_button.extra_text = "LEFT ARROW"
@@ -107,7 +107,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
 
   if (this.world_num != 0) {
-    imp_vars.impulse_music.stop_bg()
+    imp_params.impulse_music.stop_bg()
   }
   this.star_colors = ["bronze", "silver", "gold"]
 
@@ -121,11 +121,11 @@ MainGameSummaryState.prototype.send_logging = function () {
   if (this.world_num === 0) return;
   // Determine first-victory by checking world_rankings.
   var first_victory =
-    imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.world_num] === undefined;
+    imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+this.world_num] === undefined;
 
   send_logging_to_server('BEAT WORLD ' + this.world_num, {
     first_victory: first_victory,
-    difficulty_mode: imp_vars.player_data.difficulty_mode,
+    difficulty_mode: imp_params.player_data.difficulty_mode,
     hive_numbers: this.hive_numbers
   });
 };
@@ -149,7 +149,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none")
     this.bg_drawn = true
-    draw_bg(imp_vars.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+    draw_bg(imp_params.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
   }
 
   ctx.save()
@@ -164,7 +164,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   ctx.fillStyle = this.dark_color
-  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
 
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
@@ -177,7 +177,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.save()
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
 
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, 0, 0, imp_params.levelWidth, imp_params.levelHeight)
 
   ctx.restore();
   for(var i = 0; i < this.buttons.length; i++)
@@ -193,23 +193,23 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '20px Muli'
   if(this.victory) {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 100, 80)
+    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = this.bright_color
     ctx.font = '40px Muli'
-    ctx.fillText(this.victory_text, imp_vars.levelWidth/2, 130)
+    ctx.fillText(this.victory_text, imp_params.levelWidth/2, 130)
   }
   else if(this.save_screen) {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 220, 80)
+    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 220, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = "white"
-    ctx.fillText("GAME SAVED" , imp_vars.levelWidth/2, 210)
+    ctx.fillText("GAME SAVED" , imp_params.levelWidth/2, 210)
     ctx.fillStyle = this.bright_color;
     ctx.font = '40px Muli'
-    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 250)
+    ctx.fillText(this.hive_numbers.hive_name, imp_params.levelWidth/2, 250)
     ctx.font = '24px Muli'
-    ctx.fillText(this.hive_numbers.current_level, imp_vars.levelWidth/2, 280);
+    ctx.fillText(this.hive_numbers.current_level, imp_params.levelWidth/2, 280);
 
     ctx.textAlign = 'center'
 
@@ -218,42 +218,42 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.bright_color
     ctx.font = '20px Muli'
-    ctx.fillText("TOTAL TIME ", imp_vars.levelWidth/2 - 100, score_y)
+    ctx.fillText("TOTAL TIME ", imp_params.levelWidth/2 - 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2 - 100, score_label_y)
+    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_params.levelWidth/2 - 100, score_label_y)
     ctx.fillStyle = this.bright_color
     ctx.font = '20px Muli'
-    ctx.fillText("DEATHS", imp_vars.levelWidth/2 + 100, score_y)
+    ctx.fillText("DEATHS", imp_params.levelWidth/2 + 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.total_deaths, imp_vars.levelWidth/2 + 100, score_label_y)
+    ctx.fillText(this.total_deaths, imp_params.levelWidth/2 + 100, score_label_y)
 
   } else {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 100, 80)
+    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = 'red'
-    ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 80)
+    ctx.fillText("GAME OVER", imp_params.levelWidth/2, 80)
     ctx.fillStyle = this.bright_color
     if(this.hive_numbers.continues > 0) {
       ctx.font = '18px Muli'
-      ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 175)
+      ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_params.levelWidth/2, 175)
     }
     ctx.font = '40px Muli'
-    ctx.fillText(this.hive_numbers.hive_name, imp_vars.levelWidth/2, 130)
+    ctx.fillText(this.hive_numbers.hive_name, imp_params.levelWidth/2, 130)
   }
 
   if(this.victory && this.hive_numbers.continues) {
     ctx.fillStyle = this.bright_color
     ctx.font = '18px Muli'
-    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_vars.levelWidth/2, 250)
+    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, imp_params.levelWidth/2, 250)
   }
 
   if(this.victory) {
     ctx.fillStyle = this.bright_color
     ctx.font = '14px Muli'
-    ctx.fillText("TOTAL TIME", imp_vars.levelWidth/2, 167)
+    ctx.fillText("TOTAL TIME", imp_params.levelWidth/2, 167)
     ctx.font = '24px Muli'
-    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_vars.levelWidth/2, 190)
+    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_params.levelWidth/2, 190)
 
   }
 
@@ -308,13 +308,13 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = this.lite_color
   if(this.save_screen) {
     if(this.just_saved)
-      ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+      ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_params.levelWidth/2, imp_params.levelHeight - 30)
   } else if(this.victory) {
-    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_params.levelWidth/2, imp_params.levelHeight - 30)
   /* else if(this.level) {
-    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)*/
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_params.levelWidth/2, imp_params.levelHeight - 30)*/
   } else {
-    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", imp_params.levelWidth/2, imp_params.levelHeight - 30)
   }
 
   for(var i = 0; i < this.buttons.length; i++) {
@@ -391,13 +391,13 @@ MainGameSummaryState.prototype.process = function(dt) {
 }
 
 MainGameSummaryState.prototype.resume_game = function() {
-  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
+  imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
   save_game()
   switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
-  imp_vars.player_data.save_data[imp_vars.player_data.difficulty_mode] = {}
+  imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
   save_game()
   switch_game_state(new WorldMapState(this.world_num))
 }
@@ -405,7 +405,7 @@ MainGameSummaryState.prototype.delete_game = function() {
 MainGameSummaryState.prototype.check_quests = function() {
   if (this.world_num <= 0) return;
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
+  if (imp_params.player_data.difficulty_mode == "normal" && this.hive_numbers.speed_run_countdown > 0) {
     set_quest_completed("blitz_hive" + this.world_num);
   }
 
@@ -413,8 +413,8 @@ MainGameSummaryState.prototype.check_quests = function() {
     set_quest_completed("untouchable");
   }
 
-  if(imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]
-    && imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+  if(imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+this.hive_numbers.world]
+    && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
     if (this.hive_numbers.world < 4) {
       set_quest_completed("beat_hive")
 
@@ -429,7 +429,7 @@ MainGameSummaryState.prototype.check_quests = function() {
       set_quest_completed("final_boss")
     }
 
-    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_vars.player_data.difficulty_mode == "easy")) {
+    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && imp_params.player_data.difficulty_mode == "easy")) {
       this.rewards.push({
         type: "share"
       });
@@ -444,19 +444,19 @@ MainGameSummaryState.prototype.exit_game = function() {
 MainGameSummaryState.prototype.go_to_next_state = function() {
   if(this.victory) {
     if (this.world_num === 4 &&
-        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 4"] &&
-        imp_vars.player_data.world_rankings[imp_vars.player_data.difficulty_mode]["world 4"]["first_victory"]) {
+        imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world 4"] &&
+        imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world 4"]["first_victory"]) {
       switch_game_state(new CreditsState(true, this.hive_numbers,
         {victory: true,
           is_tutorial: this.world_num == 0,
-          first_time_tutorial: imp_vars.player_data.first_time,
+          first_time_tutorial: imp_params.player_data.first_time,
           skipped: false,
           just_saved: this.just_saved}))
     } else {
       switch_game_state(new RewardGameState(this.hive_numbers, true,
         {victory: true,
           is_tutorial: this.world_num == 0,
-          first_time_tutorial: imp_vars.player_data.first_time,
+          first_time_tutorial: imp_params.player_data.first_time,
           skipped: false,
           just_saved: this.just_saved}))
     }
@@ -464,7 +464,7 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
     switch_game_state(new RewardGameState(this.hive_numbers, true,
       {victory: false,
         is_tutorial: this.world_num == 0,
-        first_time_tutorial: imp_vars.player_data.first_time,
+        first_time_tutorial: imp_params.player_data.first_time,
         skipped: false,
         just_saved: this.just_saved}))
   }

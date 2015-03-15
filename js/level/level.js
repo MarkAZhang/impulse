@@ -18,7 +18,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.restarting_effects_duration = 500;
 
   // Retrieve enemy data. Use easy mode if necessary but default to normal.
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.enemies_data = data.enemies_easy
   }
   if (!this.enemies_data) {
@@ -27,7 +27,7 @@ Level.prototype.init = function(data, level_intro_state) {
     this.using_enemies_easy = true
   }
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.initial_spawn_data = data.initial_spawn_data_easy
   }
   if (!this.initial_spawn_data) {
@@ -48,7 +48,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.dark_ones_visited = 0;
   this.dark_ones_after_gateway = data.dark_ones_after_gateway;
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.multi_spawn_points = data.multi_spawn_points_easy
   }
   if (!this.multi_spawn_points) {
@@ -58,7 +58,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.pick_alt_path = data.pick_alt_path
 
   this.starting_loc = data.player_loc
-  if (imp_vars.player_data.difficulty_mode == "easy" && data.player_loc_easy) {
+  if (imp_params.player_data.difficulty_mode == "easy" && data.player_loc_easy) {
     this.starting_loc = data.player_loc_easy
   }
   this.player_loc = this.get_starting_loc()
@@ -69,7 +69,7 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.obstacle_num = data.obstacle_num
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.obstacle_v = data.obstacle_v_easy
   }
   if (!this.obstacle_v) {
@@ -83,7 +83,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
-    this.cutoff_scores = data.cutoff_scores[imp_vars.player_data.difficulty_mode]
+    this.cutoff_scores = data.cutoff_scores[imp_params.player_data.difficulty_mode]
   }
   this.boss_victory = false
 
@@ -125,9 +125,9 @@ Level.prototype.init = function(data, level_intro_state) {
     "boss four spawner": BossFourSpawner,
   }
   if (data.gateway_loc) {
-    this.gateway_loc = {x: data.gateway_loc.x/imp_vars.draw_factor, y: data.gateway_loc.y/imp_vars.draw_factor}
+    this.gateway_loc = {x: data.gateway_loc.x/imp_params.draw_factor, y: data.gateway_loc.y/imp_params.draw_factor}
   } else {
-    this.gateway_loc = {x: this.get_starting_loc().x/imp_vars.draw_factor, y: this.get_starting_loc().y/imp_vars.draw_factor}
+    this.gateway_loc = {x: this.get_starting_loc().x/imp_params.draw_factor, y: this.get_starting_loc().y/imp_params.draw_factor}
   }
   this.gateway_size = 4
 
@@ -221,7 +221,7 @@ Level.prototype.reset = function() {
 Level.prototype.generate_multi = function() {
   var multi_index = Math.floor(Math.random() * this.multi_spawn_points.length)
   this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
-  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
+  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
   while(p_dist(player_loc,  this.multi_loc) < 125) {
     multi_index+=1
     multi_index = multi_index % this.multi_spawn_points.length
@@ -240,9 +240,9 @@ Level.prototype.process = function(dt) {
     if(this.multi_loc == null || this.multi_duration < 0) {
       this.generate_multi()
     } else {
-      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_vars.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_vars.draw_factor}
+      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
       if(p_dist(player_loc, this.multi_loc) < 25) {
-        imp_vars.impulse_music.play_sound("multi")
+        imp_params.impulse_music.play_sound("multi")
         this.impulse_game_state.game_numbers.base_combo += 5
         this.impulse_game_state.game_numbers.combo =
           this.impulse_game_state.game_numbers.base_combo + Math.floor(this.impulse_game_state.game_numbers.seconds/10)
@@ -250,8 +250,8 @@ Level.prototype.process = function(dt) {
         this.impulse_game_state.addScoreLabel(
           "x" + this.impulse_game_state.game_numbers.combo,
           "white",
-          this.multi_loc.x / imp_vars.draw_factor,
-          this.multi_loc.y / imp_vars.draw_factor,
+          this.multi_loc.x / imp_params.draw_factor,
+          this.multi_loc.y / imp_params.draw_factor,
           20,
           2000);
         this.generate_multi()
@@ -263,9 +263,9 @@ Level.prototype.process = function(dt) {
     if(this.gateway_transition_duration > 0) {
       this.gateway_transition_duration -= dt
     } else {
-      imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-      this.draw_bg(imp_vars.bg_ctx)
-      imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+      imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
+      this.draw_bg(imp_params.bg_ctx)
+      imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
       this.gateway_transition_duration = null
     }
   }
@@ -390,7 +390,7 @@ Level.prototype.initial_spawn = function() {
     for(var enemy in this.initial_spawn_data) {
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
-      if(!this.is_boss_level && imp_vars.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
+      if(!this.is_boss_level && imp_params.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
@@ -407,7 +407,7 @@ Level.prototype.initial_spawn = function() {
       this.spawn_enemy_set(enemy_type_list);
     }
   }
-  if (this.dark_ones_data && !this.dark_ones_spawned && imp_vars.debug.story_mode &&
+  if (this.dark_ones_data && !this.dark_ones_spawned && imp_params.debug.story_mode &&
     !this.dark_ones_after_gateway && !this.is_boss_level) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
@@ -448,7 +448,7 @@ Level.prototype.pick_pivot_spawn_index = function() {
     var max_distance = 0;
     var best_spawn_point = Math.floor(Math.random() * this.spawn_points.length);
     for (var i = 0; i < this.spawn_points.length; i++) {
-      var spawn_point = {x: this.spawn_points[i][0] / imp_vars.draw_factor, y: this.spawn_points[i][1] / imp_vars.draw_factor};
+      var spawn_point = {x: this.spawn_points[i][0] / imp_params.draw_factor, y: this.spawn_points[i][1] / imp_params.draw_factor};
       var min_dist = -1;
       for (var j = 0; j < this.enemies.length; j++) {
         var dist_to_enemy = p_dist(this.enemies[j].body.GetPosition(), spawn_point);
@@ -482,7 +482,7 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
     if(num_enemies_to_spawn > 0) {
 
-      if(imp_vars.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
+      if(imp_params.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
@@ -517,7 +517,7 @@ Level.prototype.skip_enemy_spawn_timers = function() {
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
   if(enemy_type == "player" || enemy_type == "shadow" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
-    || (this.total_fragments < this.max_fragments && imp_vars.player_data.options.explosions)) {
+    || (this.total_fragments < this.max_fragments && imp_params.player_data.options.explosions)) {
       this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
       this.total_fragments += 4;
   }
@@ -540,13 +540,13 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, imp_vars.levelWidth/imp_vars.draw_factor/2, (imp_vars.levelHeight)/imp_vars.draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, imp_params.levelWidth/imp_params.draw_factor/2, (imp_params.levelHeight)/imp_params.draw_factor/2, this.enemy_counter, this.impulse_game_state)
     this.boss = temp_enemy
     this.boss_spawned = true
   }
   else if(this.spawn_points) {
     var r_p = this.spawn_points[spawn_point % this.spawn_points.length]
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/imp_vars.draw_factor, r_p[1]/imp_vars.draw_factor, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/imp_params.draw_factor, r_p[1]/imp_params.draw_factor, this.enemy_counter, this.impulse_game_state)
   }
   else {
     var r_p = getRandomOutsideLocation(5, 2)
@@ -700,7 +700,7 @@ Level.prototype.draw = function(context, draw_factor) {
     for(var i = 0; i < this.obstacles.length; i++) {
       var origColor = this.obstacles[i].color;
       this.obstacles[i].color = this.flash_obstacle_color;
-      this.obstacles[i].draw(context, imp_vars.draw_factor)
+      this.obstacles[i].draw(context, imp_params.draw_factor)
       this.obstacles[i].color = origColor;
     }
     context.restore();
@@ -722,9 +722,9 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
   if(this.redraw_bg) {
-    imp_vars.bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
-    this.draw_bg(imp_vars.bg_ctx, true)
-    imp_vars.bg_ctx.translate(-imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
+    this.draw_bg(imp_params.bg_ctx, true)
+    imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
     this.redraw_bg = false
   }
 
@@ -781,7 +781,7 @@ Level.prototype.draw = function(context, draw_factor) {
   if(this.boss_delay_timer >= 0) {
 
     context.beginPath()
-    context.arc(imp_vars.levelWidth/draw_factor/2 * draw_factor, (imp_vars.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    context.arc(imp_params.levelWidth/draw_factor/2 * draw_factor, (imp_params.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
 
     context.lineWidth = 2
     context.strokeStyle = "gray"
@@ -803,7 +803,7 @@ Level.prototype.open_gateway = function() {
 
   this.gateway_transition_duration = this.gateway_transition_interval
   this.gateway_opened = true
-  if (imp_vars.debug.story_mode && this.dark_ones_after_gateway && !this.is_boss_level) {
+  if (imp_params.debug.story_mode && this.dark_ones_after_gateway && !this.is_boss_level) {
     for (var i = 0; i < this.dark_ones_data.length; i++) {
       var data = this.dark_ones_data[i];
       this.spawn_dark_one(data);
@@ -815,40 +815,40 @@ Level.prototype.open_gateway = function() {
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
   bg_ctx.beginPath();
-  bg_ctx.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  bg_ctx.rect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
   bg_ctx.fillStyle = this.dark_color;
   bg_ctx.fill();
   bg_ctx.clip()
 
   if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
     bg_ctx.restore();
   } else if(this.world_num != null && !this.is_level_zero) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
     bg_ctx.restore();
   } else if (this.world_num != null && this.is_level_zero) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0");
+    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0");
     bg_ctx.restore();
   } else {
     bg_ctx.fillStyle = impulse_colors["world 0 bright"]
-    bg_ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+    bg_ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
   }
 
   if (this.is_level_zero) {
     bg_ctx.save();
     var r = 0.15;
-    var x = this.gateway_loc.x * imp_vars.draw_factor;
-    var y = this.gateway_loc.y * imp_vars.draw_factor;
-    draw_bg(bg_ctx, x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r,
-      x + imp_vars.levelWidth * r, y + imp_vars.levelHeight * r,
+    var x = this.gateway_loc.x * imp_params.draw_factor;
+    var y = this.gateway_loc.y * imp_params.draw_factor;
+    draw_bg(bg_ctx, x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
+      x + imp_params.levelWidth * r, y + imp_params.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
     bg_ctx.restore();
     bg_ctx.beginPath();
-    bg_ctx.rect(x - imp_vars.levelWidth * r, y - imp_vars.levelHeight * r,
-      2 * imp_vars.levelWidth * r, 2 * imp_vars.levelHeight * r);
+    bg_ctx.rect(x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
+      2 * imp_params.levelWidth * r, 2 * imp_params.levelHeight * r);
     bg_ctx.lineWidth = 2;
     bg_ctx.strokeStyle = impulse_colors["world " + this.level_intro_state.world_num + " dark"];
     bg_ctx.stroke();
@@ -856,7 +856,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
 
 
   for(var i = 0; i < this.obstacles.length; i++) {
-    this.obstacles[i].draw(bg_ctx, imp_vars.draw_factor)
+    this.obstacles[i].draw(bg_ctx, imp_params.draw_factor)
   }
 
   // Draw any additional rectangles to hide obstacle seams.

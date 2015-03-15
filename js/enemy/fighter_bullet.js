@@ -17,19 +17,19 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
   this.v.Normalize()
   this.v.Multiply(this.force)
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.v.Multiply(0.5)
   }
   this.do_yield = false
   this.bullet_force = 100
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.bullet_force = 50
   }
 
   this.adjust_position_enabled = false
 
   this.bullet_enemy_factor = 150;
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.bullet_enemy_factor = 75
   }
 
@@ -56,7 +56,7 @@ FighterBullet.prototype.collide_with = function(other) {
   if(other === this.player) {
     this.start_death("hit_player")
     if(!this.is_silenced()) {
-      imp_vars.impulse_music.play_sound("fbullethit")
+      imp_params.impulse_music.play_sound("fbullethit")
       var vel = this.body.GetLinearVelocity().Copy()
       vel.Normalize()
       //_atan(this.body.GetPosition(), this.player.body.GetPosition())
@@ -78,7 +78,7 @@ FighterBullet.prototype.collide_with = function(other) {
 
     if(other.id != this.parent_id || this.reflected) {
       if(!this.is_silenced()) {
-        imp_vars.impulse_music.play_sound("fbullethit")
+        imp_params.impulse_music.play_sound("fbullethit")
         if(other instanceof Fighter) {
           other.frenzy_charge = 0
         }
@@ -113,11 +113,11 @@ FighterBullet.prototype.collide_with = function(other) {
 FighterBullet.prototype.move = function() {
 
   if (this.is_gooed()) {
-    this.body.ApplyImpulse(new b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())  
+    this.body.ApplyImpulse(new b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())
   } else {
-    this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())  
+    this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
   }
-  
+
   this.set_heading(_atan({x: 0, y: 0}, this.v))
 }
 
@@ -143,7 +143,7 @@ FighterBullet.prototype.check_death = function()
       return
     }
   }
-  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= imp_vars.canvasWidth/imp_vars.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= imp_vars.canvasWidth/imp_vars.draw_factor + 5)
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= imp_params.canvasWidth/imp_params.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= imp_params.canvasWidth/imp_params.draw_factor + 5)
   {
     this.start_death("kill")
   }

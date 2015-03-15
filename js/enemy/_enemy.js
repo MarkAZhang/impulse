@@ -387,7 +387,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 Enemy.prototype.process_entered_arena = function() {
 
   if(!this.silence_outside_arena) return
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay)
     this.recovery_interval = this.entered_arena_delay
     this.recovery_timer = this.entered_arena_delay
@@ -398,7 +398,7 @@ Enemy.prototype.process_entered_arena = function() {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
     this.silence(100, true)
     this.recovery_timer = 0
@@ -447,7 +447,7 @@ Enemy.prototype.adjust_position = function() {
   if(this.adjust_position_angle != null) {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
-    if(this.durations["open"] > 0 && imp_vars.player_data.difficulty_mode == "normal" && this.extra_adjust) {
+    if(this.durations["open"] > 0 && imp_params.player_data.difficulty_mode == "normal" && this.extra_adjust) {
       dir.Multiply(1.5)
     } else if((this.type == "goo" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
@@ -600,7 +600,7 @@ Enemy.prototype.start_death = function(death) {
       imp_params.impulse_enemy_stats[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
-      if(imp_vars.player_data.options.score_labels)
+      if(imp_params.player_data.options.score_labels)
         this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()
@@ -613,19 +613,19 @@ Enemy.prototype.start_death = function(death) {
 
   if(this.dying != "accident" && this.dying != "fade" && this.dying != "absorbed") {
     if (this.type == "tank") {
-      imp_vars.impulse_music.play_sound("tdeath")
+      imp_params.impulse_music.play_sound("tdeath")
     } else if (this.is_boss) {
-      imp_vars.impulse_music.play_sound("tdeath")
+      imp_params.impulse_music.play_sound("tdeath")
       setTimeout(function() {
-        imp_vars.impulse_music.play_sound("tdeath")
+        imp_params.impulse_music.play_sound("tdeath")
       }, 150);
       setTimeout(function() {
-        imp_vars.impulse_music.play_sound("tdeath")
+        imp_params.impulse_music.play_sound("tdeath")
       }, 300);
     } else if (this.type == "troll" && this.dying == "hit_player" && !this.is_silenced()) {
       // do nothing if it's a troll hitting a player. there's a different sound.
     } else {
-      imp_vars.impulse_music.play_sound("sdeath")
+      imp_params.impulse_music.play_sound("sdeath")
     }
   }
   if (this.dying != "fade") {
@@ -696,10 +696,10 @@ Enemy.prototype.enemy_hit_proc = function(other) {
 
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.player.stun(300)
   }
-  if(imp_vars.player_data.difficulty_mode == "normal") {
+  if(imp_params.player_data.difficulty_mode == "normal") {
     this.player.stun(500)
   }
 }
@@ -958,8 +958,8 @@ Enemy.prototype.get_impulse_sensitive_pts = function() {
 
 Enemy.prototype.set_up_images = function() {
   var normal_canvas = document.createElement('canvas');
-  normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
-  normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_vars.draw_factor
+  normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_params.draw_factor
+  normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_params.draw_factor
 
   var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1040,8 +1040,8 @@ Enemy.prototype.generate_images = function() {
   for(index in all_status) {
     var status = all_status[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
-    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_vars.draw_factor
+    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
+    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1049,10 +1049,10 @@ Enemy.prototype.generate_images = function() {
     if (!cur_color) cur_color = this.color
 
     var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
-    normal_canvas_ctx.translate(tp.x * imp_vars.draw_factor, tp.y * imp_vars.draw_factor)
+    normal_canvas_ctx.translate(tp.x * imp_params.draw_factor, tp.y * imp_params.draw_factor)
 
     draw_enemy_image(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);
-    normal_canvas_ctx.translate(-tp.x * imp_vars.draw_factor, -tp.y * imp_vars.draw_factor)
+    normal_canvas_ctx.translate(-tp.x * imp_params.draw_factor, -tp.y * imp_params.draw_factor)
     images[status] = normal_canvas
 
   }

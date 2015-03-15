@@ -51,9 +51,13 @@
     <!--<script src="js/impulse.min.js"></script>-->
     <!--<script src="js/temp.js"> </script>-->
 
-    <script src="js/core/game_vars.js"></script>
+    <script src="js/data/vars.js"></script>
+    <script src="js/data/audio.js"></script>
+    <script src="js/data/colors.js"></script>
+    <script src="js/data/sprite_data.js"></script>
     <script src="js/render/sprites.js"></script>
     <script src="js/core/loader.js"></script>
+    <script src="js/core/controls.js"></script>
     <script src="js/render/enemy.js"></script>
     <script src="js/render/quest.js"></script>
     <script src="js/render/icons.js"></script>
@@ -64,7 +68,7 @@
     <script src="js/core/util.js"></script>
     <script src="js/core/music_player.js"></script>
     <script src="js/core/hive_numbers.js"></script>
-    <script src="js/core/quest_data.js"></script>
+    <script src="js/data/quest_data.js"></script>
     <script src="js/vendor/Box2dWeb-2.1.a.3.min.js"></script>
     <script src="js/vendor/buzz.js"></script>
     <script src='js/player/player.js'></script>
@@ -97,13 +101,13 @@
     <script src='js/enemy/boss_four_attacker.js'></script>
 
 
-    <script src='js/enemy/zz_enemy_data.js'></script>
+    <script src='js/data/zz_enemy_data.js'></script>
     <script src='js/obstacle/basic_obstacle.js'></script>
     <script src='js/lib/visibility_graph.js'></script>
 
     <script src="js/level/enemy_spawner.js"></script>
     <script src="js/level/level.js"></script>
-    <script src="js/level/level_data.js"></script>
+    <script src="js/data/level_data.js"></script>
 
     <script src="js/impulse_main.js"></script>
     <script src="js/game_states/_game_state.js"></script>
@@ -138,51 +142,6 @@
     <script src="js/ui/slider_option_button.js"></script>
     <script src="js/ui/tutorial_overlay.js"></script>
 
-    <script type="text/javascript">
-        window.onload = function() {
-            var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-            if(is_chrome) {
-                window.impulse_main();
-            } else {
-                centerMessage()
-            }
-
-        }
-        function centerMessage() {
-            var message = document.getElementById("message");
-          var dim = getWindowDimensions()
-
-            message.setAttribute("style", "display: block" )
-            if(message.clientWidth < dim.w)
-            {
-              offset_left = (dim.w-message.clientWidth)/2
-              message.style.left =  Math.round(offset_left) + 'px'
-            }
-            else
-            {
-              offset_left = 0
-            }
-            if(message.clientHeight < dim.h)
-            {
-              offset_top = (dim.h-message.clientHeight )/2
-              message.style.top = Math.round(offset_top) + 'px'
-            }
-            else
-            {
-              offset_top = 0
-            }
-
-        }
-        function redirect_to_chrome() {
-            window.location = "https://www.google.com/intl/en/chrome/browser/";
-        }
-        function start_game() {
-            message.setAttribute("style", "display: none" )
-            setTimeout(function(){window.impulse_main()}, 50)
-        }
-
-    </script>
-
 </head>
 <!-- Html -->
 <body>
@@ -212,11 +171,11 @@
             Impulse is best played with the Chrome web browser.
         </div>
         <br />
-        <div id = "continue" class="button" onclick="start_game()">
+        <div id = "continue_btn" class="button" onclick="start_game()">
             Continue Anyway
         </div>
         <br />
-        <div id = "download" class="button" onclick="redirect_to_chrome()">
+        <div id = "download_btn" class="button" onclick="redirect_to_chrome()">
             Download Chrome
         </div>
     </div>

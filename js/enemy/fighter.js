@@ -46,7 +46,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.frenzy_charge_interval = 2500
 
-  if(imp_vars.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+  if(imp_params.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
     this.frenzy_charge_interval = 3500
 
   this.frenzy_charge_bars = 5;
@@ -59,7 +59,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.activated = false
 
   this.tank_force = 100 //force that the fighter impulses the player
-  if(imp_vars.player_data.difficulty_mode == "easy")
+  if(imp_params.player_data.difficulty_mode == "easy")
     this.tank_force = 80
   this.cautious = false
 
@@ -107,7 +107,7 @@ Fighter.prototype.get_current_status = function() {
 
 Fighter.prototype.additional_processing = function(dt) {
   if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
-    imp_vars.impulse_music.play_sound("ffrenzy")
+    imp_params.impulse_music.play_sound("ffrenzy")
     window.console.log("PLAYIN FRENZY");
     this.fighter_status = "frenzy"
 
@@ -140,14 +140,14 @@ Fighter.prototype.additional_processing = function(dt) {
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && !this.is_silenced()) {
 
-      if(check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+      if(check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
         var cur_bullet_loc = this.get_bullet_locations(i);
         this.has_sight_of_player = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
 
         var target_angle = _atan(cur_bullet_loc, this.player.body.GetPosition())
         if (this.has_sight_of_player) {
           this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval) : this.frenzy_shoot_interval
-          imp_vars.impulse_music.play_sound("fbullet")
+          imp_params.impulse_music.play_sound("fbullet")
           if(this.fighter_status == "frenzy") {
             this.frenzy_charge -= 0.5
             var new_piercing_bullet = new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id )
@@ -174,13 +174,13 @@ Fighter.prototype.additional_processing = function(dt) {
       this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval + this.shoot_durations[i]) : this.frenzy_shoot_interval
       this.shoot_fade_out[i] = false
     }
-    if(check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+    if(check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
       this.shoot_durations[i] -= dt
     }
   }
 
 
-  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.frenzy_charge += dt / this.frenzy_charge_interval;
   }
 
@@ -302,7 +302,7 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 

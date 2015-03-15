@@ -14,24 +14,24 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
-  this.first_time = imp_vars.player_data.first_time // cache the first time variable, since it might change during this game state
+  this.first_time = imp_params.player_data.first_time // cache the first time variable, since it might change during this game state
   this.victory = args.victory
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
   this.hard_mode_just_unlocked = false;
   var _this = this;
-  this.initial_difficulty_mode = imp_vars.player_data.difficulty_mode;
+  this.initial_difficulty_mode = imp_params.player_data.difficulty_mode;
 
-  this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_vars.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
-  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_vars.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
+  this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_params.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
+  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_params.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
 
   this.debug()
 
   this.determine_rewards()
   this.next_reward()
   if(this.rewards.length > 0) {
-    imp_vars.impulse_music.stop_bg()
+    imp_params.impulse_music.stop_bg()
   }
 
   this.auto_advance_duration = 3000;
@@ -40,7 +40,7 @@ function RewardGameState(hive_numbers, main_game, args) {
 
 RewardGameState.prototype.change_mode = function(type) {
   if (this.transition_state == "none") {
-    imp_vars.player_data.difficulty_mode = type;
+    imp_params.player_data.difficulty_mode = type;
     save_game();
     this.adjust_difficulty_button_border()
     this.transition_state="out";
@@ -57,13 +57,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   var cur_reward = this.rewards[this.cur_reward_index]
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none")
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
+    var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
     if (cur_reward.type == "world_victory") {
-      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+(cur_reward.data+1))
+      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+(cur_reward.data+1))
     } else if (cur_reward.type == "final_victory") {
-      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Title Alt4")
+      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Title Alt4")
     } else {
-      draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive 0")
+      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
     }
     this.bg_drawn = true
   }
@@ -75,7 +75,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   } else {
     ctx.globalAlpha *= get_bg_opacity(0);
   }
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, 0, 0, imp_params.levelWidth, imp_params.levelHeight)
   ctx.restore()
   ctx.save();
   // change transparency for transition
@@ -96,7 +96,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
-    draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 100)
+    draw_tessellation_sign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 100)
     ctx.restore()
   }
   var main_message = ""
@@ -112,7 +112,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
-      ctx.fillText(imp_params.hive_names[cur_reward.data+1], imp_vars.levelWidth/2, 270)
+      ctx.fillText(imp_params.hive_names[cur_reward.data+1], imp_params.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
@@ -123,16 +123,16 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
-      ctx.fillText(final_message, imp_vars.levelWidth/2, 240)
+      ctx.fillText(final_message, imp_params.levelWidth/2, 240)
       ctx.font = "20px Muli"
       ctx.fillStyle = "red"
-      ctx.fillText(final_message_teaser, imp_vars.levelWidth/2, 280)
+      ctx.fillText(final_message_teaser, imp_params.levelWidth/2, 280)
 
       ctx.font = "16px Muli"
       ctx.fillStyle = "white"
       if (this.initial_difficulty_mode == "easy") {
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_vars.levelWidth/2, 320)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_params.levelWidth/2, 320)
         // TODO: add sharing
       }
     }
@@ -145,35 +145,35 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, imp_vars.levelWidth/2, main_reward_text_y + 20)
+      ctx.fillText("+"+cur_reward.data.diff, imp_params.levelWidth/2, main_reward_text_y + 20)
 
       ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = 'white'
-      ctx.fillText("NEW SKILL RATING", imp_vars.levelWidth/2, new_values_text_y - 25)
+      ctx.fillText("NEW SKILL RATING", imp_params.levelWidth/2, new_values_text_y - 25)
       ctx.font = '48px Muli'
-      ctx.fillText(cur_reward.data.new_rating, imp_vars.levelWidth/2, new_values_text_y + 25)
+      ctx.fillText(cur_reward.data.new_rating, imp_params.levelWidth/2, new_values_text_y + 25)
     }
 
     if(cur_reward.type == "quest") {
       var tessellation_num = 0
       ctx.save()
-      draw_tessellation_sign(ctx, tessellation_num, imp_vars.levelWidth/2, 250, 150)
+      draw_tessellation_sign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 150)
       ctx.restore()
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
 
       ctx.font = '32px Muli'
-      ctx.fillText("CHALLENGE COMPLETE!", imp_vars.levelWidth/2, 120)
+      ctx.fillText("CHALLENGE COMPLETE!", imp_params.levelWidth/2, 120)
 
 
-      draw_quest_button(ctx, imp_vars.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
+      draw_quest_button(ctx, imp_params.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
       ctx.font = '24px Muli'
       ctx.fillStyle = "white"
       for (var i = 0; i < imp_params.quest_data[cur_reward.data.type].text.length; i++) {
         var text = imp_params.quest_data[cur_reward.data.type].text[i];
-        ctx.fillText(text, imp_vars.levelWidth / 2, main_reward_text_y + 150 + i * 36);
+        ctx.fillText(text, imp_params.levelWidth / 2, main_reward_text_y + 150 + i * 36);
       }
 
     }
@@ -182,11 +182,11 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "30px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("INTRO TUTORIAL COMPLETE", imp_vars.levelWidth/2, 250)
+      ctx.fillText("INTRO TUTORIAL COMPLETE", imp_params.levelWidth/2, 250)
       ctx.fillStyle = "white"
       ctx.font = "16px Muli"
-      ctx.fillText("INITIALIZING MAIN GAME...", imp_vars.levelWidth/2, 550)
-      //draw_logo(ctx,imp_vars.levelWidth/2, 250, "", 0.5)
+      ctx.fillText("INITIALIZING MAIN GAME...", imp_params.levelWidth/2, 550)
+      //draw_logo(ctx,imp_params.levelWidth/2, 250, "", 0.5)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -203,14 +203,14 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.font = "16px Muli"
-      ctx.fillText(main_message_teaser, imp_vars.levelWidth/2, 70)
+      ctx.fillText(main_message_teaser, imp_params.levelWidth/2, 70)
       ctx.font = message_size + "px Muli"
       if (cur_reward.type == "world_victory") {
         ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       } else {
         ctx.fillStyle = impulse_colors["impulse_blue"]
       }
-      ctx.fillText(main_message, imp_vars.levelWidth/2, 120)
+      ctx.fillText(main_message, imp_params.levelWidth/2, 120)
     }
 
     if (cur_reward.type != "select_difficulty") {
@@ -219,15 +219,15 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "16px Muli"
       if (cur_reward.type != "first_time_tutorial") {
         if (cur_reward.type != "ult")
-          ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_params.levelWidth/2, imp_params.levelHeight - 30)
         else
-          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_vars.levelWidth/2, imp_vars.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_params.levelWidth/2, imp_params.levelHeight - 30)
       }
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", imp_vars.levelWidth/2, imp_vars.levelHeight - 75)
+      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", imp_params.levelWidth/2, imp_params.levelHeight - 75)
     }
     ctx.restore();
 }
@@ -291,10 +291,10 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   // If we just unlocked hard mode, go to 1.
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
 
-  if (imp_vars.player_data.difficulty_mode == "normal" && !imp_vars.player_data.first_time && go_to_world_num !== 0) {
+  if (imp_params.player_data.difficulty_mode == "normal" && !imp_params.player_data.first_time && go_to_world_num !== 0) {
     set_bg("Title Alt" + go_to_world_num, get_world_map_bg_opacity(go_to_world_num))
   } else {
-    set_bg("Hive 0", imp_vars.hive0_bg_opacity)
+    set_bg("Hive 0", imp_params.hive0_bg_opacity)
   }
 
   switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));
@@ -334,29 +334,29 @@ RewardGameState.prototype.determine_rewards = function() {
       this.rewards.push({
         type: "first_time_tutorial"
       })
-      imp_vars.player_data.first_time = false;
+      imp_params.player_data.first_time = false;
       save_game();
     }
     return
   }
 
   if (this.main_game) {
-    if(imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]
-      && imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+    if(imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]
+      && imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
 
       if (this.hive_numbers.world == 4) {
         this.rewards.push({
           type: "final_victory",
         })
         if (this.initial_difficulty_mode == "easy") {
-          imp_vars.player_data.hard_mode_unlocked = true;
+          imp_params.player_data.hard_mode_unlocked = true;
           this.hard_mode_just_unlocked = true;
-          imp_vars.player_data.difficulty_mode = "normal";
+          imp_params.player_data.difficulty_mode = "normal";
           save_game();
         }
       }
 
-      imp_vars.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
+      imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
       save_game();
     }
   }

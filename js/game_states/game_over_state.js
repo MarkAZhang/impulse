@@ -11,7 +11,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.bg_drawn = false
   this.victory = args.victory
   this.color = impulse_colors['world '+ this.world_num + ' bright']
-  this.restart_button = new IconButton("RETRY", 16, imp_vars.levelWidth - 70, imp_vars.levelHeight - 40, 60, 65, this.color, "white", function(_this){
+  this.restart_button = new IconButton("RETRY", 16, imp_params.levelWidth - 70, imp_params.levelHeight - 40, 60, 65, this.color, "white", function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       _this.fader.set_animation("fade_out", function() {
@@ -22,27 +22,27 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.buttons.push(this.restart_button);
 
   this.restart_button.keyCode = imp_params.keys.RESTART_KEY;
-  if(imp_vars.player_data.options.control_hand == "right") {
+  if(imp_params.player_data.options.control_hand == "right") {
     this.restart_button.extra_text = "R KEY"
   } else {
     this.restart_button.extra_text = "SHIFT KEY"
   }
 
- this.buttons.push(new IconButton("MENU", 16, 70, imp_vars.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
+ this.buttons.push(new IconButton("MENU", 16, 70, imp_params.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new WorldMapState(_this.world_num, true))
-        if (imp_vars.player_data.difficulty_mode == "normal") {
+        if (imp_params.player_data.difficulty_mode == "normal") {
           set_bg("Title Alt" + _this.world_num, get_world_map_bg_opacity(_this.world_num))
         } else {
-          set_bg("Hive 0", imp_vars.hive0_bg_opacity)
+          set_bg("Hive 0", imp_params.hive0_bg_opacity)
         }
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new TitleState(true))
-        set_bg("Hive 0", imp_vars.hive0_bg_opacity)
+        set_bg("Hive 0", imp_params.hive0_bg_opacity)
       });
     }
   }}(this), "back"))
@@ -56,7 +56,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     this.best_time = args.best_time ? args.best_time : 0
   }
 
-  imp_vars.player_data.total_kills += this.game_numbers.kills
+  imp_params.player_data.total_kills += this.game_numbers.kills
 
   save_game()
 
@@ -102,7 +102,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
     var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
 
-    var cur_x =  imp_vars.levelWidth/2 + (this.enemy_image_size+10) * diff
+    var cur_x =  imp_params.levelWidth/2 + (this.enemy_image_size+10) * diff
     var cur_y = 380 + this.enemy_image_size * h_diff
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
@@ -118,7 +118,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.star_colors = ["world "+this.world_num+" bright", "silver", "gold"]
   this.star_text = ["GATEWAY", "SILVER", "GOLD"]
 
-  imp_vars.impulse_music.stop_bg()
+  imp_params.impulse_music.stop_bg()
 
   this.fader = new Fader({
     "fade_in": 500,
@@ -137,19 +137,19 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     this.level.impulse_game_state= null
     bg_canvas.setAttribute("style", "display:none" )
 
-    bg_ctx.translate(imp_vars.sidebarWidth, 0)//allows us to have a topbar
+    bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
-    var world_bg_ctx = imp_vars.world_menu_bg_canvas.getContext('2d')
-    draw_bg(world_bg_ctx, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, "Hive "+this.world_num)
+    var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
+    draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
     this.bg_drawn = true
-    bg_ctx.translate(-imp_vars.sidebarWidth, 0)
+    bg_ctx.translate(-imp_params.sidebarWidth, 0)
     this.bg_drawn = true
   }
   ctx.save()
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
   ctx.globalAlpha *= get_bg_opacity(this.world_num);
-  ctx.drawImage(imp_vars.world_menu_bg_canvas, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight, 0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, 0, 0, imp_params.levelWidth, imp_params.levelHeight)
   ctx.restore()
 
   ctx.save();
@@ -161,16 +161,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 230, 80, true)
+    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
     ctx.font = '20px Muli'
-    if (imp_vars.player_data.difficulty_mode == "normal") {
+    if (imp_params.player_data.difficulty_mode == "normal") {
       ctx.textAlign = 'center'
-      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
+      ctx.fillText("HARD MODE", imp_params.levelWidth/2, 180)
     }
     ctx.restore();
 
@@ -179,15 +179,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '42px Muli'
     ctx.textAlign = 'center'
 
-    ctx.fillText(this.level_name, imp_vars.levelWidth/2, 240)
+    ctx.fillText(this.level_name, imp_params.levelWidth/2, 240)
     ctx.fill()
     ctx.font = '36px Muli';
     if(this.victory) {
       ctx.fillStyle = "white"
-      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
+      ctx.fillText("VICTORY", imp_params.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 300)
+      ctx.fillText("GAME OVER", imp_params.levelWidth/2, 300)
     }
 
     var score_y = 380;
@@ -195,15 +195,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2 + 100, score_y)
+    ctx.fillText("GAME TIME ", imp_params.levelWidth/2 + 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2 + 100, score_label_y)
+    ctx.fillText(this.game_numbers.last_time, imp_params.levelWidth/2 + 100, score_label_y)
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("SCORE", imp_vars.levelWidth/2 - 100, score_y)
+    ctx.fillText("SCORE", imp_params.levelWidth/2 - 100, score_y)
 
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.score, imp_vars.levelWidth/2 - 100, score_label_y)
+    ctx.fillText(this.game_numbers.score, imp_params.levelWidth/2 - 100, score_label_y)
 
     var line_y = 440
     if (!this.high_score) {
@@ -231,38 +231,38 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     if(this.high_score) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW HIGH SCORE!", imp_vars.levelWidth/2 - 100, high_score_y)
+      ctx.fillText("NEW HIGH SCORE!", imp_params.levelWidth/2 - 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_vars.levelWidth/2  - 100, best_score_label_y)
+      ctx.fillText("HIGH SCORE", imp_params.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].high_score,
-       imp_vars.levelWidth/2 - 100, best_score_y)
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].high_score,
+       imp_params.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
 
     if(this.best_time) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2 + 100, high_score_y)
+      ctx.fillText("NEW BEST TIME!", imp_params.levelWidth/2 + 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2 + 100, best_score_label_y)
+      ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
-          imp_vars.levelWidth/2 + 100, best_score_y)
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time),
+          imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED",
-          imp_vars.levelWidth/2 + 100, best_score_y)
+          imp_params.levelWidth/2 + 100, best_score_y)
       }
       ctx.restore();
     }
@@ -270,16 +270,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_vars.levelWidth/2, 230, 80, true)
+    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
     ctx.font = '20px Muli'
-    if (imp_vars.player_data.difficulty_mode == "normal") {
+    if (imp_params.player_data.difficulty_mode == "normal") {
       ctx.textAlign = 'center';
-      ctx.fillText("HARD MODE", imp_vars.levelWidth/2, 180)
+      ctx.fillText("HARD MODE", imp_params.levelWidth/2, 180)
     }
     ctx.restore();
 
@@ -288,16 +288,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.font = '32px Muli'
-    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_vars.levelWidth/2, 240)
+    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_params.levelWidth/2, 240)
 
     ctx.fill()
     ctx.font = '48px Muli';
     if (this.level.boss_victory) {
       ctx.fillStyle = "white"
-      ctx.fillText("VICTORY", imp_vars.levelWidth/2, 300)
+      ctx.fillText("VICTORY", imp_params.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", imp_vars.levelWidth/2, 300)
+      ctx.fillText("GAME OVER", imp_params.levelWidth/2, 300)
     }
 
     var score_y = 380;
@@ -305,9 +305,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("GAME TIME ", imp_vars.levelWidth/2, score_y)
+    ctx.fillText("GAME TIME ", imp_params.levelWidth/2, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.last_time, imp_vars.levelWidth/2, score_label_y)
+    ctx.fillText(this.game_numbers.last_time, imp_params.levelWidth/2, score_label_y)
 
     var line_y = 440
 
@@ -327,22 +327,22 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     if(this.best_time) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW BEST TIME!", imp_vars.levelWidth/2, high_score_y)
+      ctx.fillText("NEW BEST TIME!", imp_params.levelWidth/2, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_vars.levelWidth/2, best_score_label_y)
+      ctx.fillText("BEST TIME", imp_params.levelWidth/2, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time < 1000) {
+      if (imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_vars.player_data.difficulty_mode].best_time),
-          imp_vars.levelWidth/2, best_score_y)
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time),
+          imp_params.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED",
-          imp_vars.levelWidth/2, best_score_y)
+          imp_params.levelWidth/2, best_score_y)
       }
       ctx.restore();
     }

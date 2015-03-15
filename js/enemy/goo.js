@@ -22,7 +22,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_radius_big = 11;
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.goo_radius_big = 10;
   }
 
@@ -32,7 +32,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_expand_period = 2500
 
-  if(imp_vars.player_data.difficulty_mode == "easy")
+  if(imp_params.player_data.difficulty_mode == "easy")
     this.goo_expand_period = 3500
 
   this.goo_state = "small"
@@ -70,7 +70,7 @@ Goo.prototype.additional_processing = function(dt) {
 
   } else if(this.goo_state == "big" && this.goo_state_timer <= 0) {
     this.goo_state = "shrinking";
-    imp_vars.impulse_music.play_sound("goo")
+    imp_params.impulse_music.play_sound("goo")
     this.goo_state_timer = this.goo_change_transition;
 
   } else if (this.goo_state == "shrinking") {
@@ -152,7 +152,7 @@ Goo.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit
       } else if(this.goo_state == "small") {
         this.goo_state_timer = this.goo_change_transition
         this.goo_state = "expanding"
-        imp_vars.impulse_music.play_sound("goo")
+        imp_params.impulse_music.play_sound("goo")
       }
 
     }

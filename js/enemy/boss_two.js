@@ -23,7 +23,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.arm_core_angle = Math.PI * 3/4
   this.arm_width_angle_min = Math.PI * 3/16
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.arm_width_angle_min = Math.PI * 5/32
   }
   this.arm_width_angle_max = Math.PI * 1/2
@@ -75,7 +75,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.boss_low_gravity_force = .3
   this.boss_beam_gravity_force = 1.2
   // In easy mode, the player is heavier. Need to make boss stronger, else it's just too easy.
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.boss_high_gravity_force *= 1.5
     this.boss_low_gravity_force *= 1.5
     this.boss_beam_gravity_force *= 1.5
@@ -95,7 +95,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.shrink_rate = 0.025
 
   this.enemy_spawn_interval = 12000
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.enemy_spawn_interval = 12000
   }
   this.enemy_spawn_duration = 2000
@@ -106,7 +106,7 @@ function BossTwo(world, x, y, id, impulse_game_state) {
     ["mote", "goo"]
   ]
 
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
     this.spawn_sets = [
       ["stunner", "stunner", "tank", "goo"],
       ["harpoon", "spear", "spear", "tank"],
@@ -158,14 +158,14 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   if(!this.spawn_spawners) {
     this.spawn_spawners = true
     var spawner_buffer = 80
-    var locs = [[imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer],
+    var locs = [[imp_params.levelWidth - spawner_buffer, imp_params.levelHeight - spawner_buffer],
       [spawner_buffer, spawner_buffer]]
-    if (imp_vars.player_data.difficulty_mode == "normal") {
+    if (imp_params.player_data.difficulty_mode == "normal") {
       locs = [
         [spawner_buffer, spawner_buffer],
-        [imp_vars.levelWidth - spawner_buffer, spawner_buffer],
-        [imp_vars.levelWidth - spawner_buffer, imp_vars.levelHeight - spawner_buffer],
-        [spawner_buffer, imp_vars.levelHeight - spawner_buffer]
+        [imp_params.levelWidth - spawner_buffer, spawner_buffer],
+        [imp_params.levelWidth - spawner_buffer, imp_params.levelHeight - spawner_buffer],
+        [spawner_buffer, imp_params.levelHeight - spawner_buffer]
       ];
     }
     for(var i = 0; i < locs.length; i++) {
@@ -264,11 +264,11 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   }
 
 
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
     if(this.black_hole_timer < 0) {
       if (!this.black_hole_sound_played) {
         this.black_hole_sound_played = true
-        imp_vars.impulse_music.play_sound("b2bhole")
+        imp_params.impulse_music.play_sound("b2bhole")
       }
       var prop = -this.black_hole_timer/this.black_hole_duration
       if(prop < this.black_hole_expand_prop)
@@ -358,7 +358,7 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.black_hole_timer - this.black_hole_duration/2)/(this.black_hole_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, imp_vars.canvasWidth, imp_vars.canvasHeight)
+    context.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight)
     context.globalAlpha *= 2
   }
 
@@ -517,7 +517,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
   context.save()
   context.beginPath()
-  context.rect(0, 0, imp_vars.levelWidth, imp_vars.levelHeight)
+  context.rect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
   context.clip()
 
   for(var j = 0; j < polygons.length; j++) {
@@ -621,7 +621,7 @@ BossTwo.prototype.collide_with = function(other) {
   if(other.dying) return
 
   if(other === this.player) {
-    imp_vars.impulse_music.play_sound("b2eat")
+    imp_params.impulse_music.play_sound("b2eat")
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
     //other.lin_damp = 2
@@ -635,7 +635,7 @@ BossTwo.prototype.collide_with = function(other) {
     //other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
   else if(other !== this.player) {
-    imp_vars.impulse_music.play_sound("b2eat")
+    imp_params.impulse_music.play_sound("b2eat")
     if(other.type != "harpoonhead") {
       other.start_death("absorbed")
       this.growth_factor += this.growth_on_enemy
@@ -764,7 +764,7 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
 }
 
 BossTwo.prototype.get_impulse_extra_factor = function() {
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     return this.impulse_extra_factor * 1.5;
   }
   return this.impulse_extra_factor;

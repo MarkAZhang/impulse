@@ -13,10 +13,10 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100 //force that the spear impulses the player
 
-  if(imp_vars.player_data.difficulty_mode == "easy")
+  if(imp_params.player_data.difficulty_mode == "easy")
     this.tank_force = 80
 
-  if (imp_vars.player_data.difficulty_mode == "normal") {}
+  if (imp_params.player_data.difficulty_mode == "normal") {}
 
   this.death_radius = 5
 
@@ -25,7 +25,7 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.death_delay = 200
   this.bomb_factor = 6
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.bomb_factor = 5
   }
 
@@ -121,7 +121,7 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) 
   if (this.is_gooed()) {
     this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
   } else {
-    if (imp_vars.player_data.difficulty_mode == "easy") {
+    if (imp_params.player_data.difficulty_mode == "easy") {
       this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     } else {
       this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
@@ -287,21 +287,21 @@ Tank.prototype.draw_enemy_image_additional = function(context, color) {
   context.strokeStyle = color
   context.lineWidth = 3;
   var this_angle = Math.PI/4
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_vars.draw_factor}
+  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor}
 
   context.beginPath()
 
-  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
-  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
+  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
+  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
 
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
-  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
+  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
   context.stroke()
 
   context.beginPath()
-  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_vars.draw_factor)
+  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
+  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
+   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
   context.stroke()
 }

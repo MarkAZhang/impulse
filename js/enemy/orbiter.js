@@ -111,7 +111,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.set_heading_to(this.player.body.GetPosition())
 
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -120,7 +120,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
     this.silence(100, true)
   }
@@ -195,10 +195,10 @@ Orbiter.prototype.get_target_path = function() {
 
 
     if(!this.impulse_game_state.is_boss_level) {
-      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius) 
+      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius)
         return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name, this.impulse_game_state.level.pick_alt_path))
       else
-        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.level.pick_alt_path)    
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.level.pick_alt_path)
     } else {
       return {path: null, dist: null}
     }
@@ -266,7 +266,7 @@ Orbiter.prototype.move = function() {
 }
 
 Orbiter.prototype.modify_movement_vector = function(dir) {
-  
+
   if(this.charging) {
     dir.Multiply(this.fast_factor)
     dir.Multiply(this.force)
@@ -309,7 +309,7 @@ Orbiter.prototype.process_impulse_specific = function(attack_loc, impulse_force,
 
 Orbiter.prototype.weaken = function() {
   // makes lin_damp smaller
-  this.weakened_duration = this.weakened_interval 
+  this.weakened_duration = this.weakened_interval
 }
 
 Orbiter.prototype.bulk_draw_start = function(context, draw_factor, num) {

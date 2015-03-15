@@ -4,7 +4,7 @@ IntroState.prototype.constructor = IntroState
 
 function IntroState() {
 
-  imp_vars.impulse_music.play_bg(imp_params.songs["Menu"])
+  imp_params.impulse_music.play_bg(imp_params.songs["Menu"])
   this.bg_drawn = false;
   this.fader = new Fader({
     "fade_in": 1000,
@@ -29,8 +29,8 @@ IntroState.prototype.process = function(dt) {
 
 IntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    imp_vars.bg_canvas.setAttribute("style", "")
-    set_bg("Hive 0", imp_vars.hive0_bg_opacity)
+    imp_params.bg_canvas.setAttribute("style", "")
+    set_bg("Hive 0", imp_params.hive0_bg_opacity)
     this.bg_drawn = true
   }
 
@@ -45,7 +45,7 @@ IntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", imp_vars.levelWidth/2, 200)
+  ctx.fillText("CREATED BY", imp_params.levelWidth/2, 200)
   draw_porcelain_logo(ctx, 400, 300);
   ctx.restore()
 }

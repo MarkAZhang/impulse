@@ -40,67 +40,6 @@
     </script>
     <script src="js/impulse.min.js"></script>
 
-    <script type="text/javascript">
-        window.onload = function() {
-            var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-            if(is_chrome) {
-                window.impulse_main();
-            } else {
-                centerMessage()
-            }
-
-        }
-        function centerMessage() {
-            var message = document.getElementById("message");
-          var dim = getWindowDimensions()
-
-            message.setAttribute("style", "display: block" )
-            if(message.clientWidth < dim.w)
-            {
-              offset_left = (dim.w-message.clientWidth)/2
-              message.style.left =  Math.round(offset_left) + 'px'
-            }
-            else
-            {
-              offset_left = 0
-            }
-            if(message.clientHeight < dim.h)
-            {
-              offset_top = (dim.h-message.clientHeight )/2
-              message.style.top = Math.round(offset_top) + 'px'
-            }
-            else
-            {
-              offset_top = 0
-            }
-
-        }
-        function redirect_to_chrome() {
-            window.location = "https://www.google.com/intl/en/chrome/browser/";
-        }
-        function start_game() {
-            message.setAttribute("style", "display: none" )
-            setTimeout(function(){window.impulse_main()}, 50)
-        }
-        function getWindowDimensions() {
-          var winW = 800, winH = 600;
-          if (document.body && document.body.offsetWidth) {
-           winW = document.body.offsetWidth;
-           winH = document.body.offsetHeight;
-          }
-          if (document.compatMode=='CSS1Compat' &&
-              document.documentElement &&
-              document.documentElement.offsetWidth ) {
-           winW = document.documentElement.offsetWidth;
-           winH = document.documentElement.offsetHeight;
-          }
-          if (window.innerWidth && window.innerHeight) {
-           winW = window.innerWidth;
-           winH = window.innerHeight;
-          }
-          return {w: winW, h: winH}
-        }
-    </script>
 </head>
 <!-- Html -->
 <body>

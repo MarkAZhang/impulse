@@ -27,7 +27,7 @@ Player.prototype.effective_radius = .66
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   if (world == null) return
 
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.density *= 1.5;
     this.true_force *= 1.5;
   }
@@ -506,7 +506,7 @@ Player.prototype.maybe_start_impulse = function () {
   if (this.level.impulse_disabled) {
     return;
   }
-  if(imp_vars.player_data.options.control_scheme == "mouse") {
+  if(imp_params.player_data.options.control_scheme == "mouse") {
     if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && !this.is_silenced())
     {
       this.attacking = true
@@ -514,14 +514,14 @@ Player.prototype.maybe_start_impulse = function () {
       this.attack_loc = this.body.GetPosition().Copy()
       this.attack_angle = this.impulse_angle
       this.attack_duration = this.attack_length
-      imp_vars.impulse_music.play_sound("impulse")
+      imp_params.impulse_music.play_sound("impulse")
       if (this.impulse_game_state.show_tutorial) {
         this.impulse_game_state.add_tutorial_signal("player_impulsed")
       }
 
     }
-    this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_vars.draw_factor, y: this.body.GetPosition().y*imp_vars.draw_factor}, this.mouse_pos)
-  } else if(imp_vars.player_data.options.control_scheme == "keyboard") {
+    this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_params.draw_factor, y: this.body.GetPosition().y*imp_params.draw_factor}, this.mouse_pos)
+  } else if(imp_params.player_data.options.control_scheme == "keyboard") {
     if(!this.attacking && !this.is_silenced()) {
       var earliest_key_press = 0
       if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
@@ -562,7 +562,7 @@ Player.prototype.maybe_start_impulse = function () {
         this.impulse_game_state.game_numbers.impulsed = true;
         this.attack_loc = this.body.GetPosition().Copy()
         this.attack_duration = this.attack_length
-        imp_vars.impulse_music.play_sound("impulse")
+        imp_params.impulse_music.play_sound("impulse")
       }
     }
   }
@@ -653,7 +653,7 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 10;
       context.shadowColor = impulse_colors["impulse_blue"];
       context.fillStyle = impulse_colors["impulse_blue"];
-      context.arc(this.body.GetPosition().x * imp_vars.draw_factor, this.body.GetPosition().y * imp_vars.draw_factor, this.shape.GetRadius() * imp_vars.draw_factor, 0, 2*Math.PI, true)
+      context.arc(this.body.GetPosition().x * imp_params.draw_factor, this.body.GetPosition().y * imp_params.draw_factor, this.shape.GetRadius() * imp_params.draw_factor, 0, 2*Math.PI, true)
       context.fill()
       context.shadowBlur = 0;*/
         this.draw_player_sprite(context, "player_normal");
@@ -666,7 +666,7 @@ Player.prototype.draw = function(context) {
       context.beginPath();
       context.lineWidth = Math.ceil(4 - 4 * prog);
       context.strokeStyle = impulse_colors["impulse_blue"];
-      context.arc(this.body.GetPosition().x * imp_vars.draw_factor, this.body.GetPosition().y * imp_vars.draw_factor, this.shape.GetRadius() * factor * imp_vars.draw_factor, 0, 2*Math.PI, true);
+      context.arc(this.body.GetPosition().x * imp_params.draw_factor, this.body.GetPosition().y * imp_params.draw_factor, this.shape.GetRadius() * factor * imp_params.draw_factor, 0, 2*Math.PI, true);
       context.stroke();
       context.restore();
     }
@@ -676,28 +676,28 @@ Player.prototype.draw = function(context) {
 
     if(this.is_gooed()) {
       context.beginPath()
-      context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor,
-       this.radius* lighten_factor * imp_vars.draw_factor, 0, 2* Math.PI, false)
+      context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor,
+       this.radius* lighten_factor * imp_params.draw_factor, 0, 2* Math.PI, false)
       context.strokeStyle = "black"
       context.stroke()
 
     }
     context.beginPath()
 
-    if(imp_vars.player_data.options.impulse_shadow && !this.level.impulse_disabled) {
+    if(imp_params.player_data.options.impulse_shadow && !this.level.impulse_disabled) {
       context.save();
       var prog = this.appear_timer / this.appear_duration;
       context.globalAlpha *= Math.max(0, 1 - prog);
-      if (!this.is_silenced() && imp_vars.player_data.options.control_scheme == "mouse") {
+      if (!this.is_silenced() && imp_params.player_data.options.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 
-        context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.impulse_radius * lighten_factor* imp_vars.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-        context.lineTo(this.body.GetPosition().x*imp_vars.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*imp_vars.draw_factor)
-        context.lineTo(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor)
+        context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.impulse_radius * lighten_factor* imp_params.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+        context.lineTo(this.body.GetPosition().x*imp_params.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*imp_params.draw_factor)
+        context.lineTo(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor)
         context.fill()
-      } else if(!this.is_silenced() && imp_vars.player_data.options.control_scheme == "keyboard") {
+      } else if(!this.is_silenced() && imp_params.player_data.options.control_scheme == "keyboard") {
         context.beginPath()
-        context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.impulse_radius * lighten_factor *imp_vars.draw_factor, 0, 2 * Math.PI)
+        context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.impulse_radius * lighten_factor *imp_params.draw_factor, 0, 2 * Math.PI)
         context.globalAlpha /= 6
         context.lineWidth = 2
         context.strokeStyle = impulse_colors["impulse_blue"]
@@ -715,7 +715,7 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 10;
       context.shadowColor = this.impulse_color;
 
-      context.lineWidth = this.impulse_radius * this.impulse_width * imp_vars.draw_factor * lighten_factor
+      context.lineWidth = this.impulse_radius * this.impulse_width * imp_params.draw_factor * lighten_factor
       var prop = ((this.attack_length - this.attack_duration)/this.attack_length);
       context.save();
       if(prop > 0.5) {
@@ -723,7 +723,7 @@ Player.prototype.draw = function(context) {
         context.globalAlpha *= (1 - prop)/(0.5) < 0 ? 0 : (1-prop)/(0.5);
       }
 
-      context.arc(this.attack_loc.x*imp_vars.draw_factor, this.attack_loc.y*imp_vars.draw_factor, this.impulse_radius * lighten_factor* prop * imp_vars.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+      context.arc(this.attack_loc.x*imp_params.draw_factor, this.attack_loc.y*imp_params.draw_factor, this.impulse_radius * lighten_factor* prop * imp_params.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
       //context.lineWidth = 15;
       // line color
       context.strokeStyle = this.impulse_color
@@ -732,9 +732,9 @@ Player.prototype.draw = function(context) {
       context.restore();
     }
 
-    /*if(imp_vars.player_data.options.progress_circle) {
+    /*if(imp_params.player_data.options.progress_circle) {
       context.beginPath()
-      context.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.radius * 1.5 * imp_vars.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
+      context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.radius * 1.5 * imp_params.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
       context.strokeStyle = impulse_colors["impulse_blue"]
       if(this.impulse_game_state.world_num == 0) {
         context.strokeStyle = impulse_colors["impulse_blue_dark"]
@@ -742,13 +742,13 @@ Player.prototype.draw = function(context) {
       context.lineWidth = 2
       context.stroke()
     }*/
-    if(this.impulse_game_state.combo_enabled && imp_vars.player_data.options.multiplier_display &&
+    if(this.impulse_game_state.combo_enabled && imp_params.player_data.options.multiplier_display &&
        !this.impulse_game_state.is_boss_level) {
       context.font = "16px Muli"
       context.fillStyle = impulse_colors["impulse_blue"]
       context.textAlign = "center"
       context.shadowBlur = 0
-      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor + 30)
+      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor + 30)
     }
     context.restore()
   }
@@ -758,7 +758,7 @@ Player.prototype.draw_player_sprite = function(ctx, name) {
   /*ctx.beginPath()
 
   ctx.strokeStyle = impulse_colors["impulse_blue"]
-  ctx.arc(this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, this.shape.GetRadius() * imp_vars.draw_factor, 0, 2 * Math.PI)
+  ctx.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.shape.GetRadius() * imp_params.draw_factor, 0, 2 * Math.PI)
   ctx.shadowBlur = 20
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.fillStyle = "black"
@@ -767,7 +767,7 @@ Player.prototype.draw_player_sprite = function(ctx, name) {
   ctx.stroke()
   return*/
   var lighten_factor = this.get_lighten_factor()
-  drawSprite(ctx, this.body.GetPosition().x*imp_vars.draw_factor, this.body.GetPosition().y*imp_vars.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * imp_vars.draw_factor * 2.5 * lighten_factor, name)
+  drawSprite(ctx, this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * imp_params.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * imp_params.draw_factor * 2.5 * lighten_factor, name)
 }
 
 Player.prototype.get_lighten_factor = function() {
@@ -801,7 +801,7 @@ Player.prototype.start_death = function(reason) {
   this.dying_duration = this.dying_length
   this.level.obstacles_visible = true
   if (reason != "absorbed")
-  imp_vars.impulse_music.play_sound("pdeath")
+  imp_params.impulse_music.play_sound("pdeath")
   this.level.add_fragments("player", this.body.GetPosition(), this.body.GetLinearVelocity(), true)
 }
 

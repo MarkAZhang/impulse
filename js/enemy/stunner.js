@@ -14,7 +14,7 @@ function Stunner(world, x, y, id, impulse_game_state) {
 
   this.do_yield = false
 
-  if (imp_vars.player_data.difficulty_mode == "normal") {
+  if (imp_params.player_data.difficulty_mode == "normal") {
   	this.force *= 1.3;
   }
 

@@ -19,7 +19,7 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.troll_switch_interval = 400
   this.trolling_time_factor = 4
 
-  if (imp_vars.player_data.difficulty_mode == "easy") {
+  if (imp_params.player_data.difficulty_mode == "easy") {
     this.troll_switch_interval = 600
     this.trolling_time_factor = 3
   }
@@ -39,14 +39,14 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.bulk_draw_nums = 2
 
   this.short_troll_period = 1000
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.short_troll_period = 750
   }
 
   this.extra_adjust = true
 
   this.long_troll_period = 5000
-  if(imp_vars.player_data.difficulty_mode == "easy") {
+  if(imp_params.player_data.difficulty_mode == "easy") {
     this.long_troll_period = 2500
   }
 }
@@ -69,7 +69,7 @@ Troll.prototype.additional_processing = function(dt) {
     }
   }
 
-   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -78,7 +78,7 @@ Troll.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
   }
 }
@@ -106,7 +106,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
     this.body.ApplyImpulse(new b2Vec2(.3 * impulse_force*Math.cos(hit_angle), .3 * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
     this.player.confuse(this.short_troll_period)
-    imp_vars.impulse_music.play_sound("pwheel")
+    imp_params.impulse_music.play_sound("pwheel")
     this.confused_targets.push({object: this.player, timer: this.confused_duration})
     this.impulse_game_state.reset_combo();
   }
@@ -121,7 +121,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
 Troll.prototype.player_hit_proc = function() {
   if(!this.is_silenced()) {
     this.player.confuse(this.long_troll_period)
-    imp_vars.impulse_music.play_sound("pwheel")
+    imp_params.impulse_music.play_sound("pwheel")
   }
 }
 
@@ -165,7 +165,7 @@ Troll.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Troll.prototype.modify_movement_vector = function(dir) {
-  if(!check_bounds(-3, this.body.GetPosition(), imp_vars.draw_factor)) {
+  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 

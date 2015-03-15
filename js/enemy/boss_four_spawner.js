@@ -46,12 +46,12 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
       if(this.size != imp_params.impulse_enemy_stats[this.type].effective_radius) {
         this.set_size(imp_params.impulse_enemy_stats[this.type].effective_radius)
       }
-    }  
+    }
   }
-  
+
 
 	if(this.spawn && this.spawn_action_timer < this.spawn_action_period/2) {
-    imp_vars.impulse_music.play_sound("b4spawneract")  
+    imp_params.impulse_music.play_sound("b4spawneract")
 		var ray_angle = _atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
     var spawn_number = this.spawn_number * this.parent.get_spawn_bonus();
@@ -71,7 +71,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
         {x: this.body.GetPosition().x + 10 * Math.cos(angle),
           y: this.body.GetPosition().y + 10 * Math.sin(angle)},
           this.level.obstacle_edges
-        )) 
+        ))
       {
           j += 1
           angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
@@ -136,14 +136,14 @@ BossFourSpawner.prototype.collide_with = function(other) {
     return
 
   if (other === this.player) {
-    this.impulse_game_state.reset_combo();  
+    this.impulse_game_state.reset_combo();
   }
 
   /*if(other === this.player) {
 
       var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
-  }*/ 
+  }*/
 }
 
 BossFourSpawner.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
@@ -166,7 +166,7 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.save()
   context.globalAlpha *= 1-prog
   drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
-  
+
   //draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color
   draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
   /*context.beginPath()

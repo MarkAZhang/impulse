@@ -21,10 +21,10 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
 
     if(cur_shape.type == "polygon") {
       //draw polygon shape
-      context.moveTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[0][0])*imp_vars.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[0][1])*imp_vars.draw_factor)
+      context.moveTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[0][0])*imp_params.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[0][1])*imp_params.draw_factor)
       for(var i = 1; i < cur_shape_points.length; i++)
       {
-        context.lineTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[i][0])*imp_vars.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[i][1])*imp_vars.draw_factor)
+        context.lineTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[i][0])*imp_params.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[i][1])*imp_params.draw_factor)
       }
     }
     context.closePath()
@@ -61,8 +61,8 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
   if(erase_lines) {
     context.beginPath()
     for(var i = 0; i < erase_lines.length; i++) {
-      context.moveTo(scale*(erase_lines[i][0][0])*imp_vars.draw_factor, scale*(erase_lines[i][0][1])*imp_vars.draw_factor)
-      context.lineTo(scale*(erase_lines[i][1][0])*imp_vars.draw_factor, scale*(erase_lines[i][1][1])*imp_vars.draw_factor)
+      context.moveTo(scale*(erase_lines[i][0][0])*imp_params.draw_factor, scale*(erase_lines[i][0][1])*imp_params.draw_factor)
+      context.lineTo(scale*(erase_lines[i][1][0])*imp_params.draw_factor, scale*(erase_lines[i][1][1])*imp_params.draw_factor)
     }
     context.strokeStyle = "black"
     context.lineWidth = 3
@@ -77,8 +77,8 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
       for(var m = 0; m < extra_lines.length; m++) {
         context.beginPath()
         var line = extra_lines[m]
-        context.moveTo(scale*(r * line["x1"]) * imp_vars.draw_factor, scale*(r * line["y1"]) * imp_vars.draw_factor)
-        context.lineTo(scale*(r * line["x2"]) * imp_vars.draw_factor, scale*(r * line["y2"]) * imp_vars.draw_factor)
+        context.moveTo(scale*(r * line["x1"]) * imp_params.draw_factor, scale*(r * line["y1"]) * imp_params.draw_factor)
+        context.lineTo(scale*(r * line["x2"]) * imp_params.draw_factor, scale*(r * line["y2"]) * imp_params.draw_factor)
         context.lineWidth = 2
         context.strokeStyle = cur_color
         context.stroke()
@@ -102,7 +102,7 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   }
   if(status === undefined) status = "normal"
   var max_radius = 1.5
-  var size = imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_vars.draw_factor * Enemy.prototype.enemy_canvas_factor
+  var size = imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_params.draw_factor * Enemy.prototype.enemy_canvas_factor
   if(d == null) {
     var draw_scale = size
   } else {
@@ -134,7 +134,7 @@ function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
     draw_polygons = imp_params.impulse_enemy_stats[enemy_name].shape_polygons
   }
 
-  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_vars.draw_factor)
+  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_params.draw_factor)
   draw_enemy_image(context, status, draw_polygons, enemy_name, enemy_color, scale)
 
   //context.translate(draw_scale, draw_scale)

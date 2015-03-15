@@ -6,8 +6,8 @@ var MusicPlayer = function() {
   this.initialize_multisounds();
 
   this.playing = {}
-  this.mute = imp_vars.player_data.options.music_mute
-  this.effects_mute = imp_vars.player_data.options.effects_mute
+  this.mute = imp_params.player_data.options.music_mute
+  this.effects_mute = imp_params.player_data.options.effects_mute
 }
 
 MusicPlayer.prototype.initialize_multisounds = function() {
@@ -32,17 +32,17 @@ MusicPlayer.prototype.play = function(file, volume) {
   }
 
   this.sounds[file].play();
-  //this.sounds[file].setVolume(1);//imp_vars.player_data.options.effects_volume);
+  //this.sounds[file].setVolume(1);//imp_params.player_data.options.effects_volume);
   if (volume) {
     this.sounds[file].setVolume(volume);
   } else {
-    this.sounds[file].setVolume(imp_vars.player_data.options.effects_volume);
+    this.sounds[file].setVolume(imp_params.player_data.options.effects_volume);
   }
 }
 
 MusicPlayer.prototype.mute_effects = function(mute) {
   this.effects_mute = mute
-  imp_vars.player_data.options.effects_mute = mute
+  imp_params.player_data.options.effects_mute = mute
   save_game()
 }
 
@@ -52,7 +52,7 @@ MusicPlayer.prototype.play_multisound = function(file) {
     if(!this.multisounds[file][i]) {
 
       this.sounds[file+i].play();
-      this.sounds[file+i].setVolume(imp_vars.player_data.options.effects_volume);
+      this.sounds[file+i].setVolume(imp_params.player_data.options.effects_volume);
       this.multisounds[file][i] = true;
       return;
     }
@@ -86,7 +86,7 @@ MusicPlayer.prototype.switch_bg = function(file) {
 
 MusicPlayer.prototype.mute_bg = function() {
   this.mute = true
-  imp_vars.player_data.options.music_mute = true
+  imp_params.player_data.options.music_mute = true
   save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(0);
@@ -96,18 +96,18 @@ MusicPlayer.prototype.mute_bg = function() {
 
 MusicPlayer.prototype.unmute_bg = function() {
   this.mute = false
-  imp_vars.player_data.options.music_mute = false
+  imp_params.player_data.options.music_mute = false
   save_game()
   if(this.cur_song) {
-    this.sounds[this.cur_song].setVolume(imp_vars.player_data.options.bg_music_volume);
+    this.sounds[this.cur_song].setVolume(imp_params.player_data.options.bg_music_volume);
     this.playing[this.cur_song] = true
   }
 }
 
 MusicPlayer.prototype.change_bg_volume = function(volume, save) {
-  imp_vars.player_data.options.bg_music_volume = volume
+  imp_params.player_data.options.bg_music_volume = volume
   if(this.cur_song && !this.mute) {
-    this.sounds[this.cur_song].setVolume(imp_vars.player_data.options.bg_music_volume);
+    this.sounds[this.cur_song].setVolume(imp_params.player_data.options.bg_music_volume);
   }
   if (save) {
     save_game()
@@ -115,7 +115,7 @@ MusicPlayer.prototype.change_bg_volume = function(volume, save) {
 }
 
 MusicPlayer.prototype.change_effects_volume = function(volume) {
-  imp_vars.player_data.options.effects_volume = volume
+  imp_params.player_data.options.effects_volume = volume
   save_game()
 }
 
@@ -167,7 +167,7 @@ MusicPlayer.prototype.play_bg = function(file) {
   //  this.sounds[file].stop()
   //}
   if(!this.mute) {
-    this.sounds[file].setVolume(imp_vars.player_data.options.bg_music_volume);
+    this.sounds[file].setVolume(imp_params.player_data.options.bg_music_volume);
   } else {
     this.sounds[file].setVolume(0);
   }
@@ -197,7 +197,7 @@ MusicPlayer.prototype.stop_bg = function() {
         // in this case, start_bg was called again on the same song before the fade_out happened.
         // in this case, set the volume back to full.
         } else if (_this.cur_song == current_song && _this.playing[_this.cur_song]) {
-          _this.sounds[_this.cur_song].setVolume(imp_vars.player_data.options.bg_music_volume)
+          _this.sounds[_this.cur_song].setVolume(imp_params.player_data.options.bg_music_volume)
         }
     })
   }

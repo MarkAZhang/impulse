@@ -12,11 +12,11 @@ function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
   var _this = this
 
 
-  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, imp_vars.levelWidth/2 - 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
-  this.buttons.push(new IconButton("MATT MCFARLAND", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
-  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, imp_vars.levelWidth/2 + 250, imp_vars.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
-  this.buttons.push(new IconButton("JAY SALVAT", 16, imp_vars.levelWidth/2 - 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
-  this.buttons.push(new IconButton("ERIN CATTO", 16, imp_vars.levelWidth/2 + 150, imp_vars.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
+  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, imp_params.levelWidth/2 - 250, imp_params.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
+  this.buttons.push(new IconButton("MATT MCFARLAND", 16, imp_params.levelWidth/2, imp_params.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
+  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, imp_params.levelWidth/2 + 250, imp_params.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
+  this.buttons.push(new IconButton("JAY SALVAT", 16, imp_params.levelWidth/2 - 150, imp_params.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
+  this.buttons.push(new IconButton("ERIN CATTO", 16, imp_params.levelWidth/2 + 150, imp_params.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
   this.buttons[0].extra_text = "MAIN MENU MUSIC"
   this.buttons[1].extra_text = "ALL OTHER MUSIC"
   this.buttons[2].extra_text = "TEXTURES"
@@ -24,7 +24,7 @@ function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
   this.buttons[4].extra_text = "PHYSICS ENGINE"
 
   if (!this.after_main_game) {
-    this.buttons.push(new IconButton("BACK", 16, imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
+    this.buttons.push(new IconButton("BACK", 16, imp_params.levelWidth/2, imp_params.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
       _this.fader.set_animation("fade_out", function() {
         switch_game_state(new TitleState(_this));
       });
@@ -45,7 +45,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    set_bg("Hive 0", imp_vars.hive0_bg_opacity)
+    set_bg("Hive 0", imp_params.hive0_bg_opacity)
     this.bg_drawn = true
   }
 
@@ -62,20 +62,20 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", imp_vars.levelWidth/2, 60)
-  ctx.fillText("WITH CREDIT TO", imp_vars.levelWidth/2, 260)
-  /*ctx.fillText("Music by Matt McFarland", imp_vars.levelWidth/2, imp_vars.levelHeight/2 - 20)
-  ctx.fillText("Some textures from SubtlePatterns.com", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 30)
-  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 80)
-  ctx.fillText("Based on the Box2dWeb Physics Engine", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 130)
-  ctx.fillText("Game design, UI design, programming, art", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 180)
-  ctx.fillText("and everything else by Mark Zhang", imp_vars.levelWidth/2, imp_vars.levelHeight/2 + 210)*/
+  ctx.fillText("CREATED BY", imp_params.levelWidth/2, 60)
+  ctx.fillText("WITH CREDIT TO", imp_params.levelWidth/2, 260)
+  /*ctx.fillText("Music by Matt McFarland", imp_params.levelWidth/2, imp_params.levelHeight/2 - 20)
+  ctx.fillText("Some textures from SubtlePatterns.com", imp_params.levelWidth/2, imp_params.levelHeight/2 + 30)
+  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", imp_params.levelWidth/2, imp_params.levelHeight/2 + 80)
+  ctx.fillText("Based on the Box2dWeb Physics Engine", imp_params.levelWidth/2, imp_params.levelHeight/2 + 130)
+  ctx.fillText("Game design, UI design, programming, art", imp_params.levelWidth/2, imp_params.levelHeight/2 + 180)
+  ctx.fillText("and everything else by Mark Zhang", imp_params.levelWidth/2, imp_params.levelHeight/2 + 210)*/
   if (this.after_main_game) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.font = '16px Muli'
     ctx.fillStyle = impulse_colors["impulse_blue"];
-    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_vars.levelWidth/2, imp_vars.levelHeight - 30);
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_params.levelWidth/2, imp_params.levelHeight - 30);
     ctx.restore();
   }
 
