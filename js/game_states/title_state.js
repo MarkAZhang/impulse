@@ -137,9 +137,9 @@ TitleState.prototype.setup_main_menu = function() {
         i += 1
       }
       if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
-        switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+        game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
       } else {
-        switch_game_state(new WorldMapState(i))
+        game_engine.switch_game_state(new WorldMapState(i))
       }
     }))
     this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+20, 200, 50, button_color, "blue",
@@ -148,12 +148,12 @@ TitleState.prototype.setup_main_menu = function() {
         while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
           i += 1
         }
-        switch_game_state(new WorldMapState(i, true));
+        game_engine.switch_game_state(new WorldMapState(i, true));
       }));
     this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
-    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+170, 200, 50, button_color, "blue",function(){switch_game_state(new MusicPlayerState())}))
-    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+270, 200, 50, button_color, "blue",function(){switch_game_state(new LevelEditorState())}))
-    this.buttons["menu"].push(new SmallButton("QUESTS", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+70, 200, 50, button_color, "blue",function(){switch_game_state(new QuestGameState())}))
+    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+170, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new MusicPlayerState())}))
+    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+270, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new LevelEditorState())}))
+    this.buttons["menu"].push(new SmallButton("QUESTS", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+70, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new QuestGameState())}))
   } else {
     var button_y = imp_params.levelHeight/2 + 50
     var _this = this;
@@ -166,7 +166,7 @@ TitleState.prototype.setup_main_menu = function() {
          imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
         //setTimeout(function(){
           _this.fader.set_animation("fade_out", function() {
-            switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+            game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
           });
         //}, _this.fade_interval)
       } else {
@@ -181,7 +181,7 @@ TitleState.prototype.setup_main_menu = function() {
           switch_bg(impulse_colors["world 0 dark"], 150, 1)
         }
         _this.fader.set_animation("fade_out", function() {
-          switch_game_state(new WorldMapState(i, false))
+          game_engine.switch_game_state(new WorldMapState(i, false))
         });
       }
     }, "player"));
@@ -199,17 +199,17 @@ TitleState.prototype.setup_main_menu = function() {
           switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
         }
         _this.fader.set_animation("fade_out", function() {
-          switch_game_state(new WorldMapState(i, true))
+          game_engine.switch_game_state(new WorldMapState(i, true))
         });
 
         /*if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
           _this.fader.set_animation("fade_out", function() {
-            switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
+            game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
           });
         } else {
           if (!imp_params.impulse_level_data["HIVE 1-1"].save_state["normal"].high_score) {
             _this.fader.set_animation("fade_out", function() {
-              switch_game_state(new ChallengeModeIntroState());
+              game_engine.switch_game_state(new ChallengeModeIntroState());
             });
           } else {
           var i = 1;
@@ -217,7 +217,7 @@ TitleState.prototype.setup_main_menu = function() {
               i += 1
             }
             _this.fader.set_animation("fade_out", function() {
-              switch_game_state(new WorldMapState(i))
+              game_engine.switch_game_state(new WorldMapState(i))
             });
           }
         }*/
@@ -226,7 +226,7 @@ TitleState.prototype.setup_main_menu = function() {
 
     this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_params.levelWidth/2 - 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new OptionsMenu(_this))
+        game_engine.set_dialog_box(new OptionsMenu(_this))
       });
     }, "gear"))
 
@@ -234,13 +234,13 @@ TitleState.prototype.setup_main_menu = function() {
       imp_params.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new QuestGameState(_this))
+        game_engine.switch_game_state(new QuestGameState(_this))
       });
     }, "quest"))
 
     this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_params.levelWidth/2 + 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new CreditsState())
+        game_engine.switch_game_state(new CreditsState())
       });
     }, "credit"))
 
@@ -248,7 +248,7 @@ TitleState.prototype.setup_main_menu = function() {
 
     /*this.buttons["menu"].push(new IconButton("SHARE", 16, imp_params.levelWidth - 50, imp_params.levelHeight - 50, 100, 70, impulse_colors["impulse_blue"], impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new OptionsMenu(_this))
+        game_engine.set_dialog_box(new OptionsMenu(_this))
       });
     }, "fb"))*/
   }

@@ -21,7 +21,7 @@ function WorldMapState(world, is_practice_mode) {
 
   this.buttons.push(new IconButton("BACK", 16, 70, imp_params.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
     _this.fader.set_animation("fade_out", function() {
-      switch_game_state(new TitleState(_this));
+      game_engine.switch_game_state(new TitleState(_this));
     });
     switch_bg("Hive 0", 250, imp_params.hive0_bg_opacity)
   }, "back"));
@@ -81,7 +81,7 @@ function WorldMapState(world, is_practice_mode) {
   if (imp_params.player_data.first_time) {
     // If we don't set timeout, the click event will set world map state back to the game state.
     setTimeout(function() {
-      switch_game_state(new MainGameTransitionState(0, null, null, null, false))
+      game_engine.switch_game_state(new MainGameTransitionState(0, null, null, null, false))
     });
   }
 }
@@ -216,7 +216,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
           var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
           _this.draw_world_bg(world_bg_ctx)
           setTimeout(function(){
-            switch_game_state(new LevelIntroState(level, index));
+            game_engine.switch_game_state(new LevelIntroState(level, index));
           }, _this.fade_out_interval_practice)
         }
 
@@ -249,7 +249,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
       var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
       _this.draw_world_bg(world_bg_ctx)
       setTimeout(function(){
-        switch_game_state(new MainGameTransitionState(world_num, null, null, null, false))
+        game_engine.switch_game_state(new MainGameTransitionState(world_num, null, null, null, false))
       }, _this.fade_out_interval_main)}, "world"+world_num)
   this.world_buttons[difficulty][world_num].active = unlocked
 }

@@ -121,7 +121,7 @@ function segIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return false//lines are collinear. For the purposes of our imp_params.cur_game_state.visibility_graph, this does not count as an intersection
+      return false//lines are collinear. For the purposes of our game_engine.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -140,7 +140,7 @@ function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
   {
     if(crossProduct(a, seg2d)==0)
     {
-      return null//lines are collinear. For the purposes of our imp_params.cur_game_state.visibility_graph, this does not count as an intersection
+      return null//lines are collinear. For the purposes of our game_engine.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
@@ -383,9 +383,9 @@ function get_nearest_spawn_point(object, player, level_name) {
 function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
   var r_point = {x:Math.random()*(imp_params.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_params.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
-  for(var k = 0; k < imp_params.cur_game_state.level.boundary_polygons.length; k++)
+  for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(imp_params.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -394,7 +394,7 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
-  if(imp_params.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
+  if(game_engine.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
@@ -405,9 +405,9 @@ function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
 function getRandomCentralValidLocation(testPoint) {
   var r_point = {x:Math.random()*(imp_params.levelWidth/2/imp_params.draw_factor)+imp_params.levelWidth/4/imp_params.draw_factor, y: Math.random()*((imp_params.levelHeight)/2/imp_params.draw_factor)+(imp_params.levelHeight)/4/imp_params.draw_factor}
   var inPoly = false
-  for(var k = 0; k < imp_params.cur_game_state.level.boundary_polygons.length; k++)
+  for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(imp_params.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
@@ -416,7 +416,7 @@ function getRandomCentralValidLocation(testPoint) {
   {
     return getRandomCentralValidLocation(testPoint)
   }
-  if(imp_params.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
+  if(game_engine.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
     return getRandomCentralValidLocation(testPoint)
   }

@@ -28,10 +28,10 @@ function LevelIntroState(level_name, world) {
 
     _this.fader.set_animation("fade_out_to_main", function() {
       if(_this.world_num) {
-        switch_game_state(new WorldMapState(_this.world_num, true))
+        game_engine.switch_game_state(new WorldMapState(_this.world_num, true))
       }
       else {
-        switch_game_state(new TitleState(true))
+        game_engine.switch_game_state(new TitleState(true))
       }
       imp_params.bg_file = null
       // TODO: transition the bg.
@@ -89,7 +89,7 @@ function LevelIntroState(level_name, world) {
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
-          set_dialog_box(new EnemyBox(enemy, _this))
+          game_engine.set_dialog_box(new EnemyBox(enemy, _this))
         });
       }})(j, this)
       ))
@@ -291,7 +291,7 @@ LevelIntroState.prototype.load_complete = function() {
   this.buttons.push(new IconButton("START", 16, imp_params.levelWidth - 70, imp_params.levelHeight/2 + 260, 100, 65, this.bright_color, "white", function(_this){
     return function(){
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false /*is_main_game*/, true /*first_time*/))
+        game_engine.switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false /*is_main_game*/, true /*first_time*/))
       });
     }
   }(this), "start"))

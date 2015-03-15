@@ -15,7 +15,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
+        game_engine.switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
       });
     }
   }(this), "start")
@@ -31,7 +31,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
  this.buttons.push(new IconButton("MENU", 16, 70, imp_params.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new WorldMapState(_this.world_num, true))
+        game_engine.switch_game_state(new WorldMapState(_this.world_num, true))
         if (imp_params.player_data.difficulty_mode == "normal") {
           set_bg("Title Alt" + _this.world_num, get_world_map_bg_opacity(_this.world_num))
         } else {
@@ -41,7 +41,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     }
     else {
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new TitleState(true))
+        game_engine.switch_game_state(new TitleState(true))
         set_bg("Hive 0", imp_params.hive0_bg_opacity)
       });
     }
@@ -107,7 +107,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
       (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
-          set_dialog_box(new EnemyBox(enemy, _this))
+          game_engine.set_dialog_box(new EnemyBox(enemy, _this))
         });
       }})(j, this)
       ))

@@ -70,7 +70,7 @@ MusicPlayerState.prototype.setup_ui = function() {
         }))
   this.setup_music_buttons()
 
-    this.buttons.push(new SmallButton("MAIN MENU", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+270, 200, 50, this.button_color, "blue", function(){setTimeout(function(){switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+270, 200, 50, this.button_color, "blue", function(){setTimeout(function(){game_engine.switch_game_state(new TitleState(true))}, 20)}))
 }
 
 MusicPlayerState.prototype.setup_music_buttons = function() {

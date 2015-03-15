@@ -393,13 +393,13 @@ MainGameSummaryState.prototype.process = function(dt) {
 MainGameSummaryState.prototype.resume_game = function() {
   imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
   save_game()
-  switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
+  game_engine.switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
   imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
   save_game()
-  switch_game_state(new WorldMapState(this.world_num))
+  game_engine.switch_game_state(new WorldMapState(this.world_num))
 }
 
 MainGameSummaryState.prototype.check_quests = function() {
@@ -438,7 +438,7 @@ MainGameSummaryState.prototype.check_quests = function() {
 }
 
 MainGameSummaryState.prototype.exit_game = function() {
-  switch_game_state(new TitleState(true))
+  game_engine.switch_game_state(new TitleState(true))
 }
 
 MainGameSummaryState.prototype.go_to_next_state = function() {
@@ -446,14 +446,14 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
     if (this.world_num === 4 &&
         imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world 4"] &&
         imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world 4"]["first_victory"]) {
-      switch_game_state(new CreditsState(true, this.hive_numbers,
+      game_engine.switch_game_state(new CreditsState(true, this.hive_numbers,
         {victory: true,
           is_tutorial: this.world_num == 0,
           first_time_tutorial: imp_params.player_data.first_time,
           skipped: false,
           just_saved: this.just_saved}))
     } else {
-      switch_game_state(new RewardGameState(this.hive_numbers, true,
+      game_engine.switch_game_state(new RewardGameState(this.hive_numbers, true,
         {victory: true,
           is_tutorial: this.world_num == 0,
           first_time_tutorial: imp_params.player_data.first_time,
@@ -461,7 +461,7 @@ MainGameSummaryState.prototype.go_to_next_state = function() {
           just_saved: this.just_saved}))
     }
   } else {
-    switch_game_state(new RewardGameState(this.hive_numbers, true,
+    game_engine.switch_game_state(new RewardGameState(this.hive_numbers, true,
       {victory: false,
         is_tutorial: this.world_num == 0,
         first_time_tutorial: imp_params.player_data.first_time,

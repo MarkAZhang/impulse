@@ -11,7 +11,7 @@ function QuestGameState() {
   this.buttons = [];
   this.buttons.push(new IconButton("BACK", 16, imp_params.levelWidth/2, imp_params.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
     _this.fader.set_animation("fade_out", function() {
-      switch_game_state(new TitleState(true))
+      game_engine.switch_game_state(new TitleState(true))
     });
   }}(this), "back"));
   this.set_up_quests();

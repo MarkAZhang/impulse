@@ -146,12 +146,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.check_new_enemies()
   }
 
-  // Manually set the current colors for the game button.
-  for( var i = 0; i < imp_params.game_buttons.length; i++) {
-    imp_params.game_buttons[i].color = this.color
-    imp_params.game_buttons[i].hover_color = this.bright_color
-  }
-
   // if this is world zero. show the tutorial.
   this.show_tutorial = (this.is_tutorial_level ||
     imp_params.player_data.tutorial_shown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
@@ -235,7 +229,7 @@ ImpulseGameState.prototype.check_new_enemies = function() {
     if(!imp_params.impulse_enemy_stats[enemy].is_boss &&
         imp_params.impulse_enemy_stats[enemy].seen == 1) {
 
-      set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
+      game_engine.set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
     }
   }
 }
@@ -295,7 +289,7 @@ ImpulseGameState.prototype.transition_to_hive0bg = function (dur) {
 ImpulseGameState.prototype.check_pause = function() {
   if(document.webkitHidden) {
     this.pause = true
-    set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
+    game_engine.set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
   }
 }
 
@@ -989,9 +983,9 @@ ImpulseGameState.prototype.toggle_pause = function() {
   this.pause = !this.pause
   if(this.pause) {
     this.reset_player_state()
-    set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
+    game_engine.set_dialog_box(new PauseMenu(this.level, this.world_num, this.game_numbers, this, this.visibility_graph))
   } else {
-    clear_dialog_box()
+    game_engine.clear_dialog_box()
   }
 }
 
@@ -1172,9 +1166,9 @@ ImpulseGameState.prototype.reset_combo = function() {
 
 ImpulseGameState.prototype.level_defeated = function() {
   if (this.main_game) {
-    switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, false))
+    game_engine.switch_game_state(new MainGameTransitionState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, false))
   } else {
-    switch_game_state(new RewardGameState(this.hive_numbers, this.main_game, {
+    game_engine.switch_game_state(new RewardGameState(this.hive_numbers, this.main_game, {
       game_numbers: this.game_numbers,
       level: this.level,
       world_num: this.world_num,
@@ -1204,7 +1198,7 @@ ImpulseGameState.prototype.on_victory = function() {
       this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
       if (!this.is_tutorial_level) {
         save_player_game(this.hive_numbers);
-        set_popup_message("saved_alert", 1000, "white", this.world_num)
+        game_engine.set_popup_message("saved_alert", 1000, "white", this.world_num)
       }
     } else {
       // Clear the game data.

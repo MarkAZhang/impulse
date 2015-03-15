@@ -21,7 +21,7 @@ IntroState.prototype.process = function(dt) {
   if(this.fader.animation === null) {
     this.fade_state_index += 1;
     if (this.fade_state_index >= this.fade_states.length) {
-      switch_game_state(new TitleState());
+      game_engine.switch_game_state(new TitleState());
     }
     this.fader.set_animation(this.fade_states[this.fade_state_index]);
   }

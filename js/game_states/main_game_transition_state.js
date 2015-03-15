@@ -129,20 +129,20 @@ MainGameTransitionState.prototype.should_skip_transition_state = function () {
 MainGameTransitionState.prototype.maybe_switch_states = function () {
   // if last level of tutorial, go to summary state.
   if(this.world_num == 0 && this.last_level && this.last_level.level_name == imp_params.last_tutorial_level) {
-    switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
+    game_engine.switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return true;
   }
 
   // if tutorial, skip the transition state. Also, if this is the first time, go directly to impulse game state.
   if(this.should_skip_transition_state()) {
     if(this.level_loaded) {
-      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
+      game_engine.switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
     }
     return true;
   }
 
   if(this.last_level && this.last_level.is_boss_level) {
-    switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
+    game_engine.switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return true;
   }
 
@@ -170,7 +170,7 @@ MainGameTransitionState.prototype.process = function(dt) {
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
     } else if(this.state == "level_intro") {
-      switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
+      game_engine.switch_game_state(new ImpulseGameState(this.world_num, this.level, this.visibility_graph, this.hive_numbers, true))
     }
   }
 }

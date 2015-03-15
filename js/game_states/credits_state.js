@@ -26,7 +26,7 @@ function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
   if (!this.after_main_game) {
     this.buttons.push(new IconButton("BACK", 16, imp_params.levelWidth/2, imp_params.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new TitleState(_this));
+        game_engine.switch_game_state(new TitleState(_this));
       });
     }, "back"))
   }
@@ -103,7 +103,7 @@ CreditsState.prototype.on_key_down = function (keyCode) {
   if (this.after_main_game) {
     var _this = this;
     this.fader.set_animation("fade_out", function() {
-      switch_game_state(new RewardGameState(_this.main_game_hive_numbers, true, _this.main_game_args));
+      game_engine.switch_game_state(new RewardGameState(_this.main_game_hive_numbers, true, _this.main_game_args));
     });
   }
 }

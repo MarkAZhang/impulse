@@ -152,7 +152,7 @@ PauseMenu.prototype.add_buttons = function() {
     }
     this.options_button = new IconButton("OPTIONS", 16, this.x, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new OptionsMenu(_this))
+        game_engine.set_dialog_box(new OptionsMenu(_this))
       });
     }}(this), "options")
     this.options_button.bg_color = this.bg_color
@@ -167,7 +167,7 @@ PauseMenu.prototype.add_buttons = function() {
 
     this.options_button = new IconButton("OPTIONS", 16, this.x - 100, this.y - this.h/2 + second_row_y, 100, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new OptionsMenu(_this))
+        game_engine.set_dialog_box(new OptionsMenu(_this))
       });
     }}(this), "options")
     this.options_button.bg_color = this.bg_color
@@ -221,7 +221,7 @@ PauseMenu.prototype.add_buttons = function() {
     var enemy_button = new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size,
       this.level.lite_color, (function(enemy, _this) { return function() {
         _this.fader.set_animation("fade_out", function() {
-          set_dialog_box(new EnemyBox(enemy, _this))
+          game_engine.set_dialog_box(new EnemyBox(enemy, _this))
         });
       }})(j, this)
     );
@@ -298,14 +298,14 @@ PauseMenu.prototype.on_click = function(x, y) {
 }
 
 PauseMenu.prototype.quit_practice = function() {
-  switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+  game_engine.switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level,
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       victory: false
     }))
-  clear_dialog_box()
+  game_engine.clear_dialog_box()
 }
 PauseMenu.prototype.restart_practice = function() {
   imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
@@ -313,18 +313,18 @@ PauseMenu.prototype.restart_practice = function() {
   this.level.draw_bg(imp_params.bg_ctx)
   imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)
   var hive_numbers = new HiveNumbers(this.game_state.world_num, false)
-  switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false /*is_main_game*/, false /*first_time*/))
-  clear_dialog_box()
+  game_engine.switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false /*is_main_game*/, false /*first_time*/))
+  game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.quit_main_game = function() {
   save_player_game({});
-  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
-  clear_dialog_box()
+  game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
+  game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.quit_tutorial = function() {
-   switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+   game_engine.switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level,
       world_num: this.game_state.world_num,
@@ -334,13 +334,13 @@ PauseMenu.prototype.quit_tutorial = function() {
       victory: true,
       skipped: true
     }))
-   clear_dialog_box()
+   game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
   save_player_game(this.game_state.hive_numbers);
-  switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
-  clear_dialog_box()
+  game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
+  game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.on_key_down = function(keyCode) {
@@ -385,13 +385,13 @@ function OptionsMenu(previous_menu) {
   _this.fader.set_animation("fade_out", function() {
     if(_this.previous_menu instanceof PauseMenu) {
       _this.previous_menu.add_buttons()
-      set_dialog_box(_this.previous_menu)
+      game_engine.set_dialog_box(_this.previous_menu)
       _this.previous_menu.fader.set_animation("fade_in");
     } else {
       if (_this.previous_menu instanceof TitleState) {
         _this.previous_menu.fader.set_animation("fade_in");
       }
-      clear_dialog_box()
+      game_engine.clear_dialog_box()
     }
   });
 
@@ -401,7 +401,7 @@ function OptionsMenu(previous_menu) {
   if (this.previous_menu instanceof TitleState) {
     this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x + 150, this.y + 120, 200, 100, this.bright_color, "red", function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
-        set_dialog_box(new DeleteDataDialog(_this))
+        game_engine.set_dialog_box(new DeleteDataDialog(_this))
       });
     }}(this), "delete")
     this.buttons.push(this.delete_button)
@@ -410,7 +410,7 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(this.back_button)
   this.controls_button = new IconButton("CHANGE CONTROLS", 20, controls_x_value, this.y + 120, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
-      set_dialog_box(new ControlsMenu(_this))
+      game_engine.set_dialog_box(new ControlsMenu(_this))
     });
   }}(this), "controls")
   this.buttons.push(this.controls_button)
@@ -561,7 +561,7 @@ OptionsMenu.prototype.on_click = function(x, y) {
 
 OptionsMenu.prototype.on_key_down = function(keyCode) {
   /*if(keyCode == 66 || keyCode == 79) {
-    set_dialog_box(this.previous_menu)
+    game_engine.set_dialog_box(this.previous_menu)
   }*/
 }
 
@@ -613,7 +613,7 @@ function ControlsMenu(previous_menu) {
   var _this = this;
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
-      set_dialog_box(_this.previous_menu)
+      game_engine.set_dialog_box(_this.previous_menu)
       _this.previous_menu.fader.set_animation("fade_in");
     });
   }}(this), "back")
@@ -771,7 +771,7 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
 
 ControlsMenu.prototype.on_key_down = function(keyCode) {
   /*if(keyCode == 66 || keyCode == 79) {
-    set_dialog_box(this.previous_menu)
+    game_engine.set_dialog_box(this.previous_menu)
   }*/
 }
 
@@ -824,11 +824,11 @@ function EnemyBox(enemy_name, previous_menu) {
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       if(_this.previous_menu instanceof DialogBox) {
-        set_dialog_box(_this.previous_menu)
+        game_engine.set_dialog_box(_this.previous_menu)
         _this.previous_menu.fader.set_animation("fade_in");
       } else if(_this.previous_menu instanceof GameState) {
-        //switch_game_state(_this.previous_menu)
-        clear_dialog_box()
+        //game_engine.switch_game_state(_this.previous_menu)
+        game_engine.clear_dialog_box()
         _this.previous_menu.fader.set_animation("fade_in");
       }
     });
@@ -1041,7 +1041,7 @@ function DeleteDataDialog(previous_menu) {
 
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, "white", "white" ,function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
-      set_dialog_box(_this.previous_menu)
+      game_engine.set_dialog_box(_this.previous_menu)
       _this.previous_menu.draw_bg();
       _this.previous_menu.fader.set_animation("fade_in");
     });

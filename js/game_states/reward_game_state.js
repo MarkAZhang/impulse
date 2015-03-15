@@ -297,26 +297,26 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
     set_bg("Hive 0", imp_params.hive0_bg_opacity)
   }
 
-  switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));
+  game_engine.switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));
 }
 
 RewardGameState.prototype.advance_game_state = function() {
   if (this.main_game) {
     if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
       // Immediately move to the next world.
-      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
+      game_engine.switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
     } else if (this.victory && this.hive_numbers.world == 0 && this.first_time) {
-      switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
+      game_engine.switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
     } else if (this.victory && this.hive_numbers.world == 4) {
       this.switch_to_world_map(false);
     } else if (this.args.just_saved) {
-      switch_game_state(new TitleState(this));
+      game_engine.switch_game_state(new TitleState(this));
     } else {
       this.switch_to_world_map(false);
     }
   } else {
     if (this.victory) {
-      switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
+      game_engine.switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
         best_time: this.args.game_numbers.best_time,
         high_score: this.args.game_numbers.high_score,
         victory: this.victory

@@ -11,7 +11,7 @@ function ChallengeModeIntroState() {
   this.buttons = [];
   this.buttons.push(new IconButton("BACK", 16, 70, imp_params.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
     _this.fader.set_animation("fade_out", function() {
-      switch_game_state(new TitleState(true))
+      game_engine.switch_game_state(new TitleState(true))
     });
   }}(this), "back"));
   this.buttons.push(new IconButton("CONTINUE", 16, imp_params.levelWidth - 70, imp_params.levelHeight/2+260, 60, 65,  "white", impulse_colors["impulse_blue"], function(_this){return function(){
@@ -21,11 +21,11 @@ function ChallengeModeIntroState() {
     }
     if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new MainGameSummaryState(null, null, null, null, null, true));
+        game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true));
       });
     } else {
       _this.fader.set_animation("fade_out", function() {
-        switch_game_state(new WorldMapState(i));
+        game_engine.switch_game_state(new WorldMapState(i));
       });
     }
   }}(this), "start"));
