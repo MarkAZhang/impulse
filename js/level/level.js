@@ -42,12 +42,6 @@ Level.prototype.init = function(data, level_intro_state) {
     this.world_num = 0;
   }
 
-  this.dark_ones_data = data.dark_ones
-  this.dark_ones = [];
-  this.dark_ones_spawned = false;
-  this.dark_ones_visited = 0;
-  this.dark_ones_after_gateway = data.dark_ones_after_gateway;
-
   if (imp_params.player_data.difficulty_mode == "easy") {
     this.multi_spawn_points = data.multi_spawn_points_easy
   }
@@ -292,10 +286,6 @@ Level.prototype.process = function(dt) {
     this.obstacles_visible_timer -= dt
   }
 
-  for (var i = 0; i < this.dark_ones.length; i++) {
-    this.dark_ones[i].process(dt);
-  }
-
   this.dead_enemies = []
   this.spawned_enemies = []
   this.expired_enemies = []
@@ -407,27 +397,6 @@ Level.prototype.initial_spawn = function() {
       this.spawn_enemy_set(enemy_type_list);
     }
   }
-  if (this.dark_ones_data && !this.dark_ones_spawned && imp_params.debug.story_mode &&
-    !this.dark_ones_after_gateway && !this.is_boss_level) {
-    for (var i = 0; i < this.dark_ones_data.length; i++) {
-      var data = this.dark_ones_data[i];
-      this.spawn_dark_one(data);
-    }
-    this.dark_ones_spawned = true;
-  }
-}
-
-Level.prototype.spawn_dark_one = function (data) {
-  if (this.restarting_level) {
-    return
-  }
-  var dark_one = new DarkOne(data.x, data.y, this.impulse_game_state, data.msg, data.size, this.dark_ones_after_gateway)
-
-  this.dark_ones.push(dark_one);
-};
-
-Level.prototype.add_dark_one = function (dark_one) {
-  this.dark_ones.push(dark_one);
 }
 
 Level.prototype.spawn_enemy_set = function(enemy_type_list) {
@@ -770,10 +739,6 @@ Level.prototype.draw = function(context, draw_factor) {
     this.enemies[i].final_draw(context, draw_factor)
   }
 
-  for (var i = 0; i < this.dark_ones.length; i++) {
-    this.dark_ones[i].draw(context);
-  }
-
   if (this.enemy_visibility != 1) {
     context.restore();
   }
@@ -794,22 +759,11 @@ Level.prototype.draw = function(context, draw_factor) {
 }
 
 Level.prototype.final_draw = function(context, draw_factor) {
-  for (var i = 0; i < this.dark_ones.length; i++) {
-    this.dark_ones[i].final_draw(context);
-  }
 };
 
 Level.prototype.open_gateway = function() {
-
   this.gateway_transition_duration = this.gateway_transition_interval
   this.gateway_opened = true
-  if (imp_params.debug.story_mode && this.dark_ones_after_gateway && !this.is_boss_level) {
-    for (var i = 0; i < this.dark_ones_data.length; i++) {
-      var data = this.dark_ones_data[i];
-      this.spawn_dark_one(data);
-    }
-    this.dark_ones_spawned = true;
-  }
 }
 
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
@@ -961,7 +915,4 @@ Level.prototype.clear_obstacles = function () {
 }
 
 Level.prototype.dispose = function() {
-  for (var i = 0; i < this.dark_ones.length; i++) {
-    this.dark_ones[i].dispose();
-  }
 }

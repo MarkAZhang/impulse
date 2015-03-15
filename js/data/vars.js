@@ -21,7 +21,6 @@ var imp_params = {
   bg_opacity: 0.3,
   hive0_bg_opacity: 0.6 /* hive0 gets rendered differently, needs to be brighter */,
   switch_bg_duration: null,
-  dark_one_speaks: false
 };
 
 imp_params.debug = {
@@ -29,7 +28,6 @@ imp_params.debug = {
   god_mode: false,
   dev: false,
   old_menu: false,
-  story_mode: false,
   show_zero_level: false,
   is_beta: false,
   instant_victory_enabled: false,

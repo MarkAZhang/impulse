@@ -41,15 +41,6 @@ imp_params.impulse_level_data['HIVE 0-1'] = {
   },
   player_loc: {x: 200, y: 300},
   gateway_loc: {x: 600, y: 300},
-  dark_ones: [
-    {
-      x: 400,
-      y: 300,
-      size: 250,
-      msg: 'one'
-    }
-  ],
-  dark_ones_after_gateway: false,
   impulse_disabled: true
 }
 
@@ -110,21 +101,6 @@ imp_params.impulse_level_data['HIVE 0-3'] = {
   player_loc: {x: 100, y: 300},
   gateway_loc: {x: 600, y: 300},
   show_score_interface: true,
-  dark_ones: [
-    {
-      x: 400,
-      y: 115,
-      size: 125,
-      msg: 'three'
-    },
-    {
-      x: 400,
-      y: 485,
-      size: 125,
-      msg: 'three'
-    }
-  ],
-  dark_ones_after_gateway: true
 }
 
 imp_params.impulse_level_data['HIVE 0-4'] = {
@@ -154,33 +130,6 @@ imp_params.impulse_level_data['HIVE 0-4'] = {
   player_loc: {x: 400, y: 300},
   spawn_pattern: "spread",
   show_full_interface: true,
-  dark_ones: [
-    {
-      x: 165,
-      y: 130,
-      size: 125,
-      msg: 'four'
-    },
-    {
-      x: 165,
-      y: 470,
-      size: 125,
-      msg: 'four'
-    },
-    {
-      x: 635,
-      y: 470,
-      size: 125,
-      msg: 'four'
-    },
-    {
-      x: 635,
-      y: 130,
-      size: 125,
-      msg: 'four'
-    }
-  ],
-  dark_ones_after_gateway: true
 }
 
 imp_params.impulse_level_data['HIVE 1-0'] = {
@@ -204,15 +153,6 @@ imp_params.impulse_level_data['HIVE 1-0'] = {
   },
   player_loc: {x: 400, y: 500},
   gateway_loc: {x: 400, y: 350},
-  dark_ones: [
-    {
-      x: 400,
-      y: 150,
-      size: 200,
-      msg: 'hive_one_open'
-    }
-  ],
-  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 1-1'] = {
@@ -438,14 +378,6 @@ imp_params.impulse_level_data['BOSS 1'] = {
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
   defeat_time: 40,
-  dark_ones: [
-    {
-      x: 400,
-      y: 200,
-      size: 125,
-      msg: 'hive_one_close'
-    }
-  ]
 }
 
 imp_params.impulse_level_data['HIVE 2-0'] = {
@@ -469,15 +401,6 @@ imp_params.impulse_level_data['HIVE 2-0'] = {
   },
   player_loc: {x: 400, y: 500},
   gateway_loc: {x: 400, y: 350},
-  dark_ones: [
-    {
-      x: 400,
-      y: 150,
-      size: 200,
-      msg: 'hive_two_open'
-    }
-  ],
-  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 2-1'] = {
@@ -744,14 +667,6 @@ imp_params.impulse_level_data['BOSS 2'] = {
   buffer_radius: 1,
   player_loc: {x: 400, y: 500},
   defeat_time: 60,
-  dark_ones: [
-    {
-      x: 400,
-      y: 200,
-      size: 125,
-      msg: 'hive_two_close'
-    }
-  ]
 }
 
 imp_params.impulse_level_data['HIVE 3-0'] = {
@@ -775,15 +690,6 @@ imp_params.impulse_level_data['HIVE 3-0'] = {
   },
   player_loc: {x: 400, y: 500},
   gateway_loc: {x: 400, y: 350},
-  dark_ones: [
-    {
-      x: 400,
-      y: 150,
-      size: 200,
-      msg: 'hive_three_open'
-    }
-  ],
-  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 3-1'] = {
@@ -1149,15 +1055,6 @@ imp_params.impulse_level_data['BOSS 3'] = {
   initial_spawn_data: {
     "third boss": 1
   },
-  dark_ones: [
-    {
-      x: 400,
-      y: 200,
-      size: 125,
-      msg: 'hive_three_close'
-    }
-  ]
-
 }
 
 imp_params.impulse_level_data['HIVE 4-0'] = {
@@ -1181,15 +1078,6 @@ imp_params.impulse_level_data['HIVE 4-0'] = {
   },
   player_loc: {x: 400, y: 500},
   gateway_loc: {x: 400, y: 350},
-  dark_ones: [
-    {
-      x: 400,
-      y: 150,
-      size: 200,
-      msg: 'hive_four_open'
-    }
-  ],
-  dark_ones_after_gateway: false
 }
 
 imp_params.impulse_level_data['HIVE 4-1'] = {
@@ -1516,15 +1404,6 @@ imp_params.impulse_level_data['BOSS 4'] = {
   initial_spawn_data: {
     "fourth boss": 1
   },
-  dark_ones: [
-    {
-      x: 400,
-      y: 200,
-      size: 125,
-      msg: 'hive_four_close'
-    }
-  ]
-
 }
 
 for(i in imp_params.impulse_level_data) {
