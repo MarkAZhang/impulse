@@ -12,7 +12,7 @@ function SmallEnemyButton(enemy_name, size, x, y, w, h, color, action) {
 
 SmallEnemyButton.prototype.additional_draw = function(context) {
   context.save()
-  
+
   context.save();
   context.beginPath()
   context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
@@ -30,12 +30,6 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   var cur_y = this.y
   draw_enemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
 
-  /* if((imp_params.impulse_enemy_stats[this.enemy_name].seen <= 3 && !imp_params.impulse_enemy_stats[this.enemy_name].is_boss)) {
-    context.font = "12px Muli"
-    context.textAlign = "center"
-    context.fillStyle = this.color
-    context.fillText("NEW", this.x + , this.y - this.h*5/8)
-  } */
   context.restore()
 }
 

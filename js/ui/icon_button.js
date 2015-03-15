@@ -90,9 +90,9 @@ IconButton.prototype.draw_icon  = function(context) {
 	} else if(this.icon == "gear") {
 
 		if(this.hover) {
-			draw_gear(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)
+			draw_gear_icon(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)
 		} else {
-			draw_gear(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)
+			draw_gear_icon(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)
 		}
 	} else if(this.icon == "credit") {
     if(this.hover) {
@@ -156,15 +156,9 @@ IconButton.prototype.draw_icon  = function(context) {
     }
   } else if(this.icon == "options") {
     if(this.hover) {
-      draw_gear(context, this.x, this.y - this.h/8, 15, this.hover_color, this.bg_color)
+      draw_gear_icon(context, this.x, this.y - this.h/8, 15, this.hover_color, this.bg_color)
     } else {
-      draw_gear(context, this.x, this.y - this.h/8, 15, this.color, this.bg_color)
-    }
-  } else if(this.icon == "fb") {
-    if(this.hover) {
-      draw_fb_icon(context, this.x, this.y - this.h/8, 30, this.hover_color)
-    } else {
-      draw_fb_icon(context, this.x, this.y - this.h/8, 30, this.color)
+      draw_gear_icon(context, this.x, this.y - this.h/8, 15, this.color, this.bg_color)
     }
   } else if(this.icon == "save") {
     if(this.hover) {

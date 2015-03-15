@@ -1,33 +1,4 @@
 
-function draw_star(context, x, y, r, color) {
-  context.beginPath()
-  context.moveTo(x + r * Math.cos(Math.PI * 3/2), y + r * Math.sin(Math.PI * 3/2))
-  context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
-  context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
-  context.closePath()
-  context.globalAlpha = 0.5;
-  context.fillStyle = impulse_colors[color]
-
-  context.fill()
-  context.globalAlpha = 1;
-  context.strokeStyle = impulse_colors[color]
-
-  context.lineWidth = Math.ceil(r/7.5)
-  context.stroke()
-
-}
-
-function draw_empty_star(context, x, y, r, color) {
-  context.beginPath()
-  context.moveTo(x + r * Math.cos(Math.PI * 3/2), y + r * Math.sin(Math.PI * 3/2))
-  context.lineTo(x + r * Math.cos(Math.PI * 1/6), y + r * Math.sin(Math.PI * 1/6))
-  context.lineTo(x + r * Math.cos(Math.PI * 5/6), y + r * Math.sin(Math.PI * 5/6))
-  context.closePath()
-  context.strokeStyle = color ? color : impulse_colors["impulse_blue"]
-  context.lineWidth = Math.ceil(r/7.5)
-  context.stroke()
-}
-
 function draw_prog_circle(context, x, y, r, prog, color, width) {
   context.beginPath()
   context.arc(x*imp_vars.draw_factor, y*imp_vars.draw_factor, (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
@@ -41,88 +12,6 @@ function bulk_draw_prog_circle(context, x, y, r, prog) {
   context.arc(x*imp_vars.draw_factor,
               y*imp_vars.draw_factor,
               (r*imp_vars.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
-}
-
-
-function draw_new_enemy_button(context, x, y, w, h, color, enemy_name) {
-
-  context.save()
-  context.clearRect(x - w/2, y - h/2, w, h)
-
-  context.beginPath()
-  context.rect(x - w/2, y - h/2, w, h)
-  context.strokeStyle = color
-  context.stroke()
-  context.globalAlpha *= 0.1
-  context.fillStyle =color
-  context.fill()
-
-  context.globalAlpha *= 10
-  context.textAlign = "center"
-
-  context.font = "10px MUli"
-  context.fillText("NEW ENEMY", x, y - h * 0.4)
-  context.font = "18px MUli"
-  context.fillStyle = imp_params.impulse_enemy_stats[enemy_name].color
-  var true_name = enemy_name
-  if(imp_params.impulse_enemy_stats[enemy_name].true_name) {
-    true_name = imp_params.impulse_enemy_stats[enemy_name].true_name
-  }
-  context.fillText(true_name.toUpperCase(), x, y - h * 0.25)
-
-  draw_enemy(context, enemy_name, x, y , 30)
-
-  context.fillStyle = color
-  context.font = "20px MUli"
-  context.fillText("PAUSE", x, y + h * 0.3)
-  context.font = "16px MUli"
-  context.fillText("FOR INFO", x, y + h * 0.42)
-  context.restore()
-
-}
-
-
-function draw_score_achieved_box(context, x, y, w, h, color, text, text_color, text_size, world_num) {
-
-  context.save()
-
-  context.clearRect(x - w/2, y - h/2, w, h)
-
-  context.shadowBlur = 0
-  //context.shadowColor = text_color
-  context.beginPath()
-  context.rect(x - w/2, y - h/2, w, h)
-  context.lineWidth = 4
-  context.strokeStyle = text_color
-  context.stroke()
-  context.globalAlpha *= 0.1
-  context.fillStyle = text_color
-  context.fill()
-
-  context.globalAlpha *= 10
-  context.save()
-  context.globalAlpha *= 0.4
-  if(world_num == 0) {
-    context.globalAlpha *= 0.5
-  }
-  if(text == "GATEWAY UNLOCKED")
-    draw_tessellation_sign(context, world_num, x, y, 50)
-  if(text == "SILVER SCORE") {
-    drawSprite(context, x, y, 0, 50, 50, "silver_trophy")
-  }
-  if(text == "GOLD SCORE") {
-    drawSprite(context, x, y, 0, 50, 50, "gold_trophy")
-  }
-  context.restore()
-  context.textAlign = "center"
-  context.font = text_size+"px Muli"
-  context.fillStyle = text_color
-  context.shadowColor = text_color
-  context.fillText(text.split(" ")[0].toUpperCase(), x, y - 15)
-  context.fillText(text.split(" ")[1].toUpperCase(), x, y + 15)
-
-  context.restore()
-
 }
 
 function draw_enemy_image(context, state, draw_polygons, type, default_color, scale) {
@@ -340,7 +229,6 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
     context.rotate(rotate);
   }
 
-
   var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
 
   draw_enemy_helper(context, enemy_name, size * factor/2, "normal")
@@ -348,68 +236,44 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
 }
 
 
-
-var tessellation_logo_factor = {
-    "0": 1.4,
-    "1": 1,
-    "2": 1.4,
-    "3": 1.4,
-    "4": 1.6
-}
-
 function draw_tessellation_sign(context, tessellation, x, y, size, glow, rotate) {
 
-  // if(tessellation > 4) {
-  //   context.save()
-  //   if(rotate) {
-  //     context.translate(x, y)
-  //     context.rotate(rotate)
-  //     context.translate(-x, -y)
-  //   }
-  //   context.beginPath()
-  //   context.lineWidth = 2
-  //   context.rect(x-size/2, y-size/2, size, size)
-  //   context.rect(x-size/2+5, y-size/2+5, size-10, size-10)
-  //   context.strokeStyle = impulse_colors["world "+tessellation+" dark"]
+  size *= imp_params.tessellation_logo_factor[tessellation]
 
-  //   context.stroke()
-  //   context.restore()
-  //   return
-  // }
-    size *= tessellation_logo_factor[tessellation]
-
-    context.save()
-    if(glow) {
-      context.globalAlpha *= 0.5
-      if(tessellation == 1) {
-        drawSprite(context, x, y, (Math.PI/4), size * 2, size * 2, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
-      }
-      drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5, tessellation_glow_map[tessellation], tessellation_sprite_map[tessellation])
-    }
-
-    context.restore()
-    context.save()
-
-    // set screen position
-    context.translate(x, y);
-    // set rotation
-    var offset = (tessellation != 4 && tessellation != 2) ? Math.PI/4 : 0
-    var angle = rotate ? rotate : 0
-    context.rotate(angle + offset)
-    drawSprite(context, 0, 0, 0, size, size, tessellation_logo_map[tessellation], tessellation_sprite_map[tessellation])
+  context.save()
+  if(glow) {
+    context.globalAlpha *= 0.5
     if(tessellation == 1) {
-      context.beginPath()
-      context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
-      context.lineWidth = Math.ceil(size/20)
-      context.strokeStyle = impulse_colors["boss "+tessellation]
-      context.stroke()
+      drawSprite(context, x, y, (Math.PI/4), size * 2, size * 2,
+        imp_params.tessellation_glow_map[tessellation], getTessellationSprite(parseInt(tessellation)))
     }
-    context.restore()
+    drawSprite(context, x, y, (Math.PI/4), size * 1.5, size * 1.5,
+      imp_params.tessellation_glow_map[tessellation], getTessellationSprite(parseInt(tessellation)))
+  }
+
+  context.restore()
+  context.save()
+
+  // set screen position
+  context.translate(x, y);
+  // set rotation
+  var offset = (tessellation != 4 && tessellation != 2) ? Math.PI/4 : 0
+  var angle = rotate ? rotate : 0
+  context.rotate(angle + offset)
+  drawSprite(context, 0, 0, 0, size, size, imp_params.tessellation_logo_map[tessellation], getTessellationSprite(parseInt(tessellation)))
+  if(tessellation == 1) {
+    context.beginPath()
+    context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
+    context.lineWidth = Math.ceil(size/20)
+    context.strokeStyle = impulse_colors["boss "+tessellation]
+    context.stroke()
+  }
+  context.restore()
 }
 
 function draw_gray_tessellation_sign(context, tessellation, x, y, size, glow, rotate) {
 
-    size *= tessellation_logo_factor[tessellation]
+    size *= imp_params.tessellation_logo_factor[tessellation]
 
     context.save()
 
@@ -418,7 +282,7 @@ function draw_gray_tessellation_sign(context, tessellation, x, y, size, glow, ro
     // set rotation
     if(tessellation != 4 && tessellation != 2)
     context.rotate(Math.PI/4)
-    drawSprite(context, 0, 0, 0, size, size, tessellation_gray_logo_map[tessellation], tessellation_sprite_map[tessellation])
+    drawSprite(context, 0, 0, 0, size, size, imp_params.tessellation_gray_logo_map[tessellation], getTessellationSprite(parseInt(tessellation)))
     if(tessellation == 1) {
       context.beginPath()
       context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
@@ -434,10 +298,6 @@ function draw_arrow_keys(context, x, y, size, color, keysArray) {
 
   context.shadowColor = color
   context.shadowBlur = 0
-  //drawSprite(context, x, y - size, 0, size, size, "key")
-  //drawSprite(context, x - size, y, 0, size, size, "key")
-  //drawSprite(context, x, y , 0, size, size, "key")
-  //drawSprite(context, x + size, y , 0, size, size, "key")
   draw_rounded_rect(context, x, y-size, size * 0.9, size * 0.9, size * 0.2, color)
   draw_rounded_rect(context, x - size, y, size * 0.9, size * 0.9, size * 0.2, color)
   draw_rounded_rect(context, x, y, size * 0.9, size * 0.9, size * 0.2, color)
@@ -515,9 +375,6 @@ function draw_right_mouse(context, x, y, w, h, color) {
   context.save()
   context.shadowColor = color
   context.fillStyle = color
-  /*context.font = "10px Muli"
-  context.textAlign = "center"
-  context.fillText("RIGHT CLICK", x, y - w/2 - 30)*/
   context.shadowBlur = 0
   draw_rounded_rect(context, x, y, w, h, h * 0.2, color)
   context.clip()
@@ -556,412 +413,6 @@ function draw_rounded_rect(context, x, y, w, h, r, color) {
   context.stroke()
   context.restore()
 }
-
-function draw_fb_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.rect(x - scale/2, y - scale/2, scale, scale)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-  context.fillStyle = color
-  context.font = "20px Muli"
-  context.fillText("f", x, y + scale/4);
-  context.restore()
-}
-
-function draw_pause_icon(context, x, y, scale, color, key_display) {
-
-  context.save()
-  context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
-  context.beginPath()
-  context.rect(x - scale * 3/8, y - scale/2, scale * 1/4, scale)
-  context.rect(x + scale * 1/8, y - scale/2, scale * 1/4, scale)
-  context.fillStyle = color
-  context.fill()
-
-  if(key_display) {
-    context.font = "10px Muli"
-    context.textAlign = "center"
-    if(imp_vars.player_data.options.control_hand == "left") {
-      context.fillText("ENTER", x+scale, y+scale)
-    } else {
-      context.fillText("Q", x+scale, y+scale)
-    }
-  }
-
-  context.restore()
-}
-
-function draw_gear(context, x, y, scale, color, center_color, center_glow) {
-  context.save()
-  //context.shadowBlur = 5
-  var spokes = 6
-  var unit = 2 * Math.PI / (spokes * 4)
-  var offset = -0.4
-  context.beginPath()
-  for(var i = 0; i < spokes; i++) {
-
-    if(i == 0) {
-      context.moveTo(x - Math.cos(unit * (4 * i+ offset)) * scale, y - Math.sin(unit * (4 * i + offset)) * scale)
-    } else {
-      context.lineTo(x - Math.cos(unit * (4 * i+ offset)) * scale, y - Math.sin(unit * (4 * i+ offset)) * scale)
-    }
-    context.lineTo(x - Math.cos(unit * (4 * i + 1+ offset)) * scale, y - Math.sin(unit * (4 * i + 1+ offset)) * scale)
-    context.lineTo(x - Math.cos(unit * (4 * i + 2+ offset)) * scale * 0.75, y - Math.sin(unit * (4 * i + 2+ offset)) * scale * 0.75)
-    context.lineTo(x - Math.cos(unit * (4 * i + 3+ offset)) * scale * 0.75, y - Math.sin(unit * (4 * i + 3+ offset)) * scale * 0.75)
-  }
-  context.closePath()
-  context.fillStyle = color
-  context.fill()
-  if(center_glow)
-    context.globalAlpha /= 2
-  context.beginPath()
-  context.arc(x, y, scale * 0.5, 0, 2 * Math.PI * 0.999)
-  context.fillStyle = center_color
-  context.fill()
-  context.restore()
-}
-
-function draw_credits_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.arc(x, y - scale/3, scale/3, 0, 2 * Math.PI, true)
-  context.moveTo(x, y + scale*5/6)
-  context.arc(x, y + scale*5/6, scale * 2/3, 0, Math.PI, true)
-  context.fillStyle = color
-  context.fill()
-  context.restore()
-}
-
-function draw_tutorial_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.moveTo(x, y - scale * 1/3)
-  context.lineTo(x - scale, y - scale * 2/3)
-  context.lineTo(x - scale, y + scale * 2/3)
-  context.lineTo(x, y + scale)
-  context.moveTo(x, y + scale)
-  context.lineTo(x, y - scale * 1/3)
-  context.lineTo(x + scale, y - scale * 2/3)
-  context.lineTo(x + scale, y + scale * 2/3)
-  context.lineTo(x, y + scale)
-  //context.rect(x - scale*2/3, y - scale*5/6, scale * 4/3, scale*5/3)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-  //context.fillStyle = color
-  //context.fill()
-  context.restore()
-}
-
-function draw_retry_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.arc(x, y, scale * 3/4,  Math.PI * 2/5, Math.PI)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-  context.beginPath()
-  context.arc(x, y, scale * 3/4, Math.PI * 7/5, Math.PI * 2)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-
-  context.beginPath()
-  context.moveTo(x - scale * 3/16, y)
-  context.lineTo(x - scale * 19/16, y)
-  context.lineTo(x - scale * 11/16, y - scale/2)
-  context.moveTo(x + scale * 3/16, y)
-  context.lineTo(x + scale * 19/16, y)
-  context.lineTo(x + scale * 11/16, y + scale/2)
-  context.fillStyle = color
-  context.fill()
-  context.restore()
-}
-
-function draw_back_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.arc(x, y, scale * 3/4, 3*Math.PI/2, Math.PI * 3/4)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-  context.beginPath()
-  context.moveTo(x, y - scale * 3/16)
-  context.lineTo(x, y - scale * 19/16)
-  context.lineTo(x - scale/2, y - scale * 11/16)
-  context.fillStyle = color
-  context.fill()
-  context.restore()
-}
-
-function draw_start_icon(context, x, y, scale, color) {
-  context.save()
-  draw_player_icon(context, x, y, scale/2, color)
-
-
-  context.beginPath()
-  context.arc(x, y, scale, Math.PI * 7/6, Math.PI * 11/6)
-  context.lineWidth = Math.ceil(scale / 6)
-  context.strokeStyle = color
-  context.stroke()
-  context.restore()
-
-}
-
-function draw_player_icon(context, x, y, scale, color) {
-  context.beginPath()
-  context.arc(x, y, scale, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999)
-  context.fillStyle = color
-  context.fill()
-  context.beginPath()
-  context.arc(x, y, scale * 4/5, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 )
-  context.fillStyle = "black"
-  context.fill()
-  context.beginPath()
-  context.arc(x, y, scale * 11/20, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999)
-  context.fillStyle = color
-  context.fill()
-}
-
-function draw_loading_icon(context, x, y, scale, color, prog) {
-  context.save()
-  draw_player_icon(context, x, y, scale/2, color)
-  context.beginPath()
-  context.arc(x, y, scale * 3/4, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 * prog)
-  context.lineWidth = 2
-  context.strokeStyle = color
-  context.stroke()
-  context.restore()
-
-}
-
-function draw_save_icon(context, x, y, scale, color) {
-  context.save()
-  context.shadowBlur = 0
-  context.beginPath()
-  context.fillStyle = color
-  context.strokeStyle = color
-  context.moveTo(x - scale * 0.6, y - scale * 0.6)
-  context.lineTo(x - scale * 0.6, y + scale * 0.6)
-  context.lineTo(x + scale * 0.6, y + scale * 0.6)
-  context.lineTo(x + scale * 0.6, y - scale * 0.6)
-  context.lineTo(x, y - scale * 0.6)
-  context.lineTo(x, y)
-  context.lineWidth = 5
-  context.stroke()
-  context.beginPath()
-  context.moveTo(x - scale * 0.35, y - scale * 0.15)
-  context.lineTo(x + scale * 0.35, y - scale * 0.15)
-  context.lineTo(x, y + scale * 0.2)
-  context.fill()
-  context.restore()
-
-}
-function draw_quest_icon(context, x, y, scale, color) {
-  context.save()
-  context.shadowBlur = 0
-  context.beginPath()
-  context.fillStyle = color
-  context.strokeStyle = color
-  context.arc(x, y, scale * 0.7, 0, 2 * Math.PI, true)
-  context.lineWidth = 3
-  context.stroke()
-  context.beginPath()
-  context.lineWidth = 4
-  context.moveTo(x, y - scale * 0.4)
-  context.lineTo(x, y + scale * 0.2)
-  context.moveTo(x, y + scale * 0.3)
-  context.lineTo(x, y + scale * 0.4)
-  context.stroke()
-  context.restore()
-
-}
-
-function draw_delete_icon(context, x, y, scale, color) {
-  context.save()
-  context.shadowBlur = 0
-  context.beginPath()
-  context.moveTo(x - scale * 3/8, y - scale/4)
-  context.lineTo(x + scale * 3/8, y - scale/4)
-  context.moveTo(x - scale/4, y - scale/4)
-  context.lineTo(x - scale/4, y + scale/2)
-  context.lineTo(x + scale/4, y + scale/2)
-  context.lineTo(x + scale/4, y - scale/4)
-  context.moveTo(x - scale/8, y - scale/8)
-  context.lineTo(x - scale/8, y + 3 * scale/8)
-  context.moveTo(x, y - scale/8)
-  context.lineTo(x, y + 3 * scale/8)
-  context.moveTo(x + scale/8, y - scale/8)
-  context.lineTo(x + scale/8, y + 3 * scale/8)
-  context.moveTo(x - scale/8, y - scale/4)
-  context.lineTo(x - scale/8, y - 3 * scale/8)
-  context.lineTo(x + scale/8, y - 3 * scale/8)
-  context.lineTo(x + scale/8, y - scale/4)
-  context.strokeStyle = color
-  context.lineWidth = 2
-  context.stroke()
-  context.restore()
-}
-
-function draw_quit_icon(context, x, y, scale, color) {
-  context.save()
-  context.shadowBlur = 0
-  context.beginPath()
-  context.moveTo(x - scale/2, y - scale/2)
-  context.lineTo(x + scale/2, y + scale/2)
-  context.moveTo(x - scale/2, y + scale/2)
-  context.lineTo(x + scale/2, y - scale/2)
-  context.strokeStyle = color
-  context.lineWidth = 5
-  context.stroke()
-  context.restore()
-}
-
-function draw_texture_icon(context, x, y, scale, color) {
-  context.save()
-  context.translate(x, y)
-  context.transform(1,-0.35,0,1,0,0);
-  context.translate(-x, -y)
-  context.beginPath()
-  context.moveTo(x - scale/2, y)
-  context.lineTo(x + scale/2, y)
-  context.moveTo(x - scale/2, y + scale/2)
-  context.lineTo(x + scale/2, y + scale/2)
-  context.lineWidth = 6
-  context.strokeStyle = color
-  context.stroke()
-  context.restore()
-}
-
-function draw_physics_icon(context, x, y, scale, color) {
-  context.save()
-  context.beginPath()
-  context.rect(x - scale/4, y - scale/2, scale/2, scale/2)
-  context.rect(x - scale/2, y, scale/2, scale/2)
-  context.rect(x, y, scale/2, scale/2)
-  context.strokeStyle = color
-  context.lineWidth = 4
-  context.stroke()
-  context.restore()
-}
-
-function draw_note_icon(context, x, y, scale, color) {
-  context.save()
-  context.translate(scale/3, 0)
-  context.beginPath()
-  context.moveTo(x - scale/3, y + scale/2)
-  context.lineTo(x - scale/3, y - scale * 1/6)
-  context.lineTo(x + scale/3, y - scale * 2/6)
-  context.lineTo(x + scale/3, y + scale * 2/6)
-  context.lineWidth = 4
-  context.strokeStyle = color
-  context.stroke()
-  //context.beginPath()
-  //context.moveTo(x + scale/2, y + scale * 2/3)
-  //context.lineTo(x + scale/2, y - scale * 2/3)
-  //context.stroke()
-
-  var x1 = x - scale/2
-  var y1 = y + scale/2
-  context.save();
-  context.translate(x1, y1)
-  context.scale(1.3, 1);
-  context.translate(-x1, -y1)
-  context.beginPath()
-  context.arc(x1, y1, scale/6, 0, 2 * Math.PI, true)
-  context.fillStyle = color
-  context.fill()
-
-  context.restore()
-
-  var x2 = x + scale/6
-  var y2 = y + scale/3
-  context.save();
-  context.translate(x2, y2)
-  context.scale(1.3, 1);
-  context.translate(-x2, -y2)
-  context.beginPath()
-  context.arc(x2, y2, scale/6, 0, 2 * Math.PI, true)
-  context.fillStyle = color
-  context.fill()
-  context.restore()
-  context.restore()
-}
-
-function draw_music_icon(context, x, y, scale, color, key_display, mute) {
-  context.save()
-
-  context.beginPath()
-  context.moveTo(x - scale * 0.3- scale/2 * 0.75, y - scale/2 * 0.6)
-  context.lineTo(x- scale * 0.3, y - scale/2 * 0.6)
-  context.lineTo(x - scale * 0.3+ scale/2 * 0.75, y - scale * 0.6)
-  context.lineTo(x- scale * 0.3 + scale/2  * 0.75, y + scale * 0.6)
-  context.lineTo(x- scale * 0.3, y + scale/2* 0.6)
-  context.lineTo(x- scale * 0.3 - scale/2 * 0.75, y + scale/2  * 0.6)
-  context.fillStyle = color
-  context.fill()
-  if(mute) {
-    context.beginPath()
-    context.arc(x - scale * 0.3+ scale * 0.75, y, scale/2 * 0.45, 0, 2 * Math.PI, true)
-    context.moveTo(x - scale * 0.3+ scale  * 0.75- Math.cos(Math.PI/4) * scale/2 * 0.45, y - Math.cos(Math.PI/4) * scale/2 * 0.45)
-    context.lineTo(x - scale * 0.3+ scale* 0.75+ Math.cos(Math.PI/4) * scale/2 * 0.45, y + Math.cos(Math.PI/4) * scale/2 * 0.405)
-    context.lineWidth = 2
-    context.strokeStyle = color
-    context.stroke()
-  } else {
-    context.beginPath()
-    context.arc(x - scale * 0.3+ scale * 0.4, y, scale/2 * 0.6, -Math.PI/3,Math.PI/3, false)
-    context.lineWidth = 2
-    context.strokeStyle = color
-    context.stroke()
-    context.beginPath()
-    context.arc(x- scale * 0.3 + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
-    context.stroke()
-  }
-  /*if(key_display) {
-    context.font = "10px Muli"
-    context.textAlign = "center"
-    context.fillText("X", x+scale, y+scale)
-  }*/
-  context.restore()
-}
-
-function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
-  context.save()
-  context.beginPath()
-  context.globalAlpha /= 2
-  context.rect(x - scale * 3/4, y - scale * 3/4, scale * 3/2, scale * 3/2)
-  context.strokeStyle = color
-  context.fillStyle = color
-  context.lineWidth = 2
-  context.stroke()
-  context.globalAlpha *= 2
-  context.beginPath()
-  context.moveTo(x - scale * 1/2, y - scale * 1/2)
-  context.lineTo(x - scale * 0/8, y - scale * 1/2)
-  context.lineTo(x - scale * 1/2, y - scale * 0/8)
-  context.closePath()
-  context.fill()
-  context.beginPath()
-  context.moveTo(x + scale * 1/2, y + scale * 1/2)
-  context.lineTo(x + scale * 0/8, y + scale * 1/2)
-  context.lineTo(x + scale * 1/2, y + scale * 0/8)
-  context.closePath()
-  context.fill()
-  context.beginPath()
-  context.moveTo(x - scale * 1/2, y - scale * 1/2)
-  context.lineTo(x + scale * 1/2, y + scale * 1/2)
-  context.stroke()
-  /* if(key_display) {
-    context.font = "10px Muli"
-    context.textAlign = "center"
-    context.fillText("C", x+scale, y+scale)
-  } */
-  context.restore()
-}
-
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
 function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_color) {
@@ -1156,8 +607,6 @@ function draw_logo(context, x, y, text, scale) {
   context.shadowBlur = 0
   context.fillStyle = "white"//impulse_colors["impulse_blue"]
 
-/*  context.font = '72px Muli'
-  context.fillText("IMPULSE", x, y)*/
   var logoScale = scale ? scale : 0.85;
   context.drawImage(logoSprite, x - logoSprite.width/2 * logoScale, y - logoSprite.height * 0.75 * logoScale, logoSprite.width * logoScale, logoSprite.height * logoScale)
 
@@ -1241,8 +690,6 @@ function draw_agents_within_rect(context, player, level, x, y, w, h, border_colo
   context.clip()
 
   //draw player
-
-
   for(var i = 0; i < level.enemies.length; i++) {
     var enemy_loc = level.enemies[i].body.GetPosition()
     context.beginPath()
@@ -1274,180 +721,6 @@ function draw_agents_within_rect(context, player, level, x, y, w, h, border_colo
   context.strokeStyle = border_color
   context.stroke()
   context.restore()
-}
-
-
-function loadSprite(imageName)
-{
-    // create new image object
-    var image = new Image();
-    // load image
-    image.src = imageName;
-    // return image object
-    return image;
-}
-
-var playerSprite = loadSprite("art/sprites.png")
-
-var spriteSheetData = {
-  //x, y, w, h
-  //"player_normal": [60, 0, 60, 60],
-  "player_normal": [0, 0, 40, 40],
-  // not sure why this offset is necessary...
-  "player_red": [40, -1, 40, 40],
-  "player_yellow": [80, 0, 41, 41],
-  "player_gray": [120, 0, 41, 41],
-  "player_green": [160, 0, 41, 41],
-  "player_white": [200, 0, 40, 40],
-  "spark": [0, 41, 40, 40],
-  "multi": [0, 81, 40, 40],
-  "white_glow": [40, 40, 100, 100],
-  "white_gateway": [148, 41, 150, 150],
-  "lives_icon": [0, 0, 40, 40],
-  "sparks_icon": [0, 41, 40, 40],
-  "white_flower": [0, 155, 42, 42],
-  "blue_flower": [43, 155, 42, 42],
-  "world1_starblank": [85, 199, 41, 38],
-  "world1_starhalf": [127, 199, 19, 38],
-  "world1_star": [127, 199, 41, 38],
-  "world2_starblank": [85, 237, 41, 38],
-  "world2_starhalf": [127, 237, 19, 38],
-  "world2_star": [127, 237, 41, 38],
-  "world3_starblank": [0, 199, 41, 38],
-  "world3_starhalf": [42, 199, 19, 38],
-  "world3_star": [42, 199, 41, 38],
-  "world4_starblank": [0, 237, 41, 38],
-  "world4_starhalf": [42, 237, 19, 38],
-  "world4_star": [42, 237, 41, 38],
-  "silver_trophy": [0, 277, 90, 78],
-  "gold_trophy": [89, 277, 90, 78],
-  "world1_timer": [189, 211, 48, 61],
-  "world2_timer": [241, 211, 48, 61],
-  "world3_timer": [189, 277, 48, 62],
-  "world4_timer": [241, 277, 48, 62],
-  "spark_powerup": [310, 6, 37, 36],
-  "multi_powerup": [310, 58, 37, 36],
-  "ult_powerup": [304, 105, 49, 48],
-  "pink_one": [300, 201, 40, 40],
-  "dark_one": [301, 240, 40, 41],
-  "dark_aura": [300, 299, 100, 101],
-
-  "immunitas_arm": [0, 0, 90, 90],
-  "immunitas_arm_red": [150, 135, 90, 90],
-  "immunitas_hand": [90, 0, 90, 90],
-  "immunitas_hand_red": [240, 135, 90, 90],
-  "immunitas_logo_gray": [330, 135, 90, 90],
-  "immunitas_head": [0, 90, 108, 108],
-  "immunitas_head_red": [450, 123, 108, 108],
-  "immunitas_glow": [180, 0, 135, 135],
-  "immunitas_red_glow": [315, 0, 135, 135],
-  "immunitas_aura": [450, 0, 123, 123],
-  "immunitas_aura_red": [573, 0, 123, 123],
-  "immunitas_arrow": [0, 200, 70, 70],
-  "immunitas_lockon" : [573, 123, 120, 120],
-
-  "consumendi_head": [0, 0, 180, 180],
-  "consumendi_head_red": [720, 136, 135, 135],
-  "consumendi_aura": [181, 0, 269, 269],
-  "consumendi_small_diamond": [94, 180, 30, 56],
-  "consumendi_small_diamond_filled": [64, 180, 30, 56],
-  "consumendi_small_arrow": [124, 180, 30, 16],
-  "consumendi_glow": [720, 0, 135, 135],
-  "consumendi_logo": [450, 0, 120, 119],
-  "consumendi_mini": [450, 119, 120, 120],
-  "consumendi_mini_gray": [570, 0, 120, 120],
-
-  "negligentia_head": [0, 0, 180, 180],
-  "negligentia_head_red": [0, 180, 180, 180],
-  "negligentia_arm_striking": [180, 0, 244, 100],
-  "negligentia_arm_striking_red": [180, 100, 244, 100],
-  "negligentia_wheel": [424, 0, 134, 134],
-  "negligentia_wheel_red": [424, 270, 134, 134],
-  "negligentia_wheel_complete": [423, 135, 135, 135],
-  "negligentia_glow": [560, 0, 115, 115],
-  "negligentia_glow_red": [560, 115, 115, 115],
-  "negligentia_aura": [559, 270, 39, 65],
-  "negligentia_aura_open": [598, 270, 39, 65],
-  "negligentia_arm_ring": [180, 200, 180, 180],
-  "negligentia_logo": [680, 0, 120, 120],
-  "negligentia_logo_gray": [680, 120, 120, 120],
-
-  "adrogantia_attack_bud": [0, 0, 80, 80],
-  "adrogantia_spawner": [0, 80, 80, 80],
-  "adrogantia_body_bud": [80, 0, 80, 80],
-  "adrogantia_attack_bud_firing": [80, 80, 80, 80],
-  "adrogantia_body_bud_red": [80, 160, 80, 80],
-  "adrogantia_head": [181, 1, 160, 160],
-  "adrogantia_head_red": [181, 161, 160, 160],
-  "adrogantia_glow": [340, 0, 135, 135],
-  "adrogantia_logo": [476, 0, 125, 125],
-  "adrogantia_logo_gray": [476, 125, 125, 125],
-}
-
-var immunitasSprite = loadSprite("art/immunitas_sprite.png")
-var consumendiSprite = loadSprite("art/consumendi_sprite.png")
-var negligentiaSprite = loadSprite("art/negligentia_sprite.png")
-var adrogantiaSprite = loadSprite("art/adrogantia_sprite.png")
-var logoSprite = loadSprite("art/logo.png")
-var porcelainLogoSprite = loadSprite("art/porcelain_logo.png")
-
-var tessellation_glow_map = {
-  "0": "white_glow",
-  "1": "immunitas_glow",
-  "2": "consumendi_glow",
-  "3": "negligentia_glow",
-  "4": "adrogantia_glow"
-}
-var tessellation_logo_map = {
-  "0": "white_gateway",
-  "1": "immunitas_arm",
-  "2": "consumendi_logo",
-  "3": "negligentia_logo",
-  "4": "adrogantia_logo"
-}
-var tessellation_gray_logo_map = {
-  "0": "world_logo",
-  "1": "immunitas_logo_gray",
-  "2": "consumendi_mini_gray",
-  "3": "negligentia_logo_gray",
-  "4": "adrogantia_logo_gray"
-}
-var tessellation_sprite_map = {
-  "0": playerSprite,
-  "1": immunitasSprite,
-  "2": consumendiSprite,
-  "3": negligentiaSprite,
-  "4": adrogantiaSprite,
-}
-
-var impulse_bg_images = {}
-
-for(var bg in imp_params.bg) {
-  impulse_bg_images[bg] = loadSprite("art/"+imp_params.bg[bg]+".png");
-}
-
-function drawSprite(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, imageObject)
-{
-
-    imageObject = typeof imageObject !== 'undefined' ? imageObject: playerSprite;
-    var w = imageObject.width;
-    var h = imageObject.height;
-
-    // save state
-    ctx.save();
-    // set screen position
-    ctx.translate(x, y);
-    // set rotation
-    ctx.rotate(rotation);
-    // set scale value
-
-    //ctx.scale(actualWidth/imageObject.width)
-
-    // draw image to screen drawImage(imageObject, sourceX, sourceY, sourceWidth, sourceHeight,
-    // destinationX, destinationY, destinationWidth, destinationHeight)
-    ctx.drawImage(imageObject, spriteSheetData[spriteName][0], spriteSheetData[spriteName][1], spriteSheetData[spriteName][2], spriteSheetData[spriteName][3], -actualWidth/2, -actualHeight/2, actualWidth, actualHeight);
-    // restore state
-    ctx.restore();
 }
 
 function drawImageWithRotation(ctx, x, y, rotation, actualWidth, actualHeight, image) {

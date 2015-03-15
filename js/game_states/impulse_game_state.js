@@ -213,9 +213,6 @@ ImpulseGameState.prototype.reset = function() {
   }
 
   this.boss_after_death_actions = false;
- // draw_music_icon(context, imp_vars.sidebarWidth/2, imp_vars.canvasHeight - 20, 15, this.color, true, imp_vars.player_data.options.music_mute))
- // draw_pause_icon(context, imp_vars.sidebarWidth/2 - 40, imp_vars.canvasHeight - 20, 15, this.color, true)
- // draw_fullscreen_icon(context, imp_vars.sidebarWidth/2 + 40, imp_vars.canvasHeight - 20, 15, this.color, true)
 }
 
 ImpulseGameState.prototype.reset_game_numbers = function () {
