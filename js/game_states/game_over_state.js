@@ -58,7 +58,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
   imp_params.player_data.total_kills += this.game_numbers.kills
 
-  save_game()
+  save_data.save_game()
 
   var closest_enemy_type = null
   var closest_prop = -1

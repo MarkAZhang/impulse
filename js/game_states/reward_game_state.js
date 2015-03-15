@@ -41,7 +41,7 @@ function RewardGameState(hive_numbers, main_game, args) {
 RewardGameState.prototype.change_mode = function(type) {
   if (this.transition_state == "none") {
     imp_params.player_data.difficulty_mode = type;
-    save_game();
+    save_data.save_game();
     this.adjust_difficulty_button_border()
     this.transition_state="out";
     this.transition_timer = this.transition_interval * 4
@@ -335,7 +335,7 @@ RewardGameState.prototype.determine_rewards = function() {
         type: "first_time_tutorial"
       })
       imp_params.player_data.first_time = false;
-      save_game();
+      save_data.save_game();
     }
     return
   }
@@ -352,12 +352,12 @@ RewardGameState.prototype.determine_rewards = function() {
           imp_params.player_data.hard_mode_unlocked = true;
           this.hard_mode_just_unlocked = true;
           imp_params.player_data.difficulty_mode = "normal";
-          save_game();
+          save_data.save_game();
         }
       }
 
       imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
-      save_game();
+      save_data.save_game();
     }
   }
 }

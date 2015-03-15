@@ -20,7 +20,7 @@ function SelectDifficultyButton(size, x, y, w, h, color, hcolor, world_map_state
 
 SelectDifficultyButton.prototype.on_adjust_difficulty = function() {
   imp_params.player_data.difficulty_mode = imp_params.player_data.difficulty_mode == "easy" ? "normal" : "easy";
-  save_game();
+  save_data.save_game();
   this.world_map_state.update_on_difficulty_change(imp_params.player_data.difficulty_mode);
   this.recalculate_state();
 }

@@ -17,7 +17,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
   if(save_screen) {
     this.hive_numbers = imp_params.player_data.save_data[imp_params.player_data.difficulty_mode]
-    save_game()
+    save_data.save_game()
     this.world_num = this.hive_numbers.world
     this.victory = null
   }
@@ -57,7 +57,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
           "defeated": true,
           "first_victory": true
         }
-      save_game()
+      save_data.save_game()
     }
   }
 
@@ -392,13 +392,13 @@ MainGameSummaryState.prototype.process = function(dt) {
 
 MainGameSummaryState.prototype.resume_game = function() {
   imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
-  save_game()
+  save_data.save_game()
   game_engine.switch_game_state(new MainGameTransitionState(this.world_num, null, null, this.hive_numbers, true))
 }
 
 MainGameSummaryState.prototype.delete_game = function() {
   imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = {}
-  save_game()
+  save_data.save_game()
   game_engine.switch_game_state(new WorldMapState(this.world_num))
 }
 

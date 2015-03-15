@@ -534,7 +534,7 @@ ResetMultiplierTutorialOverlay.prototype.process = function(dt) {
 ResetMultiplierTutorialOverlay.prototype.on_expire = function() {
 	if(imp_params.player_data.tutorial_shown.indexOf("reset_multiplier") == -1) {
 		imp_params.player_data.tutorial_shown.push("reset_multiplier");
-		save_game();
+		save_data.save_game();
 	}
 }
 

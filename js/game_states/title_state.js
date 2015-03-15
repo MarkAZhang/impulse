@@ -291,7 +291,7 @@ TitleState.prototype.setup_main_menu = function() {
 TitleState.prototype.change_mode = function(type) {
   imp_params.player_data.difficulty_mode = type;
 
-  save_game();
+  save_data.save_game();
   this.set_difficulty_button_underline();
 }
 

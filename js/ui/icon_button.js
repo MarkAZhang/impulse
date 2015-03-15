@@ -197,7 +197,7 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 36, this.color)
     }
   } else if (this.icon == "mute_in_game") {
-    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, imp_params.player_data.options.music_mute)
+    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, imp_params.player_data.options.bg_music_mute)
   } else if (this.icon == "pause_in_game") {
     draw_pause_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true)
   } else if (this.icon == "fullscreen_in_game") {

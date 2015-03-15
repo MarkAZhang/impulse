@@ -69,7 +69,7 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
   this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode].seen
   if (this.first_time) {
     imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode].seen = true
-    save_game()
+    save_data.save_game()
   }
 
   if(this.level.is_boss_level) {

@@ -444,7 +444,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, "white", function(on) {
     imp_params.player_data.options.explosions = !imp_params.player_data.options.explosions
-    save_game();
+    save_data.save_game();
   }, function() {
     return imp_params.player_data.options.explosions;
   });
@@ -453,7 +453,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, "white", function(on) {
     imp_params.player_data.options.score_labels = !imp_params.player_data.options.score_labels
-    save_game();
+    save_data.save_game();
   }, function() {
     return imp_params.player_data.options.score_labels;
   });
@@ -462,7 +462,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, "white", function(on) {
     imp_params.player_data.options.multiplier_display = !imp_params.player_data.options.multiplier_display
-    save_game();
+    save_data.save_game();
   }, function() {
     return imp_params.player_data.options.multiplier_display;
   });
@@ -471,7 +471,7 @@ function OptionsMenu(previous_menu) {
 
   button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, "white", function(on) {
     imp_params.player_data.options.impulse_shadow = !imp_params.player_data.options.impulse_shadow
-    save_game();
+    save_data.save_game();
   }, function() {
     return imp_params.player_data.options.impulse_shadow;
   });
@@ -481,7 +481,7 @@ function OptionsMenu(previous_menu) {
   if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && imp_params.player_data.difficulty_mode == "normal") {
     button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
       imp_params.player_data.options.speed_run_countdown = !imp_params.player_data.options.speed_run_countdown;
-      save_game();
+      save_data.save_game();
     }, function() {
       return imp_params.player_data.options.speed_run_countdown;
     });
@@ -624,21 +624,21 @@ function ControlsMenu(previous_menu) {
   this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_params.player_data.options.control_hand = "left"
     imp_params.player_data.options.control_scheme = "mouse"
-    save_game()
+    save_data.save_game()
     set_key_bindings()
   }}(this), "left_mouse")
 
   this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_params.player_data.options.control_hand = "right"
     imp_params.player_data.options.control_scheme = "keyboard"
-    save_game()
+    save_data.save_game()
     set_key_bindings()
   }}(this), "keyboard")
 
   this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     imp_params.player_data.options.control_hand = "right"
     imp_params.player_data.options.control_scheme = "mouse"
-    save_game()
+    save_data.save_game()
     set_key_bindings()
   }}(this), "right_mouse")
 
@@ -648,7 +648,7 @@ function ControlsMenu(previous_menu) {
   /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
     imp_params.player_data.options.control_hand = "right"
     imp_params.player_data.options.control_scheme = "keyboard"
-    save_game()
+    save_data.save_game()
     _this.adjust_underlines()
   }}(this)))*/
 
@@ -1092,11 +1092,11 @@ DeleteDataDialog.prototype.clear_data = function() {
   localStorage.removeItem(imp_params.save_name);
   var old_player_options = imp_params.player_data.options;
   var old_tutorial_shown = imp_params.player_data.tutorial_shown;
-  load_game();
+  save_data.load_game();
   imp_params.player_data.options = old_player_options
   imp_params.player_data.tutorial_shown = old_tutorial_shown;
   imp_params.player_data.first_time = false
-  save_game();
+  save_data.save_game();
 }
 
 NewEnemyDialog.prototype = new DialogBox()

@@ -92,7 +92,7 @@ window["impulse_main"] =  function() {
 
     io.set_up_listeners();
     dom.centerCanvas()
-    load_game()
+    save_data.load_game()
     set_up_enemy_images()
     set_up_title_bg()
     set_key_bindings()
@@ -230,14 +230,9 @@ function toggle_mute() {
   }
 }
 
-function is_mute() {
-  return imp_params.impulse_music_mute;
-}
-
-
 function save_player_game(hive_number) {
   imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = hive_number
-  save_game();
+  save_data.save_game();
 }
 
 function is_quest_completed(name) {
@@ -247,7 +242,7 @@ function is_quest_completed(name) {
 function set_quest_completed(name) {
   if (!is_quest_completed(name)) {
     imp_params.player_data.quests.push(name);
-    save_game();
+    save_data.save_game();
     game_engine.set_popup_message("quest_" + name, 2500, "white", 0)
   }
 }

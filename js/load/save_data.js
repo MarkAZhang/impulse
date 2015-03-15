@@ -1,4 +1,37 @@
-function load_game() {
+// These need to be explicitly named because the values can change across minifications.
+var default_options = {
+  'effects_mute': false,
+  'bg_music_mute': false,
+  'effects_volume': 100,
+  'bg_music_volume': 100,
+  'explosions': true,
+  'score_labels': true,
+  'progress_circle': false,
+  'multiplier_display': false,
+  'impulse_shadow': true,
+  'speed_run_countdown': false,
+  'control_hand': 'right',
+  'control_scheme': 'mouse',
+}
+
+function isValidOptionValue (optionName, optionValue) {
+  if (['bg_music_volume', 'effects_volume'].indexOf(optionName) !== -1) {
+    return typeof optionValue === 'number';
+  } else if (['explosions', 'score_labels', 'progress_circle', 'multiplier_display',
+    'impulse_shadow', 'speed_run_countdown', 'effects_mute', 'bg_music_mute'].indexOf(optionName) !== -1) {
+    return typeof optionValue === 'boolean'
+  } else if (optionName === 'control_hand') {
+    return ['right', 'left'].indexOf(optionValue) !== -1;
+  } else if (optionName === 'control_scheme') {
+    return ['mouse', 'keyboard'].indexOf(optionValue) !== -1;
+  } else {
+    return false;
+  }
+}
+
+var save_data = {};
+
+save_data.load_game = function() {
   var load_obj = {}
   if(localStorage[imp_params.save_name]===undefined || localStorage[imp_params.save_name] === null) {
     imp_params.player_data.first_time = true
@@ -44,35 +77,6 @@ function load_game() {
     }
   }
 
-  // These need to be explicitly named because the values can change across minifications.
-  var default_options = {
-      'effects_volume': 100,
-      'bg_music_volume': 100,
-      'explosions': true,
-      'score_labels': true,
-      'progress_circle': false,
-      'multiplier_display': false,
-      'impulse_shadow': true,
-      'speed_run_countdown': false,
-      'control_hand': 'right',
-      'control_scheme': 'mouse',
-    }
-
-  function isValidOptionValue (optionName, optionValue) {
-    if (['bg_music_volume', 'effects_volume'].indexOf(optionName) !== -1) {
-      return typeof optionValue === 'number';
-    } else if (['explosions', 'score_labels', 'progress_circle', 'multiplier_display',
-      'impulse_shadow', 'speed_run_countdown'].indexOf(optionName) !== -1) {
-      return typeof optionValue === 'boolean'
-    } else if (optionName === 'control_hand') {
-      return ['right', 'left'].indexOf(optionValue) !== -1;
-    } else if (optionName === 'control_scheme') {
-      return ['mouse', 'keyboard'].indexOf(optionValue) !== -1;
-    } else {
-      return false;
-    }
-  }
-
   if(!load_obj['options']) {
     //default options
     load_obj['options'] = {}
@@ -113,7 +117,9 @@ function load_game() {
   imp_params.player_data.tutorial_shown = load_obj['tutorial_shown'] ? load_obj['tutorial_shown'] : [];
   imp_params.player_data.options = {
     effects_volume: load_obj['options']['effects_volume'],
+    effects_mute: load_obj['options']['effects_mute'],
     bg_music_volume: load_obj['options']['bg_music_volume'],
+    bg_music_mute: load_obj['options']['bg_music_mute'],
     explosions: load_obj['options']['explosions'],
     score_labels: load_obj['options']['score_labels'],
     progress_circle: load_obj['options']['progress_circle'],
@@ -155,13 +161,13 @@ function load_level_data(difficulty_level, load_obj) {
       }
     }
   }
-}
+};
 
-function save_game() {
+save_data.save_game = function () {
   var save_obj = {}
   save_obj['levels'] = {}
-  save_level_data('easy', save_obj)
-  save_level_data('normal', save_obj)
+  save_data.save_level_data('easy', save_obj)
+  save_data.save_level_data('normal', save_obj)
   save_obj['enemies_seen'] = {}
   save_obj['enemies_killed'] = {}
   for(i in imp_params.impulse_enemy_stats) {
@@ -174,7 +180,9 @@ function save_game() {
   save_obj['save_data'] = imp_params.player_data.save_data
   save_obj['options'] = {
     'effects_volume': imp_params.player_data.options.effects_volume,
+    'effects_mute': imp_params.player_data.options.effects_mute,
     'bg_music_volume': imp_params.player_data.options.bg_music_volume,
+    'bg_music_mute': imp_params.player_data.options.bg_music_mute,
     'explosions': imp_params.player_data.options.explosions,
     'score_labels': imp_params.player_data.options.score_labels,
     'progress_circle': imp_params.player_data.options.progress_circle,
@@ -189,10 +197,10 @@ function save_game() {
   save_obj['tutorial_shown'] = imp_params.player_data.tutorial_shown;
   save_obj['quests'] = imp_params.player_data.quests
   localStorage[imp_params.save_name] = JSON.stringify(save_obj)
-}
+};
 
 
-function save_level_data(difficulty_level, save_obj) {
+save_data.save_level_data = function(difficulty_level, save_obj) {
   for(i in imp_params.impulse_level_data) {
     if(i.slice(0, 11) != "HOW TO PLAY") {
       if(!(save_obj['levels'].hasOwnProperty(i))) {
@@ -206,4 +214,4 @@ function save_level_data(difficulty_level, save_obj) {
       save_obj['levels'][i]["save_state"][difficulty_level]["seen"] = imp_params.impulse_level_data[i].save_state[difficulty_level].seen
     }
   }
-}
+};

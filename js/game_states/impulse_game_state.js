@@ -224,7 +224,7 @@ ImpulseGameState.prototype.check_new_enemies = function() {
   if (this.is_tutorial_level) return;
   for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
     imp_params.impulse_enemy_stats[enemy].seen += 1
-    save_game()
+    save_data.save_game()
     var difficulty_level = imp_params.player_data.difficulty_mode
     if(!imp_params.impulse_enemy_stats[enemy].is_boss &&
         imp_params.impulse_enemy_stats[enemy].seen == 1) {
@@ -1225,7 +1225,7 @@ ImpulseGameState.prototype.update_save_data_for_level = function () {
   } else {
     this.game_numbers.best_time = false;
   }
-  save_game()
+  save_data.save_game()
 }
 
 ImpulseGameState.prototype.shake_level = function (dur) {
@@ -1243,7 +1243,7 @@ ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
     this.game_numbers.best_time = false;
   }
 
-  save_game()
+  save_data.save_game()
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

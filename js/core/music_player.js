@@ -6,7 +6,7 @@ var MusicPlayer = function() {
   this.initialize_multisounds();
 
   this.playing = {}
-  this.mute = imp_params.player_data.options.music_mute
+  this.mute = imp_params.player_data.options.bg_music_mute
   this.effects_mute = imp_params.player_data.options.effects_mute
 }
 
@@ -43,7 +43,7 @@ MusicPlayer.prototype.play = function(file, volume) {
 MusicPlayer.prototype.mute_effects = function(mute) {
   this.effects_mute = mute
   imp_params.player_data.options.effects_mute = mute
-  save_game()
+  save_data.save_game()
 }
 
 MusicPlayer.prototype.play_multisound = function(file) {
@@ -86,8 +86,8 @@ MusicPlayer.prototype.switch_bg = function(file) {
 
 MusicPlayer.prototype.mute_bg = function() {
   this.mute = true
-  imp_params.player_data.options.music_mute = true
-  save_game()
+  imp_params.player_data.options.bg_music_mute = true
+  save_data.save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(0);
     this.playing[this.cur_song] = false
@@ -96,8 +96,8 @@ MusicPlayer.prototype.mute_bg = function() {
 
 MusicPlayer.prototype.unmute_bg = function() {
   this.mute = false
-  imp_params.player_data.options.music_mute = false
-  save_game()
+  imp_params.player_data.options.bg_music_mute = false
+  save_data.save_game()
   if(this.cur_song) {
     this.sounds[this.cur_song].setVolume(imp_params.player_data.options.bg_music_volume);
     this.playing[this.cur_song] = true
@@ -110,13 +110,13 @@ MusicPlayer.prototype.change_bg_volume = function(volume, save) {
     this.sounds[this.cur_song].setVolume(imp_params.player_data.options.bg_music_volume);
   }
   if (save) {
-    save_game()
+    save_data.save_game()
   }
 }
 
 MusicPlayer.prototype.change_effects_volume = function(volume) {
   imp_params.player_data.options.effects_volume = volume
-  save_game()
+  save_data.save_game()
 }
 
 MusicPlayer.prototype.bg_is_playing = function() {
