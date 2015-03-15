@@ -42,20 +42,22 @@ function start_game() {
   setTimeout(function(){window.impulse_main()}, 50)
 }
 
+b2Vec2 = Box2D.Common.Math.b2Vec2
+, b2AABB = Box2D.Collision.b2AABB
+, b2BodyDef = Box2D.Dynamics.b2BodyDef
+, b2Body = Box2D.Dynamics.b2Body
+, b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+, b2Fixture = Box2D.Dynamics.b2Fixture
+, b2World = Box2D.Dynamics.b2World
+, b2MassData = Box2D.Collision.Shapes.b2MassData
+, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+, b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+, b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+, b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+, b2ContactListener = Box2D.Dynamics.b2ContactListener
+
 window["impulse_main"] =  function() {
-    b2Vec2 = Box2D.Common.Math.b2Vec2
-    , b2AABB = Box2D.Collision.b2AABB
-    , b2BodyDef = Box2D.Dynamics.b2BodyDef
-    , b2Body = Box2D.Dynamics.b2Body
-    , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-    , b2Fixture = Box2D.Dynamics.b2Fixture
-    , b2World = Box2D.Dynamics.b2World
-    , b2MassData = Box2D.Collision.Shapes.b2MassData
-    , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-    , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-    , b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-    , b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
-    , b2ContactListener = Box2D.Dynamics.b2ContactListener
+
 
     imp_params.canvasWidth = 1200;
     imp_params.canvasHeight = 600;
@@ -93,7 +95,6 @@ window["impulse_main"] =  function() {
     io.set_up_listeners();
     dom.centerCanvas()
     saveData.loadGame()
-    set_up_enemy_images()
     set_up_title_bg()
     set_key_bindings()
     imp_params.impulse_music = new MusicPlayer()
@@ -245,8 +246,7 @@ function set_quest_completed(name) {
 
 function should_show_level_zero(world_num) {
   // Easy difficulty, and we've never played this world before.
-  return saveData.difficultyMode == "easy" &&
-         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[saveData.difficultyMode].seen;
+  return saveData.difficultyMode == "easy" && saveData.getLevelData("HIVE " + world_num + "-1").seen;
 }
 
 function get_bg_opacity(world) {

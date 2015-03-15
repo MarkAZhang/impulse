@@ -160,7 +160,7 @@ function BossFour(world, x, y, id, impulse_game_state) {
 
   this.initial_spawn = false
   this.do_initial_spawn = true
-  this.body_bud_radius = imp_params.impulse_enemy_stats[this.type].body_bud_radius
+  this.body_bud_radius = enemyData[this.type].body_bud_radius
   this.create_body_buds()
 
   this.turn_rate = 4000
@@ -724,7 +724,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
 BossFour.prototype.create_body_buds = function() {
   for(var index = 0; index < this.num_buds; index++) {
     var angle = (index + 0.5)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
-    var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon,
+    var bud_body =  create_body(this.world, enemyData[this.type].bud_polygon,
       this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
        this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
       3, 10, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
@@ -744,7 +744,7 @@ BossFour.prototype.additional_death_prep_specific = function() {
     var bud = this.buds[index];
     var angle = _atan(this.body.GetPosition(), bud.body.GetPosition());
     if (bud.type == "body") {
-      var bud_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].bud_polygon,
+      var bud_body =  create_body(this.world, enemyData[this.type].bud_polygon,
         this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
          this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
         3, 0.1, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
@@ -882,7 +882,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
   var index = bud.loc
   var angle = (index)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
 
-  var offset_radius = this.effective_radius + imp_params.impulse_enemy_stats["boss four "+bud.type+"er"].initial_radius * 1.5
+  var offset_radius = this.effective_radius + enemyData["boss four "+bud.type+"er"].initial_radius * 1.5
   var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
     y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}
   var new_enemy = null
@@ -955,7 +955,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
           this.ready_bud_queue.splice(this.ready_bud_queue.indexOf(index), 1);
           this.generate_new_attack_bud(bud)
         } else {
-          var size = Math.max(0.1, bezier_interpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * imp_params.impulse_enemy_stats["boss four "+bud.type+"er"].effective_radius)
+          var size = Math.max(0.1, bezier_interpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * enemyData["boss four "+bud.type+"er"].effective_radius)
           var offset_radius = this.effective_radius + size
           var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
             y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}

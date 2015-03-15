@@ -66,9 +66,9 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
 
   this.load_next_level(loading_saved_game);
 
-  this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode].seen
+  this.first_time = !saveData.getLevelData(this.level_name).seen
   if (this.first_time) {
-    imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode].seen = true
+    saveData.getLevelData(this.level_name).seen = true
     saveData.saveGame()
   }
 
@@ -114,7 +114,8 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
 MainGameTransitionState.prototype.load_next_level = function () {
   // Set the next level to load.
   this.level_loaded = false
-  this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level])
+  this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level]);
+  this.level_name = this.level.level_name;
 }
 
 MainGameTransitionState.prototype.compute_last_level_stats = function() {
@@ -325,7 +326,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("HIGH SCORE", imp_params.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].high_score,
+      ctx.fillText(saveData.getLevelData(this.last_level_name).high_score,
        imp_params.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
@@ -341,9 +342,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].best_time < 1000) {
+      if (saveData.getLevelData(this.last_level_name) < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].best_time),
+        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.last_level_name).best_time),
           imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'

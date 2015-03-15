@@ -48,7 +48,7 @@ BossTwoSpawner.prototype.draw = function(context, draw_factor, prop, next_enemy_
     context.beginPath()
     context.arc(this.x, this.y, this.size * 0.75, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * (1-prop), true)
     context.lineWidth = 4
-    context.strokeStyle = imp_params.impulse_enemy_stats[next_enemy_type].color
+    context.strokeStyle = enemyData[next_enemy_type].color
     context.stroke()
   }
   context.restore()
@@ -119,7 +119,7 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
       var loc = [(this.x + this.size/2 * Math.cos(angle))/imp_params.draw_factor,
       (this.y + this.size/2 * Math.sin(angle))/imp_params.draw_factor]
 
-      var temp_enemy = new (imp_params.impulse_enemy_stats[enemy_type].className)(this.world, loc[0], loc[1],
+      var temp_enemy = new (enemyData[enemy_type].className)(this.world, loc[0], loc[1],
       this.level.enemy_counter, this.impulse_game_state)
       temp_enemy.set_heading(angle);
 

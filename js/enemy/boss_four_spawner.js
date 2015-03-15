@@ -12,7 +12,7 @@ function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_
   this.image_enemy_type = this.type+" "+enemy_type
 
   this.color = "black"
-  this.interior_color = imp_params.impulse_enemy_stats[this.enemy_type].color
+  this.interior_color = enemyData[this.enemy_type].color
   this.spawn = false
   this.spawn_number = enemy_spawn
   this.push_force = push_force
@@ -40,11 +40,11 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
   if(this.spawned) {
     if(this.spawn_action_timer > 0) {
       var cur_factor = 1 + bezier_interpolate(0.15, 0.85, 0.5 - Math.abs(this.spawn_action_timer/this.spawn_action_period - 0.5))
-      this.set_size(imp_params.impulse_enemy_stats[this.type].effective_radius * cur_factor)
+      this.set_size(enemyData[this.type].effective_radius * cur_factor)
       this.spawn_action_timer -= dt
     } else {
-      if(this.size != imp_params.impulse_enemy_stats[this.type].effective_radius) {
-        this.set_size(imp_params.impulse_enemy_stats[this.type].effective_radius)
+      if(this.size != enemyData[this.type].effective_radius) {
+        this.set_size(enemyData[this.type].effective_radius)
       }
     }
   }
@@ -80,7 +80,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
   		var loc = [this.body.GetPosition().x + this.effective_radius * 2 * Math.cos(angle),
   		this.body.GetPosition().y + this.effective_radius * 2 * Math.sin(angle)]
 
-      var temp_enemy = new (imp_params.impulse_enemy_stats[this.enemy_type].className)(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
+      var temp_enemy = new (enemyData[this.enemy_type].className)(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
 
       var force = new b2Vec2(Math.cos(angle), Math.sin(angle))
       force.Multiply(this.push_force)
@@ -172,7 +172,7 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   /*context.beginPath()
   context.arc(this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, 0, Math.PI * 2)
   context.lineWidth = 2
-  context.strokeStyle = imp_params.impulse_enemy_stats[this.enemy_type].color
+  context.strokeStyle = enemyData[this.enemy_type].color
   context.stroke()*/
   context.restore()
 

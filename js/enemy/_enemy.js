@@ -19,8 +19,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     this.player = impulse_game_state.player
   }
   this.world = world
-  for(i in imp_params.impulse_enemy_stats[this.type]) {
-    this[i] = imp_params.impulse_enemy_stats[this.type][i]
+  for(i in enemyData[this.type]) {
+    this[i] = enemyData[this.type][i]
   }
 
 
@@ -335,7 +335,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         //fixtures[i].SetDensity(this.density/5)
       }
       this.body.ResetMassData()
-      this.force = imp_params.impulse_enemy_stats[this.type].force/this.lighten_factor/this.lighten_factor
+      this.force = enemyData[this.type].force/this.lighten_factor/this.lighten_factor
     }
   }
   else {
@@ -354,7 +354,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         //fixtures[i].SetDensity(this.density)
       }
       this.body.ResetMassData()
-      this.force = imp_params.impulse_enemy_stats[this.type].force
+      this.force = enemyData[this.type].force
     }
   }
   if(this.pointer_visibility < 1) {
@@ -594,10 +594,10 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
-    if(imp_params.impulse_enemy_stats[this.type].proxy)
-      imp_params.impulse_enemy_stats[imp_params.impulse_enemy_stats[this.type].proxy].kills += 1
+    if(enemyData[this.type].proxy)
+      saveData.numEnemiesKilled[enemyData[this.type].proxy] += 1;
     else
-      imp_params.impulse_enemy_stats[this.type].kills += 1
+      saveData.numEnemiesKilled[this.type] += 1;
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
       if(saveData.optionsData.score_labels)
@@ -754,7 +754,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
   //}
   //var latest_color = this.get_current_color_with_status()
 
-  var size = imp_params.impulse_enemy_stats[this.type].images["normal"].height;
+  var size = enemyData[this.type].images["normal"].height;
   if (this.dying)
     context.globalAlpha *= (1 - prog)
   else
@@ -781,7 +781,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
     }
   my_size *= radius_factor
 
-  context.drawImage(imp_params.impulse_enemy_stats[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
+  context.drawImage(enemyData[this.type].images[this.get_current_status()], 0, 0, size, size, -my_size/2, -my_size/2, my_size, my_size);
 
   context.restore()
 
@@ -958,8 +958,8 @@ Enemy.prototype.get_impulse_sensitive_pts = function() {
 
 Enemy.prototype.set_up_images = function() {
   var normal_canvas = document.createElement('canvas');
-  normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_params.draw_factor
-  normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * imp_params.draw_factor
+  normal_canvas.width = enemyData[this.type].effective_radius * 2 * imp_params.draw_factor
+  normal_canvas.height = enemyData[this.type].effective_radius * 2 * imp_params.draw_factor
 
   var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1040,15 +1040,15 @@ Enemy.prototype.generate_images = function() {
   for(index in all_status) {
     var status = all_status[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
-    normal_canvas.height = imp_params.impulse_enemy_stats[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
+    normal_canvas.width = enemyData[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
+    normal_canvas.height = enemyData[this.type].effective_radius * 2 * this.enemy_canvas_factor * imp_params.draw_factor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
     var cur_color = this.get_color_for_status(status)
     if (!cur_color) cur_color = this.color
 
-    var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
+    var tp = {x: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
     normal_canvas_ctx.translate(tp.x * imp_params.draw_factor, tp.y * imp_params.draw_factor)
 
     draw_enemy_image(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);

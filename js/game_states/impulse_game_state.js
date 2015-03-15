@@ -152,7 +152,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   // if we've never beaten the first boss, show the tutorial
   if (this.is_boss_level && this.world_num == 1 && saveData.difficultyMode == "easy" &&
-    imp_params.impulse_level_data[this.level_name].save_state["easy"].best_time === 1000) {
+    saveData.getLevelData(this.level_name).best_time === 1000) {
     this.show_tutorial = true
   }
 
@@ -223,12 +223,11 @@ ImpulseGameState.prototype.reset_game_numbers = function () {
 ImpulseGameState.prototype.check_new_enemies = function() {
   if (this.is_tutorial_level) return;
   for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
-    imp_params.impulse_enemy_stats[enemy].seen += 1
+    saveData.numEnemiesSeen[enemy] += 1
     saveData.saveGame()
     var difficulty_level = saveData.difficultyMode
-    if(!imp_params.impulse_enemy_stats[enemy].is_boss &&
-        imp_params.impulse_enemy_stats[enemy].seen == 1) {
-
+    if(!enemyData[enemy].is_boss &&
+        saveData.numEnemiesSeen[enemy] == 1) {
       game_engine.set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
     }
   }
@@ -1208,20 +1207,20 @@ ImpulseGameState.prototype.on_victory = function() {
 }
 
 ImpulseGameState.prototype.update_save_data_for_level = function () {
-  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode];
+  var saveState = saveData.getLevelData(this.level.level_name);
   var new_score = this.game_numbers.score;
   var new_time = this.game_numbers.seconds;
 
-  if (new_score > save_state.high_score) {
+  if (new_score > saveState.high_score) {
     this.game_numbers.high_score = true
-    save_state.high_score = new_score
+    saveState.high_score = new_score
   } else {
     this.game_numbers.high_score = false
   }
 
-  if (new_time < save_state.best_time) {
+  if (new_time < saveState.best_time) {
     this.game_numbers.best_time = true
-    save_state.best_time = new_time
+    saveState.best_time = new_time
   } else {
     this.game_numbers.best_time = false;
   }
@@ -1234,11 +1233,11 @@ ImpulseGameState.prototype.shake_level = function (dur) {
 }
 
 ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
-  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode];
+  var saveState = saveData.getLevelData(this.level.level_name);
   var new_time = this.game_numbers.seconds;
-  if (new_time < save_state.best_time) {
+  if (new_time < saveState.best_time) {
     this.game_numbers.best_time = true
-    save_state.best_time = new_time
+    saveState.best_time = new_time
   } else {
     this.game_numbers.best_time = false;
   }

@@ -66,7 +66,7 @@ Tank.prototype.additional_processing = function(dt) {
   /*if(this.durations["open"] > 0) {
     this.color = "red";
   } else {
-    this.color = imp_params.impulse_enemy_stats[this.type].color;
+    this.color = enemyData[this.type].color;
   }*/
 }
 
@@ -233,7 +233,7 @@ Tank.prototype.bulk_draw_start = function(context, draw_factor, num) {
   context.beginPath()
   context.lineWidth = 2
   context.globalAlpha *= .5
-  context.strokeStyle = imp_params.impulse_enemy_stats[this.type].color
+  context.strokeStyle = enemyData[this.type].color
 }
 
 Tank.prototype.bulk_draw = function(context, draw_factor, num) {
@@ -287,7 +287,7 @@ Tank.prototype.draw_enemy_image_additional = function(context, color) {
   context.strokeStyle = color
   context.lineWidth = 3;
   var this_angle = Math.PI/4
-  var tp = {x: imp_params.impulse_enemy_stats[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor , y: imp_params.impulse_enemy_stats[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor}
+  var tp = {x: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor , y: enemyData[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor}
 
   context.beginPath()
 

@@ -86,11 +86,11 @@ Goo.prototype.additional_processing = function(dt) {
   }
 
   if(!this.is_silenced()) {
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
-    this.force = imp_params.impulse_enemy_stats[this.type].force
+    this.body.SetLinearDamping(enemyData[this.type].lin_damp)
+    this.force = enemyData[this.type].force
   } else {
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 0.3)
-    this.force = imp_params.impulse_enemy_stats[this.type].force * 0.3
+    this.body.SetLinearDamping(enemyData[this.type].lin_damp * 0.3)
+    this.force = enemyData[this.type].force * 0.3
   }
 
   this.check_area_of_effect()

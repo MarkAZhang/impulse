@@ -202,25 +202,6 @@ TitleState.prototype.setup_main_menu = function() {
           game_engine.switch_game_state(new WorldMapState(i, true))
         });
 
-        /*if(saveData.savedGame.game_numbers) {
-          _this.fader.set_animation("fade_out", function() {
-            game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
-          });
-        } else {
-          if (!imp_params.impulse_level_data["HIVE 1-1"].save_state["normal"].high_score) {
-            _this.fader.set_animation("fade_out", function() {
-              game_engine.switch_game_state(new ChallengeModeIntroState());
-            });
-          } else {
-          var i = 1;
-            while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
-              i += 1
-            }
-            _this.fader.set_animation("fade_out", function() {
-              game_engine.switch_game_state(new WorldMapState(i))
-            });
-          }
-        }*/
       }, "normal_mode"))
   }
 
@@ -243,14 +224,6 @@ TitleState.prototype.setup_main_menu = function() {
         game_engine.switch_game_state(new CreditsState())
       });
     }, "credit"))
-
-
-
-    /*this.buttons["menu"].push(new IconButton("SHARE", 16, imp_params.levelWidth - 50, imp_params.levelHeight - 50, 100, 70, impulse_colors["impulse_blue"], impulse_colors["impulse_blue"],function(){
-      _this.fader.set_animation("fade_out", function() {
-        game_engine.set_dialog_box(new OptionsMenu(_this))
-      });
-    }, "fb"))*/
   }
 
 

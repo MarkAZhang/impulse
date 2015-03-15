@@ -39,7 +39,7 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.additional_statuses = ["empowered"]
 
-  this.orig_lin_damp = imp_params.impulse_enemy_stats[this.type].lin_damp
+  this.orig_lin_damp = enemyData[this.type].lin_damp
   this.slingshot_lin_damp = 6
 
 }

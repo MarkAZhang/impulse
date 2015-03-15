@@ -185,58 +185,30 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("LOADING", imp_params.levelWidth - 70, imp_params.levelHeight - 19)
     }
 
-    if(this.level_name.slice(0, 11) != "HOW TO PLAY") {
+    ctx.fillStyle = this.bright_color
+    ctx.font = '12px Muli'
+    ctx.fillText("ENEMIES",  imp_params.levelWidth/2, 370)
 
-      /*var temp_colors = ["world "+this.world_num+" lite", 'silver', 'gold']
-      var score_names = ['GATEWAY SCORE', "SILVER SCORE", "GOLD SCORE"]
-      if(!this.is_boss_level) {
-        for(var i = 0; i < 3; i++) {
-          ctx.font = '24px Muli';
-          ctx.textAlign = "right"
-          ctx.fillStyle = impulse_colors[temp_colors[i]]
-          ctx.shadowColor = ctx.fillStyle
-          ctx.font = '20px Muli';
-          ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][i], imp_params.levelWidth/2 + 160, 290 + 35 * i + 7)
-          ctx.textAlign = "left"
-          ctx.font = '20px Muli';
-          ctx.fillText(score_names[i], imp_params.levelWidth/2 - 160, 290 + 35 * i + 7)
-        }
-      }*/
+    ctx.fillStyle = this.bright_color
+    ctx.textAlign = 'center'
 
-      ctx.fillStyle = this.bright_color
-      ctx.font = '12px Muli'
-      ctx.fillText("ENEMIES",  imp_params.levelWidth/2, 370)
+    ctx.font = '12px Muli'
+    ctx.fillText("HIGH SCORE", imp_params.levelWidth/2 - 100, 480)
+    ctx.font = '28px Muli'
+    ctx.fillText(saveData.getLevelData(this.level_name).high_score,
+     imp_params.levelWidth/2 - 100, 505)
 
-      score_color = 0
 
-      while(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][score_color]) {
-        score_color += 1;
-      }
-
-      ctx.fillStyle = this.bright_color
-      ctx.textAlign = 'center'
-
-      ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", imp_params.levelWidth/2 - 100, 480)
+    ctx.fillStyle = this.bright_color
+    ctx.font = '12px Muli'
+    ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, 480)
+    if (saveData.getLevelData(this.level_name).best_time < 1000) {
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score,
-       imp_params.levelWidth/2 - 100, 505)
-
-
-      ctx.fillStyle = this.bright_color
-      ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, 480)
-      if (imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
-        ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time),
-         imp_params.levelWidth/2 + 100, 505)
-      } else {
-        ctx.font = '24px Muli'
-        ctx.fillText("UNDEFEATED", imp_params.levelWidth/2 + 100, 505)
-      }
-
-
-
+      ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
+       imp_params.levelWidth/2 + 100, 505)
+    } else {
+      ctx.font = '24px Muli'
+      ctx.fillText("UNDEFEATED", imp_params.levelWidth/2 + 100, 505)
     }
   } else {
 
@@ -255,11 +227,11 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(imp_params.tessellation_names[this.world_num], imp_params.levelWidth/2, imp_params.levelHeight/2 - 20)
     ctx.font = '24px Muli'
 
-    if(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
+    if(saveData.getLevelData(this.level_name).best_time < 1000) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2, 390)
       ctx.font = '28px Muli'
-      ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time), imp_params.levelWidth/2, 415)
+      ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time), imp_params.levelWidth/2, 415)
     } else {
       ctx.fillStyle = impulse_colors['boss '+ this.world_num]
       ctx.fillText("UNDEFEATED",  imp_params.levelWidth/2, 400)

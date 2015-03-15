@@ -116,7 +116,7 @@ Boss.prototype.process_spawn_particles = function (dt) {
 }
 
 Boss.prototype.draw_spawn_particles = function(ctx, draw_factor) {
-  var particle_shape = imp_params.impulse_enemy_stats[this.type].death_polygons[0];
+  var particle_shape = enemyData[this.type].death_polygons[0];
   for(var i = 0; i < this.spawn_particles.length; i++) {
     var particle = this.spawn_particles[i];
     ctx.save()

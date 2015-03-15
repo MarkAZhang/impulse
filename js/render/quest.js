@@ -57,7 +57,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
       drawImageWithRotation(ctx,
         x + r * 0.9 * Math.cos(angle),
         y - r / 2 + r * 0.9 * Math.sin(angle),
-      angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
+      angle, 10, 10, enemyData["stunner"].images["normal"]);
     }
   }
 
@@ -80,7 +80,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
       drawImageWithRotation(ctx,
         x + r * 0.9 * Math.cos(angle),
         y - r / 2 + r * 0.9 * Math.sin(angle),
-      angle, 10, 10, imp_params.impulse_enemy_stats["stunner"].images["normal"]);
+      angle, 10, 10, enemyData["stunner"].images["normal"]);
     }
   }
 
@@ -132,7 +132,7 @@ draw_quest_button = function(ctx, x, y, r, type) {
       drawImageWithRotation(ctx,
         x + r * 0.5 * Math.cos(angle),
         y + r * 0.5 * Math.sin(angle),
-      Math.PI/2 + angle, 15, 15, imp_params.impulse_enemy_stats["spear"].images["normal"]);
+      Math.PI/2 + angle, 15, 15, enemyData["spear"].images["normal"]);
     }
   }
 

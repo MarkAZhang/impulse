@@ -114,7 +114,7 @@ Fighter.prototype.additional_processing = function(dt) {
 
     this.shoot_durations = [this.frenzy_shoot_interval, this.frenzy_shoot_interval]
     this.color = "red"
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 5)
+    this.body.SetLinearDamping(enemyData[this.type].lin_damp * 5)
   }
 
   if(!this.is_silenced() && this.player_collision_buffer_timer <= 0 &&
@@ -134,8 +134,8 @@ Fighter.prototype.additional_processing = function(dt) {
   if(this.fighter_status == "frenzy" && this.frenzy_charge <= 0) {
     this.fighter_status = "normal"
     this.shoot_durations = [this.shoot_interval, this.shoot_interval * 2];
-    this.color = imp_params.impulse_enemy_stats[this.type].color;
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
+    this.color = enemyData[this.type].color;
+    this.body.SetLinearDamping(enemyData[this.type].lin_damp)
   }
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && !this.is_silenced()) {

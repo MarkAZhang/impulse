@@ -637,7 +637,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
 
 BossThree.prototype.initialize_arms = function() {
   for(var index = 0; index < this.num_arms; index++) {
-    var arm_body =  create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
+    var arm_body =  create_body(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
     arm_body.SetAngle(this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
     this.striking_arms[index] = {
       interval: this.strike_duration,
@@ -653,7 +653,7 @@ BossThree.prototype.initialize_arms = function() {
 BossThree.prototype.additional_death_prep_specific = function() {
   for(var index = 0; index < this.num_arms; index++) {
     // Need to recreate arms.
-    var arm_body = create_body(this.world, imp_params.impulse_enemy_stats[this.type].arm_polygon, this.body.GetPosition().x,
+    var arm_body = create_body(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x,
     this.body.GetPosition().y, 3, 1, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
     var angle = this.body.GetAngle() + Math.PI/(this.num_arms/2) * index;
     arm_body.SetAngle(angle);
@@ -993,7 +993,7 @@ BossThree.prototype.collide_with = function(other, body) {
             other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {
             if(this.spawn_force[other.type] != undefined)
-              var enemy_data = imp_params.impulse_enemy_stats[other.type]
+              var enemy_data = enemyData[other.type]
               if (enemy_data) {
                 var force = other.body.GetMass() * Math.sqrt(enemy_data.lin_damp) * this.boss_force
                 other.body.ApplyImpulse(new b2Vec2(force * Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())

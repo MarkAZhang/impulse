@@ -239,7 +239,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("HIGH SCORE", imp_params.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score,
+      ctx.fillText(saveData.getLevelData(this.level_name).high_score,
        imp_params.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
@@ -255,9 +255,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
+      if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time),
+        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
           imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
@@ -335,9 +335,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
+      if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time),
+        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
           imp_params.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'

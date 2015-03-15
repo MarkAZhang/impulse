@@ -19,8 +19,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   this.color = "black"
 
   if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
-    this.shape = imp_params.impulse_enemy_stats[enemy_type].death_polygons[0]
-    this.color = imp_params.impulse_enemy_stats[enemy_type].color
+    this.shape = enemyData[enemy_type].death_polygons[0]
+    this.color = enemyData[enemy_type].color
     this.original_v_damping = 0.5
     this.num_fragments = 50
     this.burst = 10;
@@ -38,8 +38,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.burst = 2
     this.waves = 2;
   } else if(enemy_type=="harpoon" || enemy_type=="harpoonhead") {
-    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
-    this.color = imp_params.impulse_enemy_stats[enemy_type].color
+    this.shape = enemyData[enemy_type].shape_polygons[0]
+    this.color = enemyData[enemy_type].color
     this.original_v_damping = 0.3
     this.num_fragments = 4
     this.burst = 2
@@ -51,8 +51,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
     this.shape = enemy_type
 
   } else {
-    this.shape = imp_params.impulse_enemy_stats[enemy_type].shape_polygons[0]
-    this.color = imp_params.impulse_enemy_stats[enemy_type].color
+    this.shape = enemyData[enemy_type].shape_polygons[0]
+    this.color = enemyData[enemy_type].color
     if(enemy_type=="tanker") {
       this.color = "red"
     }

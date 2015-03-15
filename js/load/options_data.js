@@ -15,7 +15,18 @@ var defaultOptions = {
 };
 
 var OptionsData = function () {
-
+  this.effects_volume = 100;
+  this.effects_mute = false;
+  this.bg_music_volume = 100;
+  this.bg_music_mute = false;
+  this.explosions = true;
+  this.score_labels = true;
+  this.progress_circle = false;
+  this.multiplier_display = false;
+  this.impulse_shadow = true;
+  this.speed_run_countdown = false;
+  this.control_hand = 'right';
+  this.control_scheme = 'mouse';
 };
 
 OptionsData.prototype.loadOptionsFromObj = function (saveObj) {
@@ -24,35 +35,39 @@ OptionsData.prototype.loadOptionsFromObj = function (saveObj) {
     saveObj = {};
   }
 
-  // Set default values in loaded options.
-  for(var option in defaultOptions) {
-    if(!saveObj.hasOwnProperty(option)) {
-      saveObj[option] = defaultOptions[option]
-    }
+  if (this.isValidOptionValue(saveObj, 'effects_volume')) {
+    this.effects_volume = saveObj['effects_volume'];
   }
-  for (var option in saveObj) {
-    // Remove extraneous or obsolete options.
-    if(!defaultOptions.hasOwnProperty(option)) {
-      delete defaultOptions[option];
-    }
-    // Verify loaded options are valid. Replace with default if not.
-    else if(!this.isValidOptionValue(option, saveObj[option])) {
-      saveObj[option] = defaultOptions[option];
-    }
+  if (this.isValidOptionValue(saveObj, 'effects_mute')) {
+    this.effects_mute = saveObj['effects_mute'];
   }
-
-  this.effects_volume = saveObj['effects_volume'];
-  this.effects_mute = saveObj['effects_mute'];
-  this.bg_music_volume = saveObj['bg_music_volume'];
-  this.bg_music_mute = saveObj['bg_music_mute'];
-  this.explosions = saveObj['explosions'];
-  this.score_labels = saveObj['score_labels'];
-  this.progress_circle = saveObj['progress_circle'];
-  this.multiplier_display = saveObj['multiplier_display'];
-  this.impulse_shadow = saveObj['impulse_shadow'];
-  this.speed_run_countdown = saveObj['speed_run_countdown'];
-  this.control_hand = saveObj['control_hand'];
-  this.control_scheme = saveObj['control_scheme'];
+  if (this.isValidOptionValue(saveObj, 'bg_music_volume')) {
+    this.bg_music_volume = saveObj['bg_music_volume'];
+  }
+  if (this.isValidOptionValue(saveObj, 'explosions')) {
+    this.explosions = saveObj['explosions'];
+  }
+  if (this.isValidOptionValue(saveObj, 'score_labels')) {
+    this.score_labels = saveObj['score_labels'];
+  }
+  if (this.isValidOptionValue(saveObj, 'progress_circle')) {
+    this.progress_circle = saveObj['progress_circle'];
+  }
+  if (this.isValidOptionValue(saveObj, 'multiplier_display')) {
+    this.multiplier_display = saveObj['multiplier_display'];
+  }
+  if (this.isValidOptionValue(saveObj, 'impulse_shadow')) {
+    this.impulse_shadow = saveObj['impulse_shadow'];
+  }
+  if (this.isValidOptionValue(saveObj, 'speed_run_countdown')) {
+    this.speed_run_countdown = saveObj['speed_run_countdown'];
+  }
+  if (this.isValidOptionValue(saveObj, 'control_hand')) {
+    this.control_hand = saveObj['control_hand'];
+  }
+  if (this.isValidOptionValue(saveObj, 'control_scheme')) {
+    this.control_scheme = saveObj['control_scheme'];
+  }
 }
 
 OptionsData.prototype.createSaveObj = function () {
@@ -72,7 +87,11 @@ OptionsData.prototype.createSaveObj = function () {
   };
 }
 
-OptionsData.prototype.isValidOptionValue = function (optionName, optionValue) {
+OptionsData.prototype.isValidOptionValue = function (obj, optionName) {
+  var optionValue = obj[optionName];
+  if (optionValue === undefined) {
+    return false;
+  }
   if (['bg_music_volume', 'effects_volume'].indexOf(optionName) !== -1) {
     return typeof optionValue === 'number';
   } else if (['explosions', 'score_labels', 'progress_circle', 'multiplier_display',

@@ -2,24 +2,6 @@ imp_params.impulse_level_data = {}
 
 //enemy format is [start_spawn_time, spawn_period, number_of_spawn, incr_of_spawn_per_minute, cap]
 
-imp_params.impulse_level_data['HOW TO PLAY'] = {
-  enemies: {
-    "stunner": [0, 4, 0, 4, 1, 0, 5]
-  },
-  dominant_enemy: "stunner",
-  obstacle_v: [[[838,84],[-38,84],[-38,-45],[838,-45]],[[-38,175],[42,175],[42,258],[756,258],[756,175],[838,175],[838,645],[-38,645]]],
-  multi_spawn_points: [[72, 225], [728, 225], [21, 127], [779, 127]],
-  spawn_points: [[-100, 127], [900, 127]],
-  buffer_radius: 1,
-  //cutoff_scores: [100, 500, 1000],
-  cutoff_scores: {
-    "normal": [2500, 10000, 20000],
-    "easy": [2500, 10000, 20000],
-  },
-  player_loc: {x: 400, y: 170},
-  buffer_radius: 1
-}
-
 imp_params.impulse_level_data['HIVE 0-1'] = {
   enemies_easy: {
   },
@@ -1410,16 +1392,6 @@ for(i in imp_params.impulse_level_data) {
   imp_params.impulse_level_data[i].level_name = i;
   if(imp_params.impulse_level_data[i].cutoff_scores &&  (typeof imp_params.impulse_level_data[i].cutoff_scores["easy"] === "undefined"))
     imp_params.impulse_level_data[i].cutoff_scores["easy"] = imp_params.impulse_level_data[i].cutoff_scores["normal"].map(function(x){return x/2})
-
-  if(typeof(imp_params.impulse_level_data[i].max_rating) === "undefined") {
-    if(i.slice(0, 4)=="BOSS") {
-      var boss_number = parseInt(i.slice(5,6))
-      imp_params.impulse_level_data[i].max_rating = 100 * boss_number
-    } else if(i.slice(0, 4) == "HIVE") {
-      var hive_number = parseInt(i.slice(5,6))
-      imp_params.impulse_level_data[i].max_rating = 100 * hive_number
-    }
-  }
 
   // provide a get_obstacle_vertices method if none provided
   if(typeof(imp_params.impulse_level_data.get_obstacle_vertices) === "undefined") {

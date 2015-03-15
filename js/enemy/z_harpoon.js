@@ -184,8 +184,8 @@ Harpoon.prototype.can_harpoon = function() {
 }
 
 Harpoon.prototype.get_virtual_harpoon_loc = function() {
-  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.cos(this.actual_heading),
-    this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(imp_params.impulse_enemy_stats[this.type].effective_radius) * Math.sin(this.actual_heading))
+  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(enemyData[this.type].effective_radius) * Math.cos(this.actual_heading),
+    this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(enemyData[this.type].effective_radius) * Math.sin(this.actual_heading))
 }
 
 Harpoon.prototype.set_heading = function(heading) {
@@ -357,10 +357,10 @@ Harpoon.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
-    if(imp_params.impulse_enemy_stats[this.type].proxy)
-      imp_params.impulse_enemy_stats[imp_params.impulse_enemy_stats[this.type].proxy].kills += 1
+    if(enemyData[this.type].proxy)
+      enemyData[enemyData[this.type].proxy].kills += 1
     else
-      imp_params.impulse_enemy_stats[this.type].kills += 1
+      enemyData[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
       if(saveData.optionsData.score_labels)

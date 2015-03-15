@@ -183,7 +183,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   else if(this.spawned == false){
     this.spawned = true
     this.visibility = 1
-    this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp)
+    this.body.SetLinearDamping(enemyData[this.type].lin_damp)
 
   }
   this.body.SetAngle(this.arm_core_angle)
@@ -741,7 +741,7 @@ BossTwo.prototype.generate_gateway_particles = function(x, y, num_particles) {
 }
 
 BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
-  var particle_shape = imp_params.impulse_enemy_stats[this.type].death_polygons[0];
+  var particle_shape = enemyData[this.type].death_polygons[0];
   for(var i = 0; i < this.gateway_particles.length; i++) {
     var particle = this.gateway_particles[i];
     ctx.save()

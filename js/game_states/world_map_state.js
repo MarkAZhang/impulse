@@ -228,7 +228,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
-      new_button.active = imp_params.impulse_level_data[level_name].save_state[difficulty].seen ||
+      new_button.active = saveData.getLevelData(level_name).seen ||
         (j == 0 && this.world_unlocked[difficulty][i]) || (imp_params.debug.dev || imp_params.debug.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"

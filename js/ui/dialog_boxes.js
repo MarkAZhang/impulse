@@ -118,7 +118,7 @@ PauseMenu.prototype.add_buttons = function() {
   if (this.world_num == 0 || this.world_num == undefined) {
     hover_color = impulse_colors["impulse_blue"];
   }
-  if(this.level_name.slice(0, 11) != "HOW TO PLAY" && this.world_num != 0) {
+  if(this.world_num != 0) {
 
     if(!this.level.main_game) {
       this.restart_button = new IconButton("RETRY", 16, this.x - 173, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
@@ -264,19 +264,6 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   }
 
   ctx.textAlign = "center";
-    //var score_color = 0
-
-    /*if(!this.is_boss_level) {
-      while(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][score_color]) {
-        score_color+=1
-      }
-    }*/
-
-    /*ctx.font = '20px Muli';
-    ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
-    ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("HIGH SCORE "+imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score, this.x, this.y - this.h/2 + 250)*/
-
   ctx.shadowBlur = 0
 
   for(var i = 0; i < this.buttons.length; i++) {
@@ -811,14 +798,12 @@ function EnemyBox(enemy_name, previous_menu) {
 
   this.true_name = enemy_name
 
-  if(imp_params.impulse_enemy_stats[this.enemy_name].true_name) {
-    this.true_name = imp_params.impulse_enemy_stats[this.enemy_name].true_name
+  if(enemyData[this.enemy_name].true_name) {
+    this.true_name = enemyData[this.enemy_name].true_name
   }
   this.max_enemy_d = 50
   this.special_ability = null
   this.other_notes = null
-
-  this.seen = imp_params.impulse_enemy_stats[this.enemy_name].seen
 
   this.w = 600
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
@@ -840,7 +825,7 @@ function EnemyBox(enemy_name, previous_menu) {
   this.color = impulse_colors["world "+this.world_num]
   this.text_width = 500
 
-  this.enemy_info = imp_params.impulse_enemy_stats[this.enemy_name].enemy_info
+  this.enemy_info = enemyData[this.enemy_name].enemy_info
 
   this.current_lines = null
 
@@ -851,13 +836,13 @@ function EnemyBox(enemy_name, previous_menu) {
   var doSleep = false; //objects in our world will rarely go to sleep
   var world = new b2World(gravity, doSleep);
 
-  /*var temp_enemy = new (imp_params.impulse_enemy_stats[this.enemy_name].className)(world, 0, 0, 0, 0)
+  /*var temp_enemy = new (enemyData[this.enemy_name].className)(world, 0, 0, 0, 0)
 
   this.def_value = Math.min(temp_enemy.body.m_mass/5.5, 1)
 
-  this.atk_value = imp_params.impulse_enemy_stats[this.enemy_name].attack_rating/10
+  this.atk_value = enemyData[this.enemy_name].attack_rating/10
 
-  this.spd_value = ((imp_params.impulse_enemy_stats[this.enemy_name].force/temp_enemy.body.m_mass)/imp_params.impulse_enemy_stats[this.enemy_name].lin_damp)/.35*/
+  this.spd_value = ((enemyData[this.enemy_name].force/temp_enemy.body.m_mass)/enemyData[this.enemy_name].lin_damp)/.35*/
 
   if(this.enemy_name == "spear") this.spd_value = 1
 
@@ -872,10 +857,10 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
 
   /*if(this.special_ability == null) {
-    this.special_ability = getLines(ctx, imp_params.impulse_enemy_stats[this.enemy_name].special_ability, this.w - 20, '20px Muli')
+    this.special_ability = getLines(ctx, enemyData[this.enemy_name].special_ability, this.w - 20, '20px Muli')
   }
-  if(this.other_notes == null && imp_params.impulse_enemy_stats[this.enemy_name].other_notes != "") {
-    this.other_notes = getLines(ctx, imp_params.impulse_enemy_stats[this.enemy_name].other_notes, this.w - 20, '20px Muli')
+  if(this.other_notes == null && enemyData[this.enemy_name].other_notes != "") {
+    this.other_notes = getLines(ctx, enemyData[this.enemy_name].other_notes, this.w - 20, '20px Muli')
   }
 
   if(this.special_ability != null && !this.h) {
@@ -905,7 +890,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.font = '12px Muli'
   ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)
   ctx.font = '24px Muli'
-  ctx.fillText(imp_params.impulse_enemy_stats[this.enemy_name].score_value, this.x, this.y - this.h/2 + 335)
+  ctx.fillText(enemyData[this.enemy_name].score_value, this.x, this.y - this.h/2 + 335)
 
   ctx.font = '20px Muli'
 
@@ -942,13 +927,13 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
 
   //ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, imp_params.impulse_enemy_stats[this.enemy_name].color)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, enemyData[this.enemy_name].color)
   //ctx.fillStyle = "black"
   //ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, imp_params.impulse_enemy_stats[this.enemy_name].color)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, enemyData[this.enemy_name].color)
   //ctx.fillStyle = "black"
   //ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, imp_params.impulse_enemy_stats[this.enemy_name].color)
+  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, enemyData[this.enemy_name].color)
   /*ctx.fillStyle = "black"
   ctx.fillText("DIES UPON PLAYER COLLISION", this.x - this.w * .30, this.y - this.h/2 + 245)
   ctx.textAlign = 'center'
@@ -956,7 +941,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   if (this.other_notes != null)
     ctx.fillText("OTHER NOTES", this.x, this.y - this.h/2 + 315 + 25 * this.special_ability.length)
   ctx.textAlign = 'right'
-  ctx.fillText(imp_params.impulse_enemy_stats[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
+  ctx.fillText(enemyData[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
   ctx.beginPath()
   ctx.textAlign = 'center'
   ctx.font = '20px Muli'

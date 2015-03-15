@@ -385,19 +385,19 @@ MessageBox.prototype.draw = function(ctx) {
 
 		var type = this.type.substring(6);
 		var true_name = type;
-	    if(imp_params.impulse_enemy_stats[type].true_name) {
-	      true_name = imp_params.impulse_enemy_stats[type].true_name
+	    if(enemyData[type].true_name) {
+	      true_name = enemyData[type].true_name
 		}
 		ctx.textAlign = 'center';
 		ctx.font = "12px Muli"
 		ctx.fillStyle = "white";
 		ctx.fillText("NEW ENEMY", this.x + x_shift, this.y - this.h / 2 + 20);
-		ctx.fillStyle = imp_params.impulse_enemy_stats[type].color
+		ctx.fillStyle = enemyData[type].color
 		ctx.font = "24px Muli"
 		ctx.fillText(true_name.toUpperCase(), this.x + x_shift, this.y - this.h / 2 + 45);
 		ctx.fillStyle = "white";;
 		ctx.font = "16px Muli"
-		ctx.fillText(imp_params.impulse_enemy_stats[type].snippet.toUpperCase(), this.x + x_shift, this.y + this.h / 2 - 15);
+		ctx.fillText(enemyData[type].snippet.toUpperCase(), this.x + x_shift, this.y + this.h / 2 - 15);
 		draw_enemy_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 	} else {
 		// rewards

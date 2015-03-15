@@ -1,6 +1,6 @@
-imp_params.impulse_enemy_stats = {}
+var enemyData = {};
 
-imp_params.impulse_enemy_stats["dumb_stunner"] = {
+enemyData["dumb_stunner"] = {
   color: "#00ffff",///"#999",
   density: 2.2,
   lin_damp: 6,
@@ -29,7 +29,7 @@ imp_params.impulse_enemy_stats["dumb_stunner"] = {
   className: DumbStunner
 }
 
-imp_params.impulse_enemy_stats["stunner"] = {
+enemyData["stunner"] = {
   color: "#00ffff",///"#999",
   density: 1.5,
   lin_damp: 4,
@@ -58,7 +58,7 @@ imp_params.impulse_enemy_stats["stunner"] = {
   className: Stunner
 }
 
-imp_params.impulse_enemy_stats["spear"] = {
+enemyData["spear"] = {
   color: "#f86003",
   density: 0.7,
   lin_damp: 4,
@@ -85,7 +85,7 @@ imp_params.impulse_enemy_stats["spear"] = {
   className: Spear
 }
 
-imp_params.impulse_enemy_stats["tank"] = {
+enemyData["tank"] = {
   color: "#6f27cf",
   density: 2.5,
   lin_damp: 3,
@@ -125,7 +125,7 @@ imp_params.impulse_enemy_stats["tank"] = {
   className: Tank
 }
 
-imp_params.impulse_enemy_stats["mote"] = {
+enemyData["mote"] = {
   color: "#ee42ae",
   density: .5,
   lin_damp: 3,
@@ -149,7 +149,7 @@ imp_params.impulse_enemy_stats["mote"] = {
 
 }
 
-imp_params.impulse_enemy_stats["goo"] = {
+enemyData["goo"] = {
   color: "#e6c43c",
   density: 7,
   lin_damp: 9,
@@ -184,7 +184,7 @@ imp_params.impulse_enemy_stats["goo"] = {
 
 }
 
-imp_params.impulse_enemy_stats["harpoon"] = {
+enemyData["harpoon"] = {
   color: "#00aa00",
   density: 5,
   lin_damp: 6,
@@ -236,16 +236,16 @@ imp_params.impulse_enemy_stats["harpoon"] = {
 
 }
 
-imp_params.impulse_enemy_stats["harpoonhead"] = {
+enemyData["harpoonhead"] = {
   color: "#00dd00",
   density: 1.2,
   lin_damp: 6,
-  effective_radius: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3,
+  effective_radius: enemyData["harpoon"].effective_radius * Math.sqrt(6)/3,
   force: 1.5,
   score_value: 1000,
   attack_rating: 6,
   batch_enemy_image: true,
-  shape_polygons: [{type: "polygon", x: 0, y: 0, r: imp_params.impulse_enemy_stats["harpoon"].effective_radius * Math.sqrt(6)/3, vertices:
+  shape_polygons: [{type: "polygon", x: 0, y: 0, r: enemyData["harpoon"].effective_radius * Math.sqrt(6)/3, vertices:
   [[Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
   [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]]
@@ -259,7 +259,7 @@ imp_params.impulse_enemy_stats["harpoonhead"] = {
 
 }
 
-imp_params.impulse_enemy_stats["fighter"] = {
+enemyData["fighter"] = {
   color: "#0000ff",
   density: 3,
   lin_damp: 6,
@@ -301,7 +301,7 @@ imp_params.impulse_enemy_stats["fighter"] = {
   className: Fighter
 }
 
-imp_params.impulse_enemy_stats["fighter_bullet"] = {
+enemyData["fighter_bullet"] = {
   color: "#0000ec",
   density: 1,
   lin_damp: 3,
@@ -318,7 +318,7 @@ imp_params.impulse_enemy_stats["fighter_bullet"] = {
   className: FighterBullet
 }
 
-imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
+enemyData["piercing_fighter_bullet"] = {
   color: "#ff0000",
   density: 1,
   lin_damp: 3,
@@ -336,7 +336,7 @@ imp_params.impulse_enemy_stats["piercing_fighter_bullet"] = {
 }
 
 
-imp_params.impulse_enemy_stats["disabler"] = {
+enemyData["disabler"] = {
   color: "#cccccc",
   //interior_color: "rgb(205, 201, 201)",
   density: 8,
@@ -375,7 +375,7 @@ imp_params.impulse_enemy_stats["disabler"] = {
   className: Disabler
 }
 
-imp_params.impulse_enemy_stats["troll"] = {
+enemyData["troll"] = {
   color: "#159d31",
   density: 1.3,
   lin_damp: 3,
@@ -431,7 +431,7 @@ imp_params.impulse_enemy_stats["troll"] = {
 }
 
 
-imp_params.impulse_enemy_stats["slingshot"] = {
+enemyData["slingshot"] = {
   color: "#a0522d",
   density: .2,
   lin_damp: 7,
@@ -470,7 +470,7 @@ imp_params.impulse_enemy_stats["slingshot"] = {
   snippet: "slingshots when impulsed",
 }
 
-imp_params.impulse_enemy_stats["orbiter"] = {
+enemyData["orbiter"] = {
   color: "red",
   density: .3,
   lin_damp: 15,
@@ -516,7 +516,7 @@ imp_params.impulse_enemy_stats["orbiter"] = {
   className: Orbiter
 }
 
-imp_params.impulse_enemy_stats["deathray"] = {
+enemyData["deathray"] = {
   color: "#dddddd",//"#169f95",
   interior_color: "black",
   density: 6,
@@ -563,7 +563,7 @@ imp_params.impulse_enemy_stats["deathray"] = {
 
 }
 
-imp_params.impulse_enemy_stats["first boss"] = {
+enemyData["first boss"] = {
   color: impulse_colors["boss 1"],
   density: 4.5,
   lin_damp: 8,
@@ -622,7 +622,7 @@ imp_params.impulse_enemy_stats["first boss"] = {
 
 }
 
-imp_params.impulse_enemy_stats["second boss"] = {
+enemyData["second boss"] = {
   color: impulse_colors["boss 2"],
   //color: "gray",//"rgb(244, 164, 96)",
   density: 4.5,
@@ -654,7 +654,7 @@ imp_params.impulse_enemy_stats["second boss"] = {
 
 }
 
-imp_params.impulse_enemy_stats["third boss"] = {
+enemyData["third boss"] = {
   color: "#C000FF",//"rgb(244, 164, 96)",
   density: 2,
   lin_damp: 8,
@@ -701,7 +701,7 @@ imp_params.impulse_enemy_stats["third boss"] = {
 
 };
 
-imp_params.impulse_enemy_stats["fourth boss"] = {
+enemyData["fourth boss"] = {
   color: "#ff0000",
   density: 3,
   lin_damp: 10,
@@ -741,7 +741,7 @@ imp_params.impulse_enemy_stats["fourth boss"] = {
 
 }
 
-imp_params.impulse_enemy_stats["boss four attacker"] = {
+enemyData["boss four attacker"] = {
   color: "white",
   density: 1.5,
   lin_damp: 1,
@@ -760,7 +760,7 @@ imp_params.impulse_enemy_stats["boss four attacker"] = {
   className: BossFourAttacker
 }
 
-imp_params.impulse_enemy_stats["boss four spawner"] = {
+enemyData["boss four spawner"] = {
   color: "rgb(0, 255, 0)",
   density: 4,
   lin_damp: 12,
@@ -778,28 +778,10 @@ imp_params.impulse_enemy_stats["boss four spawner"] = {
   className: BossFourSpawner
 }
 
-var impulse_enemy_kills_star_cutoffs = {
-  "stunner": 500,
-  "spear": 250,
-  "tank": 150,
-  "mote": 150,
-  "goo": 50,
-  "harpoon": 50,
-  "disabler": 50,
-  "fighter": 50,
-  "slingshot": 50,
-  "troll": 50,
-  "deathray": 25,
-  "orbiter": 50
-}
-
-function set_up_enemy_images() {
-  for(var i in imp_params.impulse_enemy_stats) {
-    if(imp_params.impulse_enemy_stats[i].batch_enemy_image) {
-      var temp_enemy = new (imp_params.impulse_enemy_stats[i].className)(null, 0, 0, 0, null)
-      imp_params.impulse_enemy_stats[i].images = temp_enemy.generate_images();
-    }
+for(var i in enemyData) {
+  if(enemyData[i].batch_enemy_image) {
+    var temp_enemy = new (enemyData[i].className)(null, 0, 0, 0, null)
+    enemyData[i].images = temp_enemy.generate_images();
   }
 }
-
 

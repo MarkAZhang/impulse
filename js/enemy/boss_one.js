@@ -73,7 +73,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
 
   this.red_visibility = 0
 
-  this.body.SetLinearDamping(imp_params.impulse_enemy_stats[this.type].lin_damp * 100)
+  this.body.SetLinearDamping(enemyData[this.type].lin_damp * 100)
 
   this.boss_force = 30
 
@@ -124,7 +124,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
     right: this.action_interval
   }
 
-  this.data = imp_params.impulse_enemy_stats[this.type]
+  this.data = enemyData[this.type]
 
   this.state = "turret"
   this.state_switch_interval = 10000
@@ -211,9 +211,9 @@ function BossOne(world, x, y, id, impulse_game_state) {
 //
 BossOne.prototype.add_arms = function() {
 
-  var upper_arm_r = imp_params.impulse_enemy_stats[this.type].upper_arm_polygon[0].r;
-  var lower_arm_r = imp_params.impulse_enemy_stats[this.type].lower_arm_polygon[0].r
-  var hand_r = imp_params.impulse_enemy_stats[this.type].hand_polygon[0].r;
+  var upper_arm_r = enemyData[this.type].upper_arm_polygon[0].r;
+  var lower_arm_r = enemyData[this.type].lower_arm_polygon[0].r
+  var hand_r = enemyData[this.type].hand_polygon[0].r;
   var body_r = this.effective_radius;
   var body_x = this.body.GetPosition().x
   var body_y = this.body.GetPosition().y
@@ -488,13 +488,13 @@ BossOne.prototype.set_timer = function(side, time) {
 }
 
 BossOne.prototype.create_lower_arm_piece = function(x, y) {
-  return create_body(this.world, imp_params.impulse_enemy_stats[this.type].lower_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return create_body(this.world, enemyData[this.type].lower_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_upper_arm_piece = function(x, y) {
-  return create_body(this.world, imp_params.impulse_enemy_stats[this.type].upper_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return create_body(this.world, enemyData[this.type].upper_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_hand = function(x, y) {
-  return create_body(this.world, imp_params.impulse_enemy_stats[this.type].hand_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return create_body(this.world, enemyData[this.type].hand_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
 

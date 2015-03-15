@@ -28,7 +28,7 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
       }
     }
     context.closePath()
-    var interior_color = imp_params.impulse_enemy_stats[type].interior_color
+    var interior_color = enemyData[type].interior_color
 
     context.fillStyle = cur_color
 
@@ -56,7 +56,7 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
     context.stroke()
 
   }
-  var erase_lines =  imp_params.impulse_enemy_stats[type].erase_lines
+  var erase_lines =  enemyData[type].erase_lines
 
   if(erase_lines) {
     context.beginPath()
@@ -70,8 +70,8 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
     context.stroke()
   }
 
-  var extra_lines =  imp_params.impulse_enemy_stats[type].extra_rendering_lines
-  var r =  imp_params.impulse_enemy_stats[type].effective_radius
+  var extra_lines =  enemyData[type].extra_rendering_lines
+  var r =  enemyData[type].effective_radius
 
   if(!(typeof extra_lines === "undefined")) {
       for(var m = 0; m < extra_lines.length; m++) {
@@ -102,12 +102,12 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   }
   if(status === undefined) status = "normal"
   var max_radius = 1.5
-  var size = imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_params.draw_factor * Enemy.prototype.enemy_canvas_factor
+  var size = enemyData[enemy_name].effective_radius * imp_params.draw_factor * Enemy.prototype.enemy_canvas_factor
   if(d == null) {
     var draw_scale = size
   } else {
-    //var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
-    var draw_scale = d * Math.min(imp_params.impulse_enemy_stats[enemy_name].effective_radius/max_radius, 1)
+    //var draw_scale = Math.min(1/enemyData[enemy_name].effective_radius, 1) * d/2
+    var draw_scale = d * Math.min(enemyData[enemy_name].effective_radius/max_radius, 1)
   }
 
   draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
@@ -117,46 +117,46 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
 
 function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color) {
   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
-     //draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
+     //draw_scale = 2/enemyData[enemy_name].effective_radius * d/2
   }
 
   if (enemy_color === undefined) {
-    var enemy_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
+    var enemy_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
     if(!enemy_color) {
-      enemy_color = imp_params.impulse_enemy_stats[enemy_name].color
+      enemy_color = enemyData[enemy_name].color
     }
   }
 
   //context.translate(-draw_scale, -draw_scale)
-  var draw_polygons = imp_params.impulse_enemy_stats[enemy_name].draw_polygons
+  var draw_polygons = enemyData[enemy_name].draw_polygons
 
   if(!draw_polygons) {
-    draw_polygons = imp_params.impulse_enemy_stats[enemy_name].shape_polygons
+    draw_polygons = enemyData[enemy_name].shape_polygons
   }
 
-  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * imp_params.impulse_enemy_stats[enemy_name].effective_radius * imp_params.draw_factor)
+  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * enemyData[enemy_name].effective_radius * imp_params.draw_factor)
   draw_enemy_image(context, status, draw_polygons, enemy_name, enemy_color, scale)
 
   //context.translate(draw_scale, draw_scale)
-  //context.drawImage(imp_params.impulse_enemy_stats[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
+  //context.drawImage(enemyData[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
 
-   /*for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
-      var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
-      if(imp_params.impulse_enemy_stats[enemy_name].interior_color) {
-        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color, 1, 0, imp_params.impulse_enemy_stats[enemy_name].interior_color)
+   /*for(var m = 0; m < enemyData[enemy_name].shape_polygons.length; m++) {
+      var this_shape = enemyData[enemy_name].shape_polygons[m]
+      if(enemyData[enemy_name].interior_color) {
+        draw_shape(context, x, y, this_shape, draw_scale, enemyData[enemy_name].color, 1, 0, enemyData[enemy_name].interior_color)
       } else {
-        draw_shape(context, x, y, this_shape, draw_scale, imp_params.impulse_enemy_stats[enemy_name].color)
+        draw_shape(context, x, y, this_shape, draw_scale, enemyData[enemy_name].color)
       }
 
     }*/
 
-    var this_color = (imp_params.impulse_enemy_stats[enemy_name].className).prototype.get_color_for_status(status)
+    var this_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
     if(!this_color) {
-      this_color = imp_params.impulse_enemy_stats[enemy_name].color
+      this_color = enemyData[enemy_name].color
     }
-    if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
-      for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
-        var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
+    if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
+      for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
+        var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
         if(!this_shape.colored) {
           draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")
         } else {
@@ -175,23 +175,23 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
     context.translate(-x, -y);
   }
 
-  var draw_scale = Math.min(1/imp_params.impulse_enemy_stats[enemy_name].effective_radius, 1) * d/2
+  var draw_scale = Math.min(1/enemyData[enemy_name].effective_radius, 1) * d/2
    if(enemy_name.slice(enemy_name.length - 4) == "boss") {
-      draw_scale = 2/imp_params.impulse_enemy_stats[enemy_name].effective_radius * d/2
+      draw_scale = 2/enemyData[enemy_name].effective_radius * d/2
    }
-   for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].shape_polygons.length; m++) {
-      var this_shape = imp_params.impulse_enemy_stats[enemy_name].shape_polygons[m]
+   for(var m = 0; m < enemyData[enemy_name].shape_polygons.length; m++) {
+      var this_shape = enemyData[enemy_name].shape_polygons[m]
       draw_shape(context, x, y, this_shape, draw_scale, color)
 
     }
-    if(!(typeof imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons === "undefined")) {
-      for(var m = 0; m < imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons.length; m++) {
-        var this_shape = imp_params.impulse_enemy_stats[enemy_name].extra_rendering_polygons[m]
+    if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
+      for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
+        var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
         draw_shape(context, x, y, this_shape, draw_scale, color)
       }
     }
 
-    var extra_lines =  imp_params.impulse_enemy_stats[enemy_name].extra_rendering_lines
+    var extra_lines =  enemyData[enemy_name].extra_rendering_lines
     if(!(typeof extra_lines === "undefined")) {
       for(var m = 0; m < extra_lines.length; m++) {
         context.beginPath()
@@ -214,7 +214,7 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
     context.rotate(rotate);
   }
 
-  var size = imp_params.impulse_enemy_stats[enemy_name].images["normal"].height
+  var size = enemyData[enemy_name].images["normal"].height
 
   draw_enemy_helper(context, enemy_name, size * factor/2, "normal")
   context.restore()
