@@ -258,10 +258,6 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.fillStyle = this.bright_color;
   ctx.fillText("MENU", this.x, this.y - this.h/2 + 100)
 
-  //draw_level_obstacles_within_rect(ctx, this.level_name, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
-
-  //draw_agents_within_rect(ctx, this.game_state.player, this.game_state.level, this.x, this.y - this.h/2 + 150, 150, 112, this.level.lite_color)
-
   ctx.font = '16px Muli';
   if(this.num_enemy_type > 0) {
     ctx.fillText("DETAILED ENEMY INFO", this.x, this.y - this.h/2 + 165)
