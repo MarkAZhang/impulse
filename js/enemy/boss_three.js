@@ -33,17 +33,17 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.boss_force = 200
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.boss_force = 120
   }
   this.num_arms = 16
   this.striking_arms = {}
   this.strike_duration = 2200 // this is how long the strike lasts, with the first part of it being the "charge"
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.strike_duration = 2800
   }
   this.strike_interval = 1500 // every interval, we add a new strike
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.strike_interval = 2000
   }
   this.strike_timer = this.strike_interval
@@ -53,7 +53,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
   this.spin_rate = 16*this.strike_duration * (1 - this.strike_charging_prop)
 
   this.wheel_spinning_duration = 4000
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.wheel_spinning_duration = 6000 // spin one more round on easy-mode
   }
   this.wheel_spinning_timer = this.wheel_spinning_duration
@@ -127,7 +127,7 @@ function BossThree(world, x, y, id, impulse_game_state) {
    "troll" : 10,
  }
 
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
       this.spawn_count = {
        "stunner" : 6,
        "spear" : 5,
@@ -233,7 +233,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
         this.body.SetAngle(this.body.GetAngle() - 2*Math.PI * dt/this.spin_rate)
     }
 
-  if(imp_params.player_data.difficulty_mode == "normal") {
+  if(saveData.difficultyMode == "normal") {
     if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
       this.silence_timer = 0;
       this.silenced = true
@@ -1016,7 +1016,7 @@ BossThree.prototype.collide_with = function(other, body) {
   } else {
     var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
     var factor = 1
-    if(other === this.player && imp_params.player_data.difficulty_mode == "easy") {
+    if(other === this.player && saveData.difficultyMode == "easy") {
       factor = 0.5
     }
     other.body.ApplyImpulse(new b2Vec2(this.boss_force * factor * Math.cos(boss_angle), this.boss_force * factor * Math.sin(boss_angle)), other.body.GetWorldCenter())
@@ -1039,7 +1039,7 @@ BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_forc
 }
 
 BossThree.prototype.get_impulse_extra_factor = function() {
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     return this.impulse_extra_factor * 1.5;
   }
   return this.impulse_extra_factor;

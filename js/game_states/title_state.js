@@ -133,10 +133,10 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2-30, 200, 100, button_color, "blue",
     function(){
       var i = 1;
-      while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+      while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
         i += 1
       }
-      if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
+      if(saveData.savedGame.game_numbers) {
         game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
       } else {
         game_engine.switch_game_state(new WorldMapState(i))
@@ -145,7 +145,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+20, 200, 50, button_color, "blue",
       function(){
         var i = 1;
-        while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
           i += 1
         }
         game_engine.switch_game_state(new WorldMapState(i, true));
@@ -157,13 +157,13 @@ TitleState.prototype.setup_main_menu = function() {
   } else {
     var button_y = imp_params.levelHeight/2 + 50
     var _this = this;
-    this.buttons["menu"].push(new IconButton("START GAME", 20, imp_params.player_data.first_time ? imp_params.levelWidth/2 : imp_params.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("START GAME", 20, saveData.firstTime ? imp_params.levelWidth/2 : imp_params.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
 
       //_this.fade_out_duration = _this.fade_interval;
 
-      if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] &&
-         imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
+      if(saveData.savedGame &&
+         saveData.savedGame.game_numbers) {
         //setTimeout(function(){
           _this.fader.set_animation("fade_out", function() {
             game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
@@ -171,13 +171,13 @@ TitleState.prototype.setup_main_menu = function() {
         //}, _this.fade_interval)
       } else {
         var i = 1;
-        while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
           i += 1
         }
 
-        if (_this.fader.animation == null && imp_params.player_data.difficulty_mode == "normal" && !imp_params.player_data.first_time) {
+        if (_this.fader.animation == null && saveData.difficultyMode == "normal" && !saveData.firstTime) {
           switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
-        } else if (imp_params.player_data.first_time) {
+        } else if (saveData.firstTime) {
           switch_bg(impulse_colors["world 0 dark"], 150, 1)
         }
         _this.fader.set_animation("fade_out", function() {
@@ -186,23 +186,23 @@ TitleState.prototype.setup_main_menu = function() {
       }
     }, "player"));
 
-    if (!imp_params.player_data.first_time) {
+    if (!saveData.firstTime) {
       this.buttons["menu"].push(new IconButton("PRACTICE", 20, imp_params.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
       function(){
         //_this.fade_out_duration = _this.fade_interval;
         var i = 1;
-        while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
           i += 1
         }
 
-        if (_this.fader.animation == null && imp_params.player_data.difficulty_mode == "normal") {
+        if (_this.fader.animation == null && saveData.difficultyMode == "normal") {
           switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
         }
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(new WorldMapState(i, true))
         });
 
-        /*if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
+        /*if(saveData.savedGame.game_numbers) {
           _this.fader.set_animation("fade_out", function() {
             game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true))
           });
@@ -213,7 +213,7 @@ TitleState.prototype.setup_main_menu = function() {
             });
           } else {
           var i = 1;
-            while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+            while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
               i += 1
             }
             _this.fader.set_animation("fade_out", function() {
@@ -265,7 +265,7 @@ TitleState.prototype.setup_main_menu = function() {
   this.buttons["options"].push(this.clear_data_button)
   this.buttons["options"].push(new SmallButton("BACK", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
 
-  /*if (imp_params.player_data.difficulty_mode == "easy") {
+  /*if (saveData.difficultyMode == "easy") {
     var difficulty_change_button = new IconButton("NORMAL MODE", 16, imp_params.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
     }, "normal_mode")
@@ -289,13 +289,13 @@ TitleState.prototype.setup_main_menu = function() {
 }
 
 TitleState.prototype.change_mode = function(type) {
-  imp_params.player_data.difficulty_mode = type;
+  saveData.difficultyMode = type;
 
-  save_data.save_game();
+  saveData.saveGame();
   this.set_difficulty_button_underline();
 }
 
 TitleState.prototype.set_difficulty_button_underline = function() {
-  this.easy_mode_button.underline = (imp_params.player_data.difficulty_mode == "easy");
-  this.normal_mode_button.underline = (imp_params.player_data.difficulty_mode == "normal");
+  this.easy_mode_button.underline = (saveData.difficultyMode == "easy");
+  this.normal_mode_button.underline = (saveData.difficultyMode == "normal");
 }

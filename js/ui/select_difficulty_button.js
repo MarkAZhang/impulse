@@ -19,14 +19,14 @@ function SelectDifficultyButton(size, x, y, w, h, color, hcolor, world_map_state
 }
 
 SelectDifficultyButton.prototype.on_adjust_difficulty = function() {
-  imp_params.player_data.difficulty_mode = imp_params.player_data.difficulty_mode == "easy" ? "normal" : "easy";
-  save_data.save_game();
-  this.world_map_state.update_on_difficulty_change(imp_params.player_data.difficulty_mode);
+  saveData.difficultyMode = saveData.difficultyMode == "easy" ? "normal" : "easy";
+  saveData.saveGame();
+  this.world_map_state.update_on_difficulty_change(saveData.difficultyMode);
   this.recalculate_state();
 }
 
 SelectDifficultyButton.prototype.recalculate_state = function() {
-  this.checkbox.checked = imp_params.player_data.difficulty_mode == "normal";
+  this.checkbox.checked = saveData.difficultyMode == "normal";
 }
 
 SelectDifficultyButton.prototype.additional_draw = function(ctx) {

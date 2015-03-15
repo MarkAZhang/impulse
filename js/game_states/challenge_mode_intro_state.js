@@ -16,10 +16,10 @@ function ChallengeModeIntroState() {
   }}(this), "back"));
   this.buttons.push(new IconButton("CONTINUE", 16, imp_params.levelWidth - 70, imp_params.levelHeight/2+260, 60, 65,  "white", impulse_colors["impulse_blue"], function(_this){return function(){
     var i = 1;
-    while(i < 4 && imp_params.player_data.world_rankings[imp_params.player_data.difficulty_mode]["world "+i]) {
+    while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
       i += 1
     }
-    if(imp_params.player_data.save_data[imp_params.player_data.difficulty_mode].game_numbers) {
+    if(saveData.savedGame.game_numbers) {
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(new MainGameSummaryState(null, null, null, null, null, true));
       });

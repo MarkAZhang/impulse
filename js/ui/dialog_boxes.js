@@ -127,7 +127,7 @@ PauseMenu.prototype.add_buttons = function() {
       this.buttons.push(this.restart_button)
       this.restart_button.keyCode = imp_params.keys.RESTART_KEY;
 
-      if(imp_params.player_data.options.control_hand == "right") {
+      if(saveData.optionsData.control_hand == "right") {
         this.restart_button.extra_text = "R KEY"
       } else {
         this.restart_button.extra_text = "SHIFT KEY"
@@ -159,7 +159,7 @@ PauseMenu.prototype.add_buttons = function() {
     this.buttons.push(this.options_button)
 
   } else {
-    this.quit_button = new IconButton(this.world_num == 0 && imp_params.player_data.first_time ? "SKIP TUTORIAL" : "QUIT",
+    this.quit_button = new IconButton(this.world_num == 0 && saveData.firstTime ? "SKIP TUTORIAL" : "QUIT",
         16, this.x + 100, this.y - this.h/2 + second_row_y, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
       _this.quit_tutorial()
     }}(this), "quit")
@@ -183,7 +183,7 @@ PauseMenu.prototype.add_buttons = function() {
   this.resume_button.keyCode = imp_params.keys.PAUSE;
   this.resume_button.sKeyCode = imp_params.keys.SECONDARY_PAUSE;
 
-  if(imp_params.player_data.options.control_hand == "right") {
+  if(saveData.optionsData.control_hand == "right") {
     this.resume_button.extra_text = "Q KEY"
   } else {
     this.resume_button.extra_text = "ENTER KEY"
@@ -267,7 +267,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     //var score_color = 0
 
     /*if(!this.is_boss_level) {
-      while(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_params.player_data.difficulty_mode][score_color]) {
+      while(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][score_color]) {
         score_color+=1
       }
     }*/
@@ -275,7 +275,7 @@ PauseMenu.prototype.additional_draw = function(ctx) {
     /*ctx.font = '20px Muli';
     ctx.fillStyle = score_color > 0 ? impulse_colors[temp_colors[score_color - 1]] : "gray"
     ctx.shadowColor = ctx.fillStyle
-    ctx.fillText("HIGH SCORE "+imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].high_score, this.x, this.y - this.h/2 + 250)*/
+    ctx.fillText("HIGH SCORE "+imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score, this.x, this.y - this.h/2 + 250)*/
 
   ctx.shadowBlur = 0
 
@@ -318,7 +318,7 @@ PauseMenu.prototype.restart_practice = function() {
 }
 
 PauseMenu.prototype.quit_main_game = function() {
-  save_player_game({});
+  saveData.clearSavedPlayerGame();
   game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
   game_engine.clear_dialog_box()
 }
@@ -330,7 +330,7 @@ PauseMenu.prototype.quit_tutorial = function() {
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       is_tutorial: true,
-      first_time_tutorial: imp_params.player_data.first_time,
+      first_time_tutorial: saveData.firstTime,
       victory: true,
       skipped: true
     }))
@@ -338,7 +338,7 @@ PauseMenu.prototype.quit_tutorial = function() {
 }
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
-  save_player_game(this.game_state.hive_numbers);
+  saveData.savePlayerGame(this.game_state.hive_numbers);
   game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
   game_engine.clear_dialog_box()
 }
@@ -421,14 +421,14 @@ function OptionsMenu(previous_menu) {
 
   this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, "white", function(value) {
     imp_params.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100), true) // sqrt it to get a better curve
-  }, Math.pow(imp_params.player_data.options.bg_music_volume / 100, 0.5));
+  }, Math.pow(saveData.optionsData.bg_music_volume / 100, 0.5));
   this.music_button.special_mode = imp_params.impulse_music.mute
   this.music_button.add_hover_overlay(new MessageBox("option_game_music", "white", this.world_num))
   this.buttons.push(this.music_button)
 
   this.effects_button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, "white", function(value) {
     imp_params.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
-  }, Math.pow(imp_params.player_data.options.effects_volume / 100, 0.333));
+  }, Math.pow(saveData.optionsData.effects_volume / 100, 0.333));
   this.effects_button.special_mode = imp_params.impulse_music.mute
   this.effects_button.add_hover_overlay(new MessageBox("option_sound_effects", "white", this.world_num))
   this.buttons.push(this.effects_button)
@@ -443,47 +443,47 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(this.fullscreen_button)
 
   button = new CheckboxOptionButton("PARTICLE EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 90, button_width, 30, this.bright_color, "white", function(on) {
-    imp_params.player_data.options.explosions = !imp_params.player_data.options.explosions
-    save_data.save_game();
+    saveData.optionsData.explosions = !saveData.optionsData.explosions
+    saveData.saveGame();
   }, function() {
-    return imp_params.player_data.options.explosions;
+    return saveData.optionsData.explosions;
   });
   button.add_hover_overlay(new MessageBox("option_particle_effects", "white", this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("SCORE LABELS", this.x, this.y - this.h/2 + this.options_y_line_up + 120, button_width, 30, this.bright_color, "white", function(on) {
-    imp_params.player_data.options.score_labels = !imp_params.player_data.options.score_labels
-    save_data.save_game();
+    saveData.optionsData.score_labels = !saveData.optionsData.score_labels
+    saveData.saveGame();
   }, function() {
-    return imp_params.player_data.options.score_labels;
+    return saveData.optionsData.score_labels;
   });
   button.add_hover_overlay(new MessageBox("option_score_labels", "white", this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("MULTIPLIER DISPLAY", this.x, this.y - this.h/2 + this.options_y_line_up + 150, button_width, 30, this.bright_color, "white", function(on) {
-    imp_params.player_data.options.multiplier_display = !imp_params.player_data.options.multiplier_display
-    save_data.save_game();
+    saveData.optionsData.multiplier_display = !saveData.optionsData.multiplier_display
+    saveData.saveGame();
   }, function() {
-    return imp_params.player_data.options.multiplier_display;
+    return saveData.optionsData.multiplier_display;
   });
   button.add_hover_overlay(new MessageBox("option_multiplier_display", "white", this.world_num))
   this.buttons.push(button)
 
   button = new CheckboxOptionButton("IMPULSE SHADOW", this.x, this.y - this.h/2 + this.options_y_line_up + 180, button_width, 30, this.bright_color, "white", function(on) {
-    imp_params.player_data.options.impulse_shadow = !imp_params.player_data.options.impulse_shadow
-    save_data.save_game();
+    saveData.optionsData.impulse_shadow = !saveData.optionsData.impulse_shadow
+    saveData.saveGame();
   }, function() {
-    return imp_params.player_data.options.impulse_shadow;
+    return saveData.optionsData.impulse_shadow;
   });
   button.add_hover_overlay(new MessageBox("option_impulse_shadow", "white", this.world_num))
   this.buttons.push(button)
   var me = this;
-  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && imp_params.player_data.difficulty_mode == "normal") {
+  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && saveData.difficultyMode == "normal") {
     button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
-      imp_params.player_data.options.speed_run_countdown = !imp_params.player_data.options.speed_run_countdown;
-      save_data.save_game();
+      saveData.optionsData.speed_run_countdown = !saveData.optionsData.speed_run_countdown;
+      saveData.saveGame();
     }, function() {
-      return imp_params.player_data.options.speed_run_countdown;
+      return saveData.optionsData.speed_run_countdown;
     });
     button.add_hover_overlay(new MessageBox("option_speed_run", "white", this.world_num))
     this.buttons.push(button)
@@ -608,8 +608,8 @@ function ControlsMenu(previous_menu) {
     hover_color = impulse_colors["impulse_blue"];
   }
 
-  this.current_hand = imp_params.player_data.options.control_hand
-  this.current_scheme = imp_params.player_data.options.control_scheme
+  this.current_hand = saveData.optionsData.control_hand
+  this.current_scheme = saveData.optionsData.control_scheme
   var _this = this;
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
@@ -622,23 +622,23 @@ function ControlsMenu(previous_menu) {
   this.control_buttons = {}
 
   this.control_buttons["left mouse"] = new IconButton("LEFT-HAND MOUSE", 16, this.x - 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
-    imp_params.player_data.options.control_hand = "left"
-    imp_params.player_data.options.control_scheme = "mouse"
-    save_data.save_game()
+    saveData.optionsData.control_hand = "left"
+    saveData.optionsData.control_scheme = "mouse"
+    saveData.saveGame()
     set_key_bindings()
   }}(this), "left_mouse")
 
   this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
-    imp_params.player_data.options.control_hand = "right"
-    imp_params.player_data.options.control_scheme = "keyboard"
-    save_data.save_game()
+    saveData.optionsData.control_hand = "right"
+    saveData.optionsData.control_scheme = "keyboard"
+    saveData.saveGame()
     set_key_bindings()
   }}(this), "keyboard")
 
   this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
-    imp_params.player_data.options.control_hand = "right"
-    imp_params.player_data.options.control_scheme = "mouse"
-    save_data.save_game()
+    saveData.optionsData.control_hand = "right"
+    saveData.optionsData.control_scheme = "mouse"
+    saveData.saveGame()
     set_key_bindings()
   }}(this), "right_mouse")
 
@@ -646,9 +646,9 @@ function ControlsMenu(previous_menu) {
   this.buttons.push(this.control_buttons["right mouse"])
   this.buttons.push(this.control_buttons["right keyboard"])
   /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
-    imp_params.player_data.options.control_hand = "right"
-    imp_params.player_data.options.control_scheme = "keyboard"
-    save_data.save_game()
+    saveData.optionsData.control_hand = "right"
+    saveData.optionsData.control_scheme = "keyboard"
+    saveData.saveGame()
     _this.adjust_underlines()
   }}(this)))*/
 
@@ -693,9 +693,9 @@ ControlsMenu.prototype.adjust_colors = function() {
   if (this.current_hover) {
     this.control_buttons[this.current_hover].color = this.bright_color
   } else {
-    this.control_buttons[imp_params.player_data.options.control_hand +" "+imp_params.player_data.options.control_scheme].color = this.bright_color
+    this.control_buttons[saveData.optionsData.control_hand +" "+saveData.optionsData.control_scheme].color = this.bright_color
   }
-  this.control_buttons[imp_params.player_data.options.control_hand +" "+imp_params.player_data.options.control_scheme].border = true
+  this.control_buttons[saveData.optionsData.control_hand +" "+saveData.optionsData.control_scheme].border = true
 }
 
 ControlsMenu.prototype.additional_draw = function(ctx) {
@@ -718,13 +718,13 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   var currentControls = this.current_hover;
 
   if (currentControls == null) {
-    if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "mouse") {
+    if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "mouse") {
       currentControls = "right mouse"
     }
-    if(imp_params.player_data.options.control_hand == "left" && imp_params.player_data.options.control_scheme == "mouse") {
+    if(saveData.optionsData.control_hand == "left" && saveData.optionsData.control_scheme == "mouse") {
       currentControls = "left mouse"
     }
-    if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "keyboard") {
+    if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "keyboard") {
       currentControls = "right keyboard"
     }
   }
@@ -1090,13 +1090,13 @@ DeleteDataDialog.prototype.on_click = function(x, y) {
 
 DeleteDataDialog.prototype.clear_data = function() {
   localStorage.removeItem(imp_params.save_name);
-  var old_player_options = imp_params.player_data.options;
-  var old_tutorial_shown = imp_params.player_data.tutorial_shown;
-  save_data.load_game();
-  imp_params.player_data.options = old_player_options
-  imp_params.player_data.tutorial_shown = old_tutorial_shown;
-  imp_params.player_data.first_time = false
-  save_data.save_game();
+  var old_player_options = saveData.optionsData;
+  var old_tutorial_shown = saveData.tutorialsShown;
+  saveData.loadGame();
+  saveData.optionsData = old_player_options
+  saveData.tutorialsShown = old_tutorial_shown;
+  saveData.firstTime = false
+  saveData.saveGame();
 }
 
 NewEnemyDialog.prototype = new DialogBox()

@@ -91,7 +91,7 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
 
   var enemy_num = this.enemies_to_spawn[enemy_type]
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     enemy_num = this.enemies_to_spawn_easy[enemy_type]
   }
   var j = 0;

@@ -614,7 +614,7 @@ LevelEditorState.prototype.load = function(string) {
 
 LevelEditorState.prototype.load_level = function(string, mode) {
   var polygon_ans = null
-  var difficulty_mode = mode ? mode : imp_params.player_data.difficulty_mode
+  var difficulty_mode = mode ? mode : saveData.difficultyMode
 
   if (difficulty_mode == "easy") {
     polygon_ans = imp_params.impulse_level_data[string].obstacle_v_easy
@@ -635,7 +635,7 @@ LevelEditorState.prototype.load_level = function(string, mode) {
 
 LevelEditorState.prototype.add_level = function(string) {
   var polygon_ans = null
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     polygon_ans = imp_params.impulse_level_data[string].obstacle_v_easy
   }
   if (!polygon_ans) {

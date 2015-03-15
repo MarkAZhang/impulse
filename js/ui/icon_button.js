@@ -197,7 +197,7 @@ IconButton.prototype.draw_icon  = function(context) {
       draw_quit_icon(context, this.x, this.y - this.h/6, 36, this.color)
     }
   } else if (this.icon == "mute_in_game") {
-    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, imp_params.player_data.options.bg_music_mute)
+    draw_music_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true, saveData.optionsData.bg_music_mute)
   } else if (this.icon == "pause_in_game") {
     draw_pause_icon(context, this.x, this.y, 15, this.hover ? this.hover_color : this.color, true)
   } else if (this.icon == "fullscreen_in_game") {
@@ -232,16 +232,16 @@ IconButton.prototype.draw_icon  = function(context) {
     context.fill();
   } else if(this.icon == "controls") {
     context.shadowBlur = 0
-    if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "mouse") {
+    if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "mouse") {
 
       draw_arrow_keys(context, this.x - this.w * 0.15, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
       draw_bare_mouse(context, this.x + this.w * 0.2, this.y - this.h * 0.1, this.w * 0.15, this.h * 0.4, this.hover ? this.hover_color : this.color)
     }
-    if(imp_params.player_data.options.control_hand == "left" && imp_params.player_data.options.control_scheme == "mouse") {
+    if(saveData.optionsData.control_hand == "left" && saveData.optionsData.control_scheme == "mouse") {
       draw_bare_mouse(context, this.x - this.w * 0.2, this.y - this.h * 0.1, this.w * 0.15, this.h * 0.4, this.hover ? this.hover_color : this.color)
       draw_arrow_keys(context, this.x + this.w * 0.15, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }
-    if(imp_params.player_data.options.control_hand == "right" && imp_params.player_data.options.control_scheme == "keyboard") {
+    if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "keyboard") {
       draw_arrow_keys(context, this.x - this.w * 0.2, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
       draw_arrow_keys(context, this.x + this.w * 0.2, this.y, this.h * 0.2, this.hover ? this.hover_color : this.color)
     }

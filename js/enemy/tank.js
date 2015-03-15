@@ -13,10 +13,10 @@ function Tank(world, x, y, id, impulse_game_state) {
 
   this.tank_force = 100 //force that the spear impulses the player
 
-  if(imp_params.player_data.difficulty_mode == "easy")
+  if(saveData.difficultyMode == "easy")
     this.tank_force = 80
 
-  if (imp_params.player_data.difficulty_mode == "normal") {}
+  if (saveData.difficultyMode == "normal") {}
 
   this.death_radius = 5
 
@@ -25,7 +25,7 @@ function Tank(world, x, y, id, impulse_game_state) {
   this.death_delay = 200
   this.bomb_factor = 6
 
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.bomb_factor = 5
   }
 
@@ -121,7 +121,7 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) 
   if (this.is_gooed()) {
     this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
   } else {
-    if (imp_params.player_data.difficulty_mode == "easy") {
+    if (saveData.difficultyMode == "easy") {
       this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     } else {
       this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())

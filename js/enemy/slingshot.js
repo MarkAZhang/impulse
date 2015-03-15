@@ -9,7 +9,7 @@ function Slingshot(world, x, y, id, impulse_game_state) {
 
   this.special_mode = false
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.force *= 0.8
   }
 

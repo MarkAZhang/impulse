@@ -12,7 +12,7 @@ function WorldMapState(world, is_practice_mode) {
   this.world_num = world
   this.next_world = null;
 
-  this.cur_difficulty_mode = imp_params.player_data.difficulty_mode;
+  this.cur_difficulty_mode = saveData.difficultyMode;
   this.next_difficulty_mode = null;
   this.transition_to_world_num = null;
 
@@ -78,7 +78,7 @@ function WorldMapState(world, is_practice_mode) {
   this.gateway_particles_per_round = 8
 
   // If this is the first time, take the player to the tutorial.
-  if (imp_params.player_data.first_time) {
+  if (saveData.firstTime) {
     // If we don't set timeout, the click event will set world map state back to the game state.
     setTimeout(function() {
       game_engine.switch_game_state(new MainGameTransitionState(0, null, null, null, false))
@@ -95,9 +95,9 @@ WorldMapState.prototype.set_up_buttons = function() {
     this.world_unlocked[difficulty] = {
       0: true,
       1: true,
-      2: imp_params.player_data.world_rankings[difficulty]["world 1"] || imp_params.debug.dev || imp_params.debug.god_mode,
-      3: imp_params.player_data.world_rankings[difficulty]["world 2"] || imp_params.debug.dev || imp_params.debug.god_mode,
-      4: imp_params.player_data.world_rankings[difficulty]["world 3"] || imp_params.debug.dev || imp_params.debug.god_mode,
+      2: saveData.worldRankings[difficulty]["world 1"] || imp_params.debug.dev || imp_params.debug.god_mode,
+      3: saveData.worldRankings[difficulty]["world 2"] || imp_params.debug.dev || imp_params.debug.god_mode,
+      4: saveData.worldRankings[difficulty]["world 3"] || imp_params.debug.dev || imp_params.debug.god_mode,
     }
   }
 
@@ -259,7 +259,7 @@ WorldMapState.prototype.draw_world_bg = function(ctx) {
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
-  if (imp_params.player_data.first_time) {
+  if (saveData.firstTime) {
     return
   }
   if(this.fade_out_color) {
@@ -298,7 +298,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   // Only draw gateway particles if the current world is active.
-  if (!this.is_practice_mode && this.world_unlocked[imp_params.player_data.difficulty_mode][this.world_num] ) {
+  if (!this.is_practice_mode && this.world_unlocked[saveData.difficultyMode][this.world_num] ) {
     this.draw_gateway_particles(ctx, imp_params.draw_factor);
   }
 
@@ -343,7 +343,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
       ctx.fillStyle = "white"
       ctx.font = "20px Muli"
       ctx.fillText("PRACTICE MODE", imp_params.levelWidth/2, this.world_button_y - 170)
-    } else if (imp_params.player_data.difficulty_mode == "normal") {
+    } else if (saveData.difficultyMode == "normal") {
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
       ctx.fillText("HARD MODE", imp_params.levelWidth/2, this.world_button_y - 170)
@@ -387,7 +387,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
 };
 
 WorldMapState.prototype.process = function(dt) {
-  if (imp_params.player_data.first_time) {
+  if (saveData.firstTime) {
     return
   }
   if(this.fade_out_duration != null) {
@@ -405,7 +405,7 @@ WorldMapState.prototype.on_mouse_move = function(x, y) {
   {
     this.buttons[i].on_mouse_move(x, y)
   }
-  var difficulty = imp_params.player_data.difficulty_mode;
+  var difficulty = saveData.difficultyMode;
   if (!this.is_practice_mode) {
     this.world_buttons[difficulty][this.world_num].on_mouse_move(x, y)
   } else {
@@ -428,7 +428,7 @@ WorldMapState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  var difficulty = imp_params.player_data.difficulty_mode;
+  var difficulty = saveData.difficultyMode;
   if (!this.is_practice_mode) {
     this.world_buttons[difficulty][this.world_num].on_click(x, y)
   } else {

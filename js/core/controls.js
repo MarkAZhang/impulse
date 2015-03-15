@@ -1,5 +1,5 @@
 function set_key_bindings() {
-  var type = imp_params.player_data.options.control_hand +" "+imp_params.player_data.options.control_scheme
+  var type = saveData.optionsData.control_hand +" "+saveData.optionsData.control_scheme
   if(type == "left mouse") {
     imp_params.keys = {
       LEFT_KEY: 37,

@@ -19,7 +19,7 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.troll_switch_interval = 400
   this.trolling_time_factor = 4
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.troll_switch_interval = 600
     this.trolling_time_factor = 3
   }
@@ -39,14 +39,14 @@ function Troll(world, x, y, id, impulse_game_state) {
   this.bulk_draw_nums = 2
 
   this.short_troll_period = 1000
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.short_troll_period = 750
   }
 
   this.extra_adjust = true
 
   this.long_troll_period = 5000
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.long_troll_period = 2500
   }
 }

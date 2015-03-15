@@ -15,7 +15,6 @@ var imp_params = {
   cur_game_state: null,
   cur_dialog_box: null,
   save_name: "impulse_save_data",
-  player_data: {},
   impulse_music: null,
   minified: true,
   bg_opacity: 0.3,

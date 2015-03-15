@@ -196,9 +196,6 @@ GameEngine.prototype.on_click = function(mPos) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
       this.cur_game_state.on_click(mPos.x - imp_params.sidebarWidth, mPos.y)
     } else {
-      for(var i = 0; i < imp_params.game_buttons.length; i++) {
-        imp_params.game_buttons[i].on_click(mPos.x, mPos.y)
-      }
       this.cur_game_state.on_click(mPos.x, mPos.y)
     }
   }

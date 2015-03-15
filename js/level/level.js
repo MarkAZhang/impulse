@@ -18,7 +18,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.restarting_effects_duration = 500;
 
   // Retrieve enemy data. Use easy mode if necessary but default to normal.
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.enemies_data = data.enemies_easy
   }
   if (!this.enemies_data) {
@@ -27,7 +27,7 @@ Level.prototype.init = function(data, level_intro_state) {
     this.using_enemies_easy = true
   }
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.initial_spawn_data = data.initial_spawn_data_easy
   }
   if (!this.initial_spawn_data) {
@@ -42,7 +42,7 @@ Level.prototype.init = function(data, level_intro_state) {
     this.world_num = 0;
   }
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.multi_spawn_points = data.multi_spawn_points_easy
   }
   if (!this.multi_spawn_points) {
@@ -52,7 +52,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.pick_alt_path = data.pick_alt_path
 
   this.starting_loc = data.player_loc
-  if (imp_params.player_data.difficulty_mode == "easy" && data.player_loc_easy) {
+  if (saveData.difficultyMode == "easy" && data.player_loc_easy) {
     this.starting_loc = data.player_loc_easy
   }
   this.player_loc = this.get_starting_loc()
@@ -63,7 +63,7 @@ Level.prototype.init = function(data, level_intro_state) {
 
   this.obstacle_num = data.obstacle_num
 
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.obstacle_v = data.obstacle_v_easy
   }
   if (!this.obstacle_v) {
@@ -77,7 +77,7 @@ Level.prototype.init = function(data, level_intro_state) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
-    this.cutoff_scores = data.cutoff_scores[imp_params.player_data.difficulty_mode]
+    this.cutoff_scores = data.cutoff_scores[saveData.difficultyMode]
   }
   this.boss_victory = false
 
@@ -380,7 +380,7 @@ Level.prototype.initial_spawn = function() {
     for(var enemy in this.initial_spawn_data) {
 
       var num_enemies_to_spawn = this.initial_spawn_data[enemy]
-      if(!this.is_boss_level && imp_params.player_data.difficulty_mode == "easy" && !this.using_initial_spawn_data_easy) {
+      if(!this.is_boss_level && saveData.difficultyMode == "easy" && !this.using_initial_spawn_data_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
@@ -451,7 +451,7 @@ Level.prototype.check_enemy_spawn_timers = function(dt) {
 
     if(num_enemies_to_spawn > 0) {
 
-      if(imp_params.player_data.difficulty_mode == "easy" && !this.using_enemies_easy) {
+      if(saveData.difficultyMode == "easy" && !this.using_enemies_easy) {
         num_enemies_to_spawn = Math.max(1, 0.5 * num_enemies_to_spawn)
       }
 
@@ -486,7 +486,7 @@ Level.prototype.skip_enemy_spawn_timers = function() {
 //v = {x: 0, y: 0}
 Level.prototype.add_fragments = function(enemy_type, loc, v, shadowed) {
   if(enemy_type == "player" || enemy_type == "shadow" || enemy_type == "multi" || enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss"
-    || (this.total_fragments < this.max_fragments && imp_params.player_data.options.explosions)) {
+    || (this.total_fragments < this.max_fragments && saveData.optionsData.explosions)) {
       this.fragments.push(new FragmentGroup(enemy_type, loc, v, shadowed))
       this.total_fragments += 4;
   }

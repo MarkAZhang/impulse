@@ -22,7 +22,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_radius_big = 11;
 
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.goo_radius_big = 10;
   }
 
@@ -32,7 +32,7 @@ function Goo(world, x, y, id, impulse_game_state) {
 
   this.goo_expand_period = 2500
 
-  if(imp_params.player_data.difficulty_mode == "easy")
+  if(saveData.difficultyMode == "easy")
     this.goo_expand_period = 3500
 
   this.goo_state = "small"

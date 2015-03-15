@@ -46,7 +46,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
 
   this.frenzy_charge_interval = 2500
 
-  if(imp_params.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+  if(saveData.difficultyMode == "easy") // since the player is heavier in easy mode
     this.frenzy_charge_interval = 3500
 
   this.frenzy_charge_bars = 5;
@@ -59,7 +59,7 @@ function Fighter(world, x, y, id, impulse_game_state) {
   this.activated = false
 
   this.tank_force = 100 //force that the fighter impulses the player
-  if(imp_params.player_data.difficulty_mode == "easy")
+  if(saveData.difficultyMode == "easy")
     this.tank_force = 80
   this.cautious = false
 

@@ -350,3 +350,19 @@ function draw_progress_bar(context, x, y, w, h, prop, color, bcolor, noborder, a
     context.stroke()
   }
 }
+
+
+function draw_prog_circle(context, x, y, r, prog, color, width) {
+  context.beginPath()
+  context.arc(x*imp_params.draw_factor, y*imp_params.draw_factor, (r*imp_params.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
+  context.lineWidth = width ? width : 2
+  context.strokeStyle = color
+  context.stroke()
+}
+
+function bulk_draw_prog_circle(context, x, y, r, prog) {
+  context.moveTo(x*imp_params.draw_factor, y*imp_params.draw_factor - (r*imp_params.draw_factor) * 2)
+  context.arc(x*imp_params.draw_factor,
+              y*imp_params.draw_factor,
+              (r*imp_params.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
+}

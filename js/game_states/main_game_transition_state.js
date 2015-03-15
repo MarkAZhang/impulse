@@ -66,10 +66,10 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
 
   this.load_next_level(loading_saved_game);
 
-  this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode].seen
+  this.first_time = !imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode].seen
   if (this.first_time) {
-    imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode].seen = true
-    save_data.save_game()
+    imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode].seen = true
+    saveData.saveGame()
   }
 
   if(this.level.is_boss_level) {
@@ -260,7 +260,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
     ctx.font = '20px Muli'
-    if (imp_params.player_data.difficulty_mode == "normal") {
+    if (saveData.difficultyMode == "normal") {
       ctx.fillText("HARD MODE", imp_params.levelWidth/2, 180)
     }
     ctx.restore();
@@ -325,7 +325,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("HIGH SCORE", imp_params.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.last_level_name].save_state[imp_params.player_data.difficulty_mode].high_score,
+      ctx.fillText(imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].high_score,
        imp_params.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
@@ -341,9 +341,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (imp_params.impulse_level_data[this.last_level_name].save_state[imp_params.player_data.difficulty_mode].best_time < 1000) {
+      if (imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[imp_params.player_data.difficulty_mode].best_time),
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.last_level_name].save_state[saveData.difficultyMode].best_time),
           imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'

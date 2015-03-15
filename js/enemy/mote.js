@@ -21,7 +21,7 @@ function Mote(world, x, y, id, impulse_game_state) {
   this.adjust_position_factor = 1
 
   this.silence_duration = 3000
-  if(imp_params.player_data.difficulty_mode == "easy")
+  if(saveData.difficultyMode == "easy")
     this.silence_duration = 2000
 
 }

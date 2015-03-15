@@ -12,7 +12,7 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 ]
 
 TutorialOverlayManager.prototype.add_overlays = function() {
-	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && imp_params.player_data.difficulty_mode == "easy" &&
+	if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && saveData.difficultyMode == "easy" &&
     imp_params.impulse_level_data[this.impulse_game_state.level_name].save_state["easy"].best_time === 1000) {
 		this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));
 	}
@@ -39,7 +39,7 @@ TutorialOverlayManager.prototype.add_overlays = function() {
 		this.overlays.push(new ResetMultiplierTutorialOverlay(this.impulse_game_state));
 	} else {
 		for (var i = 0; i < this.on_demand_overlays.length; i++) {
-			if (imp_params.player_data.tutorial_shown.indexOf(this.on_demand_overlays[i].type) == -1) {
+			if (saveData.tutorialsShown.indexOf(this.on_demand_overlays[i].type) == -1) {
 				this.overlays.push(new this.on_demand_overlays[i].class(this.impulse_game_state));
 			}
 		}
@@ -532,9 +532,9 @@ ResetMultiplierTutorialOverlay.prototype.process = function(dt) {
 }
 
 ResetMultiplierTutorialOverlay.prototype.on_expire = function() {
-	if(imp_params.player_data.tutorial_shown.indexOf("reset_multiplier") == -1) {
-		imp_params.player_data.tutorial_shown.push("reset_multiplier");
-		save_data.save_game();
+	if(saveData.tutorialsShown.indexOf("reset_multiplier") == -1) {
+		saveData.tutorialsShown.push("reset_multiplier");
+		saveData.saveGame();
 	}
 }
 

@@ -35,7 +35,7 @@ function LevelIntroState(level_name, world) {
       }
       imp_params.bg_file = null
       // TODO: transition the bg.
-      if (imp_params.player_data.difficulty_mode == "normal") {
+      if (saveData.difficultyMode == "normal") {
         set_bg("Title Alt" + _this.world_num, get_world_map_bg_opacity(_this.world_num))
       } else {
         set_bg("Hive 0", imp_params.hive0_bg_opacity)
@@ -152,7 +152,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = "white"
     ctx.font = '18px Muli'
-    if (imp_params.player_data.difficulty_mode == "normal") {
+    if (saveData.difficultyMode == "normal") {
       ctx.fillText("HARD MODE", imp_params.levelWidth/2, 100)
     }
 
@@ -196,7 +196,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
           ctx.fillStyle = impulse_colors[temp_colors[i]]
           ctx.shadowColor = ctx.fillStyle
           ctx.font = '20px Muli';
-          ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_params.player_data.difficulty_mode][i], imp_params.levelWidth/2 + 160, 290 + 35 * i + 7)
+          ctx.fillText(imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][i], imp_params.levelWidth/2 + 160, 290 + 35 * i + 7)
           ctx.textAlign = "left"
           ctx.font = '20px Muli';
           ctx.fillText(score_names[i], imp_params.levelWidth/2 - 160, 290 + 35 * i + 7)
@@ -209,7 +209,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
       score_color = 0
 
-      while(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[imp_params.player_data.difficulty_mode][score_color]) {
+      while(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score > imp_params.impulse_level_data[this.level_name].cutoff_scores[saveData.difficultyMode][score_color]) {
         score_color += 1;
       }
 
@@ -219,16 +219,16 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("HIGH SCORE", imp_params.levelWidth/2 - 100, 480)
       ctx.font = '28px Muli'
-      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].high_score,
+      ctx.fillText(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].high_score,
        imp_params.levelWidth/2 - 100, 505)
 
 
       ctx.fillStyle = this.bright_color
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, 480)
-      if (imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time < 1000) {
+      if (imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time),
+        ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time),
          imp_params.levelWidth/2 + 100, 505)
       } else {
         ctx.font = '24px Muli'
@@ -255,11 +255,11 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(imp_params.tessellation_names[this.world_num], imp_params.levelWidth/2, imp_params.levelHeight/2 - 20)
     ctx.font = '24px Muli'
 
-    if(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time < 1000) {
+    if(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time < 1000) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2, 390)
       ctx.font = '28px Muli'
-      ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[imp_params.player_data.difficulty_mode].best_time), imp_params.levelWidth/2, 415)
+      ctx.fillText(convert_to_time_notation(imp_params.impulse_level_data[this.level_name].save_state[saveData.difficultyMode].best_time), imp_params.levelWidth/2, 415)
     } else {
       ctx.fillStyle = impulse_colors['boss '+ this.world_num]
       ctx.fillText("UNDEFEATED",  imp_params.levelWidth/2, 400)

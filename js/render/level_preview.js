@@ -13,7 +13,7 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.fill()
   context.restore();
   var polygons = null
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     polygons = imp_params.impulse_level_data[level_name].obstacle_v_easy
   }
   if (!polygons) {

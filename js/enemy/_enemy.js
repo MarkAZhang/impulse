@@ -447,7 +447,7 @@ Enemy.prototype.adjust_position = function() {
   if(this.adjust_position_angle != null) {
     var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
-    if(this.durations["open"] > 0 && imp_params.player_data.difficulty_mode == "normal" && this.extra_adjust) {
+    if(this.durations["open"] > 0 && saveData.difficultyMode == "normal" && this.extra_adjust) {
       dir.Multiply(1.5)
     } else if((this.type == "goo" || this.type == "disabler") && this.durations["open"] > 0) {
       dir.Multiply(0)
@@ -600,7 +600,7 @@ Enemy.prototype.start_death = function(death) {
       imp_params.impulse_enemy_stats[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
-      if(imp_params.player_data.options.score_labels)
+      if(saveData.optionsData.score_labels)
         this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()
@@ -696,10 +696,10 @@ Enemy.prototype.enemy_hit_proc = function(other) {
 
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.player.stun(300)
   }
-  if(imp_params.player_data.difficulty_mode == "normal") {
+  if(saveData.difficultyMode == "normal") {
     this.player.stun(500)
   }
 }

@@ -92,7 +92,7 @@ window["impulse_main"] =  function() {
 
     io.set_up_listeners();
     dom.centerCanvas()
-    save_data.load_game()
+    saveData.loadGame()
     set_up_enemy_images()
     set_up_title_bg()
     set_key_bindings()
@@ -230,27 +230,23 @@ function toggle_mute() {
   }
 }
 
-function save_player_game(hive_number) {
-  imp_params.player_data.save_data[imp_params.player_data.difficulty_mode] = hive_number
-  save_data.save_game();
-}
 
 function is_quest_completed(name) {
-  return imp_params.player_data.quests.indexOf(name) != -1
+  return saveData.quests.indexOf(name) != -1
 }
 
 function set_quest_completed(name) {
   if (!is_quest_completed(name)) {
-    imp_params.player_data.quests.push(name);
-    save_data.save_game();
+    saveData.quests.push(name);
+    saveData.saveGame();
     game_engine.set_popup_message("quest_" + name, 2500, "white", 0)
   }
 }
 
 function should_show_level_zero(world_num) {
   // Easy difficulty, and we've never played this world before.
-  return imp_params.player_data.difficulty_mode == "easy" &&
-         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[imp_params.player_data.difficulty_mode].seen;
+  return saveData.difficultyMode == "easy" &&
+         imp_params.impulse_level_data["HIVE "+world_num+"-1"].save_state[saveData.difficultyMode].seen;
 }
 
 function get_bg_opacity(world) {

@@ -29,7 +29,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.boss_after_death_actions = false;
 
   // Is the multiplier mechanic enabled in this game?
-  this.combo_enabled = imp_params.player_data.difficulty_mode == "normal";
+  this.combo_enabled = saveData.difficultyMode == "normal";
 
   this.world_num = world
   this.cutoff_messages = ["BRONZE SCORE ACHIEVED", "SILVER SCORE ACHIEVED", "GOLD SCORE ACHIEVED"]
@@ -62,12 +62,12 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     } else {
       imp_params.impulse_music.play_bg(imp_params.songs["Menu"]);
     }
-  }
-  // Set up game numbers for level.
-  if(this.level && !this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
-    this.hive_numbers.game_numbers[this.level.level_name] = {}
-    this.hive_numbers.game_numbers[this.level.level_name].visited = true
-    this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
+    // Set up game numbers for level.
+    if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
+      this.hive_numbers.game_numbers[this.level.level_name] = {}
+      this.hive_numbers.game_numbers[this.level.level_name].visited = true
+      this.hive_numbers.game_numbers[this.level.level_name].deaths = 0
+    }
     this.game_numbers = this.hive_numbers.game_numbers[this.level.level_name];
     this.reset_game_numbers();
   }
@@ -148,10 +148,10 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   // if this is world zero. show the tutorial.
   this.show_tutorial = (this.is_tutorial_level ||
-    imp_params.player_data.tutorial_shown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
+    saveData.tutorialsShown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
 
   // if we've never beaten the first boss, show the tutorial
-  if (this.is_boss_level && this.world_num == 1 && imp_params.player_data.difficulty_mode == "easy" &&
+  if (this.is_boss_level && this.world_num == 1 && saveData.difficultyMode == "easy" &&
     imp_params.impulse_level_data[this.level_name].save_state["easy"].best_time === 1000) {
     this.show_tutorial = true
   }
@@ -224,8 +224,8 @@ ImpulseGameState.prototype.check_new_enemies = function() {
   if (this.is_tutorial_level) return;
   for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
     imp_params.impulse_enemy_stats[enemy].seen += 1
-    save_data.save_game()
-    var difficulty_level = imp_params.player_data.difficulty_mode
+    saveData.saveGame()
+    var difficulty_level = saveData.difficultyMode
     if(!imp_params.impulse_enemy_stats[enemy].is_boss &&
         imp_params.impulse_enemy_stats[enemy].seen == 1) {
 
@@ -383,7 +383,7 @@ ImpulseGameState.prototype.process = function(dt) {
       // Save the game when the player dies.
       if (this.main_game && this.world_num > 0) {
         this.hive_numbers.game_numbers[this.level.level_name].deaths += 1
-        save_player_game(this.hive_numbers);
+        saveData.savePlayerGame(this.hive_numbers);
       }
     }
 
@@ -788,7 +788,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 
   var titleTextY = 0;
 
-  var showHardMode = this.world_num != 0 && imp_params.player_data.difficulty_mode == "normal" &&
+  var showHardMode = this.world_num != 0 && saveData.difficultyMode == "normal" &&
     !this.is_boss_level;
 
   var showLevelName = !this.is_boss_level && (
@@ -843,7 +843,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     context.font = '18px Muli';
     context.save();
     context.globalAlpha *= 0.4;
-    if(imp_params.player_data.options.control_hand == "right") {
+    if(saveData.optionsData.control_hand == "right") {
       context.fillText("Q FOR MENU", imp_params.sidebarWidth/2, menuY);
     } else {
       context.fillText("ENTER FOR MENU", imp_params.sidebarWidth/2, menuY);
@@ -855,8 +855,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   // draw the game time
   if (showGameTime) {
     // Show speed run countdown, even if in boss.
-    if (imp_params.player_data.difficulty_mode == "normal" && this.world_num > 0 &&
-      this.main_game && imp_params.player_data.options.speed_run_countdown) {
+    if (saveData.difficultyMode == "normal" && this.world_num > 0 &&
+      this.main_game && saveData.optionsData.speed_run_countdown) {
       context.fillStyle = "white"
       context.font = '16px Muli';
       context.fillText("SPEED RUN", imp_params.sidebarWidth/2, timeY - 30);
@@ -1006,7 +1006,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
       this.toggle_pause()
     }
   } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
-    //if(this.game_numbers.score >= this.level.cutoff_scores[imp_params.player_data.difficulty_mode]["bronze"]) {
+    //if(this.game_numbers.score >= this.level.cutoff_scores[saveData.difficultyMode]["bronze"]) {
     this.on_victory();
   }
   // USED FOR TRAILER RECORDING
@@ -1197,18 +1197,18 @@ ImpulseGameState.prototype.on_victory = function() {
       // Advance the level to the next level.
       this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
       if (!this.is_tutorial_level) {
-        save_player_game(this.hive_numbers);
+        saveData.savePlayerGame(this.hive_numbers);
         game_engine.set_popup_message("saved_alert", 1000, "white", this.world_num)
       }
     } else {
       // Clear the game data.
-      save_player_game({});
+      saveData.clearSavedPlayerGame();
     }
   }
 }
 
 ImpulseGameState.prototype.update_save_data_for_level = function () {
-  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode];
+  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode];
   var new_score = this.game_numbers.score;
   var new_time = this.game_numbers.seconds;
 
@@ -1225,7 +1225,7 @@ ImpulseGameState.prototype.update_save_data_for_level = function () {
   } else {
     this.game_numbers.best_time = false;
   }
-  save_data.save_game()
+  saveData.saveGame()
 }
 
 ImpulseGameState.prototype.shake_level = function (dur) {
@@ -1234,7 +1234,7 @@ ImpulseGameState.prototype.shake_level = function (dur) {
 }
 
 ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
-  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[imp_params.player_data.difficulty_mode];
+  var save_state = imp_params.impulse_level_data[this.level.level_name].save_state[saveData.difficultyMode];
   var new_time = this.game_numbers.seconds;
   if (new_time < save_state.best_time) {
     this.game_numbers.best_time = true
@@ -1243,7 +1243,7 @@ ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
     this.game_numbers.best_time = false;
   }
 
-  save_data.save_game()
+  saveData.saveGame()
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

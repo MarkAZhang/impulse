@@ -11,7 +11,7 @@ function BossFourAttacker(world, x, y, id, impulse_game_state,size) {
   this.size = size
   this.default_heading = false
   this.tank_force = 100
-  if (imp_params.player_data.difficulty_mode == "easy") {
+  if (saveData.difficultyMode == "easy") {
     this.tank_force = 70
   }
   this.spawner_hit_force = 200
@@ -40,7 +40,7 @@ BossFourAttacker.prototype.additional_processing = function(dt) {
     var dir = new b2Vec2(this.dir.x, this.dir.y)
     dir.Normalize()
     dir.Multiply(this.force)
-    if (imp_params.player_data.difficulty_mode == "easy") {
+    if (saveData.difficultyMode == "easy") {
       dir.Multiply(0.5)
     }
     this.body.ApplyImpulse(dir, this.body.GetWorldCenter())

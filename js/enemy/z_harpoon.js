@@ -28,7 +28,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   // Estimated harpoon length.
   this.harpoon_length = 17
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.harpoon_length = 13
   }
 
@@ -39,17 +39,17 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.harpoon_state = "inactive"
 
   this.harpooned_force = 6
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.harpooned_force = 4.5
   }
   this.harpooned_goo_factor = 0.33
 
   this.harpoonhead_force = 400
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.harpoonhead_force = 50
   }
   this.harpoonhead_retract_force = 1.2
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.harpoonhead_retract_force = 0.6
   }
 
@@ -111,7 +111,7 @@ function Harpoon(world, x, y, id, impulse_game_state) {
   this.extra_adjust = false
   this.adjust_position_factor = 1;
 
-  if(imp_params.player_data.difficulty_mode == "normal") {
+  if(saveData.difficultyMode == "normal") {
     this.adjust_position_factor = 0.8;
   }
   this.orbiter_checks = [0, -1, 1, -2, 2, -4, 4, -8, 8, -12, 12, -16, 16, -20, 20]
@@ -363,7 +363,7 @@ Harpoon.prototype.start_death = function(death) {
       imp_params.impulse_enemy_stats[this.type].kills += 1
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
-      if(imp_params.player_data.options.score_labels)
+      if(saveData.optionsData.score_labels)
         this.impulse_game_state.addScoreLabel(score_value, this.color, this.body.GetPosition().x, this.body.GetPosition().y, 20)
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()

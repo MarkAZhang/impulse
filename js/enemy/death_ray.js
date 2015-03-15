@@ -23,7 +23,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
   this.shoot_interval = 1200
 
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.shoot_interval = 1400
   }
 
@@ -50,7 +50,7 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.turret_arm_angle = 0
 
   this.stun_length = 2000
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.stun_length = 2000
   }
 

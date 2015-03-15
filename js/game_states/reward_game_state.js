@@ -14,14 +14,14 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
-  this.first_time = imp_params.player_data.first_time // cache the first time variable, since it might change during this game state
+  this.first_time = saveData.firstTime // cache the first time variable, since it might change during this game state
   this.victory = args.victory
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
   this.hard_mode_just_unlocked = false;
   var _this = this;
-  this.initial_difficulty_mode = imp_params.player_data.difficulty_mode;
+  this.initial_difficulty_mode = saveData.difficultyMode;
 
   this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_params.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
   this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_params.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
@@ -40,8 +40,8 @@ function RewardGameState(hive_numbers, main_game, args) {
 
 RewardGameState.prototype.change_mode = function(type) {
   if (this.transition_state == "none") {
-    imp_params.player_data.difficulty_mode = type;
-    save_data.save_game();
+    saveData.difficultyMode = type;
+    saveData.saveGame();
     this.adjust_difficulty_button_border()
     this.transition_state="out";
     this.transition_timer = this.transition_interval * 4
@@ -291,7 +291,7 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   // If we just unlocked hard mode, go to 1.
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
 
-  if (imp_params.player_data.difficulty_mode == "normal" && !imp_params.player_data.first_time && go_to_world_num !== 0) {
+  if (saveData.difficultyMode == "normal" && !saveData.firstTime && go_to_world_num !== 0) {
     set_bg("Title Alt" + go_to_world_num, get_world_map_bg_opacity(go_to_world_num))
   } else {
     set_bg("Hive 0", imp_params.hive0_bg_opacity)
@@ -334,30 +334,30 @@ RewardGameState.prototype.determine_rewards = function() {
       this.rewards.push({
         type: "first_time_tutorial"
       })
-      imp_params.player_data.first_time = false;
-      save_data.save_game();
+      saveData.firstTime = false;
+      saveData.saveGame();
     }
     return
   }
 
   if (this.main_game) {
-    if(imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]
-      && imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+    if(saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]
+      && saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
 
       if (this.hive_numbers.world == 4) {
         this.rewards.push({
           type: "final_victory",
         })
         if (this.initial_difficulty_mode == "easy") {
-          imp_params.player_data.hard_mode_unlocked = true;
+          saveData.hardModeUnlocked = true;
           this.hard_mode_just_unlocked = true;
-          imp_params.player_data.difficulty_mode = "normal";
-          save_data.save_game();
+          saveData.difficultyMode = "normal";
+          saveData.saveGame();
         }
       }
 
-      imp_params.player_data.world_rankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
-      save_data.save_game();
+      saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
+      saveData.saveGame();
     }
   }
 }

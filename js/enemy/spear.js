@@ -12,7 +12,7 @@ function Spear(world, x, y, id, impulse_game_state) {
 
   this.spear_force = 30 //force that the spear impulses the player
 
-  if(imp_params.player_data.difficulty_mode == "easy") // since the player is heavier in easy mode
+  if(saveData.difficultyMode == "easy") // since the player is heavier in easy mode
     this.spear_force = 40
 
   this.death_radius = 5

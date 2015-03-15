@@ -27,7 +27,7 @@ Player.prototype.effective_radius = .66
 Player.prototype.init = function(world, x, y, impulse_game_state) {
   if (world == null) return
 
-  if(imp_params.player_data.difficulty_mode == "easy") {
+  if(saveData.difficultyMode == "easy") {
     this.density *= 1.5;
     this.true_force *= 1.5;
   }
@@ -506,7 +506,7 @@ Player.prototype.maybe_start_impulse = function () {
   if (this.level.impulse_disabled) {
     return;
   }
-  if(imp_params.player_data.options.control_scheme == "mouse") {
+  if(saveData.optionsData.control_scheme == "mouse") {
     if((this.mouse_pressed || cur_time - this.last_mouse_down < 100) && !this.attacking && !this.is_silenced())
     {
       this.attacking = true
@@ -521,7 +521,7 @@ Player.prototype.maybe_start_impulse = function () {
 
     }
     this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_params.draw_factor, y: this.body.GetPosition().y*imp_params.draw_factor}, this.mouse_pos)
-  } else if(imp_params.player_data.options.control_scheme == "keyboard") {
+  } else if(saveData.optionsData.control_scheme == "keyboard") {
     if(!this.attacking && !this.is_silenced()) {
       var earliest_key_press = 0
       if(this.ileft != null && this.ileft > earliest_key_press) earliest_key_press = this.ileft
@@ -684,18 +684,18 @@ Player.prototype.draw = function(context) {
     }
     context.beginPath()
 
-    if(imp_params.player_data.options.impulse_shadow && !this.level.impulse_disabled) {
+    if(saveData.optionsData.impulse_shadow && !this.level.impulse_disabled) {
       context.save();
       var prog = this.appear_timer / this.appear_duration;
       context.globalAlpha *= Math.max(0, 1 - prog);
-      if (!this.is_silenced() && imp_params.player_data.options.control_scheme == "mouse") {
+      if (!this.is_silenced() && saveData.optionsData.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 
         context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.impulse_radius * lighten_factor* imp_params.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
         context.lineTo(this.body.GetPosition().x*imp_params.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*imp_params.draw_factor)
         context.lineTo(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor)
         context.fill()
-      } else if(!this.is_silenced() && imp_params.player_data.options.control_scheme == "keyboard") {
+      } else if(!this.is_silenced() && saveData.optionsData.control_scheme == "keyboard") {
         context.beginPath()
         context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.impulse_radius * lighten_factor *imp_params.draw_factor, 0, 2 * Math.PI)
         context.globalAlpha /= 6
@@ -732,7 +732,7 @@ Player.prototype.draw = function(context) {
       context.restore();
     }
 
-    /*if(imp_params.player_data.options.progress_circle) {
+    /*if(saveData.optionsData.progress_circle) {
       context.beginPath()
       context.arc(this.body.GetPosition().x*imp_params.draw_factor, this.body.GetPosition().y*imp_params.draw_factor, this.radius * 1.5 * imp_params.draw_factor, -.5* Math.PI, -.5 * Math.PI - 2*Math.PI * this.impulse_game_state.progress_bar_prop, true)
       context.strokeStyle = impulse_colors["impulse_blue"]
@@ -742,7 +742,7 @@ Player.prototype.draw = function(context) {
       context.lineWidth = 2
       context.stroke()
     }*/
-    if(this.impulse_game_state.combo_enabled && imp_params.player_data.options.multiplier_display &&
+    if(this.impulse_game_state.combo_enabled && saveData.optionsData.multiplier_display &&
        !this.impulse_game_state.is_boss_level) {
       context.font = "16px Muli"
       context.fillStyle = impulse_colors["impulse_blue"]
