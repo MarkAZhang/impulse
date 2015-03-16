@@ -344,7 +344,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (saveData.getLevelData(this.last_level_name) < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.last_level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.last_level_name).best_time),
           imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'

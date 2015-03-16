@@ -69,7 +69,7 @@ Troll.prototype.additional_processing = function(dt) {
     }
   }
 
-   if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+   if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -78,7 +78,7 @@ Troll.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
   }
 }
@@ -165,7 +165,7 @@ Troll.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Troll.prototype.modify_movement_vector = function(dir) {
-  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 

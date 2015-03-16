@@ -60,14 +60,14 @@ BossFourAttacker.prototype.collide_with = function(other) {
 
   if(other === this.player) {
 
-      var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
       this.impulse_game_state.reset_combo();
       //this.cause_of_death = "hit_player"
       return
   } else if(this.dir && other.type == "boss four spawner") {
-    var tank_angle = _atan({x:0, y:0}, this.dir)
-    var ref_angle = angle_closest_to(tank_angle, _atan(this.body.GetPosition(), other.body.GetPosition()))
+    var tank_angle = utils.atan({x:0, y:0}, this.dir)
+    var ref_angle = utils.angleClosestTo(tank_angle, utils.atan(this.body.GetPosition(), other.body.GetPosition()))
     if(tank_angle < ref_angle) {
       tank_angle -= Math.PI/2
     } else {
@@ -75,7 +75,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
     }
     other.body.ApplyImpulse(new b2Vec2(this.spawner_hit_force * Math.cos(tank_angle), this.spawner_hit_force * Math.sin(tank_angle)), other.body.GetWorldCenter())
   } else if(this.dir && other.type != "fourth boss") {
-    var tank_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+    var tank_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
     var dir = new b2Vec2(this.dir.x, this.dir.y)
     dir.Normalize()
     dir.Multiply(100 * other.force)
@@ -97,7 +97,7 @@ BossFourAttacker.prototype.check_death = function() {
 
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
 
       if (this.durations["open"] <= 0 && this.require_open) {

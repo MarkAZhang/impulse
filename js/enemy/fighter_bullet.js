@@ -59,7 +59,7 @@ FighterBullet.prototype.collide_with = function(other) {
       imp_params.impulse_music.play_sound("fbullethit")
       var vel = this.body.GetLinearVelocity().Copy()
       vel.Normalize()
-      //_atan(this.body.GetPosition(), this.player.body.GetPosition())
+      //utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
       if(this.player.is_gooed() > 0) {
         vel.Multiply(this.bullet_force * this.bullet_goo_factor)
         this.player.body.ApplyImpulse(vel, this.player.body.GetWorldCenter())
@@ -84,7 +84,7 @@ FighterBullet.prototype.collide_with = function(other) {
         }
         var vel = this.body.GetLinearVelocity().Copy()
         vel.Normalize()
-        //var bullet_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+        //var bullet_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
 
         var factor = 1;
 
@@ -118,7 +118,7 @@ FighterBullet.prototype.move = function() {
     this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
   }
 
-  this.set_heading(_atan({x: 0, y: 0}, this.v))
+  this.set_heading(utils.atan({x: 0, y: 0}, this.v))
 }
 
 FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
@@ -136,7 +136,7 @@ FighterBullet.prototype.check_death = function()
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death("kill")
 

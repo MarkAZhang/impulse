@@ -21,7 +21,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   }(this), "start")
   this.buttons.push(this.restart_button);
 
-  this.restart_button.keyCode = imp_params.keys.RESTART_KEY;
+  this.restart_button.keyCode = controls.keys.RESTART_KEY;
   if(saveData.optionsData.control_hand == "right") {
     this.restart_button.extra_text = "R KEY"
   } else {
@@ -257,7 +257,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
           imp_params.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
@@ -337,7 +337,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '28px Muli'
       if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
-        ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
           imp_params.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'

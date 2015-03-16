@@ -220,7 +220,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '20px Muli'
     ctx.fillText("TOTAL TIME ", imp_params.levelWidth/2 - 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_params.levelWidth/2 - 100, score_label_y)
+    ctx.fillText(utils.convertSecondsToTimeString(this.total_time), imp_params.levelWidth/2 - 100, score_label_y)
     ctx.fillStyle = this.bright_color
     ctx.font = '20px Muli'
     ctx.fillText("DEATHS", imp_params.levelWidth/2 + 100, score_y)
@@ -253,7 +253,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '14px Muli'
     ctx.fillText("TOTAL TIME", imp_params.levelWidth/2, 167)
     ctx.font = '24px Muli'
-    ctx.fillText(convert_seconds_to_time_string(this.total_time), imp_params.levelWidth/2, 190)
+    ctx.fillText(utils.convertSecondsToTimeString(this.total_time), imp_params.levelWidth/2, 190)
 
   }
 
@@ -291,7 +291,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.fillStyle = gn.visited ? this.bright_color : "#666";
       if(this.hive_numbers.total_time[title] != undefined)
-        ctx.fillText(convert_seconds_to_time_string(Math.floor(this.hive_numbers.total_time[title] / 1000)), 400, y)
+        ctx.fillText(utils.convertSecondsToTimeString(Math.floor(this.hive_numbers.total_time[title] / 1000)), 400, y)
       else {
         ctx.fillText('---', 400, y)
       }
@@ -347,11 +347,11 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
 
   /*if(this.save_screen && !this.just_saved) {
-    if(keyCode == imp_params.keys.EXIT_GAME_KEY) {
+    if(keyCode == controls.keys.EXIT_GAME_KEY) {
       this.exit_game()
-    } else if(keyCode == imp_params.keys.DELETE_GAME_KEY && this.shift_down()) {
+    } else if(keyCode == controls.keys.DELETE_GAME_KEY && this.shift_down()) {
       this.delete_game()
-    } else if(keyCode == imp_params.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
+    } else if(keyCode == controls.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
       this.resume_game()
     }
   } else{*/

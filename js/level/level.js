@@ -216,7 +216,7 @@ Level.prototype.generate_multi = function() {
   var multi_index = Math.floor(Math.random() * this.multi_spawn_points.length)
   this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
   var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
-  while(p_dist(player_loc,  this.multi_loc) < 125) {
+  while(utils.pDist(player_loc,  this.multi_loc) < 125) {
     multi_index+=1
     multi_index = multi_index % this.multi_spawn_points.length
     this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
@@ -235,7 +235,7 @@ Level.prototype.process = function(dt) {
       this.generate_multi()
     } else {
       var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
-      if(p_dist(player_loc, this.multi_loc) < 25) {
+      if(utils.pDist(player_loc, this.multi_loc) < 25) {
         imp_params.impulse_music.play_sound("multi")
         this.impulse_game_state.game_numbers.base_combo += 5
         this.impulse_game_state.game_numbers.combo =
@@ -368,8 +368,8 @@ Level.prototype.process = function(dt) {
 
 Level.prototype.order_spawn_points = function() {
   this.spawn_points.sort(function(a, b) {
-    var angle_a = _atan({x: 400, y: 300}, {x: a[0], y: a[1]});
-    var angle_b = _atan({x: 400, y: 300}, {x: b[0], y: b[1]});
+    var angle_a = utils.atan({x: 400, y: 300}, {x: a[0], y: a[1]});
+    var angle_b = utils.atan({x: 400, y: 300}, {x: b[0], y: b[1]});
     return angle_a - angle_b;
   })
 }
@@ -420,7 +420,7 @@ Level.prototype.pick_pivot_spawn_index = function() {
       var spawn_point = {x: this.spawn_points[i][0] / imp_params.draw_factor, y: this.spawn_points[i][1] / imp_params.draw_factor};
       var min_dist = -1;
       for (var j = 0; j < this.enemies.length; j++) {
-        var dist_to_enemy = p_dist(this.enemies[j].body.GetPosition(), spawn_point);
+        var dist_to_enemy = utils.pDist(this.enemies[j].body.GetPosition(), spawn_point);
         if (min_dist == -1 || dist_to_enemy < min_dist) {
           min_dist = dist_to_enemy;
         }
@@ -518,7 +518,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/imp_params.draw_factor, r_p[1]/imp_params.draw_factor, this.enemy_counter, this.impulse_game_state)
   }
   else {
-    var r_p = getRandomOutsideLocation(5, 2)
+    var r_p = utils.getRandomOutsideLocation(5, 2)
     var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p.x, r_p.y, this.enemy_counter, this.impulse_game_state)
   }
 
@@ -570,7 +570,7 @@ Level.prototype.generate_obstacles = function() {
     for(var j = 0; j < temp_v.length; j++) {
       this.obstacle_vertices.push(temp_v[j])
     }
-    this.boundary_polygons.push(getBoundaryPolygon(temp_v, this.buffer_radius))
+    this.boundary_polygons.push(utils.getBoundaryPolygon(temp_v, this.buffer_radius))
   }
   this.generate_obstacle_edges()
 }

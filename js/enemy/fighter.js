@@ -118,8 +118,8 @@ Fighter.prototype.additional_processing = function(dt) {
   }
 
   if(!this.is_silenced() && this.player_collision_buffer_timer <= 0 &&
-      p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.shield_radius) {
-    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) < this.shield_radius) {
+    var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
     this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     //this.cause_of_death = "hit_player"
     this.impulse_game_state.reset_combo()
@@ -140,11 +140,11 @@ Fighter.prototype.additional_processing = function(dt) {
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && !this.is_silenced()) {
 
-      if(check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+      if(utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
         var cur_bullet_loc = this.get_bullet_locations(i);
-        this.has_sight_of_player = isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
+        this.has_sight_of_player = utils.isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
 
-        var target_angle = _atan(cur_bullet_loc, this.player.body.GetPosition())
+        var target_angle = utils.atan(cur_bullet_loc, this.player.body.GetPosition())
         if (this.has_sight_of_player) {
           this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval) : this.frenzy_shoot_interval
           imp_params.impulse_music.play_sound("fbullet")
@@ -174,13 +174,13 @@ Fighter.prototype.additional_processing = function(dt) {
       this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval + this.shoot_durations[i]) : this.frenzy_shoot_interval
       this.shoot_fade_out[i] = false
     }
-    if(check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+    if(utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
       this.shoot_durations[i] -= dt
     }
   }
 
 
-  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.frenzy_charge += dt / this.frenzy_charge_interval;
   }
 
@@ -272,7 +272,7 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
     if (this.shield_animate_duration > 0) {
       var shield_prog = 1 - Math.abs(1 - 2 * this.shield_animate_duration / this.shield_animate_interval);
       context.save()
-      context.globalAlpha *= bezier_interpolate(0.15, 0.85, shield_prog);
+      context.globalAlpha *= utils.bezierInterpolate(0.15, 0.85, shield_prog);
       context.beginPath()
       context.strokeStyle = this.color;
       context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.shield_radius) *draw_factor
@@ -302,14 +302,14 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 
   var in_poly = false
   for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
     {
       in_poly = true
     }
@@ -335,18 +335,18 @@ Fighter.prototype.modify_movement_vector = function(dir) {
 }
 
 Fighter.prototype.explode = function() {
-  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+  if(utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
   {
-    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
     this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }
 
   for(var i = 0; i < this.level.enemies.length; i++)
   {
 
-    if(this.level.enemies[i] !== this && p_dist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    if(this.level.enemies[i] !== this && utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
-      var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
+      var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       this.level.enemies[i].open(1500)
 

@@ -115,20 +115,20 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
 Player.prototype.keyDown = function(keyCode) {
   switch(keyCode)
   {
-    case imp_params.keys.LEFT_KEY:
+    case controls.keys.LEFT_KEY:
       this.left = true
       break;
-    case imp_params.keys.RIGHT_KEY:
+    case controls.keys.RIGHT_KEY:
       this.right = true
       break;
-    case imp_params.keys.DOWN_KEY:
+    case controls.keys.DOWN_KEY:
       this.down = true
       break;
-    case imp_params.keys.UP_KEY:
+    case controls.keys.UP_KEY:
       this.up = true
       break;
-    case imp_params.keys.PAUSE:
-    case imp_params.keys.SECONDARY_PAUSE:
+    case controls.keys.PAUSE:
+    case controls.keys.SECONDARY_PAUSE:
       this.up = false
       this.down = false
       this.left = false
@@ -138,16 +138,16 @@ Player.prototype.keyDown = function(keyCode) {
       this.iup = null
       this.idown = null
       break
-    case imp_params.keys.ILEFT_KEY:
+    case controls.keys.ILEFT_KEY:
       this.ileft = (new Date()).getTime()
       break;
-    case imp_params.keys.IUP_KEY:
+    case controls.keys.IUP_KEY:
       this.iup = (new Date()).getTime()
       break;
-    case imp_params.keys.IRIGHT_KEY:
+    case controls.keys.IRIGHT_KEY:
       this.iright = (new Date()).getTime()
       break;
-    case imp_params.keys.IDOWN_KEY:
+    case controls.keys.IDOWN_KEY:
       this.idown = (new Date()).getTime()
       break;
   }
@@ -156,32 +156,32 @@ Player.prototype.keyDown = function(keyCode) {
 Player.prototype.keyUp = function(keyCode) {
   switch(keyCode)
   {
-    case imp_params.keys.LEFT_KEY:
+    case controls.keys.LEFT_KEY:
       this.left = false
       break;
-    case imp_params.keys.RIGHT_KEY:
+    case controls.keys.RIGHT_KEY:
       this.right = false
       break;
-    case imp_params.keys.DOWN_KEY:
+    case controls.keys.DOWN_KEY:
       this.down = false
       break;
-    case imp_params.keys.UP_KEY:
+    case controls.keys.UP_KEY:
       this.up = false
       break;
-    case imp_params.keys.ILEFT_KEY:
+    case controls.keys.ILEFT_KEY:
       this.ileft = null
       break;
-    case imp_params.keys.IUP_KEY:
+    case controls.keys.IUP_KEY:
       this.iup = null
       break;
-    case imp_params.keys.IRIGHT_KEY:
+    case controls.keys.IRIGHT_KEY:
       this.iright = null
       break;
-    case imp_params.keys.IDOWN_KEY:
+    case controls.keys.IDOWN_KEY:
       this.idown = null
       break;
-    case imp_params.keys.PAUSE:
-    case imp_params.keys.SECONDARY_PAUSE:
+    case controls.keys.PAUSE:
+    case controls.keys.SECONDARY_PAUSE:
       this.up = false
       this.down = false
       this.left = false
@@ -388,7 +388,7 @@ Player.prototype.process = function(dt) {
   }
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       this.start_death()
       break
@@ -424,7 +424,7 @@ Player.prototype.process = function(dt) {
 
               if (this.point_in_impulse_dist(impulse_sensitive_points[j], this.level.enemies[i].body.GetLinearVelocity().Length() > 20))
               {
-                var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                var angle = utils.atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                 this.enemies_hit.push(this.level.enemies[i].id)
                 var force = this.impulse_force;
                 // If it's a goo-ed Harpoon.
@@ -459,7 +459,7 @@ Player.prototype.process = function(dt) {
               {
                 if (this.point_in_impulse_dist(impulse_sensitive_points[j], true))
                 {
-                  var angle = _atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
+                  var angle = utils.atan(this.attack_loc, impulse_sensitive_points[j])//not sure if it should be this point
                   // Impulse the harpoon head.
                   this_harpoon_head.process_impulse(this.attack_loc, this.impulse_force, angle)
                   this.enemies_hit.push(this_harpoon_head.id)
@@ -520,7 +520,7 @@ Player.prototype.maybe_start_impulse = function () {
       }
 
     }
-    this.impulse_angle = _atan({x: this.body.GetPosition().x*imp_params.draw_factor, y: this.body.GetPosition().y*imp_params.draw_factor}, this.mouse_pos)
+    this.impulse_angle = utils.atan({x: this.body.GetPosition().x*imp_params.draw_factor, y: this.body.GetPosition().y*imp_params.draw_factor}, this.mouse_pos)
   } else if(saveData.optionsData.control_scheme == "keyboard") {
     if(!this.attacking && !this.is_silenced()) {
       var earliest_key_press = 0
@@ -584,7 +584,7 @@ Player.prototype.get_current_position = function() {
 }
 
 Player.prototype.point_in_impulse_angle = function(pt) {
-  var angle = _atan(this.attack_loc, pt)
+  var angle = utils.atan(this.attack_loc, pt)
 
   var struck;
 
@@ -793,7 +793,7 @@ Player.prototype.collide_with = function(other) {
 }
 
 Player.prototype.point_intersect = function(pt) {
-  return p_dist(pt, this.body.GetPosition()) < this.r
+  return utils.pDist(pt, this.body.GetPosition()) < this.r
 }
 
 Player.prototype.start_death = function(reason) {
@@ -820,9 +820,9 @@ Player.prototype.get_segment_intersection = function(seg_s, seg_f) {
      y: this.body.GetPosition().y + this.points_polar_form[i].r * Math.sin(this.points_polar_form[i].ang + cur_ang)}
     var loc_j = {x: this.body.GetPosition().x + this.points_polar_form[j].r * Math.cos(this.points_polar_form[j].ang + cur_ang),
      y: this.body.GetPosition().y + this.points_polar_form[j].r * Math.sin(this.points_polar_form[j].ang + cur_ang)}
-    var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
+    var temp_point = utils.getSegIntersection(loc_i, loc_j, seg_s, seg_f)
     if(temp_point == null) continue
-    var temp_d = p_dist(temp_point, seg_s)
+    var temp_d = utils.pDist(temp_point, seg_s)
     if(ans_d == null || temp_d < ans_d)
     {
       ans = temp_point

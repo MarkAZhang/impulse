@@ -36,7 +36,7 @@ Spear.prototype.move = function() {
 
   if(this.is_locked()) return //locked
 
-  if (isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
+  if (utils.isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {
     this.path = [this.player.body.GetPosition()]
     this.move_to(this.player.body.GetPosition())
   } else {
@@ -46,29 +46,14 @@ Spear.prototype.move = function() {
 }
 
 Spear.prototype.modify_movement_vector = function(dir) {
-  //apply impulse to move enemy
-  /*var in_poly = false
-  for(var i = 0; i < this.level.obstacle_polygons.length; i++)
+  if(this.special_mode)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
-    {
-      in_poly = true
-    }
+    dir.Multiply(this.fast_factor)
   }
-  if(in_poly)
-  {
-    dir.Multiply(this.slow_force)
+  if(this.is_gooed()) {
+    dir.Multiply(this.slow_factor)
   }
-  else {*/
-    if(this.special_mode)
-    {
-      dir.Multiply(this.fast_factor)
-    }
-    if(this.is_gooed()) {
-      dir.Multiply(this.slow_factor)
-    }
-    dir.Multiply(this.force)
-  //}
+  dir.Multiply(this.force)
 }
 
 Spear.prototype.additional_processing = function(dt) {
@@ -77,7 +62,7 @@ Spear.prototype.additional_processing = function(dt) {
 
 Spear.prototype.player_hit_proc = function() {
   if(!this.is_silenced()) {
-    var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    var spear_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
     var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
     this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
   }

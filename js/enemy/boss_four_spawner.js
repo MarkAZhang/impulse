@@ -39,7 +39,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
   if(this.spawned) {
     if(this.spawn_action_timer > 0) {
-      var cur_factor = 1 + bezier_interpolate(0.15, 0.85, 0.5 - Math.abs(this.spawn_action_timer/this.spawn_action_period - 0.5))
+      var cur_factor = 1 + utils.bezierInterpolate(0.15, 0.85, 0.5 - Math.abs(this.spawn_action_timer/this.spawn_action_period - 0.5))
       this.set_size(enemyData[this.type].effective_radius * cur_factor)
       this.spawn_action_timer -= dt
     } else {
@@ -52,7 +52,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
 	if(this.spawn && this.spawn_action_timer < this.spawn_action_period/2) {
     imp_params.impulse_music.play_sound("b4spawneract")
-		var ray_angle = _atan(this.parent.body.GetPosition(), this.body.GetPosition())
+		var ray_angle = utils.atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
     var spawn_number = this.spawn_number * this.parent.get_spawn_bonus();
     var exit_points = Math.max(spawn_number, 4)
@@ -67,7 +67,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
       // find a direction that isn't close to the wall
       var angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
-      while(!isVisible(this.body.GetPosition(),
+      while(!utils.isVisible(this.body.GetPosition(),
         {x: this.body.GetPosition().x + 10 * Math.cos(angle),
           y: this.body.GetPosition().y + 10 * Math.sin(angle)},
           this.level.obstacle_edges
@@ -141,7 +141,7 @@ BossFourSpawner.prototype.collide_with = function(other) {
 
   /*if(other === this.player) {
 
-      var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }*/
 }

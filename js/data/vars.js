@@ -16,7 +16,7 @@ var imp_params = {
   cur_dialog_box: null,
   save_name: "impulse_save_data",
   impulse_music: null,
-  minified: true,
+  use_minified_worker: true,
   bg_opacity: 0.3,
   hive0_bg_opacity: 0.6 /* hive0 gets rendered differently, needs to be brighter */,
   switch_bg_duration: null,

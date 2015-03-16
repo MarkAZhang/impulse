@@ -61,13 +61,13 @@ Boss.prototype.additional_processing = function (dt) {
   if(this.spawn_duration > 0) {
     this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
     var ratio = 1 - this.spawn_duration / this.spawn_interval
-    this.visibility = bezier_interpolate(0.15, 0.3, ratio);
+    this.visibility = utils.bezierInterpolate(0.15, 0.3, ratio);
 
     // If this is the first time, show the dark aura and the particles.
     if (this.should_show_aura_and_particles()) {
       if (ratio < this.initial_dark_aura_inflection_prop) {
         this.initial_dark_aura_ratio =
-          bezier_interpolate(0.7, 0.85, ratio / this.initial_dark_aura_inflection_prop);
+          utils.bezierInterpolate(0.7, 0.85, ratio / this.initial_dark_aura_inflection_prop);
       } else {
         this.initial_dark_aura_ratio = 1 + 2 * (ratio - this.initial_dark_aura_inflection_prop) /
           (1 - this.initial_dark_aura_inflection_prop);

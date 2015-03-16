@@ -204,7 +204,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("BEST TIME", imp_params.levelWidth/2 + 100, 480)
     if (saveData.getLevelData(this.level_name).best_time < 1000) {
       ctx.font = '28px Muli'
-      ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time),
+      ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
        imp_params.levelWidth/2 + 100, 505)
     } else {
       ctx.font = '24px Muli'
@@ -231,7 +231,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", imp_params.levelWidth/2, 390)
       ctx.font = '28px Muli'
-      ctx.fillText(convert_to_time_notation(saveData.getLevelData(this.level_name).best_time), imp_params.levelWidth/2, 415)
+      ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time), imp_params.levelWidth/2, 415)
     } else {
       ctx.fillStyle = impulse_colors['boss '+ this.world_num]
       ctx.fillText("UNDEFEATED",  imp_params.levelWidth/2, 400)

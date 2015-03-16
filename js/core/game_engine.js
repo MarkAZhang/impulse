@@ -216,7 +216,7 @@ GameEngine.prototype.on_right_click = function(mPos) {
 };
 
 GameEngine.prototype.on_key_down = function(keyCode) {
-  if(keyCode == imp_params.keys.GOD_MODE_KEY && imp_params.debug.god_mode_enabled) { //G = god mode
+  if(keyCode == controls.keys.GOD_MODE_KEY && imp_params.debug.god_mode_enabled) { //G = god mode
     if (imp_params.debug.god_mode == false) {
       imp_params.debug.god_mode = true
       this.set_popup_message("god_mode_alert", 2500, "white", 0)
@@ -228,11 +228,11 @@ GameEngine.prototype.on_key_down = function(keyCode) {
     }
   }
 
-  if(keyCode == imp_params.keys.MUTE_KEY) { //X = mute/unmute
+  if(keyCode == controls.keys.MUTE_KEY) { //X = mute/unmute
     toggle_mute()
   }
 
-  if(keyCode == imp_params.keys.FULLSCREEN_KEY) {
+  if(keyCode == controls.keys.FULLSCREEN_KEY) {
     toggleFullScreen()
   }
 

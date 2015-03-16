@@ -1,6 +1,4 @@
 self.onmessage = function(event) {
-
-
   var polygons = event.data["a"]
   var obstacle_edges = event.data["b"] // actual obstacle edges
   var draw_factor = event.data["c"]
@@ -32,10 +30,9 @@ self.onmessage = function(event) {
       vertex["p_v"] = polygon.length // numbe of vertices in polygon
       vertex["p_i"] = j  //index of vertex in polygon
 
-      if(!inPoly && check_bounds(0, vertex, draw_factor, levelWidth, levelHeight))
+      if(!inPoly && checkBounds(0, vertex, draw_factor, levelWidth, levelHeight))
       {
         vertices.push(vertex)
-
       }
       poly_edges.push({"p1": polygon[j], "p2": polygon[m]})
       m = j
@@ -57,7 +54,7 @@ self.onmessage = function(event) {
         if(isVisible(v_i, v_j, poly_edges) && isVisible(v_i, v_j, obstacle_edges))
         {
           edges.push({"p1": v_i, "p2": v_j})
-          var dist =  p_dist(v_j, v_i)
+          var dist =  pDist(v_j, v_i)
           edge_list[i][j] = dist
           edge_list[j][i] = dist
         }
@@ -67,7 +64,7 @@ self.onmessage = function(event) {
         if(isVisible(v_i, v_j, obstacle_edges) && isVisible(v_i, v_j, poly_edges))
         {
           edges.push({"p1": v_i, "p2": v_j})
-          var dist =  p_dist(v_j, v_i)
+          var dist =  pDist(v_j, v_i)
           edge_list[i][j] = dist
           edge_list[j][i] = dist
         }
@@ -137,8 +134,8 @@ self.onmessage = function(event) {
     "a": poly_edges,
     "b": vertices,
     "c": edges,
-    "d": edge_list, 
-    "e": shortest_paths, 
+    "d": edge_list,
+    "e": shortest_paths,
     "f": visible_vertices})
 }
 
@@ -195,12 +192,12 @@ function pointInPolygon(polygon, point)
   return ans
 }
 
-function p_dist(p1, p2)
+function pDist(p1, p2)
 {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
 }
 
-function check_bounds(buffer, pt, draw_factor, levelWidth, levelHeight) {
+function checkBounds(buffer, pt, draw_factor, levelWidth, levelHeight) {
   var factor = draw_factor ? draw_factor : 1
   return pt.x >= buffer && pt.y >= buffer && pt.x <= levelWidth/factor - buffer && pt.y <= (levelHeight)/factor - buffer
 }

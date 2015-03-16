@@ -1,7 +1,7 @@
 var dom = {};
 
 dom.centerCanvas = function() {
-  var dim = getWindowDimensions()
+  var dim = utils.getWindowDimensions()
 
   if(imp_params.canvasWidth < dim.w)
   {

@@ -62,7 +62,7 @@ Goo.prototype.additional_processing = function(dt) {
     } else {
       var t = (this.goo_change_transition - this.goo_state_timer)/this.goo_change_transition;
 
-      var bezier_p = bezier_interpolate(0.15, 0.85, t);
+      var bezier_p = utils.bezierInterpolate(0.15, 0.85, t);
 
       this.goo_radius = this.goo_radius_small * (1-bezier_p) +  (bezier_p) * this.goo_radius_big
 
@@ -80,7 +80,7 @@ Goo.prototype.additional_processing = function(dt) {
       this.goo_state_timer = this.goo_expand_period;
     } else {
       var t = (this.goo_change_transition - this.goo_state_timer)/this.goo_change_transition;
-      var bezier_p = bezier_interpolate(0.15, 0.85, t)
+      var bezier_p = utils.bezierInterpolate(0.15, 0.85, t)
       this.goo_radius = this.goo_radius_small * (bezier_p) +  (1-bezier_p) * this.goo_radius_big
     }
   }
@@ -97,12 +97,12 @@ Goo.prototype.additional_processing = function(dt) {
 }
 
 Goo.prototype.check_area_of_effect = function() {
-  if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
+  if(!this.is_silenced() && utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) < this.goo_radius) {
     this.area_effect(this.player)
   }
 
   for(var j = 0; j < this.level.enemies.length; j++) {
-    if(!this.is_silenced() && p_dist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
+    if(!this.is_silenced() && utils.pDist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
     {
       if(this.level.enemies[j].className != this.className)
         this.area_effect(this.level.enemies[j])

@@ -58,7 +58,7 @@ Orbiter.prototype.additional_drawing = function(context, draw_factor) {
 
   return
   context.beginPath()
-  var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
+  var orig_angle = utils.atan(this.player.body.GetPosition(), this.body.GetPosition());
   var divisions = 64;
   var offsets = this.orbiter_checks
   var offset = 0;
@@ -79,7 +79,7 @@ Orbiter.prototype.additional_drawing = function(context, draw_factor) {
 }
 
 Orbiter.prototype.additional_processing = function(dt) {
-  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.safe_distance * 1.5) {
+  if(utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) < this.safe_distance * 1.5) {
     this.pathfinding_delay = this.pathfinding_delay_near;
 
   } else {
@@ -91,7 +91,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     var in_poly = false
     for(var i = 0; i < this.level.boundary_polygons.length; i++)
     {
-      if(pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
+      if(utils.pointInPolygon(this.level.boundary_polygons[i], this.body.GetPosition()))
       {
         in_poly = true
       }
@@ -111,7 +111,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.set_heading_to(this.player.body.GetPosition())
 
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -120,7 +120,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
     this.silence(100, true)
   }
@@ -136,7 +136,7 @@ Orbiter.prototype.get_target_path = function() {
   //console.log(this.pathfinding_delay)
 
   if(!this.attack_mode) {
-    var orig_angle = _atan(this.player.body.GetPosition(), this.body.GetPosition());
+    var orig_angle = utils.atan(this.player.body.GetPosition(), this.body.GetPosition());
     var divisions = 64;
     var offsets = this.orbiter_checks
     var offset = 0;
@@ -160,7 +160,7 @@ Orbiter.prototype.get_target_path = function() {
                               this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)
       for(var k = 0; k < this.level.boundary_polygons.length; k++)
       {
-        if(pointInPolygon(this.level.boundary_polygons[k], tempPt))
+        if(utils.pointInPolygon(this.level.boundary_polygons[k], tempPt))
         {
           //console.log("inside boundary polygon")
           is_valid = false
@@ -177,7 +177,7 @@ Orbiter.prototype.get_target_path = function() {
           guesses += 1
           if(guesses >= this.max_guesses)
             break
-        } else if(!path_safe_from_pt(this_path.path, this.player.body.GetPosition(), this.orbit_radius)) {
+        } else if(!utils.pathSafeFromPt(this_path.path, this.player.body.GetPosition(), this.orbit_radius)) {
           //console.log("not safe from player")
           is_valid = false
           guesses += 1
@@ -195,8 +195,8 @@ Orbiter.prototype.get_target_path = function() {
 
 
     if(!this.impulse_game_state.is_boss_level) {
-      if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius)
-        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), get_safest_spawn_point(this, this.player, this.impulse_game_state.level_name, this.impulse_game_state.level.pick_alt_path))
+      if(utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) < this.orbit_radius)
+        return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), utils.getSafestSpawnPoint(this, this.player, this.impulse_game_state.level_name, this.impulse_game_state.level.pick_alt_path))
       else
         return this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), this.player.body.GetPosition(), this.impulse_game_state.level.pick_alt_path)
     } else {
@@ -221,7 +221,7 @@ Orbiter.prototype.move = function() {
     var target_path = this.get_target_path()
     if(!target_path.path) return
 
-    if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_path.path[target_path.length - 1] == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
+    if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_path.path[target_path.length - 1] == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !utils.isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
         var new_path = target_path;
@@ -243,20 +243,20 @@ Orbiter.prototype.move = function() {
 
   var endPt = this.path[0]
   if ( this.pathfinding_counter % 4 == 0) {
-    while(this.path.length > 0 && p_dist(endPt, this.body.GetPosition())<1)
+    while(this.path.length > 0 && utils.pDist(endPt, this.body.GetPosition())<1)
     //get rid of points that are too close
     {
       this.path = this.path.slice(1)
       endPt = this.path[0]
     }
 
-    if(!endPt || !isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
+    if(!endPt || !utils.isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
     //if it's not possible to reach the point
     {
       return
     }
 
-    if(isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && this.target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
+    if(utils.isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges) && this.target_point == this.player.body.GetPosition()) {//if we can see the player directly, immediately make that the path
       this.path = [this.player.body.GetPosition()]
       endPt = this.path[0]
     }
@@ -298,7 +298,7 @@ Orbiter.prototype.move_to = function(endPt) {
 }
 
 Orbiter.prototype.player_hit_proc = function() {
-  var orbiter_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  var orbiter_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
   var a = new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle))
   this.player.body.ApplyImpulse(new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle)), this.player.body.GetWorldCenter())
 }

@@ -85,9 +85,9 @@ DeathRay.prototype.additional_processing = function(dt) {
   if(this.aimed) {
     this.set_heading(this.ray_angle)
   } else
-    this.set_heading(_atan(this.body.GetPosition(), this.player.body.GetPosition()))
+    this.set_heading(utils.atan(this.body.GetPosition(), this.player.body.GetPosition()))
 
-  if(this.safe != p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
+  if(this.safe != utils.pDist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius)
   {
     this.safe = !this.safe
   }
@@ -96,7 +96,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.destroyable_timer -= dt
   }
 
-  this.within_bounds = check_bounds(this.interior_buffer, this.body.GetPosition(), imp_params.draw_factor)
+  this.within_bounds = utils.checkBounds(this.interior_buffer, this.body.GetPosition(), imp_params.draw_factor)
 
   if (this.recovery_timer > 0) {
     this.recovery_timer -= dt
@@ -142,7 +142,7 @@ DeathRay.prototype.additional_processing = function(dt) {
       if(this.fire_duration <= this.fire_interval/2 && !this.fired) {
         var ray_polygon = this.get_ray_polygon()
         this.fired = true
-        if(pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
+        if(utils.pointInPolygon(ray_polygon, this.player.body.GetPosition())) {
           var factor = 1
           if(this.player.is_bulked()) {
             factor *= 10
@@ -154,7 +154,7 @@ DeathRay.prototype.additional_processing = function(dt) {
           this.impulse_game_state.reset_combo()
         }
         for(var i = 0; i < this.level.enemies.length; i++) {
-          if(this.level.enemies[i] != this && pointInPolygon(ray_polygon, this.level.enemies[i].body.GetPosition())) {
+          if(this.level.enemies[i] != this && utils.pointInPolygon(ray_polygon, this.level.enemies[i].body.GetPosition())) {
             if(this.level.enemies[i].type == "orbiter") {
               this.level.enemies[i].weaken()
             }
@@ -190,7 +190,7 @@ DeathRay.prototype.reset_ray = function() {
 }
 
 DeathRay.prototype.aim_ray = function() {
-  this.ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  this.ray_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.shoot_duration = this.shoot_interval * this.aim_proportion
 
 
@@ -228,12 +228,12 @@ DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_ang
 DeathRay.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
-    var point = get_nearest_spawn_point(this, this.player, this.impulse_game_state.level_name)
+    var point = utils.getNearestSpawnPoint(this, this.player, this.impulse_game_state.level_name)
     return {x: point.x/imp_params.draw_factor, y: point.y/imp_params.draw_factor}
   }
   else {
     if(this.goalPt == null) {
-      this.goalPt = {x: this.level.get_starting_loc().x/imp_params.draw_factor, y: this.level.get_starting_loc().y/imp_params.draw_factor}//getRandomCentralValidLocation({x: -10, y: -10})
+      this.goalPt = {x: this.level.get_starting_loc().x/imp_params.draw_factor, y: this.level.get_starting_loc().y/imp_params.draw_factor}//utils.getRandomCentralValidLocation({x: -10, y: -10})
     }
     return this.goalPt
   }
@@ -260,7 +260,7 @@ DeathRay.prototype.move = function() {
       this.goalPt = null
       this.moving = false
     }
-    else if(p_dist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius + this.safe_radius_buffer)
+    else if(utils.pDist(this.player.body.GetPosition(), this.body.GetPosition()) > this.safe_radius + this.safe_radius_buffer)
     {
       if(this.path == null) {
         this.pathfinding_counter = 2 * this.pathfinding_delay
@@ -286,7 +286,7 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
     {
       //this part takes care of the "aimer"
       context.beginPath()
-      var ray_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+      var ray_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
       context.moveTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle + Math.PI/2))*draw_factor,
        (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle + Math.PI/2))*draw_factor)
       context.lineTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle - Math.PI/2))*draw_factor,
@@ -367,14 +367,14 @@ DeathRay.prototype.get_color_for_status = function(status) {
 DeathRay.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
-  if(!check_bounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 
   var in_poly = false
   for(var i = 0; i < this.level.obstacle_polygons.length; i++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[i], this.body.GetPosition()))
     {
       in_poly = true
     }
@@ -397,6 +397,6 @@ DeathRay.prototype.modify_movement_vector = function(dir) {
 }
 
 DeathRay.prototype.player_hit_proc = function() {
-  //var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  //var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
   //this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
 }

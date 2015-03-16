@@ -1,7 +1,7 @@
 var io = {};
 
 function on_mouse_move(event) {
-  var mPos = getCursorPosition(event)
+  var mPos = utils.getCursorPosition(event)
 
   game_engine.on_mouse_move(mPos);
 }
@@ -9,7 +9,7 @@ function on_mouse_move(event) {
 function on_mouse_down(event) {
   event.preventDefault()
 
-  var mPos = getCursorPosition(event)
+  var mPos = utils.getCursorPosition(event)
   if(event.button == 0) {
     game_engine.on_mouse_down(mPos);
   } else if(event.button == 2) {
@@ -20,7 +20,7 @@ function on_mouse_down(event) {
 function on_mouse_up(event) {
   event.preventDefault()
 
-  var mPos = getCursorPosition(event)
+  var mPos = utils.getCursorPosition(event)
 
   if(event.button == 0) {
     game_engine.on_mouse_up(mPos);
@@ -33,7 +33,7 @@ function on_click(event) {
 
   event.preventDefault()
 
-  var mPos = getCursorPosition(event)
+  var mPos = utils.getCursorPosition(event)
 
   if(event.button == 0) {
     game_engine.on_click(mPos);

@@ -271,7 +271,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
     }
   } else if(this.striking_state == "striking") {
     this.process_striking_arms()
-    if(p_dist(this.body.GetPosition(), this.player.get_current_position()) <= 15) {
+    if(utils.pDist(this.body.GetPosition(), this.player.get_current_position()) <= 15) {
       this.strike_timer -= dt
       if(this.strike_timer <= 0 && !(this.wheel_activate_timer > 0 && this.current_wheel_set[this.wheel_cur_index] == "frenzy")) {
         this.strike_timer = this.strike_interval
@@ -492,7 +492,7 @@ BossThree.prototype.process_striking_arms = function() {
       var prog = 1 - data.duration/data.interval
       var arm_size = 0
       if(data.max_dist == null) {
-        data.max_dist = p_dist(this.body.GetPosition(), this.player.get_current_position()) + 5
+        data.max_dist = utils.pDist(this.body.GetPosition(), this.player.get_current_position()) + 5
         if(data.max_dist < 20) data.max_dist += 10
       }
 
@@ -506,7 +506,7 @@ BossThree.prototype.process_striking_arms = function() {
         data.cur_dist = data.start_dist * (1 - arm_size) + (data.charge_dist) * (arm_size)
       } else if (prog >= start_strike_t && prog < finish_strike_t) {
         arm_size = (prog - start_strike_t) / (finish_strike_t - start_strike_t);
-        arm_size = bezier_interpolate(0.15, 0.85, arm_size);
+        arm_size = utils.bezierInterpolate(0.15, 0.85, arm_size);
         data.cur_dist = data.max_dist * (arm_size) + (data.charge_dist) * (1 - arm_size)
         if (!data.sound_played) {
           data.sound_played = true
@@ -516,7 +516,7 @@ BossThree.prototype.process_striking_arms = function() {
         data.cur_dist = data.max_dist
       } else if (prog >= start_retract_t && prog < finish_retract_t) {
         arm_size = (prog - start_retract_t) / (finish_retract_t - start_retract_t);
-        arm_size = bezier_interpolate(0.15, 0.85, arm_size);
+        arm_size = utils.bezierInterpolate(0.15, 0.85, arm_size);
         if (arm_size > 0) {
           data.cur_dist = data.max_dist * (1 - arm_size) + (data.start_dist) * (arm_size)
         } else {
@@ -554,7 +554,7 @@ BossThree.prototype.cancel_strikes = function() {
 BossThree.prototype.strike_at_player = function() {
 
   if(this.striking_state == "striking") {
-    var boss_angle = _atan(this.body.GetPosition(),this.player.get_current_position())
+    var boss_angle = utils.atan(this.body.GetPosition(),this.player.get_current_position())
     var arm = Math.floor((boss_angle - this.body.GetAngle())/(Math.PI/8))
     while(arm < 0) {
       arm += this.num_arms
@@ -574,7 +574,7 @@ BossThree.prototype.strike_at_player = function() {
     var index = Math.floor(Math.random() * choices.length)
     this.strike_with_arm(choices[index], dist, this.strike_duration)
   } else if(this.striking_state == "frenzy") {
-    var boss_angle = _atan(this.body.GetPosition(),this.player.get_current_position())
+    var boss_angle = utils.atan(this.body.GetPosition(),this.player.get_current_position())
     var arm = Math.floor((boss_angle - this.body.GetAngle())/(Math.PI/8))
     while(arm < 0) {
       arm += this.num_arms
@@ -637,7 +637,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
 
 BossThree.prototype.initialize_arms = function() {
   for(var index = 0; index < this.num_arms; index++) {
-    var arm_body =  create_body(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
+    var arm_body =  utils.createBody(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
     arm_body.SetAngle(this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
     this.striking_arms[index] = {
       interval: this.strike_duration,
@@ -653,7 +653,7 @@ BossThree.prototype.initialize_arms = function() {
 BossThree.prototype.additional_death_prep_specific = function() {
   for(var index = 0; index < this.num_arms; index++) {
     // Need to recreate arms.
-    var arm_body = create_body(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x,
+    var arm_body = utils.createBody(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x,
     this.body.GetPosition().y, 3, 1, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
     var angle = this.body.GetAngle() + Math.PI/(this.num_arms/2) * index;
     arm_body.SetAngle(angle);
@@ -923,7 +923,7 @@ BossThree.prototype.draw_special_attack_timer = function(context, draw_factor) {
 }
 
 BossThree.prototype.spawn_this_enemy = function(enemy_type) {
-  var angle = _atan(this.body.GetPosition(), this.player.get_current_position());
+  var angle = utils.atan(this.body.GetPosition(), this.player.get_current_position());
 
   var spread = 0;
 
@@ -984,7 +984,7 @@ BossThree.prototype.collide_with = function(other, body) {
       var prog = 1 - data.duration/data.interval
       if(data.body == body) {
         if((prog > data.charging_prop && prog < data.charging_prop + (1-data.charging_prop) * 0.3) || prog >= 1 || prog < data.charging_prop) {
-          var boss_angle = _atan(this.body.GetPosition(), other.body.GetPosition())
+          var boss_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
           if(other === this.player) {
             var _this = this;
             other.body.ApplyImpulse(new b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
@@ -1001,8 +1001,8 @@ BossThree.prototype.collide_with = function(other, body) {
               }
           }
         } /*else {
-          var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
-          var arm_angle = angle_closest_to(boss_angle, this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
+          var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
+          var arm_angle = utils.angleClosestTo(boss_angle, this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
           if(boss_angle > arm_angle) {
             var attack_angle = boss_angle + Math.PI/2
             other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(attack_angle), this.boss_force * Math.sin(attack_angle)), other.body.GetWorldCenter())
@@ -1014,7 +1014,7 @@ BossThree.prototype.collide_with = function(other, body) {
       }
     }
   } else {
-    var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
+    var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
     var factor = 1
     if(other === this.player && saveData.difficultyMode == "easy") {
       factor = 0.5

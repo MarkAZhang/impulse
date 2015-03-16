@@ -58,12 +58,12 @@ BossTwoSpawner.prototype.process = function(dt) {
 
   for(var i = 0; i < this.level.enemies.length; i++) {
       if (this.level.enemies[i].id == this.id) continue
-      var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
+      var boss_angle = utils.atan(this.level.enemies[i].body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
       var gravity_force = this.get_gravity_force(this.level.enemies[i].body.GetPosition())
       if(gravity_force > 0)
         this.level.enemies[i].body.ApplyImpulse(new b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
     }
-    var boss_angle = _atan(this.player.body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
+    var boss_angle = utils.atan(this.player.body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
 
     var gravity_force = this.get_gravity_force(this.player.body.GetPosition())
 
@@ -73,7 +73,7 @@ BossTwoSpawner.prototype.process = function(dt) {
 }
 
 BossTwoSpawner.prototype.get_gravity_force = function(loc) {
-var dist =  p_dist(loc, {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor})
+var dist =  utils.pDist(loc, {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor})
   var inside = false
 
   if (dist <= this.size/imp_params.draw_factor * this.high_gravity_factor) {
@@ -102,10 +102,10 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
       // coordinates in box2d world, not canvas.
       var world_x =  this.x/imp_params.draw_factor;
       var world_y =  this.y/imp_params.draw_factor;
-      var ray_angle = _atan({x: world_x, y: world_y}, this.boss.body.GetPosition())
+      var ray_angle = utils.atan({x: world_x, y: world_y}, this.boss.body.GetPosition())
        // find a direction that isn't close to the wall
       var angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
-      while(!isVisible({x: world_x, y: world_y},
+      while(!utils.isVisible({x: world_x, y: world_y},
         {x: world_x + 10 * Math.cos(angle),
           y: world_y + 10 * Math.sin(angle)},
           this.level.obstacle_edges

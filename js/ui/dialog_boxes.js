@@ -125,7 +125,7 @@ PauseMenu.prototype.add_buttons = function() {
         _this.restart_practice()
       }}(this), "retry")
       this.buttons.push(this.restart_button)
-      this.restart_button.keyCode = imp_params.keys.RESTART_KEY;
+      this.restart_button.keyCode = controls.keys.RESTART_KEY;
 
       if(saveData.optionsData.control_hand == "right") {
         this.restart_button.extra_text = "R KEY"
@@ -180,8 +180,8 @@ PauseMenu.prototype.add_buttons = function() {
 
     _this.game_state.toggle_pause()
   }}(this), "resume")
-  this.resume_button.keyCode = imp_params.keys.PAUSE;
-  this.resume_button.sKeyCode = imp_params.keys.SECONDARY_PAUSE;
+  this.resume_button.keyCode = controls.keys.PAUSE;
+  this.resume_button.sKeyCode = controls.keys.SECONDARY_PAUSE;
 
   if(saveData.optionsData.control_hand == "right") {
     this.resume_button.extra_text = "Q KEY"
@@ -853,14 +853,14 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
   ctx.save()
   if(this.current_lines == null) {
-    this.current_lines = getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
+    this.current_lines = utils.getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
   }
 
   /*if(this.special_ability == null) {
-    this.special_ability = getLines(ctx, enemyData[this.enemy_name].special_ability, this.w - 20, '20px Muli')
+    this.special_ability = utils.getLines(ctx, enemyData[this.enemy_name].special_ability, this.w - 20, '20px Muli')
   }
   if(this.other_notes == null && enemyData[this.enemy_name].other_notes != "") {
-    this.other_notes = getLines(ctx, enemyData[this.enemy_name].other_notes, this.w - 20, '20px Muli')
+    this.other_notes = utils.getLines(ctx, enemyData[this.enemy_name].other_notes, this.w - 20, '20px Muli')
   }
 
   if(this.special_ability != null && !this.h) {

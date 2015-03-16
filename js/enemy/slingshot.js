@@ -55,7 +55,7 @@ Slingshot.prototype.move = function() {
         dir.Multiply(this.slow_factor)
       this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-      var heading = _atan(this.body.GetPosition(), this.slingshot_point)
+      var heading = utils.atan(this.body.GetPosition(), this.slingshot_point)
       this.body.SetAngle(heading)
     }
   }
@@ -76,13 +76,13 @@ Slingshot.prototype.modify_movement_vector = function(dir) {
 
 Slingshot.prototype.additional_processing = function(dt) {
 
-  if(this.slingshot_mode && (this.slingshot_duration <= 0 && p_dist(this.slingshot_point, this.body.GetPosition()) < 1) || this.is_silenced()) {
+  if(this.slingshot_mode && (this.slingshot_duration <= 0 && utils.pDist(this.slingshot_point, this.body.GetPosition()) < 1) || this.is_silenced()) {
     this.slingshot_mode = false
     this.lin_damp = this.orig_lin_damp
   }
 
   // Slow the slingshot until it enters the arena, with a small buffer.
-  if (!this.first_time_in_arena && check_bounds(1, this.body.GetPosition(), imp_params.draw_factor)) {
+  if (!this.first_time_in_arena && utils.checkBounds(1, this.body.GetPosition(), imp_params.draw_factor)) {
     this.first_time_in_arena = true
   }
 
@@ -106,7 +106,7 @@ Slingshot.prototype.additional_processing = function(dt) {
 
 Slingshot.prototype.player_hit_proc = function() {
 
-  var spear_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+  var spear_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
   var a = new b2Vec2(Math.cos(spear_angle), Math.sin(spear_angle))
   if(this.empowered_duration > 0)
   {

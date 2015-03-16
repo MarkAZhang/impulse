@@ -10,7 +10,7 @@ window.onload = function() {
 }
 function centerMessage() {
   var message = document.getElementById("message");
-  var dim = getWindowDimensions()
+  var dim = utils.getWindowDimensions()
 
   message.setAttribute("style", "display: block" )
   if(message.clientWidth < dim.w)
@@ -96,7 +96,7 @@ window["impulse_main"] =  function() {
     dom.centerCanvas()
     saveData.loadGame()
     set_up_title_bg()
-    set_key_bindings()
+    controls.set_key_bindings()
     imp_params.impulse_music = new MusicPlayer()
     imp_params.last_time = (new Date()).getTime();
     game_engine.switch_game_state(new IntroState());

@@ -238,7 +238,7 @@ ImpulseGameState.prototype.make_player = function() {
     this.player = new Player(this.world, this.level.get_starting_loc().x/imp_params.draw_factor, this.level.get_starting_loc().y/imp_params.draw_factor, this)
   }
   else {
-    var r_p = getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, imp_params.draw_factor)
+    var r_p = utils.getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, imp_params.draw_factor)
     this.player = new Player(this.world, r_p.x, r_p.y, this)
   }
 }
@@ -331,7 +331,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     if (this.show_tutorial) {
       this.tutorial_overlay_manager.process(dt);
-      if(this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+      if(this.gateway_unlocked && utils.pDist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
         this.add_tutorial_signal("moved_to_gateway")
       }
     }
@@ -348,7 +348,7 @@ ImpulseGameState.prototype.process = function(dt) {
           this.zoom_bg_switch = false;
         } else {
           var prop = (this.zoom_transition_timer) / (this.zoom_transition_period)
-          //bezier_interpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
+          //utils.bezierInterpolate(0.9, 0.9, (this.zoom_transition_timer) / (this.zoom_transition_period))
           this.zoom = 1/(1/(this.zoom_start_scale) * prop + 1/(this.zoom_target_scale) * (1-prop))
           this.camera_center.x = this.zoom_start_pt.x * prop + this.zoom_target_pt.x * (1-prop)
           this.camera_center.y = this.zoom_start_pt.y * prop + this.zoom_target_pt.y * (1-prop)
@@ -448,7 +448,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if (this.combo_enabled) {
       this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
     }
-    this.game_numbers.last_time = convert_seconds_to_time_string(this.game_numbers.seconds);
+    this.game_numbers.last_time = utils.convertSecondsToTimeString(this.game_numbers.seconds);
 
     this.game_numbers.game_length += dt;
     if (this.world_num > 0 && !this.is_level_zero)
@@ -489,10 +489,10 @@ ImpulseGameState.prototype.bg_transition = function() {
 
 ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
   if(this.fade_state == "in") {
-      var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
+      var prop = utils.bezierInterpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
       ctx.globalAlpha = Math.min(1-prop,1)
   } else if(this.fade_state == "out"){
-    var prop = bezier_interpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
+    var prop = utils.bezierInterpolate(0.1, 0.5, (this.zoom_transition_timer) / (this.zoom_transition_period))
     ctx.globalAlpha = Math.max(prop,0)
   }
 }
@@ -666,7 +666,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     	ctx.stroke()
       ctx.beginPath()
       ctx.fillStyle = 'red'
-      ctx.fillText(Math.round(p_dist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*imp_params.draw_factor+this.visibility_graph.edges[i].p2.x*imp_params.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*imp_params.draw_factor+this.visibility_graph.edges[i].p2.y*imp_params.draw_factor)/2)
+      ctx.fillText(Math.round(utils.pDist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*imp_params.draw_factor+this.visibility_graph.edges[i].p2.x*imp_params.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*imp_params.draw_factor+this.visibility_graph.edges[i].p2.y*imp_params.draw_factor)/2)
       ctx.fill()
   }
   ctx.restore()*/
@@ -861,7 +861,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
       context.fillText("SPEED RUN", imp_params.sidebarWidth/2, timeY - 30);
       context.fillText("TIME LEFT", imp_params.sidebarWidth/2, timeY - 10);
       context.font = '32px Muli';
-      var total_time = convert_seconds_to_time_string(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
+      var total_time = utils.convertSecondsToTimeString(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
       context.fillText(total_time, imp_params.sidebarWidth/2, timeY + 22);
     } else if (!this.is_boss_level) {
       context.fillStyle = this.color;
@@ -962,7 +962,7 @@ ImpulseGameState.prototype.on_right_mouse_down = function(x, y) {
 }
 
 ImpulseGameState.prototype.reset_player_state = function() {
-  this.player.keyDown(imp_params.keys.PAUSE)
+  this.player.keyDown(controls.keys.PAUSE)
   this.player.mouse_up(null)
 }
 
@@ -998,13 +998,13 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     }
     this.on_victory();
   }
-  if(keyCode == imp_params.keys.PAUSE || keyCode == imp_params.keys.SECONDARY_PAUSE) {
+  if(keyCode == controls.keys.PAUSE || keyCode == controls.keys.SECONDARY_PAUSE) {
     if ((this.is_boss_level && this.victory)) {
       // Do not allow player to pause if they've beaten the boss.
     } else {
       this.toggle_pause()
     }
-  } else if(keyCode == imp_params.keys.GATEWAY_KEY && this.gateway_unlocked && p_dist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
+  } else if(keyCode == controls.keys.GATEWAY_KEY && this.gateway_unlocked && utils.pDist(this.level.gateway_loc, this.player.body.GetPosition()) < this.level.gateway_size) {
     //if(this.game_numbers.score >= this.level.cutoff_scores[saveData.difficultyMode]["bronze"]) {
     this.on_victory();
   }
@@ -1113,7 +1113,7 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
 
       if(second_object != first_object.harpoon && second_object.type != "harpoonhead" && !second_object.is_boss && !second["owner"].is_boss) {
         if((second_object.type == "boss four spawner" || second_object.type == "boss four attacker") && !second_object.spawned) continue
-        if(p_dist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
+        if(utils.pDist(first_object.body.GetPosition(), second_object.body.GetPosition()) < first_object.effective_radius + second_object.effective_radius) {
           if(second_object.is_enemy)
           {
             second_object.open(3000)

@@ -197,7 +197,7 @@ Enemy.prototype.check_death = function() {
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
 
       if(this.durations["open"] <= 0 && this.no_death_on_open) {
@@ -232,19 +232,19 @@ Enemy.prototype.generate_collision_polygons = function() {
       if(cur_shape instanceof b2PolygonShape) {
         var these_points = cur_shape.m_vertices
         for(var i = 0; i < these_points.length; i++) {
-          var temp_r = p_dist({x: 0, y: 0}, these_points[i])
-          var temp_ang = _atan({x: 0, y: 0}, these_points[i])
+          var temp_r = utils.pDist({x: 0, y: 0}, these_points[i])
+          var temp_ang = utils.atan({x: 0, y: 0}, these_points[i])
           these_polar_points.push({r: temp_r, ang: temp_ang})
         }
-        this.collision_polygons.push(getBoundaryPolygon(these_points, (this.player.r + 0.1)))
+        this.collision_polygons.push(utils.getBoundaryPolygon(these_points, (this.player.r + 0.1)))
       }
       /*else if(cur_shape instanceof b2CircleShape) {
         var this_polygon = this.body // not actually right, but we don't have any objects where this matters
         var these_points = [{x: this_polygon.x + Math.cos()}]
         for(var i = 0; i < 4; i++) {
           var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * cur_shape.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * cur_shape.r}
-          var temp_r = p_dist({x: 0, y: 0}, point)
-          var temp_ang = _atan({x: 0, y: 0}, point)
+          var temp_r = utils.pDist({x: 0, y: 0}, point)
+          var temp_ang = utils.atan({x: 0, y: 0}, point)
           these_polar_points.push({r: temp_r, ang: temp_ang})
         }
         this.collision_polygons.push(null)
@@ -387,7 +387,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 Enemy.prototype.process_entered_arena = function() {
 
   if(!this.silence_outside_arena) return
-  if(!this.entered_arena && check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.silence(this.entered_arena_delay)
     this.recovery_interval = this.entered_arena_delay
     this.recovery_timer = this.entered_arena_delay
@@ -398,7 +398,7 @@ Enemy.prototype.process_entered_arena = function() {
     this.entered_arena_timer -= dt
   }
 
-  if(!check_bounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
     this.entered_arena = false
     this.silence(100, true)
     this.recovery_timer = 0
@@ -422,15 +422,15 @@ Enemy.prototype.adjust_position = function() {
     var angle = null
 
     for(var i = 0; i < polygons.length; i++) {
-      if(pointInPolygon(polygons[i], this.body.GetPosition())) {
-        var closest_edge = closestPolygonEdgeToPoint(polygons[i], this.body.GetPosition())
+      if(utils.pointInPolygon(polygons[i], this.body.GetPosition())) {
+        var closest_edge = utils.closestPolygonEdgeToPoint(polygons[i], this.body.GetPosition())
         if(closest_edge.dist != null) {
-          var angle = _atan({x: 0, y: 0}, {x: closest_edge.p2.x - closest_edge.p1.x, y: closest_edge.p2.y - closest_edge.p1.y})  - Math.PI/2
+          var angle = utils.atan({x: 0, y: 0}, {x: closest_edge.p2.x - closest_edge.p1.x, y: closest_edge.p2.y - closest_edge.p1.y})  - Math.PI/2
           in_polygon = true
         } else {
-          var closest_vertex = closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
+          var closest_vertex = utils.closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
           if(closest_vertex.dist < imp_params.impulse_level_data[this.level.level_name].buffer_radius) {
-            var angle = _atan(closest_vertex.v, this.body.GetPosition())
+            var angle = utils.atan(closest_vertex.v, this.body.GetPosition())
             in_polygon = true
           }
         }
@@ -482,7 +482,7 @@ Enemy.prototype.move = function() {
     var target_point = this.get_target_point()
 
     if(!target_point) return
-    if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
+    if((this.path && this.path.length == 0) || (this.path && this.path.length == 1 && target_point == this.player.body.GetPosition()) || this.pathfinding_counter >= this.pathfinding_delay || (this.path && !utils.isVisible(this.body.GetPosition(), this.path[0], this.level.obstacle_edges)))
     //if this.path.length == 1, there is nothing in between the enemy and the player. In this case, it's not too expensive to check every frame to make sure the enemy doesn't kill itself
     {
       var new_path = this.impulse_game_state.visibility_graph.query(this.body.GetPosition(), target_point, this.impulse_game_state.level.pick_alt_path)
@@ -505,21 +505,21 @@ Enemy.prototype.move = function() {
 
   var endPt = this.path[0]
   if ( this.pathfinding_counter % 4 == 0) {
-    while(this.path.length > 0 && p_dist(endPt, this.body.GetPosition())<1)
+    while(this.path.length > 0 && utils.pDist(endPt, this.body.GetPosition())<1)
     //get rid of points that are too close
     {
       this.path = this.path.slice(1)
       endPt = this.path[0]
     }
 
-    if(!endPt || !isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
+    if(!endPt || !utils.isVisible(this.body.GetPosition(), endPt, this.level.obstacle_edges))
     //if it's not possible to reach the point
     {
       return
     }
 
     if(target_point == this.player.body.GetPosition() &&
-       isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
+       utils.isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)) {//if we can see the player directly, immediately make that the path
       this.path = [this.player.body.GetPosition()]
       endPt = this.path[0]
     }
@@ -529,7 +529,7 @@ Enemy.prototype.move = function() {
   if(this.do_yield) {
     if(this.yield_counter == this.yield_delay)
     {
-      var nearby_enemies = getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, this.level.enemies, function(enemy) {return enemy.body.GetPosition()})
+      var nearby_enemies = utils.getObjectsWithinRadius(this.body.GetPosition(), this.effective_radius*4, this.level.enemies, function(enemy) {return enemy.body.GetPosition()})
       this.yield = false
       for(var i = 0; i < nearby_enemies.length; i++)
       {//move if the highest id enemy
@@ -571,7 +571,7 @@ Enemy.prototype.modify_movement_vector = function(dir) {
 }
 
 Enemy.prototype.set_heading_to = function(point) {
-  this.set_heading(_atan(this.body.GetPosition(), point))
+  this.set_heading(utils.atan(this.body.GetPosition(), point))
 }
 
 Enemy.prototype.set_heading = function(heading) {
@@ -706,10 +706,10 @@ Enemy.prototype.player_hit_proc = function() {
 
 // draw a pointer if the enemy is off-screen
 /*Enemy.prototype.draw_arrow = function(context, draw_factor) {
-  if(!check_bounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
+  if(!utils.checkBounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
-    var pointer_angle = _atan(pointer_point, this.body.GetPosition())
+    var pointer_angle = utils.atan(pointer_point, this.body.GetPosition())
     context.save();
     context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
     context.rotate(pointer_angle);
@@ -719,7 +719,7 @@ Enemy.prototype.player_hit_proc = function() {
     context.globalAlpha = this.pointer_visibility
     context.strokeStyle = this.color
     context.lineWidth = 2
-    var pointer_radius = this.pointer_max_radius * Math.max(Math.min(1, (15 - (p_dist(this.body.GetPosition(), pointer_point) - 3))/15), 0)
+    var pointer_radius = this.pointer_max_radius * Math.max(Math.min(1, (15 - (utils.pDist(this.body.GetPosition(), pointer_point) - 3))/15), 0)
     context.moveTo((pointer_point.x+this.pointer_vertices[0].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[0].y*pointer_radius)*draw_factor)
 
 
@@ -898,20 +898,20 @@ Enemy.prototype.is_invincible = function() {
     if(this.shapes[i] instanceof b2PolygonShape) {
       var collision_polygon = this.collision_polygons[i]
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
-      var temp_ang = _atan({x:0, y:0}, temp_vec)
+      var temp_ang = utils.atan({x:0, y:0}, temp_vec)
       var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
       var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
-      if(pointInPolygon(collision_polygon, rotated_vec))
+      if(utils.pointInPolygon(collision_polygon, rotated_vec))
         return true
     }
     else if(this.shapes[i] instanceof b2CircleShape)
     {
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
-      var temp_ang = _atan({x:0, y:0}, temp_vec)
+      var temp_ang = utils.atan({x:0, y:0}, temp_vec)
       var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
       var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
 
-      if (p_dist(rotated_vec, {x: this.shape_polygons[i].x, y: this.shape_polygons[i].y}) <= other.shape.GetRadius() + this.shape_polygons[i].r + 0.1)
+      if (utils.pDist(rotated_vec, {x: this.shape_polygons[i].x, y: this.shape_polygons[i].y}) <= other.shape.GetRadius() + this.shape_polygons[i].r + 0.1)
         return true
     }
   }
@@ -937,9 +937,9 @@ Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
        y: this.body.GetPosition().y + these_polar_points[i].r * Math.sin(these_polar_points[i].ang + cur_ang)}
       var loc_j = {x: this.body.GetPosition().x + these_polar_points[j].r * Math.cos(these_polar_points[j].ang + cur_ang),
        y: this.body.GetPosition().y + these_polar_points[j].r * Math.sin(these_polar_points[j].ang + cur_ang)}
-      var temp_point = getSegIntersection(loc_i, loc_j, seg_s, seg_f)
+      var temp_point = utils.getSegIntersection(loc_i, loc_j, seg_s, seg_f)
       if(temp_point == null) continue
-      var temp_d = p_dist(temp_point, seg_s)
+      var temp_d = utils.pDist(temp_point, seg_s)
       if(ans_d == null || temp_d < ans_d)
       {
         ans = temp_point

@@ -138,8 +138,8 @@ LevelEditorState.prototype.rotate_world = function(angle, center_point, duplicat
     var new_polygon = []
     for(var j = 0; j < this.polygons[i].length; j++) {
       var pt = this.polygons[i][j]
-      var r = p_dist(pt, center_point)
-      var theta = _atan(center_point, pt)
+      var r = utils.pDist(pt, center_point)
+      var theta = utils.atan(center_point, pt)
       var new_pt = {x: center_point.x + r*Math.cos(angle + theta), y: center_point.y + r*Math.sin(angle + theta)}
       new_polygon.push(new_pt)
     }
@@ -162,8 +162,8 @@ LevelEditorState.prototype.scale_world = function(sx, sy, center_point) {
     var new_polygon = []
     for(var j = 0; j < this.polygons[i].length; j++) {
       var pt = this.polygons[i][j]
-      var r = p_dist(pt, center_point)
-      var theta = _atan(center_point, pt)
+      var r = utils.pDist(pt, center_point)
+      var theta = utils.atan(center_point, pt)
       var new_pt = {x: center_point.x + sx*r*Math.cos(theta), y: center_point.y + sy*r*Math.sin(theta)}
       new_polygon.push(new_pt)
     }
@@ -180,8 +180,8 @@ LevelEditorState.prototype.scale_polygon = function(polygon, sx, sy, center_poin
   var new_polygon = []
   for(var j = 0; j < this.polygons[polygon].length; j++) {
     var pt = this.polygons[polygon][j]
-    var r = p_dist(pt, center_point)
-    var theta = _atan(center_point, pt)
+    var r = utils.pDist(pt, center_point)
+    var theta = utils.atan(center_point, pt)
     var new_pt = {x: center_point.x + sx*r*Math.cos(theta), y: center_point.y + sy*r*Math.sin(theta)}
     new_polygon.push(new_pt)
   }
@@ -200,8 +200,8 @@ LevelEditorState.prototype.scale_polygon_around_centroid = function(polygon, s) 
   var new_polygon = []
   for(var j = 0; j < this.polygons[polygon].length; j++) {
     var pt = this.polygons[polygon][j]
-    var r = p_dist(pt, centroid)
-    var theta = _atan(centroid, pt)
+    var r = utils.pDist(pt, centroid)
+    var theta = utils.atan(centroid, pt)
     var new_pt = {x: centroid.x + s*r*Math.cos(theta), y: centroid.y + s*r*Math.sin(theta)}
     new_polygon.push(new_pt)
   }
@@ -270,8 +270,8 @@ LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point)
   var new_polygon = []
   for(var j = 0; j < this.polygons[index].length; j++) {
     var pt = this.polygons[index][j]
-    var r = p_dist(pt, center_point)
-    var theta = _atan(center_point, pt)
+    var r = utils.pDist(pt, center_point)
+    var theta = utils.atan(center_point, pt)
     var new_pt = {x: center_point.x + r*Math.cos(angle + theta), y: center_point.y + r*Math.sin(angle + theta)}
     new_polygon.push(new_pt)
   }
@@ -305,7 +305,7 @@ LevelEditorState.prototype.on_mouse_up = function(x, y) {
 
 LevelEditorState.prototype.on_mouse_down = function(x, y) {
   var trans_point = this.transform_to_zoomed_space({x:x, y:y});
-  if(this.selected_p != null && pointInPolygon(this.polygons[this.selected_p], trans_point)) {
+  if(this.selected_p != null && utils.pointInPolygon(this.polygons[this.selected_p], trans_point)) {
     this.drag_loc = trans_point
     this.dragging = true
   }
@@ -334,7 +334,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
 
   for(var i = 0; i < this.polygons.length; i++) {
     for(var j = 0; j < this.polygons[i].length; j++) {
-      if(p_dist({x: this.polygons[i][j].x, y: this.polygons[i][j].y}, trans_point) < 5/this.zoom) {
+      if(utils.pDist({x: this.polygons[i][j].x, y: this.polygons[i][j].y}, trans_point) < 5/this.zoom) {
         this.selected_v = [i, j]
         return
       }
@@ -342,7 +342,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
   }
 
   for(var i = 0; i < this.polygons.length; i++) {
-    if(pointInPolygon(this.polygons[i], trans_point)) {
+    if(utils.pointInPolygon(this.polygons[i], trans_point)) {
       this.selected_p = i
       console.log("CLICKED ON POLYGON "+i)
       return
@@ -351,7 +351,7 @@ LevelEditorState.prototype.on_click = function(x, y) {
   }
 
   for(var i = 0; i < this.accumulated_vertices.length; i++) {
-    if(p_dist({x: this.accumulated_vertices[i].x, y: this.accumulated_vertices[i].y}, trans_point) < 5/this.zoom) {
+    if(utils.pDist({x: this.accumulated_vertices[i].x, y: this.accumulated_vertices[i].y}, trans_point) < 5/this.zoom) {
         this.selected_av = i
         return
       }

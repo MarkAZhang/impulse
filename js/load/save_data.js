@@ -43,7 +43,7 @@ SaveData.prototype.loadGame = function() {
     if (!this.hardModeUnlocked) {
       this.difficultyMode = "easy";
     }
-    // IF PLAYER HAS BEATEN WORLD 4, UNLOCK HARD MODE.
+    // TODO: IF PLAYER HAS BEATEN WORLD 4, UNLOCK HARD MODE.
   }
 
   if (loadObj['total_kills']) {

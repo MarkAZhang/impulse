@@ -1,20 +1,22 @@
-var eq = function(a, b) {
-  return a.x == b.x && a.y == b.y
-}
+var utils = {};
 
-var convert_seconds_to_time_string = function(seconds) {
+utils.eq = function(a, b) {
+  return a.x == b.x && a.y == b.y
+};
+
+utils.convertSecondsToTimeString = function(seconds) {
   var a = seconds % 60;
   a = a < 10 ? "0"+a : a;
   return Math.floor(seconds/60)+":"+a;
 };
 
-function isVisibleThroughPolygon(v_i, v_j, polygon) {
+utils.isVisibleThroughPolygon = function (v_i, v_j, polygon) {
   var j = polygon.length - 1
   var ans = false
 
   for( var i = 0; i < polygon.length; i++)
   {
-    if(segIntersection(v_i, v_j, polygon[i], polygon[j])) {
+    if(utils.segIntersection(v_i, v_j, polygon[i], polygon[j])) {
       return false
     }
 
@@ -22,10 +24,9 @@ function isVisibleThroughPolygon(v_i, v_j, polygon) {
   }
   return true
 
-}
+};
 
-function isVisible(v_i, v_j, edges, ignore_polygon)
-{
+utils.isVisible = function (v_i, v_j, edges, ignore_polygon) {
   // ignore_polygon ignores edges of a certain polygon. Only works with boundary polygons.
 
   // prevents an obstacle polygon with no p_n from equally ignore_polygon
@@ -33,18 +34,18 @@ function isVisible(v_i, v_j, edges, ignore_polygon)
   for(var k = 0; k < edges.length; k++)
   {
 
-    if(eq(v_i, edges[k]["p1"]) || eq(v_i, edges[k]["p2"]) || eq(v_j, edges[k]["p1"]) || eq(v_j, edges[k]["p2"])) {
+    if(utils.eq(v_i, edges[k]["p1"]) || utils.eq(v_i, edges[k]["p2"]) || utils.eq(v_j, edges[k]["p1"]) || utils.eq(v_j, edges[k]["p2"])) {
       continue
     }
-  if(edges[k]["p1"]["p_n"] !== ignore_polygon && segIntersection(v_i, v_j, edges[k]["p1"], edges[k]["p2"]))
+    if(edges[k]["p1"]["p_n"] !== ignore_polygon && utils.segIntersection(v_i, v_j, edges[k]["p1"], edges[k]["p2"]))
     {
       return false
     }
   }
   return true
-}
+};
 
-function pointInPolygon(polygon, point)
+utils.pointInPolygon = function (polygon, point)
 //polygon is an array of b2Vec2
 {
   var j = polygon.length - 1
@@ -62,20 +63,20 @@ function pointInPolygon(polygon, point)
     j = i
   }
   return ans
-}
+};
 
-function closestPolygonEdgeToPoint(polygon, point) {
+utils.closestPolygonEdgeToPoint = function (polygon, point) {
   var j = polygon.length - 1
   var ans = {p1: null, p2: null, dist: null}
 
   for(var i = 0; i < polygon.length; i++)
   {
 
-    var dist = seg_dist_from_pt(polygon[i], polygon[j], point)
+    var dist = utils.segDistFromPt(polygon[i], polygon[j], point)
     if(ans.dist == null || dist < ans.dist) {
 
-      var angle_one = _atan(point, polygon[j])
-      var angle_two = angle_closest_to(angle_one,_atan(point, polygon[i]))
+      var angle_one = utils.atan(point, polygon[j])
+      var angle_two = utils.angleClosestTo(angle_one,utils.atan(point, polygon[i]))
       if(angle_two - angle_one < Math.PI/2) {
         // ensure that the edge is close to the point...necessary for CONCAVE polygons
       } else {
@@ -87,16 +88,16 @@ function closestPolygonEdgeToPoint(polygon, point) {
     j = i
   }
   return ans
-}
+};
 
 
-function closestPolygonVertexToPoint(polygon, point) {
+utils.closestPolygonVertexToPoint = function(polygon, point) {
   var ans = {v: null, dist: null}
 
   for(var i = 0; i < polygon.length; i++)
   {
 
-    var dist = p_dist(polygon[i], point)
+    var dist = utils.pDist(polygon[i], point)
     if(ans.dist == null || dist < ans.dist) {
 
       ans.dist = dist
@@ -104,83 +105,80 @@ function closestPolygonVertexToPoint(polygon, point) {
     }
   }
   return ans
-}
+};
 
-function p_dist(p1, p2)
+utils.pDist = function(p1, p2)
 {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
-}
+};
 
-function segIntersection(seg1s, seg1f, seg2s, seg2f)
+utils.segIntersection = function (seg1s, seg1f, seg2s, seg2f)
 {
   var seg1d = {x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}
   var seg2d = {x: seg2f.x - seg2s.x, y: seg2f.y - seg2s.y}
   var a = {x: seg2s.x - seg1s.x, y: seg2s.y - seg1s.y}
-  var b = crossProduct(seg1d, seg2d)
+  var b = utils.crossProduct(seg1d, seg2d)
   if(b==0)
   {
-    if(crossProduct(a, seg2d)==0)
+    if(utils.crossProduct(a, seg2d)==0)
     {
       return false//lines are collinear. For the purposes of our game_engine.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
-  var t = crossProduct(a, seg2d)/b
-  var s = crossProduct(a, seg1d)/b
+  var t = utils.crossProduct(a, seg2d)/b
+  var s = utils.crossProduct(a, seg1d)/b
   return t>=0 && t<=1 && s>=0 && s<=1
-}
+};
 
-function getSegIntersection(seg1s, seg1f, seg2s, seg2f)
+utils.getSegIntersection = function (seg1s, seg1f, seg2s, seg2f)
 {
   var seg1d = {x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}
   var seg2d = {x: seg2f.x - seg2s.x, y: seg2f.y - seg2s.y}
   var a = {x: seg2s.x - seg1s.x, y: seg2s.y - seg1s.y}
-  var b = crossProduct(seg1d, seg2d)
+  var b = utils.crossProduct(seg1d, seg2d)
   if(b==0)
   {
-    if(crossProduct(a, seg2d)==0)
+    if(utils.crossProduct(a, seg2d)==0)
     {
       return null//lines are collinear. For the purposes of our game_engine.cur_game_state.visibility_graph, this does not count as an intersection
     }
     //lines are parallel
   }
-  var t = crossProduct(a, seg2d)/b
-  var s = crossProduct(a, seg1d)/b
+  var t = utils.crossProduct(a, seg2d)/b
+  var s = utils.crossProduct(a, seg1d)/b
   if(t>=0 && t<=1 && s>=0 && s<=1)
   {
     return {x: seg1s.x + seg1d.x * t, y: seg1s.y + seg1d.y * t}
   }
   else
     return null
-}
+};
 
-function seg_dist_from_pt(seg1s, seg1f, pt) {
-
-  return Math.abs(crossProduct({x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}, {x: pt.x - seg1s.x, y: pt.y - seg1s.y})) /
-  //return Math.abs((seg1f.x - seg1s.x) * (seg1s.y - pt.y) - (seg1s.x - pt.x) * (seg1f.y -seg1s.y)) /
+utils.segDistFromPt = function(seg1s, seg1f, pt) {
+  return Math.abs(utils.crossProduct({x: seg1f.x - seg1s.x, y: seg1f.y - seg1s.y}, {x: pt.x - seg1s.x, y: pt.y - seg1s.y})) /
          Math.sqrt((seg1f.x - seg1s.x) * (seg1f.x - seg1s.x)  + (seg1f.y -seg1s.y) * (seg1f.y -seg1s.y));
-}
+};
 
-function path_safe_from_pt(path, pt, dist) {
+utils.pathSafeFromPt = function (path, pt, dist) {
   for(var i = 0; i < path.length-1; i++) {
-    if(seg_dist_from_pt(path[i], path[i+1], pt) < dist)
+    if(utils.segDistFromPt(path[i], path[i+1], pt) < dist)
       return false;
   }
   return true;
-}
+};
 
-
-function crossProduct(v1, v2)
+utils.crossProduct = function(v1, v2)
 {
   return v1.x*v2.y - v1.y*v2.x
 }
 
-function dotProduct(v1, v2)
+utils.dotProduct = function(v1, v2)
 {
   return v1.x*v2.x + v1.y*v2.y
 }
 
-function getCursorPosition(e){
+utils.getCursorPosition = function(e){
 
     var x;
     var y;
@@ -199,7 +197,7 @@ function getCursorPosition(e){
 }
 
 // returns -Math.pi to Math.pi
-var _atan = function(center, ray) {
+utils.atan = function(center, ray) {
   if(center == null || ray == null) {
     console.log("ERROR")
   }
@@ -226,23 +224,13 @@ var _atan = function(center, ray) {
   return angle
 }
 
-var normalize_angle = function(angle) {
-  while(angle < -Math.PI) {
-    angle += 2 * Math.PI
-  }
-  while(angle > Math.PI) {
-    angle -= Math.Pi
-  }
-  return angle
-}
-
-function getObjectsWithinRadius(pt, r, objects, getLocation)
+utils.getObjectsWithinRadius = function(pt, r, objects, getLocation)
 {
   var ans = []
   for(var i = 0; i < objects.length; i++)
   {
     var loc = getLocation(objects[i])
-    if (p_dist(pt, loc)<r)
+    if (utils.pDist(pt, loc)<r)
     {
       ans.push(objects[i])
     }
@@ -251,28 +239,7 @@ function getObjectsWithinRadius(pt, r, objects, getLocation)
 
 }
 
-function getBoundaryPolygonOld(polygon, radius) {
-
-  var j = polygon.length - 1
-  var ans = []
-  for(var i = 0; i < polygon.length; i++)
-  {
-    var k = (i+1)%polygon.length
-    var j_to_i_normal = new b2Vec2(polygon[j].y - polygon[i].y, polygon[i].x - polygon[j].x)
-    var k_to_i_normal = new b2Vec2(polygon[i].y - polygon[k].y, polygon[k].x - polygon[i].x)
-    j_to_i_normal.Normalize()
-    k_to_i_normal.Normalize()
-    ans.push({x: polygon[j].x+j_to_i_normal.x*radius, y: polygon[j].y + j_to_i_normal.y*radius})
-    ans.push({x: polygon[i].x+j_to_i_normal.x*radius, y: polygon[i].y + j_to_i_normal.y*radius})
-    var sum = new b2Vec2(j_to_i_normal.x + k_to_i_normal.x, j_to_i_normal.y + k_to_i_normal.y)
-    sum.Normalize()
-    ans.push({x: polygon[i].x+sum.x * radius, y: polygon[i].y+sum.y * radius})
-    j = i
-  }
-  return ans
-}
-
-function getBoundaryPolygon(polygon, radius) {
+utils.getBoundaryPolygon = function(polygon, radius) {
   var j = polygon.length - 1
   var ans = []
   for(var i = 0; i < polygon.length; i++)
@@ -286,8 +253,8 @@ function getBoundaryPolygon(polygon, radius) {
     k_to_i_normal.Normalize()
     j_to_i.Normalize()
     k_to_i.Normalize()
-    var first_angle = _atan({x: 0, y: 0}, k_to_i_normal)
-    var second_angle = _atan({x: 0, y: 0}, j_to_i_normal)
+    var first_angle = utils.atan({x: 0, y: 0}, k_to_i_normal)
+    var second_angle = utils.atan({x: 0, y: 0}, j_to_i_normal)
     var cur_angle = first_angle - second_angle
     cur_angle = cur_angle < 0? cur_angle+Math.PI * 2 : cur_angle
     cur_angle = cur_angle >= 2 * Math.PI ? cur_angle - Math.PI * 2 : cur_angle
@@ -312,12 +279,12 @@ function getBoundaryPolygon(polygon, radius) {
   return ans
 }
 
-function check_bounds(buffer, pt, draw_factor) {
+utils.checkBounds = function(buffer, pt, draw_factor) {
   var factor = draw_factor ? draw_factor : 1;
   return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_params.levelWidth/factor - buffer && pt.y <= (imp_params.levelHeight)/factor - buffer;
 }
 
-function get_safest_spawn_point(object, player, level_name) {
+utils.getSafestSpawnPoint = function(object, player, level_name) {
   //returns the spawn point whose angle is closest to opposite the player
 
   var spawn_points = imp_params.impulse_level_data[level_name].spawn_points
@@ -325,10 +292,10 @@ function get_safest_spawn_point(object, player, level_name) {
   var best_point = null
   var best_value = 0
 
-  var angle_to_player = _atan(object.body.GetPosition(), player.body.GetPosition())
+  var angle_to_player = utils.atan(object.body.GetPosition(), player.body.GetPosition())
 
   for(var i = 0; i < spawn_points.length; i++){
-    var angle = angle_closest_to(angle_to_player, _atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}))
+    var angle = utils.angleClosestTo(angle_to_player, utils.atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}))
     var diff = Math.abs(angle - angle_to_player)
     if(diff > best_value) {
       best_value = diff
@@ -340,8 +307,7 @@ function get_safest_spawn_point(object, player, level_name) {
 
 }
 
-
-function get_nearest_spawn_point(object, player, level_name) {
+utils.getNearestSpawnPoint = function(object, player, level_name) {
   //returns the spawn point whose angle is closest to opposite the player
 
   var spawn_points = imp_params.impulse_level_data[level_name].spawn_points
@@ -351,7 +317,7 @@ function get_nearest_spawn_point(object, player, level_name) {
 
 
   for(var i = 0; i < spawn_points.length; i++){
-    var dist = p_dist({x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}, object.body.GetPosition())
+    var dist = utils.pDist({x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}, object.body.GetPosition())
     if(dist < best_value) {
       best_value = dist
       best_point = spawn_points[i]
@@ -362,68 +328,51 @@ function get_nearest_spawn_point(object, player, level_name) {
 
 }
 
-/*function get_pointer_point(object) {
-
-  var enemy_pointer_lines = [{x: 2, y: 2}, {x: 2, y: (levelHeight)/draw_factor - 2}, {x: levelWidth/draw_factor - 2, y: (levelHeight)/draw_factor  - 2}, {x: levelWidth/draw_factor - 2, y: 2}]
-  var j = enemy_pointer_lines.length - 1
-  for(var i = 0; i < enemy_pointer_lines.length; i++)
-  {
-    var temp = getSegIntersection({x: (levelHeight)/draw_factor/2, y: levelWidth/draw_factor/2}, object.body.GetPosition(), enemy_pointer_lines[i], enemy_pointer_lines[j])
-
-    if(temp!=null)
-    {
-      return temp
-    }
-
-    j = i
-  }
-}*/
-
 //gets random point that is not inside a boundary polygon
-function getRandomValidLocation(testPoint, buffer_radius, draw_factor) {
+utils.getRandomValidLocation = function(testPoint, buffer_radius, draw_factor) {
   var r_point = {x:Math.random()*(imp_params.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_params.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
   for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && utils.pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
   }
   if(inPoly)
   {
-    return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
+    return utils.getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
   if(game_engine.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
-    return getRandomValidLocation(testPoint, buffer_radius, draw_factor)
+    return utils.getRandomValidLocation(testPoint, buffer_radius, draw_factor)
   }
   return r_point
 }
 
 //gets random point that is not inside a boundary polygon
-function getRandomCentralValidLocation(testPoint) {
+utils.getRandomCentralValidLocation = function(testPoint) {
   var r_point = {x:Math.random()*(imp_params.levelWidth/2/imp_params.draw_factor)+imp_params.levelWidth/4/imp_params.draw_factor, y: Math.random()*((imp_params.levelHeight)/2/imp_params.draw_factor)+(imp_params.levelHeight)/4/imp_params.draw_factor}
   var inPoly = false
   for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
-    if(i != k && pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
+    if(i != k && utils.pointInPolygon(game_engine.cur_game_state.level.boundary_polygons[k], r_point))
     {
       inPoly = true
     }
   }
   if(inPoly)
   {
-    return getRandomCentralValidLocation(testPoint)
+    return utils.getRandomCentralValidLocation(testPoint)
   }
   if(game_engine.cur_game_state.visibility_graph.query(r_point, testPoint).path==null)
   {
-    return getRandomCentralValidLocation(testPoint)
+    return utils.getRandomCentralValidLocation(testPoint)
   }
   return r_point
 }
 
-function getRandomOutsideLocation(buffer, range) {
+utils.getRandomOutsideLocation = function(buffer, range) {
   var x_anchor, y_anchor
   if(Math.random() < .5)
   {
@@ -442,9 +391,7 @@ function getRandomOutsideLocation(buffer, range) {
 
 }
 
-
-
-function getWindowDimensions() {
+utils.getWindowDimensions = function() {
   var winW = 800, winH = 600;
   if (document.body && document.body.offsetWidth) {
    winW = document.body.offsetWidth;
@@ -464,8 +411,7 @@ function getWindowDimensions() {
   return {w: winW, h: winH}
 }
 
-function getLines(ctx,phrase,maxPxLength,textStyle) {
-
+utils.getLines = function(ctx,phrase,maxPxLength,textStyle) {
   var wa=phrase.split(" "),
       phraseArray=[],
       lastPhrase=wa[0],
@@ -493,7 +439,7 @@ function getLines(ctx,phrase,maxPxLength,textStyle) {
   return phraseArray;
 }
 
-function is_angle_between(small, large, angle) {
+utils.isAngleBetween = function(small, large, angle) {
 //assumes large - small < Math.Pi * 2
   var t_small = small
   var t_large = large
@@ -515,7 +461,7 @@ function is_angle_between(small, large, angle) {
   return t_large - t_small <= Math.PI * 2
 }
 
-function angle_closest_to(this_angle, other_angle) {
+utils.angleClosestTo = function(this_angle, other_angle) {
   while(other_angle - this_angle > Math.PI) {
     other_angle -= 2 * Math.PI
   }
@@ -526,7 +472,7 @@ function angle_closest_to(this_angle, other_angle) {
 
 }
 
-function small_angle_between(angle1, angle2) {
+utils.smallAngleBetween = function(angle1, angle2) {
   var ans = angle1 - angle2;
 
   if(ans > Math.PI * 2) ans -= Math.PI * 2
@@ -537,12 +483,12 @@ function small_angle_between(angle1, angle2) {
   return ans
 }
 
-function bezier_interpolate(mid1, mid2, t) {
+utils.bezierInterpolate = function(mid1, mid2, t) {
 
  return (Math.pow(1-t,3) * 0 + 3*Math.pow(1-t,2)*t*mid1+ 3*(1-t)*Math.pow(t,2)*mid2+ Math.pow(t,3)*1);
 }
 
-function create_body(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, type, owner, self) {
+utils.createBody = function(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, type, owner, self) {
   var bodyDef = new b2BodyDef;
   if(type == "static") {
     bodyDef.type = b2Body.b2_staticBody
@@ -581,13 +527,4 @@ function create_body(world, polygons, x, y, lin_damp, density, categoryBits, mas
   }
 
   return body;
-
-}
-
-function convert_to_time_notation(seconds) {
-  var ans = seconds%60
-  if(ans < 10) {
-    ans = "0"+ans
-  }
-  return Math.floor(seconds / 60) + ":" + ans
 }

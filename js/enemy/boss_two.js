@@ -245,7 +245,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
 
   for(var i = 0; i < this.level.enemies.length; i++) {
     if (this.level.enemies[i].id == this.id) continue
-    var boss_angle = _atan(this.level.enemies[i].body.GetPosition(), this.body.GetPosition())
+    var boss_angle = utils.atan(this.level.enemies[i].body.GetPosition(), this.body.GetPosition())
 
     var gravity_force = this.enemy_gravity_factor[this.level.enemies[i].type] * this.get_gravity_force(this.level.enemies[i].body.GetPosition(), true)
 
@@ -254,7 +254,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   }
 
   this.player_gravity_force = 0
-  var boss_angle = _atan(this.player.get_current_position(), this.body.GetPosition())
+  var boss_angle = utils.atan(this.player.get_current_position(), this.body.GetPosition())
 
   var gravity_force = this.get_gravity_force(this.player.get_current_position())
 
@@ -300,7 +300,7 @@ BossTwo.prototype.get_black_hole_force = function(loc, is_enemy) {
     black_hole_factor = 0.12
   }
 
-  if(p_dist(this.body.GetPosition(), loc) <= this.effective_radius * this.low_gravity_factor)
+  if(utils.pDist(this.body.GetPosition(), loc) <= this.effective_radius * this.low_gravity_factor)
   {
     black_hole_force = this.black_hole_force * black_hole_factor
     if (!is_enemy) {
@@ -322,12 +322,12 @@ BossTwo.prototype.get_gravity_force = function(loc, is_enemy) {
       return black_hole_force
     }
   }
-  var dist =  p_dist(loc, this.body.GetPosition())
+  var dist =  utils.pDist(loc, this.body.GetPosition())
   var polygons = this.get_arm_polygons()
   var inside = false
   var gravity_force = 0;
   for(var j = 0; j < polygons.length; j++) {
-    if(pointInPolygon(polygons[j], loc)) {
+    if(utils.pointInPolygon(polygons[j], loc)) {
       gravity_force += this.boss_beam_gravity_force;
       break;
     }
@@ -461,7 +461,7 @@ BossTwo.prototype.additional_death_prep_specific = function() {
   // Spawn exactly 10 fragments, generated from the array.
   for (var i = 0; i < 10; i++) {
     var type = this.absorbed_enemy_types[Math.floor(this.absorbed_enemy_types.length / 10 * i)];
-    var angle = _atan(this.body.GetPosition(), this.player.body.GetPosition()) + (Math.random() - 0.5) * 2 * Math.PI;
+    var angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition()) + (Math.random() - 0.5) * 2 * Math.PI;
     var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
     dir.Normalize();
     dir.Multiply(100);
@@ -565,7 +565,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
   }*/
 
   var tp = this.player.get_current_position()
-  var angle = _atan(tp, this.body.GetPosition())
+  var angle = utils.atan(tp, this.body.GetPosition())
 
 
   if(!this.player.dying) {
@@ -622,7 +622,7 @@ BossTwo.prototype.collide_with = function(other) {
 
   if(other === this.player) {
     imp_params.impulse_music.play_sound("b2eat")
-    var boss_angle = _atan(this.body.GetPosition(),other.body.GetPosition())
+    var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
     //other.lin_damp = 2
     other.start_death("absorbed")
@@ -671,13 +671,13 @@ BossTwo.prototype.black_hole = function() {
   var black_hole_force = 0
 
   if(!this.player_struck) {
-    if(p_dist(this.body.GetPosition(), this.player.get_current_position()) <= this.black_hole_radius)
+    if(utils.pDist(this.body.GetPosition(), this.player.get_current_position()) <= this.black_hole_radius)
     {
       black_hole_force = this.black_hole_force * black_hole_factor * this.black_hole_player_factor
     } else {
       black_hole_force = this.boss_low_gravity_force
     }
-    var tank_angle = _atan(this.body.GetPosition(), this.player.get_current_position()) + Math.PI
+    var tank_angle = utils.atan(this.body.GetPosition(), this.player.get_current_position()) + Math.PI
 
     this.player_gravity_force += black_hole_force
 
@@ -688,13 +688,13 @@ BossTwo.prototype.black_hole = function() {
   for(var i = 0; i < this.level.enemies.length; i++)
   {
     if(this.enemies_struck.indexOf(this.level.enemies[i]) == -1 &&!this.level.enemies[i].dying && this.level.enemies[i] !== this) {
-      if(p_dist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.black_hole_radius)
+      if(utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.black_hole_radius)
       {
-        var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
+        var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
         var suction_force = this.black_hole_force * this.enemy_gravity_factor[this.level.enemies[i].type] * black_hole_factor
         this.level.enemies[i].body.ApplyImpulse(new b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       } else {
-        var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
+        var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
         var suction_force = this.boss_low_gravity_force * this.enemy_gravity_factor[this.level.enemies[i].type]
         this.level.enemies[i].body.ApplyImpulse(new b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       }
@@ -754,7 +754,7 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
     if (this.black_hole_timer >= 0) {
       ctx.globalAlpha *= 0.5;
     }
-    var pointer_angle = _atan({x: particle.start_x, y: particle.start_y},
+    var pointer_angle = utils.atan({x: particle.start_x, y: particle.start_y},
                               {x: this.body.GetPosition().x, y: this.body.GetPosition().y});
     var x = draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop);
     var y = draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop);

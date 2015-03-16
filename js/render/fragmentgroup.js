@@ -146,7 +146,7 @@ Fragment.prototype.draw = function(context, prog) {
   if(this.shape == "multi") {
     context.save()
     context.globalAlpha *= prog
-    var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
+    var pointer_angle = utils.atan({x: 0, y: 0}, this.velocity)
     if(this.shape == "multi")
       draw_multi_fragment(context, this.loc.x/imp_params.draw_factor, this.loc.y/imp_params.draw_factor, pointer_angle)
 
@@ -162,7 +162,7 @@ Fragment.prototype.draw = function(context, prog) {
     context.restore();
   } else {
     context.save()
-    var pointer_angle = _atan({x: 0, y: 0}, this.velocity)
+    var pointer_angle = utils.atan({x: 0, y: 0}, this.velocity)
     draw_shape(context, this.loc.x, this.loc.y, this.shape, this.size, this.color, prog, pointer_angle)
     context.restore()
   }

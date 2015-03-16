@@ -97,7 +97,7 @@ Tank.prototype.check_death = function()
   //check if enemy has intersected polygon, if so die
   for(var k = 0; k < this.level.obstacle_polygons.length; k++)
   {
-    if(pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
+    if(utils.pointInPolygon(this.level.obstacle_polygons[k], this.body.GetPosition()))
     {
       if(!this.is_silenced() && this.durations["volatile"] > 0) {
         this.activated = true
@@ -172,9 +172,9 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
 }
 
 Tank.prototype.explode = function() {
-  if(p_dist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+  if(utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
   {
-    var tank_angle = _atan(this.body.GetPosition(), this.player.body.GetPosition())
+    var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
     var force = this.tank_force;
     this.player.body.ApplyImpulse(new b2Vec2(force * Math.cos(tank_angle), force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     // If you get caught in explosion, your combo resets.
@@ -186,9 +186,9 @@ Tank.prototype.explode = function() {
   for(var i = 0; i < this.level.enemies.length; i++)
   {
 
-    if(this.level.enemies[i] !== this && p_dist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
+    if(this.level.enemies[i] !== this && utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
-      var _angle = _atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
+      var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       this.level.enemies[i].open(1500)
 
