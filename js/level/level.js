@@ -119,9 +119,9 @@ Level.prototype.init = function(data, level_intro_state) {
     "boss four spawner": BossFourSpawner,
   }
   if (data.gateway_loc) {
-    this.gateway_loc = {x: data.gateway_loc.x/imp_params.draw_factor, y: data.gateway_loc.y/imp_params.draw_factor}
+    this.gateway_loc = {x: data.gateway_loc.x/layers.draw_factor, y: data.gateway_loc.y/layers.draw_factor}
   } else {
-    this.gateway_loc = {x: this.get_starting_loc().x/imp_params.draw_factor, y: this.get_starting_loc().y/imp_params.draw_factor}
+    this.gateway_loc = {x: this.get_starting_loc().x/layers.draw_factor, y: this.get_starting_loc().y/layers.draw_factor}
   }
   this.gateway_size = 4
 
@@ -215,7 +215,7 @@ Level.prototype.reset = function() {
 Level.prototype.generate_multi = function() {
   var multi_index = Math.floor(Math.random() * this.multi_spawn_points.length)
   this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
-  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
+  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor}
   while(utils.pDist(player_loc,  this.multi_loc) < 125) {
     multi_index+=1
     multi_index = multi_index % this.multi_spawn_points.length
@@ -234,9 +234,9 @@ Level.prototype.process = function(dt) {
     if(this.multi_loc == null || this.multi_duration < 0) {
       this.generate_multi()
     } else {
-      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor}
+      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor}
       if(utils.pDist(player_loc, this.multi_loc) < 25) {
-        imp_params.impulse_music.play_sound("multi")
+        music_player.play_sound("multi")
         this.impulse_game_state.game_numbers.base_combo += 5
         this.impulse_game_state.game_numbers.combo =
           this.impulse_game_state.game_numbers.base_combo + Math.floor(this.impulse_game_state.game_numbers.seconds/10)
@@ -244,8 +244,8 @@ Level.prototype.process = function(dt) {
         this.impulse_game_state.addScoreLabel(
           "x" + this.impulse_game_state.game_numbers.combo,
           "white",
-          this.multi_loc.x / imp_params.draw_factor,
-          this.multi_loc.y / imp_params.draw_factor,
+          this.multi_loc.x / layers.draw_factor,
+          this.multi_loc.y / layers.draw_factor,
           20,
           2000);
         this.generate_multi()
@@ -417,7 +417,7 @@ Level.prototype.pick_pivot_spawn_index = function() {
     var max_distance = 0;
     var best_spawn_point = Math.floor(Math.random() * this.spawn_points.length);
     for (var i = 0; i < this.spawn_points.length; i++) {
-      var spawn_point = {x: this.spawn_points[i][0] / imp_params.draw_factor, y: this.spawn_points[i][1] / imp_params.draw_factor};
+      var spawn_point = {x: this.spawn_points[i][0] / layers.draw_factor, y: this.spawn_points[i][1] / layers.draw_factor};
       var min_dist = -1;
       for (var j = 0; j < this.enemies.length; j++) {
         var dist_to_enemy = utils.pDist(this.enemies[j].body.GetPosition(), spawn_point);
@@ -509,13 +509,13 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, dom.levelWidth/imp_params.draw_factor/2, (dom.levelHeight)/imp_params.draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, dom.levelWidth/layers.draw_factor/2, (dom.levelHeight)/layers.draw_factor/2, this.enemy_counter, this.impulse_game_state)
     this.boss = temp_enemy
     this.boss_spawned = true
   }
   else if(this.spawn_points) {
     var r_p = this.spawn_points[spawn_point % this.spawn_points.length]
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/imp_params.draw_factor, r_p[1]/imp_params.draw_factor, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/layers.draw_factor, r_p[1]/layers.draw_factor, this.enemy_counter, this.impulse_game_state)
   }
   else {
     var r_p = utils.getRandomOutsideLocation(5, 2)
@@ -669,7 +669,7 @@ Level.prototype.draw = function(context, draw_factor) {
     for(var i = 0; i < this.obstacles.length; i++) {
       var origColor = this.obstacles[i].color;
       this.obstacles[i].color = this.flash_obstacle_color;
-      this.obstacles[i].draw(context, imp_params.draw_factor)
+      this.obstacles[i].draw(context, layers.draw_factor)
       this.obstacles[i].color = origColor;
     }
     context.restore();
@@ -794,8 +794,8 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   if (this.is_level_zero) {
     bg_ctx.save();
     var r = 0.15;
-    var x = this.gateway_loc.x * imp_params.draw_factor;
-    var y = this.gateway_loc.y * imp_params.draw_factor;
+    var x = this.gateway_loc.x * layers.draw_factor;
+    var y = this.gateway_loc.y * layers.draw_factor;
     uiRenderUtils.tessellateBg(bg_ctx, x - dom.levelWidth * r, y - dom.levelHeight * r,
       x + dom.levelWidth * r, y + dom.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
@@ -810,7 +810,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
 
 
   for(var i = 0; i < this.obstacles.length; i++) {
-    this.obstacles[i].draw(bg_ctx, imp_params.draw_factor)
+    this.obstacles[i].draw(bg_ctx, layers.draw_factor)
   }
 
   // Draw any additional rectangles to hide obstacle seams.

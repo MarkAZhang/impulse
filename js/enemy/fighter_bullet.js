@@ -56,7 +56,7 @@ FighterBullet.prototype.collide_with = function(other) {
   if(other === this.player) {
     this.start_death("hit_player")
     if(!this.is_silenced()) {
-      imp_params.impulse_music.play_sound("fbullethit")
+      music_player.play_sound("fbullethit")
       var vel = this.body.GetLinearVelocity().Copy()
       vel.Normalize()
       //utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
@@ -78,7 +78,7 @@ FighterBullet.prototype.collide_with = function(other) {
 
     if(other.id != this.parent_id || this.reflected) {
       if(!this.is_silenced()) {
-        imp_params.impulse_music.play_sound("fbullethit")
+        music_player.play_sound("fbullethit")
         if(other instanceof Fighter) {
           other.frenzy_charge = 0
         }
@@ -143,7 +143,7 @@ FighterBullet.prototype.check_death = function()
       return
     }
   }
-  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= dom.canvasWidth/imp_params.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= dom.canvasWidth/imp_params.draw_factor + 5)
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= dom.canvasWidth/layers.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= dom.canvasWidth/layers.draw_factor + 5)
   {
     this.start_death("kill")
   }

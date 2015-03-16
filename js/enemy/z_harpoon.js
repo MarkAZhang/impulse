@@ -179,7 +179,7 @@ Harpoon.prototype.no_sight = function() {
 }
 
 Harpoon.prototype.can_harpoon = function() {
-  return (!this.is_silenced() && this.entered_arena && !this.dying && this.harpoon_state == "inactive" && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)
+  return (!this.is_silenced() && this.entered_arena && !this.dying && this.harpoon_state == "inactive" && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)
    && utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length)
 }
 
@@ -232,7 +232,7 @@ Harpoon.prototype.additional_processing = function(dt) {
       this.harpooning = false
     }*/
   } else if(this.harpoon_state == "retract") {
-    if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+    if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
       var dir = utils.atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
       this.harpoon_head.body.ApplyImpulse(new box_2d.b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
       this.harpoon_head.set_heading(Math.PI + dir)
@@ -290,7 +290,7 @@ Harpoon.prototype.additional_processing = function(dt) {
     if(this.no_sight() || this.impulse_game_state.is_boss_level) {
       this.harpoonable = true
       if(this.can_harpoon() ) {
-        imp_params.impulse_music.play_sound("hfire")
+        music_player.play_sound("hfire")
         this.harpoon_state = "fire"
         this.harpoon_dir = utils.atan(this.harpoon_head.body.GetPosition(), this.get_harpoon_target_pt())
         this.harpoon_head.body.ApplyImpulse(new box_2d.b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
@@ -340,7 +340,7 @@ Harpoon.prototype.process_death = function(enemy_index, dt) {
 }
 
 Harpoon.prototype.modify_movement_vector = function(dir) {
-  if(!utils.checkBounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 
@@ -373,7 +373,7 @@ Harpoon.prototype.start_death = function(death) {
   if (this.dying != "fade") {
     this.level.add_fragments(this.type, this.body.GetPosition(), this.body.GetLinearVelocity())
     this.additional_death_prep(death)
-    imp_params.impulse_music.play_sound("sdeath")
+    music_player.play_sound("sdeath")
   }
 
   this.harpoon_head.start_death(this.dying == "fade" ? "fade" : "accident")
@@ -385,7 +385,7 @@ Harpoon.prototype.check_cancel_harpoon = function() {
   if(this.is_silenced() && (this.harpoon_state != "inactive")) {
     this.disengage_harpoon()
   }
-  if(this.harpoon_state == "engaged" && (!utils.checkBounds(1, this.harpooned_target.body.GetPosition(), imp_params.draw_factor) || this.harpooned_target.dying || utils.pDist(this.harpooned_target.body.GetPosition(), this.body.GetPosition()) < this.harpoon_disengage_dist)) {
+  if(this.harpoon_state == "engaged" && (!utils.checkBounds(1, this.harpooned_target.body.GetPosition(), layers.draw_factor) || this.harpooned_target.dying || utils.pDist(this.harpooned_target.body.GetPosition(), this.body.GetPosition()) < this.harpoon_disengage_dist)) {
     this.disengage_harpoon()
   }
   /*else if(this.harpoon_state == "engaged" && !utils.checkBounds(0, this.body.GetPosition(), draw_factor)) {
@@ -501,7 +501,7 @@ Harpoon.prototype.disengage_harpoon = function() {
 
 Harpoon.prototype.engage_harpoon = function(target) {
   if(this.harpoon_state != "engaged" && !this.dying && !this.is_silenced() && target.id !== this.harpoon_disengage_id) {
-    imp_params.impulse_music.play_sound("hhit")
+    music_player.play_sound("hhit")
     this.harpoon_state = "engaged"
     /*this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
     this.harpoon_joint.Initialize(this.body, target.body, this.body.GetWorldCenter(), target.body.GetWorldCenter())

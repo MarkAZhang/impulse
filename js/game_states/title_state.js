@@ -17,7 +17,7 @@ function TitleState(last_state) {
 
   this.setup_main_menu()
 
-  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
+  music_player.play_bg(audioData.songs["Menu"])
 
   this.fader = new Fader({
     "fade_in": 500,
@@ -28,7 +28,7 @@ function TitleState(last_state) {
   this.trailer_fade_total = 8000;
   this.trailer_fade_delay = 7000;
 
-  if (imp_params.debug.is_beta) {
+  if (debugVars.is_beta) {
     this.feedback_button = new SmallButton(
     "HELP US IMPROVE THE BETA", 20, 400, 570, 200, 50, impulse_colors["impulse_blue_dark"],
       impulse_colors["impulse_blue"], function() {
@@ -47,7 +47,7 @@ TitleState.prototype.process = function(dt) {
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
    layers.bgCanvas.setAttribute("style", "")
-   game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+   game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
    this.bg_drawn = true
   }
 
@@ -75,7 +75,7 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   }*/
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
-  if (imp_params.debug.is_beta) {
+  if (debugVars.is_beta) {
     uiRenderUtils.drawLogo(ctx,dom.levelWidth/2, 200, "BETA")
   } else {
     uiRenderUtils.drawLogo(ctx,dom.levelWidth/2, 200, "")
@@ -129,7 +129,7 @@ TitleState.prototype.setup_main_menu = function() {
   this.buttons["menu"] = []
   var button_color = "white"//impulse_colors["impulse_blue"]
 
-  if(imp_params.debug.dev && imp_params.debug.old_menu) {
+  if(debugVars.dev && debugVars.old_menu) {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, dom.levelWidth/2 - 100, dom.levelHeight/2-30, 200, 100, button_color, "blue",
     function(){
       var i = 1;

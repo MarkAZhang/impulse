@@ -21,11 +21,11 @@ uiRenderUtils.drawEnemyButton = function(ctx, x, y, r, type) {
 uiRenderUtils.getBgOpacity = function(world) {
   // Return opacity for the background in world menus.
   var opacity_array = [
-    imp_params.hive0_bg_opacity,
-    imp_params.bg_opacity,
+    spriteData.hive0_bg_opacity,
+    spriteData.bg_opacity,
     0.8,
     0.4,
-    imp_params.bg_opacity
+    spriteData.bg_opacity
   ];
   return opacity_array[world];
 }
@@ -33,7 +33,7 @@ uiRenderUtils.getBgOpacity = function(world) {
 uiRenderUtils.getWorldMapBgOpacity = function(world) {
   // Return opacity for the background in world-map state.
   var opacity_array = [
-    imp_params.hive0_bg_opacity,
+    spriteData.hive0_bg_opacity,
     0.2,
     0.35,
     0.3,
@@ -354,15 +354,15 @@ uiRenderUtils.drawProgressBar = function(context, x, y, w, h, prop, color, bcolo
 
 uiRenderUtils.drawProgCircle = function(context, x, y, r, prog, color, width) {
   context.beginPath()
-  context.arc(x*imp_params.draw_factor, y*imp_params.draw_factor, (r*imp_params.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
+  context.arc(x*layers.draw_factor, y*layers.draw_factor, (r*layers.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
   context.lineWidth = width ? width : 2
   context.strokeStyle = color
   context.stroke()
 }
 
 uiRenderUtils.bulkDrawProgCircle = function(context, x, y, r, prog) {
-  context.moveTo(x*imp_params.draw_factor, y*imp_params.draw_factor - (r*imp_params.draw_factor) * 2)
-  context.arc(x*imp_params.draw_factor,
-              y*imp_params.draw_factor,
-              (r*imp_params.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
+  context.moveTo(x*layers.draw_factor, y*layers.draw_factor - (r*layers.draw_factor) * 2)
+  context.arc(x*layers.draw_factor,
+              y*layers.draw_factor,
+              (r*layers.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
 }

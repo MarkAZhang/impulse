@@ -53,14 +53,14 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.is_tutorial_level = this.world_num == 0;
     this.make_player()
     if(this.level_name == "BOSS 4") {
-      imp_params.impulse_music.play_bg(audioData.songs["Final Tessellation"])
+      music_player.play_bg(audioData.songs["Final Tessellation"])
     }
     else if(this.level_name.slice(0, 4) == "BOSS")
-      imp_params.impulse_music.play_bg(audioData.songs["Tessellation"])
+      music_player.play_bg(audioData.songs["Tessellation"])
     else if (!this.is_tutorial_level&& !this.is_level_zero) {
-      imp_params.impulse_music.play_bg(audioData.songs["Hive "+this.world_num])
+      music_player.play_bg(audioData.songs["Hive "+this.world_num])
     } else {
-      imp_params.impulse_music.play_bg(audioData.songs["Menu"]);
+      music_player.play_bg(audioData.songs["Menu"]);
     }
     // Set up game numbers for level.
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
@@ -235,10 +235,10 @@ ImpulseGameState.prototype.check_new_enemies = function() {
 
 ImpulseGameState.prototype.make_player = function() {
   if(this.level.get_starting_loc()) {
-    this.player = new Player(this.world, this.level.get_starting_loc().x/imp_params.draw_factor, this.level.get_starting_loc().y/imp_params.draw_factor, this)
+    this.player = new Player(this.world, this.level.get_starting_loc().x/layers.draw_factor, this.level.get_starting_loc().y/layers.draw_factor, this)
   }
   else {
-    var r_p = utils.getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, imp_params.draw_factor)
+    var r_p = utils.getRandomValidLocation({x: -10, y: -10}, this.buffer_radius, layers.draw_factor)
     this.player = new Player(this.world, r_p.x, r_p.y, this)
   }
 }
@@ -356,8 +356,8 @@ ImpulseGameState.prototype.process = function(dt) {
         }
       }
     } else {
-      this.camera_center = {x: this.player.body.GetPosition().x * imp_params.draw_factor,
-                            y: this.player.body.GetPosition().y * imp_params.draw_factor}
+      this.camera_center = {x: this.player.body.GetPosition().x * layers.draw_factor,
+                            y: this.player.body.GetPosition().y * layers.draw_factor}
     }
 
     if(this.zoom_state == "none" && this.zoom == 1 && this.is_boss_level && !this.boss_intro_text_activated) {
@@ -412,7 +412,7 @@ ImpulseGameState.prototype.process = function(dt) {
     if(this.victory)
     {
       if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_out({x: this.player.body.GetPosition().x * imp_params.draw_factor, y: this.player.body.GetPosition().y * imp_params.draw_factor}, 10, this.slow_zoom_transition_period)
+        this.zoom_out({x: this.player.body.GetPosition().x * layers.draw_factor, y: this.player.body.GetPosition().y * layers.draw_factor}, 10, this.slow_zoom_transition_period)
         this.fade_state = "out"
       } else if(this.zoom_state == "none"){
         this.ready = false
@@ -499,7 +499,7 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
-  if (this.pause && !imp_params.debug.hide_pause_menu) return
+  if (this.pause && !debugVars.hide_pause_menu) return
 
   this.additional_draw(ctx, bg_ctx)
   ctx.save();
@@ -547,7 +547,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     ctx.restore();
   }
 
-  this.level.pre_draw(ctx, imp_params.draw_factor )
+  this.level.pre_draw(ctx, layers.draw_factor )
   this.player.pre_draw(ctx)
 
   if(this.boss_intro_text_duration > 0 && this.boss_intro_text_duration < this.boss_intro_text_interval &&
@@ -555,21 +555,21 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.draw_boss_text(ctx)
   }
 
-  this.level.draw(ctx, imp_params.draw_factor)
+  this.level.draw(ctx, layers.draw_factor)
 
   if(this.zoom != 1 && this.victory) {
     ctx.save()
 
-    ctx.translate(this.player.body.GetPosition().x * imp_params.draw_factor, this.player.body.GetPosition().y * imp_params.draw_factor)
+    ctx.translate(this.player.body.GetPosition().x * layers.draw_factor, this.player.body.GetPosition().y * layers.draw_factor)
     ctx.scale(1/this.zoom, 1/this.zoom)
-    ctx.translate(-this.player.body.GetPosition().x * imp_params.draw_factor, -this.player.body.GetPosition().y * imp_params.draw_factor)
+    ctx.translate(-this.player.body.GetPosition().x * layers.draw_factor, -this.player.body.GetPosition().y * layers.draw_factor)
     this.player.draw(ctx)
     ctx.restore();
   } else {
     this.player.draw(ctx)
   }
 
-  this.level.final_draw(ctx, imp_params.draw_factor)
+  this.level.final_draw(ctx, layers.draw_factor)
 
   if(this.level_redraw_bg) {
     this.level.open_gateway()
@@ -629,9 +629,9 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   {
       ctx.beginPath()
     	ctx.fillStyle = 'green';
-    	ctx.arc(this.visibility_graph.vertices[i].x*imp_params.draw_factor, this.visibility_graph.vertices[i].y*imp_params.draw_factor, 2, 0, 2*Math.PI, true)
+    	ctx.arc(this.visibility_graph.vertices[i].x*layers.draw_factor, this.visibility_graph.vertices[i].y*layers.draw_factor, 2, 0, 2*Math.PI, true)
       ctx.font = 'italic 10px sans-serif'
-      ctx.fillText(i, this.visibility_graph.vertices[i].x*imp_params.draw_factor, this.visibility_graph.vertices[i].y*imp_params.draw_factor)
+      ctx.fillText(i, this.visibility_graph.vertices[i].x*layers.draw_factor, this.visibility_graph.vertices[i].y*layers.draw_factor)
     	ctx.fill()
   }*/
 
@@ -640,8 +640,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.beginPath()
       ctx.lineWidth = 1
     	ctx.strokeStyle = '#ccc';
-      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*imp_params.draw_factor +dom.sideBarWidth, this.visibility_graph.poly_edges[i].p1.y*imp_params.draw_factor)
-      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*imp_params.draw_factor + dom.sideBarWidth, this.visibility_graph.poly_edges[i].p2.y*imp_params.draw_factor)
+      ctx.moveTo(this.visibility_graph.poly_edges[i].p1.x*layers.draw_factor +dom.sideBarWidth, this.visibility_graph.poly_edges[i].p1.y*layers.draw_factor)
+      ctx.lineTo(this.visibility_graph.poly_edges[i].p2.x*layers.draw_factor + dom.sideBarWidth, this.visibility_graph.poly_edges[i].p2.y*layers.draw_factor)
     	ctx.stroke()
   }
 
@@ -650,8 +650,8 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.beginPath()
       ctx.lineWidth = 3
     	ctx.strokeStyle = 'brown';
-      ctx.moveTo(this.level.obstacle_edges[i].p1.x*imp_params.draw_factor + dom.sideBarWidth, this.level.obstacle_edges[i].p1.y*imp_params.draw_factor)
-      ctx.lineTo(this.level.obstacle_edges[i].p2.x*imp_params.draw_factor + dom.sideBarWidth, this.level.obstacle_edges[i].p2.y*imp_params.draw_factor)
+      ctx.moveTo(this.level.obstacle_edges[i].p1.x*layers.draw_factor + dom.sideBarWidth, this.level.obstacle_edges[i].p1.y*layers.draw_factor)
+      ctx.lineTo(this.level.obstacle_edges[i].p2.x*layers.draw_factor + dom.sideBarWidth, this.level.obstacle_edges[i].p2.y*layers.draw_factor)
     	ctx.stroke()
   }
 
@@ -666,7 +666,7 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     	ctx.stroke()
       ctx.beginPath()
       ctx.fillStyle = 'red'
-      ctx.fillText(Math.round(utils.pDist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*imp_params.draw_factor+this.visibility_graph.edges[i].p2.x*imp_params.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*imp_params.draw_factor+this.visibility_graph.edges[i].p2.y*imp_params.draw_factor)/2)
+      ctx.fillText(Math.round(utils.pDist(this.visibility_graph.edges[i].p1, this.visibility_graph.edges[i].p2)), (this.visibility_graph.edges[i].p1.x*layers.draw_factor+this.visibility_graph.edges[i].p2.x*layers.draw_factor)/2, (this.visibility_graph.edges[i].p1.y*layers.draw_factor+this.visibility_graph.edges[i].p2.y*layers.draw_factor)/2)
       ctx.fill()
   }
   ctx.restore()*/
@@ -716,10 +716,10 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
         ctx.beginPath()
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 3
-        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*imp_params.draw_factor + dom.sideBarWidth, this.level.enemies[j].body.GetPosition().y*imp_params.draw_factor)
+        ctx.moveTo(this.level.enemies[j].body.GetPosition().x*layers.draw_factor + dom.sideBarWidth, this.level.enemies[j].body.GetPosition().y*layers.draw_factor)
         for(var i = 0; i < this_path.length; i++)
         {
-            ctx.lineTo(this_path[i].x*imp_params.draw_factor + dom.sideBarWidth, this_path[i].y*imp_params.draw_factor)
+            ctx.lineTo(this_path[i].x*layers.draw_factor + dom.sideBarWidth, this_path[i].y*layers.draw_factor)
         }
         ctx.stroke()
         ctx.lineWidth = 1
@@ -745,7 +745,7 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
       ctx.globalAlpha *= prog
       ctx.fillStyle = this.score_labels[i].color
       ctx.textAlign = 'center'
-      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * imp_params.draw_factor, this.score_labels[i].y * imp_params.draw_factor - (1 - prog) * this.score_label_rise)
+      ctx.fillText(this.score_labels[i].text, this.score_labels[i].x * layers.draw_factor, this.score_labels[i].y * layers.draw_factor - (1 - prog) * this.score_label_rise)
       ctx.restore()
     }
 }
@@ -991,7 +991,7 @@ ImpulseGameState.prototype.toggle_pause = function() {
 ImpulseGameState.prototype.on_key_down = function(keyCode) {
   if(!this.ready) return
 
-  if(keyCode == 90 && (imp_params.debug.dev || imp_params.debug.instant_victory_enabled)) {//Z - insta-victory if debug is on.
+  if(keyCode == 90 && (debugVars.dev || debugVars.instant_victory_enabled)) {//Z - insta-victory if debug is on.
     this.victory = true
     if (!this.is_boss_level) {
       this.game_numbers.score = this.level.cutoff_scores[2];
@@ -1009,7 +1009,7 @@ ImpulseGameState.prototype.on_key_down = function(keyCode) {
     this.on_victory();
   }
   // USED FOR TRAILER RECORDING
-  else if (keyCode == 69 && imp_params.debug.dev) { // E KEY
+  else if (keyCode == 69 && debugVars.dev) { // E KEY
     this.zoom_to_player = !this.zoom_to_player
     if (this.zoom_to_player) {
       this.zoom = 1.7
@@ -1038,21 +1038,21 @@ ImpulseGameState.prototype.on_key_up = function(keyCode) {
 ImpulseGameState.prototype.addWalls = function() {
   var wall_dim, wall_pos;
 
-    wall_dim = [{x: dom.levelWidth/imp_params.draw_factor/2, y: 2},
-      {x: dom.levelWidth/imp_params.draw_factor/2, y: 2},
-      {x: 2, y: (dom.levelHeight)/imp_params.draw_factor/2},
-      {x: 2, y: (dom.levelHeight)/imp_params.draw_factor/2}]
+    wall_dim = [{x: dom.levelWidth/layers.draw_factor/2, y: 2},
+      {x: dom.levelWidth/layers.draw_factor/2, y: 2},
+      {x: 2, y: (dom.levelHeight)/layers.draw_factor/2},
+      {x: 2, y: (dom.levelHeight)/layers.draw_factor/2}]
 
-    wall_pos = [{x: dom.levelWidth/imp_params.draw_factor/2, y: -2},
-      {x: dom.levelWidth/imp_params.draw_factor/2, y: (dom.levelHeight)/imp_params.draw_factor+2},
-      {x: -2, y: (dom.levelHeight)/imp_params.draw_factor/2},
-      {x: dom.levelWidth/imp_params.draw_factor+2, y: (dom.levelHeight)/imp_params.draw_factor/2}]
+    wall_pos = [{x: dom.levelWidth/layers.draw_factor/2, y: -2},
+      {x: dom.levelWidth/layers.draw_factor/2, y: (dom.levelHeight)/layers.draw_factor+2},
+      {x: -2, y: (dom.levelHeight)/layers.draw_factor/2},
+      {x: dom.levelWidth/layers.draw_factor+2, y: (dom.levelHeight)/layers.draw_factor/2}]
 
 
   for(var i = 0; i < 4; i++) {
     var fixDef = new box_2d.b2FixtureDef;
-    fixDef.filter.categoryBits = imp_params.WALL_BIT
-    fixDef.filter.maskBits = imp_params.PLAYER_BIT
+    fixDef.filter.categoryBits = box_2d.WALL_BIT
+    fixDef.filter.maskBits = box_2d.PLAYER_BIT
     var bodyDef = new box_2d.b2BodyDef;
     bodyDef.type = box_2d.b2Body.b2_staticBody;
     fixDef.shape = new box_2d.b2PolygonShape;

@@ -4,7 +4,7 @@ IntroState.prototype.constructor = IntroState
 
 function IntroState() {
 
-  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
+  music_player.play_bg(audioData.songs["Menu"])
   this.bg_drawn = false;
   this.fader = new Fader({
     "fade_in": 1000,
@@ -30,7 +30,7 @@ IntroState.prototype.process = function(dt) {
 IntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     layers.bgCanvas.setAttribute("style", "")
-    game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+    game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
     this.bg_drawn = true
   }
 

@@ -41,7 +41,7 @@ ChallengeModeIntroState.prototype.process = function(dt) {
 ChallengeModeIntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     layers.bgCanvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, layers.titleBgCanvas, imp_params.bg_opacity)
+    draw_image_on_bg_ctx(bg_ctx, layers.titleBgCanvas, spriteData.bg_opacity)
     this.bg_drawn = true
   }
 

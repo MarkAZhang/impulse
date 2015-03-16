@@ -82,7 +82,7 @@ Slingshot.prototype.additional_processing = function(dt) {
   }
 
   // Slow the slingshot until it enters the arena, with a small buffer.
-  if (!this.first_time_in_arena && utils.checkBounds(1, this.body.GetPosition(), imp_params.draw_factor)) {
+  if (!this.first_time_in_arena && utils.checkBounds(1, this.body.GetPosition(), layers.draw_factor)) {
     this.first_time_in_arena = true
   }
 
@@ -128,7 +128,7 @@ Slingshot.prototype.process_impulse_specific = function(attack_loc, impulse_forc
     this.slingshot_duration = this.slingshot_interval
     this.empowered_duration = this.empowered_interval
     this.lin_damp = this.slingshot_lin_damp
-    imp_params.impulse_music.play_sound("sshot")
+    music_player.play_sound("sshot")
   }
 }
 

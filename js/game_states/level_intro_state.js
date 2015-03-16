@@ -3,8 +3,6 @@ LevelIntroState.prototype = new LoaderGameState
 LevelIntroState.prototype.constructor = LevelIntroState
 
 function LevelIntroState(level_name, world) {
-
-
   this.level_name = level_name
   this.buttons = []
   this.world_num = world
@@ -33,12 +31,11 @@ function LevelIntroState(level_name, world) {
       else {
         game_engine.switch_game_state(new TitleState(true))
       }
-      imp_params.bg_file = null
       // TODO: transition the bg.
       if (saveData.difficultyMode == "normal") {
         game_engine.setBg("Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num))
       } else {
-        game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+        game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
       }
     });
   }}(this), "back"))
@@ -47,8 +44,6 @@ function LevelIntroState(level_name, world) {
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
-    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
-    //this.num_enemy_type = 1
   }
   else {
     this.drawn_enemies = levelData[this.level_name].enemies

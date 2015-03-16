@@ -82,9 +82,9 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
       !(loading_saved_game && this.hive_numbers.current_level &&
       this.hive_numbers.current_level.substring(0, 4) == "BOSS")) {
     if (this.is_level_zero(this.level.level_name)) {
-      imp_params.impulse_music.play_bg(audioData.songs["Menu"])
+      music_player.play_bg(audioData.songs["Menu"])
     } else {
-      imp_params.impulse_music.play_bg(audioData.songs["Hive "+this.world_num])
+      music_player.play_bg(audioData.songs["Hive "+this.world_num])
     }
   }
 }
@@ -104,7 +104,7 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
   if (world_num == 0) {
     return "HIVE 0-1"
   }
-  if (imp_params.debug.show_zero_level && saveData.shouldShowLevelZero(world_num)) {
+  if (debugVars.show_zero_level && saveData.shouldShowLevelZero(world_num)) {
       this.going_to_level_zero = true;
       return "HIVE "+world_num+"-0"
   }
@@ -166,7 +166,7 @@ MainGameTransitionState.prototype.process = function(dt) {
   if(this.transition_timer < 0) {
     if(this.state == "last_level_summary" && this.level_loaded) {
       if(this.level.is_boss_level) {
-        imp_params.impulse_music.stop_bg()
+        music_player.stop_bg()
       }
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval

@@ -24,7 +24,7 @@ Fragment.prototype.draw = function(context, prog) {
     context.globalAlpha *= prog
     var pointer_angle = utils.atan({x: 0, y: 0}, this.velocity)
     if(this.shape == "multi")
-      objectRenderUtils.drawMultiFragment(context, this.loc.x/imp_params.draw_factor, this.loc.y/imp_params.draw_factor, pointer_angle)
+      objectRenderUtils.drawMultiFragment(context, this.loc.x/layers.draw_factor, this.loc.y/layers.draw_factor, pointer_angle)
 
     context.restore()
 

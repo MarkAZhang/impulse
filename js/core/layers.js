@@ -34,3 +34,5 @@ layers.setUpLayers = function() {
   layers.mainCtx = layers.mainCanvas.getContext('2d');
   layers.bgCtx = layers.bgCanvas.getContext('2d');
 }
+
+layers.draw_factor = 15;

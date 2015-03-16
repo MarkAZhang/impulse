@@ -1,15 +1,17 @@
 
 var GameEngine = function() {
-    this.cur_game_state = null;
-    this.cur_dialog_box = null;
-    this.cur_popup_message = null;
+  this.cur_game_state = null;
+  this.cur_dialog_box = null;
+  this.cur_popup_message = null;
+  this.stepId = 0;
 
-    this.bgFile = null;
-    this.bgAlpha = 0;
-    this.switchBgDuration = null;
-    this.switchBgTimer = 0;
-    this.altBgAlpha = 0;
-    this.altBgFile = null;
+  this.bgFile = null;
+  this.bgAlpha = 0;
+  this.switchBgDuration = null;
+  this.switchBgTimer = 0;
+  this.altBgAlpha = 0;
+  this.altBgFile = null;
+  this.lastTime = (new Date()).getTime();
 };
 
 GameEngine.prototype.switch_game_state = function (game_state) {
@@ -23,7 +25,7 @@ GameEngine.prototype.switch_game_state = function (game_state) {
 GameEngine.prototype.step = function () {
   var cur_time = (new Date()).getTime()
   layers.mainCtx.globalAlpha = 1;
-  dt = cur_time - imp_params.last_time
+  dt = cur_time - this.lastTime
   if (this.cur_dialog_box != null) {
     this.cur_dialog_box.process(dt);
   }
@@ -72,10 +74,10 @@ GameEngine.prototype.step = function () {
     this.draw_popup_message(layers.mainCtx)
   }
 
-  imp_params.last_time = cur_time
+  this.lastTime = cur_time
   var temp_dt = (new Date()).getTime() - cur_time
   var _this = this;
-  imp_params.step_id = setTimeout(function () {
+  this.stepId = setTimeout(function () {
     _this.step()
   }, Math.max(33 - temp_dt, 1))
 };
@@ -223,9 +225,9 @@ GameEngine.prototype.on_right_click = function(mPos) {
 };
 
 GameEngine.prototype.on_key_down = function(keyCode) {
-  if(keyCode == controls.keys.GOD_MODE_KEY && imp_params.debug.god_mode_enabled) { //G = god mode
-    if (imp_params.debug.god_mode == false) {
-      imp_params.debug.god_mode = true
+  if(keyCode == controls.keys.GOD_MODE_KEY && debugVars.god_mode_enabled) { //G = god mode
+    if (debugVars.god_mode == false) {
+      debugVars.god_mode = true
       this.set_popup_message("god_mode_alert", 2500, "white", 0)
       if (this.cur_game_state) {
         if (this.cur_game_state instanceof WorldMapState) {
@@ -274,15 +276,15 @@ GameEngine.prototype.send_logging_to_server = function(msg, tags) {
 };
 
 GameEngine.prototype.toggleMute = function () {
-  if(!imp_params.impulse_music.mute) {
-    imp_params.impulse_music.mute_bg()
-    imp_params.impulse_music.mute_effects(true);
+  if(!music_player.mute) {
+    music_player.mute_bg()
+    music_player.mute_effects(true);
   } else {
-    imp_params.impulse_music.unmute_bg()
-    imp_params.impulse_music.mute_effects(false)
+    music_player.unmute_bg()
+    music_player.mute_effects(false)
   }
   if (this.cur_dialog_box && this.cur_dialog_box instanceof OptionsMenu) {
-    this.cur_dialog_box.sendMuteSignal(imp_params.impulse_music.mute);
+    this.cur_dialog_box.sendMuteSignal(music_player.mute);
   }
 };
 

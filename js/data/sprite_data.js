@@ -136,3 +136,6 @@ spriteData.tessellationLogoFactor = {
   "3": 1.4,
   "4": 1.6
 };
+
+spriteData.bg_opacity = 0.3;
+spriteData.hive0_bg_opacity = 0.6; /* hive0 gets rendered differently, needs to be brighter */

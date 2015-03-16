@@ -1401,7 +1401,7 @@ for(i in levelData) {
       var ans = ob_v[index]
       var ans_array = []
       for(var i = 0; i < ans.length; i++) {
-        ans_array.push(new box_2d.b2Vec2(ans[i][0]/imp_params.draw_factor, ans[i][1]/imp_params.draw_factor))
+        ans_array.push(new box_2d.b2Vec2(ans[i][0]/layers.draw_factor, ans[i][1]/layers.draw_factor))
       }
 
       return ans_array
@@ -1424,30 +1424,6 @@ levelData.hiveNames = {
 };
 
 levelData.lastTutorialLevel = 'HIVE 0-3';
-
-//imp_params.world_cutoffs = {}
-//imp_params.impulse_level_cutoffs = {}
-
-
-/*var level_cutoffs = [0, 1, 3, 5, 7, 9, 11, 15]
-
-for(var i = 0; i < 8; i++) {
-  imp_params.world_cutoffs['WORLD '+(i+1)] = i * 16
-  for(var j = 0; j < 7; j++) {
-    imp_params.impulse_level_cutoffs['HIVE '+(i+1)+'-'+(j+1)] = 16 * i + level_cutoffs[j]
-  }
-  imp_params.impulse_level_cutoffs['BOSS '+(i+1)] = 16 * i + level_cutoffs[7]
-}*/
-
-/*if(unlockall) {
-  imp_params.world_cutoffs = {}
-  imp_params.impulse_level_cutoffs = {}
-}
-
-for(i in imp_params.impulse_level_cutoffs) {
-  if(levelData[i])
-    levelData[i].star_cutoff = imp_params.impulse_level_cutoffs[i]
-}*/
 
 /*var snail_polygons = [[[79, 456.5], [122, 430.5], [174, 410.5], [231, 429.5], [309, 398.5], [386, 393.5], [474, 385.5], [559, 315.5], [614, 232.5], [607, 74.5], [621, 69.5], [636, 218.5], [657, 161.5], [670, 167.5], [661, 243.5], [691, 277.5], [706, 324.5], [678, 362.5], [636, 457.5], [587, 513.5], [553, 528.5], [499, 530.5], [406, 507.5], [313, 511.5], [236, 508.5], [189, 518.5], [143, 495.5], [109, 496.5], [89, 491.5]], [[202, 97.5], [250, 67.5], [325, 67.5], [426, 96.5], [491, 164.5], [524, 231.5], [534, 269.5], [461, 325.5], [380, 345.5], [316, 341.5], [325, 266.5], [310, 193.5], [282, 138.5], [248, 108.5]], [[166, 153.5], [212, 155.5], [249, 194.5], [253, 257.5], [241, 323.5], [184, 366.5], [130, 337.5], [112, 300.5], [161, 323.5], [203, 300.5], [222, 252.5], [215, 201.5], [196, 168.5]], [[134, 201.5], [166, 187.5], [181, 214.5], [173, 247.5], [145, 265.5], [122, 239.5]]]
 

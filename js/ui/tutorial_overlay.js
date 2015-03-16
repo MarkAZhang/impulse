@@ -139,8 +139,8 @@ TutorialOverlay.prototype.process_internal = function(dt) {
     this.duration -= dt;
   }
   if (this.hover_overlay) {
-    var pos_x = this.impulse_game_state.player.body.GetPosition().x * imp_params.draw_factor;
-    var pos_y = this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor;
+    var pos_x = this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor;
+    var pos_y = this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor;
     if (pos_x < this.hover_overlay.w / 2 + 5) {
       pos_x = this.hover_overlay.w / 2 + 5;
     } else if (pos_x > dom.levelWidth - this.hover_overlay.w / 2 - 5) {
@@ -545,8 +545,8 @@ GatewayMoveTutorialOverlay.prototype.constructor = GatewayMoveTutorialOverlay;
 function GatewayMoveTutorialOverlay(impulse_game_state) {
   this.init(impulse_game_state);
   this.gateway_loc = {
-    x: this.impulse_game_state.level.gateway_loc.x * imp_params.draw_factor,
-    y: this.impulse_game_state.level.gateway_loc.y * imp_params.draw_factor};
+    x: this.impulse_game_state.level.gateway_loc.x * layers.draw_factor,
+    y: this.impulse_game_state.level.gateway_loc.y * layers.draw_factor};
   this.message_box = new MessageBox("tutorial_gateway_move", impulse_game_state.bright_color, impulse_game_state.world_num);
   this.message_box.set_position(this.gateway_loc.x, this.gateway_loc.y - 30);
   this.message_box.set_visible(true);

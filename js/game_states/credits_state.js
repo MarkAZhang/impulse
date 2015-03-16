@@ -45,7 +45,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+    game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
     this.bg_drawn = true
   }
 

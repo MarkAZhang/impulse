@@ -273,7 +273,7 @@ BossFour.prototype.draw_blindness_overlay = function(context, draw_factor) {
   } else if (this.darkness_timer > -this.darkness_spreading_duration) {
     if (!this.darkness_sound_played) {
       this.darkness_sound_played = true
-      imp_params.impulse_music.play_sound("b4darkness")
+      music_player.play_sound("b4darkness")
     }
     var prog = (this.darkness_timer / -this.darkness_spreading_duration);
     var r = (this.effective_radius * (1 - prog) + 60 * prog) * draw_factor;
@@ -445,8 +445,8 @@ BossFour.prototype.generate_target_spawn_angle = function() {
     var distance = 15
     var test_point = {x: this.body.GetPosition().x + Math.cos(angle) * distance,
         y: this.body.GetPosition().y + Math.sin(angle) * distance}
-    var dist = Math.min(775/imp_params.draw_factor - test_point.x, test_point.x - 25/imp_params.draw_factor)
-    var dist2 = Math.min(575/imp_params.draw_factor - test_point.y, test_point.y - 25/imp_params.draw_factor)
+    var dist = Math.min(775/layers.draw_factor - test_point.x, test_point.x - 25/layers.draw_factor)
+    var dist2 = Math.min(575/layers.draw_factor - test_point.y, test_point.y - 25/layers.draw_factor)
 
     // One of these three angles MUST work.
     if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 5) {
@@ -497,7 +497,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     this.attack_bud_charging = false
     bud.enemy.body.ResetMassData()
     bud.enemy = null
-    imp_params.impulse_music.play_sound("b4attacker")
+    music_player.play_sound("b4attacker")
   } else if(bud.type == "spawn"){
     this.ready_attack_bud = null
     this.attack_bud_charging = false
@@ -515,7 +515,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.enemy.body.ResetMassData()
     bud.enemy = null
     this.target_spawn_angle = null
-    imp_params.impulse_music.play_sound("b4spawner")
+    music_player.play_sound("b4spawner")
   }
   this.attack_bud_cooldown_timer = this.attack_bud_cooldown_period;
 }
@@ -526,7 +526,7 @@ BossFour.prototype.createBodyBuds = function() {
     var bud_body =  utils.createBody(this.world, enemyData[this.type].bud_polygon,
       this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
        this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
-      3, 10, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
+      3, 10, box_2d.BOSS_FOUR_BIT, box_2d.PLAYER_BIT | box_2d.ENEMY_BIT, "static", this, null)
 
     bud_body.SetAngle(angle)
     this.buds.push({
@@ -546,7 +546,7 @@ BossFour.prototype.additional_death_prep_specific = function() {
       var bud_body =  utils.createBody(this.world, enemyData[this.type].bud_polygon,
         this.body.GetPosition().x + this.effective_radius *1.5 * Math.cos(Math.PI/5)  * Math.cos(angle),
          this.body.GetPosition().y + this.effective_radius * 1.5 * Math.cos(Math.PI/5) * Math.sin(angle),
-        3, 0.1, imp_params.BOSS_FOUR_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
+        3, 0.1, box_2d.BOSS_FOUR_BIT, box_2d.PLAYER_BIT | box_2d.ENEMY_BIT, "dynamic", this, null)
 
       bud_body.SetAngle(angle)
       this.buds[index].body = bud_body;

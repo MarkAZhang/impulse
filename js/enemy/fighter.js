@@ -107,7 +107,7 @@ Fighter.prototype.get_current_status = function() {
 
 Fighter.prototype.additional_processing = function(dt) {
   if(this.fighter_status == "normal" && this.frenzy_charge >= this.frenzy_charge_bars) {
-    imp_params.impulse_music.play_sound("ffrenzy")
+    music_player.play_sound("ffrenzy")
     window.console.log("PLAYIN FRENZY");
     this.fighter_status = "frenzy"
 
@@ -140,14 +140,14 @@ Fighter.prototype.additional_processing = function(dt) {
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && !this.is_silenced()) {
 
-      if(utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+      if(utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
         var cur_bullet_loc = this.get_bullet_locations(i);
         this.has_sight_of_player = utils.isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
 
         var target_angle = utils.atan(cur_bullet_loc, this.player.body.GetPosition())
         if (this.has_sight_of_player) {
           this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval) : this.frenzy_shoot_interval
-          imp_params.impulse_music.play_sound("fbullet")
+          music_player.play_sound("fbullet")
           if(this.fighter_status == "frenzy") {
             this.frenzy_charge -= 0.5
             var new_piercing_bullet = new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id )
@@ -174,13 +174,13 @@ Fighter.prototype.additional_processing = function(dt) {
       this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval + this.shoot_durations[i]) : this.frenzy_shoot_interval
       this.shoot_fade_out[i] = false
     }
-    if(utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+    if(utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
       this.shoot_durations[i] -= dt
     }
   }
 
 
-  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
     this.frenzy_charge += dt / this.frenzy_charge_interval;
   }
 
@@ -302,7 +302,7 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  if(!utils.checkBounds(-3, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
     dir.Multiply(this.fast_factor)
   }
 

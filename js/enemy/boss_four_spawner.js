@@ -51,7 +51,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
 
 	if(this.spawn && this.spawn_action_timer < this.spawn_action_period/2) {
-    imp_params.impulse_music.play_sound("b4spawneract")
+    music_player.play_sound("b4spawneract")
 		var ray_angle = utils.atan(this.parent.body.GetPosition(), this.body.GetPosition())
     var j = 0
     var spawn_number = this.spawn_number * this.parent.get_spawn_bonus();

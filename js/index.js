@@ -1,6 +1,5 @@
 window.onload = function() {
-  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-  if(is_chrome) {
+  if(dom.isChromeBrowser()) {
     main.executeGame()
   } else {
     dom.centerMessage()

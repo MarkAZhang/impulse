@@ -488,13 +488,13 @@ BossOne.prototype.set_timer = function(side, time) {
 }
 
 BossOne.prototype.create_lower_arm_piece = function(x, y) {
-  return utils.createBody(this.world, enemyData[this.type].lower_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return utils.createBody(this.world, enemyData[this.type].lower_arm_polygon, x, y, 3, 0.01, box_2d.BOSS_ONE_BIT, box_2d.ENEMY_BIT | box_2d.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_upper_arm_piece = function(x, y) {
-  return utils.createBody(this.world, enemyData[this.type].upper_arm_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return utils.createBody(this.world, enemyData[this.type].upper_arm_polygon, x, y, 3, 0.01, box_2d.BOSS_ONE_BIT, box_2d.ENEMY_BIT | box_2d.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_hand = function(x, y) {
-  return utils.createBody(this.world, enemyData[this.type].hand_polygon, x, y, 3, 0.01, imp_params.BOSS_ONE_BIT, imp_params.ENEMY_BIT | imp_params.PLAYER_BIT, "dynamic", this, null)
+  return utils.createBody(this.world, enemyData[this.type].hand_polygon, x, y, 3, 0.01, box_2d.BOSS_ONE_BIT, box_2d.ENEMY_BIT | box_2d.PLAYER_BIT, "dynamic", this, null)
 }
 BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
 
@@ -674,7 +674,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
   if (saveData.difficultyMode == "normal") {
     if(this.lighten_timer < 0 && this.lighten_timer > -this.lighten_duration * 0.9 && !this.lightened) {
       this.lightened = true
-      imp_params.impulse_music.play_sound("b1shrink")
+      music_player.play_sound("b1shrink")
 
       if(this.shoot_duration > this.shoot_interval/this.shoot_speedup_factor) {
         this.shoot_duration = this.shoot_interval/this.shoot_speedup_factor
@@ -686,7 +686,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
       if (this.lightened)  {
         // in order to play the sound at the right moment, we'll allow the boss's punches to lose the lighten bonus early.
         this.lightened = false
-        imp_params.impulse_music.play_sound("b1grow")
+        music_player.play_sound("b1grow")
       }
     }
 
@@ -1082,7 +1082,7 @@ BossOne.prototype.collide_with = function(other, body) {
   if(this.dying || !this.spawned)//ensures the collision effect only activates once
     return
   if (other == this.player) {
-    imp_params.impulse_music.play_sound("b1hit")
+    music_player.play_sound("b1hit")
     this.impulse_game_state.reset_combo();
   }
   if(body == this.body) {

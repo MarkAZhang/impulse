@@ -23,7 +23,7 @@ function WorldMapState(world, is_practice_mode) {
     _this.fader.set_animation("fade_out", function() {
       game_engine.switch_game_state(new TitleState(_this));
     });
-    game_engine.switchBg("Hive 0", 250, imp_params.hive0_bg_opacity)
+    game_engine.switchBg("Hive 0", 250, spriteData.hive0_bg_opacity)
   }, "back"));
 
   this.difficulties = ["easy", "normal"];
@@ -52,7 +52,7 @@ function WorldMapState(world, is_practice_mode) {
   this.world_button_y = dom.levelHeight/2;
   this.set_up_buttons();
 
-  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
+  music_player.play_bg(audioData.songs["Menu"])
 
   this.fade_out_interval_main = 500
   this.fade_out_interval_practice = 250
@@ -73,7 +73,7 @@ function WorldMapState(world, is_practice_mode) {
   this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
   this.gateway_particle_duration = 2000
   // We need to divide by draw_factor due to the implementation in level.js
-  this.gateway_loc = {x: dom.levelWidth/2/imp_params.draw_factor, y: this.world_button_y/imp_params.draw_factor}
+  this.gateway_loc = {x: dom.levelWidth/2/layers.draw_factor, y: this.world_button_y/layers.draw_factor}
   this.gateway_size = 5
   this.gateway_particles_per_round = 8
 
@@ -95,9 +95,9 @@ WorldMapState.prototype.set_up_buttons = function() {
     this.world_unlocked[difficulty] = {
       0: true,
       1: true,
-      2: saveData.worldRankings[difficulty]["world 1"] || imp_params.debug.dev || imp_params.debug.god_mode,
-      3: saveData.worldRankings[difficulty]["world 2"] || imp_params.debug.dev || imp_params.debug.god_mode,
-      4: saveData.worldRankings[difficulty]["world 3"] || imp_params.debug.dev || imp_params.debug.god_mode,
+      2: saveData.worldRankings[difficulty]["world 1"] || debugVars.dev || debugVars.god_mode,
+      3: saveData.worldRankings[difficulty]["world 2"] || debugVars.dev || debugVars.god_mode,
+      4: saveData.worldRankings[difficulty]["world 3"] || debugVars.dev || debugVars.god_mode,
     }
   }
 
@@ -188,7 +188,7 @@ WorldMapState.prototype.update_bg = function(index, difficulty) {
   if (index != 0 && difficulty == "normal") {
     game_engine.switchBg("Title Alt" + index, 250, uiRenderUtils.getWorldMapBgOpacity(index))
   } else {
-    game_engine.switchBg("Hive 0", 250, imp_params.hive0_bg_opacity)
+    game_engine.switchBg("Hive 0", 250, spriteData.hive0_bg_opacity)
   }
 }
 
@@ -229,7 +229,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
       new_button.active = saveData.getLevelData(level_name).seen ||
-        (j == 0 && this.world_unlocked[difficulty][i]) || (imp_params.debug.dev || imp_params.debug.god_mode)
+        (j == 0 && this.world_unlocked[difficulty][i]) || (debugVars.dev || debugVars.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"
       }
@@ -269,7 +269,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight)
     ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num)
     if (!saveData.shouldShowLevelZero(this.transition_to_world_num) &&
-      !imp_params.debug.show_zero_level) {
+      !debugVars.show_zero_level) {
       ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, 0, 0, dom.levelWidth, dom.levelHeight)
     }
     ctx.restore()
@@ -299,7 +299,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   // Only draw gateway particles if the current world is active.
   if (!this.is_practice_mode && this.world_unlocked[saveData.difficultyMode][this.world_num] ) {
-    this.draw_gateway_particles(ctx, imp_params.draw_factor);
+    this.draw_gateway_particles(ctx, layers.draw_factor);
   }
 
 

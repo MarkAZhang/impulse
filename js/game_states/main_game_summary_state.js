@@ -107,7 +107,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
 
 
   if (this.world_num != 0) {
-    imp_params.impulse_music.stop_bg()
+    music_player.stop_bg()
   }
   this.star_colors = ["bronze", "silver", "gold"]
 

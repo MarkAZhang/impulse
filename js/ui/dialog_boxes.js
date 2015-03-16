@@ -24,7 +24,7 @@ DialogBox.prototype.process = function(dt) {
 }
 
 DialogBox.prototype.draw = function(ctx) {
-  if (imp_params.debug.hide_pause_menu) return;
+  if (debugVars.hide_pause_menu) return;
   ctx.save();
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
   ctx.fillRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight)
@@ -101,7 +101,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   }
   this.enemy_image_size = 40
   this.add_buttons()
-  //this.draw_bg();
 }
 
 PauseMenu.prototype.draw_bg = function() {
@@ -406,16 +405,16 @@ function OptionsMenu(previous_menu) {
   var button_width = 300;
 
   this.music_button = new SliderOptionButton("GAME MUSIC", this.x, this.y - this.h/2 + this.options_y_line_up, button_width, 30, this.bright_color, "white", function(value) {
-    imp_params.impulse_music.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100), true) // sqrt it to get a better curve
+    music_player.change_bg_volume(Math.ceil(Math.pow(value, 2) * 100), true) // sqrt it to get a better curve
   }, Math.pow(saveData.optionsData.bg_music_volume / 100, 0.5));
-  this.music_button.special_mode = imp_params.impulse_music.mute
+  this.music_button.special_mode = music_player.mute
   this.music_button.add_hover_overlay(new MessageBox("option_game_music", "white", this.world_num))
   this.buttons.push(this.music_button)
 
   this.effects_button = new SliderOptionButton("SOUND EFFECTS", this.x, this.y - this.h/2 + this.options_y_line_up + 30, button_width, 30, this.bright_color, "white", function(value) {
-    imp_params.impulse_music.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
+    music_player.change_effects_volume(Math.ceil(Math.pow(value, 3) * 100)) // sqrt it to get a better curve
   }, Math.pow(saveData.optionsData.effects_volume / 100, 0.333));
-  this.effects_button.special_mode = imp_params.impulse_music.mute
+  this.effects_button.special_mode = music_player.mute
   this.effects_button.add_hover_overlay(new MessageBox("option_sound_effects", "white", this.world_num))
   this.buttons.push(this.effects_button)
 
@@ -480,7 +479,7 @@ function OptionsMenu(previous_menu) {
 
 OptionsMenu.prototype.draw_bg = function() {
   var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
-  draw_bg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
+  uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -564,8 +563,8 @@ OptionsMenu.prototype.on_mouse_up = function(x, y) {
   }
   //this.music_volume_slider.on_mouse_up(x,y)
   //this.effects_volume_slider.on_mouse_up(x,y)
-  //imp_params.impulse_music.change_bg_volume(this.convert_slider_value(this.music_volume_slider.value))
-  //imp_params.impulse_music.change_effects_volume(this.convert_slider_value(this.effects_volume_slider.value))
+  //music_player.change_bg_volume(this.convert_slider_value(this.music_volume_slider.value))
+  //music_player.change_effects_volume(this.convert_slider_value(this.effects_volume_slider.value))
 }
 
 OptionsMenu.prototype.convert_slider_value = function(value) {
@@ -641,10 +640,10 @@ function ControlsMenu(previous_menu) {
   this.buttons.push(this.back_button)
 
   /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
-  this.music_volume_slider.value = Math.log(imp_params.impulse_music.bg_music_volume)/Math.log(100.0)
+  this.music_volume_slider.value = Math.log(music_player.bg_music_volume)/Math.log(100.0)
 
   this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
-  this.effects_volume_slider.value = Math.log(imp_params.impulse_music.effects_volume)/Math.log(100.0)*/
+  this.effects_volume_slider.value = Math.log(music_player.effects_volume)/Math.log(100.0)*/
   this.adjust_colors()
 
   this.fader.set_animation("fade_in");
@@ -1073,14 +1072,7 @@ DeleteDataDialog.prototype.on_click = function(x, y) {
 }
 
 DeleteDataDialog.prototype.clear_data = function() {
-  localStorage.removeItem(imp_params.save_name);
-  var old_player_options = saveData.optionsData;
-  var old_tutorial_shown = saveData.tutorialsShown;
-  saveData.loadGame();
-  saveData.optionsData = old_player_options
-  saveData.tutorialsShown = old_tutorial_shown;
-  saveData.firstTime = false
-  saveData.saveGame();
+  saveData.clearData();
 }
 
 NewEnemyDialog.prototype = new DialogBox()

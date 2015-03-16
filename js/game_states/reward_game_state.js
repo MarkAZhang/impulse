@@ -31,7 +31,7 @@ function RewardGameState(hive_numbers, main_game, args) {
   this.determine_rewards()
   this.next_reward()
   if(this.rewards.length > 0) {
-    imp_params.impulse_music.stop_bg()
+    music_player.stop_bg()
   }
 
   this.auto_advance_duration = 3000;
@@ -293,7 +293,7 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   if (saveData.difficultyMode == "normal" && !saveData.firstTime && go_to_world_num !== 0) {
     game_engine.setBg("Title Alt" + go_to_world_num, uiRenderUtils.getWorldMapBgOpacity(go_to_world_num))
   } else {
-    game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+    game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
   }
 
   game_engine.switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));

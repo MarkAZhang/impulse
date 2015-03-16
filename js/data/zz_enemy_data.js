@@ -572,8 +572,8 @@ enemyData["first boss"] = {
   score_value: [1000000, 5000000, 15000000],
   attack_rating: 10,
   is_boss: true,
-  categoryBits: imp_params.BOSS_ONE_BIT,
-  maskBits: imp_params.PLAYER_BIT | imp_params.ENEMY_BIT,
+  categoryBits: box_2d.BOSS_ONE_BIT,
+  maskBits: box_2d.PLAYER_BIT | box_2d.ENEMY_BIT,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -663,8 +663,8 @@ enemyData["third boss"] = {
   attack_rating: 10,
   score_value: [1000000, 5000000, 15000000],
   is_boss: true,
-  categoryBits: imp_params.BOSS_THREE_BIT,
-  maskBits: imp_params.PLAYER_BIT | imp_params.ENEMY_BIT,
+  categoryBits: box_2d.BOSS_THREE_BIT,
+  maskBits: box_2d.PLAYER_BIT | box_2d.ENEMY_BIT,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 4.5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)],
@@ -710,8 +710,8 @@ enemyData["fourth boss"] = {
   attack_rating: 10,
   score_value: [1000000, 5000000, 15000000],
   is_boss: true,
-  categoryBits: imp_params.BOSS_FOUR_BIT,
-  maskBits: imp_params.PLAYER_BIT | imp_params.ENEMY_BIT,
+  categoryBits: box_2d.BOSS_FOUR_BIT,
+  maskBits: box_2d.PLAYER_BIT | box_2d.ENEMY_BIT,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: 4, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],

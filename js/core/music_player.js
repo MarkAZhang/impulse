@@ -224,3 +224,4 @@ MusicPlayer.prototype.skip = function(time) {
   this.sounds[this.cur_song].setTime(time)
 }
 
+music_player = new MusicPlayer()

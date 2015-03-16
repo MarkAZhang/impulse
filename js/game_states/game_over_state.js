@@ -35,14 +35,14 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
         if (saveData.difficultyMode == "normal") {
           game_engine.setBg("Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num))
         } else {
-          game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+          game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
         }
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(new TitleState(true))
-        game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
+        game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
       });
     }
   }}(this), "back"))
@@ -118,7 +118,7 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
   this.star_colors = ["world "+this.world_num+" bright", "silver", "gold"]
   this.star_text = ["GATEWAY", "SILVER", "GOLD"]
 
-  imp_params.impulse_music.stop_bg()
+  music_player.stop_bg()
 
   this.fader = new Fader({
     "fade_in": 500,

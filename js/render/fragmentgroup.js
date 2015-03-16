@@ -75,8 +75,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
       new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
         y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
-      this.fragments.push(new Fragment(this.shape, imp_params.draw_factor/3, {x: loc.x * imp_params.draw_factor, y: loc.y * imp_params.draw_factor},
-       {x: new_v.x * imp_params.draw_factor, y: new_v.y * imp_params.draw_factor}, this.color))
+      this.fragments.push(new Fragment(this.shape, layers.draw_factor/3, {x: loc.x * layers.draw_factor, y: loc.y * layers.draw_factor},
+       {x: new_v.x * layers.draw_factor, y: new_v.y * layers.draw_factor}, this.color))
     }
     if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
       for(var i = 0; i < num_frags_in_wave; i++) {
@@ -84,8 +84,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
         new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
           y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
-        this.fragments.push(new Fragment("shadow", imp_params.draw_factor/3, {x: loc.x * imp_params.draw_factor, y: loc.y * imp_params.draw_factor},
-         {x: new_v.x * imp_params.draw_factor, y: new_v.y * imp_params.draw_factor}, this.color))
+        this.fragments.push(new Fragment("shadow", layers.draw_factor/3, {x: loc.x * layers.draw_factor, y: loc.y * layers.draw_factor},
+         {x: new_v.x * layers.draw_factor, y: new_v.y * layers.draw_factor}, this.color))
       }
     }
   }

@@ -113,3 +113,7 @@ dom.toggleFullScreen = function () {
     game_engine.cur_dialog_box.sendFullscreenSignal(!isFullScreen);
   }
 }
+
+dom.isChromeBrowser = function () {
+  return navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+};

@@ -295,7 +295,7 @@ utils.getSafestSpawnPoint = function(object, player, level_name) {
   var angle_to_player = utils.atan(object.body.GetPosition(), player.body.GetPosition())
 
   for(var i = 0; i < spawn_points.length; i++){
-    var angle = utils.angleClosestTo(angle_to_player, utils.atan(object.body.GetPosition(), {x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}))
+    var angle = utils.angleClosestTo(angle_to_player, utils.atan(object.body.GetPosition(), {x: spawn_points[i][0]/layers.draw_factor, y: spawn_points[i][1]/layers.draw_factor}))
     var diff = Math.abs(angle - angle_to_player)
     if(diff > best_value) {
       best_value = diff
@@ -303,7 +303,7 @@ utils.getSafestSpawnPoint = function(object, player, level_name) {
     }
   }
 
-  return {x: best_point[0]/imp_params.draw_factor, y: best_point[1]/imp_params.draw_factor}
+  return {x: best_point[0]/layers.draw_factor, y: best_point[1]/layers.draw_factor}
 
 }
 
@@ -317,7 +317,7 @@ utils.getNearestSpawnPoint = function(object, player, level_name) {
 
 
   for(var i = 0; i < spawn_points.length; i++){
-    var dist = utils.pDist({x: spawn_points[i][0]/imp_params.draw_factor, y: spawn_points[i][1]/imp_params.draw_factor}, object.body.GetPosition())
+    var dist = utils.pDist({x: spawn_points[i][0]/layers.draw_factor, y: spawn_points[i][1]/layers.draw_factor}, object.body.GetPosition())
     if(dist < best_value) {
       best_value = dist
       best_point = spawn_points[i]
@@ -352,7 +352,7 @@ utils.getRandomValidLocation = function(testPoint, buffer_radius, draw_factor) {
 
 //gets random point that is not inside a boundary polygon
 utils.getRandomCentralValidLocation = function(testPoint) {
-  var r_point = {x:Math.random()*(dom.levelWidth/2/imp_params.draw_factor)+dom.levelWidth/4/imp_params.draw_factor, y: Math.random()*((dom.levelHeight)/2/imp_params.draw_factor)+(dom.levelHeight)/4/imp_params.draw_factor}
+  var r_point = {x:Math.random()*(dom.levelWidth/2/layers.draw_factor)+dom.levelWidth/4/layers.draw_factor, y: Math.random()*((dom.levelHeight)/2/layers.draw_factor)+(dom.levelHeight)/4/layers.draw_factor}
   var inPoly = false
   for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -376,13 +376,13 @@ utils.getRandomOutsideLocation = function(buffer, range) {
   var x_anchor, y_anchor
   if(Math.random() < .5)
   {
-    x_anchor = Math.random() < .5 ? -buffer-range : dom.levelWidth/imp_params.draw_factor + buffer
-    y_anchor = Math.random() * ((dom.levelHeight)/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
+    x_anchor = Math.random() < .5 ? -buffer-range : dom.levelWidth/layers.draw_factor + buffer
+    y_anchor = Math.random() * ((dom.levelHeight)/layers.draw_factor + 2 * buffer + range) - (buffer + range)
   }
   else
   {
-    y_anchor = Math.random() < .5 ? -buffer-range : (dom.levelHeight)/imp_params.draw_factor + buffer
-    x_anchor = Math.random() * (dom.levelWidth/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
+    y_anchor = Math.random() < .5 ? -buffer-range : (dom.levelHeight)/layers.draw_factor + buffer
+    x_anchor = Math.random() * (dom.levelWidth/layers.draw_factor + 2 * buffer + range) - (buffer + range)
   }
 
   //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay

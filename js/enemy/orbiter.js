@@ -111,7 +111,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.set_heading_to(this.player.body.GetPosition())
 
-  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -120,7 +120,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
     this.entered_arena = false
     this.silence(100, true)
   }

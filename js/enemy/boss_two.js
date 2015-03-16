@@ -268,7 +268,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
     if(this.black_hole_timer < 0) {
       if (!this.black_hole_sound_played) {
         this.black_hole_sound_played = true
-        imp_params.impulse_music.play_sound("b2bhole")
+        music_player.play_sound("b2bhole")
       }
       var prop = -this.black_hole_timer/this.black_hole_duration
       if(prop < this.black_hole_expand_prop)
@@ -563,14 +563,14 @@ BossTwo.prototype.collide_with = function(other) {
   if(other.dying) return
 
   if(other === this.player) {
-    imp_params.impulse_music.play_sound("b2eat")
+    music_player.play_sound("b2eat")
     var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
     other.start_death("absorbed")
     this.impulse_game_state.reset_combo();
   }
   else if(other !== this.player) {
-    imp_params.impulse_music.play_sound("b2eat")
+    music_player.play_sound("b2eat")
     if(other.type != "harpoonhead") {
       other.start_death("absorbed")
       this.growth_factor += this.growth_on_enemy

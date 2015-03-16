@@ -47,9 +47,9 @@ Boss.prototype.getLife = function() {
   if(this.dying) {
     return 0
   }
-  var dist = Math.min(775/imp_params.draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/imp_params.draw_factor)
-  var dist2 = Math.min(575/imp_params.draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/imp_params.draw_factor)
-  return Math.min(dist, dist2)/(275/imp_params.draw_factor)
+  var dist = Math.min(775/layers.draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/layers.draw_factor)
+  var dist2 = Math.min(575/layers.draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/layers.draw_factor)
+  return Math.min(dist, dist2)/(275/layers.draw_factor)
 }
 
 Boss.prototype.should_show_aura_and_particles = function() {
@@ -92,7 +92,7 @@ Boss.prototype.additional_processing = function (dt) {
 
 Boss.prototype.generate_spawn_particles = function (loc) {
   for (var i = 0; i < this.spawn_particle_num; i++) {
-    var r = this.aura_radius / imp_params.draw_factor * this.initial_dark_aura_ratio * 0.5 + 5;
+    var r = this.aura_radius / layers.draw_factor * this.initial_dark_aura_ratio * 0.5 + 5;
     var angle = Math.PI * 2 * i / this.spawn_particle_num + (Math.random() - 0.5) * Math.PI * 2 / this.spawn_particle_num
     this.spawn_particles.push({
       start_x: Math.cos(angle) * r + loc.x,
@@ -185,7 +185,7 @@ Boss.prototype.additional_death_prep = function () {
   this.impulse_game_state.level.clear_obstacles();
   this.impulse_game_state.transition_to_hive0bg(5000);
   this.impulse_game_state.shake_level(3000);
-  imp_params.impulse_music.stop_bg()
+  music_player.stop_bg()
   this.additional_death_prep_specific();
 }
 

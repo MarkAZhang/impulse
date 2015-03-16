@@ -328,7 +328,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
     if (this.last_wheel_index_with_sound != this.wheel_cur_index) {
       // play the sound if it's the first time on this index
       this.last_wheel_index_with_sound = this.wheel_cur_index
-      imp_params.impulse_music.play_sound("b3tick")
+      music_player.play_sound("b3tick")
     }
 
     if(this.wheel_spinning_timer <= 0) {
@@ -510,7 +510,7 @@ BossThree.prototype.process_striking_arms = function() {
         data.cur_dist = data.max_dist * (arm_size) + (data.charge_dist) * (1 - arm_size)
         if (!data.sound_played) {
           data.sound_played = true
-          imp_params.impulse_music.play_sound("b3strike")
+          music_player.play_sound("b3strike")
         }
       } else if (prog >= finish_strike_t && prog < start_retract_t) {
         data.cur_dist = data.max_dist
@@ -637,7 +637,7 @@ BossThree.prototype.strike_with_arm = function(index, dist, duration) {
 
 BossThree.prototype.initialize_arms = function() {
   for(var index = 0; index < this.num_arms; index++) {
-    var arm_body =  utils.createBody(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "static", this, null)
+    var arm_body =  utils.createBody(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x, this.body.GetPosition().y, 3, 0.01, box_2d.BOSS_THREE_BIT, box_2d.PLAYER_BIT | box_2d.ENEMY_BIT, "static", this, null)
     arm_body.SetAngle(this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
     this.striking_arms[index] = {
       interval: this.strike_duration,
@@ -654,7 +654,7 @@ BossThree.prototype.additional_death_prep_specific = function() {
   for(var index = 0; index < this.num_arms; index++) {
     // Need to recreate arms.
     var arm_body = utils.createBody(this.world, enemyData[this.type].arm_polygon, this.body.GetPosition().x,
-    this.body.GetPosition().y, 3, 1, imp_params.BOSS_THREE_BIT, imp_params.PLAYER_BIT | imp_params.ENEMY_BIT, "dynamic", this, null)
+    this.body.GetPosition().y, 3, 1, box_2d.BOSS_THREE_BIT, box_2d.PLAYER_BIT | box_2d.ENEMY_BIT, "dynamic", this, null)
     var angle = this.body.GetAngle() + Math.PI/(this.num_arms/2) * index;
     arm_body.SetAngle(angle);
     this.striking_arms[index].body = arm_body;
@@ -901,10 +901,10 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
     angle += Math.random() * spread - spread / 2;
   }
 
-  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* imp_params.draw_factor,
-    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* imp_params.draw_factor}
+  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* layers.draw_factor,
+    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* layers.draw_factor}
 
-  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_params.draw_factor, spawn_loc.y/imp_params.draw_factor, this.level.enemy_counter, this.impulse_game_state)
+  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/layers.draw_factor, spawn_loc.y/layers.draw_factor, this.level.enemy_counter, this.impulse_game_state)
   var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
@@ -971,7 +971,7 @@ BossThree.prototype.activate_wheel = function() {
   this.wheel_state = "activate"
   this.wheel_activate_timer = this.wheel_activate_duration
   this.wheel_effect_activated = false
-  imp_params.impulse_music.play_sound("b3select")
+  music_player.play_sound("b3select")
 }
 
 BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {

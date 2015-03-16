@@ -1,5 +1,10 @@
+var LOCAL_STORAGE_BUCKET_NAME = "impulse_save_data"
 
 var SaveData = function() {
+  this.resetData();
+};
+
+SaveData.prototype.resetData = function () {
   this.difficultyMode = "easy";
   this.firstTime = true;
   this.hardModeUnlocked = false;
@@ -18,7 +23,7 @@ var SaveData = function() {
 };
 
 SaveData.prototype.loadGame = function() {
-  var loadObj = localStorage[imp_params.save_name];
+  var loadObj = localStorage[LOCAL_STORAGE_BUCKET_NAME];
 
   if (!loadObj) {
     game_engine.send_logging_to_server('STARTED GAME', {});
@@ -93,7 +98,19 @@ SaveData.prototype.saveGame = function() {
   saveObj['hard_mode_unlocked'] = this.hardModeUnlocked;
   saveObj['tutorial_shown'] = this.tutorialsShown;
   saveObj['quests'] = this.quests;
-  localStorage[imp_params.save_name] = JSON.stringify(saveObj)
+  localStorage[LOCAL_STORAGE_BUCKET_NAME] = JSON.stringify(saveObj)
+};
+
+SaveData.prototype.clearData = function () {
+  localStorage.removeItem(LOCAL_STORAGE_BUCKET_NAME);
+  var oldPlayerOptions = this.optionsData;
+  var oldTutorialShown = this.tutorialsShown;
+  this.resetData();
+  this.loadGame();
+  this.optionsData = oldPlayerOptions
+  this.tutorialsShown = oldTutorialShown;
+  this.firstTime = false
+  this.saveGame();
 };
 
 SaveData.prototype.savePlayerGame = function(hive_number) {
