@@ -136,7 +136,7 @@ Boss.prototype.draw_spawn_particles = function(ctx, draw_factor) {
       this.body.GetPosition().y * particle.prop * (this.spawn_particle_travel_prop));
     var ratio = 1 - this.spawn_duration / this.spawn_interval
     var r = this.spawn_particle_radius * (1 - ratio) + this.spawn_particle_radius_max * ratio;
-    drawSprite(ctx, x * draw_factor,
+    renderUtils.drawSprite(ctx, x * draw_factor,
       y * draw_factor,
       0, r * Math.min(particle.prop * 2, 1),
       r * Math.min(particle.prop * 2, 1), "dark_aura");
@@ -167,7 +167,7 @@ Boss.prototype.final_draw = function(context, draw_factor) {
     var loc = this.body.GetPosition();
     context.globalAlpha *= this.get_dark_aura_opacity();
 
-    drawSprite(context, loc.x * draw_factor,
+    renderUtils.drawSprite(context, loc.x * draw_factor,
       loc.y * draw_factor,
       0, this.aura_radius * this.initial_dark_aura_ratio,
       this.aura_radius * this.initial_dark_aura_ratio, "dark_aura")

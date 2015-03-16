@@ -76,14 +76,14 @@ MusicPlayerState.prototype.setup_ui = function() {
 MusicPlayerState.prototype.setup_music_buttons = function() {
 
   var index = 0;
-  for(song in imp_params.songs) {
+  for(song in audioData.songs) {
     var x = (index%2 == 0) ? this.first_column : this.second_column;
     var _this = this;
     this.buttons.push(new SmallButton(song, 20, x, this.column_top + Math.floor(index/2) * this.column_space, 200, 50, this.button_color, "blue",
           (function(this_song) {
           return function() {
             _this.cur_song = this_song;
-            imp_params.impulse_music.play_bg(imp_params.songs[_this.cur_song])
+            imp_params.impulse_music.play_bg(audioData.songs[_this.cur_song])
           }})(song)
 
           ))

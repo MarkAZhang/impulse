@@ -1,4 +1,6 @@
-imp_params.songs = {
+var audioData = {};
+
+audioData.songs = {
   "Menu": "complex",
   "Interlude": "complex",
   "Hive 1": "kickit",
@@ -8,11 +10,11 @@ imp_params.songs = {
   "Tessellation": "driven",
   "Final Tessellation": "wicked"
 };
-imp_params.song_repeats = {
+audioData.song_repeats = {
   "driven": 27.460,
   "wicked": 2.922
 };
-imp_params.sounds = {
+audioData.sounds = {
   "impulse": "effects/impulse",
   "pdeath": "effects/pdeath",
   "ffrenzy": "effects/ffrenzy",
@@ -34,7 +36,7 @@ imp_params.sounds = {
   "dark_diag": "effects/dark_diag",
   "dark_anger": "effects/dark_anger",
 };
-imp_params.multisounds = {
+audioData.multisounds = {
   "b3tick": {
     file: "effects/b3tick",
     maxnum: 2
@@ -73,7 +75,7 @@ imp_params.multisounds = {
   }
 };
 
-for(var multisounds in imp_params.multisounds) {
-  imp_params.sounds[multisounds] = imp_params.multisounds[multisounds].file
+for(var multisounds in audioData.multisounds) {
+  audioData.sounds[multisounds] = audioData.multisounds[multisounds].file
 }
 

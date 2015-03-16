@@ -702,8 +702,8 @@ BossThree.prototype.draw = function(context, draw_factor) {
         var v_dist = this.striking_arms[index].cur_dist * Math.sin(Math.PI/16) * 2
         var h_dist = this.striking_arms[index].cur_dist * Math.cos(Math.PI/16)
         var armSpriteName = this.knockback_red_duration > 0 ? "negligentia_arm_striking_red" : "negligentia_arm_striking"
-        drawSprite(context, h_dist/2 * draw_factor, 0, 0,
-                  h_dist * draw_factor,v_dist * draw_factor, armSpriteName, negligentiaSprite)
+        renderUtils.drawSprite(context, h_dist/2 * draw_factor, 0, 0,
+                  h_dist * draw_factor,v_dist * draw_factor, armSpriteName, sprites.negligentiaSprite)
         context.restore()
         arms_active.push(index);
       }
@@ -740,39 +740,20 @@ BossThree.prototype.draw = function(context, draw_factor) {
   if(this.spawned) {
     if(this.striking_state == "extend" || this.striking_state == "retract") {
       var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+      renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.target_arm_length * draw_factor * 2, this.target_arm_length * draw_factor * 2, "negligentia_arm_ring", sprites.negligentiaSprite)
     } else if(this.striking_state == "striking" || this.striking_state == "frenzy") {
       var tp = this.body.GetPosition()
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", negligentiaSprite)
+      renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.default_strike_position* draw_factor * 2, this.default_strike_position * draw_factor * 2, "negligentia_arm_ring", sprites.negligentiaSprite)
     }
   }
   context.restore();
 
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head_red", negligentiaSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head_red", sprites.negligentiaSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", negligentiaSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", sprites.negligentiaSprite)
   }
 
-  /* context.save()
-  context.globalAlpha *= 0.3
-  for(var i = 0; i < 16; i++) {
-    var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
-
-
-    if(1 - this.silence_timer / this.silence_interval > 1-i/16) {
-      //context.globalAlpha *= 1.5
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
-
-    } else {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.default_strike_range) * draw_factor,
-      (tp.y+Math.sin(angle) *this.default_strike_range) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
-    }
-  }
-  context.restore() */
   this.additional_drawing(context, draw_factor)
 
   context.restore()
@@ -782,13 +763,13 @@ BossThree.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (this.body.GetAngle()), 300, 300, "negligentia_glow_red", negligentiaSprite)
+    (this.body.GetAngle()), 300, 300, "negligentia_glow_red", sprites.negligentiaSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle()), 300, 300, "negligentia_glow", negligentiaSprite)
+      (this.body.GetAngle()), 300, 300, "negligentia_glow", sprites.negligentiaSprite)
   }
 }
 
@@ -826,38 +807,19 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
 
     if(1 - this.silence_timer/this.silence_interval > 1-i/16 && (i != 0 || this.silenced)) {
       context.globalAlpha *= 2
-      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
       (tp.y+Math.sin(angle) *this.effective_radius * 1.8) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura", negligentiaSprite)
+      angle + Math.PI/2, 30, 50, "negligentia_aura", sprites.negligentiaSprite)
       context.globalAlpha /= 2
 
     } else {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * 1.8) * draw_factor,
       (tp.y+Math.sin(angle) *this.effective_radius * 1.8) * draw_factor,
-      angle + Math.PI/2, 30, 50, "negligentia_aura_open", negligentiaSprite)
+      angle + Math.PI/2, 30, 50, "negligentia_aura_open", sprites.negligentiaSprite)
     }
 
   }
-
-    /*context.rotate(-Math.PI/16)
-    context.moveTo(body_vertices[0].x * draw_factor, body_vertices[0].y * draw_factor)
-    context.lineTo(body_vertices[1].x * draw_factor, body_vertices[1].y * draw_factor)
-    context.lineTo(body_vertices[2].x * draw_factor, body_vertices[2].y * draw_factor)
-
-    /*var data = this.striking_arms[index]
-    context.moveTo(this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor)
-    var angle = this.body.GetAngle() + Math.PI*2/16 * index
-    context.lineTo(this.body.GetPosition().x * draw_factor + Math.cos(angle) * data.cur_dist * draw_factor, this.body.GetPosition().y * draw_factor + Math.sin(angle) * data.cur_dist * draw_factor)
-    context.lineTo(this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/8) * data.cur_dist * draw_factor, this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/8) * data.cur_dist * draw_factor)
-    context.strokeStyle = this.color
-    context.stroke()
-    if(this.striking_arms[index].duration > 0) {
-      context.fillStyle = this.color
-      context.fill()
-    }*/
   context.restore()
-
-
 }
 
 BossThree.prototype.additional_drawing = function(context, draw_factor) {
@@ -874,8 +836,8 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
 
     var wheel_angle = (this.body.GetAngle() + Math.PI/16) + Math.PI/4
     var angle = Math.PI/(this.wheel_sections/2) * (this.wheel_cur_index +0.5)+ wheel_angle
-    drawSprite(context, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, wheel_angle + Math.PI/2 * ((this.wheel_cur_index + 1 )% 4),
-        2 * this.wheel_radius * Math.cos(Math.PI/4)*draw_factor, 2 * this.wheel_radius * Math.cos(Math.PI/4)*draw_factor, wheel_sprite, negligentiaSprite)
+    renderUtils.drawSprite(context, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, wheel_angle + Math.PI/2 * ((this.wheel_cur_index + 1 )% 4),
+        2 * this.wheel_radius * Math.cos(Math.PI/4)*draw_factor, 2 * this.wheel_radius * Math.cos(Math.PI/4)*draw_factor, wheel_sprite, sprites.negligentiaSprite)
 
 
     if(this.wheel_state == "fadein" || this.wheel_state == "spinning") {
@@ -883,10 +845,10 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
       for(var i = 0; i < this.wheel_sections; i++) {
         var angle = Math.PI/(this.wheel_sections/2) * (i+0.5) + wheel_angle
         if(this.current_wheel_set[i] != "frenzy") {
-          draw_enemy(context, this.current_wheel_set[i], this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
+          enemyRenderUtils.drawEnemy(context, this.current_wheel_set[i], this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
             this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 15, angle + Math.PI*1/4)
         } else {
-          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
+          uiRenderUtils.drawTessellationSign(context, 3, this.body.GetPosition().x * draw_factor + Math.cos(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor,
             this.body.GetPosition().y * draw_factor + Math.sin(angle + Math.PI/(this.wheel_sections/2)/2) * this.wheel_radius * 0.4 * draw_factor, 20, true,angle)
 
         }
@@ -894,20 +856,13 @@ BossThree.prototype.additional_drawing = function(context, draw_factor) {
     } else if(this.wheel_state == "fadeout" || this.wheel_state == "activate") {
       if(this.wheel_cur_index != null) { // will be null if forcing frenzy
         if(this.current_wheel_set[this.wheel_cur_index] != "frenzy") {
-          draw_enemy(context, this.current_wheel_set[this.wheel_cur_index], this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 20, angle + Math.PI*1/4)
+          enemyRenderUtils.drawEnemy(context, this.current_wheel_set[this.wheel_cur_index], this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 20, angle + Math.PI*1/4)
         } else {
-          draw_tessellation_sign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 50, true, angle)
+          uiRenderUtils.drawTessellationSign(context, 3, this.body.GetPosition().x * draw_factor, this.body.GetPosition().y * draw_factor, 50, true, angle)
         }
       }
     }
   }
-
-  /*if(this.silence_timer >= 0) {
-    this.draw_special_attack_timer(context, draw_factor)
-  }*/
-
-
-
   context.restore()
 
 }
@@ -966,7 +921,6 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   new_enemy.entered_arena_timer = 0
   if(enemy_type == "harpoon") {
     new_enemy.silence(500, true)
-    //setTimeout(function(){new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())}, 20)
   }
 }
 
@@ -1000,17 +954,7 @@ BossThree.prototype.collide_with = function(other, body) {
 
               }
           }
-        } /*else {
-          var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
-          var arm_angle = utils.angleClosestTo(boss_angle, this.body.GetAngle() + Math.PI/(this.num_arms/2) * index)
-          if(boss_angle > arm_angle) {
-            var attack_angle = boss_angle + Math.PI/2
-            other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(attack_angle), this.boss_force * Math.sin(attack_angle)), other.body.GetWorldCenter())
-          } else {
-            var attack_angle = boss_angle - Math.PI/2
-            other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(attack_angle), this.boss_force * Math.sin(attack_angle)), other.body.GetWorldCenter())
-          }
-        }*/
+        }
       }
     }
   } else {

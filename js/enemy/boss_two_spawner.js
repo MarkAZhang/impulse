@@ -41,8 +41,8 @@ BossTwoSpawner.prototype.draw = function(context, draw_factor, prop, next_enemy_
 
   context.save()
   context.globalAlpha *= .5
-  drawSprite(context, this.x, this.y, Math.PI/4, this.size * 2, this.size * 2, "consumendi_glow", consumendiSprite)
-  drawSprite(context, this.x, this.y, Math.PI/4, this.size, this.size, "consumendi_mini", consumendiSprite)
+  renderUtils.drawSprite(context, this.x, this.y, Math.PI/4, this.size * 2, this.size * 2, "consumendi_glow", sprites.consumendiSprite)
+  renderUtils.drawSprite(context, this.x, this.y, Math.PI/4, this.size, this.size, "consumendi_mini", sprites.consumendiSprite)
 
   if(prop > 0) {
     context.beginPath()

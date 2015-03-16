@@ -429,7 +429,7 @@ Enemy.prototype.adjust_position = function() {
           in_polygon = true
         } else {
           var closest_vertex = utils.closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
-          if(closest_vertex.dist < imp_params.impulse_level_data[this.level.level_name].buffer_radius) {
+          if(closest_vertex.dist < levelData[this.level.level_name].buffer_radius) {
             var angle = utils.atan(closest_vertex.v, this.body.GetPosition())
             in_polygon = true
           }
@@ -605,7 +605,7 @@ Enemy.prototype.start_death = function(death) {
       this.impulse_game_state.game_numbers.score += score_value
       this.impulse_game_state.increment_combo()
       this.impulse_game_state.check_cutoffs()
-      if (score_value > imp_params.quest_data["high_roller"].score_cutoff) {
+      if (score_value > questData["high_roller"].score_cutoff) {
         set_quest_completed("high_roller");
       }
     }
@@ -705,7 +705,7 @@ Enemy.prototype.player_hit_proc = function() {
 }
 
 // draw a pointer if the enemy is off-screen
-/*Enemy.prototype.draw_arrow = function(context, draw_factor) {
+/*Enemy.prototype.uiRenderUtils.drawArrow = function(context, draw_factor) {
   if(!utils.checkBounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
 
     var pointer_point = get_pointer_point(this)
@@ -963,7 +963,7 @@ Enemy.prototype.set_up_images = function() {
 
   var normal_canvas_ctx = normal_canvas.getContext('2d');
 
-  this.draw_enemy_image(normal_canvas_ctx);
+  this.enemyRenderUtils.drawEnemyImage(normal_canvas_ctx);
   this.enemy_images = {}
   this.enemy_images["normal"] = normal_canvas
 }
@@ -1051,7 +1051,7 @@ Enemy.prototype.generate_images = function() {
     var tp = {x: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
     normal_canvas_ctx.translate(tp.x * imp_params.draw_factor, tp.y * imp_params.draw_factor)
 
-    draw_enemy_image(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);
+    enemyRenderUtils.drawEnemyImage(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);
     normal_canvas_ctx.translate(-tp.x * imp_params.draw_factor, -tp.y * imp_params.draw_factor)
     images[status] = normal_canvas
 

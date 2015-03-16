@@ -1,4 +1,6 @@
-imp_params.spriteSheetData = {
+var spriteData = {};
+
+spriteData.spriteSheetData = {
   //x, y, w, h
   //"player_normal": [60, 0, 60, 60],
   "player_normal": [0, 0, 40, 40],
@@ -93,21 +95,21 @@ imp_params.spriteSheetData = {
   "adrogantia_logo_gray": [476, 125, 125, 125],
 }
 
-imp_params.tessellation_glow_map = {
+spriteData.tessellationGlowMap = {
   "0": "white_glow",
   "1": "immunitas_glow",
   "2": "consumendi_glow",
   "3": "negligentia_glow",
   "4": "adrogantia_glow"
 }
-imp_params.tessellation_logo_map = {
+spriteData.tessellationLogoMap = {
   "0": "white_gateway",
   "1": "immunitas_arm",
   "2": "consumendi_logo",
   "3": "negligentia_logo",
   "4": "adrogantia_logo"
 }
-imp_params.tessellation_gray_logo_map = {
+spriteData.tessellationGrayLogoMap = {
   "0": "world_logo",
   "1": "immunitas_logo_gray",
   "2": "consumendi_mini_gray",
@@ -115,7 +117,7 @@ imp_params.tessellation_gray_logo_map = {
   "4": "adrogantia_logo_gray"
 }
 
-imp_params.bg = {
+spriteData.bgFiles = {
   "Hive 0": "bg/hive0",
   "Title Alt1": "bg/titlebg_alt1",
   "Title Alt2": "bg/titlebg_alt2",
@@ -127,7 +129,7 @@ imp_params.bg = {
   "Hive 4": "bg/hive4",
 };
 
-imp_params.tessellation_logo_factor = {
+spriteData.tessellationLogoFactor = {
   "0": 1.4,
   "1": 1,
   "2": 1.4,

@@ -632,7 +632,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   } else {
     ctx.globalAlpha *= 0.3
   }
-  draw_tessellation_sign(
+  uiRenderUtils.drawTessellationSign(
     ctx,
     world_num,
     this.gateway_loc.x * draw_factor,
@@ -685,7 +685,7 @@ Level.prototype.draw = function(context, draw_factor) {
       context.globalAlpha *= Math.max(0, this.restarting_timer / this.restarting_effects_duration)
     }
 
-    draw_multi_powerup(context, this.multi_loc.x, this.multi_loc.y, prog)
+    objectRenderUtils.drawMultiPowerup(context, this.multi_loc.x, this.multi_loc.y, prog)
     context.restore()
 
   }
@@ -776,15 +776,15 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
 
   if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
     bg_ctx.restore();
   } else if(this.world_num != null && !this.is_level_zero) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
     bg_ctx.restore();
   } else if (this.world_num != null && this.is_level_zero) {
     bg_ctx.save();
-    draw_bg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0");
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0");
     bg_ctx.restore();
   } else {
     bg_ctx.fillStyle = impulse_colors["world 0 bright"]
@@ -796,7 +796,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     var r = 0.15;
     var x = this.gateway_loc.x * imp_params.draw_factor;
     var y = this.gateway_loc.y * imp_params.draw_factor;
-    draw_bg(bg_ctx, x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
+    uiRenderUtils.tessellateBg(bg_ctx, x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
       x + imp_params.levelWidth * r, y + imp_params.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
     bg_ctx.restore();
@@ -834,7 +834,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"];
     bg_ctx.textAlign = "center";
     bg_ctx.font = "32px Muli";
-    bg_ctx.fillText(imp_params.hive_names[this.level_intro_state.world_num], 400, 150);
+    bg_ctx.fillText(levelData.hiveNames[this.level_intro_state.world_num], 400, 150);
     bg_ctx.font = "16px Muli";
     bg_ctx.fillText("8 LEVELS", 400, 170);
   }

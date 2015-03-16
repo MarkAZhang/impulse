@@ -59,7 +59,7 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
     // do not do the following if we have beat the last level.. will transfer to summary_state later
     return
   }
-  if(this.world_num == 0 && this.last_level && this.last_level.level_name == imp_params.last_tutorial_level) {
+  if(this.world_num == 0 && this.last_level && this.last_level.level_name == levelData.lastTutorialLevel) {
     // do not do the following if we have beat the last tutorial level.. will transfer to summary_state later
     return
   }
@@ -82,9 +82,9 @@ function MainGameTransitionState(world_num, level, visibility_graph, hive_number
       !(loading_saved_game && this.hive_numbers.current_level &&
       this.hive_numbers.current_level.substring(0, 4) == "BOSS")) {
     if (this.is_level_zero(this.level.level_name)) {
-      imp_params.impulse_music.play_bg(imp_params.songs["Menu"])
+      imp_params.impulse_music.play_bg(audioData.songs["Menu"])
     } else {
-      imp_params.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
+      imp_params.impulse_music.play_bg(audioData.songs["Hive "+this.world_num])
     }
   }
 }
@@ -114,7 +114,7 @@ MainGameTransitionState.prototype.get_first_level_name = function (world_num) {
 MainGameTransitionState.prototype.load_next_level = function () {
   // Set the next level to load.
   this.level_loaded = false
-  this.level = this.load_level(imp_params.impulse_level_data[this.hive_numbers.current_level]);
+  this.level = this.load_level(levelData[this.hive_numbers.current_level]);
   this.level_name = this.level.level_name;
 }
 
@@ -129,7 +129,7 @@ MainGameTransitionState.prototype.should_skip_transition_state = function () {
 
 MainGameTransitionState.prototype.maybe_switch_states = function () {
   // if last level of tutorial, go to summary state.
-  if(this.world_num == 0 && this.last_level && this.last_level.level_name == imp_params.last_tutorial_level) {
+  if(this.world_num == 0 && this.last_level && this.last_level.level_name == levelData.lastTutorialLevel) {
     game_engine.switch_game_state(new MainGameSummaryState(this.world_num, true, this.hive_numbers))
     return true;
   }
@@ -184,7 +184,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     this.bg_drawn = true
 
     bg_canvas.setAttribute("style", "display:none")
-    draw_bg(imp_params.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(imp_params.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
   }
 
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
@@ -230,7 +230,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.save()
       ctx.globalAlpha *= 0.3
-      draw_tessellation_sign(ctx,this.world_num, imp_params.levelWidth/2, 300, 100)
+      uiRenderUtils.drawTessellationSign(ctx,this.world_num, imp_params.levelWidth/2, 300, 100)
       ctx.restore()
       ctx.font = '24px Muli'
       ctx.save();
@@ -254,7 +254,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();

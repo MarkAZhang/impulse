@@ -147,14 +147,14 @@ Troll.prototype.bulk_draw = function(context, draw_factor, num) {
   }
   if(num == 1) {
     if(this.recovery_timer > 0 && !this.dying && !this.is_locked()) {
-      bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
+      uiRenderUtils.bulkDrawProgCircle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval)
     }
   }
   if(num == 2) {
     var time = (new Date()).getTime()
     if(!this.is_silenced() && time % (this.trolling_time_factor * this.troll_switch_interval) > this.troll_switch_interval) {
       var troll_prop = (time % (this.trolling_time_factor * this.troll_switch_interval) - this.troll_switch_interval)/ ((this.trolling_time_factor-1)*this.troll_switch_interval)
-      bulk_draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, troll_prop)
+      uiRenderUtils.bulkDrawProgCircle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, troll_prop)
     }
   }
 }

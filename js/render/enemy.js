@@ -1,5 +1,6 @@
+var enemyRenderUtils = {};
 
-function draw_enemy_image(context, state, draw_polygons, type, default_color, scale) {
+enemyRenderUtils.drawEnemyImage = function(context, state, draw_polygons, type, default_color, scale) {
 
   if (scale === undefined) {
     scale = 1
@@ -88,9 +89,7 @@ function draw_enemy_image(context, state, draw_polygons, type, default_color, sc
   context.restore()
 }
 
-
-
-function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
+enemyRenderUtils.drawEnemy = function(context, enemy_name, x, y, d, rotate, status, enemy_color) {
   // if d == null, will draw at default size
 
 
@@ -110,12 +109,12 @@ function draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color) {
     var draw_scale = d * Math.min(enemyData[enemy_name].effective_radius/max_radius, 1)
   }
 
-  draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
+  enemyRenderUtils.drawEnemyHelper(context, enemy_name, draw_scale, status, enemy_color)
 
   context.restore()
-}
+};
 
-function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color) {
+enemyRenderUtils.drawEnemyHelper = function(context, enemy_name, draw_scale, status, enemy_color) {
   if(enemy_name.slice(enemy_name.length - 4) == "boss") {
      //draw_scale = 2/enemyData[enemy_name].effective_radius * d/2
   }
@@ -135,38 +134,25 @@ function draw_enemy_helper(context, enemy_name, draw_scale, status, enemy_color)
   }
 
   var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * enemyData[enemy_name].effective_radius * imp_params.draw_factor)
-  draw_enemy_image(context, status, draw_polygons, enemy_name, enemy_color, scale)
+  enemyRenderUtils.drawEnemyImage(context, status, draw_polygons, enemy_name, enemy_color, scale)
 
-  //context.translate(draw_scale, draw_scale)
-  //context.drawImage(enemyData[enemy_name].images[status], 0, 0, size, size, -draw_scale, -draw_scale, draw_scale * 2, draw_scale * 2);
-
-   /*for(var m = 0; m < enemyData[enemy_name].shape_polygons.length; m++) {
-      var this_shape = enemyData[enemy_name].shape_polygons[m]
-      if(enemyData[enemy_name].interior_color) {
-        draw_shape(context, x, y, this_shape, draw_scale, enemyData[enemy_name].color, 1, 0, enemyData[enemy_name].interior_color)
+  var this_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
+  if(!this_color) {
+    this_color = enemyData[enemy_name].color
+  }
+  if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
+    for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
+      var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
+      if(!this_shape.colored) {
+        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")
       } else {
-        draw_shape(context, x, y, this_shape, draw_scale, enemyData[enemy_name].color)
-      }
-
-    }*/
-
-    var this_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
-    if(!this_color) {
-      this_color = enemyData[enemy_name].color
-    }
-    if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
-      for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
-        var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
-        if(!this_shape.colored) {
-          draw_shape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")
-        } else {
-          draw_shape(context, 0, 0, this_shape, draw_scale, this_color)
-        }
+        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, this_color)
       }
     }
+  }
 }
 
-function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
+enemyRenderUtils.drawEnemyColored = function(context, enemy_name, x, y, d, rotate, color) {
 
   context.save()
   if(rotate) {
@@ -181,13 +167,13 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
    }
    for(var m = 0; m < enemyData[enemy_name].shape_polygons.length; m++) {
       var this_shape = enemyData[enemy_name].shape_polygons[m]
-      draw_shape(context, x, y, this_shape, draw_scale, color)
+      renderUtils.drawShape(context, x, y, this_shape, draw_scale, color)
 
     }
     if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
       for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
         var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
-        draw_shape(context, x, y, this_shape, draw_scale, color)
+        renderUtils.drawShape(context, x, y, this_shape, draw_scale, color)
       }
     }
 
@@ -204,9 +190,9 @@ function draw_enemy_colored(context, enemy_name, x, y, d, rotate, color) {
       }
     }
   context.restore()
-}
+};
 
-function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
+enemyRenderUtils.drawEnemyRealSize = function(context, enemy_name, x, y, factor, rotate) {
 
   context.save()
   context.translate(x, y);
@@ -216,6 +202,6 @@ function draw_enemy_real_size(context, enemy_name, x, y, factor, rotate) {
 
   var size = enemyData[enemy_name].images["normal"].height
 
-  draw_enemy_helper(context, enemy_name, size * factor/2, "normal")
+  enemyRenderUtils.drawEnemyHelper(context, enemy_name, size * factor/2, "normal")
   context.restore()
-}
+};

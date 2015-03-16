@@ -89,13 +89,13 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
-    //this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
+    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
     this.num_enemy_type = 0
   }
   else {
-    this.drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
+    this.drawn_enemies = levelData[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in imp_params.impulse_level_data[this.level_name].enemies) {
+    for(var j in levelData[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }
@@ -717,37 +717,37 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
   }
   ctx.globalAlpha *= 0.6
   if(currentControls == "right mouse") {
-    draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
+    uiRenderUtils.drawArrowKeys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
     ctx.fillText("MOVE", this.x - 200, this.y - this.h/2 + 360)
-    draw_mouse(ctx, this.x + 200, this.y - this.h/2 + 270, 75, 100, this.bright_color)
+    uiRenderUtils.drawMouse(ctx, this.x + 200, this.y - this.h/2 + 270, 75, 100, this.bright_color)
     ctx.fillText("IMPULSE", this.x + 200, this.y - this.h/2 + 360)
 
-    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.bright_color)
+    renderUtils.drawRoundedRect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.bright_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
   }
 
   if(currentControls == "left mouse") {
-    draw_mouse(ctx, this.x - 200, this.y - this.h/2 + 270,  75, 100, this.bright_color)
+    uiRenderUtils.drawMouse(ctx, this.x - 200, this.y - this.h/2 + 270,  75, 100, this.bright_color)
     ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
 
-    draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
+    uiRenderUtils.drawArrowKeys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
     ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)
 
-    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 120, 40, 10, this.bright_color)
+    renderUtils.drawRoundedRect(ctx, this.x, this.y - this.h/2 + 430, 120, 40, 10, this.bright_color)
     ctx.fillText("SHIFT", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
   }
 
   if(currentControls == "right keyboard") {
-    draw_arrow_keys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
+    uiRenderUtils.drawArrowKeys(ctx, this.x - 200, this.y - this.h/2 + 300, 50, this.bright_color, ["W", "A", "S", "D"])
     ctx.fillText("IMPULSE", this.x - 200, this.y - this.h/2 + 360)
 
-    draw_arrow_keys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
+    uiRenderUtils.drawArrowKeys(ctx, this.x + 200, this.y - this.h/2 + 300, 50, this.bright_color)
     ctx.fillText("MOVE", this.x + 200, this.y - this.h/2 + 360)
-    draw_rounded_rect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.bright_color)
+    renderUtils.drawRoundedRect(ctx, this.x, this.y - this.h/2 + 430, 300, 40, 10, this.bright_color)
     ctx.fillText("SPACEBAR", this.x, this.y - this.h/2 + 436)
     ctx.shadowBlur = 0
     ctx.fillText("ENTER GATEWAY", this.x, this.y - this.h/2 + 490)
@@ -883,9 +883,9 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
 
   ctx.globalAlpha /= 3
-  draw_tessellation_sign(ctx, this.world_num, this.x, this.y - this.h/2 + 215, 80)
+  uiRenderUtils.drawTessellationSign(ctx, this.world_num, this.x, this.y - this.h/2 + 215, 80)
   ctx.globalAlpha *= 3
-  draw_enemy_real_size(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, 1.5)
+  enemyRenderUtils.drawEnemyRealSize(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, 1.5)
 
   ctx.font = '12px Muli'
   ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)
@@ -899,12 +899,12 @@ EnemyBox.prototype.additional_draw = function(ctx) {
     ctx.fillText(this.current_lines[i], this.x, this.y - this.h/2 + 427 + 25 * offset)
   }
   if (this.num_pages > 1) {
-    draw_arrow(ctx, this.x - 300, this.y - this.h/2 + 420, 20, "left", this.bright_color, false)
+    uiRenderUtils.drawArrow(ctx, this.x - 300, this.y - this.h/2 + 420, 20, "left", this.bright_color, false)
     ctx.font = '10px Muli'
     ctx.fillStyle = this.bright_color
     ctx.fillText("NEXT", this.x + 302, this.y - this.h/2 + 450)
     ctx.fillText("PREV", this.x - 302, this.y - this.h/2 + 450)
-    draw_arrow(ctx, this.x + 300, this.y - this.h/2 + 420, 20, "right", this.bright_color, false)
+    uiRenderUtils.drawArrow(ctx, this.x + 300, this.y - this.h/2 + 420, 20, "right", this.bright_color, false)
     for(var i = 0; i < this.num_pages; i++) {
       var offset = (this.num_pages-1)/2 - i
       ctx.beginPath()
@@ -927,13 +927,13 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
 
   //ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, enemyData[this.enemy_name].color)
+  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, enemyData[this.enemy_name].color)
   //ctx.fillStyle = "black"
   //ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, enemyData[this.enemy_name].color)
+  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, enemyData[this.enemy_name].color)
   //ctx.fillStyle = "black"
   //ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
-  //draw_progress_bar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, enemyData[this.enemy_name].color)
+  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, enemyData[this.enemy_name].color)
   /*ctx.fillStyle = "black"
   ctx.fillText("DIES UPON PLAYER COLLISION", this.x - this.w * .30, this.y - this.h/2 + 245)
   ctx.textAlign = 'center'

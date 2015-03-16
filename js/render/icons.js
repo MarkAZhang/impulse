@@ -1,4 +1,6 @@
-function draw_pause_icon(context, x, y, scale, color, key_display) {
+var iconRenderUtils = {};
+
+iconRenderUtils.drawPauseIcon = function(context, x, y, scale, color, key_display) {
 
   context.save()
   context.clearRect(x - scale, y - scale, 3 * scale, 3 * scale)
@@ -21,7 +23,7 @@ function draw_pause_icon(context, x, y, scale, color, key_display) {
   context.restore()
 }
 
-function draw_gear_icon(context, x, y, scale, color, center_color, center_glow) {
+iconRenderUtils.drawGearIcon = function(context, x, y, scale, color, center_color, center_glow) {
   context.save()
   //context.shadowBlur = 5
   var spokes = 6
@@ -51,7 +53,7 @@ function draw_gear_icon(context, x, y, scale, color, center_color, center_glow) 
   context.restore()
 }
 
-function draw_credits_icon(context, x, y, scale, color) {
+iconRenderUtils.drawCreditsIcon = function(context, x, y, scale, color) {
   context.save()
   context.beginPath()
   context.arc(x, y - scale/3, scale/3, 0, 2 * Math.PI, true)
@@ -62,7 +64,7 @@ function draw_credits_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_tutorial_icon(context, x, y, scale, color) {
+iconRenderUtils.drawTutorialIcon = function(context, x, y, scale, color) {
   context.save()
   context.beginPath()
   context.moveTo(x, y - scale * 1/3)
@@ -83,7 +85,7 @@ function draw_tutorial_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_retry_icon(context, x, y, scale, color) {
+iconRenderUtils.drawRetryIcon = function(context, x, y, scale, color) {
   context.save()
   context.beginPath()
   context.arc(x, y, scale * 3/4,  Math.PI * 2/5, Math.PI)
@@ -108,7 +110,7 @@ function draw_retry_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_back_icon(context, x, y, scale, color) {
+iconRenderUtils.drawBackIcon = function(context, x, y, scale, color) {
   context.save()
   context.beginPath()
   context.arc(x, y, scale * 3/4, 3*Math.PI/2, Math.PI * 3/4)
@@ -124,11 +126,9 @@ function draw_back_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_start_icon(context, x, y, scale, color) {
+iconRenderUtils.drawStartIcon = function(context, x, y, scale, color) {
   context.save()
-  draw_player_icon(context, x, y, scale/2, color)
-
-
+  iconRenderUtils.drawPlayerIcon(context, x, y, scale/2, color)
   context.beginPath()
   context.arc(x, y, scale, Math.PI * 7/6, Math.PI * 11/6)
   context.lineWidth = Math.ceil(scale / 6)
@@ -138,7 +138,7 @@ function draw_start_icon(context, x, y, scale, color) {
 
 }
 
-function draw_player_icon(context, x, y, scale, color) {
+iconRenderUtils.drawPlayerIcon = function(context, x, y, scale, color) {
   context.beginPath()
   context.arc(x, y, scale, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999)
   context.fillStyle = color
@@ -153,9 +153,9 @@ function draw_player_icon(context, x, y, scale, color) {
   context.fill()
 }
 
-function draw_loading_icon(context, x, y, scale, color, prog) {
+iconRenderUtils.drawLoadingIcon = function(context, x, y, scale, color, prog) {
   context.save()
-  draw_player_icon(context, x, y, scale/2, color)
+  iconRenderUtils.drawPlayerIcon(context, x, y, scale/2, color)
   context.beginPath()
   context.arc(x, y, scale * 3/4, Math.PI * 3/2, Math.PI * 3/2 + Math.PI * 1.999 * prog)
   context.lineWidth = 2
@@ -165,7 +165,7 @@ function draw_loading_icon(context, x, y, scale, color, prog) {
 
 }
 
-function draw_save_icon(context, x, y, scale, color) {
+iconRenderUtils.drawSaveIcon = function(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0
   context.beginPath()
@@ -187,7 +187,7 @@ function draw_save_icon(context, x, y, scale, color) {
   context.restore()
 
 }
-function draw_quest_icon(context, x, y, scale, color) {
+iconRenderUtils.drawQuestIcon = function(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0
   context.beginPath()
@@ -207,7 +207,7 @@ function draw_quest_icon(context, x, y, scale, color) {
 
 }
 
-function draw_delete_icon(context, x, y, scale, color) {
+iconRenderUtils.drawDeleteIcon = function(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0
   context.beginPath()
@@ -233,7 +233,7 @@ function draw_delete_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_quit_icon(context, x, y, scale, color) {
+iconRenderUtils.drawQuitIcon = function(context, x, y, scale, color) {
   context.save()
   context.shadowBlur = 0
   context.beginPath()
@@ -247,7 +247,7 @@ function draw_quit_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_texture_icon(context, x, y, scale, color) {
+iconRenderUtils.drawTextureIcon = function(context, x, y, scale, color) {
   context.save()
   context.translate(x, y)
   context.transform(1,-0.35,0,1,0,0);
@@ -263,7 +263,7 @@ function draw_texture_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_physics_icon(context, x, y, scale, color) {
+iconRenderUtils.drawPhysicsIcon = function(context, x, y, scale, color) {
   context.save()
   context.beginPath()
   context.rect(x - scale/4, y - scale/2, scale/2, scale/2)
@@ -275,7 +275,7 @@ function draw_physics_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_note_icon(context, x, y, scale, color) {
+iconRenderUtils.drawNoteIcon = function(context, x, y, scale, color) {
   context.save()
   context.translate(scale/3, 0)
   context.beginPath()
@@ -314,7 +314,7 @@ function draw_note_icon(context, x, y, scale, color) {
   context.restore()
 }
 
-function draw_music_icon(context, x, y, scale, color, key_display, mute) {
+iconRenderUtils.drawMusicIcon = function(context, x, y, scale, color, key_display, mute) {
   context.save()
 
   context.beginPath()
@@ -344,15 +344,10 @@ function draw_music_icon(context, x, y, scale, color, key_display, mute) {
     context.arc(x- scale * 0.3 + scale * 0.4, y, scale/2, -Math.PI/3,Math.PI/3, false)
     context.stroke()
   }
-  /*if(key_display) {
-    context.font = "10px Muli"
-    context.textAlign = "center"
-    context.fillText("X", x+scale, y+scale)
-  }*/
   context.restore()
 }
 
-function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
+iconRenderUtils.drawFullscreenIcon = function(context, x, y, scale, color, key_display) {
   context.save()
   context.beginPath()
   context.globalAlpha /= 2
@@ -378,10 +373,5 @@ function draw_fullscreen_icon(context, x, y, scale, color, key_display) {
   context.moveTo(x - scale * 1/2, y - scale * 1/2)
   context.lineTo(x + scale * 1/2, y + scale * 1/2)
   context.stroke()
-  /* if(key_display) {
-    context.font = "10px Muli"
-    context.textAlign = "center"
-    context.fillText("C", x+scale, y+scale)
-  } */
   context.restore()
 }

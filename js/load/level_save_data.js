@@ -8,7 +8,7 @@ var LevelSaveData = function () {
 };
 
 LevelSaveData.prototype.setUpDataForDifficulty = function (difficulty_level) {
-  for(i in imp_params.impulse_level_data) {
+  for(i in levelData) {
     this.data[difficulty_level][i] = {};
     this.data[difficulty_level][i].high_score = 0;
     this.data[difficulty_level][i].seen = false;
@@ -22,7 +22,7 @@ LevelSaveData.prototype.loadData = function (load_obj) {
 };
 
 LevelSaveData.prototype.loadDataForDifficulty = function (load_obj, difficulty_level) {
-  for (i in imp_params.impulse_level_data) {
+  for (i in levelData) {
     if (load_obj.hasOwnProperty(i) &&
         load_obj[i]["save_state"] &&
         load_obj[i]["save_state"][difficulty_level]) {
@@ -39,7 +39,7 @@ LevelSaveData.prototype.addLevelDataToSaveObj = function (save_obj) {
 };
 
 LevelSaveData.prototype.addLevelDataForDifficulty = function (save_obj, difficulty_level) {
-  for(i in imp_params.impulse_level_data) {
+  for(i in levelData) {
     if(!(save_obj.hasOwnProperty(i))) {
       save_obj[i] = {}
       save_obj[i]["save_state"] = {}

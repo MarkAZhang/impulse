@@ -52,7 +52,7 @@ function WorldMapState(world, is_practice_mode) {
   this.world_button_y = imp_params.levelHeight/2;
   this.set_up_buttons();
 
-  imp_params.impulse_music.play_bg(imp_params.songs["Menu"])
+  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
 
   this.fade_out_interval_main = 500
   this.fade_out_interval_practice = 250
@@ -255,7 +255,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
-  draw_bg(ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+  uiRenderUtils.tessellateBg(ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
@@ -355,7 +355,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   ctx.font = "42px Muli"
   ctx.textAlign = "center"
   if (index > 0) {
-    ctx.fillText(imp_params.hive_names[index], imp_params.levelWidth/2, this.world_button_y - 125)
+    ctx.fillText(levelData.hiveNames[index], imp_params.levelWidth/2, this.world_button_y - 125)
   } else {
     ctx.fillText("TUTORIAL", imp_params.levelWidth/2, this.world_button_y - 125)
   }
@@ -371,7 +371,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
         ctx.fillText("TUTORIAL", imp_params.levelWidth/2, imp_params.levelHeight - 8)
       } else if(this.mode_buttons[difficulty][i].active) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText(imp_params.hive_names[i], imp_params.levelWidth/2, imp_params.levelHeight - 8)
+        ctx.fillText(levelData.hiveNames[i], imp_params.levelWidth/2, imp_params.levelHeight - 8)
       }
     }
   }

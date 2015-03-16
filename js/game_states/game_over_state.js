@@ -67,13 +67,13 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
 
   if(this.level.is_boss_level) {
     this.drawn_enemies = {}
-    //this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
+    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
     //this.num_enemy_type = 1
   }
   else {
-    this.drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
+    this.drawn_enemies = levelData[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in imp_params.impulse_level_data[this.level_name].enemies) {
+    for(var j in levelData[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }
@@ -140,7 +140,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
-    draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
     this.bg_drawn = true
     bg_ctx.translate(-imp_params.sidebarWidth, 0)
     this.bg_drawn = true
@@ -161,7 +161,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
@@ -270,7 +270,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
@@ -288,7 +288,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.font = '32px Muli'
-    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_params.levelWidth/2, 240)
+    ctx.fillText(levelData.bossNames[this.world_num], imp_params.levelWidth/2, 240)
 
     ctx.fill()
     ctx.font = '48px Muli';

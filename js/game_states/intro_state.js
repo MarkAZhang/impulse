@@ -4,7 +4,7 @@ IntroState.prototype.constructor = IntroState
 
 function IntroState() {
 
-  imp_params.impulse_music.play_bg(imp_params.songs["Menu"])
+  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
   this.bg_drawn = false;
   this.fader = new Fader({
     "fade_in": 1000,
@@ -46,7 +46,7 @@ IntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
   ctx.fillText("CREATED BY", imp_params.levelWidth/2, 200)
-  draw_porcelain_logo(ctx, 400, 300);
+  uiRenderUtils.drawPorcelainLogo(ctx, 400, 300);
   ctx.restore()
 }
 

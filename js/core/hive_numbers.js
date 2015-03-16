@@ -4,7 +4,7 @@ var HiveNumbers = function (world_num, main_game) {
   this.hit = false;
   this.main_game = main_game
   if (world_num > 0) {
-    this.speed_run_countdown = imp_params.quest_data["blitz_hive" + world_num].time_cutoff * 1000// in ms
+    this.speed_run_countdown = questData["blitz_hive" + world_num].time_cutoff * 1000// in ms
   }
 
   this.total_time = {};
@@ -16,10 +16,10 @@ var HiveNumbers = function (world_num, main_game) {
   if (this.world == 0) {
     this.hive_name = "TUTORIAL"
   } else {
-    this.hive_name = imp_params.hive_names[world_num]
+    this.hive_name = levelData.hiveNames[world_num]
   }
 
-  this.boss_name = imp_params.tessellation_names[world_num];
+  this.boss_name = levelData.bossNames[world_num];
 }
 
 HiveNumbers.loadFromSaveObj = function (saveObj) {

@@ -74,14 +74,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
 
 DeathRay.prototype.additional_processing = function(dt) {
 
-  //if(!this.turret_mode && this.turret_timer <= 0) {
-  //  this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
-  //} else if(this.turret_mode && this.turret_timer >= 1) {
-
-  //} else if(this.turret_mode){
-  //  this.turret_arm_angle = this.body.GetAngle();
-  //}
-
   if(this.aimed) {
     this.set_heading(this.ray_angle)
   } else
@@ -105,25 +97,6 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.reset_ray()
     return
   }
-
-
-  //this.turret_mode = this.safe && this.within_bounds
-
-  /*if(!this.turret_mode) {
-    this.shoot_duration = this.shoot_interval
-    this.fire_duration = this.fire_interval
-    this.aimed = false
-    this.fired = false
-  }*/
-
-  /*if(this.turret_mode && this.turret_timer < 1)
-  {
-    this.turret_timer = Math.min(this.turret_timer + dt/this.turret_duration, 1)
-  }
-  else if(!this.turret_mode && this.turret_timer > 0)
-  {
-    this.turret_timer = Math.max(this.turret_timer - dt/this.turret_duration, 0)
-  }*/
 
   //ready to shoot
   if(this.shoot_duration <= 0) {
@@ -176,7 +149,7 @@ DeathRay.prototype.additional_processing = function(dt) {
 
 DeathRay.prototype.additional_drawing = function(context, draw_factor) {
   if(this.recovery_timer > 0 && !this.dying) {
-    draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval, "#444444", 4)
+    uiRenderUtils.drawProgCircle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.recovery_timer/this.recovery_interval, "#444444", 4)
   }
 }
 
@@ -193,11 +166,6 @@ DeathRay.prototype.aim_ray = function() {
   this.ray_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
   this.shoot_duration = this.shoot_interval * this.aim_proportion
 
-
-/*  this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_size * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle - Math.PI/2),
-   y: this.body.GetPosition().y + this.ray_size * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle - Math.PI/2)})
-  this.ray_polygon.push({x: this.body.GetPosition().x + this.ray_size * Math.cos(this.ray_angle) + this.ray_radius * Math.cos(this.ray_angle + Math.PI/2),
-   y: this.body.GetPosition().y + this.ray_size * Math.sin(this.ray_angle) + this.ray_radius * Math.sin(this.ray_angle + Math.PI/2)})*/
   this.aimed = true
 }
 
@@ -282,27 +250,6 @@ DeathRay.prototype.pre_draw = function(context, draw_factor) {
     var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
     context.save()
     context.globalAlpha *= (1-prog)
-    /*if(!this.aimed)// && this.turret_timer > 0)
-    {
-      //this part takes care of the "aimer"
-      context.beginPath()
-      var ray_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-      context.moveTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle + Math.PI/2))*draw_factor,
-       (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle + Math.PI/2))*draw_factor)
-      context.lineTo((this.body.GetPosition().x + this.ray_buffer_radius * Math.cos(ray_angle) + this.ray_radius * Math.cos(ray_angle - Math.PI/2))*draw_factor,
-        (this.body.GetPosition().y + this.ray_buffer_radius * Math.sin(ray_angle) + this.ray_radius * Math.sin(ray_angle - Math.PI/2))*draw_factor)
-      context.strokeStyle = this.color
-      //context.lineWidth = Math.ceil(5 * this.turret_timer/2)
-      context.stroke()
-    }
-    else {//if(this.turret_timer > 0){
-      context.beginPath()
-      context.moveTo(this.ray_polygon[0].x * draw_factor, this.ray_polygon[0].y * draw_factor)
-      context.lineTo(this.ray_polygon[1].x * draw_factor, this.ray_polygon[1].y * draw_factor)
-      context.strokeStyle = this.color
-      //context.lineWidth = Math.ceil(5 * this.turret_timer/2)
-      context.stroke()
-    }*/
 
     var ray_polygon = this.get_ray_polygon()
 
@@ -397,6 +344,4 @@ DeathRay.prototype.modify_movement_vector = function(dir) {
 }
 
 DeathRay.prototype.player_hit_proc = function() {
-  //var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-  //this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
 }

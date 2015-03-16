@@ -846,14 +846,14 @@ BossOne.prototype.draw_arm_piece = function(arm, context, draw_factor, side) {
     var tp = arm.GetPosition();
 
     if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm_red", immunitasSprite)
+      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm_red", sprites.immunitasSprite)
 
     } else
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", immunitasSprite)
+      (arm.GetAngle() + Math.PI/4), 64, 64, "immunitas_arm", sprites.immunitasSprite)
 
 
 }
@@ -862,14 +862,14 @@ BossOne.prototype.draw_hand = function(hand, context, draw_factor, side) {
     // fade out if dying
     var tp = hand.GetPosition();
         if(this.knockback_red_duration > 0 || this.knockback_arm_timers[side] > 0) {
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand_red", immunitasSprite)
+      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand_red", sprites.immunitasSprite)
 
     } else
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand", immunitasSprite)
+      (hand.GetAngle() + Math.PI/4), 64, 64, "immunitas_hand", sprites.immunitasSprite)
 
 
 }
@@ -879,14 +879,14 @@ BossOne.prototype.draw_aura = function(context, draw_factor) {
     var tp = this.body.GetPosition()
     context.globalAlpha *= 0.6
     if(this.knockback_red_duration > 0) {
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (Math.PI/4), 173, 173, "immunitas_aura_red", immunitasSprite)
+    (Math.PI/4), 173, 173, "immunitas_aura_red", sprites.immunitasSprite)
 
     } else
-     drawSprite(context, tp.x*draw_factor,
+     renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (Math.PI/4), 173, 173, "immunitas_aura", immunitasSprite)
+    (Math.PI/4), 173, 173, "immunitas_aura", sprites.immunitasSprite)
      context.globalAlpha /= 0.6
 }
 
@@ -894,13 +894,13 @@ BossOne.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (this.body.GetAngle()), 285, 285, "immunitas_red_glow", immunitasSprite)
+    (this.body.GetAngle()), 285, 285, "immunitas_red_glow", sprites.immunitasSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle()), 285, 285, "immunitas_glow", immunitasSprite)
+      (this.body.GetAngle()), 285, 285, "immunitas_glow", sprites.immunitasSprite)
   }
 
   var glowing_body_parts = []
@@ -913,9 +913,9 @@ BossOne.prototype.draw_glows = function(context, draw_factor) {
     if(this.body_parts[name]) {
       var body_part = this.body_parts[name]
       tp = body_part.GetPosition()
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (body_part.GetAngle()), 190, 190, "immunitas_glow", immunitasSprite)
+      (body_part.GetAngle()), 190, 190, "immunitas_glow", sprites.immunitasSprite)
     }
   }
 }
@@ -941,14 +941,14 @@ BossOne.prototype.draw = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
       if(this.knockback_red_duration > 0) {
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head_red", immunitasSprite)
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head_red", sprites.immunitasSprite)
 
     } else
-      drawSprite(context, tp.x*draw_factor,
+      renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head", immunitasSprite)
+      (this.body.GetAngle() + Math.PI/4), 64, 64, "immunitas_head", sprites.immunitasSprite)
 
   context.restore()
 
@@ -992,8 +992,8 @@ BossOne.prototype.draw_punching_explode_warning = function(ctx, draw_factor) {
 
 
     var angle = i/this.punching_explode_warning_parts * Math.PI * 2;
-    drawSprite(ctx, this.body.GetPosition().x*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.cos(angle),
-      this.body.GetPosition().y*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.sin(angle), angle, 70, 70, "immunitas_arrow",immunitasSprite)
+    renderUtils.drawSprite(ctx, this.body.GetPosition().x*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.cos(angle),
+      this.body.GetPosition().y*draw_factor + (this.punching_explode_radius + 0.9)* draw_factor * Math.sin(angle), angle, 70, 70, "immunitas_arrow",sprites.immunitasSprite)
     ctx.globalAlpha *= 0.8
     ctx.beginPath()
     ctx.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor,  this.punching_explode_radius* draw_factor,
@@ -1008,40 +1008,6 @@ BossOne.prototype.draw_punching_explode_warning = function(ctx, draw_factor) {
 BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
   if (this.dying) return
-
-  /*if(this.lockon_display != null) {
-    if(this.punch_target_pts[this.lockon_display]) {
-
-      var prog = (this.lockon_display_timer/this.lockon_display_interval);
-      context.save()
-      context.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
-      var tp = this.punch_target_pts[this.lockon_display]
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-      0, 60, 60, "immunitas_lockon", immunitasSprite)
-      context.restore()
-    }
-  }*/
-
-  /*if(this.punch_target_pts["right"]) {
-    var tp = this.punch_target_pts["right"]
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-    0, 60, 60, "immunitas_lockon", immunitasSprite)
-
-    /*context.beginPath()
-    context.moveTo(this.body_parts["rh"].GetPosition().x * draw_factor, this.body_parts["rh"].GetPosition().y * draw_factor)
-    context.lineTo(this.punch_target_pts["right"].x * draw_factor, this.punch_target_pts["right"].y * draw_factor)
-    context.stroke()*/
-  /*}
-  if(this.punch_target_pts["left"]) {
-
-    var tp = this.punch_target_pts["left"]
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-    0, 60, 60, "immunitas_lockon", immunitasSprite)
-    /*context.beginPath()
-    context.moveTo(this.body_parts["lh"].GetPosition().x * draw_factor, this.body_parts["lh"].GetPosition().y * draw_factor)
-    context.lineTo(this.punch_target_pts["left"].x * draw_factor, this.punch_target_pts["left"].y * draw_factor)
-    context.stroke()*/
-  //}
 
   context.save()
   if(this.punching_explode_timer != null) {

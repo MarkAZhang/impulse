@@ -17,7 +17,7 @@ function TitleState(last_state) {
 
   this.setup_main_menu()
 
-  imp_params.impulse_music.play_bg(imp_params.songs["Menu"])
+  imp_params.impulse_music.play_bg(audioData.songs["Menu"])
 
   this.fader = new Fader({
     "fade_in": 500,
@@ -76,9 +76,9 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
   if (imp_params.debug.is_beta) {
-    draw_logo(ctx,imp_params.levelWidth/2, 200, "BETA")
+    uiRenderUtils.drawLogo(ctx,imp_params.levelWidth/2, 200, "BETA")
   } else {
-    draw_logo(ctx,imp_params.levelWidth/2, 200, "")
+    uiRenderUtils.drawLogo(ctx,imp_params.levelWidth/2, 200, "")
   }
 
   // TEXT FOR TRAILER

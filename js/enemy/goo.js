@@ -137,7 +137,7 @@ Goo.prototype.final_draw = function(context, draw_factor) {
     context.restore();
   }
   if(this.goo_state == "big") {
-    draw_prog_circle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.goo_state_timer / this.goo_expand_period)
+    uiRenderUtils.drawProgCircle(context, this.body.GetPosition().x, this.body.GetPosition().y, this.effective_radius, 1 - this.goo_state_timer / this.goo_expand_period)
   }
 }
 

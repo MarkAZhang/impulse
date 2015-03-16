@@ -59,11 +59,11 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     bg_canvas.setAttribute("style", "display:none")
     var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
     if (cur_reward.type == "world_victory") {
-      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+(cur_reward.data+1))
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+(cur_reward.data+1))
     } else if (cur_reward.type == "final_victory") {
-      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Title Alt4")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Title Alt4")
     } else {
-      draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
     }
     this.bg_drawn = true
   }
@@ -96,7 +96,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
-    draw_tessellation_sign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 100)
+    uiRenderUtils.drawTessellationSign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 100)
     ctx.restore()
   }
   var main_message = ""
@@ -112,7 +112,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
-      ctx.fillText(imp_params.hive_names[cur_reward.data+1], imp_params.levelWidth/2, 270)
+      ctx.fillText(levelData.hiveNames[cur_reward.data+1], imp_params.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
@@ -158,7 +158,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     if(cur_reward.type == "quest") {
       var tessellation_num = 0
       ctx.save()
-      draw_tessellation_sign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 150)
+      uiRenderUtils.drawTessellationSign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 150)
       ctx.restore()
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
@@ -167,12 +167,12 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillText("CHALLENGE COMPLETE!", imp_params.levelWidth/2, 120)
 
 
-      draw_quest_button(ctx, imp_params.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
+      questRenderUtils.draw_quest_button(ctx, imp_params.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
       ctx.font = '24px Muli'
       ctx.fillStyle = "white"
-      for (var i = 0; i < imp_params.quest_data[cur_reward.data.type].text.length; i++) {
-        var text = imp_params.quest_data[cur_reward.data.type].text[i];
+      for (var i = 0; i < questData[cur_reward.data.type].text.length; i++) {
+        var text = questData[cur_reward.data.type].text[i];
         ctx.fillText(text, imp_params.levelWidth / 2, main_reward_text_y + 150 + i * 36);
       }
 
@@ -186,7 +186,6 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.font = "16px Muli"
       ctx.fillText("INITIALIZING MAIN GAME...", imp_params.levelWidth/2, 550)
-      //draw_logo(ctx,imp_params.levelWidth/2, 250, "", 0.5)
     }
 
     if(cur_reward.type == "select_difficulty") {

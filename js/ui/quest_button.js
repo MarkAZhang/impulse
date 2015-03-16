@@ -13,8 +13,8 @@ function QuestButton(type, x, y, r) {
   this.normal_canvas.width = this.w
   this.normal_canvas.height = this.h
   var normal_canvas_ctx = this.normal_canvas.getContext('2d');
-  draw_quest_button(normal_canvas_ctx, this.r, this.r, this.r, this.type);
-  this.gray_canvas = convert_canvas_to_grayscale(this.normal_canvas, 255)
+  questRenderUtils.draw_quest_button(normal_canvas_ctx, this.r, this.r, this.r, this.type);
+  this.gray_canvas = renderUtils.convertCanvasToGrayscale(this.normal_canvas, 255)
 
   this.quest_completed = saveData.quests.indexOf(type) != -1;
   this.add_hover_overlay(new MessageBox(this.type, "white", 0, this.quest_completed));

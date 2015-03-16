@@ -57,7 +57,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  draw_porcelain_logo(ctx, 400, 180);
+  uiRenderUtils.drawPorcelainLogo(ctx, 400, 180);
   ctx.font = '16px Muli'
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = "center"

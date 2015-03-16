@@ -367,20 +367,12 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     var tp = this.body.GetPosition()
 
     if(-this.black_hole_timer/this.black_hole_duration < this.black_hole_expand_prop) {
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", consumendiSprite)
+      renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
+      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", sprites.consumendiSprite)
     } else {
-      drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", consumendiSprite)
+      renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
+      0, this.black_hole_radius * draw_factor * 2, this.black_hole_radius * draw_factor * 2, "consumendi_aura", sprites.consumendiSprite)
     }
-
-
-
-    /*context.beginPath()
-    context.strokeStyle = this.color
-    context.lineWidth = 2
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, this.black_hole_radius * draw_factor, 0, 2*Math.PI, true)
-    context.stroke()*/
   }
 
   var aura_factor = 1
@@ -394,8 +386,8 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
   if(this.black_hole_timer > 0) {
     context.save();
     context.globalAlpha *= 0.7;
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
-    0, 90 * aura_factor * this.last_growth_factor * this.high_gravity_factor, 90 * aura_factor *this.last_growth_factor * this.high_gravity_factor, "consumendi_aura", consumendiSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor,
+    0, 90 * aura_factor * this.last_growth_factor * this.high_gravity_factor, 90 * aura_factor *this.last_growth_factor * this.high_gravity_factor, "consumendi_aura", sprites.consumendiSprite)
     context.restore();
   }
 
@@ -405,14 +397,14 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
   for(var i = 0; i < 16; i++) {
     var angle = 2 * Math.PI * (i/16 + 1/32 - 1/4);
     if(this.spawned && 1 - this.black_hole_timer/ this.black_hole_interval > 1-i/16) {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
-      angle, 30, 56, "consumendi_small_diamond_filled", consumendiSprite)
+      angle, 30, 56, "consumendi_small_diamond_filled", sprites.consumendiSprite)
 
     } else {
-      drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
       (tp.y+Math.sin(angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor) * draw_factor,
-      angle, 30, 56, "consumendi_small_diamond", consumendiSprite)
+      angle, 30, 56, "consumendi_small_diamond", sprites.consumendiSprite)
     }
   }
   context.restore()
@@ -438,18 +430,10 @@ BossTwo.prototype.draw = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
 
-  /*this.draw_glows(context, draw_factor);
-  /*if(this.lighten_timer >= 0) {
-    this.draw_special_attack_timer(context, draw_factor)
-  }*/
-  //this.draw_aura(context, draw_factor)
-
-
-
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head_red", consumendiSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head_red", sprites.consumendiSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head", consumendiSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/4), 90 * this.last_growth_factor, 90 * this.last_growth_factor, "consumendi_head", sprites.consumendiSprite)
   }
   this.additional_drawing(context, draw_factor)
 
@@ -474,13 +458,13 @@ BossTwo.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (this.body.GetAngle()), 200 * this.last_growth_factor, 200 * this.last_growth_factor, "immunitas_red_glow", immunitasSprite)
+    (this.body.GetAngle()), 200 * this.last_growth_factor, 200 * this.last_growth_factor, "immunitas_red_glow", sprites.immunitasSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle()), 200 * this.last_growth_factor, 200 * this.last_growth_factor, "consumendi_glow", consumendiSprite)
+      (this.body.GetAngle()), 200 * this.last_growth_factor, 200 * this.last_growth_factor, "consumendi_glow", sprites.consumendiSprite)
   }
 }
 
@@ -492,28 +476,6 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
   }
 
   var polygons = this.get_arm_polygons()
-
-  /*if(this.red_visibility > 0) {
-      var tp = this.body.GetPosition()
-      context.save();
-      context.translate(tp.x * draw_factor, tp.y * draw_factor);
-      context.rotate(this.body.GetAngle());
-      context.translate(-(tp.x) * draw_factor, -(tp.y) * draw_factor);
-
-      context.beginPath()
-      context.globalAlpha = this.red_visibility
-
-      context.moveTo((tp.x+this.shape_points[0][0].x)*draw_factor, (tp.y+this.shape_points[0][0].y)*draw_factor)
-      for(var i = 1; i < this.shape_points[0].length; i++)
-      {
-        context.lineTo((tp.x+this.shape_points[0][i].x)*draw_factor, (tp.y+this.shape_points[0][i].y)*draw_factor)
-      }
-      context.closePath()
-      context.fillStyle = "red"
-      context.fill()
-      context.globalAlpha = 1
-      context.restore()
-  }*/
 
   context.save()
   context.beginPath()
@@ -533,36 +495,16 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
     context.globalAlpha *= this.visibility/4
     context.fillStyle = this.color
     context.fill()
-    /*context.globalAlpha = this.red_visibility/2
-    context.fillStyle = "red"
-    context.fill()*/
-
 
     var tp = this.body.GetPosition()
     var arm_angle = Math.PI * 2 * j / this.num_arms + this.arm_core_angle
-    drawSprite(context, (tp.x+Math.cos(arm_angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
+    renderUtils.drawSprite(context, (tp.x+Math.cos(arm_angle)*this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
     (tp.y+Math.sin(arm_angle) * this.effective_radius * this.last_growth_factor * this.low_gravity_factor * 1.5) * draw_factor,
-    arm_angle + Math.PI/2, 50, 80, "consumendi_small_arrow", consumendiSprite)
+    arm_angle + Math.PI/2, 50, 80, "consumendi_small_arrow", sprites.consumendiSprite)
     context.restore()
 
   }
   context.restore()
-
-  /*if(this.small_exploding_duration > 0) {
-    context.beginPath()
-    context.strokeStyle = "red"
-    context.lineWidth = 2
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius + (this.small_exploding_radius - this.effective_radius)* (1 - this.small_exploding_duration/this.small_exploding_interval)) * draw_factor, 0, 2*Math.PI, true)
-    context.stroke()
-  }*/
-
-  /*if(this.black_hole_timer >= 0) {
-    context.beginPath()
-    context.arc(this.body.GetPosition().x*draw_factor, this.body.GetPosition().y*draw_factor, (this.effective_radius*draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (Math.max(this.black_hole_timer, 0) / this.black_hole_interval), true)
-    context.lineWidth = 2
-    context.strokeStyle = "red"
-    context.stroke()
-  }*/
 
   var tp = this.player.get_current_position()
   var angle = utils.atan(tp, this.body.GetPosition())
@@ -572,21 +514,21 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
 
     if(this.player_gravity_force >= 0.3)
-      drawSprite(context, (tp.x+Math.cos(angle)*2) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*2) * draw_factor,
       (tp.y+Math.sin(angle) * 2) * draw_factor,
-      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", sprites.consumendiSprite)
     if(this.player_gravity_force >= 0.75)
-      drawSprite(context, (tp.x+Math.cos(angle)*2.75) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*2.75) * draw_factor,
       (tp.y+Math.sin(angle) * 2.75) * draw_factor,
-      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", sprites.consumendiSprite)
     if(this.player_gravity_force >= 1.2)
-      drawSprite(context, (tp.x+Math.cos(angle)*3.5) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*3.5) * draw_factor,
       (tp.y+Math.sin(angle) * 3.5) * draw_factor,
-      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", sprites.consumendiSprite)
     if(this.player_gravity_force >= 2)
-      drawSprite(context, (tp.x+Math.cos(angle)*4.25) * draw_factor,
+      renderUtils.drawSprite(context, (tp.x+Math.cos(angle)*4.25) * draw_factor,
       (tp.y+Math.sin(angle) * 4.25) * draw_factor,
-      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", consumendiSprite)
+      angle - Math.PI/2, 20, 10, "consumendi_small_arrow", sprites.consumendiSprite)
   }
 }
 
@@ -624,15 +566,8 @@ BossTwo.prototype.collide_with = function(other) {
     imp_params.impulse_music.play_sound("b2eat")
     var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
     this.player_struck = true
-    //other.lin_damp = 2
     other.start_death("absorbed")
     this.impulse_game_state.reset_combo();
-    //other.body.SetLinearDamping(other.lin_damp)
-    //setTimeout(function() {
-    //  other.lin_damp = 3.5
-    //  other.body.SetLinearDamping(other.lin_damp)
-    //}, 1000)
-    //other.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
   else if(other !== this.player) {
     imp_params.impulse_music.play_sound("b2eat")
@@ -758,7 +693,7 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
                               {x: this.body.GetPosition().x, y: this.body.GetPosition().y});
     var x = draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop);
     var y = draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop);
-    draw_shape(ctx, x, y, particle_shape, 2, impulse_colors["world " + this.impulse_game_state.world_num + " bright"], 1, pointer_angle)
+    renderUtils.drawShape(ctx, x, y, particle_shape, 2, impulse_colors["world " + this.impulse_game_state.world_num + " bright"], 1, pointer_angle)
     ctx.restore()
   }
 }

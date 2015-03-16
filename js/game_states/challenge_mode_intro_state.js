@@ -56,7 +56,7 @@ ChallengeModeIntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = "white"
 
   ctx.fillText("CHALLENGE MODE", imp_params.levelWidth/2, 150)
-  drawSprite(ctx, imp_params.levelWidth/2, 210, 0, 60, 60, "white_flower")
+  renderUtils.drawSprite(ctx, imp_params.levelWidth/2, 210, 0, 60, 60, "white_flower")
   ctx.font = '18px Muli'
   ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_params.levelWidth/2, 300);
   ctx.fillText("FOR EXPERIENCED PLAYERS.", imp_params.levelWidth/2, 325);

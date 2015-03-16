@@ -2,8 +2,6 @@ var BasicObstacle = function(vertices, color, darkColor) {
   this.init(vertices, color, darkColor)
 }
 
-
-
 BasicObstacle.prototype.init = function(verticeSet, color, darkColor) {
 
   this.verticeSet = verticeSet
@@ -28,7 +26,6 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
   context.closePath()
   context.clip();
   context.fillStyle = this.darkColor;
-  //var vertices =
   context.strokeStyle = this.color
   context.lineWidth = 6
   context.fill();

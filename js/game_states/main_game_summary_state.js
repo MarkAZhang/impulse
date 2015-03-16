@@ -36,7 +36,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   this.dark_color = impulse_colors["world "+this.world_num+" dark"]
 
   if (this.world_num > 0) {
-    this.total_time = Math.ceil((imp_params.quest_data["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
+    this.total_time = Math.ceil((questData["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
     this.total_deaths = 0;
   }
 
@@ -50,7 +50,7 @@ function MainGameSummaryState(world_num, victory, hive_numbers, level, visibilit
   if(victory) {
     this.calculate_deaths()
     this.send_logging();
-    this.victory_text = imp_params.hive_names[this.world_num]+" DEFEATED";
+    this.victory_text = levelData.hiveNames[this.world_num]+" DEFEATED";
     if (!saveData.worldRankings[saveData.difficultyMode]["world " + this.world_num]) {
       saveData.worldRankings[saveData.difficultyMode]["world "+this.world_num] =
         {
@@ -149,7 +149,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none")
     this.bg_drawn = true
-    draw_bg(imp_params.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(imp_params.world_menu_bg_canvas.getContext('2d'), 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
   }
 
   ctx.save()
@@ -193,7 +193,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '20px Muli'
   if(this.victory) {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = this.bright_color
     ctx.font = '40px Muli'
@@ -201,7 +201,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   }
   else if(this.save_screen) {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 220, 80)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 220, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = "white"
     ctx.fillText("GAME SAVED" , imp_params.levelWidth/2, 210)
@@ -229,7 +229,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
 
   } else {
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = 'red'
     ctx.fillText("GAME OVER", imp_params.levelWidth/2, 80)

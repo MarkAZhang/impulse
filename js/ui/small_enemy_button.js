@@ -28,7 +28,7 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
 
   var cur_x = this.x
   var cur_y = this.y
-  draw_enemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
+  enemyRenderUtils.drawEnemy(context, this.enemy_name, cur_x, cur_y, this.enemy_image_size)
 
   context.restore()
 }

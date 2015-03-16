@@ -12,18 +12,12 @@ function SliderOptionButton(text, x, y, w, h, color, hcolor, action, starting_va
   this.hcolor = hcolor;
   this.special_mode = false;
   this.special_text = 'MUTED (M)'
-  //this.checkbox.checked = check_verifier();
-
-  /*this.action = function() {
-    action(this.checkbox.checked);
-    this.checkbox.checked = !this.checkbox.checked;
-  }*/
 }
 
 SliderOptionButton.prototype.additional_draw = function(ctx) {
   ctx.save();
   if (!this.mouseOver) {
-    ctx.globalAlpha *= 0.5;  
+    ctx.globalAlpha *= 0.5;
   }
 
   ctx.textAlign = 'left'
@@ -41,7 +35,7 @@ SliderOptionButton.prototype.additional_draw = function(ctx) {
 
 SliderOptionButton.prototype.on_mouse_down = function(x, y) {
   if (!this.special_mode) {
-    this.slider.on_mouse_down(x, y)  
+    this.slider.on_mouse_down(x, y)
   }
 }
 

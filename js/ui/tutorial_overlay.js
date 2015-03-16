@@ -348,7 +348,7 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  draw_full_arrow(ctx, imp_params.levelWidth + 15, 35, 1, "white", "right");
+  uiRenderUtils.drawFullArrow(ctx, imp_params.levelWidth + 15, 35, 1, "white", "right");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
@@ -428,7 +428,7 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  draw_full_arrow(ctx, -15, imp_params.levelHeight - 35, 1, "white", "left");
+  uiRenderUtils.drawFullArrow(ctx, -15, imp_params.levelHeight - 35, 1, "white", "left");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
@@ -490,7 +490,7 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  draw_full_arrow(ctx, a_loc.x, a_loc.y, 1, "white", "right");
+  uiRenderUtils.drawFullArrow(ctx, a_loc.x, a_loc.y, 1, "white", "right");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
@@ -567,15 +567,9 @@ GatewayMoveTutorialOverlay.prototype.draw = function(ctx) {
   } else {
     prog = offset * 2;
   }
-  /*draw_arrow(ctx, this.gateway_loc.x - 45, this.gateway_loc.y, 25, "right", "red", false)
-    draw_arrow(ctx, this.gateway_loc.x + 45, this.gateway_loc.y, 25, "left", "red", false)*/
     ctx.beginPath();
-    /*ctx.moveTo(this.gateway_loc.x - 8, this.gateway_loc.y - 122 - prog * 50);
-    ctx.lineTo(this.gateway_loc.x + 8, this.gateway_loc.y - 122 - prog * 50);*/
     ctx.moveTo(this.gateway_loc.x + 16, this.gateway_loc.y - 82 - prog * 50);
-    //ctx.lineTo(this.gateway_loc.x + 16, this.gateway_loc.y - 82 - prog * 50);
     ctx.lineTo(this.gateway_loc.x, this.gateway_loc.y - 50 - prog * 50);
-    //ctx.lineTo(this.gateway_loc.x - 16, this.gateway_loc.y - 82 - prog * 50);
     ctx.lineTo(this.gateway_loc.x - 16, this.gateway_loc.y - 82 - prog * 50);
     ctx.closePath()
     ctx.lineWidth = 4
@@ -583,13 +577,6 @@ GatewayMoveTutorialOverlay.prototype.draw = function(ctx) {
     ctx.fill();
     ctx.strokeStyle = "white"
     ctx.stroke();
-    //draw_arrow(ctx, this.gateway_loc.x, this.gateway_loc.y + 45, 25, "up", "red", false)
-    /*ctx.beginPath()
-    ctx.arc(this.gateway_loc.x, this.gateway_loc.y, 50, 0, 2 * Math.PI)
-    ctx.lineWidth = 8
-    ctx.shadowBlur = 0
-    ctx.strokeStyle = 'red'
-    ctx.stroke()*/
 }
 
 GatewayMoveTutorialOverlay.prototype.process = function(dt) {

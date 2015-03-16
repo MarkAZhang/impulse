@@ -1,4 +1,6 @@
-function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, border_color) {
+var levelPreviewRenderUtils = {};
+
+levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_name, x, y, w, h, border_color) {
 
   context.save()
   context.shadowBlur = 0
@@ -14,10 +16,10 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.restore();
   var polygons = null
   if (saveData.difficultyMode == "easy") {
-    polygons = imp_params.impulse_level_data[level_name].obstacle_v_easy
+    polygons = levelData[level_name].obstacle_v_easy
   }
   if (!polygons) {
-    polygons = imp_params.impulse_level_data[level_name].obstacle_v
+    polygons = levelData[level_name].obstacle_v
   }
 
   if(!polygons) return
@@ -44,4 +46,4 @@ function draw_level_obstacles_within_rect(context, level_name, x, y, w, h, borde
   context.strokeStyle = border_color
   context.stroke()
   context.restore()
-}
+};

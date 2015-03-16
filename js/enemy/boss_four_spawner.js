@@ -165,10 +165,10 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   var prog = this.dying ? Math.min((this.dying_length - this.dying_duration) / this.dying_length, 1) : 0
   context.save()
   context.globalAlpha *= 1-prog
-  drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", adrogantiaSprite)
+  renderUtils.drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", sprites.adrogantiaSprite)
 
-  //draw_enemy(context, enemy_name, x, y, d, rotate, status, enemy_color
-  draw_enemy_colored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
+  //enemyRenderUtils.drawEnemy(context, enemy_name, x, y, d, rotate, status, enemy_color
+  enemyRenderUtils.drawEnemyColored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
   /*context.beginPath()
   context.arc(this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, 0, Math.PI * 2)
   context.lineWidth = 2

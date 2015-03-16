@@ -21,7 +21,7 @@ function LevelIntroState(level_name, world) {
     imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
     imp_params.bg_ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
     imp_params.bg_ctx.globalAlpha *= get_bg_opacity(0);
-    draw_bg(imp_params.bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+_this.world_num)
+    uiRenderUtils.tessellateBg(imp_params.bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+_this.world_num)
     imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
     imp_params.bg_canvas.setAttribute("style", "")
 
@@ -47,19 +47,19 @@ function LevelIntroState(level_name, world) {
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
-    //this.drawn_enemies[imp_params.impulse_level_data[this.level_name].dominant_enemy] = null
+    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
     //this.num_enemy_type = 1
   }
   else {
-    this.drawn_enemies = imp_params.impulse_level_data[this.level_name].enemies
+    this.drawn_enemies = levelData[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in imp_params.impulse_level_data[this.level_name].enemies) {
+    for(var j in levelData[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }
   this.enemy_image_size = 40
 
-  this.level = this.load_level(imp_params.impulse_level_data[this.level_name])
+  this.level = this.load_level(levelData[this.level_name])
 
   var num_row = 12
 
@@ -115,7 +115,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
     world_bg_ctx.clearRect(0, 0, imp_params.levelWidth, imp_params.levelHeight);
-    draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
     bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     this.bg_drawn = true
@@ -147,7 +147,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
   }
   if (!this.is_boss_level) {
     ctx.globalAlpha /= 3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, 130, 40, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, 130, 40, true)
     ctx.globalAlpha *= 3
 
     ctx.fillStyle = "white"
@@ -169,7 +169,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
       this.buttons[i].draw(ctx)
     }
 
-    draw_level_obstacles_within_rect(ctx, this.level_name, imp_params.levelWidth/2, 255, 200, 150, impulse_colors['world '+ this.world_num + ' lite'])
+    levelPreviewRenderUtils.drawLevelObstaclesWithinRect(ctx, this.level_name, imp_params.levelWidth/2, 255, 200, 150, impulse_colors['world '+ this.world_num + ' lite'])
     ctx.beginPath()
     ctx.rect(imp_params.levelWidth/2 - 100, 100, 250, 150)
 
@@ -179,7 +179,7 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     if (this.load_percentage < 1) {
 
       ctx.textAlign = 'center'
-      draw_loading_icon(ctx, imp_params.levelWidth - 70, imp_params.levelHeight - 53, 20, "gray", this.load_percentage)
+      iconRenderUtils.drawLoadingIcon(ctx, imp_params.levelWidth - 70, imp_params.levelHeight - 53, 20, "gray", this.load_percentage)
       ctx.font = '16px Muli'
       ctx.fillStyle = "gray"
       ctx.fillText("LOADING", imp_params.levelWidth - 70, imp_params.levelHeight - 19)
@@ -219,12 +219,12 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.shadowBlur = 0;
     ctx.save();
     ctx.globalAlpha *= 0.3
-    draw_tessellation_sign(ctx, this.world_num, imp_params.levelWidth/2, imp_params.levelHeight/2 - 50, 100)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, imp_params.levelWidth/2, imp_params.levelHeight/2 - 50, 100)
     ctx.restore();
     ctx.font = '16px Muli'
     ctx.fillText(this.level.level_name, imp_params.levelWidth/2, imp_params.levelHeight/2 - 60)
     ctx.font = '40px Muli'
-    ctx.fillText(imp_params.tessellation_names[this.world_num], imp_params.levelWidth/2, imp_params.levelHeight/2 - 20)
+    ctx.fillText(levelData.bossNames[this.world_num], imp_params.levelWidth/2, imp_params.levelHeight/2 - 20)
     ctx.font = '24px Muli'
 
     if(saveData.getLevelData(this.level_name).best_time < 1000) {

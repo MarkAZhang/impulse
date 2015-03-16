@@ -282,26 +282,3 @@ Tank.prototype.get_current_status = function() {
 
   return this.get_additional_current_status()
 }
-
-Tank.prototype.draw_enemy_image_additional = function(context, color) {
-  context.strokeStyle = color
-  context.lineWidth = 3;
-  var this_angle = Math.PI/4
-  var tp = {x: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor , y: enemyData[this.type].effective_radius* Enemy.prototype.enemy_canvas_factor * imp_params.draw_factor}
-
-  context.beginPath()
-
-  context.moveTo(tp.x + Math.cos(this_angle)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
-  tp.y + Math.sin(this_angle)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
-
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
-  tp.y + Math.sin(this_angle+Math.PI)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
-  context.stroke()
-
-  context.beginPath()
-  context.moveTo(tp.x + Math.cos(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI*3/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
-  context.lineTo(tp.x + Math.cos(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor,
-   tp.y + Math.sin(this_angle+Math.PI/2)*this.effective_radius/Math.sqrt(2)*imp_params.draw_factor)
-  context.stroke()
-}

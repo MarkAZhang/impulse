@@ -1,4 +1,6 @@
-function draw_rounded_rect(context, x, y, w, h, r, color) {
+var renderUtils = {};
+
+renderUtils.drawRoundedRect = function(context, x, y, w, h, r, color) {
   context.save()
   context.shadowColor = color
   context.shadowBlur = 0
@@ -16,7 +18,7 @@ function draw_rounded_rect(context, x, y, w, h, r, color) {
 }
 
 // shape is {type: circle/ polygon, r: radius_factor, vertices: [[0-1, 0-1], [0-1, 0-1]]}
-function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_color) {
+renderUtils.drawShape = function(context, x, y, shape, scale, color, alpha, rotate, interior_color) {
 
   alpha = typeof alpha !== 'undefined' ? alpha: 1;
   rotate = typeof rotate !== 'undefined' ? rotate: 0;
@@ -60,7 +62,7 @@ function draw_shape(context, x, y, shape, scale, color, alpha, rotate, interior_
   context.restore()
 }
 
-function drawImageWithRotation(ctx, x, y, rotation, actualWidth, actualHeight, image) {
+renderUtils.drawImageWithRotation = function(ctx, x, y, rotation, actualWidth, actualHeight, image) {
   var w = image.width;
   var h = image.height;
 
@@ -72,7 +74,7 @@ function drawImageWithRotation(ctx, x, y, rotation, actualWidth, actualHeight, i
   ctx.restore();
 }
 
-function draw_ellipse(ctx, cx, cy, rx, ry, style) {
+renderUtils.drawEllipse = function(ctx, cx, cy, rx, ry, style) {
   ctx.save(); // save state
   ctx.beginPath();
   ctx.translate(cx-rx, cy-ry);
@@ -86,7 +88,7 @@ function draw_ellipse(ctx, cx, cy, rx, ry, style) {
   ctx.restore();
 }
 
-function convert_canvas_to_grayscale(canvas, opacity) {
+renderUtils.convertCanvasToGrayscale = function(canvas, opacity) {
   var canvasContext = canvas.getContext('2d');
   var imgPixels = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -106,4 +108,27 @@ function convert_canvas_to_grayscale(canvas, opacity) {
   var gray_canvas_ctx = gray_canvas.getContext('2d');
   gray_canvas_ctx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
   return gray_canvas;
+}
+
+renderUtils.drawSprite = function(ctx, x, y, rotation, actualWidth, actualHeight, spriteName, imageObject) {
+
+    imageObject = typeof imageObject !== 'undefined' ? imageObject: sprites.playerSprite;
+    var w = imageObject.width;
+    var h = imageObject.height;
+
+    ctx.save();
+    // set screen position
+    ctx.translate(x, y);
+    // set rotation
+    ctx.rotate(rotation);
+    // set scale value
+
+    // draw image to screen drawImage(imageObject, sourceX, sourceY, sourceWidth, sourceHeight,
+    // destinationX, destinationY, destinationWidth, destinationHeight)
+    ctx.drawImage(imageObject, spriteData.spriteSheetData[spriteName][0],
+      spriteData.spriteSheetData[spriteName][1],
+      spriteData.spriteSheetData[spriteName][2],
+      spriteData.spriteSheetData[spriteName][3],
+      -actualWidth/2, -actualHeight/2, actualWidth, actualHeight);
+    ctx.restore();
 }

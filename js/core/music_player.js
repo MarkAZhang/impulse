@@ -11,13 +11,13 @@ var MusicPlayer = function() {
 }
 
 MusicPlayer.prototype.initialize_multisounds = function() {
-  for(var multisound in imp_params.multisounds) {
-    this.initialize_sound_set(imp_params.multisounds[multisound].file, imp_params.multisounds[multisound].maxnum);
+  for(var multisound in audioData.multisounds) {
+    this.initialize_sound_set(audioData.multisounds[multisound].file, audioData.multisounds[multisound].maxnum);
   }
 }
 
 MusicPlayer.prototype.play_sound = function(sound, volume) {
-  this.play(imp_params.sounds[sound], volume)
+  this.play(audioData.sounds[sound], volume)
 }
 
 MusicPlayer.prototype.play = function(file, volume) {
@@ -148,10 +148,10 @@ MusicPlayer.prototype.play_bg = function(file) {
   if(!(file in this.sounds)) {
 
     // if the file needs to loop from mid-way through the song, add a listener
-    if(file in imp_params.song_repeats) {
+    if(file in audioData.song_repeats) {
       this.sounds[file] = new buzz.sound("audio/"+file+".ogg");
       this.sounds[file].bind("ended", function(e) {
-             this.setTime(imp_params.song_repeats[file]);
+             this.setTime(audioData.song_repeats[file]);
              this.play();
           });
     // otherwise, just loop it.

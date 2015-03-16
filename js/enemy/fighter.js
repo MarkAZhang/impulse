@@ -237,9 +237,9 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         context.globalAlpha *= loaded_prop
         var bullet_type = this.fighter_status == "frenzy" ? "piercing_fighter_bullet" : "fighter_bullet"
         if (this.actual_heading)
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
+          enemyRenderUtils.drawEnemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
         else
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
+          enemyRenderUtils.drawEnemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
 
         if(this.shoot_durations[i] > 0 && loaded_prop > 0) {
           context.beginPath()
@@ -257,9 +257,9 @@ Fighter.prototype.additional_drawing = function(context, draw_factor) {
         context.globalAlpha *= faded_prop
         var bullet_type = this.fighter_status == "frenzy" ? "piercing_fighter_bullet" : "fighter_bullet"
         if (this.actual_heading)
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
+          enemyRenderUtils.drawEnemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.actual_heading)
         else
-          draw_enemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
+          enemyRenderUtils.drawEnemy(context, bullet_type, cur_bullet_loc.x * draw_factor, cur_bullet_loc.y * draw_factor, null, this.body.GetAngle())
         context.beginPath()
         context.arc(cur_bullet_loc.x*draw_factor, cur_bullet_loc.y*draw_factor,
           (this.effective_radius*draw_factor) * 1, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999)

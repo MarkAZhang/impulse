@@ -131,7 +131,7 @@ function switch_bg(bg_file, duration, alpha) {
       alt_title_bg_ctx.fillStyle = bg_file;
       alt_title_bg_ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight);
     } else {
-      draw_bg(alt_title_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, bg_file)
+      uiRenderUtils.tessellateBg(alt_title_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, bg_file)
     }
 
     imp_params.alt_bg_alpha = alpha;
@@ -146,7 +146,7 @@ function set_bg(bg_file, alpha) {
     title_bg_ctx.fillStyle = bg_file;
     title_bg_ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight);
   } else {
-    draw_bg(title_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, bg_file)
+    uiRenderUtils.tessellateBg(title_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, bg_file)
   }
   imp_params.bg_alpha = alpha;
   imp_params.bg_file = bg_file;

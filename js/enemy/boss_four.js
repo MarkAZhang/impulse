@@ -219,8 +219,8 @@ BossFour.prototype.draw = function(context, draw_factor) {
   var tp = this.body.GetPosition()
 
   //if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
-      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head", adrogantiaSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
+      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head", sprites.adrogantiaSprite)
 
 
   if (this.anger_level > 0) {
@@ -238,12 +238,12 @@ BossFour.prototype.draw = function(context, draw_factor) {
     }
     context.closePath();
     context.clip();
-    drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
-      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head_red", adrogantiaSprite)
+    renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle()),
+      this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "adrogantia_head_red", sprites.adrogantiaSprite)
     context.restore();
   }
   //} else {
-  //  drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", negligentiaSprite)
+  //  renderUtils.drawSprite(context, tp.x*draw_factor, tp.y*draw_factor, (this.body.GetAngle() + Math.PI/16), this.effective_radius * 2 * draw_factor, this.effective_radius * 2 * draw_factor, "negligentia_head", sprites.negligentiaSprite)
   //}
   this.additional_drawing(context, draw_factor)
 
@@ -627,9 +627,9 @@ BossFour.prototype.draw_body_buds = function(context, draw_factor) {
       var tp = bud.body.GetPosition()
       var angle = bud.body.GetAngle()
       context.save()
-      drawSprite(context, tp.x* draw_factor, tp.y* draw_factor, angle,
+      renderUtils.drawSprite(context, tp.x* draw_factor, tp.y* draw_factor, angle,
         bud.size * draw_factor * 2, bud.size* draw_factor * 2,
-        bud.loc < this.anger_level ? "adrogantia_body_bud_red" : "adrogantia_body_bud", adrogantiaSprite)
+        bud.loc < this.anger_level ? "adrogantia_body_bud_red" : "adrogantia_body_bud", sprites.adrogantiaSprite)
       context.restore()
 
     }
@@ -887,13 +887,13 @@ BossFour.prototype.draw_glows = function(context, draw_factor) {
 
   var tp = this.body.GetPosition()
   if(this.knockback_red_duration > 0) {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
     tp.y*draw_factor,
-    (this.body.GetAngle()), 200, 200, "adrogantia_glow", adrogantiaSprite)
+    (this.body.GetAngle()), 200, 200, "adrogantia_glow", sprites.adrogantiaSprite)
   } else {
-    drawSprite(context, tp.x*draw_factor,
+    renderUtils.drawSprite(context, tp.x*draw_factor,
       tp.y*draw_factor,
-      (this.body.GetAngle()), 200, 200, "adrogantia_glow", adrogantiaSprite)
+      (this.body.GetAngle()), 200, 200, "adrogantia_glow", sprites.adrogantiaSprite)
   }
 }
 

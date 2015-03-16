@@ -184,22 +184,22 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_move") {
 		if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "mouse") {
-          draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
+          uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
         }
 		if(saveData.optionsData.control_hand == "right" && saveData.optionsData.control_scheme == "keyboard") {
-          draw_arrow_keys(ctx, this.x, this.y, 40, "white")
+          uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 40, "white")
         }
         if(saveData.optionsData.control_hand == "left" && saveData.optionsData.control_scheme == "mouse") {
-          draw_arrow_keys(ctx, this.x, this.y, 40, "white")
+          uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 40, "white")
         }
 		this.tutorial_text = "MOVE";
 	}
 
 	if (this.type == "tutorial_impulse") {
 		if(saveData.optionsData.control_scheme == "mouse") {
-			draw_mouse(ctx, this.x, this.y - 20, 56, 82, "white")
+			uiRenderUtils.drawMouse(ctx, this.x, this.y - 20, 56, 82, "white")
 		} else {
-            draw_arrow_keys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
+            uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 40, "white", ["W", "A", "S", "D"])
 		}
 		this.tutorial_text = "IMPULSE";
 	}
@@ -249,12 +249,12 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		if(saveData.optionsData.control_hand == "right") {
-	        draw_rounded_rect(ctx, this.x, this.y - 10, 160, 34, 7, "white")
+	        renderUtils.drawRoundedRect(ctx, this.x, this.y - 10, 160, 34, 7, "white")
 	        ctx.fillText("SPACEBAR", this.x, this.y - 4)
 	    }
 
 	    if(saveData.optionsData.control_hand == "left") {
-	        draw_rounded_rect(ctx, this.x, this.y - 10, 80, 34, 7, "white")
+	        renderUtils.drawRoundedRect(ctx, this.x, this.y - 10, 80, 34, 7, "white")
 	        ctx.fillText("SHIFT", this.x, this.y - 4)
 	    }
 		this.tutorial_text = "ENTER GATEWAY";
@@ -265,7 +265,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.font = "16px Muli";
 		ctx.fillStyle = this.color;
 		ctx.fillText("MOVE TO THE GATEWAY", this.x, this.y - this.h / 2 + 25);
-		draw_full_arrow(ctx, this.x, this.y + 12, 1, "white", "down");
+		uiRenderUtils.drawFullArrow(ctx, this.x, this.y + 12, 1, "white", "down");
 	}
 
 	if (this.type == "fullscreen_msg") {
@@ -280,10 +280,10 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillText("MUTE (M)", this.x, this.y - this.h / 2 + 25);
 	} else if (this.type.substring(0, 8) == "tutorial") {
 		/*if(saveData.optionsData.control_hand == "right") {
-	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color, ["W", "A", "S", "D"])
+	      uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 45, this.color, ["W", "A", "S", "D"])
 	    }
 	    if(saveData.optionsData.control_hand == "left" && saveData.optionsData.control_scheme == "mouse") {
-	      draw_arrow_keys(ctx, this.x, this.y, 45, this.color)
+	      uiRenderUtils.drawArrowKeys(ctx, this.x, this.y, 45, this.color)
 	    }*/
 	    if (this.tutorial_text) {
 			ctx.textAlign = 'center';
@@ -309,11 +309,11 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = this.color;
 		ctx.save()
 		ctx.globalAlpha *= 0.5
-	    draw_save_icon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)
+	    iconRenderUtils.drawSaveIcon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)
 		ctx.restore()
 		ctx.fillText("GAME SAVED", this.x, this.y + this.h / 2 - 33);
 	} else if (this.type.substring(0, 14) == "level_preview_") {
-		draw_level_obstacles_within_rect(ctx, this.type.substring(14), this.x, this.y, 200, 150,
+		levelPreviewRenderUtils.drawLevelObstaclesWithinRect(ctx, this.type.substring(14), this.x, this.y, 200, 150,
 			impulse_colors['world '+ this.world_num + ' lite'])
 		ctx.beginPath();
 		ctx.rect(this.x - this.w/2, this.y - this.h / 2, this.w, this.h);
@@ -353,17 +353,17 @@ MessageBox.prototype.draw = function(ctx) {
 
 		ctx.font = "12px Muli"
 		var quest_text = ""
-		if (imp_params.quest_data[type]) {
-			for (var i = 0; i < imp_params.quest_data[type].text.length; i++) {
-				quest_text += imp_params.quest_data[type].text[i] + " ";
+		if (questData[type]) {
+			for (var i = 0; i < questData[type].text.length; i++) {
+				quest_text += questData[type].text[i] + " ";
 			}
 		}
 
 		ctx.fillText(quest_text, this.x + x_shift, this.y + this.h / 2 - 20);
 
-		draw_quest_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
+		questRenderUtils.draw_quest_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 
-		//draw_quest_button = function(ctx, x, y, r, type) {
+		//questRenderUtils.draw_quest_button = function(ctx, x, y, r, type) {
 	} else if (this.type.substring(0, 6) == "enemy_")  {
 		ctx.beginPath();
 		ctx.fillStyle = "black"
@@ -398,14 +398,14 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.fillStyle = "white";;
 		ctx.font = "16px Muli"
 		ctx.fillText(enemyData[type].snippet.toUpperCase(), this.x + x_shift, this.y + this.h / 2 - 15);
-		draw_enemy_button(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
+		uiRenderUtils.drawEnemyButton(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 	} else {
 		// rewards
 		ctx.textAlign = 'center';
 		ctx.font = "16px Muli";
 		ctx.fillStyle = "white";
-		for (var i = 0; i < imp_params.quest_data[this.type].text.length; i++) {
-			var text = imp_params.quest_data[this.type].text[i];
+		for (var i = 0; i < questData[this.type].text.length; i++) {
+			var text = questData[this.type].text[i];
 			ctx.fillText(text, this.x, this.y - this.h / 2 + 30 + i * 24);
 		}
 	}

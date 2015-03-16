@@ -53,14 +53,14 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.is_tutorial_level = this.world_num == 0;
     this.make_player()
     if(this.level_name == "BOSS 4") {
-      imp_params.impulse_music.play_bg(imp_params.songs["Final Tessellation"])
+      imp_params.impulse_music.play_bg(audioData.songs["Final Tessellation"])
     }
     else if(this.level_name.slice(0, 4) == "BOSS")
-      imp_params.impulse_music.play_bg(imp_params.songs["Tessellation"])
+      imp_params.impulse_music.play_bg(audioData.songs["Tessellation"])
     else if (!this.is_tutorial_level&& !this.is_level_zero) {
-      imp_params.impulse_music.play_bg(imp_params.songs["Hive "+this.world_num])
+      imp_params.impulse_music.play_bg(audioData.songs["Hive "+this.world_num])
     } else {
-      imp_params.impulse_music.play_bg(imp_params.songs["Menu"]);
+      imp_params.impulse_music.play_bg(audioData.songs["Menu"]);
     }
     // Set up game numbers for level.
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
@@ -222,7 +222,7 @@ ImpulseGameState.prototype.reset_game_numbers = function () {
 
 ImpulseGameState.prototype.check_new_enemies = function() {
   if (this.is_tutorial_level) return;
-  for(var enemy in imp_params.impulse_level_data[this.level_name].enemies) {
+  for(var enemy in levelData[this.level_name].enemies) {
     saveData.numEnemiesSeen[enemy] += 1
     saveData.saveGame()
     var difficulty_level = saveData.difficultyMode
@@ -282,7 +282,7 @@ ImpulseGameState.prototype.transition_to_hive0bg = function (dur) {
   this.hive0bg_canvas.width = imp_params.levelWidth;
   this.hive0bg_canvas.height = imp_params.levelHeight;
   var hive0bg_ctx = this.hive0bg_canvas.getContext('2d');
-  draw_bg(hive0bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+  uiRenderUtils.tessellateBg(hive0bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
 }
 
 ImpulseGameState.prototype.check_pause = function() {
@@ -326,7 +326,7 @@ ImpulseGameState.prototype.process = function(dt) {
       this.hive0bg_transition_timer -= dt;
     } else if (this.hive0bg_transition) {
       this.hive0bg_transition = false;
-      draw_bg(imp_params.bg_ctx,
+      uiRenderUtils.tessellateBg(imp_params.bg_ctx,
         imp_params.sidebarWidth, 0, imp_params.levelWidth + imp_params.sidebarWidth, imp_params.levelHeight, "Hive 0")
     }
     if (this.show_tutorial) {
@@ -791,17 +791,17 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     !this.is_boss_level;
 
   var showLevelName = !this.is_boss_level && (
-    this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface);
+    this.world_num != 0 || levelData[this.level_name].show_full_interface);
 
   var showMenuHint = !this.is_boss_level && (
-    this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface);
+    this.world_num != 0 || levelData[this.level_name].show_full_interface);
 
   var showGameTime = this.world_num != 0 ||
-    imp_params.impulse_level_data[this.level_name].show_full_interface;
+    levelData[this.level_name].show_full_interface;
 
   var showScoreLabels = !this.is_boss_level && (!this.is_tutorial_level ||
-    imp_params.impulse_level_data[this.level_name].show_full_interface ||
-    imp_params.impulse_level_data[this.level_name].show_score_interface);
+    levelData[this.level_name].show_full_interface ||
+    levelData[this.level_name].show_score_interface);
 
   if (showHardMode) {
     context.font = "20px Muli"
@@ -897,8 +897,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 }
 
 ImpulseGameState.prototype.draw_score_bar = function(ctx) {
-  if (this.is_tutorial_level && !imp_params.impulse_level_data[this.level_name].show_full_interface &&
-    !imp_params.impulse_level_data[this.level_name].show_score_interface) {
+  if (this.is_tutorial_level && !levelData[this.level_name].show_full_interface &&
+    !levelData[this.level_name].show_score_interface) {
     return;
   }
 
@@ -910,13 +910,13 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
   this.set_zoom_transparency(ctx)
 
   if(!this.is_boss_level) {
-    draw_vprogress_bar(ctx, imp_params.canvasWidth - imp_params.sidebarWidth/2, imp_params.canvasHeight/2,
+    uiRenderUtils.drawVProgressBar(ctx, imp_params.canvasWidth - imp_params.sidebarWidth/2, imp_params.canvasHeight/2,
       40, imp_params.canvasHeight * 3/4 - 50, this.progress_bar_prop, this.color, true)
     ctx.textAlign = 'center'
     ctx.font = '72px Muli'
     ctx.fillStyle = "white"
     if (this.combo_enabled) {
-      if (this.world_num != 0 || imp_params.impulse_level_data[this.level_name].show_full_interface) {
+      if (this.world_num != 0 || levelData[this.level_name].show_full_interface) {
         ctx.fillText("x"+this.game_numbers.combo, imp_params.canvasWidth - imp_params.sidebarWidth/2, imp_params.canvasHeight/2)
       }
     }
@@ -1192,7 +1192,7 @@ ImpulseGameState.prototype.on_victory = function() {
   }
   if (this.main_game) {
     if (!this.is_boss_level && !(this.world_num == 0
-        && this.level.level_name === imp_params.last_tutorial_level)) {
+        && this.level.level_name === levelData.lastTutorialLevel)) {
       // Advance the level to the next level.
       this.hive_numbers.current_level = MainGameTransitionState.prototype.get_next_level_name(this.level, this.world_num);
       if (!this.is_tutorial_level) {
