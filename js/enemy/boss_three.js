@@ -658,7 +658,7 @@ BossThree.prototype.additional_death_prep_specific = function() {
     var angle = this.body.GetAngle() + Math.PI/(this.num_arms/2) * index;
     arm_body.SetAngle(angle);
     this.striking_arms[index].body = arm_body;
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     dir.Normalize();
     dir.Multiply(10);
     arm_body.ApplyImpulse(dir, arm_body.GetWorldCenter())
@@ -905,7 +905,7 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
     y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* imp_params.draw_factor}
 
   var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/imp_params.draw_factor, spawn_loc.y/imp_params.draw_factor, this.level.enemy_counter, this.impulse_game_state)
-  var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+  var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
   new_enemy.set_heading(angle);
@@ -941,16 +941,16 @@ BossThree.prototype.collide_with = function(other, body) {
           var boss_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
           if(other === this.player) {
             var _this = this;
-            other.body.ApplyImpulse(new b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+            other.body.ApplyImpulse(new box_2d.b2Vec2(_this.boss_force * Math.cos(boss_angle), _this.boss_force * Math.sin(boss_angle)), other.body.GetWorldCenter())
             this.impulse_game_state.reset_combo();
           } else if(other.type == "harpoonhead") {
-            other.body.ApplyImpulse(new b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
+            other.body.ApplyImpulse(new box_2d.b2Vec2(this.spawn_force["harpoon"] * Math.cos(boss_angle), this.spawn_force["harpoon"] * Math.sin(boss_angle)), other.body.GetWorldCenter())
           } else {
             if(this.spawn_force[other.type] != undefined)
               var enemy_data = enemyData[other.type]
               if (enemy_data) {
                 var force = other.body.GetMass() * Math.sqrt(enemy_data.lin_damp) * this.boss_force
-                other.body.ApplyImpulse(new b2Vec2(force * Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+                other.body.ApplyImpulse(new box_2d.b2Vec2(force * Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
 
               }
           }
@@ -963,7 +963,7 @@ BossThree.prototype.collide_with = function(other, body) {
     if(other === this.player && saveData.difficultyMode == "easy") {
       factor = 0.5
     }
-    other.body.ApplyImpulse(new b2Vec2(this.boss_force * factor * Math.cos(boss_angle), this.boss_force * factor * Math.sin(boss_angle)), other.body.GetWorldCenter())
+    other.body.ApplyImpulse(new box_2d.b2Vec2(this.boss_force * factor * Math.cos(boss_angle), this.boss_force * factor * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
 }
 

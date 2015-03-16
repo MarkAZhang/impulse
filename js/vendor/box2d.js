@@ -1,3 +1,5 @@
+// Box2dWeb-2.1.a.3.min.js
+
 var Box2D={};
 (function(F,G){function K(){}if(!(Object.prototype.defineProperty instanceof Function)&&Object.prototype.__defineGetter__ instanceof Function&&Object.prototype.__defineSetter__ instanceof Function)Object.defineProperty=function(y,w,A){A.get instanceof Function&&y.__defineGetter__(w,A.get);A.set instanceof Function&&y.__defineSetter__(w,A.set)};F.inherit=function(y,w){K.prototype=w.prototype;y.prototype=new K;y.prototype.constructor=y};F.generateCallback=function(y,w){return function(){w.apply(y,arguments)}};
 F.NVector=function(y){if(y===G)y=0;for(var w=Array(y||0),A=0;A<y;++A)w[A]=0;return w};F.is=function(y,w){if(y===null)return false;if(w instanceof Function&&y instanceof w)return true;if(y.constructor.__implements!=G&&y.constructor.__implements[w])return true;return false};F.parseUInt=function(y){return Math.abs(parseInt(y))}})(Box2D);var Vector=Array,Vector_a2j_Number=Box2D.NVector;if(typeof Box2D==="undefined")Box2D={};if(typeof Box2D.Collision==="undefined")Box2D.Collision={};
@@ -446,17 +448,17 @@ K.moveTo(G.position.x*y,G.position.y*y);K.lineTo((G.position.x+this.m_xformScale
 
 var box_2d = {};
 
-b2Vec2 = Box2D.Common.Math.b2Vec2
-b2AABB = Box2D.Collision.b2AABB
-b2BodyDef = Box2D.Dynamics.b2BodyDef
-b2Body = Box2D.Dynamics.b2Body
-b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-b2Fixture = Box2D.Dynamics.b2Fixture
-b2World = Box2D.Dynamics.b2World
-b2MassData = Box2D.Collision.Shapes.b2MassData
-b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
-b2ContactListener = Box2D.Dynamics.b2ContactListener
+box_2d.b2Vec2 = Box2D.Common.Math.b2Vec2
+box_2d.b2AABB = Box2D.Collision.b2AABB
+box_2d.b2BodyDef = Box2D.Dynamics.b2BodyDef
+box_2d.b2Body = Box2D.Dynamics.b2Body
+box_2d.b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+box_2d.b2Fixture = Box2D.Dynamics.b2Fixture
+box_2d.b2World = Box2D.Dynamics.b2World
+box_2d.b2MassData = Box2D.Collision.Shapes.b2MassData
+box_2d.b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+box_2d.b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+box_2d.b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+box_2d.b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+box_2d.b2ContactListener = Box2D.Dynamics.b2ContactListener
 

@@ -46,7 +46,7 @@ utils.isVisible = function (v_i, v_j, edges, ignore_polygon) {
 };
 
 utils.pointInPolygon = function (polygon, point)
-//polygon is an array of b2Vec2
+//polygon is an array of box_2d.b2Vec2
 {
   var j = polygon.length - 1
   var ans = false
@@ -245,10 +245,10 @@ utils.getBoundaryPolygon = function(polygon, radius) {
   for(var i = 0; i < polygon.length; i++)
   {
     var k = (i+1)%polygon.length
-    var j_to_i_normal = new b2Vec2(polygon[i].y - polygon[j].y, polygon[j].x - polygon[i].x)
-    var j_to_i = new b2Vec2(polygon[i].x - polygon[j].x, polygon[i].y - polygon[j].y)
-    var k_to_i_normal = new b2Vec2(polygon[k].y - polygon[i].y, polygon[i].x - polygon[k].x)
-    var k_to_i = new b2Vec2(polygon[i].x - polygon[k].x, polygon[i].y - polygon[k].y)
+    var j_to_i_normal = new box_2d.b2Vec2(polygon[i].y - polygon[j].y, polygon[j].x - polygon[i].x)
+    var j_to_i = new box_2d.b2Vec2(polygon[i].x - polygon[j].x, polygon[i].y - polygon[j].y)
+    var k_to_i_normal = new box_2d.b2Vec2(polygon[k].y - polygon[i].y, polygon[i].x - polygon[k].x)
+    var k_to_i = new box_2d.b2Vec2(polygon[i].x - polygon[k].x, polygon[i].y - polygon[k].y)
     j_to_i_normal.Normalize()
     k_to_i_normal.Normalize()
     j_to_i.Normalize()
@@ -489,11 +489,11 @@ utils.bezierInterpolate = function(mid1, mid2, t) {
 }
 
 utils.createBody = function(world, polygons, x, y, lin_damp, density, categoryBits, maskBits, type, owner, self) {
-  var bodyDef = new b2BodyDef;
+  var bodyDef = new box_2d.b2BodyDef;
   if(type == "static") {
-    bodyDef.type = b2Body.b2_staticBody
+    bodyDef.type = box_2d.b2Body.b2_staticBody
   } else
-    bodyDef.type = b2Body.b2_dynamicBody;
+    bodyDef.type = box_2d.b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = lin_damp;
@@ -503,19 +503,19 @@ utils.createBody = function(world, polygons, x, y, lin_damp, density, categoryBi
     var polygon = polygons[i]
     var this_shape = null
     if(polygon.type == "circle") {
-      this_shape = new b2CircleShape(polygon.r)
-      this_shape.SetLocalPosition(new b2Vec2(polygon.x, polygon.y))
+      this_shape = new box_2d.b2CircleShape(polygon.r)
+      this_shape.SetLocalPosition(new box_2d.b2Vec2(polygon.x, polygon.y))
     }
     if(polygon.type == "polygon") {
       var vertices = []
       for(var j= 0; j < polygon.vertices.length; j++) {
-        vertices.push(new b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
+        vertices.push(new box_2d.b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
       }
-      this_shape = new b2PolygonShape
+      this_shape = new box_2d.b2PolygonShape
       this_shape.SetAsArray(vertices, vertices.length)
     }
 
-    var fixDef = new b2FixtureDef;//make the shape
+    var fixDef = new box_2d.b2FixtureDef;//make the shape
     fixDef.density = density;
     fixDef.friction = 0;
     fixDef.restitution = 0.7;

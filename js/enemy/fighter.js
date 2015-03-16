@@ -120,7 +120,7 @@ Fighter.prototype.additional_processing = function(dt) {
   if(!this.is_silenced() && this.player_collision_buffer_timer <= 0 &&
       utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) < this.shield_radius) {
     var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     //this.cause_of_death = "hit_player"
     this.impulse_game_state.reset_combo()
     this.shield_animate_duration = this.shield_animate_interval;
@@ -151,14 +151,14 @@ Fighter.prototype.additional_processing = function(dt) {
           if(this.fighter_status == "frenzy") {
             this.frenzy_charge -= 0.5
             var new_piercing_bullet = new PiercingFighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id )
-            var dir = new b2Vec2(Math.cos(target_angle), Math.sin(target_angle));
+            var dir = new box_2d.b2Vec2(Math.cos(target_angle), Math.sin(target_angle));
             dir.Multiply(2)
             new_piercing_bullet.body.ApplyImpulse(dir, new_piercing_bullet.body.GetWorldCenter())
             this.level.spawned_enemies.push(new_piercing_bullet)
           }
           else {
             var new_bullet = new FighterBullet(this.world, cur_bullet_loc.x, cur_bullet_loc.y, this.level.enemy_counter, this.impulse_game_state, target_angle, this.id )
-            var dir = new b2Vec2(Math.cos(target_angle), Math.sin(target_angle));
+            var dir = new box_2d.b2Vec2(Math.cos(target_angle), Math.sin(target_angle));
             dir.Multiply(0.5)
             new_bullet.body.ApplyImpulse(dir, new_bullet.body.GetWorldCenter())
             this.level.spawned_enemies.push(new_bullet)
@@ -338,7 +338,7 @@ Fighter.prototype.explode = function() {
   if(utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.effective_radius * this.bomb_factor)
   {
     var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }
 
   for(var i = 0; i < this.level.enemies.length; i++)
@@ -347,7 +347,7 @@ Fighter.prototype.explode = function() {
     if(this.level.enemies[i] !== this && utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
       var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
-      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       this.level.enemies[i].open(1500)
 
     }
@@ -360,7 +360,7 @@ Fighter.prototype.process_impulse = function(attack_loc, impulse_force, hit_angl
   if (!this.is_silenced()) {
     factor = 0.6
   }
-  this.body.ApplyImpulse(new b2Vec2(factor*impulse_force*Math.cos(hit_angle), factor*impulse_force*Math.sin(hit_angle)),
+  this.body.ApplyImpulse(new box_2d.b2Vec2(factor*impulse_force*Math.cos(hit_angle), factor*impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   this.durations["impulsed"] += this.impulsed_duration
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)

@@ -67,7 +67,7 @@ Orbiter.prototype.additional_drawing = function(context, draw_factor) {
     var guess_angle = orig_angle + (Math.PI * 2) / divisions * offsets[offset] * this.offset_multiplier;
 
 
-    var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
+    var tempPt = new box_2d.b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
                               this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)
 
     context.moveTo(tempPt.x * draw_factor + 5, tempPt.y *draw_factor)
@@ -156,7 +156,7 @@ Orbiter.prototype.get_target_path = function() {
       is_valid = true;
 
 
-      var tempPt = new b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
+      var tempPt = new box_2d.b2Vec2(this.player.body.GetPosition().x + Math.cos(guess_angle) * this.safe_distance,
                               this.player.body.GetPosition().y + Math.sin(guess_angle) * this.safe_distance)
       for(var k = 0; k < this.level.boundary_polygons.length; k++)
       {
@@ -288,7 +288,7 @@ Orbiter.prototype.modify_movement_vector = function(dir) {
 
 Orbiter.prototype.move_to = function(endPt) {
 
-  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  var dir = new box_2d.b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
 
   this.modify_movement_vector(dir)
@@ -299,8 +299,8 @@ Orbiter.prototype.move_to = function(endPt) {
 
 Orbiter.prototype.player_hit_proc = function() {
   var orbiter_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-  var a = new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle))
-  this.player.body.ApplyImpulse(new b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle)), this.player.body.GetWorldCenter())
+  var a = new box_2d.b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle))
+  this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.orbiter_force * Math.cos(orbiter_angle), this.orbiter_force * Math.sin(orbiter_angle)), this.player.body.GetWorldCenter())
 }
 
 Orbiter.prototype.process_impulse_specific = function(attack_loc, impulse_force, hit_angle) {

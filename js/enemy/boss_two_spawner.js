@@ -61,14 +61,14 @@ BossTwoSpawner.prototype.process = function(dt) {
       var boss_angle = utils.atan(this.level.enemies[i].body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
       var gravity_force = this.get_gravity_force(this.level.enemies[i].body.GetPosition())
       if(gravity_force > 0)
-        this.level.enemies[i].body.ApplyImpulse(new b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
+        this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
     }
     var boss_angle = utils.atan(this.player.body.GetPosition(), {x: this.x/imp_params.draw_factor, y: this.y/imp_params.draw_factor}) + Math.PI
 
     var gravity_force = this.get_gravity_force(this.player.body.GetPosition())
 
     if(gravity_force > 0)
-      this.player.body.ApplyImpulse(new b2Vec2(gravity_force *  Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
+      this.player.body.ApplyImpulse(new box_2d.b2Vec2(gravity_force *  Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 
 }
 

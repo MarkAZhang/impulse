@@ -103,7 +103,7 @@ Troll.prototype.additional_drawing = function(context, draw_factor, latest_color
 
 Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   if(!this.is_silenced() && this.entered_arena) {
-    this.body.ApplyImpulse(new b2Vec2(.3 * impulse_force*Math.cos(hit_angle), .3 * impulse_force*Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new box_2d.b2Vec2(.3 * impulse_force*Math.cos(hit_angle), .3 * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
     this.player.confuse(this.short_troll_period)
     imp_params.impulse_music.play_sound("pwheel")
@@ -111,7 +111,7 @@ Troll.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle)
     this.impulse_game_state.reset_combo();
   }
   else {
-    this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new box_2d.b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   }
   this.open(this.open_period)

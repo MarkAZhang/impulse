@@ -13,7 +13,7 @@ function FighterBullet(world, x, y, id, impulse_game_state, dir, parent_id) {
 
   this.death_radius = 5
 
-  this.v = new b2Vec2(Math.cos(dir), Math.sin(dir))
+  this.v = new box_2d.b2Vec2(Math.cos(dir), Math.sin(dir))
   this.v.Normalize()
   this.v.Multiply(this.force)
 
@@ -101,7 +101,7 @@ FighterBullet.prototype.collide_with = function(other) {
 
         vel.Multiply(this.bullet_enemy_factor * other.force * factor)
         other.open(1500)
-        //var force = new b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
+        //var force = new box_2d.b2Vec2(this.bullet_force * factor * Math.cos(bullet_angle), this.bullet_force * factor * Math.sin(bullet_angle));
 
         other.body.ApplyImpulse(vel, other.body.GetWorldCenter())
       }
@@ -113,7 +113,7 @@ FighterBullet.prototype.collide_with = function(other) {
 FighterBullet.prototype.move = function() {
 
   if (this.is_gooed()) {
-    this.body.ApplyImpulse(new b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())
+    this.body.ApplyImpulse(new box_2d.b2Vec2(0.7 * this.v.x, 0.7 * this.v.y), this.body.GetWorldCenter())
   } else {
     this.body.ApplyImpulse(this.v, this.body.GetWorldCenter())
   }
@@ -122,7 +122,7 @@ FighterBullet.prototype.move = function() {
 }
 
 FighterBullet.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
-  var temp_dir = new b2Vec2(this.body.GetPosition().x - attack_loc.x, this.body.GetPosition().y - attack_loc.y)
+  var temp_dir = new box_2d.b2Vec2(this.body.GetPosition().x - attack_loc.x, this.body.GetPosition().y - attack_loc.y)
   temp_dir.Normalize()
   temp_dir.Multiply(impulse_force)
   this.v.Add(temp_dir)

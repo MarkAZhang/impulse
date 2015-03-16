@@ -190,12 +190,12 @@ var buzz = {
             if ( volume > 100 ) {
               volume = 100;
             }
-          
+
             this.volume = volume;
             this.sound.volume = volume / 100;
             return this;
         };
-      
+
         this.getVolume = function() {
             if ( !supported ) {
               return this;
@@ -579,7 +579,7 @@ var buzz = {
         function getExt( filename ) {
             return filename.split('.').pop();
         }
-        
+
         function addSource( sound, src ) {
             var source = document.createElement( 'source' );
             source.src = src;
@@ -591,7 +591,7 @@ var buzz = {
 
         // init
         if ( supported && src ) {
-          
+
             for(var i in buzz.defaults ) {
               if(buzz.defaults.hasOwnProperty(i)) {
                 options[ i ] = options[ i ] || buzz.defaults[ i ];

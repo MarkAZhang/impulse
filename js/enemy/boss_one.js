@@ -220,24 +220,24 @@ BossOne.prototype.add_arms = function() {
   var j_gap = this.joint_padding
 
   this.body_parts["lu"] = this.create_upper_arm_piece(body_x + body_r + upper_arm_r - 2 * j_gap, body_y)
-  this.joints["lu"] = this.create_joint(new b2Vec2(body_x + body_r - j_gap, body_y), this.body, this.body_parts["lu"])
+  this.joints["lu"] = this.create_joint(new box_2d.b2Vec2(body_x + body_r - j_gap, body_y), this.body, this.body_parts["lu"])
 
   this.body_parts["ll"] = this.create_lower_arm_piece(body_x + body_r + 2 * upper_arm_r + lower_arm_r - 4 * j_gap, body_y)
-  this.joints["ll"] = this.create_joint(new b2Vec2(body_x + body_r + 2 * upper_arm_r - 3* j_gap, body_y), this.body_parts["lu"], this.body_parts["ll"])
+  this.joints["ll"] = this.create_joint(new box_2d.b2Vec2(body_x + body_r + 2 * upper_arm_r - 3* j_gap, body_y), this.body_parts["lu"], this.body_parts["ll"])
 
   this.body_parts["lh"] = this.create_hand(body_x + body_r + 2 * upper_arm_r + 2*lower_arm_r - 4 * j_gap + 0.25 * hand_r, body_y)
   this.body_parts["lh"].SetAngle(Math.PI/4)
-  this.joints["lh"] = this.create_joint(new b2Vec2(body_x + body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r, body_y), this.body_parts["ll"], this.body_parts["lh"])
+  this.joints["lh"] = this.create_joint(new box_2d.b2Vec2(body_x + body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r, body_y), this.body_parts["ll"], this.body_parts["lh"])
 
   this.body_parts["ru"] = this.create_upper_arm_piece(body_x - (body_r + upper_arm_r - 2 * j_gap), body_y)
-  this.joints["ru"] = this.create_joint(new b2Vec2(body_x - (body_r - j_gap), body_y), this.body, this.body_parts["ru"])
+  this.joints["ru"] = this.create_joint(new box_2d.b2Vec2(body_x - (body_r - j_gap), body_y), this.body, this.body_parts["ru"])
 
   this.body_parts["rl"] = this.create_lower_arm_piece(body_x - (body_r + 2 * upper_arm_r + lower_arm_r - 4 * j_gap), body_y)
-  this.joints["rl"] = this.create_joint(new b2Vec2(body_x - (body_r + 2 * upper_arm_r - 3* j_gap), body_y), this.body_parts["ru"], this.body_parts["rl"])
+  this.joints["rl"] = this.create_joint(new box_2d.b2Vec2(body_x - (body_r + 2 * upper_arm_r - 3* j_gap), body_y), this.body_parts["ru"], this.body_parts["rl"])
 
   this.body_parts["rh"] = this.create_hand(body_x - (body_r + 2 * upper_arm_r + 2*lower_arm_r - 4 * j_gap + 0.25 * hand_r), body_y)
   this.body_parts["rh"].SetAngle(Math.PI/4)
-  this.joints["rh"] = this.create_joint(new b2Vec2(body_x - (body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r), body_y), this.body_parts["rl"], this.body_parts["rh"])
+  this.joints["rh"] = this.create_joint(new box_2d.b2Vec2(body_x - (body_r + 2 * upper_arm_r + 2 * lower_arm_r - 4* j_gap + 0.25 * hand_r), body_y), this.body_parts["rl"], this.body_parts["rh"])
 
 }
 
@@ -251,7 +251,7 @@ BossOne.prototype.additional_death_prep_specific = function() {
   for (var i = 0; i < body_parts.length; i++) {
     this.world.DestroyJoint(this.joints[body_parts[i]]);
     var angle = utils.atan(this.body.GetPosition(), this.body_parts[body_parts[i]].GetPosition());
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     dir.Normalize();
     dir.Multiply(death_explode_force);
     this.body_parts[body_parts[i]].ApplyImpulse(dir, this.body_parts[body_parts[i]].GetWorldCenter())
@@ -449,7 +449,7 @@ BossOne.prototype.rotate_joint_to = function(joint_name, angle) {
 
 BossOne.prototype.turret_fire_enemy = function(arm) {
 
-  var dir = new b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
+  var dir = new box_2d.b2Vec2(Math.cos(this.body.GetAngle()), Math.sin(this.body.GetAngle()));
 
   var enemy_type = this.enemies_to_spawn[Math.floor(Math.random() * this.enemies_to_spawn.length)]
   if (saveData.difficultyMode == "easy" && enemy_type == "tank") {
@@ -715,7 +715,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
 BossOne.prototype.process_punching = function(arm) {
   if(arm == "left") {
     var angle = utils.atan(this.body_parts["lh"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     var dist = utils.pDist(this.body_parts["lh"].GetPosition(), this.punch_target_pts[arm])
     var body_dist = utils.pDist(this.joints["lu"].GetAnchorA(), this.punch_target_pts[arm])
     if(dist < 10) {
@@ -734,7 +734,7 @@ BossOne.prototype.process_punching = function(arm) {
 
   if(arm == "right") {
     var angle = utils.atan(this.body_parts["rh"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     var dist = utils.pDist(this.body_parts["rh"].GetPosition(), this.punch_target_pts[arm])
     var body_dist = utils.pDist(this.joints["ru"].GetAnchorA(), this.punch_target_pts[arm])
     if(dist < 10) {
@@ -754,7 +754,7 @@ BossOne.prototype.process_punching = function(arm) {
 /*BossOne.prototype.process_retracting = function(arm) {
   if(arm == "left") {
     var angle = utils.atan(this.body_parts["ll"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     var dist = utils.pDist(this.body_parts["ll"].GetPosition(), this.punch_target_pts[arm])
     var body_dist = utils.pDist(this.joints["lu"].GetAnchorA(), this.punch_target_pts[arm])
     if(dist < 10) {
@@ -771,7 +771,7 @@ BossOne.prototype.process_punching = function(arm) {
 
   if(arm == "right") {
     var angle = utils.atan(this.body_parts["rl"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     var dist = utils.pDist(this.body_parts["rl"].GetPosition(), this.punch_target_pts[arm])
     var body_dist = utils.pDist(this.joints["ru"].GetAnchorA(), this.punch_target_pts[arm])
     if(dist < 10) {
@@ -1087,7 +1087,7 @@ BossOne.prototype.collide_with = function(other, body) {
   }
   if(body == this.body) {
     var boss_angle = utils.atan(this.body.GetPosition(),other.body.GetPosition())
-    other.body.ApplyImpulse(new b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
+    other.body.ApplyImpulse(new box_2d.b2Vec2(this.boss_force * 4 * Math.cos(boss_angle), this.boss_force * 4 * Math.sin(boss_angle)), other.body.GetWorldCenter())
   } else {
     var boss_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
     // hit while punching
@@ -1106,7 +1106,7 @@ BossOne.prototype.collide_with = function(other, body) {
     } else {
       force = 0;
     }
-    other.body.ApplyImpulse(new b2Vec2(force *  Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
+    other.body.ApplyImpulse(new box_2d.b2Vec2(force *  Math.cos(boss_angle), force * Math.sin(boss_angle)), other.body.GetWorldCenter())
   }
 }
 BossOne.prototype.get_impulse_sensitive_pts = function() {
@@ -1129,7 +1129,7 @@ BossOne.prototype.global_lighten = function() {
 
 BossOne.prototype.player_hit_proc = function() {
   var boss_angle = utils.atan(this.body.GetPosition(), this.player.get_current_position())
-  this.player.body.ApplyImpulse(new b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
+  this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.boss_force * Math.cos(boss_angle), this.boss_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
 }
 
 BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, side) {
@@ -1153,7 +1153,7 @@ BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, s
           this.paralyzed_pause[side] += this.punch_action_interval
         //console.log("paralyzed_pause after"+side+" "+this.paralyzed_pause[side])
         this.arm_states[side] = "paralyzed"
-        //hand.ApplyImpulse(new b2Vec2(this.impulse_hand_force * impulse_force*Math.cos(angle),
+        //hand.ApplyImpulse(new box_2d.b2Vec2(this.impulse_hand_force * impulse_force*Math.cos(angle),
         // this.impulse_hand_force * impulse_force*Math.sin(angle)),
         //hand.GetWorldCenter())
         this.knockback_arm_timers[side] = this.knockback_arm_interval
@@ -1191,7 +1191,7 @@ BossOne.prototype.explode = function() {
   if(utils.pDist(this.body.GetPosition(), this.player.get_current_position()) <= this.punching_explode_radius)
   {
     var angle = utils.atan(this.body.GetPosition(), this.player.get_current_position())
-    this.player.body.ApplyImpulse(new b2Vec2(this.punching_explode_force * Math.cos(angle),
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.punching_explode_force * Math.cos(angle),
      this.punching_explode_force * Math.sin(angle)), this.player.body.GetWorldCenter())
   }
 
@@ -1200,7 +1200,7 @@ BossOne.prototype.explode = function() {
     if(this.level.enemies[i] !== this && utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.punching_explode_radius)
     {
       var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
-      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.punching_explode_force * Math.cos(_angle), this.punching_explode_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(this.punching_explode_force * Math.cos(_angle), this.punching_explode_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       if(!(this.level.enemies[i] instanceof Tank))
         this.level.enemies[i].open(1500)
 

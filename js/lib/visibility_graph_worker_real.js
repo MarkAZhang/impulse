@@ -173,7 +173,7 @@ function isVisible(v_i, v_j, edges)
 }
 
 function pointInPolygon(polygon, point)
-//polygon is an array of b2Vec2
+//polygon is an array of box_2d.b2Vec2
 {
   var j = polygon.length - 1
   var ans = false

@@ -31,15 +31,15 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
     this.density *= 1.5;
     this.true_force *= 1.5;
   }
-  var fixDef = new b2FixtureDef;
+  var fixDef = new box_2d.b2FixtureDef;
   fixDef.density = this.density;
   fixDef.friction = 0;
   fixDef.restitution = 1.0;
   fixDef.filter.categoryBits = imp_params.PLAYER_BIT
   fixDef.filter.maskBits = imp_params.ENEMY_BIT | imp_params.WALL_BIT | imp_params.BOSS_BITS
-  var bodyDef = new b2BodyDef;
-  bodyDef.type = b2Body.b2_dynamicBody;
-  fixDef.shape = new b2CircleShape(Player.prototype.radius);
+  var bodyDef = new box_2d.b2BodyDef;
+  bodyDef.type = box_2d.b2Body.b2_dynamicBody;
+  fixDef.shape = new box_2d.b2CircleShape(Player.prototype.radius);
   this.r = Player.prototype.radius;
   this.level = impulse_game_state.level
   this.impulse_game_state = impulse_game_state
@@ -495,7 +495,7 @@ Player.prototype.process = function(dt) {
       f_x *= this.gooed_force_boost
       f_y *= this.gooed_force_boost
     }
-    this.body.ApplyImpulse(new b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
+    this.body.ApplyImpulse(new box_2d.b2Vec2(force*f_x, force*f_y), this.body.GetWorldCenter())
     if (this.impulse_game_state.show_tutorial && (f_x != 0 || f_y != 0)) {
       this.impulse_game_state.add_tutorial_signal("player_moved")
     }

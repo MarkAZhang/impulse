@@ -10,7 +10,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set effective_radius if do_yield = true
 
 
-  this.original_spawn_point = new b2Vec2(x, y);
+  this.original_spawn_point = new box_2d.b2Vec2(x, y);
 
   this.impulse_game_state = impulse_game_state
   this.image_enemy_type = this.type
@@ -26,9 +26,9 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.pointer_vertices = []
 
-  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*0), Math.sin(Math.PI*0)))
-  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*5/6), Math.sin(Math.PI*5/6)))
-  this.pointer_vertices.push(new b2Vec2(Math.cos(Math.PI*7/6), Math.sin(Math.PI*7/6)))
+  this.pointer_vertices.push(new box_2d.b2Vec2(Math.cos(Math.PI*0), Math.sin(Math.PI*0)))
+  this.pointer_vertices.push(new box_2d.b2Vec2(Math.cos(Math.PI*5/6), Math.sin(Math.PI*5/6)))
+  this.pointer_vertices.push(new box_2d.b2Vec2(Math.cos(Math.PI*7/6), Math.sin(Math.PI*7/6)))
 
   this.pointer_max_radius = .7
 
@@ -48,8 +48,8 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.impulsed_color = impulse_colors["impulse_blue"]
 
-  var bodyDef = new b2BodyDef;
-  bodyDef.type = b2Body.b2_dynamicBody;
+  var bodyDef = new box_2d.b2BodyDef;
+  bodyDef.type = box_2d.b2Body.b2_dynamicBody;
   bodyDef.position.x = x;
   bodyDef.position.y = y;
   bodyDef.linearDamping = this.lin_damp
@@ -72,19 +72,19 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     var polygon = this.shape_polygons[i]
     var this_shape = null
     if(polygon.type == "circle") {
-      this_shape = new b2CircleShape(polygon.r)
-      this_shape.SetLocalPosition(new b2Vec2(polygon.x, polygon.y))
+      this_shape = new box_2d.b2CircleShape(polygon.r)
+      this_shape.SetLocalPosition(new box_2d.b2Vec2(polygon.x, polygon.y))
     }
     if(polygon.type == "polygon") {
       var vertices = []
       for(var j= 0; j < polygon.vertices.length; j++) {
-        vertices.push(new b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
+        vertices.push(new box_2d.b2Vec2(polygon.x + polygon.r * polygon.vertices[j][0], polygon.y + polygon.r * polygon.vertices[j][1]))
       }
-      this_shape = new b2PolygonShape
+      this_shape = new box_2d.b2PolygonShape
       this_shape.SetAsArray(vertices, vertices.length)
     }
 
-    var fixDef = new b2FixtureDef;//make the shape
+    var fixDef = new box_2d.b2FixtureDef;//make the shape
     fixDef.density = this.density;
     fixDef.friction = 0;
     fixDef.restitution = 0.7;
@@ -94,7 +94,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
     if(this.body)
       this.body.CreateFixture(fixDef).SetUserData({"owner": this, "body": this.body, "self":this})
     this.shapes.push(this_shape)
-    if(this_shape instanceof b2PolygonShape)
+    if(this_shape instanceof box_2d.b2PolygonShape)
       this.shape_points.push(this_shape.m_vertices)
     else
       this.shape_points.push(null)
@@ -229,7 +229,7 @@ Enemy.prototype.generate_collision_polygons = function() {
     while(cur_fixture != null) {
       var cur_shape = cur_fixture.m_shape
       var these_polar_points = []
-      if(cur_shape instanceof b2PolygonShape) {
+      if(cur_shape instanceof box_2d.b2PolygonShape) {
         var these_points = cur_shape.m_vertices
         for(var i = 0; i < these_points.length; i++) {
           var temp_r = utils.pDist({x: 0, y: 0}, these_points[i])
@@ -238,7 +238,7 @@ Enemy.prototype.generate_collision_polygons = function() {
         }
         this.collision_polygons.push(utils.getBoundaryPolygon(these_points, (this.player.r + 0.1)))
       }
-      /*else if(cur_shape instanceof b2CircleShape) {
+      /*else if(cur_shape instanceof box_2d.b2CircleShape) {
         var this_polygon = this.body // not actually right, but we don't have any objects where this matters
         var these_points = [{x: this_polygon.x + Math.cos()}]
         for(var i = 0; i < 4; i++) {
@@ -329,7 +329,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         var vertices = this.body.GetFixtureList().m_shape.m_vertices
         for(var j = 0; j < vertices.length; j++)
         {
-          vertices[j] = new b2Vec2(vertices[j].x/this.lighten_factor, vertices[j].y/this.lighten_factor)
+          vertices[j] = new box_2d.b2Vec2(vertices[j].x/this.lighten_factor, vertices[j].y/this.lighten_factor)
         }
 
         //fixtures[i].SetDensity(this.density/5)
@@ -349,7 +349,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
         var vertices = this.body.GetFixtureList().m_shape.m_vertices
         for(var j = 0; j < vertices.length; j++)
         {
-          vertices[j] = new b2Vec2(vertices[j].x*this.lighten_factor, vertices[j].y*this.lighten_factor)
+          vertices[j] = new box_2d.b2Vec2(vertices[j].x*this.lighten_factor, vertices[j].y*this.lighten_factor)
         }
         //fixtures[i].SetDensity(this.density)
       }
@@ -445,7 +445,7 @@ Enemy.prototype.adjust_position = function() {
   }
 
   if(this.adjust_position_angle != null) {
-    var dir = new b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
+    var dir = new box_2d.b2Vec2(Math.cos(this.adjust_position_angle), Math.sin(this.adjust_position_angle))
     dir.Multiply(this.force * this.adjust_position_factor)
     if(this.durations["open"] > 0 && saveData.difficultyMode == "normal" && this.extra_adjust) {
       dir.Multiply(1.5)
@@ -552,14 +552,14 @@ Enemy.prototype.move = function() {
 
 Enemy.prototype.move_to = function(endPt) {
 
-  var dir = new b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
+  var dir = new box_2d.b2Vec2(endPt.x - this.body.GetPosition().x, endPt.y - this.body.GetPosition().y)
   dir.Normalize()
 
   this.modify_movement_vector(dir)  //primarily for Spear
 
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-  //if(this.shape instanceof b2PolygonShape) {
+  //if(this.shape instanceof box_2d.b2PolygonShape) {
   if (this.default_heading) {
     this.set_heading_to(endPt)
   }
@@ -649,13 +649,13 @@ Enemy.prototype.collide_with = function(other) {
       if(other.type=="mote" || other.type == "troll") {
         var magnitude = this.body.m_linearVelocity
         var ratio = this.body.GetMass()/other.body.GetMass()
-        other.body.ApplyImpulse(new b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
-        this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+        other.body.ApplyImpulse(new box_2d.b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+        this.body.SetLinearVelocity(new box_2d.b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
       }/* else if(this.body.GetLinearVelocity().Length() > 40 && other !== this.player) {
         var magnitude = this.body.GetLinearVelocity()
         var ratio = this.body.GetMass()/other.body.GetMass()
-        other.body.ApplyImpulse(new b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
-        this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+        other.body.ApplyImpulse(new box_2d.b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
+        this.body.SetLinearVelocity(new box_2d.b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
       }*/
     }
 
@@ -665,8 +665,8 @@ Enemy.prototype.collide_with = function(other) {
           var player_transfer_factor = 0.5
           var magnitude = this.body.GetLinearVelocity()
           var ratio = this.body.GetMass()/other.body.GetMass()
-          other.body.ApplyImpulse(new b2Vec2(magnitude.x*ratio * player_transfer_factor, magnitude.y*ratio* player_transfer_factor), other.body.GetPosition())
-          this.body.SetLinearVelocity(new b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
+          other.body.ApplyImpulse(new box_2d.b2Vec2(magnitude.x*ratio * player_transfer_factor, magnitude.y*ratio* player_transfer_factor), other.body.GetPosition())
+          this.body.SetLinearVelocity(new box_2d.b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
         }
       }
       if (this.die_on_player_collision) {
@@ -744,7 +744,7 @@ Enemy.prototype.draw = function(context, draw_factor) {
 
   //rotate enemy
 
-  //if(this.shape instanceof b2PolygonShape) {
+  //if(this.shape instanceof box_2d.b2PolygonShape) {
     //if polygon shape, need to rotate
     var tp = this.body.GetPosition()
     context.save();
@@ -817,7 +817,7 @@ Enemy.prototype.bulk_draw_end = function(context, draw_factor, num) {
 Enemy.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   this.open(this.open_period)
   this.durations["impulsed"] += this.impulsed_duration
-  this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
+  this.body.ApplyImpulse(new box_2d.b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 }
@@ -895,7 +895,7 @@ Enemy.prototype.is_invincible = function() {
 /*Enemy.prototype.check_player_intersection = function(other) {
   for(var i = 0; i < this.shapes.length; i++) {
 
-    if(this.shapes[i] instanceof b2PolygonShape) {
+    if(this.shapes[i] instanceof box_2d.b2PolygonShape) {
       var collision_polygon = this.collision_polygons[i]
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
       var temp_ang = utils.atan({x:0, y:0}, temp_vec)
@@ -904,7 +904,7 @@ Enemy.prototype.is_invincible = function() {
       if(utils.pointInPolygon(collision_polygon, rotated_vec))
         return true
     }
-    else if(this.shapes[i] instanceof b2CircleShape)
+    else if(this.shapes[i] instanceof box_2d.b2CircleShape)
     {
       var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
       var temp_ang = utils.atan({x:0, y:0}, temp_vec)

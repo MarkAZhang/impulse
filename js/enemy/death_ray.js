@@ -123,7 +123,7 @@ DeathRay.prototype.additional_processing = function(dt) {
           if(this.player.is_gooed() > 0) {
             factor *= 0.25
           }
-          this.player.body.ApplyImpulse(new b2Vec2(factor * this.ray_force * Math.cos(this.ray_angle), factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
+          this.player.body.ApplyImpulse(new box_2d.b2Vec2(factor * this.ray_force * Math.cos(this.ray_angle), factor * this.ray_force * Math.sin(this.ray_angle)), this.player.body.GetWorldCenter())
           this.impulse_game_state.reset_combo()
         }
         for(var i = 0; i < this.level.enemies.length; i++) {
@@ -131,7 +131,7 @@ DeathRay.prototype.additional_processing = function(dt) {
             if(this.level.enemies[i].type == "orbiter") {
               this.level.enemies[i].weaken()
             }
-            this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter())
+            this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(this.ray_force * Math.cos(this.ray_angle), this.ray_force * Math.sin(this.ray_angle)), this.level.enemies[i].body.GetWorldCenter())
             this.level.enemies[i].open(2500)
           }
         }
@@ -188,7 +188,7 @@ DeathRay.prototype.process_impulse = function(attack_loc, impulse_force, hit_ang
 
   this.open(this.open_period)
   this.durations["impulsed"] += this.impulsed_duration
-  this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
+  this.body.ApplyImpulse(new box_2d.b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
     this.body.GetWorldCenter())
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
 }

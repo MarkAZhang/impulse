@@ -504,7 +504,7 @@ BossFour.prototype.fire_attack_bud = function(bud, initial) {
     bud.delay = 0
     bud.body = null
     var angle = utils.atan(this.body.GetPosition(), bud.enemy.body.GetPosition())
-    var force = new b2Vec2(Math.cos(angle), Math.sin(angle))
+    var force = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle))
     force.Multiply(this.spawner_force)
     bud.enemy.body.ApplyImpulse(force, bud.enemy.body.GetWorldCenter())
     bud.enemy.spawned = true
@@ -550,12 +550,12 @@ BossFour.prototype.additional_death_prep_specific = function() {
 
       bud_body.SetAngle(angle)
       this.buds[index].body = bud_body;
-      var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+      var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
       dir.Normalize();
       dir.Multiply(20);
       bud_body.ApplyImpulse(dir, bud_body.GetWorldCenter())
     } else if (bud.expand_timer > 0) {
-      var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+      var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
       dir.Normalize();
       dir.Multiply(30);
       this.buds[index].body.ApplyImpulse(dir, this.buds[index].body.GetWorldCenter())
@@ -577,7 +577,7 @@ BossFour.prototype.repel_enemies = function() {
       if(utils.pDist(enemy.body.GetPosition(), this.body.GetPosition()) < 8) {
 
         var enemy_angle = utils.angleClosestTo(ref_angle, utils.atan(this.body.GetPosition(), enemy.body.GetPosition()))
-        enemy.body.ApplyImpulse(new b2Vec2(enemy.force * 5* Math.cos(enemy_angle), enemy.force * 5* Math.sin(enemy_angle)), enemy.body.GetWorldCenter())
+        enemy.body.ApplyImpulse(new box_2d.b2Vec2(enemy.force * 5* Math.cos(enemy_angle), enemy.force * 5* Math.sin(enemy_angle)), enemy.body.GetWorldCenter())
 
         //help the enemy along
         if(enemy_angle < ref_angle) {
@@ -585,7 +585,7 @@ BossFour.prototype.repel_enemies = function() {
         } else {
           var help_angle = enemy_angle - Math.PI/2
         }
-        enemy.body.ApplyImpulse(new b2Vec2(enemy.force * Math.cos(help_angle), enemy.force * Math.sin(help_angle)), enemy.body.GetWorldCenter())
+        enemy.body.ApplyImpulse(new box_2d.b2Vec2(enemy.force * Math.cos(help_angle), enemy.force * Math.sin(help_angle)), enemy.body.GetWorldCenter())
 
       }
 
@@ -907,7 +907,7 @@ BossFour.prototype.collide_with = function(other) {
 
   if(other === this.player) {
     var tank_angle = utils.atan(this.body.GetPosition(), this.player.get_current_position())
-    this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     this.impulse_game_state.reset_combo();
     //this.cause_of_death = "hit_player"
   }

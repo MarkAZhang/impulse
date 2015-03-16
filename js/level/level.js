@@ -547,8 +547,8 @@ Level.prototype.add_enemy = function(enemy) {
 }
 
 Level.prototype.generate_obstacles = function() {
-  //obstacles.push(new BasicObstacle(world, 30, 30, [[new b2Vec2(-10,-10), new b2Vec2(10, -10), new b2Vec2(-10, 10)],
-  //      [new b2Vec2(-30,-10), new b2Vec2(-10, -30), new b2Vec2(-10, -10)]]))
+  //obstacles.push(new BasicObstacle(world, 30, 30, [[new box_2d.b2Vec2(-10,-10), new box_2d.b2Vec2(10, -10), new box_2d.b2Vec2(-10, 10)],
+  //      [new box_2d.b2Vec2(-30,-10), new box_2d.b2Vec2(-10, -30), new box_2d.b2Vec2(-10, -10)]]))
 
   if(this.obstacle_num == null && this.obstacle_v.length) {
     this.obstacle_num = this.obstacle_v.length

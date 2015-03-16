@@ -831,9 +831,9 @@ function EnemyBox(enemy_name, previous_menu) {
   this.num_pages = this.enemy_info.length
 
   this.cur_page = 0
-  /*var gravity = new b2Vec2(000, 000);
+  /*var gravity = new box_2d.b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  var world = new b2World(gravity, doSleep);
+  var world = new box_2d.b2World(gravity, doSleep);
 
   /*var temp_enemy = new (enemyData[this.enemy_name].className)(world, 0, 0, 0, 0)
 

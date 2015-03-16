@@ -1401,7 +1401,7 @@ for(i in levelData) {
       var ans = ob_v[index]
       var ans_array = []
       for(var i = 0; i < ans.length; i++) {
-        ans_array.push(new b2Vec2(ans[i][0]/imp_params.draw_factor, ans[i][1]/imp_params.draw_factor))
+        ans_array.push(new box_2d.b2Vec2(ans[i][0]/imp_params.draw_factor, ans[i][1]/imp_params.draw_factor))
       }
 
       return ans_array

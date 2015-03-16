@@ -197,7 +197,7 @@ Boss.prototype.get_impulse_extra_factor = function() {
 
 Boss.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   if(this.spawned)  {
-    this.body.ApplyImpulse(new b2Vec2(this.get_impulse_extra_factor() * impulse_force * Math.cos(hit_angle), this.get_impulse_extra_factor() * impulse_force * Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new box_2d.b2Vec2(this.get_impulse_extra_factor() * impulse_force * Math.cos(hit_angle), this.get_impulse_extra_factor() * impulse_force * Math.sin(hit_angle)),
       this.body.GetWorldCenter())
     this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   }

@@ -38,9 +38,9 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   this.progress_bar_prop = 0
   this.progress_bar_adjust = 3000
-  var gravity = new b2Vec2(000, 000);
+  var gravity = new box_2d.b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep);
+  this.world = new box_2d.b2World(gravity, doSleep);
   this.hive0bg_transition = false;
 
   if(level) {
@@ -90,7 +90,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   this.addWalls()
 
-  var contactListener = new b2ContactListener;
+  var contactListener = new box_2d.b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
   contactListener.EndContact = this.handle_collisions_on_end_contact
@@ -173,12 +173,12 @@ ImpulseGameState.prototype.reset = function() {
   this.reset_game_numbers();
   this.processed_death = false;
   this.first_time = false;
-  var gravity = new b2Vec2(000, 000);
+  var gravity = new box_2d.b2Vec2(000, 000);
   var doSleep = false; //objects in our world will rarely go to sleep
-  this.world = new b2World(gravity, doSleep);
+  this.world = new box_2d.b2World(gravity, doSleep);
   this.addWalls()
 
-  var contactListener = new b2ContactListener;
+  var contactListener = new box_2d.b2ContactListener;
   contactListener.BeginContact = this.handle_collisions
   contactListener.PreSolve = this.filter_collisions
   this.world.SetContactListener(contactListener);
@@ -1050,12 +1050,12 @@ ImpulseGameState.prototype.addWalls = function() {
 
 
   for(var i = 0; i < 4; i++) {
-    var fixDef = new b2FixtureDef;
+    var fixDef = new box_2d.b2FixtureDef;
     fixDef.filter.categoryBits = imp_params.WALL_BIT
     fixDef.filter.maskBits = imp_params.PLAYER_BIT
-    var bodyDef = new b2BodyDef;
-    bodyDef.type = b2Body.b2_staticBody;
-    fixDef.shape = new b2PolygonShape;
+    var bodyDef = new box_2d.b2BodyDef;
+    bodyDef.type = box_2d.b2Body.b2_staticBody;
+    fixDef.shape = new box_2d.b2PolygonShape;
     fixDef.shape.SetAsBox(wall_dim[i].x, wall_dim[i].y)
   bodyDef.position.Set(wall_pos[i].x, wall_pos[i].y)
     this.world.CreateBody(bodyDef).CreateFixture(fixDef);

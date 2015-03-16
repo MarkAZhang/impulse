@@ -10,9 +10,9 @@ function Harpoon(world, x, y, id, impulse_game_state) {
 
   var s_radius = .3
 
-  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*0), s_radius*Math.sin(Math.PI*0)))
-  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
-  h_vertices.push(new b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
+  h_vertices.push(new box_2d.b2Vec2(s_radius*Math.cos(Math.PI*0), s_radius*Math.sin(Math.PI*0)))
+  h_vertices.push(new box_2d.b2Vec2(s_radius*Math.cos(Math.PI*5/6), s_radius*Math.sin(Math.PI*5/6)))
+  h_vertices.push(new box_2d.b2Vec2(s_radius*Math.cos(Math.PI*7/6), s_radius*Math.sin(Math.PI*7/6)))
   this.harpoon_shape = h_vertices
 
   this.silence_outside_arena = true
@@ -147,7 +147,7 @@ Harpoon.prototype.move = function() {
   if(this.harpoon_state != "inactive" && this.harpoon_state != "engaged") {return}//do not move if harpooning
 
   if(this.harpoon_state == "engaged") {
-    var dir = new b2Vec2(this.body.GetPosition().x - this.harpooned_target.body.GetPosition().x, this.body.GetPosition().y - this.harpooned_target.body.GetPosition().y)
+    var dir = new box_2d.b2Vec2(this.body.GetPosition().x - this.harpooned_target.body.GetPosition().x, this.body.GetPosition().y - this.harpooned_target.body.GetPosition().y)
     dir.Normalize()
     dir.Multiply(this.harpooned_force)
     if(this.harpooned_target==this.player && this.is_gooed()) {
@@ -184,7 +184,7 @@ Harpoon.prototype.can_harpoon = function() {
 }
 
 Harpoon.prototype.get_virtual_harpoon_loc = function() {
-  return new b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(enemyData[this.type].effective_radius) * Math.cos(this.actual_heading),
+  return new box_2d.b2Vec2(this.body.GetPosition().x+(this.harpoon_head_defaut_dist)*(enemyData[this.type].effective_radius) * Math.cos(this.actual_heading),
     this.body.GetPosition().y+(this.harpoon_head_defaut_dist)*(enemyData[this.type].effective_radius) * Math.sin(this.actual_heading))
 }
 
@@ -234,7 +234,7 @@ Harpoon.prototype.additional_processing = function(dt) {
   } else if(this.harpoon_state == "retract") {
     if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), imp_params.draw_factor)) {
       var dir = utils.atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
-      this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
+      this.harpoon_head.body.ApplyImpulse(new box_2d.b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
       this.harpoon_head.set_heading(Math.PI + dir)
       if(utils.pDist(this.harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.harpoon_head_defaut_dist * 1.1) {
         this.harpoon_state = "inactive"
@@ -248,11 +248,11 @@ Harpoon.prototype.additional_processing = function(dt) {
     }
   } else if(this.harpoon_state == "engaged") {
 
-    this.harpoon_head.body.SetPosition(new b2Vec2(-100, -100));
+    this.harpoon_head.body.SetPosition(new box_2d.b2Vec2(-100, -100));
     /*this.harpoon_head.body.SetPosition(this.player.body.GetPosition());
     this.harpoon_head.body.SetAngle(utils.atan(this.body.GetPosition(), this.player.body.GetPosition()))*/
   } else if(this.harpoon_state == "retract_ready") {
-    var dir = new b2Vec2(this.player.body.GetPosition().x - this.body.GetPosition().x, this.player.body.GetPosition().y - this.body.GetPosition().y)
+    var dir = new box_2d.b2Vec2(this.player.body.GetPosition().x - this.body.GetPosition().x, this.player.body.GetPosition().y - this.body.GetPosition().y)
     dir.Normalize()
     dir.Multiply(this.player.radius * 2)
     var pos = this.harpooned_target.body.GetPosition().Copy()//this.player.body.GetPosition().Copy()
@@ -293,7 +293,7 @@ Harpoon.prototype.additional_processing = function(dt) {
         imp_params.impulse_music.play_sound("hfire")
         this.harpoon_state = "fire"
         this.harpoon_dir = utils.atan(this.harpoon_head.body.GetPosition(), this.get_harpoon_target_pt())
-        this.harpoon_head.body.ApplyImpulse(new b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
+        this.harpoon_head.body.ApplyImpulse(new box_2d.b2Vec2(this.harpoonhead_force * Math.cos(this.harpoon_dir), this.harpoonhead_force * Math.sin(this.harpoon_dir)), this.harpoon_head.body.GetWorldCenter())
         this.harpoon_head.set_heading(this.harpoon_dir)
       }
     }

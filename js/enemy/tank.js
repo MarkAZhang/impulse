@@ -119,12 +119,12 @@ Tank.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) 
   this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   this.open(this.open_period)
   if (this.is_gooed()) {
-    this.body.ApplyImpulse(new b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
+    this.body.ApplyImpulse(new box_2d.b2Vec2(1.3 * impulse_force*Math.cos(hit_angle), 1.3 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
   } else {
     if (saveData.difficultyMode == "easy") {
-      this.body.ApplyImpulse(new b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
+      this.body.ApplyImpulse(new box_2d.b2Vec2(1.25 * impulse_force*Math.cos(hit_angle), 1.25 * impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     } else {
-      this.body.ApplyImpulse(new b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
+      this.body.ApplyImpulse(new box_2d.b2Vec2(impulse_force*Math.cos(hit_angle), impulse_force*Math.sin(hit_angle)), this.body.GetWorldCenter())
     }
 
   }
@@ -176,7 +176,7 @@ Tank.prototype.explode = function() {
   {
     var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
     var force = this.tank_force;
-    this.player.body.ApplyImpulse(new b2Vec2(force * Math.cos(tank_angle), force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(force * Math.cos(tank_angle), force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
     // If you get caught in explosion, your combo resets.
     if (this.cause_of_death != "hit_player") {
       this.impulse_game_state.reset_combo()
@@ -189,7 +189,7 @@ Tank.prototype.explode = function() {
     if(this.level.enemies[i] !== this && utils.pDist(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) <= this.effective_radius * this.bomb_factor)
     {
       var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
-      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(_angle), this.tank_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       this.level.enemies[i].open(1500)
 
     }

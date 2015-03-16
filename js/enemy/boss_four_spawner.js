@@ -82,7 +82,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
 
       var temp_enemy = new (enemyData[this.enemy_type].className)(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
 
-      var force = new b2Vec2(Math.cos(angle), Math.sin(angle))
+      var force = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle))
       force.Multiply(this.push_force)
       temp_enemy.body.ApplyImpulse(force, temp_enemy.body.GetWorldCenter())
       temp_enemy.set_heading(angle);
@@ -142,13 +142,13 @@ BossFourSpawner.prototype.collide_with = function(other) {
   /*if(other === this.player) {
 
       var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
+      this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }*/
 }
 
 BossFourSpawner.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {
   if(this.spawned)  {
-    this.body.ApplyImpulse(new b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
+    this.body.ApplyImpulse(new box_2d.b2Vec2(this.impulse_extra_factor * impulse_force*Math.cos(hit_angle), this.impulse_extra_factor * impulse_force*Math.sin(hit_angle)),
       this.body.GetWorldCenter())
     this.process_impulse_specific(attack_loc, impulse_force, hit_angle)
   }

@@ -63,8 +63,8 @@ Spear.prototype.additional_processing = function(dt) {
 Spear.prototype.player_hit_proc = function() {
   if(!this.is_silenced()) {
     var spear_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-    var a = new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
-    this.player.body.ApplyImpulse(new b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
+    var a = new box_2d.b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle))
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.spear_force * Math.cos(spear_angle), this.spear_force * Math.sin(spear_angle)), this.player.body.GetWorldCenter())
   }
 }
 

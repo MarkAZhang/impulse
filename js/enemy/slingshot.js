@@ -49,7 +49,7 @@ Slingshot.prototype.enemy_move = Enemy.prototype.move
 Slingshot.prototype.move = function() {
   if(this.slingshot_mode) {
     if(!this.is_locked()) {
-      var dir = new b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
+      var dir = new box_2d.b2Vec2(this.slingshot_point.x - this.body.GetPosition().x, this.slingshot_point.y - this.body.GetPosition().y)
       dir.Multiply(this.slingshot_multiplier)
       if(this.is_gooed())
         dir.Multiply(this.slow_factor)
@@ -107,7 +107,7 @@ Slingshot.prototype.additional_processing = function(dt) {
 Slingshot.prototype.player_hit_proc = function() {
 
   var spear_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-  var a = new b2Vec2(Math.cos(spear_angle), Math.sin(spear_angle))
+  var a = new box_2d.b2Vec2(Math.cos(spear_angle), Math.sin(spear_angle))
   if(this.empowered_duration > 0)
   {
     a.Multiply(this.empowered_force)

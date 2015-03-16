@@ -144,7 +144,7 @@ BossTwo.prototype.adjust_size = function() {
 
     for(var j = 0; j < vertices.length; j++)
     {
-      vertices[j] = new b2Vec2(polygon.x + (polygon.r * polygon.vertices[j][0]) * this.last_growth_factor,
+      vertices[j] = new box_2d.b2Vec2(polygon.x + (polygon.r * polygon.vertices[j][0]) * this.last_growth_factor,
         polygon.y + polygon.r * polygon.vertices[j][1] * this.last_growth_factor)
     }
 
@@ -250,7 +250,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
     var gravity_force = this.enemy_gravity_factor[this.level.enemies[i].type] * this.get_gravity_force(this.level.enemies[i].body.GetPosition(), true)
 
     if(gravity_force > 0)
-      this.level.enemies[i].body.ApplyImpulse(new b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
+      this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
   }
 
   this.player_gravity_force = 0
@@ -260,7 +260,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
 
   if(gravity_force > 0) {
     this.player_gravity_force += gravity_force
-    this.player.body.ApplyImpulse(new b2Vec2(gravity_force *  Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(gravity_force *  Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.player.body.GetWorldCenter())
   }
 
 
@@ -446,7 +446,7 @@ BossTwo.prototype.additional_death_prep_specific = function() {
   for (var i = 0; i < 10; i++) {
     var type = this.absorbed_enemy_types[Math.floor(this.absorbed_enemy_types.length / 10 * i)];
     var angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition()) + (Math.random() - 0.5) * 2 * Math.PI;
-    var dir = new b2Vec2(Math.cos(angle), Math.sin(angle));
+    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
     dir.Normalize();
     dir.Multiply(100);
     this.level.add_fragments(type, this.body.GetPosition(), dir);
@@ -616,7 +616,7 @@ BossTwo.prototype.black_hole = function() {
 
     this.player_gravity_force += black_hole_force
 
-    this.player.body.ApplyImpulse(new b2Vec2(black_hole_force * Math.cos(tank_angle),
+    this.player.body.ApplyImpulse(new box_2d.b2Vec2(black_hole_force * Math.cos(tank_angle),
     black_hole_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
   }
 
@@ -627,11 +627,11 @@ BossTwo.prototype.black_hole = function() {
       {
         var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
         var suction_force = this.black_hole_force * this.enemy_gravity_factor[this.level.enemies[i].type] * black_hole_factor
-        this.level.enemies[i].body.ApplyImpulse(new b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+        this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       } else {
         var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition()) + Math.PI
         var suction_force = this.boss_low_gravity_force * this.enemy_gravity_factor[this.level.enemies[i].type]
-        this.level.enemies[i].body.ApplyImpulse(new b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
+        this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(suction_force * Math.cos(_angle), suction_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
       }
     }
   }
