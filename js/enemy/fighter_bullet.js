@@ -143,7 +143,7 @@ FighterBullet.prototype.check_death = function()
       return
     }
   }
-  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= imp_params.canvasWidth/imp_params.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= imp_params.canvasWidth/imp_params.draw_factor + 5)
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= dom.canvasWidth/imp_params.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= dom.canvasWidth/imp_params.draw_factor + 5)
   {
     this.start_death("kill")
   }

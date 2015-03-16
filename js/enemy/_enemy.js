@@ -606,7 +606,7 @@ Enemy.prototype.start_death = function(death) {
       this.impulse_game_state.increment_combo()
       this.impulse_game_state.check_cutoffs()
       if (score_value > questData["high_roller"].score_cutoff) {
-        set_quest_completed("high_roller");
+        saveData.setQuestCompleted("high_roller");
       }
     }
   }

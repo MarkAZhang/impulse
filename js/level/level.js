@@ -257,9 +257,9 @@ Level.prototype.process = function(dt) {
     if(this.gateway_transition_duration > 0) {
       this.gateway_transition_duration -= dt
     } else {
-      imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
-      this.draw_bg(imp_params.bg_ctx)
-      imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
+      layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+      this.draw_bg(layers.bgCtx)
+      layers.bgCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
       this.gateway_transition_duration = null
     }
   }
@@ -509,7 +509,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, imp_params.levelWidth/imp_params.draw_factor/2, (imp_params.levelHeight)/imp_params.draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, dom.levelWidth/imp_params.draw_factor/2, (dom.levelHeight)/imp_params.draw_factor/2, this.enemy_counter, this.impulse_game_state)
     this.boss = temp_enemy
     this.boss_spawned = true
   }
@@ -691,9 +691,9 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
   if(this.redraw_bg) {
-    imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
-    this.draw_bg(imp_params.bg_ctx, true)
-    imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
+    layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+    this.draw_bg(layers.bgCtx, true)
+    layers.bgCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
     this.redraw_bg = false
   }
 
@@ -746,7 +746,7 @@ Level.prototype.draw = function(context, draw_factor) {
   if(this.boss_delay_timer >= 0) {
 
     context.beginPath()
-    context.arc(imp_params.levelWidth/draw_factor/2 * draw_factor, (imp_params.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    context.arc(dom.levelWidth/draw_factor/2 * draw_factor, (dom.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
 
     context.lineWidth = 2
     context.strokeStyle = "gray"
@@ -769,26 +769,26 @@ Level.prototype.open_gateway = function() {
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
   bg_ctx.beginPath();
-  bg_ctx.rect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
+  bg_ctx.rect(0, 0, dom.levelWidth, dom.levelHeight)
   bg_ctx.fillStyle = this.dark_color;
   bg_ctx.fill();
   bg_ctx.clip()
 
   if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
     bg_ctx.restore();
   } else if(this.world_num != null && !this.is_level_zero) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+this.world_num)
     bg_ctx.restore();
   } else if (this.world_num != null && this.is_level_zero) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0");
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0");
     bg_ctx.restore();
   } else {
     bg_ctx.fillStyle = impulse_colors["world 0 bright"]
-    bg_ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
+    bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight)
   }
 
   if (this.is_level_zero) {
@@ -796,13 +796,13 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     var r = 0.15;
     var x = this.gateway_loc.x * imp_params.draw_factor;
     var y = this.gateway_loc.y * imp_params.draw_factor;
-    uiRenderUtils.tessellateBg(bg_ctx, x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
-      x + imp_params.levelWidth * r, y + imp_params.levelHeight * r,
+    uiRenderUtils.tessellateBg(bg_ctx, x - dom.levelWidth * r, y - dom.levelHeight * r,
+      x + dom.levelWidth * r, y + dom.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
     bg_ctx.restore();
     bg_ctx.beginPath();
-    bg_ctx.rect(x - imp_params.levelWidth * r, y - imp_params.levelHeight * r,
-      2 * imp_params.levelWidth * r, 2 * imp_params.levelHeight * r);
+    bg_ctx.rect(x - dom.levelWidth * r, y - dom.levelHeight * r,
+      2 * dom.levelWidth * r, 2 * dom.levelHeight * r);
     bg_ctx.lineWidth = 2;
     bg_ctx.strokeStyle = impulse_colors["world " + this.level_intro_state.world_num + " dark"];
     bg_ctx.stroke();

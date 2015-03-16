@@ -3,6 +3,13 @@ var GameEngine = function() {
     this.cur_game_state = null;
     this.cur_dialog_box = null;
     this.cur_popup_message = null;
+
+    this.bgFile = null;
+    this.bgAlpha = 0;
+    this.switchBgDuration = null;
+    this.switchBgTimer = 0;
+    this.altBgAlpha = 0;
+    this.altBgFile = null;
 };
 
 GameEngine.prototype.switch_game_state = function (game_state) {
@@ -15,7 +22,7 @@ GameEngine.prototype.switch_game_state = function (game_state) {
 
 GameEngine.prototype.step = function () {
   var cur_time = (new Date()).getTime()
-  imp_params.ctx.globalAlpha = 1;
+  layers.mainCtx.globalAlpha = 1;
   dt = cur_time - imp_params.last_time
   if (this.cur_dialog_box != null) {
     this.cur_dialog_box.process(dt);
@@ -25,13 +32,13 @@ GameEngine.prototype.step = function () {
   }
 
   if(!(this.cur_game_state instanceof ImpulseGameState)) {
-    imp_params.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    layers.mainCtx.clearRect(0, 0, canvas.width, canvas.height);
   } else if(this.cur_game_state instanceof ImpulseGameState &&  this.cur_game_state.ready) {
     if(this.cur_game_state.zoom != 1) {
-      imp_params.ctx.fillStyle= this.cur_game_state.dark_color;
-      imp_params.ctx.fillRect(imp_params.sidebarWidth, 0, imp_params.levelWidth, imp_params.levelHeight);
+      layers.mainCtx.fillStyle= this.cur_game_state.dark_color;
+      layers.mainCtx.fillRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
     } else {
-      imp_params.ctx.clearRect(imp_params.sidebarWidth, 0, imp_params.levelWidth, imp_params.levelHeight);
+      layers.mainCtx.clearRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
     }
 
   }
@@ -39,30 +46,30 @@ GameEngine.prototype.step = function () {
   if (this.cur_game_state) {
     this.cur_game_state.process(dt)
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      imp_params.ctx.fillStyle = "black"
-      imp_params.ctx.fillRect(0, 0, imp_params.sidebarWidth, imp_params.canvasHeight);
-      imp_params.ctx.fillRect(imp_params.canvasWidth - imp_params.sidebarWidth, 0, imp_params.sidebarWidth, imp_params.canvasHeight);
-      imp_params.ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
-      this.cur_game_state.draw(imp_params.ctx, imp_params.bg_ctx);
-      imp_params.ctx.translate(-imp_params.sidebarWidth, 0)//allows us to have a topbar
+      layers.mainCtx.fillStyle = "black"
+      layers.mainCtx.fillRect(0, 0, dom.sideBarWidth, dom.canvasHeight);
+      layers.mainCtx.fillRect(dom.canvasWidth - dom.sideBarWidth, 0, dom.sideBarWidth, dom.canvasHeight);
+      layers.mainCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+      this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
+      layers.mainCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
     } else {
-      this.cur_game_state.draw(imp_params.ctx, imp_params.bg_ctx);
-      imp_params.ctx.save()
-      this.cur_game_state.set_zoom_transparency(imp_params.ctx)
-      imp_params.ctx.restore()
+      this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
+      layers.mainCtx.save()
+      this.cur_game_state.set_zoom_transparency(layers.mainCtx)
+      layers.mainCtx.restore()
     }
   }
 
 
   if(this.cur_dialog_box!=null) {
-    imp_params.ctx.save();
-    imp_params.ctx.globalAlpha = 1
-    this.cur_dialog_box.draw(imp_params.ctx)
-    imp_params.ctx.restore();
+    layers.mainCtx.save();
+    layers.mainCtx.globalAlpha = 1
+    this.cur_dialog_box.draw(layers.mainCtx)
+    layers.mainCtx.restore();
   }
 
   if (this.cur_popup_message != null) {
-    this.draw_popup_message(imp_params.ctx)
+    this.draw_popup_message(layers.mainCtx)
   }
 
   imp_params.last_time = cur_time
@@ -84,7 +91,7 @@ GameEngine.prototype.clear_dialog_box = function() {
 
 GameEngine.prototype.set_popup_message = function(type, duration, color, world_num) {
   this.cur_popup_message = new MessageBox(type, color ? color : "white", world_num ? world_num : 0);
-  this.cur_popup_message.set_position(imp_params.canvasWidth/2, imp_params.canvasHeight - 10 - this.cur_popup_message.h)
+  this.cur_popup_message.set_position(dom.canvasWidth/2, dom.canvasHeight - 10 - this.cur_popup_message.h)
   this.cur_popup_message.set_visible(true)
   this.cur_popup_duration = duration;
   this.cur_popup_timer = duration;
@@ -124,7 +131,7 @@ GameEngine.prototype.on_mouse_move = function(mPos) {
 
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_move(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_mouse_move(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_move(mPos.x, mPos.y)
     }
@@ -138,7 +145,7 @@ GameEngine.prototype.on_mouse_down = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_down(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_mouse_down(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_down(mPos.x, mPos.y)
     }
@@ -152,7 +159,7 @@ GameEngine.prototype.on_right_mouse_down = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_mouse_down(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_right_mouse_down(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_mouse_down(mPos.x, mPos.y)
     }
@@ -166,7 +173,7 @@ GameEngine.prototype.on_mouse_up = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_up(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_mouse_up(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_up(mPos.x, mPos.y)
     }
@@ -180,7 +187,7 @@ GameEngine.prototype.on_right_mouse_up = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_mouse_up(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_right_mouse_up(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_mouse_up(mPos.x, mPos.y)
     }
@@ -194,7 +201,7 @@ GameEngine.prototype.on_click = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_click(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_click(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_click(mPos.x, mPos.y)
     }
@@ -208,7 +215,7 @@ GameEngine.prototype.on_right_click = function(mPos) {
   }
   if (this.cur_game_state) {
     if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_click(mPos.x - imp_params.sidebarWidth, mPos.y)
+      this.cur_game_state.on_right_click(mPos.x - dom.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_click(mPos.x, mPos.y)
     }
@@ -229,11 +236,11 @@ GameEngine.prototype.on_key_down = function(keyCode) {
   }
 
   if(keyCode == controls.keys.MUTE_KEY) { //X = mute/unmute
-    toggle_mute()
+    game_engine.toggleMute()
   }
 
   if(keyCode == controls.keys.FULLSCREEN_KEY) {
-    toggleFullScreen()
+    dom.toggleFullScreen()
   }
 
   if(this.cur_dialog_box) {
@@ -254,5 +261,90 @@ GameEngine.prototype.on_key_up = function(keyCode) {
     this.cur_game_state.on_key_up(keyCode)
   }
 };
+
+// Send logging to server with Raven.
+GameEngine.prototype.send_logging_to_server = function(msg, tags) {
+  if (window.location.host === 'localhost') {
+    window.console.log('LOGGING');
+    window.console.log(msg);
+    window.console.log(tags);
+  } else {
+    window["Raven"]["captureMessage"](msg, tags);
+  }
+};
+
+GameEngine.prototype.toggleMute = function () {
+  if(!imp_params.impulse_music.mute) {
+    imp_params.impulse_music.mute_bg()
+    imp_params.impulse_music.mute_effects(true);
+  } else {
+    imp_params.impulse_music.unmute_bg()
+    imp_params.impulse_music.mute_effects(false)
+  }
+  if (this.cur_dialog_box && this.cur_dialog_box instanceof OptionsMenu) {
+    this.cur_dialog_box.sendMuteSignal(imp_params.impulse_music.mute);
+  }
+};
+
+GameEngine.prototype.switchBg = function(bg_file, duration, alpha) {
+  // Only perform the switch if the bg_file is different.
+  if (this.bgFile != bg_file) {
+    this.switchBgDuration = duration;
+    this.switchBgTimer = duration;
+    var alt_title_bg_ctx = layers.altTitleBgCanvas.getContext('2d');
+    // bg_file can also be a color.
+    if (bg_file.substring(0, 1) == "#") {
+      alt_title_bg_ctx.fillStyle = bg_file;
+      alt_title_bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight);
+    } else {
+      uiRenderUtils.tessellateBg(alt_title_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, bg_file)
+    }
+
+    this.altBgAlpha = alpha;
+    this.altBgFile = bg_file;
+  }
+}
+
+// Will immediately draw the new bg onto the bg_ctx.
+GameEngine.prototype.setBg = function(bg_file, alpha) {
+  var title_bg_ctx = layers.titleBgCanvas.getContext('2d');
+  if (bg_file.substring(0, 1) == "#") {
+    title_bg_ctx.fillStyle = bg_file;
+    title_bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight);
+  } else {
+    uiRenderUtils.tessellateBg(title_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, bg_file)
+  }
+  this.bgAlpha = alpha;
+  this.bgFile = bg_file;
+
+  layers.bgCtx.clearRect(0, 0, canvas.width, canvas.height);
+  layers.bgCtx.fillStyle = "#000"
+  layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
+  layers.bgCtx.globalAlpha = this.bgAlpha;
+
+  layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+  layers.bgCtx.globalAlpha = 1
+}
+
+GameEngine.prototype.processAndDrawBg = function(dt) {
+  if (this.switchBgTimer > 0) {
+    var prog = this.switchBgTimer / this.switchBgDuration;
+
+    layers.bgCtx.clearRect(0, 0, canvas.width, canvas.height);
+    layers.bgCtx.fillStyle = "#000"
+    layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
+    layers.bgCtx.globalAlpha = prog * this.bgAlpha
+    layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+    layers.bgCtx.globalAlpha = (1 - prog) * this.altBgAlpha
+    layers.bgCtx.drawImage(layers.altTitleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+    layers.bgCtx.globalAlpha = 1
+
+    this.switchBgTimer -= dt;
+  } else if (this.switchBgDuration != null) {
+    // At the end of the transition, directly set the bg.
+    this.switchBgDuration = null;
+    this.setBg(this.altBgFile, this.altBgAlpha);
+  }
+}
 
 game_engine = new GameEngine();

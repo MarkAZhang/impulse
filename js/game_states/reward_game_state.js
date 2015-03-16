@@ -23,8 +23,8 @@ function RewardGameState(hive_numbers, main_game, args) {
   var _this = this;
   this.initial_difficulty_mode = saveData.difficultyMode;
 
-  this.normal_mode_button = new IconButton("NORMAL MODE", 20, imp_params.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
-  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, imp_params.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
+  this.normal_mode_button = new IconButton("NORMAL MODE", 20, dom.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
+  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, dom.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
 
   this.debug()
 
@@ -57,25 +57,25 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   var cur_reward = this.rewards[this.cur_reward_index]
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "display:none")
-    var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
+    var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
     if (cur_reward.type == "world_victory") {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+(cur_reward.data+1))
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+(cur_reward.data+1))
     } else if (cur_reward.type == "final_victory") {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Title Alt4")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Title Alt4")
     } else {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
     }
     this.bg_drawn = true
   }
   ctx.save()
   if (cur_reward.type == "world_victory") {
-    ctx.globalAlpha *= get_bg_opacity(cur_reward.data + 1);
+    ctx.globalAlpha *= uiRenderUtils.getBgOpacity(cur_reward.data + 1);
   } else if (cur_reward.type == "final_victory") {
-    ctx.globalAlpha *= get_bg_opacity(0) / 2;
+    ctx.globalAlpha *= uiRenderUtils.getBgOpacity(0) / 2;
   } else {
-    ctx.globalAlpha *= get_bg_opacity(0);
+    ctx.globalAlpha *= uiRenderUtils.getBgOpacity(0);
   }
-  ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, 0, 0, imp_params.levelWidth, imp_params.levelHeight)
+  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, 0, 0, dom.levelWidth, dom.levelHeight)
   ctx.restore()
   ctx.save();
   // change transparency for transition
@@ -96,7 +96,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
-    uiRenderUtils.drawTessellationSign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 100)
+    uiRenderUtils.drawTessellationSign(ctx, tessellation_num, dom.levelWidth/2, 250, 100)
     ctx.restore()
   }
   var main_message = ""
@@ -112,7 +112,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
-      ctx.fillText(levelData.hiveNames[cur_reward.data+1], imp_params.levelWidth/2, 270)
+      ctx.fillText(levelData.hiveNames[cur_reward.data+1], dom.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
@@ -123,16 +123,16 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
-      ctx.fillText(final_message, imp_params.levelWidth/2, 240)
+      ctx.fillText(final_message, dom.levelWidth/2, 240)
       ctx.font = "20px Muli"
       ctx.fillStyle = "red"
-      ctx.fillText(final_message_teaser, imp_params.levelWidth/2, 280)
+      ctx.fillText(final_message_teaser, dom.levelWidth/2, 280)
 
       ctx.font = "16px Muli"
       ctx.fillStyle = "white"
       if (this.initial_difficulty_mode == "easy") {
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE", imp_params.levelWidth/2, 320)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE", dom.levelWidth/2, 320)
         // TODO: add sharing
       }
     }
@@ -145,35 +145,35 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, imp_params.levelWidth/2, main_reward_text_y + 20)
+      ctx.fillText("+"+cur_reward.data.diff, dom.levelWidth/2, main_reward_text_y + 20)
 
       ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = 'white'
-      ctx.fillText("NEW SKILL RATING", imp_params.levelWidth/2, new_values_text_y - 25)
+      ctx.fillText("NEW SKILL RATING", dom.levelWidth/2, new_values_text_y - 25)
       ctx.font = '48px Muli'
-      ctx.fillText(cur_reward.data.new_rating, imp_params.levelWidth/2, new_values_text_y + 25)
+      ctx.fillText(cur_reward.data.new_rating, dom.levelWidth/2, new_values_text_y + 25)
     }
 
     if(cur_reward.type == "quest") {
       var tessellation_num = 0
       ctx.save()
-      uiRenderUtils.drawTessellationSign(ctx, tessellation_num, imp_params.levelWidth/2, 250, 150)
+      uiRenderUtils.drawTessellationSign(ctx, tessellation_num, dom.levelWidth/2, 250, 150)
       ctx.restore()
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
 
       ctx.font = '32px Muli'
-      ctx.fillText("CHALLENGE COMPLETE!", imp_params.levelWidth/2, 120)
+      ctx.fillText("CHALLENGE COMPLETE!", dom.levelWidth/2, 120)
 
 
-      questRenderUtils.draw_quest_button(ctx, imp_params.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
+      questRenderUtils.draw_quest_button(ctx, dom.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
       ctx.font = '24px Muli'
       ctx.fillStyle = "white"
       for (var i = 0; i < questData[cur_reward.data.type].text.length; i++) {
         var text = questData[cur_reward.data.type].text[i];
-        ctx.fillText(text, imp_params.levelWidth / 2, main_reward_text_y + 150 + i * 36);
+        ctx.fillText(text, dom.levelWidth / 2, main_reward_text_y + 150 + i * 36);
       }
 
     }
@@ -182,10 +182,10 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "30px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("INTRO TUTORIAL COMPLETE", imp_params.levelWidth/2, 250)
+      ctx.fillText("INTRO TUTORIAL COMPLETE", dom.levelWidth/2, 250)
       ctx.fillStyle = "white"
       ctx.font = "16px Muli"
-      ctx.fillText("INITIALIZING MAIN GAME...", imp_params.levelWidth/2, 550)
+      ctx.fillText("INITIALIZING MAIN GAME...", dom.levelWidth/2, 550)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -202,14 +202,14 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.font = "16px Muli"
-      ctx.fillText(main_message_teaser, imp_params.levelWidth/2, 70)
+      ctx.fillText(main_message_teaser, dom.levelWidth/2, 70)
       ctx.font = message_size + "px Muli"
       if (cur_reward.type == "world_victory") {
         ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
       } else {
         ctx.fillStyle = impulse_colors["impulse_blue"]
       }
-      ctx.fillText(main_message, imp_params.levelWidth/2, 120)
+      ctx.fillText(main_message, dom.levelWidth/2, 120)
     }
 
     if (cur_reward.type != "select_difficulty") {
@@ -218,15 +218,15 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "16px Muli"
       if (cur_reward.type != "first_time_tutorial") {
         if (cur_reward.type != "ult")
-          ctx.fillText("PRESS ANY KEY TO CONTINUE", imp_params.levelWidth/2, imp_params.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY TO CONTINUE", dom.levelWidth/2, dom.levelHeight - 30)
         else
-          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", imp_params.levelWidth/2, imp_params.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", dom.levelWidth/2, dom.levelHeight - 30)
       }
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", imp_params.levelWidth/2, imp_params.levelHeight - 75)
+      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", dom.levelWidth/2, dom.levelHeight - 75)
     }
     ctx.restore();
 }
@@ -291,9 +291,9 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
 
   if (saveData.difficultyMode == "normal" && !saveData.firstTime && go_to_world_num !== 0) {
-    set_bg("Title Alt" + go_to_world_num, get_world_map_bg_opacity(go_to_world_num))
+    game_engine.setBg("Title Alt" + go_to_world_num, uiRenderUtils.getWorldMapBgOpacity(go_to_world_num))
   } else {
-    set_bg("Hive 0", imp_params.hive0_bg_opacity)
+    game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
   }
 
   game_engine.switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));
@@ -329,7 +329,7 @@ RewardGameState.prototype.advance_game_state = function() {
 RewardGameState.prototype.determine_rewards = function() {
   if(this.args.is_tutorial) {
     if(this.args.tutorial_type == "first_time_tutorial" || this.args.first_time_tutorial) {
-      send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.args.skipped});
+      game_engine.send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.args.skipped});
       this.rewards.push({
         type: "first_time_tutorial"
       })

@@ -17,6 +17,31 @@ uiRenderUtils.drawEnemyButton = function(ctx, x, y, r, type) {
   enemyRenderUtils.drawEnemy(ctx, type, x, y, 30)
 }
 
+
+uiRenderUtils.getBgOpacity = function(world) {
+  // Return opacity for the background in world menus.
+  var opacity_array = [
+    imp_params.hive0_bg_opacity,
+    imp_params.bg_opacity,
+    0.8,
+    0.4,
+    imp_params.bg_opacity
+  ];
+  return opacity_array[world];
+}
+
+uiRenderUtils.getWorldMapBgOpacity = function(world) {
+  // Return opacity for the background in world-map state.
+  var opacity_array = [
+    imp_params.hive0_bg_opacity,
+    0.2,
+    0.35,
+    0.3,
+    0.25,
+  ];
+  return opacity_array[world];
+}
+
 uiRenderUtils.tessellateBg = function(ctx, xLow, yLow, xHigh, yHigh, spriteName) {
   var bg = sprites.bgImages[spriteName]
   var w = bg.width;

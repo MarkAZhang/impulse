@@ -25,9 +25,9 @@ levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_n
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
-    context.moveTo(x - w/2 + polygons[i][0][0]/imp_params.levelWidth * w, y - h/2 + polygons[i][0][1]/(imp_params.levelHeight) * h)
+    context.moveTo(x - w/2 + polygons[i][0][0]/dom.levelWidth * w, y - h/2 + polygons[i][0][1]/(dom.levelHeight) * h)
     for(var j = 1; j < polygons[i].length; j++) {
-      context.lineTo(x - w/2 + polygons[i][j][0]/imp_params.levelWidth * w, y -h/2 +  polygons[i][j][1]/(imp_params.levelHeight) * h)
+      context.lineTo(x - w/2 + polygons[i][j][0]/dom.levelWidth * w, y -h/2 +  polygons[i][j][1]/(dom.levelHeight) * h)
     }
     context.closePath()
     context.fillStyle = "black"

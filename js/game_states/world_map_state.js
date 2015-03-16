@@ -19,17 +19,17 @@ function WorldMapState(world, is_practice_mode) {
   this.buttons = []
   var _this = this
 
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_params.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
+  this.buttons.push(new IconButton("BACK", 16, 70, dom.levelHeight/2+260, 60, 65, this.color, impulse_colors["impulse_blue"], function(){
     _this.fader.set_animation("fade_out", function() {
       game_engine.switch_game_state(new TitleState(_this));
     });
-    switch_bg("Hive 0", 250, imp_params.hive0_bg_opacity)
+    game_engine.switchBg("Hive 0", 250, imp_params.hive0_bg_opacity)
   }, "back"));
 
   this.difficulties = ["easy", "normal"];
 
   if (true) {
-    this.select_difficulty_button = new SelectDifficultyButton(16, 730, imp_params.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
+    this.select_difficulty_button = new SelectDifficultyButton(16, 730, dom.levelHeight/2+260, 100, 65, this.color, impulse_colors["impulse_blue"], this)
     this.buttons.push(this.select_difficulty_button);
   }
 
@@ -49,7 +49,7 @@ function WorldMapState(world, is_practice_mode) {
   }
 
 
-  this.world_button_y = imp_params.levelHeight/2;
+  this.world_button_y = dom.levelHeight/2;
   this.set_up_buttons();
 
   imp_params.impulse_music.play_bg(audioData.songs["Menu"])
@@ -73,7 +73,7 @@ function WorldMapState(world, is_practice_mode) {
   this.gateway_particle_gen_timer = this.gateway_particle_gen_interval
   this.gateway_particle_duration = 2000
   // We need to divide by draw_factor due to the implementation in level.js
-  this.gateway_loc = {x: imp_params.levelWidth/2/imp_params.draw_factor, y: this.world_button_y/imp_params.draw_factor}
+  this.gateway_loc = {x: dom.levelWidth/2/imp_params.draw_factor, y: this.world_button_y/imp_params.draw_factor}
   this.gateway_size = 5
   this.gateway_particles_per_round = 8
 
@@ -116,7 +116,7 @@ WorldMapState.prototype.set_up_buttons = function() {
       this.set_up_world_map(this.difficulties[i])
     } else {
       this.set_up_practice_buttons(this.difficulties[i])
-      this.set_up_world_icon(0, imp_params.levelWidth/2, this.world_button_y, true, this.difficulties[i])
+      this.set_up_world_icon(0, dom.levelWidth/2, this.world_button_y, true, this.difficulties[i])
     }
   }
 }
@@ -124,7 +124,7 @@ WorldMapState.prototype.set_up_buttons = function() {
 WorldMapState.prototype.set_up_world_map = function(difficulty) {
     var _this = this;
     for (var i = 0; i <= 4; i++) {
-      this.set_up_world_icon(i, imp_params.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)
+      this.set_up_world_icon(i, dom.levelWidth/2, this.world_button_y, this.world_unlocked[difficulty][i], difficulty)
     }
 }
 
@@ -141,7 +141,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
       num_buttons_to_show += 1;
     }
   }
-  var cur_x =  imp_params.levelWidth/2 - ((num_buttons_to_show - 1) * 0.5) * diff
+  var cur_x =  dom.levelWidth/2 - ((num_buttons_to_show - 1) * 0.5) * diff
 
   for(var i = 0; i < num_buttons_to_show; i++) {
     var _this = this;
@@ -157,7 +157,7 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
         }
       };
     })(i)
-    this.mode_buttons[difficulty].push(new IconButton(text[i], 16, cur_x + (i)*diff, imp_params.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))
+    this.mode_buttons[difficulty].push(new IconButton(text[i], 16, cur_x + (i)*diff, dom.levelHeight/2+250, 60, 60, impulse_colors["world "+i+" bright"], impulse_colors["impulse_blue"], callback, "world"+i))
   }
 }
 
@@ -186,9 +186,9 @@ WorldMapState.prototype.update_bg = function(index, difficulty) {
     index = this.world_num;
   }
   if (index != 0 && difficulty == "normal") {
-    switch_bg("Title Alt" + index, 250, get_world_map_bg_opacity(index))
+    game_engine.switchBg("Title Alt" + index, 250, uiRenderUtils.getWorldMapBgOpacity(index))
   } else {
-    switch_bg("Hive 0", 250, imp_params.hive0_bg_opacity)
+    game_engine.switchBg("Hive 0", 250, imp_params.hive0_bg_opacity)
   }
 }
 
@@ -213,7 +213,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
           _this.fade_out_duration = _this.fade_out_interval;
           _this.fade_out_color = impulse_colors["world "+ index +" dark"];
           _this.transition_to_world_num = index;
-          var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
+          var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
           _this.draw_world_bg(world_bg_ctx)
           setTimeout(function(){
             game_engine.switch_game_state(new LevelIntroState(level, index));
@@ -221,8 +221,8 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
         }
 
       })(level_name, i)
-      var x = imp_params.levelWidth/2 + ((-1.5 + (j % 4)) * 150);
-      var y = j >= 4 ? imp_params.levelHeight/2+100  : imp_params.levelHeight/2
+      var x = dom.levelWidth/2 + ((-1.5 + (j % 4)) * 150);
+      var y = j >= 4 ? dom.levelHeight/2+100  : dom.levelHeight/2
 
       var new_button = new IconButton(j+1, 30, x, y, 75, 75, this_color, this_color, callback, "practice"+i);
       new_button.underline_on_hover = false
@@ -246,7 +246,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
       _this.fade_out_duration = _this.fade_out_interval;
       _this.fade_out_color = impulse_colors["world "+world_num+" dark"];
       _this.transition_to_world_num = world_num;
-      var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
+      var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
       _this.draw_world_bg(world_bg_ctx)
       setTimeout(function(){
         game_engine.switch_game_state(new MainGameTransitionState(world_num, null, null, null, false))
@@ -255,7 +255,7 @@ WorldMapState.prototype.set_up_world_icon = function(world_num, x, y, unlocked, 
 }
 
 WorldMapState.prototype.draw_world_bg = function(ctx) {
-  uiRenderUtils.tessellateBg(ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive "+this.world_num)
+  uiRenderUtils.tessellateBg(ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+this.world_num)
 }
 
 WorldMapState.prototype.draw = function(ctx, bg_ctx) {
@@ -266,11 +266,11 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
     ctx.save()
     ctx.globalAlpha = 1-(this.fade_out_duration/this.fade_out_interval)
     ctx.fillStyle = this.fade_out_color
-    ctx.fillRect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
-    ctx.globalAlpha *= get_bg_opacity(this.world_num)
-    if (!should_show_level_zero(this.transition_to_world_num) &&
+    ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight)
+    ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num)
+    if (!saveData.shouldShowLevelZero(this.transition_to_world_num) &&
       !imp_params.debug.show_zero_level) {
-      ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, 0, 0, imp_params.levelWidth, imp_params.levelHeight)
+      ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, 0, 0, dom.levelWidth, dom.levelHeight)
     }
     ctx.restore()
   }
@@ -305,7 +305,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
 
   ctx.font = '13px Muli'
   ctx.fillStyle = "white"
-  ctx.fillText("SELECT HIVE", imp_params.levelWidth/2, imp_params.levelHeight/2 + 215)
+  ctx.fillText("SELECT HIVE", dom.levelWidth/2, dom.levelHeight/2 + 215)
 
   if (this.fader.get_current_animation() == "fade_across") {
     ctx.save();
@@ -342,11 +342,11 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
     if (this.is_practice_mode) {
       ctx.fillStyle = "white"
       ctx.font = "20px Muli"
-      ctx.fillText("PRACTICE MODE", imp_params.levelWidth/2, this.world_button_y - 170)
+      ctx.fillText("PRACTICE MODE", dom.levelWidth/2, this.world_button_y - 170)
     } else if (saveData.difficultyMode == "normal") {
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
-      ctx.fillText("HARD MODE", imp_params.levelWidth/2, this.world_button_y - 170)
+      ctx.fillText("HARD MODE", dom.levelWidth/2, this.world_button_y - 170)
     }
   }
 
@@ -355,9 +355,9 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   ctx.font = "42px Muli"
   ctx.textAlign = "center"
   if (index > 0) {
-    ctx.fillText(levelData.hiveNames[index], imp_params.levelWidth/2, this.world_button_y - 125)
+    ctx.fillText(levelData.hiveNames[index], dom.levelWidth/2, this.world_button_y - 125)
   } else {
-    ctx.fillText("TUTORIAL", imp_params.levelWidth/2, this.world_button_y - 125)
+    ctx.fillText("TUTORIAL", dom.levelWidth/2, this.world_button_y - 125)
   }
 
   // mode buttons
@@ -368,10 +368,10 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
       ctx.font = '15px Muli'
       if (i == 0) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText("TUTORIAL", imp_params.levelWidth/2, imp_params.levelHeight - 8)
+        ctx.fillText("TUTORIAL", dom.levelWidth/2, dom.levelHeight - 8)
       } else if(this.mode_buttons[difficulty][i].active) {
         ctx.fillStyle = impulse_colors['world '+(i)+" bright"]
-        ctx.fillText(levelData.hiveNames[i], imp_params.levelWidth/2, imp_params.levelHeight - 8)
+        ctx.fillText(levelData.hiveNames[i], dom.levelWidth/2, dom.levelHeight - 8)
       }
     }
   }
@@ -397,7 +397,7 @@ WorldMapState.prototype.process = function(dt) {
   this.process_gateway_particles(dt);
   this.fader.process(dt);
 
-  process_and_draw_bg(dt);
+  game_engine.processAndDrawBg(dt);
 }
 
 WorldMapState.prototype.on_mouse_move = function(x, y) {

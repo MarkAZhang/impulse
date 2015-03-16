@@ -143,8 +143,8 @@ TutorialOverlay.prototype.process_internal = function(dt) {
     var pos_y = this.impulse_game_state.player.body.GetPosition().y * imp_params.draw_factor;
     if (pos_x < this.hover_overlay.w / 2 + 5) {
       pos_x = this.hover_overlay.w / 2 + 5;
-    } else if (pos_x > imp_params.levelWidth - this.hover_overlay.w / 2 - 5) {
-      pos_x = imp_params.levelWidth - this.hover_overlay.w / 2 - 5;
+    } else if (pos_x > dom.levelWidth - this.hover_overlay.w / 2 - 5) {
+      pos_x = dom.levelWidth - this.hover_overlay.w / 2 - 5;
     }
 
     if (pos_y < this.hover_overlay.h + 55) {
@@ -334,26 +334,26 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   ctx.textAlign = "center"
   var rw = 120;
   var rh = 80;
-  ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
   ctx.font = '21px Muli'
-    ctx.fillText("GOAL", imp_params.levelWidth + imp_params.sidebarWidth/2, 45)
+    ctx.fillText("GOAL", dom.levelWidth + dom.sideBarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_params.levelWidth + imp_params.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], dom.levelWidth + dom.sideBarWidth/2, 85)
 
   /*ctx.beginPath();
-  ctx.rect(imp_params.levelWidth - 10, 10, 50, 50);
+  ctx.rect(dom.levelWidth - 10, 10, 50, 50);
   ctx.fillStyle = "gray";
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, imp_params.levelWidth + 15, 35, 1, "white", "right");
+  uiRenderUtils.drawFullArrow(ctx, dom.levelWidth + 15, 35, 1, "white", "right");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
   ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2);
-  ctx.lineTo(imp_params.levelWidth - 10, 35);
+  ctx.lineTo(dom.levelWidth - 10, 35);
   ctx.closePath();
   ctx.stroke();
   ctx.fillStyle = "white"
@@ -361,7 +361,7 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   ctx.arc(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(imp_params.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
+  ctx.arc(dom.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
   ctx.fill();*/
 }
 
@@ -383,12 +383,12 @@ ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
   ctx.textAlign = "center"
   var rw = 120;
   var rh = 80;
-  ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
   ctx.font = '21px Muli'
-    ctx.fillText("GOAL", imp_params.levelWidth + imp_params.sidebarWidth/2, 45)
+    ctx.fillText("GOAL", dom.levelWidth + dom.sideBarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], imp_params.levelWidth + imp_params.sidebarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], dom.levelWidth + dom.sideBarWidth/2, 85)
 }
 
 ScorePointsReminderTutorialOverlay.prototype.satisfaction_criteria = function() {
@@ -415,25 +415,25 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   ctx.beginPath();
   var rw = 120;
   var rh = 70;
-  ctx.rect(-imp_params.sidebarWidth / 2 - rw / 2, imp_params.canvasHeight/2 - 20 - rh / 2, rw, rh);
+  ctx.rect(-dom.sideBarWidth / 2 - rw / 2, dom.canvasHeight/2 - 20 - rh / 2, rw, rh);
   ctx.stroke();
     ctx.font = '16px Muli';
-    ctx.fillText("LEVEL TIME",  -imp_params.sidebarWidth/2, imp_params.canvasHeight/2 - 30);
+    ctx.fillText("LEVEL TIME",  -dom.sideBarWidth/2, dom.canvasHeight/2 - 30);
     ctx.font = '32px Muli';
-    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -imp_params.sidebarWidth/2, imp_params.canvasHeight/2 + 2);
+    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -dom.sideBarWidth/2, dom.canvasHeight/2 + 2);
   /*ctx.beginPath();
-  ctx.rect(-40, imp_params.levelHeight - 60, 50, 50);
+  ctx.rect(-40, dom.levelHeight - 60, 50, 50);
   ctx.fillStyle = "gray";
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, -15, imp_params.levelHeight - 35, 1, "white", "left");
+  uiRenderUtils.drawFullArrow(ctx, -15, dom.levelHeight - 35, 1, "white", "left");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
   ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2);
-  ctx.lineTo(10, imp_params.levelHeight - 35);
+  ctx.lineTo(10, dom.levelHeight - 35);
   ctx.closePath();
   ctx.stroke();
   ctx.fillStyle = "white";
@@ -441,7 +441,7 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   ctx.arc(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(10, imp_params.levelHeight - 35, 3, 0, 2 * Math.PI);
+  ctx.arc(10, dom.levelHeight - 35, 3, 0, 2 * Math.PI);
   ctx.fill();*/
 }
 
@@ -471,14 +471,14 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
   ctx.beginPath();
   var rw = 100;
   var rh = 100;
-  ctx.rect(imp_params.levelWidth + imp_params.sidebarWidth/2 - rw/2, imp_params.canvasHeight/2 - rh/2 - 20, rw, rh);
+  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, dom.canvasHeight/2 - rh/2 - 20, rw, rh);
   ctx.stroke();
     ctx.font = '72px Muli';
-    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, imp_params.levelWidth + imp_params.sidebarWidth/2, imp_params.canvasHeight/2)
+    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, dom.levelWidth + dom.sideBarWidth/2, dom.canvasHeight/2)
 
   /*var a_loc = {
-    x: imp_params.levelWidth + 15,
-    y: imp_params.levelHeight / 2 - 20,
+    x: dom.levelWidth + 15,
+    y: dom.levelHeight / 2 - 20,
     w: 50,
     h: 50
   };

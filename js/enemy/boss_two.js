@@ -158,14 +158,14 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   if(!this.spawn_spawners) {
     this.spawn_spawners = true
     var spawner_buffer = 80
-    var locs = [[imp_params.levelWidth - spawner_buffer, imp_params.levelHeight - spawner_buffer],
+    var locs = [[dom.levelWidth - spawner_buffer, dom.levelHeight - spawner_buffer],
       [spawner_buffer, spawner_buffer]]
     if (saveData.difficultyMode == "normal") {
       locs = [
         [spawner_buffer, spawner_buffer],
-        [imp_params.levelWidth - spawner_buffer, spawner_buffer],
-        [imp_params.levelWidth - spawner_buffer, imp_params.levelHeight - spawner_buffer],
-        [spawner_buffer, imp_params.levelHeight - spawner_buffer]
+        [dom.levelWidth - spawner_buffer, spawner_buffer],
+        [dom.levelWidth - spawner_buffer, dom.levelHeight - spawner_buffer],
+        [spawner_buffer, dom.levelHeight - spawner_buffer]
       ];
     }
     for(var i = 0; i < locs.length; i++) {
@@ -358,7 +358,7 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.black_hole_timer - this.black_hole_duration/2)/(this.black_hole_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight)
+    context.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight)
     context.globalAlpha *= 2
   }
 
@@ -479,7 +479,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
   context.save()
   context.beginPath()
-  context.rect(0, 0, imp_params.levelWidth, imp_params.levelHeight)
+  context.rect(0, 0, dom.levelWidth, dom.levelHeight)
   context.clip()
 
   for(var j = 0; j < polygons.length; j++) {

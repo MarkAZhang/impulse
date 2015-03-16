@@ -29,8 +29,8 @@ IntroState.prototype.process = function(dt) {
 
 IntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    imp_params.bg_canvas.setAttribute("style", "")
-    set_bg("Hive 0", imp_params.hive0_bg_opacity)
+    layers.bgCanvas.setAttribute("style", "")
+    game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
     this.bg_drawn = true
   }
 
@@ -45,7 +45,7 @@ IntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.fillStyle = impulse_colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", imp_params.levelWidth/2, 200)
+  ctx.fillText("CREATED BY", dom.levelWidth/2, 200)
   uiRenderUtils.drawPorcelainLogo(ctx, 400, 300);
   ctx.restore()
 }

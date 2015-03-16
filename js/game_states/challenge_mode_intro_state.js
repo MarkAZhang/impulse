@@ -9,12 +9,12 @@ function ChallengeModeIntroState() {
   });
   this.fader.set_animation("fade_in");
   this.buttons = [];
-  this.buttons.push(new IconButton("BACK", 16, 70, imp_params.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+  this.buttons.push(new IconButton("BACK", 16, 70, dom.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
     _this.fader.set_animation("fade_out", function() {
       game_engine.switch_game_state(new TitleState(true))
     });
   }}(this), "back"));
-  this.buttons.push(new IconButton("CONTINUE", 16, imp_params.levelWidth - 70, imp_params.levelHeight/2+260, 60, 65,  "white", impulse_colors["impulse_blue"], function(_this){return function(){
+  this.buttons.push(new IconButton("CONTINUE", 16, dom.levelWidth - 70, dom.levelHeight/2+260, 60, 65,  "white", impulse_colors["impulse_blue"], function(_this){return function(){
     var i = 1;
     while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
       i += 1
@@ -40,8 +40,8 @@ ChallengeModeIntroState.prototype.process = function(dt) {
 
 ChallengeModeIntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-    imp_params.bg_canvas.setAttribute("style", "")
-    draw_image_on_bg_ctx(bg_ctx, imp_params.title_bg_canvas, imp_params.bg_opacity)
+    layers.bgCanvas.setAttribute("style", "")
+    draw_image_on_bg_ctx(bg_ctx, layers.titleBgCanvas, imp_params.bg_opacity)
     this.bg_drawn = true
   }
 
@@ -55,14 +55,14 @@ ChallengeModeIntroState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '32px Muli'
   ctx.fillStyle = "white"
 
-  ctx.fillText("CHALLENGE MODE", imp_params.levelWidth/2, 150)
-  renderUtils.drawSprite(ctx, imp_params.levelWidth/2, 210, 0, 60, 60, "white_flower")
+  ctx.fillText("CHALLENGE MODE", dom.levelWidth/2, 150)
+  renderUtils.drawSprite(ctx, dom.levelWidth/2, 210, 0, 60, 60, "white_flower")
   ctx.font = '18px Muli'
-  ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", imp_params.levelWidth/2, 300);
-  ctx.fillText("FOR EXPERIENCED PLAYERS.", imp_params.levelWidth/2, 325);
+  ctx.fillText("CHALLENGE MODE IS A HARDER VERSION OF IMPULSE", dom.levelWidth/2, 300);
+  ctx.fillText("FOR EXPERIENCED PLAYERS.", dom.levelWidth/2, 325);
 
-  ctx.fillText("IF THIS IS YOUR FIRST TIME,", imp_params.levelWidth/2, 400);
-  ctx.fillText("YOU MAY WANT TO TRY NORMAL MODE FIRST.", imp_params.levelWidth/2, 425);
+  ctx.fillText("IF THIS IS YOUR FIRST TIME,", dom.levelWidth/2, 400);
+  ctx.fillText("YOU MAY WANT TO TRY NORMAL MODE FIRST.", dom.levelWidth/2, 425);
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].draw(ctx)

@@ -69,7 +69,7 @@ var controls = {
   keys: RIGHT_MOUSE_BINDINGS
 };
 
-controls.set_key_bindings = function () {
+controls.setKeyBindings = function () {
   var type = saveData.optionsData.control_hand + " " + saveData.optionsData.control_scheme;
   if(type == "left mouse") {
     controls.keys = LEFT_MOUSE_BINDINGS;

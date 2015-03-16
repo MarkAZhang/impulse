@@ -281,7 +281,7 @@ utils.getBoundaryPolygon = function(polygon, radius) {
 
 utils.checkBounds = function(buffer, pt, draw_factor) {
   var factor = draw_factor ? draw_factor : 1;
-  return pt.x >= buffer && pt.y >= buffer && pt.x <= imp_params.levelWidth/factor - buffer && pt.y <= (imp_params.levelHeight)/factor - buffer;
+  return pt.x >= buffer && pt.y >= buffer && pt.x <= dom.levelWidth/factor - buffer && pt.y <= (dom.levelHeight)/factor - buffer;
 }
 
 utils.getSafestSpawnPoint = function(object, player, level_name) {
@@ -330,7 +330,7 @@ utils.getNearestSpawnPoint = function(object, player, level_name) {
 
 //gets random point that is not inside a boundary polygon
 utils.getRandomValidLocation = function(testPoint, buffer_radius, draw_factor) {
-  var r_point = {x:Math.random()*(imp_params.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((imp_params.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
+  var r_point = {x:Math.random()*(dom.levelWidth/draw_factor-2*buffer_radius)+buffer_radius, y: Math.random()*((dom.levelHeight)/draw_factor-2*buffer_radius)+buffer_radius}
   var inPoly = false
   for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -352,7 +352,7 @@ utils.getRandomValidLocation = function(testPoint, buffer_radius, draw_factor) {
 
 //gets random point that is not inside a boundary polygon
 utils.getRandomCentralValidLocation = function(testPoint) {
-  var r_point = {x:Math.random()*(imp_params.levelWidth/2/imp_params.draw_factor)+imp_params.levelWidth/4/imp_params.draw_factor, y: Math.random()*((imp_params.levelHeight)/2/imp_params.draw_factor)+(imp_params.levelHeight)/4/imp_params.draw_factor}
+  var r_point = {x:Math.random()*(dom.levelWidth/2/imp_params.draw_factor)+dom.levelWidth/4/imp_params.draw_factor, y: Math.random()*((dom.levelHeight)/2/imp_params.draw_factor)+(dom.levelHeight)/4/imp_params.draw_factor}
   var inPoly = false
   for(var k = 0; k < game_engine.cur_game_state.level.boundary_polygons.length; k++)
   {
@@ -376,13 +376,13 @@ utils.getRandomOutsideLocation = function(buffer, range) {
   var x_anchor, y_anchor
   if(Math.random() < .5)
   {
-    x_anchor = Math.random() < .5 ? -buffer-range : imp_params.levelWidth/imp_params.draw_factor + buffer
-    y_anchor = Math.random() * ((imp_params.levelHeight)/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
+    x_anchor = Math.random() < .5 ? -buffer-range : dom.levelWidth/imp_params.draw_factor + buffer
+    y_anchor = Math.random() * ((dom.levelHeight)/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
   }
   else
   {
-    y_anchor = Math.random() < .5 ? -buffer-range : (imp_params.levelHeight)/imp_params.draw_factor + buffer
-    x_anchor = Math.random() * (imp_params.levelWidth/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
+    y_anchor = Math.random() < .5 ? -buffer-range : (dom.levelHeight)/imp_params.draw_factor + buffer
+    x_anchor = Math.random() * (dom.levelWidth/imp_params.draw_factor + 2 * buffer + range) - (buffer + range)
   }
 
   //buffer is border outside screen which is not okay, range is range of values beyond that which ARE okay

@@ -37,7 +37,7 @@ function LevelEditorState() {
   this.bg_drawn = false
 
   this.zoom = 1
-  this.camera_center = {x:imp_params.levelWidth/2, y:imp_params.levelHeight/2}
+  this.camera_center = {x:dom.levelWidth/2, y:dom.levelHeight/2}
 
 }
 
@@ -47,16 +47,16 @@ LevelEditorState.prototype.process = function(dt) {
 
 LevelEditorState.prototype.draw = function(context, bg_ctx) {
   if(!this.bg_drawn) {
-    bg_ctx.clearRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight);
+    bg_ctx.clearRect(0, 0, dom.canvasWidth, dom.canvasHeight);
     bg_ctx.fillStyle = "white"
-    bg_ctx.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight);
+    bg_ctx.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight);
     this.bg_drawn = true
   }
 
   context.save();
 
   context.scale(this.zoom, this.zoom)
-  context.translate((imp_params.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (imp_params.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  context.translate((dom.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (dom.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
 
   context.beginPath()
   context.rect(0, 0, 800, 600)
@@ -280,8 +280,8 @@ LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point)
 
 LevelEditorState.prototype.transform_to_zoomed_space = function(pt) {
 
-  var new_point = {x: (pt.x - (imp_params.levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
-    y: (pt.y - (imp_params.levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
+  var new_point = {x: (pt.x - (dom.levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
+    y: (pt.y - (dom.levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
   return new_point
 }
 
@@ -456,14 +456,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 88) { //X = reflect horizontally
     if(this.selected_av != null) {
-      this.accumulated_vertices.push({x: imp_params.levelWidth - this.accumulated_vertices[this.selected_av].x, y: this.accumulated_vertices[this.selected_av].y})
+      this.accumulated_vertices.push({x: dom.levelWidth - this.accumulated_vertices[this.selected_av].x, y: this.accumulated_vertices[this.selected_av].y})
       return
     }
 
     if(this.selected_p != null) {
       var poly = []
       for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
-        poly.push({x: imp_params.levelWidth - this.polygons[this.selected_p][j].x, y: this.polygons[this.selected_p][j].y})
+        poly.push({x: dom.levelWidth - this.polygons[this.selected_p][j].x, y: this.polygons[this.selected_p][j].y})
       }
       this.polygons.push(poly)
       return
@@ -473,7 +473,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     // for(var i = 0; i < k; i++) {
     //   var poly = []
     //   for(var j = this.polygons[i].length - 1; j >= 0; j--) {
-    //     poly.push({x: imp_params.levelWidth - this.polygons[i][j].x, y: this.polygons[i][j].y})
+    //     poly.push({x: dom.levelWidth - this.polygons[i][j].x, y: this.polygons[i][j].y})
     //   }
     //   this.polygons.push(poly)
     // }
@@ -481,14 +481,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 90) { //Z = reflect vertically
     if(this.selected_av != null) {
-      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: imp_params.levelHeight - this.accumulated_vertices[this.selected_av].y})
+      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: dom.levelHeight - this.accumulated_vertices[this.selected_av].y})
       return
     }
 
     if(this.selected_p != null) {
       var poly = []
       for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
-        poly.push({x: this.polygons[this.selected_p][j].x, y: imp_params.levelHeight - this.polygons[this.selected_p][j].y})
+        poly.push({x: this.polygons[this.selected_p][j].x, y: dom.levelHeight - this.polygons[this.selected_p][j].y})
       }
       this.polygons.push(poly)
       return
@@ -497,7 +497,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     // for(var i = 0; i < k; i++) {
     //   var poly = []
     //   for(var j = this.polygons[i].length - 1; j >= 0; j--) {
-    //     poly.push({x: this.polygons[i][j].x, y: this.imp_params.levelHeight - this.polygons[i][j].y})
+    //     poly.push({x: this.polygons[i][j].x, y: this.dom.levelHeight - this.polygons[i][j].y})
     //   }
     //   this.polygons.push(poly)
     // }

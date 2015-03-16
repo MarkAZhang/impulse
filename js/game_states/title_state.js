@@ -41,13 +41,13 @@ function TitleState(last_state) {
 TitleState.prototype.process = function(dt) {
   this.fader.process(dt);
   this.trailer_fade_in += dt
-  process_and_draw_bg(dt);
+  game_engine.processAndDrawBg(dt);
 }
 
 TitleState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
-   imp_params.bg_canvas.setAttribute("style", "")
-   set_bg("Hive 0", imp_params.hive0_bg_opacity)
+   layers.bgCanvas.setAttribute("style", "")
+   game_engine.setBg("Hive 0", imp_params.hive0_bg_opacity)
    this.bg_drawn = true
   }
 
@@ -76,9 +76,9 @@ TitleState.prototype.draw = function(ctx, bg_ctx) {
   ctx.shadowColor = impulse_colors["impulse_blue"]
   ctx.shadowBlur = 0
   if (imp_params.debug.is_beta) {
-    uiRenderUtils.drawLogo(ctx,imp_params.levelWidth/2, 200, "BETA")
+    uiRenderUtils.drawLogo(ctx,dom.levelWidth/2, 200, "BETA")
   } else {
-    uiRenderUtils.drawLogo(ctx,imp_params.levelWidth/2, 200, "")
+    uiRenderUtils.drawLogo(ctx,dom.levelWidth/2, 200, "")
   }
 
   // TEXT FOR TRAILER
@@ -130,7 +130,7 @@ TitleState.prototype.setup_main_menu = function() {
   var button_color = "white"//impulse_colors["impulse_blue"]
 
   if(imp_params.debug.dev && imp_params.debug.old_menu) {
-    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2-30, 200, 100, button_color, "blue",
+    this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, dom.levelWidth/2 - 100, dom.levelHeight/2-30, 200, 100, button_color, "blue",
     function(){
       var i = 1;
       while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
@@ -142,7 +142,7 @@ TitleState.prototype.setup_main_menu = function() {
         game_engine.switch_game_state(new WorldMapState(i))
       }
     }))
-    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+20, 200, 50, button_color, "blue",
+    this.buttons["menu"].push(new SmallButton("PRACTICE", 20, dom.levelWidth/2 - 100, dom.levelHeight/2+20, 200, 50, button_color, "blue",
       function(){
         var i = 1;
         while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
@@ -150,14 +150,14 @@ TitleState.prototype.setup_main_menu = function() {
         }
         game_engine.switch_game_state(new WorldMapState(i, true));
       }));
-    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
-    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+170, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new MusicPlayerState())}))
-    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+270, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new LevelEditorState())}))
-    this.buttons["menu"].push(new SmallButton("QUESTS", 20, imp_params.levelWidth/2 - 100, imp_params.levelHeight/2+70, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new QuestGameState())}))
+    this.buttons["menu"].push(new SmallButton("OPTIONS", 20, dom.levelWidth/2 - 100, dom.levelHeight/2+120, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "options"}, 50)}))
+    this.buttons["menu"].push(new SmallButton("JUKEBOX", 20, dom.levelWidth/2 - 100, dom.levelHeight/2+170, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new MusicPlayerState())}))
+    this.buttons["menu"].push(new SmallButton("LEVEL EDITOR", 20, dom.levelWidth/2 - 100, dom.levelHeight/2+270, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new LevelEditorState())}))
+    this.buttons["menu"].push(new SmallButton("QUESTS", 20, dom.levelWidth/2 - 100, dom.levelHeight/2+70, 200, 50, button_color, "blue",function(){game_engine.switch_game_state(new QuestGameState())}))
   } else {
-    var button_y = imp_params.levelHeight/2 + 50
+    var button_y = dom.levelHeight/2 + 50
     var _this = this;
-    this.buttons["menu"].push(new IconButton("START GAME", 20, saveData.firstTime ? imp_params.levelWidth/2 : imp_params.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+    this.buttons["menu"].push(new IconButton("START GAME", 20, saveData.firstTime ? dom.levelWidth/2 : dom.levelWidth/2 - 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
     function(){
 
       //_this.fade_out_duration = _this.fade_interval;
@@ -176,9 +176,9 @@ TitleState.prototype.setup_main_menu = function() {
         }
 
         if (_this.fader.animation == null && saveData.difficultyMode == "normal" && !saveData.firstTime) {
-          switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
+          game_engine.switchBg("Title Alt" + i, 250, uiRenderUtils.getWorldMapBgOpacity(i))
         } else if (saveData.firstTime) {
-          switch_bg(impulse_colors["world 0 dark"], 150, 1)
+          game_engine.switchBg(impulse_colors["world 0 dark"], 150, 1)
         }
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(new WorldMapState(i, false))
@@ -187,7 +187,7 @@ TitleState.prototype.setup_main_menu = function() {
     }, "player"));
 
     if (!saveData.firstTime) {
-      this.buttons["menu"].push(new IconButton("PRACTICE", 20, imp_params.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
+      this.buttons["menu"].push(new IconButton("PRACTICE", 20, dom.levelWidth/2 + 130, button_y, 210, 100, button_color, impulse_colors["impulse_blue"],
       function(){
         //_this.fade_out_duration = _this.fade_interval;
         var i = 1;
@@ -196,7 +196,7 @@ TitleState.prototype.setup_main_menu = function() {
         }
 
         if (_this.fader.animation == null && saveData.difficultyMode == "normal") {
-          switch_bg("Title Alt" + i, 250, get_world_map_bg_opacity(i))
+          game_engine.switchBg("Title Alt" + i, 250, uiRenderUtils.getWorldMapBgOpacity(i))
         }
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(new WorldMapState(i, true))
@@ -205,21 +205,21 @@ TitleState.prototype.setup_main_menu = function() {
       }, "normal_mode"))
   }
 
-    this.buttons["menu"].push(new IconButton("OPTIONS", 16, imp_params.levelWidth/2 - 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+    this.buttons["menu"].push(new IconButton("OPTIONS", 16, dom.levelWidth/2 - 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         game_engine.set_dialog_box(new OptionsMenu(_this))
       });
     }, "gear"))
 
     this.buttons["menu"].push(new IconButton("ACHIEVEMENTS", 16,
-      imp_params.levelWidth/2,
+      dom.levelWidth/2,
       button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(new QuestGameState(_this))
       });
     }, "quest"))
 
-    this.buttons["menu"].push(new IconButton("CREDITS", 16, imp_params.levelWidth/2 + 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
+    this.buttons["menu"].push(new IconButton("CREDITS", 16, dom.levelWidth/2 + 240, button_y + 130, 100, 70, button_color, impulse_colors["impulse_blue"],function(){
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(new CreditsState())
       });
@@ -227,35 +227,35 @@ TitleState.prototype.setup_main_menu = function() {
   }
 
 
-  this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
-  this.easy_mode_button = new SmallButton("NORMAL MODE", 20, imp_params.levelWidth/2-100, imp_params.levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
+  this.buttons["enter"].push(new SmallButton("CLICK TO BEGIN", 20, dom.levelWidth/2, dom.levelHeight/2+150, 200, 50, button_color, "blue", function(){setTimeout(function(){_this.state = "menu"}, 20)}))
+  this.easy_mode_button = new SmallButton("NORMAL MODE", 20, dom.levelWidth/2-100, dom.levelHeight/2+120, 200, 50, button_color, "blue", function(){_this.change_mode("easy")})
 
   this.buttons["options"].push(this.easy_mode_button)
-  this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, imp_params.levelWidth/2+100, imp_params.levelHeight/2+120, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
+  this.normal_mode_button = new SmallButton("CHALLENGE MODE", 20, dom.levelWidth/2+100, dom.levelHeight/2+120, 200, 50, button_color, "blue",function(){_this.change_mode("normal")})
   this.buttons["options"].push(this.normal_mode_button)
   this.set_difficulty_button_underline();
-  this.clear_data_button = new SmallButton("CLEAR DATA", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+170, 200, 50, button_color, "blue",function(){_this.clear_data()})
+  this.clear_data_button = new SmallButton("CLEAR DATA", 20, dom.levelWidth/2, dom.levelHeight/2+170, 200, 50, button_color, "blue",function(){_this.clear_data()})
   this.buttons["options"].push(this.clear_data_button)
-  this.buttons["options"].push(new SmallButton("BACK", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
+  this.buttons["options"].push(new SmallButton("BACK", 20, dom.levelWidth/2, dom.levelHeight/2+220, 200, 50, button_color, "blue",function(){setTimeout(function(){_this.state = "menu"}, 50)}))
 
   /*if (saveData.difficultyMode == "easy") {
-    var difficulty_change_button = new IconButton("NORMAL MODE", 16, imp_params.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
+    var difficulty_change_button = new IconButton("NORMAL MODE", 16, dom.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
     }, "normal_mode")
   } else {
-    var difficulty_change_button = new IconButton("CHALLENGE MODE", 16, imp_params.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
+    var difficulty_change_button = new IconButton("CHALLENGE MODE", 16, dom.levelWidth/2, 100, 100, 70, button_color, impulse_colors["impulse_blue"], function() {
 
     }, "challenge_mode")
   }
 
   this.buttons["menu"].push(difficulty_change_button)*/
-  var fullscreenButton = new IconButton("", 20, imp_params.levelWidth - 20, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
-    toggleFullScreen();
+  var fullscreenButton = new IconButton("", 20, dom.levelWidth - 20, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
+    dom.toggleFullScreen();
   }, "fullscreen_in_game");
   fullscreenButton.add_hover_overlay(new MessageBox("fullscreen_msg", impulse_colors["world 0 bright"], 0))
   this.buttons["menu"].push(fullscreenButton);
-  var muteButton = new IconButton("", 20, imp_params.levelWidth - 50, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
-     toggle_mute();
+  var muteButton = new IconButton("", 20, dom.levelWidth - 50, 20, 30, 30, button_color, impulse_colors["impulse_blue"], function() {
+     game_engine.toggleMute();
   }, "mute_in_game");
   muteButton.add_hover_overlay(new MessageBox("mute_msg", impulse_colors["world 0 bright"], 0))
   this.buttons["menu"].push(muteButton);

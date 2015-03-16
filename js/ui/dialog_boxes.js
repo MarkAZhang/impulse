@@ -7,8 +7,8 @@ var DialogBox = function() {
 DialogBox.prototype.init = function(w, h) {
   this.w = w
   this.h = h
-  this.x = imp_params.canvasWidth/2
-  this.y = imp_params.canvasHeight/2
+  this.x = dom.canvasWidth/2
+  this.y = dom.canvasHeight/2
   this.buttons = []
   this.solid = true;
 
@@ -27,9 +27,9 @@ DialogBox.prototype.draw = function(ctx) {
   if (imp_params.debug.hide_pause_menu) return;
   ctx.save();
   ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(imp_params.sidebarWidth, 0, imp_params.levelWidth, imp_params.levelHeight)
-  ctx.globalAlpha *= get_bg_opacity(this.world_num ? this.world_num : 0)
-  ctx.drawImage(imp_params.world_menu_bg_canvas, 0, 0, imp_params.levelWidth, imp_params.levelHeight, imp_params.sidebarWidth, 0, imp_params.levelWidth, imp_params.levelHeight)
+  ctx.fillRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight)
+  ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num ? this.world_num : 0)
+  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight)
   ctx.restore();
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
@@ -105,7 +105,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 }
 
 PauseMenu.prototype.draw_bg = function() {
-  //set_bg("Hive " + this.world_num, imp_params.bg_opacity)
 }
 
 PauseMenu.prototype.add_buttons = function() {
@@ -230,11 +229,11 @@ PauseMenu.prototype.add_buttons = function() {
     i+=1
   }
   var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
-    toggleFullScreen();
+    dom.toggleFullScreen();
   }, "fullscreen_in_game");
   this.buttons.push(fullscreenButton);
   var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
-     toggle_mute();
+     game_engine.toggleMute();
   }, "mute_in_game");
   this.buttons.push(muteButton);
 }
@@ -295,10 +294,10 @@ PauseMenu.prototype.quit_practice = function() {
   game_engine.clear_dialog_box()
 }
 PauseMenu.prototype.restart_practice = function() {
-  imp_params.bg_ctx.translate(imp_params.sidebarWidth, 0)//allows us to have a topbar
+  layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
   this.level.impulse_game_state= null
-  this.level.draw_bg(imp_params.bg_ctx)
-  imp_params.bg_ctx.translate(-imp_params.sidebarWidth, 0)
+  this.level.draw_bg(layers.bgCtx)
+  layers.bgCtx.translate(-dom.sideBarWidth, 0)
   var hive_numbers = new HiveNumbers(this.game_state.world_num, false)
   game_engine.switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false /*is_main_game*/, false /*first_time*/))
   game_engine.clear_dialog_box()
@@ -421,9 +420,9 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(this.effects_button)
 
   this.fullscreen_button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, "white", function(on) {
-    toggleFullScreen();
+    dom.toggleFullScreen();
   }, function() {
-    return isInFullScreen()
+    return dom.IsInFullScreen()
   });
   this.fullscreen_button.add_hover_overlay(new MessageBox("option_fullscreen", "white", this.world_num))
   this.fullscreen_button.change_checkbox_on_click = false;
@@ -480,8 +479,8 @@ function OptionsMenu(previous_menu) {
 }
 
 OptionsMenu.prototype.draw_bg = function() {
-  var world_bg_ctx = imp_params.world_menu_bg_canvas.getContext('2d')
-  draw_bg(world_bg_ctx, 0, 0, imp_params.levelWidth, imp_params.levelHeight, "Hive 0")
+  var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
+  draw_bg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -612,21 +611,21 @@ function ControlsMenu(previous_menu) {
     saveData.optionsData.control_hand = "left"
     saveData.optionsData.control_scheme = "mouse"
     saveData.saveGame()
-    set_key_bindings()
+    setKeyBindings()
   }}(this), "left_mouse")
 
   this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     saveData.optionsData.control_hand = "right"
     saveData.optionsData.control_scheme = "keyboard"
     saveData.saveGame()
-    set_key_bindings()
+    setKeyBindings()
   }}(this), "keyboard")
 
   this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     saveData.optionsData.control_hand = "right"
     saveData.optionsData.control_scheme = "mouse"
     saveData.saveGame()
-    set_key_bindings()
+    setKeyBindings()
   }}(this), "right_mouse")
 
   this.buttons.push(this.control_buttons["left mouse"])
@@ -866,7 +865,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   if(this.special_ability != null && !this.h) {
     this.w = 600
     this.h = 340 + 25 * this.special_ability.length + this.other_notes.length * 25
-    this.x = imp_params.canvasWidth/2
+    this.x = dom.canvasWidth/2
     this.y = 50 + this.h/2
     this.buttons = []
   }*/

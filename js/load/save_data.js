@@ -21,7 +21,7 @@ SaveData.prototype.loadGame = function() {
   var loadObj = localStorage[imp_params.save_name];
 
   if (!loadObj) {
-    send_logging_to_server('STARTED GAME', {});
+    game_engine.send_logging_to_server('STARTED GAME', {});
     return;
   } else {
     loadObj = JSON.parse(loadObj);
@@ -109,6 +109,24 @@ SaveData.prototype.getLevelData = function (level_name) {
 SaveData.prototype.clearSavedPlayerGame = function() {
   this.savedGame = null;
   this.saveGame();
+};
+
+
+SaveData.prototype.isQuestCompleted = function (name) {
+  return this.quests.indexOf(name) != -1
+}
+
+SaveData.prototype.setQuestCompleted = function(name) {
+  if (!this.isQuestCompleted(name)) {
+    this.quests.push(name);
+    this.saveGame();
+    game_engine.set_popup_message("quest_" + name, 2500, "white", 0)
+  }
+}
+
+SaveData.prototype.shouldShowLevelZero = function (world_num) {
+  // Easy difficulty, and we've never played this world before.
+  return this.difficultyMode == "easy" && this.getLevelData("HIVE " + world_num + "-1").seen;
 };
 
 var saveData = new SaveData();

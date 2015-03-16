@@ -5,8 +5,8 @@ MusicPlayerState.prototype.constructor = MusicPlayerState
 function MusicPlayerState() {
   this.buttons = []
 
-  this.first_column = imp_params.levelWidth*3/8;
-  this.second_column = imp_params.levelWidth*5/8;
+  this.first_column = dom.levelWidth*3/8;
+  this.second_column = dom.levelWidth*5/8;
   this.column_top = 300;
   this.column_space = 50;
   this.button_color = impulse_colors["impulse_blue"]
@@ -36,7 +36,7 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
     context.textAlign = "center"
     context.font = "12px Muli"
     context.fillStyle = impulse_colors["impulse_blue"]
-    context.fillText("Currently Playing: " + this.cur_song, imp_params.levelWidth/2, 175)
+    context.fillText("Currently Playing: " + this.cur_song, dom.levelWidth/2, 175)
     var duration = Math.round(imp_params.impulse_music.getCurrentSong().sound.getDuration())
     var curTime = Math.round(imp_params.impulse_music.getCurrentSong().sound.getTime())
     var durSecondsString = Math.floor(duration%60)
@@ -44,33 +44,33 @@ MusicPlayerState.prototype.draw = function(context, bg_ctx) {
     var curSecondsString = Math.floor(curTime%60)
     if(curSecondsString < 10) curSecondsString = "0"+curSecondsString
 
-    context.fillText(Math.floor(curTime/60)+":"+curSecondsString, imp_params.levelWidth*1/4, 220)
-    context.fillText(Math.floor(duration/60)+":"+durSecondsString, imp_params.levelWidth*3/4, 220)
+    context.fillText(Math.floor(curTime/60)+":"+curSecondsString, dom.levelWidth*1/4, 220)
+    context.fillText(Math.floor(duration/60)+":"+durSecondsString, dom.levelWidth*3/4, 220)
 
   }
 }
 
 MusicPlayerState.prototype.setup_ui = function() {
 
-  this.slider = new Slider(imp_params.levelWidth/2, 200, imp_params.levelWidth/2, 5, this.button_color)
+  this.slider = new Slider(dom.levelWidth/2, 200, dom.levelWidth/2, 5, this.button_color)
   this.slider.value = 0
   this.slider.active = false
 
 
-  this.buttons.push(new SmallButton("PLAY", 20, imp_params.levelWidth/2 - 50, 250, 100, 50, this.button_color, "blue",
+  this.buttons.push(new SmallButton("PLAY", 20, dom.levelWidth/2 - 50, 250, 100, 50, this.button_color, "blue",
 
         function() {
           imp_params.impulse_music.resume_bg();
         }))
 
-  this.buttons.push(new SmallButton("PAUSE", 20, imp_params.levelWidth/2 + 50, 250, 100, 50, this.button_color, "blue",
+  this.buttons.push(new SmallButton("PAUSE", 20, dom.levelWidth/2 + 50, 250, 100, 50, this.button_color, "blue",
 
         function() {
           imp_params.impulse_music.pause_bg();
         }))
   this.setup_music_buttons()
 
-    this.buttons.push(new SmallButton("MAIN MENU", 20, imp_params.levelWidth/2, imp_params.levelHeight/2+270, 200, 50, this.button_color, "blue", function(){setTimeout(function(){game_engine.switch_game_state(new TitleState(true))}, 20)}))
+    this.buttons.push(new SmallButton("MAIN MENU", 20, dom.levelWidth/2, dom.levelHeight/2+270, 200, 50, this.button_color, "blue", function(){setTimeout(function(){game_engine.switch_game_state(new TitleState(true))}, 20)}))
 }
 
 MusicPlayerState.prototype.setup_music_buttons = function() {

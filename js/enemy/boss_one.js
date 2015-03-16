@@ -1057,7 +1057,7 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, imp_params.canvasWidth, imp_params.canvasHeight)
+    context.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight)
   }
 
   context.restore()
