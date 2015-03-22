@@ -88,10 +88,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
     dir.Normalize()
     dir.Multiply(100 * other.force)
     other.body.ApplyImpulse(dir, other.body.GetWorldCenter())
-    //this.cause_of_death = "hit_player"
-
   }
-
 }
 
 BossFourAttacker.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {

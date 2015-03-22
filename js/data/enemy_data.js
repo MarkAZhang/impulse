@@ -21,11 +21,8 @@ enemyData["dumb_stunner"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
-  dies_on_impact: "YES",
   enemy_info: [
     "On collision, stuns you for a short period",
-    //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
-    //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
   snippet: "stuns on collision",
 }
@@ -47,11 +44,8 @@ enemyData["stunner"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
     [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],
-  dies_on_impact: "YES",
   enemy_info: [
     "On collision, stuns you for a short period",
-    //"If hit directly into another enemy, # may stop moving or bounce back at you # # This property is not unique to Stunners",
-    //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
   true_name: "shocker",
   snippet: "stuns on collision",
@@ -70,17 +64,10 @@ enemyData["spear"] = {
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
     [Math.cos(Math.PI * 5/6), Math.sin(Math.PI * 5/6)],
     [Math.cos(Math.PI * 7/6), Math.sin(Math.PI * 7/6)]]}],
-  dies_on_impact: "YES",
-
   enemy_info: [
     "Will dive at you if it has line of sight",
-    //"Cannot charge for 1 second after entering the screen # # Cannot charge from off-screen",
-    //"Will cause some knockback upon collision even if not charging",
   ],
   snippet: "charges on sight",
-
-  special_ability: "Charges you on sight. Hurls you backward on impact.",
-  other_notes: "Silenced for two seconds on entering or re-entering stage. When Impulsed, silenced for five seconds.",
 }
 
 enemyData["tank"] = {
@@ -100,19 +87,6 @@ enemyData["tank"] = {
   extra_rendering_lines: [{"x1": 0.5, "y1": 0.5, "x2": -0.5, "y2": -0.5},
     {"x1": 0.5, "y1": -0.5, "x2": -0.5, "y2": 0.5},
   ],
-  /*extra_rendering_polygons: [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 3/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 3/4) * 0.05],
-  [Math.cos(Math.PI * 1/4)/Math.sqrt(2)+Math.cos(Math.PI * 7/4) * 0.05, Math.sin(Math.PI * 1/4)/Math.sqrt(2)+Math.sin(Math.PI * 7/4) * 0.05],
-  [Math.cos(Math.PI * 5/4)/Math.sqrt(2)+Math.cos(Math.PI * 7/4) * 0.05, Math.sin(Math.PI * 5/4)/Math.sqrt(2)+Math.sin(Math.PI * 7/4) * 0.05],
-  [Math.cos(Math.PI * 5/4)/Math.sqrt(2)+Math.cos(Math.PI * 3/4) * 0.05, Math.sin(Math.PI * 5/4)/Math.sqrt(2)+Math.sin(Math.PI * 3/4) * 0.05]]},
-  {type: "polygon", x: 0, y: 0, r: 1, vertices:
-  [[Math.cos(Math.PI * 3/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 3/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05],
-  [Math.cos(Math.PI * 3/4)/Math.sqrt(2)+Math.cos(Math.PI * 1/4) * 0.05, Math.sin(Math.PI * 3/4)/Math.sqrt(2)+Math.sin(Math.PI * 1/4) * 0.05],
-  [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 1/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 1/4) * 0.05],
-  [Math.cos(Math.PI * 7/4)/Math.sqrt(2)+Math.cos(Math.PI * 5/4) * 0.05, Math.sin(Math.PI * 7/4)/Math.sqrt(2)+Math.sin(Math.PI * 5/4) * 0.05]]}],*/
-
-  dies_on_impact: "YES",
-
   enemy_info: [
     "Explodes on death or collision with player",
     "Will explode on collision with another Tank if recently Impulsed",
@@ -135,7 +109,6 @@ enemyData["mote"] = {
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
   [Math.cos(Math.PI * 1), Math.sin(Math.PI * 1)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}],
-  dies_on_impact: "YES",
   enemy_info: [
     "Cannot be Impulsed # # On collision, disarms you for a few moments",
     "Other enemies can be impulsed into the mote"
@@ -152,26 +125,16 @@ enemyData["goo"] = {
   score_value: 3000,
   attack_rating: .25,
   batch_enemy_image: true,
-  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
-    [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)]]}],*/
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .5, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 2/5), Math.sin(Math.PI * 2/5)],
   [Math.cos(Math.PI * 4/5), Math.sin(Math.PI * 4/5)],
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}],
-  /*{type: "circle", x: 2*Math.cos(Math.PI*2/3), y: 2*Math.sin(Math.PI*2/3), r: .2},
-  {type: "circle", x: 2*Math.cos(Math.PI*4/3), y: 2*Math.sin(Math.PI*4/3), r: .2},
-  {type: "circle", x: 2*Math.cos(Math.PI*6/3), y: 2*Math.sin(Math.PI*6/3), r: .2}*/
   extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1.3, colored: true}],
-  dies_on_impact: "YES",
   enemy_info: [
     "All units within its radius are slowed",
     "When Impulsed, expands its radius for a few moments",
-    //"Dies upon collision # # Units immediately regain speed",
-    //"When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
   snippet: "slows all nearby units",
 }
@@ -191,12 +154,6 @@ enemyData["harpoon"] = {
   [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
   [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   ]}],
-  /*{type: "polygon", x: -0.2, y: 0, r: .7, vertices:
-  [[Math.cos(Math.PI * 1/4) - 0.4, Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 7/8) - 0.4, Math.sin(Math.PI * 7/8)],
-  [Math.cos(Math.PI * 9/8) - 0.4, Math.sin(Math.PI * 9/8)],
-  [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
-  ]}*/
   extra_rendering_polygons: [{type: "polygon", x: -0.1, y: 0, r: .7, colored: false, vertices:
   [[Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   [((Math.sqrt(2)+Math.sqrt(6))/2 - 0.4)*Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
@@ -208,18 +165,11 @@ enemyData["harpoon"] = {
   [Math.cos(Math.PI * 7/4) - 0.4, Math.sin(Math.PI * 7/4)],
   ]}],
   draw_polygons: [],
-  dies_on_impact: "NO",
   enemy_info: [
     "Fires its hook at you and # attempts to yank you in # # Can only fire through the void",
     "The hook range is outlined # around the Harpoon",
     "If you are hooked, # impulse the harpoon to get free",
-    // "Will attempt to avoid you and also avoid the void.",
     "While the hook is detached from the Harpoon, it cannot move",
-    //"When Impulsed, the hook is disabled for 2 seconds",
-    //"Can latch onto other enemies and will yank them in",
-    //"Will actively try to avoid you # # Does not die on collision",
-    // "Does not die on collision",
-    //"Cannot fire for 1 second after entering the screen # # Cannot fire from off-screen",
     "During boss battles, will fire at any time",
   ],
   snippet: "hooks through walls",
@@ -239,11 +189,6 @@ enemyData["harpoonhead"] = {
   [Math.cos(Math.PI * 0), Math.sin(Math.PI * 0)],
   [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]]
   }],
-
-  dies_on_impact: "NO",
-  special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
-  other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
-  description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
 }
 
 enemyData["fighter"] = {
@@ -270,21 +215,12 @@ enemyData["fighter"] = {
   [Math.cos(Math.PI * 5/4)  + 0.3, Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 3/4) - Math.sqrt(6)/4  + 0.3, -Math.sqrt(2)]]}
   ],
-
   enemy_info: [
     "Fires projectiles at you on sight # # Is weak to its own projectiles",
-    //"Very resistant to Impulse # # Very weak against the force of its own bullets",
-    //"If the player is not within line of sight of a bullet, the fighter will not fire the bullet.",
     "When its rage meter is full, # the hunter moves faster and its bullets cannot be impulsed",
     "Impulse the hunter to lower its rage meter"
-    //"Both in and out of Frenzy mode, loses one Frenzy bar each time it is Impulsed",
   ],
-
   snippet: "weak to projectiles",
-
-  dies_on_impact: "NO",
-  special_ability: "Fires bullets at you upon sight. Bullets fling you backwards on impact. For every 2 seconds that the Fighter is idle, it loads up a piercing bullet, which cannot be Impulsed.",
-  other_notes: "Normal bullets can be reflected to hit other enemies and even the Fighter itself.",
 }
 
 enemyData["fighter_bullet"] = {
@@ -322,7 +258,6 @@ enemyData["piercing_fighter_bullet"] = {
 
 enemyData["disabler"] = {
   color: "#cccccc",
-  //interior_color: "rgb(205, 201, 201)",
   density: 8,
   lin_damp: 9,
   effective_radius: .5,
@@ -339,23 +274,12 @@ enemyData["disabler"] = {
   [Math.cos(Math.PI * 5/3), Math.sin(Math.PI * 5/3)]]}
     ],
   extra_rendering_polygons: [{type: "circle", x: 0, y: 0, r: 1.3, colored: true}],
-  /*shape_polygons: [{type: "polygon", x: 0, y: 0, r: 2, vertices:
-    [[.25 * Math.cos(Math.PI * 0), .25 * Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
-  [.25 * Math.cos(Math.PI * 1), .25 * Math.sin(Math.PI * 1)],
-  [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}], */
-  dies_on_impact: "YES",
   enemy_info: [
-    //"All units within its area of influence are slowed",
     "Disables all units within its radius. # # Touching disabled units will not reset your multiplier.",
     "When Impulsed, expands its radius for a few moments",
-  //  "Dies upon collision # # Units immediately regain special powers",
-  //  "When Impulsed, dramatically expands its area of influence for 3 seconds"
   ],
   true_name: "equalizer",
   snippet: "disables all nearby units",
-  special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
-  other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
 }
 
 enemyData["troll"] = {
@@ -402,13 +326,8 @@ enemyData["troll"] = {
   ],
   enemy_info: [
     "On collision or if impulsed while spinning, # reverses your controls",
-    //"Upon collision, reverses you for a few moments",
   ],
   snippet: "reverses your controls",
-  //can potentially have it confuse all enemies around it, but for now, no. Too confusing, and a lot of work to implement.
-  dies_on_impact: "YES",
-  special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
-  other_notes: "The troll alternates between active and inactive every second.",
 }
 
 
@@ -437,12 +356,8 @@ enemyData["slingshot"] = {
   [Math.cos(Math.PI * 4/3)  * 1, Math.sin(Math.PI * 4/3) * 1]]}],
   erase_lines: [
     [[Math.cos(Math.PI * 0) * 1/4-0.25, Math.sin(Math.PI*0) * 1/4], [Math.cos(Math.PI * 0) * .75-0.25, Math.sin(Math.PI*0) * 3/4]],
-    //[[Math.cos(Math.PI * 0) * 1, Math.sin(Math.PI*0) * 1], [Math.cos(Math.PI * 0) * 1.5, Math.sin(Math.PI*0) * 1.5] ]
   ],
-  dies_on_impact: "YES",
   true_name: "boomerang",
-  special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
-  other_notes: "If the boomerang hits you while not slingshoting, it will still push you back a fair way.",
   enemy_info: [
     "When Impulsed, latches onto its current position # and slingshots back at you",
     "cannot be impulsed while latched",
@@ -476,23 +391,10 @@ enemyData["orbiter"] = {
   erase_lines: [
     [[0.5, 0], [0.2, 0]]
   ],
-
-  /* {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
-    [[Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2],
-  [Math.cos(Math.PI * 4/3), Math.sin(Math.PI * 4/3)],
-  [Math.cos(Math.PI * 5/3) * 1/2, Math.sin(Math.PI*5/3) * 1/2 - Math.sqrt(3)/2]]},
-  {type: "polygon", x: 0, y: 0, r: 0.5, vertices:
-    [[Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2],
-    [Math.cos(Math.PI * 1/3) * 1/2, Math.sin(Math.PI*1/3) * 1/2 + Math.sqrt(3)/2],
-    [Math.cos(Math.PI * 2/3), Math.sin(Math.PI * 2/3)]*/
   enemy_info: [
     "Intelligently avoids your Impulse # # Will charge at you opportunistically",
   ],
   snippet: "intelligent and dangerous",
-
-  dies_on_impact: "YES",
-  special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
-  other_notes: "Intelligent and dangerous.",
 }
 
 enemyData["deathray"] = {
@@ -522,22 +424,10 @@ enemyData["deathray"] = {
     [0.6 * Math.cos(Math.PI * 5/3)+ 0.2, 0.6 * Math.sin(Math.PI*5/3)]]}
   ],
 
-/*  [{type: "polygon", x: 0, y: 0, r: 1, vertices:
-    [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],*/
   enemy_info: [
     "After firing, must recharge for a short period # # During this time, the deathray cannot move",
   ],
   snippet: "giant death ray",
-  dies_on_impact: "NO",
-  special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
-  other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",
 }
 
 enemyData["boss_one"] = {
@@ -563,15 +453,6 @@ enemyData["boss_one"] = {
   [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]},
   ],
-   /* [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
-  [Math.cos(Math.PI * 1/4), Math.sin(Math.PI * 1/4)],
-  [Math.cos(Math.PI * 2/4), Math.sin(Math.PI * 2/4)],
-  [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
-  [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
-  [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
-  [Math.cos(Math.PI * 6/4), Math.sin(Math.PI * 6/4)],
-  [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]},
-  ],*/
   upper_arm_polygon: [{type: "polygon", x: 0, y: 0, r: 3, vertices:
     [[Math.cos(Math.PI * 0), Math.sin(Math.PI*0)],
   [Math.cos(Math.PI * 1/2), Math.sin(Math.PI * 1/2)],
@@ -590,10 +471,6 @@ enemyData["boss_one"] = {
   [Math.cos(Math.PI * 2/2), Math.sin(Math.PI * 2/2)],
   [Math.cos(Math.PI * 3/2), Math.sin(Math.PI * 3/2)]]}
   ],
-
-  dies_on_impact: "NO",
-  special_ability: "Shoots stunners, spears, and tanks at you. Can cast a global lighten, which causes everything to lighter and much easier to push.",
-  other_notes: "The color of the boss's guns reflect what it is shooting. During the global lighten, the boss will shoot faster. Use this time to clear the field of enemies.",
 }
 
 enemyData["boss_two"] = {
@@ -620,10 +497,6 @@ enemyData["boss_two"] = {
   [0.5 * Math.cos(Math.PI * 2/4), 0.5 * Math.sin(Math.PI * 2/4)],
   [Math.cos(Math.PI * 4/4), Math.sin(Math.PI * 4/4)],
   [0.5 * Math.cos(Math.PI * 6/4), 0.5 * Math.sin(Math.PI * 6/4)]]}],
-
-  dies_on_impact: "NO",
-  special_ability: "Exerts a gravity on the field, pulling everything towards it. The closer to the boss, the stronger the pull. The boss has four gravity arms, inside which the gravity is doubled. The boss can also send a massive shockwave through the field.",
-  other_notes: "Enemies that collide with the boss will be absorbed, increasing the boss's shockwave range. If you touch the boss, you will be flung away.",
 }
 
 enemyData["boss_three"] = {
@@ -666,9 +539,6 @@ enemyData["boss_three"] = {
   [Math.cos(Math.PI * 0/8), Math.sin(Math.PI * 0/8)],
   [Math.cos(Math.PI * 1/8), Math.sin(Math.PI * 1/8)]]}
   ],
-  dies_on_impact: "NO",
-  special_ability: "Has six turrets which fire bullets. Can cast a global silence and enter berserk mode, during which its attack speed is doubled.",
-  other_notes: "Turrets which enter an obstacle cannot attack. Bullets can be reflected by Impulse to hit other enemies, including the boss.",
 };
 
 enemyData["boss_four"] = {
@@ -704,9 +574,6 @@ enemyData["boss_four"] = {
     [Math.cos(Math.PI * 6/5) , Math.sin(Math.PI * 6/5)],
     [Math.cos(Math.PI * 8/5) , Math.sin(Math.PI * 8/5)]]}
   ],
-  dies_on_impact: "NO",
-  special_ability: "Periodically spawns capsules. Has a thin laser which sweeps around the field. When the sweep laser hits a capsule, the capsule spawns a large number of enemies. The boss has two additional lasers, one which paralyzes and one which exerts massive force.",
-  other_notes: "The sweep laser can be blocked, preventing capsules from spawning enemies.",
 }
 
 enemyData["boss_four_attacker"] = {

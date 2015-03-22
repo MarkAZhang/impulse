@@ -12,7 +12,6 @@ function Disabler(world, x, y, id, impulse_game_state) {
 
   this.init(world, x, y, id, impulse_game_state)
 
-
   this.death_radius = 2
 
   this.do_yield = false

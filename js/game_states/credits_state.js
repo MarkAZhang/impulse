@@ -78,12 +78,6 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   ctx.shadowColor = ctx.fillStyle
   ctx.fillText("CREATED BY", constants.levelWidth/2, 60)
   ctx.fillText("WITH CREDIT TO", constants.levelWidth/2, 260)
-  /*ctx.fillText("Music by Matt McFarland", constants.levelWidth/2, constants.levelHeight/2 - 20)
-  ctx.fillText("Some textures from SubtlePatterns.com", constants.levelWidth/2, constants.levelHeight/2 + 30)
-  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", constants.levelWidth/2, constants.levelHeight/2 + 80)
-  ctx.fillText("Based on the Box2dWeb Physics Engine", constants.levelWidth/2, constants.levelHeight/2 + 130)
-  ctx.fillText("Game design, UI design, programming, art", constants.levelWidth/2, constants.levelHeight/2 + 180)
-  ctx.fillText("and everything else by Mark Zhang", constants.levelWidth/2, constants.levelHeight/2 + 210)*/
   if (this.after_main_game) {
     ctx.save();
     ctx.globalAlpha *= 0.5;

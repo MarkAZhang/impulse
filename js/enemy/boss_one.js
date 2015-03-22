@@ -220,7 +220,6 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.first_turret = true
 }
 
-//
 BossOne.prototype.add_arms = function() {
 
   var upper_arm_r = enemyData[this.type].upper_arm_polygon[0].r;
@@ -276,15 +275,12 @@ BossOne.prototype.load_punch_at_player = function(side, pt) {
       var _this = this;
       this.arm_states[side] = "loading"
       this.rotate_joint_to("lu", -Math.PI * 0.3)
-      //this.rotate_joint_to("ll", Math.PI * 0.75)
       this.rotate_joint_to("lh", Math.PI/4)
       this.rotate_joint_to("ll", function() {
         var this_angle = utils.angleClosestTo(_this.joints["ll"].GetJointAngle(), utils.atan(_this.joints["ll"].GetAnchorA(), _this.player.get_current_position())
          - _this.joints["lu"].GetJointAngle() - (_this.body.GetAngle() - _this.initial_angle))
         return this_angle
-        //return utils.atan(_this.joints["ll"].GetAnchorA(), _this.player.get_current_position()) - _this.joints["lu"].GetJointAngle()
       })
-      //this.rotate_joint_to("lh", Math.PI/4)*/
       this.punch_angle[side] = utils.atan(this.joints["ll"].GetAnchorA(), pt)
 
       this.punch_target_pts[side] = {x: this.joints["ll"].GetAnchorA().x + Math.cos(this.punch_angle[side]) * this.punch_range,
@@ -298,15 +294,12 @@ BossOne.prototype.load_punch_at_player = function(side, pt) {
       var _this = this;
       this.arm_states[side] = "loading"
       this.rotate_joint_to("ru", Math.PI * 0.3)
-      //this.rotate_joint_to("rl", - Math.PI* 0.75)
       this.rotate_joint_to("rh", -Math.PI/4)
       this.rotate_joint_to("rl", function() {
         var this_angle = utils.angleClosestTo(_this.joints["rl"].GetJointAngle(), Math.PI+utils.atan(_this.joints["rl"].GetAnchorA(), _this.player.get_current_position())
          - _this.joints["ru"].GetJointAngle() - (_this.body.GetAngle() - _this.initial_angle))
         return this_angle
-        //return utils.atan(_this.joints["ll"].GetAnchorA(), _this.player.get_current_position()) - _this.joints["lu"].GetJointAngle()
       })
-      //this.rotate_joint_to("rh", -Math.PI/4)*/
       this.punch_angle[side] = utils.atan(this.joints["rl"].GetAnchorA(), pt)
 
       this.punch_target_pts[side] = {x: this.joints["rl"].GetAnchorA().x + Math.cos(this.punch_angle[side]) * this.punch_range,
@@ -355,21 +348,10 @@ BossOne.prototype.move_arm_to_turret = function(side, right_stall) {
 BossOne.prototype.punch_at = function(pt, side) {
   this.set_timer(side, this.punch_action_interval )
 
-  if(side == "left")
-  /*console.log("LH: "+this.joints["lh"].GetJointAngle()+" RH: "+this.joints["rh"].GetJointAngle()+" LL: "+this.joints["ll"].GetJointAngle()
-   +" RL: "+this.joints["rl"].GetJointAngle()+" LU: "+this.joints["lu"].GetJointAngle()+" RU: "+this.joints["ru"].GetJointAngle()
-   +" CUR ANGLE: "+this.body.GetAngle())*/
-
   if(side=="left") {
     this.punch_start["ll"] = this.joints["ll"].GetJointAngle()
     this.punch_start["lu"] = this.joints["lu"].GetJointAngle()
     this.punch_start["lh"] = this.joints["lh"].GetJointAngle()
-
-    /*this.punch_angle[side] = utils.atan(this.joints["ll"].GetAnchorA(), pt)
-
-    this.punch_target_pts[side] = {x: this.joints["ll"].GetAnchorA().x + Math.cos(this.punch_angle[side]) * this.punch_range,
-                            y: this.joints["ll"].GetAnchorA().y + Math.sin(this.punch_angle[side]) * this.punch_range,
-                          }*/
     this.arm_states[side] = "punching"
     this.joints["ll"].SetLimits(0, Math.PI)
     this.joints["lu"].SetLimits(-Math.PI, Math.PI)
@@ -380,12 +362,6 @@ BossOne.prototype.punch_at = function(pt, side) {
     this.punch_start["rl"] = this.joints["rl"].GetJointAngle()
     this.punch_start["ru"] = this.joints["ru"].GetJointAngle()
     this.punch_start["rh"] = this.joints["rh"].GetJointAngle()
-
-    /*this.punch_angle[side] = utils.atan(this.joints["rl"].GetAnchorA(), pt)
-
-    this.punch_target_pts[side] = {x: this.joints["rl"].GetAnchorA().x + Math.cos(this.punch_angle[side]) * this.punch_range,
-                            y: this.joints["rl"].GetAnchorA().y + Math.sin(this.punch_angle[side]) * this.punch_range,
-                          }*/
     this.arm_states[side] = "punching"
     this.joints["rl"].SetLimits(-Math.PI, 0)
     this.joints["ru"].SetLimits(-Math.PI, Math.PI)
@@ -426,29 +402,6 @@ BossOne.prototype.retract_punch = function(side) {
       this.rotate_joint_to("rl", this.punch_start["rl"])
       this.rotate_joint_to("rh", this.punch_start["rh"])
     }
-
-  /*if(side=="left") {
-
-
-    //this.punch_target_pts[side] = {x: this.joints["lh"].GetAnchorA().x + Math.cos(Math.PI+this.punch_angle[side]) * this.punch_range/2,
-    //                        y: this.joints["lh"].GetAnchorA().y + Math.sin(Math.PI+this.punch_angle[side]) * this.punch_range/2,
-    //                      }
-    this.arm_states[side] = "retract"
-    this.joints["ll"].SetLimits(0, Math.PI)
-    this.joints["lu"].SetLimits(-Math.PI, Math.PI)
-    this.joints["lh"].SetLimits(0, 0)
-  }
-
-  if(side=="right") {
-
-    this.punch_target_pts[side] = {x: this.joints["rh"].GetAnchorA().x + Math.cos(Math.PI+this.punch_angle[side]) * this.punch_range/2,
-                            y: this.joints["rh"].GetAnchorA().y + Math.sin(Math.PI+this.punch_angle[side]) * this.punch_range/2,
-                          }
-    this.arm_states[side] = "retract"
-    this.joints["rl"].SetLimits(-Math.PI, 0)
-    this.joints["ru"].SetLimits(-Math.PI, Math.PI)
-    this.joints["rh"].SetLimits(0, 0)
-  }*/
 }
 
 BossOne.prototype.rotate_joint_to = function(joint_name, angle) {
@@ -530,19 +483,6 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     }
   }
 
-  //console.log("LH: "+this.joints["lh"].GetJointAngle()+"RH: "+this.joints["rh"].GetJointAngle()+"LL: "+this.joints["ll"].GetJointAngle()
-  //  +"RL: "+this.joints["rl"].GetJointAngle()+"LU: "+this.joints["lu"].GetJointAngle()+"RU: "+this.joints["ru"].GetJointAngle()
-  //  +"CUR ANGLE: "+this.body.GetAngle())
-
-  //if(this.punching_explode_timer != null) {
-    /*this.punching_explode_timer -= dt
-    if(this.punching_explode_timer < 0) {
-      this.explode()
-      this.punch_exploded = true
-      this.punching_explode_timer = this.punching_explode_interval
-    }*/
-  //}
-
   if(this.knockback_red_duration > 0) {
     this.knockback_red_duration -= dt
   }
@@ -574,8 +514,6 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
 
     if(this.arm_states[arm] == "none") {
       this.switch_to_turret()
-
-      //this.move_arm_to_default(arm, true)
     }
 
     if(this.state == "turret") {
@@ -584,18 +522,9 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
       var cur_angle = utils.angleClosestTo(this.body.GetAngle(), utils.atan(this.body.GetPosition(), this.player.get_current_position()));
     }
 
-    // turn the boss around
-    /*if(this.arm_states[arm] == "default") {
-      this.process_turning_to_angle(cur_angle)
-      if(this.action_timer[arm] < 0) {
-        this.load_punch_at_player(arm)
-      }
-    }*/
-
     if(this.arm_states[arm] == "loading") {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
-        //console.log("PUNCHING "+arm+" "+this.start_time)
         this.punch_at(this.player.get_current_position().Copy(), arm)
       } else {
         this.process_move_arms_to_target(arm)
@@ -605,11 +534,9 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     if(this.arm_states[arm] == "default") {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
-        //console.log("CONSUMING PARALYZE "+arm+" "+this.paralyzed_pause[arm])
         if(this.paralyzed_pause[arm] > 0) {
           this.paralyzed_pause[arm] -= dt
         } else {
-          //console.log("LOADING "+arm+" "+this.start_time)
           this.load_punch_at_player(arm, this.player.get_current_position())
         }
       } else {
@@ -620,7 +547,6 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     if(this.arm_states[arm] == "delay_default") {
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < - this.right_arm_punch_offset_delay) {
-        //console.log("CONSUMING PARALYZE "+arm+" "+this.paralyzed_pause[arm])
         if(this.paralyzed_pause[arm] > 0) {
           this.paralyzed_pause[arm] -= dt
         } else {
@@ -633,7 +559,6 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
 
     if(this.arm_states[arm] == "punching") {
       if(this.action_timer[arm] < 0) {
-        //console.log("RETRACTING "+arm+" "+this.start_time)
         this.paralyze_arm(arm)
         this.action_timer[arm] = this.paralyze_interval
       } else {
@@ -644,28 +569,18 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
 
     if(this.arm_states[arm] == "retract") {
       if(this.action_timer[arm] < 0) {
-        //console.log("DEFAULT "+arm+" "+this.start_time)
         this.move_arm_to_default(arm)
       } else {
         this.process_move_arms_to_target(arm)
-        //this.process_retracting(arm)
       }
     }
 
     if(this.arm_states[arm] == "paralyzed") {
       if(this.action_timer[arm] < 0) {
         this.retract_punch(arm)
-        //console.log("RETRACTING "+arm+" "+this.start_time)
-        //this.retract_punch(arm)
-      } else {
       }
-      /*if(this.action_timer[arm] < 0) {
-        this.retract_punch(arm)
-      }*/
     }
     if(this.arm_states[arm] == "loading_turret") {
-      //if(arm == "left")
-        //console.log("LOADING TURRET "+arm)
       this.process_turning_to_angle(cur_angle)
       if(this.action_timer[arm] < 0) {
         this.arm_states[arm] = "turret_firing"
@@ -720,8 +635,6 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
       this.red_visibility = 1
     }
   }
-
-
 }
 
 BossOne.prototype.process_punching = function(arm) {
@@ -736,12 +649,6 @@ BossOne.prototype.process_punching = function(arm) {
     if(this.arm_states[arm] == "punching")
       dir.Multiply(this.punch_force);
     this.body_parts["lh"].ApplyImpulse(dir, this.body_parts["lh"].GetWorldCenter())
-    //console.log("PUNCHING "+arm+" "+this.action_timer[arm])
-    //console.log(angle+" "+dir.x+" "+dir.y+" "+dist+" "+body_dist+" "+this.body_parts["lh"].GetWorldCenter().x+" "+this.body_parts["lh"].GetWorldCenter().y)
-    /*if(this.arm_states[arm] == "punching" && dist < 1){// || body_dist > this.punch_range) {
-      this.arm_states[arm] = "paralyzed"
-      this.paralyzed_pause[arm] += this.action_timer[arm]
-    }*/
   }
 
   if(arm == "right") {
@@ -754,78 +661,12 @@ BossOne.prototype.process_punching = function(arm) {
     }
     if(this.arm_states[arm] == "punching")
       dir.Multiply(this.punch_force);
-    this.body_parts["rh"].ApplyImpulse(dir, this.body_parts["rh"].GetWorldCenter())
-    /*if(this.arm_states[arm] == "punching" && dist < 1){// || body_dist > this.punch_range) {
-      this.arm_states[arm] = "paralyzed"
-      this.paralyzed_pause[arm] += this.action_timer[arm]
-    }*/
+      this.body_parts["rh"].ApplyImpulse(dir, this.body_parts["rh"].GetWorldCenter())
   }
 }
 
-
-/*BossOne.prototype.process_retracting = function(arm) {
-  if(arm == "left") {
-    var angle = utils.atan(this.body_parts["ll"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
-    var dist = utils.pDist(this.body_parts["ll"].GetPosition(), this.punch_target_pts[arm])
-    var body_dist = utils.pDist(this.joints["lu"].GetAnchorA(), this.punch_target_pts[arm])
-    if(dist < 10) {
-      dir.Multiply(dist/10)
-    }
-    if(this.arm_states[arm] == "retract")
-      dir.Multiply(this.retract_force)
-    this.body_parts["ll"].ApplyImpulse(dir, this.body_parts["lh"].GetWorldCenter())
-    if(this.arm_states[arm] == "punching" && dist < 1 || body_dist > this.punch_range) {
-      this.arm_states[arm] = "paralyzed"
-      this.paralyzed_pause[arm] += this.action_timer
-    }
-  }
-
-  if(arm == "right") {
-    var angle = utils.atan(this.body_parts["rl"].GetPosition(), this.punch_target_pts[arm])
-    var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
-    var dist = utils.pDist(this.body_parts["rl"].GetPosition(), this.punch_target_pts[arm])
-    var body_dist = utils.pDist(this.joints["ru"].GetAnchorA(), this.punch_target_pts[arm])
-    if(dist < 10) {
-      dir.Multiply(dist/10)
-    }
-    if(this.arm_states[arm] == "retract")
-      dir.Multiply(this.retract_force)
-    this.body_parts["rl"].ApplyImpulse(dir, this.body_parts["rh"].GetWorldCenter())
-    if(this.arm_states[arm] == "punching" && dist < 1 || body_dist > this.punch_range) {
-      this.arm_states[arm] = "paralyzed"
-      this.paralyzed_pause[arm] += this.action_timer
-    }
-  }
-}*/
 BossOne.prototype.process_turning_to_angle = function(angle) {
   this.body.SetAngle(angle)
-  return
-
-  // before there was the concept of going around the arms to hit the body, but this is currently not viable, so we simply the code
-
-  /*var cur_angle = this.body.GetAngle();
-  var player_angle =  angle;
-  var angle_between = utils.smallAngleBetween(cur_angle, player_angle )
-
-  var turn_rate = this.turn_rate;
-
-  if(this.state == "turret") {
-    turn_rate *= 2;
-  }
-
-  if(utils.isAngleBetween(cur_angle - Math.PI, cur_angle, player_angle)) {
-    if(angle_between < Math.PI * 2 * dt/turn_rate)
-      this.body.SetAngle(this.body.GetAngle() - angle_between)
-    else
-      this.body.SetAngle(this.body.GetAngle() - Math.PI * 2 * dt/turn_rate)
-  } else {
-    if(angle_between < Math.PI * 2 * dt/turn_rate)
-      this.body.SetAngle(this.body.GetAngle() + angle_between)
-    else
-    this.body.SetAngle(this.body.GetAngle() + Math.PI * 2 * dt/turn_rate)
-  }*/
-
 }
 
 BossOne.prototype.process_move_arms_to_target = function(side) {
@@ -916,10 +757,6 @@ BossOne.prototype.draw_glows = function(context, draw_factor) {
   }
 
   var glowing_body_parts = []
-  /*if(this.arm_states["left"] == "loading" || (this.arm_states["left"] == "punching" && this.punch_action_interval - this.action_timer["left"] < this.punch_knockback_window))
-    glowing_body_parts.push("lh")
-  if(this.arm_states["right"] == "loading" || (this.arm_states["right"] == "punching" && this.punch_action_interval - this.action_timer["right"] < this.punch_knockback_window))
-    glowing_body_parts.push("rh")*/
   for(index in glowing_body_parts) {
     var name = glowing_body_parts[index]
     if(this.body_parts[name]) {
@@ -1028,9 +865,6 @@ BossOne.prototype.additional_drawing = function(context, draw_factor) {
 
       context.globalAlpha = (this.punching_explode_warning_interval - this.punching_explode_timer)/this.punching_explode_warning_interval * 0.7
       this.draw_punching_explode_warning(context, draw_factor)
-      /*context.strokeStyle = this.color
-      context.lineWidth = 2;
-      context.stroke()*/
     } else if(this.punching_explode_timer > this.punching_explode_interval - this.punching_explode_warning_interval/2 && this.punch_exploded) {
       context.beginPath()
 
@@ -1157,17 +991,11 @@ BossOne.prototype.check_impulse_on_hands = function(attack_loc, impulse_force, s
 
       if (this.player.point_in_impulse_dist(hand_point))
       {
-        //console.log("HIT HAND "+side+" "+this.start_time)
         var angle = utils.atan(attack_loc, hand_point)//not sure if it should be this point
-        //console.log("paralyzed_pause "+side+" "+this.paralyzed_pause[side])
         this.paralyzed_pause[side] += this.action_timer[side]
         if(this.arm_states[side] == "loading")
           this.paralyzed_pause[side] += this.punch_action_interval
-        //console.log("paralyzed_pause after"+side+" "+this.paralyzed_pause[side])
         this.arm_states[side] = "paralyzed"
-        //hand.ApplyImpulse(new box_2d.b2Vec2(this.impulse_hand_force * impulse_force*Math.cos(angle),
-        // this.impulse_hand_force * impulse_force*Math.sin(angle)),
-        //hand.GetWorldCenter())
         this.knockback_arm_timers[side] = this.knockback_arm_interval
       }
     }

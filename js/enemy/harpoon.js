@@ -240,9 +240,6 @@ Harpoon.prototype.additional_processing = function(dt) {
     if(this.harpoon_head.body.m_linearVelocity.Length() < 1) {
       this.harpoon_state = "retract"
     }
-    /*if(this.harpooning && utils.pDist(this.body.GetPosition(), this.harpoon_head.body.GetPosition()) >= this.harpoon_length) {
-      this.harpooning = false
-    }*/
   } else if(this.harpoon_state == "retract") {
     if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
       var dir = utils.atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
@@ -261,8 +258,6 @@ Harpoon.prototype.additional_processing = function(dt) {
   } else if(this.harpoon_state == "engaged") {
 
     this.harpoon_head.body.SetPosition(new box_2d.b2Vec2(-100, -100));
-    /*this.harpoon_head.body.SetPosition(this.player.body.GetPosition());
-    this.harpoon_head.body.SetAngle(utils.atan(this.body.GetPosition(), this.player.body.GetPosition()))*/
   } else if(this.harpoon_state == "retract_ready") {
     var dir = new box_2d.b2Vec2(this.player.body.GetPosition().x - this.body.GetPosition().x, this.player.body.GetPosition().y - this.body.GetPosition().y)
     dir.Normalize()
@@ -281,15 +276,6 @@ Harpoon.prototype.additional_processing = function(dt) {
     var cur_vis = utils.isVisible(this.body.GetPosition(), this.player.body.GetPosition(), this.level.obstacle_edges)
 
     this.attack_mode = false
-    // If safe or not visible, move towards
-    /*if((cur_dist > this.safe_distance + this.safe_distance_buffer || !cur_vis) && !this.attack_mode) {
-      this.attack_mode = true
-      this.path = null
-    }
-    else if ((cur_dist < this.safe_distance && cur_vis) && this.attack_mode) {
-      this.attack_mode = false
-      this.path = null
-    }*/
 
     this.check_safety_timer = this.check_safety_interval
   }

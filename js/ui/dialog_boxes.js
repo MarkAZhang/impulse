@@ -116,7 +116,6 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
 
   if(this.is_boss_level) {
     this.drawn_enemies = {}
-    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
     this.num_enemy_type = 0
   }
   else {
@@ -845,7 +844,6 @@ function EnemyBox(enemy_name, previous_menu) {
     this.true_name = enemyData[this.enemy_name].true_name
   }
   this.max_enemy_d = 50
-  this.special_ability = null
   this.other_notes = null
 
   this.w = 600
@@ -940,35 +938,6 @@ EnemyBox.prototype.additional_draw = function(ctx) {
       }
     }
   }
-
-  //ctx.fillText("ATK", this.x - this.w/4, this.y - this.h/2 + 155)
-  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 150, this.x/2, 15, this.atk_value, enemyData[this.enemy_name].color)
-  //ctx.fillStyle = "black"
-  //ctx.fillText("DEF", this.x - this.w/4, this.y - this.h/2 + 180)
-  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 175, this.x/2, 15, this.def_value, enemyData[this.enemy_name].color)
-  //ctx.fillStyle = "black"
-  //ctx.fillText("SPD", this.x - this.w/4, this.y - this.h/2 + 205)
-  //uiRenderUtils.drawProgressBar(ctx, this.x, this.y - this.h/2 + 200, this.x/2, 15, this.spd_value, enemyData[this.enemy_name].color)
-  /*ctx.fillStyle = "black"
-  ctx.fillText("DIES UPON PLAYER COLLISION", this.x - this.w * .30, this.y - this.h/2 + 245)
-  ctx.textAlign = 'center'
-  ctx.fillText("SPECIAL ABILITY", this.x, this.y - this.h/2 + 280)
-  if (this.other_notes != null)
-    ctx.fillText("OTHER NOTES", this.x, this.y - this.h/2 + 315 + 25 * this.special_ability.length)
-  ctx.textAlign = 'right'
-  ctx.fillText(enemyData[this.enemy_name].dies_on_impact, this.x + this.w * .30, this.y - this.h/2 + 245)
-  ctx.beginPath()
-  ctx.textAlign = 'center'
-  ctx.font = '20px Muli'
-  ctx.fillStyle = "black"
-  for(var i = 0; i < this.special_ability.length; i++) {
-    ctx.fillText(this.special_ability[i], this.x, this.y - this.h/2 + 305 + 25 * i)
-  }
-  if (this.other_notes != null) {
-    for(var i = 0; i < this.other_notes.length; i++) {
-      ctx.fillText(this.other_notes[i], this.x, this.y - this.h/2 + 340 + 25 * this.special_ability.length + 25 * i)
-    }
-  }*/
   ctx.shadowBlur = 0
 
   for(var i = 0; i < this.buttons.length; i++) {

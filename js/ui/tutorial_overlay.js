@@ -223,18 +223,6 @@ function VoidTutorialOverlay(impulse_game_state) {
 VoidTutorialOverlay.prototype.draw = function(ctx) {
 }
 
-VoidTutorialOverlay.prototype.process = function(dt) {
-  /*var flash_obstacle_prop = 0;
-  if (this.fader.get_current_animation() == "fade_in") {
-    flash_obstacle_prop = this.fader.get_animation_progress();
-  } else if (this.fader.get_current_animation() == "fade_out") {
-    flash_obstacle_prop = 1 - this.fader.get_animation_progress();
-  } else if (this.shown && !this.expired) {
-    flash_obstacle_prop = 1;
-  }
-  this.impulse_game_state.level.flash_obstacles("red", flash_obstacle_prop)*/
-}
-
 TouchEnemyTutorialOverlay.prototype = new TutorialOverlay;
 
 TouchEnemyTutorialOverlay.prototype.constructor = TouchEnemyTutorialOverlay;
@@ -347,29 +335,6 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
     ctx.fillText("GOAL", constants.levelWidth + constants.sideBarWidth/2, 45)
     ctx.font = '42px Muli'
     ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], constants.levelWidth + constants.sideBarWidth/2, 85)
-
-  /*ctx.beginPath();
-  ctx.rect(constants.levelWidth - 10, 10, 50, 50);
-  ctx.fillStyle = "gray";
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.fill();
-  ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, constants.levelWidth + 15, 35, 1, "white", "right");
-  ctx.lineWidth = 4;
-  ctx.globalAlpha *= 0.5;
-  ctx.beginPath();
-  ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2);
-  ctx.lineTo(constants.levelWidth - 10, 35);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.fillStyle = "white"
-  ctx.beginPath();
-  ctx.arc(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(constants.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
-  ctx.fill();*/
 }
 
 ScorePointsReminderTutorialOverlay.prototype = new TutorialOverlay;
@@ -424,32 +389,10 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   var rh = 70;
   ctx.rect(-constants.sideBarWidth / 2 - rw / 2, constants.canvasHeight/2 - 20 - rh / 2, rw, rh);
   ctx.stroke();
-    ctx.font = '16px Muli';
-    ctx.fillText("LEVEL TIME",  -constants.sideBarWidth/2, constants.canvasHeight/2 - 30);
-    ctx.font = '32px Muli';
-    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -constants.sideBarWidth/2, constants.canvasHeight/2 + 2);
-  /*ctx.beginPath();
-  ctx.rect(-40, constants.levelHeight - 60, 50, 50);
-  ctx.fillStyle = "gray";
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.fill();
-  ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, -15, constants.levelHeight - 35, 1, "white", "left");
-  ctx.lineWidth = 4;
-  ctx.globalAlpha *= 0.5;
-  ctx.beginPath();
-  ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2);
-  ctx.lineTo(10, constants.levelHeight - 35);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.fillStyle = "white";
-  ctx.beginPath();
-  ctx.arc(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(10, constants.levelHeight - 35, 3, 0, 2 * Math.PI);
-  ctx.fill();*/
+  ctx.font = '16px Muli';
+  ctx.fillText("LEVEL TIME",  -constants.sideBarWidth/2, constants.canvasHeight/2 - 30);
+  ctx.font = '32px Muli';
+  ctx.fillText(this.impulse_game_state.game_numbers.last_time, -constants.sideBarWidth/2, constants.canvasHeight/2 + 2);
 }
 
 EnemyIncrTutorialOverlay.prototype.process = function(dt) {
@@ -482,36 +425,6 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
   ctx.stroke();
     ctx.font = '72px Muli';
     ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, constants.levelWidth + constants.sideBarWidth/2, constants.canvasHeight/2)
-
-  /*var a_loc = {
-    x: constants.levelWidth + 15,
-    y: constants.levelHeight / 2 - 20,
-    w: 50,
-    h: 50
-  };
-
-  ctx.beginPath();
-  ctx.rect(a_loc.x - a_loc.w / 2, a_loc.y - a_loc.h / 2, a_loc.w, a_loc.h);
-  ctx.fillStyle = "gray";
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.fill();
-  ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, a_loc.x, a_loc.y, 1, "white", "right");
-  ctx.lineWidth = 4;
-  ctx.globalAlpha *= 0.5;
-  ctx.beginPath();
-  ctx.moveTo(this.hover_overlay.x + this.hover_overlay.w / 2, this.hover_overlay.y);
-  ctx.lineTo(a_loc.x - a_loc.w / 2, a_loc.y);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.fillStyle = "white"
-  ctx.beginPath();
-  ctx.arc(this.hover_overlay.x + this.hover_overlay.w / 2, this.hover_overlay.y, 3, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(a_loc.x - a_loc.w / 2, a_loc.y, 3, 0, 2 * Math.PI);
-  ctx.fill();*/
 }
 
 IncrMultiplierTutorialOverlay.prototype.process = function(dt) {

@@ -149,12 +149,6 @@ BossFourSpawner.prototype.collide_with = function(other) {
   if (other === this.player) {
     this.impulse_game_state.reset_combo();
   }
-
-  /*if(other === this.player) {
-
-      var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
-      this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
-  }*/
 }
 
 BossFourSpawner.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) {

@@ -191,28 +191,9 @@ this.rotating = false
 }
 
 BossThree.prototype.generate_wheel_set = function() {
-  /*var temp = []
-  for(var i = 0; i < 4; i++)
-    temp.push("fighter")
-  return temp*/
   var tough_enemies = ["tank", "fighter", "troll", "harpoon"]
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
   var all_enemies = ["mote", "harpoon", "stunner", "spear", "goo", "disabler", "tank", "fighter", "troll"]
-
-  /*var wheel_set = []
-  var tough_enemies_index = Math.floor(Math.random() * tough_enemies.length)
-  wheel_set.push(tough_enemies[tough_enemies_index])
-  all_enemies.splice(all_enemies.indexOf(tough_enemies[tough_enemies_index]), 1)
-  for(var i = 0; i < 2; i++) {
-    var random_index = Math.floor(Math.random() * all_enemies.length)
-    wheel_set.push(all_enemies[random_index])
-    if(easy_enemies.indexOf(all_enemies[random_index])!= -1) {
-      easy_enemies.splice(easy_enemies.indexOf(all_enemies[random_index]), 1)
-    }
-    all_enemies.splice(random_index, 1)
-  }
-  var easy_enemies_index = Math.floor(Math.random() * easy_enemies.length)
-  wheel_set.push(easy_enemies[easy_enemies_index])*/
 
   if(this.level.enemies.length > 6) {
     easy_enemies.push("frenzy")
@@ -403,16 +384,6 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
   } else if(this.wheel_state == "gap") {
     this.wheel_gap_timer -= dt
     this.gap_activation_counter += dt
-    /*if(this.gap_activation_counter > this.gap_activation_threshold && !this.gap_activated) {
-      this.gap_activated = true
-      var type = this.current_wheel_set[this.wheel_cur_index]
-      if(type != "strike") {
-
-        for(var i = 0; i < this.spawn_count[type]; i++) {
-          this.spawn_queue.push(type)
-        }
-      }
-    }*/
     if(this.wheel_gap_timer <= 0) {
       this.wheel_state = "fadein"
       this.wheel_fade_timer = this.wheel_fade_duration

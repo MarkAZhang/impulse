@@ -531,21 +531,12 @@ Level.prototype.add_enemy = function(enemy) {
 
   if(enemy.is_boss) this.boss = enemy
 
-  /*if(!this.enemy_images.hasOwnProperty(enemy.image_enemy_type)) {
-    this.enemy_images[enemy.image_enemy_type] = enemy.generate_images()
-    if(enemy.image_enemy_type == "harpoon") {
-      this.enemy_images["harpoonhead"] = enemy.harpoon_head.generate_images()
-    }
-  }*/
-
   if(enemy.has_bulk_draw && !this.bulk_draw_enemies.hasOwnProperty(enemy.type)) {
     this.bulk_draw_enemies[enemy.type] = enemy.bulk_draw_nums
   }
 }
 
 Level.prototype.generate_obstacles = function() {
-  //obstacles.push(new BasicObstacle(world, 30, 30, [[new box_2d.b2Vec2(-10,-10), new box_2d.b2Vec2(10, -10), new box_2d.b2Vec2(-10, 10)],
-  //      [new box_2d.b2Vec2(-30,-10), new box_2d.b2Vec2(-10, -30), new box_2d.b2Vec2(-10, -10)]]))
 
   if(this.obstacle_num == null && this.obstacle_v.length) {
     this.obstacle_num = this.obstacle_v.length

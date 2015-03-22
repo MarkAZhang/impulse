@@ -26,7 +26,6 @@ function MainGameSummaryState(opts) {
   // save_screen
   // just_saved
 
-
   this.world_num = opts.world_num
   this.victory = opts.victory
   this.hive_numbers = opts.hive_numbers
@@ -90,12 +89,6 @@ function MainGameSummaryState(opts) {
       _this.resume_game()
     }}(this), "start")
     this.resume_button.shadow = false
-    /*if(saveData.optionsData.control_hand == "right") {
-      this.resume_button.underline_index = 0
-    } else {
-      this.resume_button.extra_text = "RIGHT ARROW"
-      this.resume_button.dim_extra_text = true
-    }*/
     this.buttons.push(this.resume_button)
 
     this.delete_button = new IconButton("DELETE", 16, constants.levelWidth/2, constants.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
@@ -103,28 +96,11 @@ function MainGameSummaryState(opts) {
     }}(this), "delete_small")
     this.buttons.push(this.delete_button)
     this.delete_button.shadow = false
-    /*if(saveData.optionsData.control_hand == "right") {
-      this.delete_button.underline_index = 0
-    this.delete_button.extra_text= "SHIFT+"
-    } else {
-      this.delete_button.extra_text = "SHIFT + DOWN ARROW"
-      this.delete_button.dim_extra_text = true
-    }
-    this.delete_button.shift_enabled = true*/
-
     this.return_to_main_button = new IconButton("EXIT", 16, 70, constants.levelHeight/2 + 260, 60, 65, this.bright_color, this.bright_color, function(_this) { return function() {
       _this.exit_game()
     }}(this), "back")
 
     this.buttons.push(this.return_to_main_button)
-    /*this.return_to_main_button.shadow = false
-    if(saveData.optionsData.control_hand == "right") {
-      this.return_to_main_button.underline_index = 0
-    } else {
-      this.return_to_main_button.extra_text = "LEFT ARROW"
-      this.return_to_main_button.dim_extra_text = true
-
-    }*/
   }
 
 
@@ -357,34 +333,14 @@ MainGameSummaryState.prototype.on_click = function(x, y) {
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
-  /*if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
-      this.transition_state="out";
-      this.transition_timer = this.transition_interval
-    }*/
 }
 
 MainGameSummaryState.prototype.on_key_down = function(keyCode) {
-
-  /*if(this.save_screen && !this.just_saved) {
-    if(keyCode == controls.keys.EXIT_GAME_KEY) {
-      this.exit_game()
-    } else if(keyCode == controls.keys.DELETE_GAME_KEY && this.shift_down()) {
-      this.delete_game()
-    } else if(keyCode == controls.keys.RESUME_GAME_KEY && !this.ctrl_down()) {
-      this.resume_game()
-    }
-  } else{*/
   if(this.transition_state=="none" && (!this.save_screen || this.just_saved)) {
     this.transition_state="out";
     this.transition_timer = this.transition_interval
   }
-  /*}
-  if(keyCode == 16) {
-    this.shift_down_time = (new Date()).getTime()
-  }
-  if(keyCode == 17) {
-    this.ctrl_down_time = (new Date()).getTime()
-  }*/
+
 }
 MainGameSummaryState.prototype.on_key_up = function(keyCode) {
   if(keyCode == 16) {
@@ -443,23 +399,11 @@ MainGameSummaryState.prototype.check_quests = function() {
     && saveData.worldRankings[saveData.difficultyMode]["world "+this.hive_numbers.world]["first_victory"]) {
     if (this.hive_numbers.world < 4) {
       saveData.setQuestCompleted("beat_hive")
-
-      /*this.rewards.push({
-        type: "world_victory",
-        data: this.hive_numbers.world
-      })*/
-      // Completed the quest for beating this world.
     }
 
     if (this.hive_numbers.world == 4) {
       saveData.setQuestCompleted("final_boss")
     }
-
-    /*if (this.hive_numbers.world == 4 || (this.hive_numbers.world == 1 && saveData.difficultyMode == "easy")) {
-      this.rewards.push({
-        type: "share"
-      });
-    }*/
   }
 }
 

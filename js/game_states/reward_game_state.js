@@ -100,13 +100,9 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   if(this.transition_state == "in") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = 1 - prog
-    /*if (cur_reward.type == "share") {
-      document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
-    }*/
   } else if(this.transition_state == "out") {
     var prog = (this.transition_timer/this.transition_interval);
     ctx.globalAlpha = Math.max(0, prog)
-    //document.getElementById("addthis-inline").style.opacity = ctx.globalAlpha;
   }
   // draw tessellation if applicable
   if (cur_reward.type != "quest" && cur_reward.type != "ult_tutorial" && cur_reward.type != "select_difficulty" &&
@@ -291,16 +287,10 @@ RewardGameState.prototype.process = function(dt) {
 }
 
 RewardGameState.prototype.next_reward = function() {
-  /*if (this.cur_reward_index >= 0 && this.cur_reward_index < this.rewards.length && this.rewards[this.cur_reward_index].type == "share") {
-    document.getElementById("addthis-inline").style.display = "none"
-  }*/
   this.cur_reward_index += 1
 
   if (this.cur_reward_index < this.rewards.length) {
     var cur_reward = this.rewards[this.cur_reward_index]
-    /*if (cur_reward.type == "share") {
-      document.getElementById("addthis-inline").style.display = "block"
-    }*/
   }
 }
 

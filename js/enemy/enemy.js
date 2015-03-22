@@ -141,8 +141,6 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.special_mode_visibility_timer = 0  //helps with the flashing special_mode appearance
   this.sp_visibility = 0
 
-
-
   //DEFAULTS, CAN BE OVERRIDDEN
   //how often enemy path_finds
 
@@ -248,17 +246,6 @@ Enemy.prototype.generate_collision_polygons = function() {
         }
         this.collision_polygons.push(utils.getBoundaryPolygon(these_points, (this.player.r + 0.1)))
       }
-      /*else if(cur_shape instanceof box_2d.b2CircleShape) {
-        var this_polygon = this.body // not actually right, but we don't have any objects where this matters
-        var these_points = [{x: this_polygon.x + Math.cos()}]
-        for(var i = 0; i < 4; i++) {
-          var point = {x:this_polygon.x + Math.cos(i * Math.PI/2) * cur_shape.r, y: this_polygon.y + Math.sin(i * Math.PI/2) * cur_shape.r}
-          var temp_r = utils.pDist({x: 0, y: 0}, point)
-          var temp_ang = utils.atan({x: 0, y: 0}, point)
-          these_polar_points.push({r: temp_r, ang: temp_ang})
-        }
-        this.collision_polygons.push(null)
-      }*/
       this.shape_polar_points.push(these_polar_points)
       cur_fixture = cur_fixture.GetNext()
     }
@@ -569,11 +556,9 @@ Enemy.prototype.move_to = function(endPt) {
 
   this.body.ApplyImpulse(dir, this.body.GetWorldCenter())
 
-  //if(this.shape instanceof box_2d.b2PolygonShape) {
   if (this.default_heading) {
     this.set_heading_to(endPt)
   }
-  //}
 }
 
 Enemy.prototype.modify_movement_vector = function(dir) {
@@ -661,12 +646,7 @@ Enemy.prototype.collide_with = function(other) {
         var ratio = this.body.GetMass()/other.body.GetMass()
         other.body.ApplyImpulse(new box_2d.b2Vec2(magnitude.x*transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
         this.body.SetLinearVelocity(new box_2d.b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-      }/* else if(this.body.GetLinearVelocity().Length() > 40 && other !== this.player) {
-        var magnitude = this.body.GetLinearVelocity()
-        var ratio = this.body.GetMass()/other.body.GetMass()
-        other.body.ApplyImpulse(new box_2d.b2Vec2(magnitude.x* transfer_factor*ratio, magnitude.y* transfer_factor*ratio), other.body.GetPosition())
-        this.body.SetLinearVelocity(new box_2d.b2Vec2(magnitude.x * (ratio)/(1+ratio), magnitude.y * (ratio)/(1+ratio)))
-      }*/
+      }
     }
 
     if(other === this.player) {
@@ -713,39 +693,6 @@ Enemy.prototype.player_hit_proc = function() {
     this.player.stun(500)
   }
 }
-
-// draw a pointer if the enemy is off-screen
-/*Enemy.prototype.uiRenderUtils.drawArrow = function(context, draw_factor) {
-  if(!utils.checkBounds(-this.effective_radius, this.body.GetPosition(), draw_factor)) {//if outside bounds, need to draw an arrow
-
-    var pointer_point = get_pointer_point(this)
-    var pointer_angle = utils.atan(pointer_point, this.body.GetPosition())
-    context.save();
-    context.translate(pointer_point.x * draw_factor, pointer_point.y * draw_factor);
-    context.rotate(pointer_angle);
-    context.translate(-(pointer_point.x) * draw_factor, -(pointer_point.y) * draw_factor);
-
-    context.beginPath()
-    context.globalAlpha = this.pointer_visibility
-    context.strokeStyle = this.color
-    context.lineWidth = 2
-    var pointer_radius = this.pointer_max_radius * Math.max(Math.min(1, (15 - (utils.pDist(this.body.GetPosition(), pointer_point) - 3))/15), 0)
-    context.moveTo((pointer_point.x+this.pointer_vertices[0].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[0].y*pointer_radius)*draw_factor)
-
-
-    for(var i = 1; i < this.pointer_vertices.length; i++)
-    {
-      context.lineTo((pointer_point.x+this.pointer_vertices[i].x*pointer_radius)*draw_factor, (pointer_point.y+this.pointer_vertices[i].y*pointer_radius)*draw_factor)
-    }
-    context.closePath()
-    context.stroke()
-    context.restore()
-    context.globalAlpha = 1
-    this.additional_drawing(context, draw_factor)
-    return true
-  }
-  return false;
-}*/
 
 Enemy.prototype.draw = function(context, draw_factor) {
   if(this.spawned == false && this.spawn_duration > .9 * this.spawn_interval) return
@@ -901,33 +848,6 @@ Enemy.prototype.is_opened = function() {
 Enemy.prototype.is_invincible = function() {
   return this.durations["invincible"] > 0;
 }
-
-/*Enemy.prototype.check_player_intersection = function(other) {
-  for(var i = 0; i < this.shapes.length; i++) {
-
-    if(this.shapes[i] instanceof box_2d.b2PolygonShape) {
-      var collision_polygon = this.collision_polygons[i]
-      var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
-      var temp_ang = utils.atan({x:0, y:0}, temp_vec)
-      var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
-      var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
-      if(utils.pointInPolygon(collision_polygon, rotated_vec))
-        return true
-    }
-    else if(this.shapes[i] instanceof box_2d.b2CircleShape)
-    {
-      var temp_vec = {x: other.body.GetPosition().x - this.body.GetPosition().x, y: other.body.GetPosition().y - this.body.GetPosition().y}
-      var temp_ang = utils.atan({x:0, y:0}, temp_vec)
-      var temp_mag = Math.sqrt(Math.pow(temp_vec.x, 2) + Math.pow(temp_vec.y, 2))
-      var rotated_vec = {x: temp_mag * Math.cos(temp_ang - this.body.GetAngle()), y: temp_mag * Math.sin(temp_ang - this.body.GetAngle())}
-
-      if (utils.pDist(rotated_vec, {x: this.shape_polygons[i].x, y: this.shape_polygons[i].y}) <= other.shape.GetRadius() + this.shape_polygons[i].r + 0.1)
-        return true
-    }
-  }
-  return false
-
-}*/
 
 Enemy.prototype.get_segment_intersection = function(seg_s, seg_f) {
   //checks if the segment intersects this enemy

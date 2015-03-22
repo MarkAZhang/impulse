@@ -18,8 +18,6 @@ function DeathRay(world, x, y, id, impulse_game_state) {
   this.init(world, x, y, id, impulse_game_state)
   if(world === null) return
 
-  //this.special_mode = false
-
   this.do_yield = false
 
   this.safe_radius = 10

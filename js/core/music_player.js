@@ -167,9 +167,6 @@ MusicPlayer.prototype.play_bg = function(file) {
   }
 
   // stop the file if it is already playing
-  //if(!this.playing[file]) {
-  //  this.sounds[file].stop()
-  //}
   if(!this.mute) {
     this.sounds[file].setVolume(saveData.optionsData.bg_music_volume);
   } else {

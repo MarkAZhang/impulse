@@ -16,7 +16,6 @@ constants.enemyCanvasFactor = 1.5;
 var impulseColors = {};
 impulseColors['bronze'] = "#cc8032"
 impulseColors['silver'] = "#c0c0c0"
-//impulseColors['impulse_silver'] = "rgba(175, 175, 175, 0.4)"
 impulseColors['impulse_target_blue'] = "rgba(0, 128, 255, 0.2)"
 impulseColors['impulse_blue'] = "rgb(0, 128, 255)"
 impulseColors['impulse_blue_dark'] = "#13527e"

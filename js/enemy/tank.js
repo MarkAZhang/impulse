@@ -61,7 +61,6 @@ function Tank(world, x, y, id, impulse_game_state) {
 Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = !this.is_silenced();
-  //this.body.SetAngle(this.body.GetAngle() + 2*Math.PI * dt/this.spin_rate)
 
   if (this.tank_collision_fudge_timer > 0) {
     this.tank_collision_fudge_timer -= dt;
@@ -70,11 +69,6 @@ Tank.prototype.additional_processing = function(dt) {
   if(this.durations["volatile"] > 0) {
     this.durations["volatile"] -= dt
   }
-  /*if(this.durations["open"] > 0) {
-    this.color = "red";
-  } else {
-    this.color = enemyData[this.type].color;
-  }*/
 }
 
 Tank.prototype.additional_death_prep = function(death) {

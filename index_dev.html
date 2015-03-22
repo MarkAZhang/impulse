@@ -1,34 +1,14 @@
-<!-- The old HTML that still has all the JS links, etc. These were removed from the new version because that ends up getting sent to the user -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Impulse</title>
-    <meta property="og:title"
-        content="Impulse" />
+    <meta property="og:title" content="Impulse" />
     <meta property="og:description"
         content="A fast-paced browser-based shooter with strategic depth, groundbreaking gameplay, and a high skill cap." />
-    <meta property="og:image"
-        content="art/logo_fb.png"/>
+    <meta property="og:image" content="art/logo_fb.png"/>
 
-    <script type="text/javascript">
-        var fileref = document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", "css/style.css");
-        document.getElementsByTagName("head")[0].insertBefore(fileref,document.getElementsByTagName("head")[0].firstChild);
-    </script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 
-    <!-- RavenJS -->
-    <!--<script src="//cdn.ravenjs.com/1.1.15/jquery,native/raven.min.js"></script>
-    <script>
-        Raven.config('https://6a20852ac459407e960a0700456cea2e@app.getsentry.com/37097', {
-        }).install();
-        Raven.setUser({
-            email: 'porcelaingames@gmail.com',
-            id: 'porcelaingames'
-        });
-    </script>-->
-    <!-- END RavenJS -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -37,12 +17,10 @@
 
       googleAnalytics('create', 'UA-41419006-2', 'play-impulse.com');
       googleAnalytics('send', 'pageview');
-
     </script>
 
     <script src="js/dist/impulse.js"></script>
 </head>
-<!-- Html -->
 <body>
     <div id ="canvas_container">
         <canvas id="canvas" tabindex='1'>
@@ -67,8 +45,5 @@
             Download Chrome
         </div>
     </div>
-    <div id = "fb-root">
-    </div>
-
 </body>
 </html>

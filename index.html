@@ -2,20 +2,12 @@
 <html>
 <head>
     <title>Impulse</title>
-    <meta property="og:title"
-        content="Impulse" />
+    <meta property="og:title" content="Impulse" />
     <meta property="og:description"
         content="A fast-paced browser-based shooter with strategic depth, groundbreaking gameplay, and a high skill cap." />
-    <meta property="og:image"
-        content="art/logo_fb.png"/>
+    <meta property="og:image" content="art/logo_fb.png"/>
 
-    <script type="text/javascript">
-        var fileref = document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", "css/style.css");
-        document.getElementsByTagName("head")[0].insertBefore(fileref,document.getElementsByTagName("head")[0].firstChild);
-    </script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <!-- RavenJS -->
     <script src="//cdn.ravenjs.com/1.1.15/jquery,native/raven.min.js"></script>
@@ -41,20 +33,8 @@
     <script src="js/dist/impulse.min.js"></script>
 
 </head>
-<!-- Html -->
 <body>
     <div id ="canvas_container">
-
-        <!-- AddThis Button BEGIN -->
-        <!--<div id = "addthis-inline">
-            <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-                <a class="addthis_button_facebook"></a>
-                <a class="addthis_button_twitter"></a>
-                <a class="addthis_button_google_plusone_share"></a>
-                <a class="addthis_button_tumblr"></a>
-                <a class="addthis_button_compact"></a>
-            </div>
-        </div>-->
         <canvas id="canvas" tabindex='1'>
         </canvas>
     </div>
@@ -81,8 +61,5 @@
             Download Chrome
         </div>
     </div>
-    <div id = "fb-root">
-    </div>
-
 </body>
 </html>
