@@ -1,3 +1,7 @@
+var dom = require('./dom.js');
+var game_engine = require('../core/game_engine.js');
+var utils = require('../core/utils.js');
+
 var io = {};
 
 function on_mouse_move(event) {
@@ -65,3 +69,5 @@ io.set_up_listeners = function () {
   window.addEventListener('mousemove', on_mouse_move, false)
   window.addEventListener('resize', on_resize, false)
 }
+
+module.exports = io;

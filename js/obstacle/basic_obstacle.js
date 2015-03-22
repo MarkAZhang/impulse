@@ -39,3 +39,4 @@ BasicObstacle.prototype.draw = function(context, draw_factor) {
   context.restore();
 }
 
+module.exports = BasicObstacle;

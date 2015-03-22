@@ -1,3 +1,9 @@
+var logging = require('../core/logging.js');
+
+var HiveNumbers = require('../load/hive_numbers.js');
+var LevelSaveData = require('../load/level_save_data.js');
+var OptionsData = require('../load/options_data.js');
+
 var LOCAL_STORAGE_BUCKET_NAME = "impulse_save_data"
 
 var SaveData = function() {
@@ -26,7 +32,7 @@ SaveData.prototype.loadGame = function() {
   var loadObj = localStorage[LOCAL_STORAGE_BUCKET_NAME];
 
   if (!loadObj) {
-    game_engine.send_logging_to_server('STARTED GAME', {});
+    logging.send_logging_to_server('STARTED GAME', {});
     return;
   } else {
     loadObj = JSON.parse(loadObj);
@@ -128,7 +134,6 @@ SaveData.prototype.clearSavedPlayerGame = function() {
   this.saveGame();
 };
 
-
 SaveData.prototype.isQuestCompleted = function (name) {
   return this.quests.indexOf(name) != -1
 }
@@ -137,7 +142,6 @@ SaveData.prototype.setQuestCompleted = function(name) {
   if (!this.isQuestCompleted(name)) {
     this.quests.push(name);
     this.saveGame();
-    game_engine.set_popup_message("quest_" + name, 2500, "white", 0)
   }
 }
 
@@ -146,4 +150,4 @@ SaveData.prototype.shouldShowLevelZero = function (world_num) {
   return this.difficultyMode == "easy" && this.getLevelData("HIVE " + world_num + "-1").seen;
 };
 
-var saveData = new SaveData();
+module.exports = new SaveData();

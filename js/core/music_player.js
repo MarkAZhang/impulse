@@ -1,3 +1,7 @@
+var audioData = require('../data/audio_data.js');
+var buzz = require('../vendor/buzz.js');
+var saveData = require('../load/save_data.js');
+
 var MusicPlayer = function() {
 
   this.sounds = {}
@@ -178,11 +182,9 @@ MusicPlayer.prototype.play_bg = function(file) {
 }
 
 MusicPlayer.prototype.pause_bg = function() {
-
   if(this.cur_song in this.sounds) {
     this.sounds[this.cur_song].pause();
   }
-
 }
 
 MusicPlayer.prototype.stop_bg = function() {
@@ -224,4 +226,4 @@ MusicPlayer.prototype.skip = function(time) {
   this.sounds[this.cur_song].setTime(time)
 }
 
-music_player = new MusicPlayer()
+module.exports = new MusicPlayer()

@@ -1,3 +1,10 @@
+var constants = require('../data/constants.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var Fader = require('../game_states/fader_util.js');
+var MessageBox = require('../ui/message_box.js');
+
 var TutorialOverlayManager = function(impulse_game_state) {
   this.overlays = [];
   this.impulse_game_state = impulse_game_state;
@@ -139,12 +146,12 @@ TutorialOverlay.prototype.process_internal = function(dt) {
     this.duration -= dt;
   }
   if (this.hover_overlay) {
-    var pos_x = this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor;
-    var pos_y = this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor;
+    var pos_x = this.impulse_game_state.player.body.GetPosition().x * constants.drawFactor;
+    var pos_y = this.impulse_game_state.player.body.GetPosition().y * constants.drawFactor;
     if (pos_x < this.hover_overlay.w / 2 + 5) {
       pos_x = this.hover_overlay.w / 2 + 5;
-    } else if (pos_x > dom.levelWidth - this.hover_overlay.w / 2 - 5) {
-      pos_x = dom.levelWidth - this.hover_overlay.w / 2 - 5;
+    } else if (pos_x > constants.levelWidth - this.hover_overlay.w / 2 - 5) {
+      pos_x = constants.levelWidth - this.hover_overlay.w / 2 - 5;
     }
 
     if (pos_y < this.hover_overlay.h + 55) {
@@ -334,26 +341,26 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   ctx.textAlign = "center"
   var rw = 120;
   var rh = 80;
-  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+  ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
   ctx.font = '21px Muli'
-    ctx.fillText("GOAL", dom.levelWidth + dom.sideBarWidth/2, 45)
+    ctx.fillText("GOAL", constants.levelWidth + constants.sideBarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], dom.levelWidth + dom.sideBarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], constants.levelWidth + constants.sideBarWidth/2, 85)
 
   /*ctx.beginPath();
-  ctx.rect(dom.levelWidth - 10, 10, 50, 50);
+  ctx.rect(constants.levelWidth - 10, 10, 50, 50);
   ctx.fillStyle = "gray";
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, dom.levelWidth + 15, 35, 1, "white", "right");
+  uiRenderUtils.drawFullArrow(ctx, constants.levelWidth + 15, 35, 1, "white", "right");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
   ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2);
-  ctx.lineTo(dom.levelWidth - 10, 35);
+  ctx.lineTo(constants.levelWidth - 10, 35);
   ctx.closePath();
   ctx.stroke();
   ctx.fillStyle = "white"
@@ -361,7 +368,7 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   ctx.arc(this.hover_overlay.x, this.hover_overlay.y - this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(dom.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
+  ctx.arc(constants.levelWidth - 10, 35, 3, 0, 2 * Math.PI);
   ctx.fill();*/
 }
 
@@ -383,12 +390,12 @@ ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
   ctx.textAlign = "center"
   var rw = 120;
   var rh = 80;
-  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
+  ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
   ctx.font = '21px Muli'
-    ctx.fillText("GOAL", dom.levelWidth + dom.sideBarWidth/2, 45)
+    ctx.fillText("GOAL", constants.levelWidth + constants.sideBarWidth/2, 45)
     ctx.font = '42px Muli'
-    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], dom.levelWidth + dom.sideBarWidth/2, 85)
+    ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], constants.levelWidth + constants.sideBarWidth/2, 85)
 }
 
 ScorePointsReminderTutorialOverlay.prototype.satisfaction_criteria = function() {
@@ -415,25 +422,25 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   ctx.beginPath();
   var rw = 120;
   var rh = 70;
-  ctx.rect(-dom.sideBarWidth / 2 - rw / 2, dom.canvasHeight/2 - 20 - rh / 2, rw, rh);
+  ctx.rect(-constants.sideBarWidth / 2 - rw / 2, constants.canvasHeight/2 - 20 - rh / 2, rw, rh);
   ctx.stroke();
     ctx.font = '16px Muli';
-    ctx.fillText("LEVEL TIME",  -dom.sideBarWidth/2, dom.canvasHeight/2 - 30);
+    ctx.fillText("LEVEL TIME",  -constants.sideBarWidth/2, constants.canvasHeight/2 - 30);
     ctx.font = '32px Muli';
-    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -dom.sideBarWidth/2, dom.canvasHeight/2 + 2);
+    ctx.fillText(this.impulse_game_state.game_numbers.last_time, -constants.sideBarWidth/2, constants.canvasHeight/2 + 2);
   /*ctx.beginPath();
-  ctx.rect(-40, dom.levelHeight - 60, 50, 50);
+  ctx.rect(-40, constants.levelHeight - 60, 50, 50);
   ctx.fillStyle = "gray";
   ctx.strokeStyle = "white";
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.stroke();
-  uiRenderUtils.drawFullArrow(ctx, -15, dom.levelHeight - 35, 1, "white", "left");
+  uiRenderUtils.drawFullArrow(ctx, -15, constants.levelHeight - 35, 1, "white", "left");
   ctx.lineWidth = 4;
   ctx.globalAlpha *= 0.5;
   ctx.beginPath();
   ctx.moveTo(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2);
-  ctx.lineTo(10, dom.levelHeight - 35);
+  ctx.lineTo(10, constants.levelHeight - 35);
   ctx.closePath();
   ctx.stroke();
   ctx.fillStyle = "white";
@@ -441,7 +448,7 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   ctx.arc(this.hover_overlay.x, this.hover_overlay.y + this.hover_overlay.h / 2, 3, 0, 2 * Math.PI);
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(10, dom.levelHeight - 35, 3, 0, 2 * Math.PI);
+  ctx.arc(10, constants.levelHeight - 35, 3, 0, 2 * Math.PI);
   ctx.fill();*/
 }
 
@@ -471,14 +478,14 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
   ctx.beginPath();
   var rw = 100;
   var rh = 100;
-  ctx.rect(dom.levelWidth + dom.sideBarWidth/2 - rw/2, dom.canvasHeight/2 - rh/2 - 20, rw, rh);
+  ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, constants.canvasHeight/2 - rh/2 - 20, rw, rh);
   ctx.stroke();
     ctx.font = '72px Muli';
-    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, dom.levelWidth + dom.sideBarWidth/2, dom.canvasHeight/2)
+    ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, constants.levelWidth + constants.sideBarWidth/2, constants.canvasHeight/2)
 
   /*var a_loc = {
-    x: dom.levelWidth + 15,
-    y: dom.levelHeight / 2 - 20,
+    x: constants.levelWidth + 15,
+    y: constants.levelHeight / 2 - 20,
     w: 50,
     h: 50
   };
@@ -545,8 +552,8 @@ GatewayMoveTutorialOverlay.prototype.constructor = GatewayMoveTutorialOverlay;
 function GatewayMoveTutorialOverlay(impulse_game_state) {
   this.init(impulse_game_state);
   this.gateway_loc = {
-    x: this.impulse_game_state.level.gateway_loc.x * layers.draw_factor,
-    y: this.impulse_game_state.level.gateway_loc.y * layers.draw_factor};
+    x: this.impulse_game_state.level.gateway_loc.x * constants.drawFactor,
+    y: this.impulse_game_state.level.gateway_loc.y * constants.drawFactor};
   this.message_box = new MessageBox("tutorial_gateway_move", impulse_game_state.bright_color, impulse_game_state.world_num);
   this.message_box.set_position(this.gateway_loc.x, this.gateway_loc.y - 30);
   this.message_box.set_visible(true);
@@ -623,3 +630,9 @@ KillBossTutorialOverlay.prototype.draw = function(ctx) {
 
 KillBossTutorialOverlay.prototype.process = function(dt) {
 }
+
+var tutorialOverlays = {
+  Manager: TutorialOverlayManager,
+};
+
+module.exports = tutorialOverlays;

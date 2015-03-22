@@ -1,3 +1,5 @@
+var spriteData = require('../data/sprite_data.js');
+
 var sprites = {};
 
 function loadSprite(imageName)
@@ -38,3 +40,4 @@ for(var bg in spriteData.bgFiles) {
   sprites.bgImages[bg] = loadSprite("art/"+spriteData.bgFiles[bg]+".png");
 }
 
+module.exports = sprites;

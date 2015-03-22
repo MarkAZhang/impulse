@@ -1,7 +1,7 @@
 var EnemySpawner = function(
-		type, 
-		first_spawn_time, 
-		spawn_period_init, 
+		type,
+		first_spawn_time,
+		spawn_period_init,
 		spawn_period_decr_per_minute,
 		spawn_period_min,
 		num_per_spawn_init,
@@ -23,11 +23,11 @@ var EnemySpawner = function(
 // Decrement the spawn period if applicable
 EnemySpawner.prototype.process = function(dt, game_seconds) {
 	if (game_seconds > this.first_spawn_time) {
-		this.spawn_period -= dt;	
+		this.spawn_period -= dt;
 	}
 };
 
-// Get the number of enemies to spawn in this iteration. 
+// Get the number of enemies to spawn in this iteration.
 EnemySpawner.prototype.get_spawn_number = function(game_seconds) {
 	if (this.spawn_period <= 0) {
 		this.spawn_period += this.calculate_current_spawn_period_(game_seconds);
@@ -60,9 +60,11 @@ EnemySpawner.prototype.calculate_current_num_spawn_ = function(game_seconds) {
 	}
 
 	return (this.num_per_spawn_init + (game_seconds - this.first_spawn_time) / 60 * this.num_per_spawn_incr_per_minute) + num_per_spawn_adj
-	
+
 }
 
 EnemySpawner.prototype.get_max_enemies = function() {
 		return this.max_enemies
 }
+
+module.exports = EnemySpawner;

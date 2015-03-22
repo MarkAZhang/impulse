@@ -1,3 +1,7 @@
+var enemyRenderUtils = require('../render/enemy.js');
+
+var ImpulseButton = require('../ui/impulse_button.js');
+
 SmallEnemyButton.prototype = new ImpulseButton()
 
 SmallEnemyButton.prototype.constructor = SmallEnemyButton
@@ -33,3 +37,4 @@ SmallEnemyButton.prototype.additional_draw = function(context) {
   context.restore()
 }
 
+module.exports = SmallEnemyButton;

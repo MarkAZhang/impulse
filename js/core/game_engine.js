@@ -1,3 +1,12 @@
+var constants = require('../data/constants.js');
+var controls = require('./controls.js');
+var debugVars = require('../data/debug.js');
+var dom = require('./dom.js');
+var layers = require('./layers.js');
+var music_player = require('../core/music_player.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var MessageBox = require('../ui/message_box.js');
 
 var GameEngine = function() {
   this.cur_game_state = null;
@@ -12,13 +21,20 @@ var GameEngine = function() {
   this.altBgAlpha = 0;
   this.altBgFile = null;
   this.lastTime = (new Date()).getTime();
+  this.gameStateFactory = null;
 };
 
-GameEngine.prototype.switch_game_state = function (game_state) {
+// We inject the game states in here from main.js to avoid circular dependencies.
+GameEngine.prototype.injectGameStateFactory = function(gameStateFactory) {
+  this.gameStateFactory = gameStateFactory;
+};
+
+GameEngine.prototype.switch_game_state = function (gsKey, opts) {
   if (this.cur_game_state) {
     this.cur_game_state.dispose();
   }
-  this.cur_game_state = game_state
+
+  this.cur_game_state = this.gameStateFactory.createGameState(gsKey, opts);
 };
 
 
@@ -33,27 +49,27 @@ GameEngine.prototype.step = function () {
     this.process_popup_message(dt)
   }
 
-  if(!(this.cur_game_state instanceof ImpulseGameState)) {
+  if(!(this.cur_game_state.isImpulseGameState)) {
     layers.mainCtx.clearRect(0, 0, canvas.width, canvas.height);
-  } else if(this.cur_game_state instanceof ImpulseGameState &&  this.cur_game_state.ready) {
+  } else if(this.cur_game_state.isImpulseGameState &&  this.cur_game_state.ready) {
     if(this.cur_game_state.zoom != 1) {
       layers.mainCtx.fillStyle= this.cur_game_state.dark_color;
-      layers.mainCtx.fillRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+      layers.mainCtx.fillRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
     } else {
-      layers.mainCtx.clearRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+      layers.mainCtx.clearRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
     }
 
   }
 
   if (this.cur_game_state) {
     this.cur_game_state.process(dt)
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
+    if(!(this.cur_game_state.isImpulseGameState)) {
       layers.mainCtx.fillStyle = "black"
-      layers.mainCtx.fillRect(0, 0, dom.sideBarWidth, dom.canvasHeight);
-      layers.mainCtx.fillRect(dom.canvasWidth - dom.sideBarWidth, 0, dom.sideBarWidth, dom.canvasHeight);
-      layers.mainCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+      layers.mainCtx.fillRect(0, 0, constants.sideBarWidth, constants.canvasHeight);
+      layers.mainCtx.fillRect(constants.canvasWidth - constants.sideBarWidth, 0, constants.sideBarWidth, constants.canvasHeight);
+      layers.mainCtx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
       this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
-      layers.mainCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
+      layers.mainCtx.translate(-constants.sideBarWidth, 0)//allows us to have a topbar
     } else {
       this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
       layers.mainCtx.save()
@@ -93,7 +109,7 @@ GameEngine.prototype.clear_dialog_box = function() {
 
 GameEngine.prototype.set_popup_message = function(type, duration, color, world_num) {
   this.cur_popup_message = new MessageBox(type, color ? color : "white", world_num ? world_num : 0);
-  this.cur_popup_message.set_position(dom.canvasWidth/2, dom.canvasHeight - 10 - this.cur_popup_message.h)
+  this.cur_popup_message.set_position(constants.canvasWidth/2, constants.canvasHeight - 10 - this.cur_popup_message.h)
   this.cur_popup_message.set_visible(true)
   this.cur_popup_duration = duration;
   this.cur_popup_timer = duration;
@@ -121,7 +137,7 @@ GameEngine.prototype.draw_popup_message = function(ctx) {
 };
 
 GameEngine.prototype.toggle_pause = function () {
-  if (this.cur_game_state instanceof ImpulseGameState) {
+  if (this.cur_game_state.isImpulseGameState) {
     this.cur_game_state.toggle_pause()
   }
 }
@@ -132,8 +148,8 @@ GameEngine.prototype.on_mouse_move = function(mPos) {
   }
 
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_move(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_mouse_move(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_move(mPos.x, mPos.y)
     }
@@ -146,8 +162,8 @@ GameEngine.prototype.on_mouse_down = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_down(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_mouse_down(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_down(mPos.x, mPos.y)
     }
@@ -160,8 +176,8 @@ GameEngine.prototype.on_right_mouse_down = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_mouse_down(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_right_mouse_down(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_mouse_down(mPos.x, mPos.y)
     }
@@ -174,8 +190,8 @@ GameEngine.prototype.on_mouse_up = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_mouse_up(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_mouse_up(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_mouse_up(mPos.x, mPos.y)
     }
@@ -188,8 +204,8 @@ GameEngine.prototype.on_right_mouse_up = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_mouse_up(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_right_mouse_up(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_mouse_up(mPos.x, mPos.y)
     }
@@ -202,8 +218,8 @@ GameEngine.prototype.on_click = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_click(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_click(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_click(mPos.x, mPos.y)
     }
@@ -216,8 +232,8 @@ GameEngine.prototype.on_right_click = function(mPos) {
     return
   }
   if (this.cur_game_state) {
-    if(!(this.cur_game_state instanceof ImpulseGameState)) {
-      this.cur_game_state.on_right_click(mPos.x - dom.sideBarWidth, mPos.y)
+    if(!(this.cur_game_state.isImpulseGameState)) {
+      this.cur_game_state.on_right_click(mPos.x - constants.sideBarWidth, mPos.y)
     } else {
       this.cur_game_state.on_right_click(mPos.x, mPos.y)
     }
@@ -229,20 +245,15 @@ GameEngine.prototype.on_key_down = function(keyCode) {
     if (debugVars.god_mode == false) {
       debugVars.god_mode = true
       this.set_popup_message("god_mode_alert", 2500, "white", 0)
-      if (this.cur_game_state) {
-        if (this.cur_game_state instanceof WorldMapState) {
-          this.cur_game_state.set_up_buttons();
-        }
-      }
     }
   }
 
   if(keyCode == controls.keys.MUTE_KEY) { //X = mute/unmute
-    game_engine.toggleMute()
+    this.toggleMute()
   }
 
   if(keyCode == controls.keys.FULLSCREEN_KEY) {
-    dom.toggleFullScreen()
+    this.toggleFullScreen()
   }
 
   if(this.cur_dialog_box) {
@@ -264,17 +275,6 @@ GameEngine.prototype.on_key_up = function(keyCode) {
   }
 };
 
-// Send logging to server with Raven.
-GameEngine.prototype.send_logging_to_server = function(msg, tags) {
-  if (window.location.host === 'localhost') {
-    window.console.log('LOGGING');
-    window.console.log(msg);
-    window.console.log(tags);
-  } else {
-    window["Raven"]["captureMessage"](msg, tags);
-  }
-};
-
 GameEngine.prototype.toggleMute = function () {
   if(!music_player.mute) {
     music_player.mute_bg()
@@ -283,10 +283,17 @@ GameEngine.prototype.toggleMute = function () {
     music_player.unmute_bg()
     music_player.mute_effects(false)
   }
-  if (this.cur_dialog_box && this.cur_dialog_box instanceof OptionsMenu) {
+  if (this.cur_dialog_box && this.cur_dialog_box.isOptionsMenu) {
     this.cur_dialog_box.sendMuteSignal(music_player.mute);
   }
 };
+
+GameEngine.prototype.toggleFullScreen = function () {
+  dom.toggleFullScreen();
+  if (this.cur_dialog_box && this.cur_dialog_box.isOptionsMenu) {
+    this.cur_dialog_box.sendFullscreenSignal(!isFullScreen);
+  }
+}
 
 GameEngine.prototype.switchBg = function(bg_file, duration, alpha) {
   // Only perform the switch if the bg_file is different.
@@ -297,9 +304,9 @@ GameEngine.prototype.switchBg = function(bg_file, duration, alpha) {
     // bg_file can also be a color.
     if (bg_file.substring(0, 1) == "#") {
       alt_title_bg_ctx.fillStyle = bg_file;
-      alt_title_bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight);
+      alt_title_bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight);
     } else {
-      uiRenderUtils.tessellateBg(alt_title_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, bg_file)
+      uiRenderUtils.tessellateBg(alt_title_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, bg_file)
     }
 
     this.altBgAlpha = alpha;
@@ -312,9 +319,9 @@ GameEngine.prototype.setBg = function(bg_file, alpha) {
   var title_bg_ctx = layers.titleBgCanvas.getContext('2d');
   if (bg_file.substring(0, 1) == "#") {
     title_bg_ctx.fillStyle = bg_file;
-    title_bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight);
+    title_bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight);
   } else {
-    uiRenderUtils.tessellateBg(title_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, bg_file)
+    uiRenderUtils.tessellateBg(title_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, bg_file)
   }
   this.bgAlpha = alpha;
   this.bgFile = bg_file;
@@ -324,7 +331,7 @@ GameEngine.prototype.setBg = function(bg_file, alpha) {
   layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
   layers.bgCtx.globalAlpha = this.bgAlpha;
 
-  layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+  layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
   layers.bgCtx.globalAlpha = 1
 }
 
@@ -336,9 +343,9 @@ GameEngine.prototype.processAndDrawBg = function(dt) {
     layers.bgCtx.fillStyle = "#000"
     layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
     layers.bgCtx.globalAlpha = prog * this.bgAlpha
-    layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+    layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
     layers.bgCtx.globalAlpha = (1 - prog) * this.altBgAlpha
-    layers.bgCtx.drawImage(layers.altTitleBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight);
+    layers.bgCtx.drawImage(layers.altTitleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
     layers.bgCtx.globalAlpha = 1
 
     this.switchBgTimer -= dt;
@@ -349,4 +356,15 @@ GameEngine.prototype.processAndDrawBg = function(dt) {
   }
 }
 
-game_engine = new GameEngine();
+GameEngine.prototype.isQuestCompleted = function (name) {
+  return saveData.isQuestCompleted(name);
+}
+
+GameEngine.prototype.setQuestCompleted = function(name) {
+  if (!this.isQuestCompleted(name)) {
+    saveData.setQuestCompleted(name);
+    this.set_popup_message("quest_" + name, 2500, "white", 0)
+  }
+}
+
+module.exports = new GameEngine();

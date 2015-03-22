@@ -1,3 +1,5 @@
+var ImpulseButton = require('../ui/impulse_button.js');
+
 SmallButton.prototype = new ImpulseButton()
 
 SmallButton.prototype.constructor = SmallButton
@@ -80,5 +82,4 @@ SmallButton.prototype.additional_draw = function(context) {
   context.shadowBlur = 0
 }
 
-
-
+module.exports = SmallButton;

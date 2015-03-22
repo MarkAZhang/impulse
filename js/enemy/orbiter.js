@@ -1,3 +1,11 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Orbiter.prototype = new Enemy()
 
 Orbiter.prototype.constructor = Orbiter
@@ -111,7 +119,7 @@ Orbiter.prototype.additional_processing = function(dt) {
 
   this.set_heading_to(this.player.body.GetPosition())
 
-  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -120,7 +128,7 @@ Orbiter.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.entered_arena = false
     this.silence(100, true)
   }
@@ -339,3 +347,5 @@ Orbiter.prototype.bulk_draw_end = function(context, draw_factor, num) {
   context.stroke()
   context.restore()
 }
+
+module.exports = Orbiter;

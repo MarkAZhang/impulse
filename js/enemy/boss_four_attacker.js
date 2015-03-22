@@ -1,10 +1,18 @@
+var box_2d = require('../vendor/box2d.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 BossFourAttacker.prototype = new Enemy()
 
 BossFourAttacker.prototype.constructor = BossFourAttacker
 
 function BossFourAttacker(world, x, y, id, impulse_game_state,size) {
 
-  this.type = "boss four attacker"
+  this.type = "boss_four_attacker"
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -65,7 +73,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
       this.impulse_game_state.reset_combo();
       //this.cause_of_death = "hit_player"
       return
-  } else if(this.dir && other.type == "boss four spawner") {
+  } else if(this.dir && other.type == "boss_four_spawner") {
     var tank_angle = utils.atan({x:0, y:0}, this.dir)
     var ref_angle = utils.angleClosestTo(tank_angle, utils.atan(this.body.GetPosition(), other.body.GetPosition()))
     if(tank_angle < ref_angle) {
@@ -74,7 +82,7 @@ BossFourAttacker.prototype.collide_with = function(other) {
       tank_angle += Math.PI/2
     }
     other.body.ApplyImpulse(new box_2d.b2Vec2(this.spawner_hit_force * Math.cos(tank_angle), this.spawner_hit_force * Math.sin(tank_angle)), other.body.GetWorldCenter())
-  } else if(this.dir && other.type != "fourth boss") {
+  } else if(this.dir && other.type != "boss_four") {
     var tank_angle = utils.atan(this.body.GetPosition(), other.body.GetPosition())
     var dir = new box_2d.b2Vec2(this.dir.x, this.dir.y)
     dir.Normalize()
@@ -121,3 +129,5 @@ BossFourAttacker.prototype.set_size = function(size) {
   this.size = size
   this.body.ResetMassData()
 }
+
+module.exports = BossFourAttacker;

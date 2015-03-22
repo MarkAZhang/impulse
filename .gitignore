@@ -1,0 +1,31 @@
+box2d_example.html
+gamejs_example.html
+*~
+*.swp
+other_audio/*
+art_helpers/*
+other/*
+art/*
+test.html
+ideas.txt
+game_playtesting.txt
+art direction.txt
+changelog.txt
+impulse storyboard.docx
+story.txt
+compile.txt
+beyond.txt
+*.txt
+js/compressjs.sh
+js/temp.js
+ranking.txt
+prog.txt
+js/compress_all.sh
+js/c*14.js
+js/dist/*
+screenshots/*
+trailer/*
+impulse_text.rtf
+dated_stuff/*
+marketing/*
+node_modules/*

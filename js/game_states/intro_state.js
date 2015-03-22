@@ -1,9 +1,20 @@
+var audioData = require('../data/audio_data.js');
+var constants = require('../data/constants.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var layers = require('../core/layers.js');
+var music_player = require('../core/music_player.js');
+var spriteData = require('../data/sprite_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var Fader = require('../game_states/fader_util.js');
+var GameState = require('../game_states/game_state.js');
+
 IntroState.prototype = new GameState
 
 IntroState.prototype.constructor = IntroState
 
 function IntroState() {
-
   music_player.play_bg(audioData.songs["Menu"])
   this.bg_drawn = false;
   this.fader = new Fader({
@@ -21,7 +32,7 @@ IntroState.prototype.process = function(dt) {
   if(this.fader.animation === null) {
     this.fade_state_index += 1;
     if (this.fade_state_index >= this.fade_states.length) {
-      game_engine.switch_game_state(new TitleState());
+      game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
     }
     this.fader.set_animation(this.fade_states[this.fade_state_index]);
   }
@@ -42,11 +53,12 @@ IntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
   ctx.font = '16px Muli'
-  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.fillStyle = constants.colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", dom.levelWidth/2, 200)
+  ctx.fillText("CREATED BY", constants.levelWidth/2, 200)
   uiRenderUtils.drawPorcelainLogo(ctx, 400, 300);
   ctx.restore()
 }
 
+module.exports = IntroState;

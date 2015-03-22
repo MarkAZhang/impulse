@@ -1,3 +1,10 @@
+var box_2d = require('../vendor/box2d.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Spear.prototype = new Enemy()
 
 Spear.prototype.constructor = Spear
@@ -107,3 +114,5 @@ Spear.prototype.bulk_draw_end = function(context, draw_factor, num) {
   context.stroke()
   context.restore()
 }
+
+module.exports = Spear;

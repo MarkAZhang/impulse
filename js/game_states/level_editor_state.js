@@ -10,7 +10,12 @@
   //arrows = move selected polygon
   //+ = zoom in
   //- = zoom out
+var constants = require('../data/constants.js');
+var levelData = require('../data/level_data.js');
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
 
+var GameState = require('../game_states/game_state.js');
 
 LevelEditorState.prototype = new GameState
 
@@ -37,7 +42,7 @@ function LevelEditorState() {
   this.bg_drawn = false
 
   this.zoom = 1
-  this.camera_center = {x:dom.levelWidth/2, y:dom.levelHeight/2}
+  this.camera_center = {x:constants.levelWidth/2, y:constants.levelHeight/2}
 
 }
 
@@ -47,16 +52,16 @@ LevelEditorState.prototype.process = function(dt) {
 
 LevelEditorState.prototype.draw = function(context, bg_ctx) {
   if(!this.bg_drawn) {
-    bg_ctx.clearRect(0, 0, dom.canvasWidth, dom.canvasHeight);
+    bg_ctx.clearRect(0, 0, constants.canvasWidth, constants.canvasHeight);
     bg_ctx.fillStyle = "white"
-    bg_ctx.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight);
+    bg_ctx.fillRect(0, 0, constants.canvasWidth, constants.canvasHeight);
     this.bg_drawn = true
   }
 
   context.save();
 
   context.scale(this.zoom, this.zoom)
-  context.translate((dom.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (dom.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
+  context.translate((constants.levelWidth/2 - this.camera_center.x*this.zoom)/this.zoom, (constants.levelHeight/2 - this.camera_center.y*this.zoom)/this.zoom);
 
   context.beginPath()
   context.rect(0, 0, 800, 600)
@@ -280,8 +285,8 @@ LevelEditorState.prototype.rotate_polygon = function(index, angle, center_point)
 
 LevelEditorState.prototype.transform_to_zoomed_space = function(pt) {
 
-  var new_point = {x: (pt.x - (dom.levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
-    y: (pt.y - (dom.levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
+  var new_point = {x: (pt.x - (constants.levelWidth/2 - this.camera_center.x*this.zoom))/this.zoom,
+    y: (pt.y - (constants.levelHeight/2 - this.camera_center.y*this.zoom))/this.zoom};
   return new_point
 }
 
@@ -456,14 +461,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 88) { //X = reflect horizontally
     if(this.selected_av != null) {
-      this.accumulated_vertices.push({x: dom.levelWidth - this.accumulated_vertices[this.selected_av].x, y: this.accumulated_vertices[this.selected_av].y})
+      this.accumulated_vertices.push({x: constants.levelWidth - this.accumulated_vertices[this.selected_av].x, y: this.accumulated_vertices[this.selected_av].y})
       return
     }
 
     if(this.selected_p != null) {
       var poly = []
       for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
-        poly.push({x: dom.levelWidth - this.polygons[this.selected_p][j].x, y: this.polygons[this.selected_p][j].y})
+        poly.push({x: constants.levelWidth - this.polygons[this.selected_p][j].x, y: this.polygons[this.selected_p][j].y})
       }
       this.polygons.push(poly)
       return
@@ -473,7 +478,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     // for(var i = 0; i < k; i++) {
     //   var poly = []
     //   for(var j = this.polygons[i].length - 1; j >= 0; j--) {
-    //     poly.push({x: dom.levelWidth - this.polygons[i][j].x, y: this.polygons[i][j].y})
+    //     poly.push({x: constants.levelWidth - this.polygons[i][j].x, y: this.polygons[i][j].y})
     //   }
     //   this.polygons.push(poly)
     // }
@@ -481,14 +486,14 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
 
   if(keyCode == 90) { //Z = reflect vertically
     if(this.selected_av != null) {
-      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: dom.levelHeight - this.accumulated_vertices[this.selected_av].y})
+      this.accumulated_vertices.push({x: this.accumulated_vertices[this.selected_av].x, y: constants.levelHeight - this.accumulated_vertices[this.selected_av].y})
       return
     }
 
     if(this.selected_p != null) {
       var poly = []
       for(var j = this.polygons[this.selected_p].length - 1; j >= 0; j--) {
-        poly.push({x: this.polygons[this.selected_p][j].x, y: dom.levelHeight - this.polygons[this.selected_p][j].y})
+        poly.push({x: this.polygons[this.selected_p][j].x, y: constants.levelHeight - this.polygons[this.selected_p][j].y})
       }
       this.polygons.push(poly)
       return
@@ -497,7 +502,7 @@ LevelEditorState.prototype.on_key_down = function(keyCode) {
     // for(var i = 0; i < k; i++) {
     //   var poly = []
     //   for(var j = this.polygons[i].length - 1; j >= 0; j--) {
-    //     poly.push({x: this.polygons[i][j].x, y: this.dom.levelHeight - this.polygons[i][j].y})
+    //     poly.push({x: this.polygons[i][j].x, y: this.constants.levelHeight - this.polygons[i][j].y})
     //   }
     //   this.polygons.push(poly)
     // }
@@ -651,4 +656,4 @@ LevelEditorState.prototype.add_level = function(string) {
   }
 }
 
-
+module.exports = LevelEditorState;

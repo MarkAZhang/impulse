@@ -1,3 +1,11 @@
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Goo.prototype = new Enemy()
 
 Goo.prototype.constructor = Goo
@@ -104,7 +112,7 @@ Goo.prototype.check_area_of_effect = function() {
   for(var j = 0; j < this.level.enemies.length; j++) {
     if(!this.is_silenced() && utils.pDist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
     {
-      if(this.level.enemies[j].className != this.className)
+      if(this.level.enemies[j].type != this.type)
         this.area_effect(this.level.enemies[j])
     }
   }
@@ -170,3 +178,5 @@ Goo.prototype.modify_movement_vector = function(dir) {
 
 
 }
+
+module.exports = Goo;

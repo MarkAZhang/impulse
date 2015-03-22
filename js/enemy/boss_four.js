@@ -1,9 +1,22 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var Boss = require('../enemy/boss.js');
+var BossFourAttacker = require('../enemy/boss_four_attacker.js');
+var BossFourSpawner = require('../enemy/boss_four_spawner.js');
+
 BossFour.prototype = new Boss()
 
 BossFour.prototype.constructor = BossFour
 
 function BossFour(world, x, y, id, impulse_game_state) {
-  this.type = "fourth boss"
+  this.type = "boss_four"
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -327,7 +340,7 @@ BossFour.prototype.boss_specific_additional_processing = function(dt) {
     }
   }
 
-  if (this.cur_object != null && this.cur_object instanceof BossFourSpawner && !this.cur_object.is_silenced()) {
+  if (this.cur_object != null && this.cur_object.type === "boss_four_spawner"  && !this.cur_object.is_silenced()) {
     this.spawn_laser_flare_prop += dt/this.get_spawn_laser_flare_transition_period();
     if (this.spawn_laser_flare_prop > 1) {
       this.spawn_laser_flare_prop = 1;
@@ -445,35 +458,15 @@ BossFour.prototype.generate_target_spawn_angle = function() {
     var distance = 15
     var test_point = {x: this.body.GetPosition().x + Math.cos(angle) * distance,
         y: this.body.GetPosition().y + Math.sin(angle) * distance}
-    var dist = Math.min(775/layers.draw_factor - test_point.x, test_point.x - 25/layers.draw_factor)
-    var dist2 = Math.min(575/layers.draw_factor - test_point.y, test_point.y - 25/layers.draw_factor)
+    var dist = Math.min(775/constants.drawFactor - test_point.x, test_point.x - 25/constants.drawFactor)
+    var dist2 = Math.min(575/constants.drawFactor - test_point.y, test_point.y - 25/constants.drawFactor)
 
     // One of these three angles MUST work.
-    if(isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 5) {
+    if(utils.isVisible(this.body.GetPosition(), test_point, this.level.obstacle_edges) && Math.min(dist, dist2) > 5) {
       this.target_spawn_angle = angle;
       return;
     }
   }
-
-  // more complicated method which might not be necessary
-  //var choices = []
-
-  /*for(var i = 0; i < this.spawn_buckets; i++) {
-    choices.push({
-      angle: i * Math.PI * 2 / this.spawn_buckets,
-      spawners_alive: 0
-    })
-  }
-
-  for(var index in this.level.enemies) {
-    var enemy = this.level.enemies[index]
-    if(enemy.type == "boss four spawner") {
-      var angle = utils.atan(this.body.GetPosition(), enemy.body.GetPosition())
-      var bucket = angle / (Math.PI * 2 / this.spawn_buckets)
-      if(bucket < 0) bucket += this.spawn_buckets
-      choices[bucket].spawners_alive += 1
-    }
-  }*/
 }
 
 BossFour.prototype.fire_attack_bud = function(bud, initial) {
@@ -568,7 +561,7 @@ BossFour.prototype.repel_enemies = function() {
   for(var index in this.level.enemies) {
     var enemy = this.level.enemies[index]
     if(enemy.dying) continue
-    if(enemy != this && enemy.type != "boss four attacker" && enemy.type != "boss four spawner") {
+    if(enemy != this && enemy.type != "boss_four_attacker" && enemy.type != "boss_four_spawner") {
 
       if(utils.pDist(enemy.body.GetPosition(), this.body.GetPosition()) < 6) { // kill the enemy
         enemy.start_death("absorbed")
@@ -586,9 +579,7 @@ BossFour.prototype.repel_enemies = function() {
           var help_angle = enemy_angle - Math.PI/2
         }
         enemy.body.ApplyImpulse(new box_2d.b2Vec2(enemy.force * Math.cos(help_angle), enemy.force * Math.sin(help_angle)), enemy.body.GetWorldCenter())
-
       }
-
     }
   }
 }
@@ -640,7 +631,7 @@ BossFour.prototype.getNumberSpawners = function() {
   var count = 0
   for(var i = 0; i < this.level.enemies.length; i++)
   {
-    if(this.level.enemies[i].type == "boss four spawner") {
+    if(this.level.enemies[i].type == "boss_four_spawner") {
       count += 1
     }
   }
@@ -663,7 +654,7 @@ BossFour.prototype.generate_new_attack_bud = function(bud) {
   var index = bud.loc
   var angle = (index)/this.num_buds * Math.PI * 2 + this.body.GetAngle()
 
-  var offset_radius = this.effective_radius + enemyData["boss four "+bud.type+"er"].initial_radius * 1.5
+  var offset_radius = this.effective_radius + enemyData["boss_four_"+bud.type+"er"].initial_radius * 1.5
   var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
     y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}
   var new_enemy = null
@@ -736,7 +727,7 @@ BossFour.prototype.process_attack_buds = function(dt) {
           this.ready_bud_queue.splice(this.ready_bud_queue.indexOf(index), 1);
           this.generate_new_attack_bud(bud)
         } else {
-          var size = Math.max(0.1, utils.bezierInterpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * enemyData["boss four "+bud.type+"er"].effective_radius)
+          var size = Math.max(0.1, utils.bezierInterpolate(0.15, 0.85, Math.min(1, 1 - bud.expand_timer/bud.expand_period)) * enemyData["boss_four_"+bud.type+"er"].effective_radius)
           var offset_radius = this.effective_radius + size
           var new_position = {x: this.body.GetPosition().x + (offset_radius) * Math.cos(angle),
             y: this.body.GetPosition().y + (offset_radius) * Math.sin(angle)}
@@ -792,7 +783,7 @@ BossFour.prototype.get_object_hit = function() {
     for(var i = 0; i < this.level.enemies.length; i++)
     {
       if(this.level.enemies[i].id == this.id) continue
-      if(!(this.level.enemies[i] instanceof BossFourSpawner)) continue
+      if(!(this.level.enemies[i].type === "boss_four_spawner")) continue
       if(!this.level.enemies[i].spawned) continue
 
       if(!utils.isAngleBetween(this.spawn_laser_angle - this.laser_check_diff, this.spawn_laser_angle + this.laser_check_diff,
@@ -820,7 +811,7 @@ BossFour.prototype.get_object_hit = function() {
       object = this.player
     }
 
-  if(object instanceof BossFourSpawner && object.id != this.cur_object.id && object.spawned) {
+  if(object.type === "boss_four_spawner" && object.id != this.cur_object.id && object.spawned) {
     object.spawn_enemy()
   }
 
@@ -963,3 +954,5 @@ BossFour.prototype.get_impulse_extra_factor = function() {
   }
   return this.impulse_extra_factor;
 }
+
+module.exports = BossFour;

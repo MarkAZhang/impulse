@@ -1,3 +1,8 @@
+var saveData = require('../load/save_data.js');
+
+var CheckBox = require('../ui/checkbox.js');
+var ImpulseButton = require('../ui/impulse_button.js');
+
 SelectDifficultyButton.prototype = new ImpulseButton()
 
 SelectDifficultyButton.prototype.constructor = SelectDifficultyButton
@@ -36,3 +41,5 @@ SelectDifficultyButton.prototype.additional_draw = function(ctx) {
   ctx.fillStyle = this.color
   ctx.fillText("HARD MODE", this.x, this.y + this.h/3)
 }
+
+module.exports = SelectDifficultyButton;

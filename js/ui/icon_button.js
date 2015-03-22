@@ -1,3 +1,11 @@
+var constants = require('../data/constants.js');
+var iconRenderUtils = require('../render/icons.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var ImpulseButton = require('../ui/impulse_button.js');
+
 IconButton.prototype = new ImpulseButton()
 
 IconButton.prototype.constructor = IconButton
@@ -77,43 +85,43 @@ IconButton.prototype.draw_icon  = function(context) {
 	} else if(this.icon == "gear") {
 
 		if(this.hover) {
-			iconRenderUtils.drawGearIcon(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)
+			iconRenderUtils.drawGearIcon(context, this.x, this.y - this.h/8, 15, constants.colors["impulse_blue"], "#080808", false)
 		} else {
 			iconRenderUtils.drawGearIcon(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)
 		}
 	} else if(this.icon == "credit") {
     if(this.hover) {
-      iconRenderUtils.drawCreditsIcon(context, this.x, this.y - this.h/8, 15, impulse_colors["impulse_blue"], "#080808", false)
+      iconRenderUtils.drawCreditsIcon(context, this.x, this.y - this.h/8, 15, constants.colors["impulse_blue"], "#080808", false)
     } else {
       iconRenderUtils.drawCreditsIcon(context, this.x, this.y - this.h/8, 15, "white", "#080808", false)
     }
   } else if(this.icon == "tutorial") {
     if(this.hover) {
-      iconRenderUtils.drawTutorialIcon(context, this.x, this.y - this.h/8, 13, impulse_colors["impulse_blue"], "#080808", false)
+      iconRenderUtils.drawTutorialIcon(context, this.x, this.y - this.h/8, 13, constants.colors["impulse_blue"], "#080808", false)
     } else {
       iconRenderUtils.drawTutorialIcon(context, this.x, this.y - this.h/8, 13, "white", "#080808", false)
     }
   } else if(this.icon == "note") {
     if(this.hover) {
-      iconRenderUtils.drawNoteIcon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"], "#080808")
+      iconRenderUtils.drawNoteIcon(context, this.x, this.y - this.h/6, 20, constants.colors["impulse_blue"], "#080808")
     } else {
       iconRenderUtils.drawNoteIcon(context, this.x, this.y - this.h/6, 20, "white", "#080808")
     }
   } else if(this.icon == "texture") {
     if(this.hover) {
-      iconRenderUtils.drawTextureIcon(context, this.x, this.y - this.h/4, 20, impulse_colors["impulse_blue"])
+      iconRenderUtils.drawTextureIcon(context, this.x, this.y - this.h/4, 20, constants.colors["impulse_blue"])
     } else {
       iconRenderUtils.drawTextureIcon(context, this.x, this.y - this.h/4, 20, "white")
     }
   } else if(this.icon == "physics_engine") {
     if(this.hover) {
-      iconRenderUtils.drawPhysicsIcon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"])
+      iconRenderUtils.drawPhysicsIcon(context, this.x, this.y - this.h/6, 20, constants.colors["impulse_blue"])
     } else {
       iconRenderUtils.drawPhysicsIcon(context, this.x, this.y - this.h/6, 20, "white")
     }
   } else if(this.icon == "audio") {
     if(this.hover) {
-      iconRenderUtils.drawMusicIcon(context, this.x, this.y - this.h/6, 20, impulse_colors["impulse_blue"], false, false)
+      iconRenderUtils.drawMusicIcon(context, this.x, this.y - this.h/6, 20, constants.colors["impulse_blue"], false, false)
     } else {
       iconRenderUtils.drawMusicIcon(context, this.x, this.y - this.h/6, 20, "white", false, false)
     }
@@ -278,3 +286,5 @@ IconButton.prototype.draw_icon  = function(context) {
   }
   context.restore()
 }
+
+module.exports = IconButton;

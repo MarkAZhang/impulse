@@ -1,3 +1,5 @@
+var levelData = require('../data/level_data.js');
+
 var LevelSaveData = function () {
   this.data = {
     "easy": {},
@@ -51,3 +53,5 @@ LevelSaveData.prototype.addLevelDataForDifficulty = function (save_obj, difficul
     save_obj[i]["save_state"][difficulty_level]["seen"] = this.data[difficulty_level][i].seen
   }
 };
+
+module.exports = LevelSaveData;

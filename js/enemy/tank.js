@@ -1,3 +1,10 @@
+var box_2d = require('../vendor/box2d.js');
+var enemyData = require('../data/enemy_data.js');
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Tank.prototype = new Enemy()
 
 Tank.prototype.constructor = Tank
@@ -140,7 +147,7 @@ Tank.prototype.process_impulse_specific = function(attack_loc, impulse_force, hi
 }
 
 Tank.prototype.collide_with = function(other, this_body, other_body) {
-  if(other instanceof Tank) {
+  if(other.type === "tank") {
     if (this.durations["volatile"] > 0 && !this.dying && !this.activated && !this.is_silenced())
     {
       this.activated = true
@@ -164,7 +171,7 @@ Tank.prototype.collide_with = function(other, this_body, other_body) {
     else {
       this.start_death("hit_player")
     }
-  } else if(other instanceof Enemy) {
+  } else if(other.isEnemy) {
     if(other.durations["open"] > 0) {
       this.open(other.durations["open"])
     }
@@ -282,3 +289,5 @@ Tank.prototype.get_current_status = function() {
 
   return this.get_additional_current_status()
 }
+
+module.exports = Tank;

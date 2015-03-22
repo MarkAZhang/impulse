@@ -105,3 +105,5 @@ OptionsData.prototype.isValidOptionValue = function (obj, optionName) {
     return false;
   }
 }
+
+module.exports = OptionsData;

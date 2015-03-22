@@ -1,3 +1,12 @@
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var iconRenderUtils = require('../render/icons.js');
+var questData = require('../data/quest_data.js');
+var questRenderUtils = require('../render/quest.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
 var MessageBox = function(type, color, world_num, completed) {
   if(!color) return
   this.init(type, color, world_num, completed)
@@ -120,9 +129,6 @@ MessageBox.prototype.init = function(type, color, world_num, completed) {
 		this.w = 250;
 		this.h = 75;
 		this.show_box = false;
-	} else if (this.type.substring(0, 14) == "level_preview_") {
-		this.w = 200;
-		this.h = 150;
 	} else if (this.type.substring(0, 6) == "quest_") {
 		this.w = 420;
 		this.h = 90;
@@ -312,14 +318,6 @@ MessageBox.prototype.draw = function(ctx) {
 	    iconRenderUtils.drawSaveIcon(ctx, this.x, this.y - this.h / 2 + 10, 20, this.color)
 		ctx.restore()
 		ctx.fillText("GAME SAVED", this.x, this.y + this.h / 2 - 33);
-	} else if (this.type.substring(0, 14) == "level_preview_") {
-		levelPreviewRenderUtils.drawLevelObstaclesWithinRect(ctx, this.type.substring(14), this.x, this.y, 200, 150,
-			impulse_colors['world '+ this.world_num + ' lite'])
-		ctx.beginPath();
-		ctx.rect(this.x - this.w/2, this.y - this.h / 2, this.w, this.h);
-		ctx.lineWidth = 6;
-		ctx.strokeStyle = impulse_colors['world '+ this.world_num + ' lite'];
-		ctx.stroke();
 	} else if (this.type.substring(0, 6) == "quest_")  {
 		ctx.beginPath();
 		ctx.fillStyle = "black"
@@ -430,3 +428,5 @@ MessageBox.prototype.set_position = function(mx, my) {
 		this.y = my - this.h/2 - 50;
 	}
 }
+
+module.exports = MessageBox;

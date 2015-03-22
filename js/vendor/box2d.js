@@ -461,6 +461,7 @@ box_2d.b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
 box_2d.b2DebugDraw = Box2D.Dynamics.b2DebugDraw
 box_2d.b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
 box_2d.b2ContactListener = Box2D.Dynamics.b2ContactListener
+box_2d.b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 box_2d.WALL_BIT = 0x0001;
 box_2d.PLAYER_BIT = 0x0002;
@@ -469,3 +470,5 @@ box_2d.BOSS_ONE_BIT = 0x0008;
 box_2d.BOSS_THREE_BIT = 0x0010;
 box_2d.BOSS_FOUR_BIT = 0x0011;
 box_2d.BOSS_BITS = 0x0018;
+
+module.exports = box_2d;

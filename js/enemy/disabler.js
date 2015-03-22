@@ -1,3 +1,8 @@
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
+
+var Goo = require('../enemy/goo.js');
+
 Disabler.prototype = new Goo()
 
 Disabler.prototype.constructor = Disabler
@@ -46,7 +51,7 @@ Disabler.prototype.check_area_of_effect = function() {
   for(var j = 0; j < this.level.enemies.length; j++) {
     if(!this.is_silenced() && utils.pDist(this.body.GetPosition(), this.level.enemies[j].body.GetPosition()) < this.goo_radius)
     {
-      if(this.level.enemies[j].className != this.className)
+      if(this.level.enemies[j].type != this.type)
         this.area_effect(this.level.enemies[j])
     } else if(this.level.enemies[j].type == "harpoon" &&
       (utils.pDist(this.level.enemies[j].harpoon_head.body.GetPosition(), this.body.GetPosition()) < this.goo_radius ||
@@ -69,3 +74,4 @@ Disabler.prototype.area_effect = function(obj) {
   }
 }
 
+module.exports = Disabler;

@@ -1,21 +1,39 @@
 // Currently responsible only for first time tutorial and final victory scores after hive 4. Also
 // Also might stil take user to ult tutorial, but that will soon be deprecated.
+var constants = require('../data/constants.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var layers = require('../core/layers.js');
+var levelData = require('../data/level_data.js');
+var logging = require('../core/logging.js');
+var music_player = require('../core/music_player.js');
+var questData = require('../data/quest_data.js');
+var questRenderUtils = require('../render/quest.js');
+var saveData = require('../load/save_data.js');
+var spriteData = require('../data/sprite_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var GameState = require('../game_states/game_state.js');
+var IconButton = require('../ui/icon_button.js');
 
 RewardGameState.prototype = new GameState
 
 RewardGameState.prototype.constructor = RewardGameState
 
-function RewardGameState(hive_numbers, main_game, args) {
-  this.hive_numbers = hive_numbers
-  this.main_game = main_game
-  this.args = args
+function RewardGameState(opts) {
+  // hive_numbers
+  // main_game
+  // game_args
+  this.hive_numbers = opts.hive_numbers
+  this.main_game = opts.main_game
+  this.game_args = opts.game_args
   this.rewards = []
   this.cur_reward_index = -1
   this.transition_interval = 250
   this.transition_timer = this.transition_interval
   this.transition_state = "in"
   this.first_time = saveData.firstTime // cache the first time variable, since it might change during this game state
-  this.victory = args.victory
+  this.victory = this.game_args.victory
   this.bg_drawn = false
   this.ult_num_pages = 7
   this.ult_cur_page = 0
@@ -23,8 +41,8 @@ function RewardGameState(hive_numbers, main_game, args) {
   var _this = this;
   this.initial_difficulty_mode = saveData.difficultyMode;
 
-  this.normal_mode_button = new IconButton("NORMAL MODE", 20, dom.levelWidth/2-150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
-  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, dom.levelWidth/2+150, 300, 250, 125, "white", impulse_colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
+  this.normal_mode_button = new IconButton("NORMAL MODE", 20, constants.levelWidth/2-150, 300, 250, 125, "white", constants.colors["impulse_blue"], function(){_this.change_mode("easy")}, "easy_mode")
+  this.challenge_mode_button = new IconButton("CHALLENGE MODE", 20, constants.levelWidth/2+150, 300, 250, 125, "white", constants.colors["impulse_blue"], function(){_this.change_mode("normal")}, "normal_mode")
 
   this.debug()
 
@@ -59,11 +77,11 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     bg_canvas.setAttribute("style", "display:none")
     var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
     if (cur_reward.type == "world_victory") {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+(cur_reward.data+1))
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive "+(cur_reward.data+1))
     } else if (cur_reward.type == "final_victory") {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Title Alt4")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Title Alt4")
     } else {
-      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
+      uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0")
     }
     this.bg_drawn = true
   }
@@ -75,7 +93,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
   } else {
     ctx.globalAlpha *= uiRenderUtils.getBgOpacity(0);
   }
-  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, 0, 0, dom.levelWidth, dom.levelHeight)
+  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, 0, 0, constants.levelWidth, constants.levelHeight)
   ctx.restore()
   ctx.save();
   // change transparency for transition
@@ -96,7 +114,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var tessellation_num = cur_reward.type == "world_victory" ? cur_reward.data + 1 : 0
     ctx.save()
     ctx.globalAlpha *= 0.2
-    uiRenderUtils.drawTessellationSign(ctx, tessellation_num, dom.levelWidth/2, 250, 100)
+    uiRenderUtils.drawTessellationSign(ctx, tessellation_num, constants.levelWidth/2, 250, 100)
     ctx.restore()
   }
   var main_message = ""
@@ -106,13 +124,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     var message_size = 32
 
     if(cur_reward.type == "world_victory") {
-      ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
+      ctx.fillStyle = constants.colors["world "+(cur_reward.data+1)+ " bright"]
       message_size = 24
       main_message = "NEW HIVE UNLOCKED"
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
       ctx.font = "48px Muli"
-      ctx.fillText(levelData.hiveNames[cur_reward.data+1], dom.levelWidth/2, 270)
+      ctx.fillText(levelData.hiveNames[cur_reward.data+1], constants.levelWidth/2, 270)
     }
 
     if(cur_reward.type == "final_victory") {
@@ -123,16 +141,16 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "24px Muli"
-      ctx.fillText(final_message, dom.levelWidth/2, 240)
+      ctx.fillText(final_message, constants.levelWidth/2, 240)
       ctx.font = "20px Muli"
       ctx.fillStyle = "red"
-      ctx.fillText(final_message_teaser, dom.levelWidth/2, 280)
+      ctx.fillText(final_message_teaser, constants.levelWidth/2, 280)
 
       ctx.font = "16px Muli"
       ctx.fillStyle = "white"
       if (this.initial_difficulty_mode == "easy") {
       } else {
-        ctx.fillText("THANKS FOR PLAYING IMPULSE", dom.levelWidth/2, 320)
+        ctx.fillText("THANKS FOR PLAYING IMPULSE", constants.levelWidth/2, 320)
         // TODO: add sharing
       }
     }
@@ -145,35 +163,35 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.font = "60px Muli"
-      ctx.fillText("+"+cur_reward.data.diff, dom.levelWidth/2, main_reward_text_y + 20)
+      ctx.fillText("+"+cur_reward.data.diff, constants.levelWidth/2, main_reward_text_y + 20)
 
       ctx.textAlign = 'center'
       ctx.font = '12px Muli'
       ctx.fillStyle = 'white'
-      ctx.fillText("NEW SKILL RATING", dom.levelWidth/2, new_values_text_y - 25)
+      ctx.fillText("NEW SKILL RATING", constants.levelWidth/2, new_values_text_y - 25)
       ctx.font = '48px Muli'
-      ctx.fillText(cur_reward.data.new_rating, dom.levelWidth/2, new_values_text_y + 25)
+      ctx.fillText(cur_reward.data.new_rating, constants.levelWidth/2, new_values_text_y + 25)
     }
 
     if(cur_reward.type == "quest") {
       var tessellation_num = 0
       ctx.save()
-      uiRenderUtils.drawTessellationSign(ctx, tessellation_num, dom.levelWidth/2, 250, 150)
+      uiRenderUtils.drawTessellationSign(ctx, tessellation_num, constants.levelWidth/2, 250, 150)
       ctx.restore()
       ctx.textAlign = "center"
-      ctx.fillStyle = impulse_colors["impulse_blue"]
+      ctx.fillStyle = constants.colors["impulse_blue"]
 
       ctx.font = '32px Muli'
-      ctx.fillText("CHALLENGE COMPLETE!", dom.levelWidth/2, 120)
+      ctx.fillText("CHALLENGE COMPLETE!", constants.levelWidth/2, 120)
 
 
-      questRenderUtils.draw_quest_button(ctx, dom.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
+      questRenderUtils.draw_quest_button(ctx, constants.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
       ctx.font = '24px Muli'
       ctx.fillStyle = "white"
       for (var i = 0; i < questData[cur_reward.data.type].text.length; i++) {
         var text = questData[cur_reward.data.type].text[i];
-        ctx.fillText(text, dom.levelWidth / 2, main_reward_text_y + 150 + i * 36);
+        ctx.fillText(text, constants.levelWidth / 2, main_reward_text_y + 150 + i * 36);
       }
 
     }
@@ -182,10 +200,10 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = "30px Muli"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.fillText("INTRO TUTORIAL COMPLETE", dom.levelWidth/2, 250)
+      ctx.fillText("INTRO TUTORIAL COMPLETE", constants.levelWidth/2, 250)
       ctx.fillStyle = "white"
       ctx.font = "16px Muli"
-      ctx.fillText("INITIALIZING MAIN GAME...", dom.levelWidth/2, 550)
+      ctx.fillText("INITIALIZING MAIN GAME...", constants.levelWidth/2, 550)
     }
 
     if(cur_reward.type == "select_difficulty") {
@@ -202,31 +220,31 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.font = "16px Muli"
-      ctx.fillText(main_message_teaser, dom.levelWidth/2, 70)
+      ctx.fillText(main_message_teaser, constants.levelWidth/2, 70)
       ctx.font = message_size + "px Muli"
       if (cur_reward.type == "world_victory") {
-        ctx.fillStyle = impulse_colors["world "+(cur_reward.data+1)+ " bright"]
+        ctx.fillStyle = constants.colors["world "+(cur_reward.data+1)+ " bright"]
       } else {
-        ctx.fillStyle = impulse_colors["impulse_blue"]
+        ctx.fillStyle = constants.colors["impulse_blue"]
       }
-      ctx.fillText(main_message, dom.levelWidth/2, 120)
+      ctx.fillText(main_message, constants.levelWidth/2, 120)
     }
 
     if (cur_reward.type != "select_difficulty") {
       ctx.textAlign = "center"
-      ctx.fillStyle = cur_reward.type == "world_victory" ? impulse_colors["world "+(cur_reward.data+1)+ " bright"] : "white"
+      ctx.fillStyle = cur_reward.type == "world_victory" ? constants.colors["world "+(cur_reward.data+1)+ " bright"] : "white"
       ctx.font = "16px Muli"
       if (cur_reward.type != "first_time_tutorial") {
         if (cur_reward.type != "ult")
-          ctx.fillText("PRESS ANY KEY TO CONTINUE", dom.levelWidth/2, dom.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY TO CONTINUE", constants.levelWidth/2, constants.levelHeight - 30)
         else
-          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", dom.levelWidth/2, dom.levelHeight - 30)
+          ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", constants.levelWidth/2, constants.levelHeight - 30)
       }
     } else {
       ctx.font = "16px Muli"
       ctx.textAlign = "center"
-      ctx.fillStyle = impulse_colors["impulse_blue"]
-      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", dom.levelWidth/2, dom.levelHeight - 75)
+      ctx.fillStyle = constants.colors["impulse_blue"]
+      ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", constants.levelWidth/2, constants.levelHeight - 75)
     }
     ctx.restore();
 }
@@ -295,31 +313,51 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   } else {
     game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
   }
-
-  game_engine.switch_game_state(new WorldMapState(go_to_world_num, is_practice_mode));
+  game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
+    world: go_to_world_num,
+    is_practice_mode: is_practice_mode
+  });
 }
 
 RewardGameState.prototype.advance_game_state = function() {
   if (this.main_game) {
     if (this.victory && this.hive_numbers.world >= 1 && this.hive_numbers.world <= 3) {
       // Immediately move to the next world.
-      game_engine.switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
+      game_engine.switch_game_state(gsKeys.MAIN_GAME_TRANSITION_STATE, {
+        world_num: this.hive_numbers.world + 1,
+        last_level: null,
+        visibility_graph: null,
+        hive_numbers: null,
+        loading_saved_game: false
+      });
     } else if (this.victory && this.hive_numbers.world == 0 && this.first_time) {
-      game_engine.switch_game_state(new MainGameTransitionState(this.hive_numbers.world + 1, null, null, null, false))
+      game_engine.switch_game_state(gsKeys.MAIN_GAME_TRANSITION_STATE, {
+        world_num: this.hive_numbers.world + 1,
+        last_level: null,
+        visibility_graph: null,
+        hive_numbers: null,
+        loading_saved_game: false
+      });
     } else if (this.victory && this.hive_numbers.world == 4) {
       this.switch_to_world_map(false);
-    } else if (this.args.just_saved) {
-      game_engine.switch_game_state(new TitleState(this));
+    } else if (this.game_args.just_saved) {
+      game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
     } else {
       this.switch_to_world_map(false);
     }
   } else {
     if (this.victory) {
-      game_engine.switch_game_state(new GameOverState(this.args.game_numbers, this.args.level, this.args.world_num, this.args.visibility_graph, {
-        best_time: this.args.game_numbers.best_time,
-        high_score: this.args.game_numbers.high_score,
-        victory: this.victory
-      }));
+      game_engine.switch_game_state(gsKeys.GAME_OVER_STATE, {
+        final_game_numbers: this.game_args.game_numbers,
+        level: this.game_args.level,
+        world_num: this.game_args.world_num,
+        visibility_graph: this.game_args.visibility_graph,
+        args: {
+          best_time: this.game_args.game_numbers.best_time,
+          high_score: this.game_args.game_numbers.high_score,
+          victory: this.victory
+        }
+      });
     } else {
       this.switch_to_world_map(true);
     }
@@ -327,9 +365,9 @@ RewardGameState.prototype.advance_game_state = function() {
 }
 
 RewardGameState.prototype.determine_rewards = function() {
-  if(this.args.is_tutorial) {
-    if(this.args.tutorial_type == "first_time_tutorial" || this.args.first_time_tutorial) {
-      game_engine.send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.args.skipped});
+  if(this.game_args.is_tutorial) {
+    if(this.game_args.tutorial_type == "first_time_tutorial" || this.game_args.first_time_tutorial) {
+      logging.send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.game_args.skipped});
       this.rewards.push({
         type: "first_time_tutorial"
       })
@@ -400,3 +438,5 @@ RewardGameState.prototype.on_mouse_move = function(x, y) {
     this.challenge_mode_button.on_mouse_move(x, y)
   }
 }
+
+module.exports = RewardGameState;

@@ -1,14 +1,25 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var levelData = require('../data/level_data.js');
+var music_player = require('../core/music_player.js');
+var questData = require('../data/quest_data.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
 var Enemy = function(world, x, y, id, impulse_game_state) {
   //empty constructor since Enemy should not be constructed
 }
 
-Enemy.prototype.enemy_canvas_factor = 1.5
+
+Enemy.prototype.isEnemy = true;
 
 Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 //need to set this.type before calling init
 
 //need to set effective_radius if do_yield = true
-
 
   this.original_spawn_point = new box_2d.b2Vec2(x, y);
 
@@ -22,7 +33,6 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
   for(i in enemyData[this.type]) {
     this[i] = enemyData[this.type][i]
   }
-
 
   this.pointer_vertices = []
 
@@ -46,7 +56,7 @@ Enemy.prototype.init = function(world, x, y, id, impulse_game_state) {
 
   this.lighten_factor = 1.5
 
-  this.impulsed_color = impulse_colors["impulse_blue"]
+  this.impulsed_color = constants.colors["impulse_blue"]
 
   var bodyDef = new box_2d.b2BodyDef;
   bodyDef.type = box_2d.b2Body.b2_dynamicBody;
@@ -387,7 +397,7 @@ Enemy.prototype.process = function(enemy_index, dt) {
 Enemy.prototype.process_entered_arena = function() {
 
   if(!this.silence_outside_arena) return
-  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.silence(this.entered_arena_delay)
     this.recovery_interval = this.entered_arena_delay
     this.recovery_timer = this.entered_arena_delay
@@ -398,7 +408,7 @@ Enemy.prototype.process_entered_arena = function() {
     this.entered_arena_timer -= dt
   }
 
-  if(!utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.entered_arena = false
     this.silence(100, true)
     this.recovery_timer = 0
@@ -682,7 +692,7 @@ Enemy.prototype.collide_with = function(other) {
       if (this.impulse_game_state.show_tutorial) {
         this.impulse_game_state.add_tutorial_signal("enemy_touched")
       }
-    } else if(other instanceof Enemy) {
+    } else if(other.isEnemy) {
         if(other.durations["open"] > 0) {
           this.open(other.durations["open"])
         }
@@ -958,8 +968,8 @@ Enemy.prototype.get_impulse_sensitive_pts = function() {
 
 Enemy.prototype.set_up_images = function() {
   var normal_canvas = document.createElement('canvas');
-  normal_canvas.width = enemyData[this.type].effective_radius * 2 * layers.draw_factor
-  normal_canvas.height = enemyData[this.type].effective_radius * 2 * layers.draw_factor
+  normal_canvas.width = enemyData[this.type].effective_radius * 2 * constants.drawFactor
+  normal_canvas.height = enemyData[this.type].effective_radius * 2 * constants.drawFactor
 
   var normal_canvas_ctx = normal_canvas.getContext('2d');
 
@@ -1022,7 +1032,7 @@ Enemy.prototype.get_color_for_status = function(status) {
   } else if(status == "black") {
     return "black"
   } else if(status.slice(0, 5) == "world") {
-    return impulse_colors["world "+status.slice(5,6)+" lite"]
+    return constants.colors["world "+status.slice(5,6)+" lite"]
   }
 
   return this.get_additional_color_for_status(status)
@@ -1040,19 +1050,19 @@ Enemy.prototype.generate_images = function() {
   for(index in all_status) {
     var status = all_status[index]
     var normal_canvas = document.createElement('canvas');
-    normal_canvas.width = enemyData[this.type].effective_radius * 2 * this.enemy_canvas_factor * layers.draw_factor
-    normal_canvas.height = enemyData[this.type].effective_radius * 2 * this.enemy_canvas_factor * layers.draw_factor
+    normal_canvas.width = enemyData[this.type].effective_radius * 2 * constants.enemyCanvasFactor * constants.drawFactor
+    normal_canvas.height = enemyData[this.type].effective_radius * 2 * constants.enemyCanvasFactor * constants.drawFactor
 
     var normal_canvas_ctx = normal_canvas.getContext('2d');
 
     var cur_color = this.get_color_for_status(status)
     if (!cur_color) cur_color = this.color
 
-    var tp = {x: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor, y: enemyData[this.type].effective_radius * Enemy.prototype.enemy_canvas_factor}
-    normal_canvas_ctx.translate(tp.x * layers.draw_factor, tp.y * layers.draw_factor)
+    var tp = {x: enemyData[this.type].effective_radius * constants.enemyCanvasFactor, y: enemyData[this.type].effective_radius * constants.enemyCanvasFactor}
+    normal_canvas_ctx.translate(tp.x * constants.drawFactor, tp.y * constants.drawFactor)
 
     enemyRenderUtils.drawEnemyImage(normal_canvas_ctx, status, draw_polygons, this.type, cur_color);
-    normal_canvas_ctx.translate(-tp.x * layers.draw_factor, -tp.y * layers.draw_factor)
+    normal_canvas_ctx.translate(-tp.x * constants.drawFactor, -tp.y * constants.drawFactor)
     images[status] = normal_canvas
 
   }
@@ -1064,3 +1074,5 @@ Enemy.prototype.generate_images = function() {
 Enemy.prototype.dispose = function () {
 
 };
+
+module.exports = Enemy;

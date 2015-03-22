@@ -1,4 +1,4 @@
-debugVars = {
+var debugVars = {
   god_mode_enabled: true,
   god_mode: false,
   dev: false,
@@ -16,3 +16,5 @@ if (window.location.host === 'localhost' && window.location.search.indexOf("dev=
 if (window.location.pathname.indexOf("beta") !== -1) {
   debugVars.is_beta = true;
 }
+
+module.exports = debugVars;

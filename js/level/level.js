@@ -1,3 +1,19 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var layers = require('../core/layers.js');
+var levelData = require('../data/level_data.js');
+var music_player = require('../core/music_player.js');
+var objectRenderUtils = require('../render/object.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var BasicObstacle = require('../obstacle/basic_obstacle.js');
+var EnemyFactory = require('../enemy/enemy_factory.js');
+var EnemySpawner = require('../level/enemy_spawner.js');
+var FragmentGroup = require('../render/fragment_group.js');
+
 var Level = function(data, impulse_game_state) {
   this.init(data, impulse_game_state)
 }
@@ -70,10 +86,10 @@ Level.prototype.init = function(data, level_intro_state) {
     this.obstacle_v = data.obstacle_v
   }
   this.get_obstacle_vertices = data.get_obstacle_vertices
-  this.color = impulse_colors["world "+level_intro_state.world_num]
-  this.dark_color = impulse_colors["world "+level_intro_state.world_num+" dark"]
-  this.lite_color = impulse_colors["world "+level_intro_state.world_num+" lite"]
-  this.bright_color = impulse_colors["world "+level_intro_state.world_num+" bright"]
+  this.color = constants.colors["world "+level_intro_state.world_num]
+  this.dark_color = constants.colors["world "+level_intro_state.world_num+" dark"]
+  this.lite_color = constants.colors["world "+level_intro_state.world_num+" lite"]
+  this.bright_color = constants.colors["world "+level_intro_state.world_num+" bright"]
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
   if(!this.is_boss_level) {
     this.level_number = parseInt(this.level_name.slice(this.level_name.length-1, this.level_name.length))
@@ -99,29 +115,10 @@ Level.prototype.init = function(data, level_intro_state) {
   this.tessellation_angle = 0
   this.tessellation_rotate_rate = 12000
 
-  this.enemy_map = {
-    "stunner": Stunner,
-    "spear": Spear,
-    "tank": Tank,
-    "mote": Mote,
-    "goo": Goo,
-    "disabler": Disabler,
-    "troll": Troll,
-    "fighter": Fighter,
-    "harpoon": Harpoon,
-    "orbiter": Orbiter,
-    "slingshot": Slingshot,
-    "deathray": DeathRay,
-    "first boss": BossOne,
-    "second boss": BossTwo,
-    "third boss": BossThree,
-    "fourth boss": BossFour,
-    "boss four spawner": BossFourSpawner,
-  }
   if (data.gateway_loc) {
-    this.gateway_loc = {x: data.gateway_loc.x/layers.draw_factor, y: data.gateway_loc.y/layers.draw_factor}
+    this.gateway_loc = {x: data.gateway_loc.x/constants.drawFactor, y: data.gateway_loc.y/constants.drawFactor}
   } else {
-    this.gateway_loc = {x: this.get_starting_loc().x/layers.draw_factor, y: this.get_starting_loc().y/layers.draw_factor}
+    this.gateway_loc = {x: this.get_starting_loc().x/constants.drawFactor, y: this.get_starting_loc().y/constants.drawFactor}
   }
   this.gateway_size = 4
 
@@ -215,7 +212,7 @@ Level.prototype.reset = function() {
 Level.prototype.generate_multi = function() {
   var multi_index = Math.floor(Math.random() * this.multi_spawn_points.length)
   this.multi_loc = {x: this.multi_spawn_points[multi_index][0], y: this.multi_spawn_points[multi_index][1]};
-  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor}
+  var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * constants.drawFactor, y: this.impulse_game_state.player.body.GetPosition().y * constants.drawFactor}
   while(utils.pDist(player_loc,  this.multi_loc) < 125) {
     multi_index+=1
     multi_index = multi_index % this.multi_spawn_points.length
@@ -234,7 +231,7 @@ Level.prototype.process = function(dt) {
     if(this.multi_loc == null || this.multi_duration < 0) {
       this.generate_multi()
     } else {
-      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * layers.draw_factor, y: this.impulse_game_state.player.body.GetPosition().y * layers.draw_factor}
+      var player_loc = {x: this.impulse_game_state.player.body.GetPosition().x * constants.drawFactor, y: this.impulse_game_state.player.body.GetPosition().y * constants.drawFactor}
       if(utils.pDist(player_loc, this.multi_loc) < 25) {
         music_player.play_sound("multi")
         this.impulse_game_state.game_numbers.base_combo += 5
@@ -244,8 +241,8 @@ Level.prototype.process = function(dt) {
         this.impulse_game_state.addScoreLabel(
           "x" + this.impulse_game_state.game_numbers.combo,
           "white",
-          this.multi_loc.x / layers.draw_factor,
-          this.multi_loc.y / layers.draw_factor,
+          this.multi_loc.x / constants.drawFactor,
+          this.multi_loc.y / constants.drawFactor,
           20,
           2000);
         this.generate_multi()
@@ -257,9 +254,9 @@ Level.prototype.process = function(dt) {
     if(this.gateway_transition_duration > 0) {
       this.gateway_transition_duration -= dt
     } else {
-      layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+      layers.bgCtx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
       this.draw_bg(layers.bgCtx)
-      layers.bgCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
+      layers.bgCtx.translate(-constants.sideBarWidth, 0)//allows us to have a topbar
       this.gateway_transition_duration = null
     }
   }
@@ -298,7 +295,7 @@ Level.prototype.process = function(dt) {
     var dead_i = this.dead_enemies.pop()
 
     this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].body)
-    if(this.enemies[dead_i] instanceof Harpoon) {
+    if(this.enemies[dead_i].type === "harpoon" ) {
       this.impulse_game_state.world.DestroyBody(this.enemies[dead_i].harpoon_head.body)
     }
 
@@ -417,7 +414,7 @@ Level.prototype.pick_pivot_spawn_index = function() {
     var max_distance = 0;
     var best_spawn_point = Math.floor(Math.random() * this.spawn_points.length);
     for (var i = 0; i < this.spawn_points.length; i++) {
-      var spawn_point = {x: this.spawn_points[i][0] / layers.draw_factor, y: this.spawn_points[i][1] / layers.draw_factor};
+      var spawn_point = {x: this.spawn_points[i][0] / constants.drawFactor, y: this.spawn_points[i][1] / constants.drawFactor};
       var min_dist = -1;
       for (var j = 0; j < this.enemies.length; j++) {
         var dist_to_enemy = utils.pDist(this.enemies[j].body.GetPosition(), spawn_point);
@@ -497,7 +494,7 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
     return
   }
 
-  var this_enemy = enemyData[enemy_type].className
+  var this_enemy = EnemyFactory.getEnemyClassFromType(enemy_type);
 
   if(this_enemy.prototype.is_boss && this.boss_spawned) {
     return;
@@ -509,13 +506,13 @@ Level.prototype.spawn_this_enemy = function(enemy_type, spawn_point) {
   }
 
   if(this_enemy.prototype.is_boss) {
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, dom.levelWidth/layers.draw_factor/2, (dom.levelHeight)/layers.draw_factor/2, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, constants.levelWidth/constants.drawFactor/2, (constants.levelHeight)/constants.drawFactor/2, this.enemy_counter, this.impulse_game_state)
     this.boss = temp_enemy
     this.boss_spawned = true
   }
   else if(this.spawn_points) {
     var r_p = this.spawn_points[spawn_point % this.spawn_points.length]
-    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/layers.draw_factor, r_p[1]/layers.draw_factor, this.enemy_counter, this.impulse_game_state)
+    var temp_enemy = new this_enemy(this.impulse_game_state.world, r_p[0]/constants.drawFactor, r_p[1]/constants.drawFactor, this.enemy_counter, this.impulse_game_state)
   }
   else {
     var r_p = utils.getRandomOutsideLocation(5, 2)
@@ -559,12 +556,12 @@ Level.prototype.generate_obstacles = function() {
     var temp_v = this.get_obstacle_vertices(i)
     if (this.is_level_zero) {
       this.obstacles.push(new BasicObstacle(temp_v,
-        impulse_colors["world "+this.world_num+" lite"],
-        impulse_colors["world "+this.world_num+" dark"]))
+        constants.colors["world "+this.world_num+" lite"],
+        constants.colors["world "+this.world_num+" dark"]))
     } else {
       this.obstacles.push(new BasicObstacle(temp_v,
-        impulse_colors["world "+this.level_intro_state.world_num+" lite"],
-        impulse_colors["world "+this.level_intro_state.world_num+" dark"]))
+        constants.colors["world "+this.level_intro_state.world_num+" lite"],
+        constants.colors["world "+this.level_intro_state.world_num+" dark"]))
     }
     this.obstacle_polygons.push(temp_v)
     for(var j = 0; j < temp_v.length; j++) {
@@ -604,7 +601,7 @@ Level.prototype.draw_gateway = function(ctx, draw_factor) {
   if(this.gateway_transition_duration != null && this.world_num <= 4) {
     var prog = Math.max(this.gateway_transition_duration / this.gateway_transition_interval, 0);
     ctx.globalAlpha *= 0.3 + 0.2 * (1-prog)
-    ctx.strokeStyle = impulse_colors["world "+world_num+" bright"]
+    ctx.strokeStyle = constants.colors["world "+world_num+" bright"]
     if (this.level_name != "HIVE 0-1" && this.level_name != "HIVE 0-2" && !this.is_level_zero) {
       ctx.save();
       if (prog > 0.5) {
@@ -669,7 +666,7 @@ Level.prototype.draw = function(context, draw_factor) {
     for(var i = 0; i < this.obstacles.length; i++) {
       var origColor = this.obstacles[i].color;
       this.obstacles[i].color = this.flash_obstacle_color;
-      this.obstacles[i].draw(context, layers.draw_factor)
+      this.obstacles[i].draw(context, constants.drawFactor)
       this.obstacles[i].color = origColor;
     }
     context.restore();
@@ -691,9 +688,9 @@ Level.prototype.draw = function(context, draw_factor) {
   }
 
   if(this.redraw_bg) {
-    layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+    layers.bgCtx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
     this.draw_bg(layers.bgCtx, true)
-    layers.bgCtx.translate(-dom.sideBarWidth, 0)//allows us to have a topbar
+    layers.bgCtx.translate(-constants.sideBarWidth, 0)//allows us to have a topbar
     this.redraw_bg = false
   }
 
@@ -746,7 +743,7 @@ Level.prototype.draw = function(context, draw_factor) {
   if(this.boss_delay_timer >= 0) {
 
     context.beginPath()
-    context.arc(dom.levelWidth/draw_factor/2 * draw_factor, (dom.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
+    context.arc(constants.levelWidth/draw_factor/2 * draw_factor, (constants.levelHeight)/draw_factor/2 * draw_factor, (this.boss_radius * 2 *draw_factor), -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * (this.boss_delay_timer / this.boss_delay_interval), true)
 
     context.lineWidth = 2
     context.strokeStyle = "gray"
@@ -769,69 +766,69 @@ Level.prototype.open_gateway = function() {
 Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
   bg_ctx.beginPath();
-  bg_ctx.rect(0, 0, dom.levelWidth, dom.levelHeight)
+  bg_ctx.rect(0, 0, constants.levelWidth, constants.levelHeight)
   bg_ctx.fillStyle = this.dark_color;
   bg_ctx.fill();
   bg_ctx.clip()
 
   if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0")
     bg_ctx.restore();
   } else if(this.world_num != null && !this.is_level_zero) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive "+this.world_num)
     bg_ctx.restore();
   } else if (this.world_num != null && this.is_level_zero) {
     bg_ctx.save();
-    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0");
+    uiRenderUtils.tessellateBg(bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0");
     bg_ctx.restore();
   } else {
-    bg_ctx.fillStyle = impulse_colors["world 0 bright"]
-    bg_ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight)
+    bg_ctx.fillStyle = constants.colors["world 0 bright"]
+    bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight)
   }
 
   if (this.is_level_zero) {
     bg_ctx.save();
     var r = 0.15;
-    var x = this.gateway_loc.x * layers.draw_factor;
-    var y = this.gateway_loc.y * layers.draw_factor;
-    uiRenderUtils.tessellateBg(bg_ctx, x - dom.levelWidth * r, y - dom.levelHeight * r,
-      x + dom.levelWidth * r, y + dom.levelHeight * r,
+    var x = this.gateway_loc.x * constants.drawFactor;
+    var y = this.gateway_loc.y * constants.drawFactor;
+    uiRenderUtils.tessellateBg(bg_ctx, x - constants.levelWidth * r, y - constants.levelHeight * r,
+      x + constants.levelWidth * r, y + constants.levelHeight * r,
       "Hive "+this.level_intro_state.world_num);
     bg_ctx.restore();
     bg_ctx.beginPath();
-    bg_ctx.rect(x - dom.levelWidth * r, y - dom.levelHeight * r,
-      2 * dom.levelWidth * r, 2 * dom.levelHeight * r);
+    bg_ctx.rect(x - constants.levelWidth * r, y - constants.levelHeight * r,
+      2 * constants.levelWidth * r, 2 * constants.levelHeight * r);
     bg_ctx.lineWidth = 2;
-    bg_ctx.strokeStyle = impulse_colors["world " + this.level_intro_state.world_num + " dark"];
+    bg_ctx.strokeStyle = constants.colors["world " + this.level_intro_state.world_num + " dark"];
     bg_ctx.stroke();
   }
 
 
   for(var i = 0; i < this.obstacles.length; i++) {
-    this.obstacles[i].draw(bg_ctx, layers.draw_factor)
+    this.obstacles[i].draw(bg_ctx, constants.drawFactor)
   }
 
   // Draw any additional rectangles to hide obstacle seams.
   if ((this.is_boss_level || this.is_level_zero) && this.obstacle_polygons.length > 0) {
-    bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
+    bg_ctx.fillStyle = constants.colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(375, 0, 50, 22);
     bg_ctx.fillRect(375, 578, 50, 22);
     bg_ctx.fillRect(0, 275, 22, 50);
     bg_ctx.fillRect(778, 275, 22, 50);
   } else if (this.level_name == "HIVE 0-3") {
-    bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
+    bg_ctx.fillStyle = constants.colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(0, 0, 47, 600);
     bg_ctx.fillRect(753, 0, 47, 600);
   } else if (this.level_name == "HIVE 0-4") {
-    bg_ctx.fillStyle = impulse_colors["world " + this.world_num + " dark"]
+    bg_ctx.fillStyle = constants.colors["world " + this.world_num + " dark"]
     bg_ctx.fillRect(0, 0, 800, 47);
     bg_ctx.fillRect(0, 553, 800, 47);
   }
 
   if (this.is_level_zero) {
-    bg_ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"];
+    bg_ctx.fillStyle = constants.colors["world " + this.level_intro_state.world_num + " bright"];
     bg_ctx.textAlign = "center";
     bg_ctx.font = "32px Muli";
     bg_ctx.fillText(levelData.hiveNames[this.level_intro_state.world_num], 400, 150);
@@ -890,11 +887,11 @@ Level.prototype.draw_gateway_particles = function(ctx, draw_factor) {
       6,
       6)
     if (this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
-      ctx.fillStyle = impulse_colors["world 0 bright"];
+      ctx.fillStyle = constants.colors["world 0 bright"];
     } else if (this.is_level_zero) {
-      ctx.fillStyle = impulse_colors["world " + this.level_intro_state.world_num + " bright"]
+      ctx.fillStyle = constants.colors["world " + this.level_intro_state.world_num + " bright"]
     } else {
-      ctx.fillStyle = impulse_colors["world " + this.world_num + " bright"]
+      ctx.fillStyle = constants.colors["world " + this.world_num + " bright"]
     }
     ctx.fill()
     ctx.restore()
@@ -916,3 +913,5 @@ Level.prototype.clear_obstacles = function () {
 
 Level.prototype.dispose = function() {
 }
+
+module.exports = Level;

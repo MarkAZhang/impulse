@@ -1,3 +1,7 @@
+var constants = require('../data/constants.js');
+var levelData = require('../data/level_data.js');
+var saveData = require('../load/save_data.js');
+
 var levelPreviewRenderUtils = {};
 
 levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_name, x, y, w, h, border_color) {
@@ -25,9 +29,9 @@ levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_n
   if(!polygons) return
   for(var i = 0; i < polygons.length; i++) {
     context.beginPath()
-    context.moveTo(x - w/2 + polygons[i][0][0]/dom.levelWidth * w, y - h/2 + polygons[i][0][1]/(dom.levelHeight) * h)
+    context.moveTo(x - w/2 + polygons[i][0][0]/constants.levelWidth * w, y - h/2 + polygons[i][0][1]/(constants.levelHeight) * h)
     for(var j = 1; j < polygons[i].length; j++) {
-      context.lineTo(x - w/2 + polygons[i][j][0]/dom.levelWidth * w, y -h/2 +  polygons[i][j][1]/(dom.levelHeight) * h)
+      context.lineTo(x - w/2 + polygons[i][j][0]/constants.levelWidth * w, y -h/2 +  polygons[i][j][1]/(constants.levelHeight) * h)
     }
     context.closePath()
     context.fillStyle = "black"
@@ -47,3 +51,5 @@ levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_n
   context.stroke()
   context.restore()
 };
+
+module.exports = levelPreviewRenderUtils;

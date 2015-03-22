@@ -1,3 +1,15 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+var HarpoonHead = require('../enemy/harpoon_head.js');
+var Orbiter = require('../enemy/orbiter.js');
+
 Harpoon.prototype = new Enemy()
 
 Harpoon.prototype.constructor = Harpoon
@@ -179,7 +191,7 @@ Harpoon.prototype.no_sight = function() {
 }
 
 Harpoon.prototype.can_harpoon = function() {
-  return (!this.is_silenced() && this.entered_arena && !this.dying && this.harpoon_state == "inactive" && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)
+  return (!this.is_silenced() && this.entered_arena && !this.dying && this.harpoon_state == "inactive" && utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)
    && utils.pDist(this.body.GetPosition(), this.player.body.GetPosition()) <= this.harpoon_length)
 }
 
@@ -232,7 +244,7 @@ Harpoon.prototype.additional_processing = function(dt) {
       this.harpooning = false
     }*/
   } else if(this.harpoon_state == "retract") {
-    if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+    if (!this.is_silenced() || !utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
       var dir = utils.atan(this.harpoon_head.body.GetPosition(), this.body.GetPosition())
       this.harpoon_head.body.ApplyImpulse(new box_2d.b2Vec2(this.harpoonhead_retract_force * Math.cos(dir), this.harpoonhead_retract_force * Math.sin(dir)), this.harpoon_head.body.GetWorldCenter())
       this.harpoon_head.set_heading(Math.PI + dir)
@@ -340,7 +352,7 @@ Harpoon.prototype.process_death = function(enemy_index, dt) {
 }
 
 Harpoon.prototype.modify_movement_vector = function(dir) {
-  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), constants.drawFactor)) {
     dir.Multiply(this.fast_factor)
   }
 
@@ -385,7 +397,7 @@ Harpoon.prototype.check_cancel_harpoon = function() {
   if(this.is_silenced() && (this.harpoon_state != "inactive")) {
     this.disengage_harpoon()
   }
-  if(this.harpoon_state == "engaged" && (!utils.checkBounds(1, this.harpooned_target.body.GetPosition(), layers.draw_factor) || this.harpooned_target.dying || utils.pDist(this.harpooned_target.body.GetPosition(), this.body.GetPosition()) < this.harpoon_disengage_dist)) {
+  if(this.harpoon_state == "engaged" && (!utils.checkBounds(1, this.harpooned_target.body.GetPosition(), constants.drawFactor) || this.harpooned_target.dying || utils.pDist(this.harpooned_target.body.GetPosition(), this.body.GetPosition()) < this.harpoon_disengage_dist)) {
     this.disengage_harpoon()
   }
   /*else if(this.harpoon_state == "engaged" && !utils.checkBounds(0, this.body.GetPosition(), draw_factor)) {
@@ -503,13 +515,11 @@ Harpoon.prototype.engage_harpoon = function(target) {
   if(this.harpoon_state != "engaged" && !this.dying && !this.is_silenced() && target.id !== this.harpoon_disengage_id) {
     music_player.play_sound("hhit")
     this.harpoon_state = "engaged"
-    /*this.harpoon_joint = new Box2D.Dynamics.Joints.b2DistanceJointDef
-    this.harpoon_joint.Initialize(this.body, target.body, this.body.GetWorldCenter(), target.body.GetWorldCenter())
-    this.harpoon_joint.collideConnected = true
-    this.harpoon_joint = this.world.CreateJoint(this.harpoon_joint)*/
     this.harpooned_target = target
     if(this.harpooned_target == this.player) {
       this.impulse_game_state.reset_combo()
     }
   }
 }
+
+module.exports = Harpoon;

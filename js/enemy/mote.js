@@ -1,3 +1,8 @@
+var box_2d = require('../vendor/box2d.js');
+var saveData = require('../load/save_data.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Mote.prototype = new Enemy()
 
 Mote.prototype.constructor = Mote
@@ -42,3 +47,5 @@ Mote.prototype.process_impulse = function(attack_loc, impulse_force, hit_angle) 
     this.open(this.open_period)
   }
 }
+
+module.exports = Mote;

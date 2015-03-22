@@ -1,3 +1,12 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 var Boss = function(world, x, y, id, impulse_game_state) {
   //empty constructor since Enemy should not be constructed
 }
@@ -20,7 +29,7 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   this.initial_dark_aura_ratio = 0;
   this.initial_dark_aura_inflection_prop = 0.95;
 
-  if (this.type == "fourth boss") {
+  if (this.type == "boss_four") {
     this.initial_dark_aura_inflection_prop = 0.9;
   }
 
@@ -47,9 +56,9 @@ Boss.prototype.getLife = function() {
   if(this.dying) {
     return 0
   }
-  var dist = Math.min(775/layers.draw_factor - this.body.GetPosition().x, this.body.GetPosition().x - 25/layers.draw_factor)
-  var dist2 = Math.min(575/layers.draw_factor - this.body.GetPosition().y, this.body.GetPosition().y - 25/layers.draw_factor)
-  return Math.min(dist, dist2)/(275/layers.draw_factor)
+  var dist = Math.min(775/constants.drawFactor - this.body.GetPosition().x, this.body.GetPosition().x - 25/constants.drawFactor)
+  var dist2 = Math.min(575/constants.drawFactor - this.body.GetPosition().y, this.body.GetPosition().y - 25/constants.drawFactor)
+  return Math.min(dist, dist2)/(275/constants.drawFactor)
 }
 
 Boss.prototype.should_show_aura_and_particles = function() {
@@ -92,7 +101,7 @@ Boss.prototype.additional_processing = function (dt) {
 
 Boss.prototype.generate_spawn_particles = function (loc) {
   for (var i = 0; i < this.spawn_particle_num; i++) {
-    var r = this.aura_radius / layers.draw_factor * this.initial_dark_aura_ratio * 0.5 + 5;
+    var r = this.aura_radius / constants.drawFactor * this.initial_dark_aura_ratio * 0.5 + 5;
     var angle = Math.PI * 2 * i / this.spawn_particle_num + (Math.random() - 0.5) * Math.PI * 2 / this.spawn_particle_num
     this.spawn_particles.push({
       start_x: Math.cos(angle) * r + loc.x,
@@ -219,3 +228,5 @@ Boss.prototype.goo = function(dur)  {}
 Boss.prototype.lighten = function(dur)  {}
 
 Boss.prototype.open = function(dur)  {}
+
+module.exports = Boss;

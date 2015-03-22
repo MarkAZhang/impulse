@@ -2,6 +2,8 @@ var GameState = function() {
   //empty constructor since GameState should not be constructed
 }
 
+GameState.prototype.isGameState = true;
+
 GameState.prototype.process = function(dt) {}
 GameState.prototype.draw = function(ctx) {}
 GameState.prototype.on_mouse_move = function(x, y) {}
@@ -16,3 +18,5 @@ GameState.prototype.on_key_up = function(keyCode) {}
 GameState.prototype.dispose = function() {}
 GameState.prototype.on_visibility_change = function(event_type) {
 }
+
+module.exports = GameState;

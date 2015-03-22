@@ -1,3 +1,10 @@
+var questRenderUtils = require('../render/quest.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+
+var ImpulseButton = require('../ui/impulse_button.js');
+var MessageBox = require('../ui/message_box.js');
+
 QuestButton.prototype = new ImpulseButton()
 
 QuestButton.prototype.constructor = QuestButton
@@ -45,3 +52,5 @@ QuestButton.prototype.draw = function(ctx, bg_ctx) {
 QuestButton.prototype.process = function(dt) {
 
 }
+
+module.exports = QuestButton;

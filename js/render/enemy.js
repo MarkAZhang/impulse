@@ -1,3 +1,7 @@
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var renderUtils = require('../render/utils.js');
+
 var enemyRenderUtils = {};
 
 enemyRenderUtils.drawEnemyImage = function(context, state, draw_polygons, type, default_color, scale) {
@@ -22,10 +26,10 @@ enemyRenderUtils.drawEnemyImage = function(context, state, draw_polygons, type, 
 
     if(cur_shape.type == "polygon") {
       //draw polygon shape
-      context.moveTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[0][0])*layers.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[0][1])*layers.draw_factor)
+      context.moveTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[0][0])*constants.drawFactor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[0][1])*constants.drawFactor)
       for(var i = 1; i < cur_shape_points.length; i++)
       {
-        context.lineTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[i][0])*layers.draw_factor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[i][1])*layers.draw_factor)
+        context.lineTo(scale*(cur_shape.x + cur_shape.r*cur_shape_points[i][0])*constants.drawFactor, scale*(cur_shape.y + cur_shape.r*cur_shape_points[i][1])*constants.drawFactor)
       }
     }
     context.closePath()
@@ -62,8 +66,8 @@ enemyRenderUtils.drawEnemyImage = function(context, state, draw_polygons, type, 
   if(erase_lines) {
     context.beginPath()
     for(var i = 0; i < erase_lines.length; i++) {
-      context.moveTo(scale*(erase_lines[i][0][0])*layers.draw_factor, scale*(erase_lines[i][0][1])*layers.draw_factor)
-      context.lineTo(scale*(erase_lines[i][1][0])*layers.draw_factor, scale*(erase_lines[i][1][1])*layers.draw_factor)
+      context.moveTo(scale*(erase_lines[i][0][0])*constants.drawFactor, scale*(erase_lines[i][0][1])*constants.drawFactor)
+      context.lineTo(scale*(erase_lines[i][1][0])*constants.drawFactor, scale*(erase_lines[i][1][1])*constants.drawFactor)
     }
     context.strokeStyle = "black"
     context.lineWidth = 3
@@ -78,8 +82,8 @@ enemyRenderUtils.drawEnemyImage = function(context, state, draw_polygons, type, 
       for(var m = 0; m < extra_lines.length; m++) {
         context.beginPath()
         var line = extra_lines[m]
-        context.moveTo(scale*(r * line["x1"]) * layers.draw_factor, scale*(r * line["y1"]) * layers.draw_factor)
-        context.lineTo(scale*(r * line["x2"]) * layers.draw_factor, scale*(r * line["y2"]) * layers.draw_factor)
+        context.moveTo(scale*(r * line["x1"]) * constants.drawFactor, scale*(r * line["y1"]) * constants.drawFactor)
+        context.lineTo(scale*(r * line["x2"]) * constants.drawFactor, scale*(r * line["y2"]) * constants.drawFactor)
         context.lineWidth = 2
         context.strokeStyle = cur_color
         context.stroke()
@@ -101,7 +105,7 @@ enemyRenderUtils.drawEnemy = function(context, enemy_name, x, y, d, rotate, stat
   }
   if(status === undefined) status = "normal"
   var max_radius = 1.5
-  var size = enemyData[enemy_name].effective_radius * layers.draw_factor * Enemy.prototype.enemy_canvas_factor
+  var size = enemyData[enemy_name].effective_radius * constants.drawFactor * constants.enemyCanvasFactor
   if(d == null) {
     var draw_scale = size
   } else {
@@ -115,38 +119,27 @@ enemyRenderUtils.drawEnemy = function(context, enemy_name, x, y, d, rotate, stat
 };
 
 enemyRenderUtils.drawEnemyHelper = function(context, enemy_name, draw_scale, status, enemy_color) {
-  if(enemy_name.slice(enemy_name.length - 4) == "boss") {
-     //draw_scale = 2/enemyData[enemy_name].effective_radius * d/2
+
+  if(!enemy_color) {
+    enemy_color = enemyData[enemy_name].color
   }
 
-  if (enemy_color === undefined) {
-    var enemy_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
-    if(!enemy_color) {
-      enemy_color = enemyData[enemy_name].color
-    }
-  }
-
-  //context.translate(-draw_scale, -draw_scale)
   var draw_polygons = enemyData[enemy_name].draw_polygons
 
   if(!draw_polygons) {
     draw_polygons = enemyData[enemy_name].shape_polygons
   }
 
-  var scale = draw_scale / (Enemy.prototype.enemy_canvas_factor * enemyData[enemy_name].effective_radius * layers.draw_factor)
+  var scale = draw_scale / (constants.enemyCanvasFactor * enemyData[enemy_name].effective_radius * constants.drawFactor)
   enemyRenderUtils.drawEnemyImage(context, status, draw_polygons, enemy_name, enemy_color, scale)
 
-  var this_color = (enemyData[enemy_name].className).prototype.get_color_for_status(status)
-  if(!this_color) {
-    this_color = enemyData[enemy_name].color
-  }
   if(!(typeof enemyData[enemy_name].extra_rendering_polygons === "undefined")) {
     for(var m = 0; m < enemyData[enemy_name].extra_rendering_polygons.length; m++) {
       var this_shape = enemyData[enemy_name].extra_rendering_polygons[m]
       if(!this_shape.colored) {
-        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, this_color, 1, 0, "black")
+        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, enemy_color, 1, 0, "black")
       } else {
-        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, this_color)
+        renderUtils.drawShape(context, 0, 0, this_shape, draw_scale, enemy_color)
       }
     }
   }
@@ -202,6 +195,9 @@ enemyRenderUtils.drawEnemyRealSize = function(context, enemy_name, x, y, factor,
 
   var size = enemyData[enemy_name].images["normal"].height
 
-  enemyRenderUtils.drawEnemyHelper(context, enemy_name, size * factor/2, "normal")
+  enemyRenderUtils.drawEnemyHelper(context, enemy_name, size * factor/2, "normal", enemyData[enemy_name].color)
   context.restore()
 };
+
+
+module.exports = enemyRenderUtils;

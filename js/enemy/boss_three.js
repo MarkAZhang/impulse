@@ -1,10 +1,24 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Boss = require('../enemy/boss.js');
+var EnemyFactory = require('../enemy/enemy_factory.js');
+
 BossThree.prototype = new Boss()
 
 BossThree.prototype.constructor = BossThree
 
 function BossThree(world, x, y, id, impulse_game_state) {
 
-  this.type = "third boss"
+  this.type = "boss_three"
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -793,7 +807,7 @@ BossThree.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.silence_timer - this.silence_duration/2)/(this.silence_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight)
+    context.fillRect(0, 0, constants.canvasWidth, constants.canvasHeight)
     context.restore()
   }
 
@@ -901,10 +915,10 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
     angle += Math.random() * spread - spread / 2;
   }
 
-  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* layers.draw_factor,
-    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* layers.draw_factor}
+  var spawn_loc = {x: (this.body.GetPosition().x + Math.cos(angle) * this.effective_radius * 1.35)* constants.drawFactor,
+    y: (this.body.GetPosition().y + Math.sin(angle) * this.effective_radius * 1.35)* constants.drawFactor}
 
-  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x/layers.draw_factor, spawn_loc.y/layers.draw_factor, this.level.enemy_counter, this.impulse_game_state)
+  var new_enemy = new (EnemyFactory.getEnemyClassFromType(enemy_type))(this.world, spawn_loc.x/constants.drawFactor, spawn_loc.y/constants.drawFactor, this.level.enemy_counter, this.impulse_game_state)
   var dir = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle));
   dir.Multiply(this.spawn_force[enemy_type])
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
@@ -988,3 +1002,5 @@ BossThree.prototype.get_impulse_extra_factor = function() {
   }
   return this.impulse_extra_factor;
 }
+
+module.exports = BossThree;

@@ -1,3 +1,10 @@
+var constants = require('../data/constants.js');
+var debugVars = require('../data/debug.js');
+
+var GameState = require('../game_states/game_state.js');
+var Level = require('../level/level.js');
+var VisibilityGraph = require('../lib/visibility_graph.js');
+
 var LoaderGameState = function() {
   //empty constructor
 }
@@ -16,9 +23,9 @@ LoaderGameState.prototype.load_level = function(level_data) {
     var visibility_graph_worker = new Worker("js/lib/visibility_graph_worker_real.js")
   visibility_graph_worker.postMessage({"a": level.boundary_polygons, /*polygons*/
      "b": level.obstacle_edges, /*obstacle_edges*/
-     "c": layers.draw_factor, /*draw_factor*/
-     "d": dom.levelWidth, /*levelWidth*/
-     "e": dom.levelHeight}) /*levelHeight*/
+     "c": constants.drawFactor, /*draw_factor*/
+     "d": constants.levelWidth, /*levelWidth*/
+     "e": constants.levelHeight}) /*levelHeight*/
 
   this.load_percentage = 0
 
@@ -49,3 +56,5 @@ LoaderGameState.prototype.load_level = function(level_data) {
 LoaderGameState.prototype.load_complete = function() {
 
 }
+
+module.exports = LoaderGameState;

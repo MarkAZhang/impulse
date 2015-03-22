@@ -1,14 +1,39 @@
-    // ENEMY BOX BUG IS NOT RESOLVED...
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var controls = require('../core/controls.js');
+var debugVars = require('../data/debug.js');
+var dom = require('../core/dom.js');
+var enemyData = require('../data/enemy_data.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var layers = require('../core/layers.js');
+var levelData = require('../data/level_data.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var CheckboxOptionButton = require('../ui/checkbox_option_button.js');
+var Fader = require('../game_states/fader_util.js');
+var HiveNumbers = require('../load/hive_numbers.js');
+var IconButton = require('../ui/icon_button.js');
+var MessageBox = require('../ui/message_box.js');
+var SliderOptionButton = require('../ui/slider_option_button.js');
+var SmallEnemyButton = require('../ui/small_enemy_button.js');
 
 var DialogBox = function() {
 
 }
 
+DialogBox.prototype.isDialogBox = true;
+
 DialogBox.prototype.init = function(w, h) {
   this.w = w
   this.h = h
-  this.x = dom.canvasWidth/2
-  this.y = dom.canvasHeight/2
+  this.x = constants.canvasWidth/2
+  this.y = constants.canvasHeight/2
   this.buttons = []
   this.solid = true;
 
@@ -26,10 +51,10 @@ DialogBox.prototype.process = function(dt) {
 DialogBox.prototype.draw = function(ctx) {
   if (debugVars.hide_pause_menu) return;
   ctx.save();
-  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight)
+  ctx.fillStyle = constants.colors["world "+this.world_num+" dark"]
+  ctx.fillRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight)
   ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num ? this.world_num : 0)
-  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, dom.sideBarWidth, 0, dom.levelWidth, dom.levelHeight)
+  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight)
   ctx.restore();
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
@@ -70,6 +95,8 @@ PauseMenu.prototype = new DialogBox()
 
 PauseMenu.prototype.constructor = PauseMenu
 
+PauseMenu.prototype.isPauseMenu = true;
+
 function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph) {
   this.level = level
   this.game_numbers = game_numbers
@@ -80,9 +107,9 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
   this.visibility_graph = visibility_graph
   this.init(800, 600)
   this.solid = false;
-  this.bg_color = "black"//impulse_colors["world "+this.world_num +" dark"]
-  this.bright_color = impulse_colors["world "+this.world_num +" bright"]
-  this.color = impulse_colors["world "+this.world_num]
+  this.bg_color = "black"//constants.colors["world "+this.world_num +" dark"]
+  this.bright_color = constants.colors["world "+this.world_num +" bright"]
+  this.color = constants.colors["world "+this.world_num]
   this.lite_color = this.game_state.lite_color
 
   this.drawn_enemies = null
@@ -114,7 +141,7 @@ PauseMenu.prototype.add_buttons = function() {
   var second_row_y = 500;
   var hover_color = "white";
   if (this.world_num == 0 || this.world_num == undefined) {
-    hover_color = impulse_colors["impulse_blue"];
+    hover_color = constants.colors["impulse_blue"];
   }
   if(this.world_num != 0) {
 
@@ -228,7 +255,7 @@ PauseMenu.prototype.add_buttons = function() {
     i+=1
   }
   var fullscreenButton = new IconButton("", 20, this.x + this.w /2 - 20, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
-    dom.toggleFullScreen();
+    game_engine.toggleFullScreen();
   }, "fullscreen_in_game");
   this.buttons.push(fullscreenButton);
   var muteButton = new IconButton("", 20, this.x + this.w / 2 - 50, this.y - this.h/2 + 20, 30, 30, this.bright_color, hover_color, function() {
@@ -283,33 +310,53 @@ PauseMenu.prototype.on_click = function(x, y) {
 }
 
 PauseMenu.prototype.quit_practice = function() {
-  game_engine.switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+  game_engine.switch_game_state(gsKeys.REWARD_GAME_STATE, {
+    hive_numbers: this.game_state.hive_numbers,
+    main_game: this.game_state.main_game,
+    game_args: {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level,
       world_num: this.game_state.world_num,
       visibility_graph: this.game_state.visibility_graph,
       victory: false
-    }))
+    }
+  });
   game_engine.clear_dialog_box()
 }
 PauseMenu.prototype.restart_practice = function() {
-  layers.bgCtx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+  layers.bgCtx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
   this.level.impulse_game_state= null
   this.level.draw_bg(layers.bgCtx)
-  layers.bgCtx.translate(-dom.sideBarWidth, 0)
+  layers.bgCtx.translate(-constants.sideBarWidth, 0)
   var hive_numbers = new HiveNumbers(this.game_state.world_num, false)
-  game_engine.switch_game_state(new ImpulseGameState(this.game_state.world_num, this.level, this.visibility_graph, hive_numbers, false /*is_main_game*/, false /*first_time*/))
+  game_engine.switch_game_state(gsKeys.IMPULSE_GAME_STATE, {
+    world: this.game_state.world_num,
+    level: this.level,
+    visibility_graph: this.visibility_graph,
+    hive_numbers: hive_numbers,
+    main_game: false
+  });
   game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.quit_main_game = function() {
   saveData.clearSavedPlayerGame();
-  game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null))
+  game_engine.switch_game_state(gsKeys.MAIN_GAME_SUMMARY_STATE, {
+    world_num: this.game_state.world_num,
+    victory: false,
+    hive_numbers: this.game_state.hive_numbers,
+    visibility_graph: null,
+    save_screen: false,
+    just_saved: false
+  });
   game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.quit_tutorial = function() {
-   game_engine.switch_game_state(new RewardGameState(this.game_state.hive_numbers, this.game_state.main_game, {
+  game_engine.switch_game_state(gsKeys.REWARD_GAME_STATE, {
+    hive_numbers: this.game_state.hive_numbers,
+    main_game: this.game_state.main_game,
+    game_args: {
       game_numbers: this.game_state.game_numbers,
       level: this.game_state.level,
       world_num: this.game_state.world_num,
@@ -318,13 +365,21 @@ PauseMenu.prototype.quit_tutorial = function() {
       first_time_tutorial: saveData.firstTime,
       victory: true,
       skipped: true
-    }))
-   game_engine.clear_dialog_box()
+    }
+  });
+  game_engine.clear_dialog_box()
 }
 
 PauseMenu.prototype.save_and_quit_main_game = function() {
   saveData.savePlayerGame(this.game_state.hive_numbers);
-  game_engine.switch_game_state(new MainGameSummaryState(this.game_state.world_num, false, this.game_state.hive_numbers, null, null, true, true))
+  game_engine.switch_game_state(gsKeys.MAIN_GAME_SUMMARY_STATE, {
+    world_num: this.game_state.world_num,
+    victory: false,
+    hive_numbers: this.game_state.hive_numbers,
+    visibility_graph: null,
+    save_screen: true,
+    just_saved: true
+  });
   game_engine.clear_dialog_box()
 }
 
@@ -338,6 +393,7 @@ PauseMenu.prototype.on_key_down = function(keyCode) {
 OptionsMenu.prototype = new DialogBox()
 
 OptionsMenu.prototype.constructor = OptionsMenu
+OptionsMenu.prototype.isOptionsMenu = true;
 
 function OptionsMenu(previous_menu) {
   this.init(800, 600)
@@ -349,31 +405,31 @@ function OptionsMenu(previous_menu) {
 
   var hover_color = "white";
   if (this.world_num == 0 || this.world_num == undefined) {
-    hover_color = impulse_colors["impulse_blue"];
+    hover_color = constants.colors["impulse_blue"];
   }
 
   this.previous_menu = previous_menu
-  if (this.previous_menu instanceof PauseMenu) {
+  if (this.previous_menu.isPauseMenu) {
     this.bg_color = this.previous_menu.bg_color
     this.color = this.previous_menu.color
     this.lite_color = this.previous_menu.lite_color
     this.bright_color = this.previous_menu.bright_color
   } else {
-    this.bg_color = impulse_colors["world 0 dark"]
-    this.color = impulse_colors["world 0"]
-    this.lite_color = impulse_colors["world 0 lite"]
-    this.bright_color = impulse_colors["world 0 bright"]
+    this.bg_color = constants.colors["world 0 dark"]
+    this.color = constants.colors["world 0"]
+    this.lite_color = constants.colors["world 0 lite"]
+    this.bright_color = constants.colors["world 0 bright"]
     this.draw_bg();
   }
 
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
   _this.fader.set_animation("fade_out", function() {
-    if(_this.previous_menu instanceof PauseMenu) {
+    if(_this.previous_menu.isPauseMenu) {
       _this.previous_menu.add_buttons()
       game_engine.set_dialog_box(_this.previous_menu)
       _this.previous_menu.fader.set_animation("fade_in");
     } else {
-      if (_this.previous_menu instanceof TitleState) {
+      if (_this.previous_menu.isTitleState) {
         _this.previous_menu.fader.set_animation("fade_in");
       }
       game_engine.clear_dialog_box()
@@ -383,7 +439,7 @@ function OptionsMenu(previous_menu) {
   }}(this), "back");
 
   var controls_x_value = this.x
-  if (this.previous_menu instanceof TitleState) {
+  if (this.previous_menu.isTitleState) {
     this.delete_button= new IconButton("DELETE GAME DATA", 20, this.x + 150, this.y + 120, 200, 100, this.bright_color, "red", function(_this) { return function() {
       _this.fader.set_animation("fade_out", function() {
         game_engine.set_dialog_box(new DeleteDataDialog(_this))
@@ -419,7 +475,7 @@ function OptionsMenu(previous_menu) {
   this.buttons.push(this.effects_button)
 
   this.fullscreen_button = new CheckboxOptionButton("FULLSCREEN", this.x, this.y - this.h/2 + this.options_y_line_up + 60, button_width, 30, this.bright_color, "white", function(on) {
-    dom.toggleFullScreen();
+    game_engine.toggleFullScreen();
   }, function() {
     return dom.IsInFullScreen()
   });
@@ -463,7 +519,7 @@ function OptionsMenu(previous_menu) {
   button.add_hover_overlay(new MessageBox("option_impulse_shadow", "white", this.world_num))
   this.buttons.push(button)
   var me = this;
-  if(this.game_state instanceof ImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && saveData.difficultyMode == "normal") {
+  if(this.game_state && this.game_state.isImpulseGameState && this.game_state.level.main_game && this.world_num > 0 && saveData.difficultyMode == "normal") {
     button = new CheckboxOptionButton("SPEED RUN COUNTDOWN", this.x, this.y - this.h/2 + this.options_y_line_up + 210, button_width, 30, this.bright_color, "white", function(on) {
       saveData.optionsData.speed_run_countdown = !saveData.optionsData.speed_run_countdown;
       saveData.saveGame();
@@ -479,7 +535,7 @@ function OptionsMenu(previous_menu) {
 
 OptionsMenu.prototype.draw_bg = function() {
   var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
-  uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive 0")
+  uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0")
 }
 
 OptionsMenu.prototype.additional_draw = function(ctx) {
@@ -503,7 +559,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
   ctx.textAlign = 'center'
   if(this.current_help_text) {
     ctx.font = '14px Muli'
-    if (this.game_state instanceof ImpulseGameState && this.game_state.level.main_game ) {
+    if (this.game_state.isImpulseGameState && this.game_state.level.main_game ) {
       ctx.fillText(this.current_help_text, this.x, this.y - this.h/2 + this.options_y_line_up + 180)
     } else {
       ctx.fillText(this.current_help_text, this.x, this.y - this.h/2 + this.options_y_line_up + 150)
@@ -590,7 +646,7 @@ function ControlsMenu(previous_menu) {
 
   var hover_color = "white";
   if (this.world_num == 0 || this.world_num == undefined) {
-    hover_color = impulse_colors["impulse_blue"];
+    hover_color = constants.colors["impulse_blue"];
   }
 
   this.current_hand = saveData.optionsData.control_hand
@@ -610,40 +666,29 @@ function ControlsMenu(previous_menu) {
     saveData.optionsData.control_hand = "left"
     saveData.optionsData.control_scheme = "mouse"
     saveData.saveGame()
-    setKeyBindings()
+    controls.setKeyBindings()
   }}(this), "left_mouse")
 
   this.control_buttons["right keyboard"] = new IconButton("KEYBOARD-ONLY", 16, this.x, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     saveData.optionsData.control_hand = "right"
     saveData.optionsData.control_scheme = "keyboard"
     saveData.saveGame()
-    setKeyBindings()
+    controls.setKeyBindings()
   }}(this), "keyboard")
 
   this.control_buttons["right mouse"] = new IconButton("RIGHT-HAND MOUSE", 16, this.x + 200, this.y - this.h/2 + 135, 200, 100, this.bright_color, hover_color, function(_this) { return function() {
     saveData.optionsData.control_hand = "right"
     saveData.optionsData.control_scheme = "mouse"
     saveData.saveGame()
-    setKeyBindings()
+    controls.setKeyBindings()
   }}(this), "right_mouse")
 
   this.buttons.push(this.control_buttons["left mouse"])
   this.buttons.push(this.control_buttons["right mouse"])
   this.buttons.push(this.control_buttons["right keyboard"])
-  /*this.buttons.push(new SmallButton("RIGHT-HANDED KEYBOARD-ONLY", 16, this.x + 200, this.y - this.h/2 + 175, 200, 30, this.lite_color, this.lite_color, function(_this) { return function() {
-    saveData.optionsData.control_hand = "right"
-    saveData.optionsData.control_scheme = "keyboard"
-    saveData.saveGame()
-    _this.adjust_underlines()
-  }}(this)))*/
 
   this.buttons.push(this.back_button)
 
-  /*this.music_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 115, 200, 5, this.lite_color)
-  this.music_volume_slider.value = Math.log(music_player.bg_music_volume)/Math.log(100.0)
-
-  this.effects_volume_slider = new Slider(this.x + 170, this.y - this.h/2 + 145, 200, 5, this.lite_color)
-  this.effects_volume_slider.value = Math.log(music_player.effects_volume)/Math.log(100.0)*/
   this.adjust_colors()
 
   this.fader.set_animation("fade_in");
@@ -769,7 +814,7 @@ function EnemyBox(enemy_name, previous_menu) {
   this.init(800, 600)
 
   this.solid = false;
-  if(previous_menu instanceof DialogBox){
+  if(previous_menu.isDialogBox){
     this.game_state = previous_menu.game_state
     this.bg_color = previous_menu.bg_color
     this.color = previous_menu.color
@@ -777,17 +822,17 @@ function EnemyBox(enemy_name, previous_menu) {
     this.lite_color = previous_menu.lite_color
     this.bright_color = previous_menu.bright_color
     this.world_num = this.game_state.world_num
-  } else if(previous_menu instanceof GameState) {
-    this.bg_color = "black"//impulse_colors["world "+previous_menu.world_num+" dark"]
-    this.lite_color = impulse_colors["world "+previous_menu.world_num+" lite"]
-    this.bright_color = impulse_colors["world "+previous_menu.world_num +" bright"]
-    this.color = impulse_colors["world "+previous_menu.world_num]
+  } else if(previous_menu.isGameState) {
+    this.bg_color = "black"//constants.colors["world "+previous_menu.world_num+" dark"]
+    this.lite_color = constants.colors["world "+previous_menu.world_num+" lite"]
+    this.bright_color = constants.colors["world "+previous_menu.world_num +" bright"]
+    this.color = constants.colors["world "+previous_menu.world_num]
     this.world_num = previous_menu.world_num
   }
 
   var hover_color = "white";
   if (this.world_num == 0 || this.world_num == undefined) {
-    hover_color = impulse_colors["impulse_blue"];
+    hover_color = constants.colors["impulse_blue"];
   }
 
   this.previous_menu = previous_menu
@@ -806,11 +851,10 @@ function EnemyBox(enemy_name, previous_menu) {
   this.w = 600
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.bright_color, hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
-      if(_this.previous_menu instanceof DialogBox) {
+      if(_this.previous_menu.isDialogBox) {
         game_engine.set_dialog_box(_this.previous_menu)
         _this.previous_menu.fader.set_animation("fade_in");
-      } else if(_this.previous_menu instanceof GameState) {
-        //game_engine.switch_game_state(_this.previous_menu)
+      } else if(_this.previous_menu.isGameState) {
         game_engine.clear_dialog_box()
         _this.previous_menu.fader.set_animation("fade_in");
       }
@@ -820,7 +864,7 @@ function EnemyBox(enemy_name, previous_menu) {
   this.buttons.push(this.back_button)
 
 
-  this.color = impulse_colors["world "+this.world_num]
+  this.color = constants.colors["world "+this.world_num]
   this.text_width = 500
 
   this.enemy_info = enemyData[this.enemy_name].enemy_info
@@ -830,17 +874,6 @@ function EnemyBox(enemy_name, previous_menu) {
   this.num_pages = this.enemy_info.length
 
   this.cur_page = 0
-  /*var gravity = new box_2d.b2Vec2(000, 000);
-  var doSleep = false; //objects in our world will rarely go to sleep
-  var world = new box_2d.b2World(gravity, doSleep);
-
-  /*var temp_enemy = new (enemyData[this.enemy_name].className)(world, 0, 0, 0, 0)
-
-  this.def_value = Math.min(temp_enemy.body.m_mass/5.5, 1)
-
-  this.atk_value = enemyData[this.enemy_name].attack_rating/10
-
-  this.spd_value = ((enemyData[this.enemy_name].force/temp_enemy.body.m_mass)/enemyData[this.enemy_name].lin_damp)/.35*/
 
   if(this.enemy_name == "spear") this.spd_value = 1
 
@@ -853,22 +886,6 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   if(this.current_lines == null) {
     this.current_lines = utils.getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
   }
-
-  /*if(this.special_ability == null) {
-    this.special_ability = utils.getLines(ctx, enemyData[this.enemy_name].special_ability, this.w - 20, '20px Muli')
-  }
-  if(this.other_notes == null && enemyData[this.enemy_name].other_notes != "") {
-    this.other_notes = utils.getLines(ctx, enemyData[this.enemy_name].other_notes, this.w - 20, '20px Muli')
-  }
-
-  if(this.special_ability != null && !this.h) {
-    this.w = 600
-    this.h = 340 + 25 * this.special_ability.length + this.other_notes.length * 25
-    this.x = dom.canvasWidth/2
-    this.y = 50 + this.h/2
-    this.buttons = []
-  }*/
-
 
   ctx.beginPath()
   ctx.textAlign = "center"
@@ -1075,18 +1092,10 @@ DeleteDataDialog.prototype.clear_data = function() {
   saveData.clearData();
 }
 
-NewEnemyDialog.prototype = new DialogBox()
+var dialogBoxes = {
+  EnemyBox: EnemyBox,
+  OptionsMenu: OptionsMenu,
+  PauseMenu: PauseMenu
+};
 
-NewEnemyDialog.prototype.constructor = NewEnemyDialog
-
-function NewEnemyDialog(previous_menu) {
-  this.init(400, 300)
-}
-
-NewEnemyDialog.prototype.additional_draw = function(ctx) {
-  ctx.font = "28px Muli"
-  ctx.fillStyle = "red"
-  ctx.textAlign = 'center'
-  ctx.fillText("WOULD YOU LIKE TO SEE ENEMY INFO?", this.x, this.y)
-
-}
+module.exports = dialogBoxes;

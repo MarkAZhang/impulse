@@ -79,3 +79,4 @@ for(var multisounds in audioData.multisounds) {
   audioData.sounds[multisounds] = audioData.multisounds[multisounds].file
 }
 
+module.exports = audioData;

@@ -1,3 +1,9 @@
+var constants = require('../data/constants.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var renderUtils = require('../render/utils.js');
+var sprites = require('../render/sprites.js');
+var spriteData = require('../data/sprite_data.js');
+
 var uiRenderUtils = {};
 
 uiRenderUtils.drawEnemyButton = function(ctx, x, y, r, type) {
@@ -51,7 +57,7 @@ uiRenderUtils.tessellateBg = function(ctx, xLow, yLow, xHigh, yHigh, spriteName)
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
   if (spriteName.substring(0, 4) === "Hive" &&
       parseInt(spriteName.substring(5, 6)) !== 0) {
-    ctx.fillStyle = "#111"//impulse_colors['world ' + parseInt(spriteName.substring(5, 6))];
+    ctx.fillStyle = "#111"//constants.colors['world ' + parseInt(spriteName.substring(5, 6))];
     ctx.fill();
     ctx.globalAlpha *= 0.5;
   }
@@ -71,9 +77,9 @@ uiRenderUtils.tessellateBg = function(ctx, xLow, yLow, xHigh, yHigh, spriteName)
 uiRenderUtils.drawLogo = function(context, x, y, text, scale) {
   context.save()
 
-  context.shadowColor = impulse_colors["impulse_blue"]
+  context.shadowColor = constants.colors["impulse_blue"]
   context.shadowBlur = 0
-  context.fillStyle = "white"//impulse_colors["impulse_blue"]
+  context.fillStyle = "white"//constants.colors["impulse_blue"]
 
   var logoScale = scale ? scale : 0.85;
   context.drawImage(sprites.logoSprite, x - sprites.logoSprite.width/2 * logoScale, y - sprites.logoSprite.height * 0.75 * logoScale, sprites.logoSprite.width * logoScale, sprites.logoSprite.height * logoScale)
@@ -131,7 +137,7 @@ uiRenderUtils.drawTessellationSign = function(context, tessellation, x, y, size,
     context.beginPath()
     context.rect(-size/2*1.2, -size/2*1.2, size*1.2, size*1.2)
     context.lineWidth = Math.ceil(size/20)
-    context.strokeStyle = impulse_colors["boss "+tessellation]
+    context.strokeStyle = constants.colors["boss "+tessellation]
     context.stroke()
   }
   context.restore()
@@ -354,15 +360,17 @@ uiRenderUtils.drawProgressBar = function(context, x, y, w, h, prop, color, bcolo
 
 uiRenderUtils.drawProgCircle = function(context, x, y, r, prog, color, width) {
   context.beginPath()
-  context.arc(x*layers.draw_factor, y*layers.draw_factor, (r*layers.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
+  context.arc(x*constants.drawFactor, y*constants.drawFactor, (r*constants.drawFactor) * 2, -.5* Math.PI, -.5 * Math.PI + 1.999*Math.PI * prog, true)
   context.lineWidth = width ? width : 2
   context.strokeStyle = color
   context.stroke()
 }
 
 uiRenderUtils.bulkDrawProgCircle = function(context, x, y, r, prog) {
-  context.moveTo(x*layers.draw_factor, y*layers.draw_factor - (r*layers.draw_factor) * 2)
-  context.arc(x*layers.draw_factor,
-              y*layers.draw_factor,
-              (r*layers.draw_factor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
+  context.moveTo(x*constants.drawFactor, y*constants.drawFactor - (r*constants.drawFactor) * 2)
+  context.arc(x*constants.drawFactor,
+              y*constants.drawFactor,
+              (r*constants.drawFactor) * 2, -.5* Math.PI, -.5 * Math.PI + 2*Math.PI * 0.999 * (prog), true)
 }
+
+module.exports = uiRenderUtils;

@@ -1,5 +1,14 @@
-
 // NOT an enemy. Does not have a box2d body. Cannot be killed.
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var EnemyFactory = require('../enemy/enemy_factory.js');
+
 var BossTwoSpawner = function(x, y, boss, impulse_game_state) {
   this.x = x
   this.y = y
@@ -58,12 +67,12 @@ BossTwoSpawner.prototype.process = function(dt) {
 
   for(var i = 0; i < this.level.enemies.length; i++) {
       if (this.level.enemies[i].id == this.id) continue
-      var boss_angle = utils.atan(this.level.enemies[i].body.GetPosition(), {x: this.x/layers.draw_factor, y: this.y/layers.draw_factor}) + Math.PI
+      var boss_angle = utils.atan(this.level.enemies[i].body.GetPosition(), {x: this.x/constants.drawFactor, y: this.y/constants.drawFactor}) + Math.PI
       var gravity_force = this.get_gravity_force(this.level.enemies[i].body.GetPosition())
       if(gravity_force > 0)
         this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(gravity_force * Math.cos(boss_angle), gravity_force * Math.sin(boss_angle)), this.level.enemies[i].body.GetWorldCenter())
     }
-    var boss_angle = utils.atan(this.player.body.GetPosition(), {x: this.x/layers.draw_factor, y: this.y/layers.draw_factor}) + Math.PI
+    var boss_angle = utils.atan(this.player.body.GetPosition(), {x: this.x/constants.drawFactor, y: this.y/constants.drawFactor}) + Math.PI
 
     var gravity_force = this.get_gravity_force(this.player.body.GetPosition())
 
@@ -73,13 +82,13 @@ BossTwoSpawner.prototype.process = function(dt) {
 }
 
 BossTwoSpawner.prototype.get_gravity_force = function(loc) {
-var dist =  utils.pDist(loc, {x: this.x/layers.draw_factor, y: this.y/layers.draw_factor})
+var dist =  utils.pDist(loc, {x: this.x/constants.drawFactor, y: this.y/constants.drawFactor})
   var inside = false
 
-  if (dist <= this.size/layers.draw_factor * this.high_gravity_factor) {
+  if (dist <= this.size/constants.drawFactor * this.high_gravity_factor) {
     return this.high_gravity_force
   }
-  else if (dist <= this.size/layers.draw_factor * this.low_gravity_factor) {
+  else if (dist <= this.size/constants.drawFactor * this.low_gravity_factor) {
     return this.low_gravity_force
   }
 
@@ -100,8 +109,8 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
 
     for(var i = 0; i < enemy_num; i++) {
       // coordinates in box2d world, not canvas.
-      var world_x =  this.x/layers.draw_factor;
-      var world_y =  this.y/layers.draw_factor;
+      var world_x =  this.x/constants.drawFactor;
+      var world_y =  this.y/constants.drawFactor;
       var ray_angle = utils.atan({x: world_x, y: world_y}, this.boss.body.GetPosition())
        // find a direction that isn't close to the wall
       var angle = ray_angle + Math.PI * 2 * (j + (1/((j - (j % exit_points))/exit_points + 1)))/exit_points
@@ -116,10 +125,10 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
       }
 
 
-      var loc = [(this.x + this.size/2 * Math.cos(angle))/layers.draw_factor,
-      (this.y + this.size/2 * Math.sin(angle))/layers.draw_factor]
+      var loc = [(this.x + this.size/2 * Math.cos(angle))/constants.drawFactor,
+      (this.y + this.size/2 * Math.sin(angle))/constants.drawFactor]
 
-      var temp_enemy = new (enemyData[enemy_type].className)(this.world, loc[0], loc[1],
+      var temp_enemy = new ((EnemyFactory.getEnemyClassFromType(enemy_type)))(this.world, loc[0], loc[1],
       this.level.enemy_counter, this.impulse_game_state)
       temp_enemy.set_heading(angle);
 
@@ -134,3 +143,5 @@ BossTwoSpawner.prototype.spawn_enemies = function(enemy_type) {
     }
   }
 }
+
+module.exports = BossTwoSpawner;

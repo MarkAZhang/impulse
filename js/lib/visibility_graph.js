@@ -1,3 +1,6 @@
+var constants = require('../data/constants.js');
+var utils = require('../core/utils.js');
+
 var VisibilityGraph = function(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices ) {
   this.init(level, poly_edges, vertices, edges, edge_list, shortest_paths, visible_vertices)
 }
@@ -64,8 +67,8 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
   var min_distance = null
   var min_path = null
   var split_size = 50
-  var point1_adj = this.visible_vertices[Math.floor(point1.x*layers.draw_factor/split_size)*split_size+" "+Math.floor(point1.y*layers.draw_factor/split_size)*split_size]
-  var point2_adj = this.visible_vertices[Math.floor(point2.x*layers.draw_factor/split_size)*split_size+" "+Math.floor(point2.y*layers.draw_factor/split_size)*split_size]
+  var point1_adj = this.visible_vertices[Math.floor(point1.x*constants.drawFactor/split_size)*split_size+" "+Math.floor(point1.y*constants.drawFactor/split_size)*split_size]
+  var point2_adj = this.visible_vertices[Math.floor(point2.x*constants.drawFactor/split_size)*split_size+" "+Math.floor(point2.y*constants.drawFactor/split_size)*split_size]
 
   var inPoly = false
 
@@ -214,3 +217,5 @@ VisibilityGraph.prototype.query = function(point1, point2, pick_alt_path)
 
   return {path: ans, dist: min_distance}
 }
+
+module.exports = VisibilityGraph;

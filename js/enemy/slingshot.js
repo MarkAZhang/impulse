@@ -1,3 +1,12 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Slingshot.prototype = new Enemy()
 
 Slingshot.prototype.constructor = Slingshot
@@ -82,7 +91,7 @@ Slingshot.prototype.additional_processing = function(dt) {
   }
 
   // Slow the slingshot until it enters the arena, with a small buffer.
-  if (!this.first_time_in_arena && utils.checkBounds(1, this.body.GetPosition(), layers.draw_factor)) {
+  if (!this.first_time_in_arena && utils.checkBounds(1, this.body.GetPosition(), constants.drawFactor)) {
     this.first_time_in_arena = true
   }
 
@@ -188,3 +197,4 @@ Slingshot.prototype.additional_drawing = function(context, draw_factor) {
   }
 }
 
+module.exports = Slingshot;

@@ -30,10 +30,10 @@ ImpulseButton.prototype.draw = function(context) {
     context.beginPath()
     context.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h)
     context.fillStyle = this.bg_color
-    context.fill() 
+    context.fill()
   }*/
   this.additional_draw(context)
-  
+
   context.restore()
 }
 
@@ -95,3 +95,5 @@ ImpulseButton.prototype.add_hover_overlay = function(hover_overlay) {
 
 ImpulseButton.prototype.on_mouse_down = function(x, y) {}
 ImpulseButton.prototype.on_mouse_up = function(x, y) {}
+
+module.exports = ImpulseButton;

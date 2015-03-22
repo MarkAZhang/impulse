@@ -1,3 +1,6 @@
+var CheckBox = require('../ui/checkbox.js');
+var ImpulseButton = require('../ui/impulse_button.js');
+
 CheckboxOptionButton.prototype = new ImpulseButton()
 
 CheckboxOptionButton.prototype.constructor = CheckboxOptionButton
@@ -21,7 +24,7 @@ function CheckboxOptionButton(text, x, y, w, h, color, hcolor, action, check_ver
 CheckboxOptionButton.prototype.additional_draw = function(ctx) {
   ctx.save();
   if (!this.mouseOver) {
-    ctx.globalAlpha *= 0.5;  
+    ctx.globalAlpha *= 0.5;
   }
 
   ctx.textAlign = 'left'
@@ -32,3 +35,5 @@ CheckboxOptionButton.prototype.additional_draw = function(ctx) {
   this.checkbox.draw(ctx);
   ctx.restore();
 }
+
+module.exports = CheckboxOptionButton;

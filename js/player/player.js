@@ -1,4 +1,12 @@
 //currently 15 by 15px
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var controls = require('../core/controls.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
 
 var Player = function(world, x, y, impulse_game_state) {
   this.init(world, x, y, impulse_game_state)
@@ -16,8 +24,8 @@ Player.prototype.impulse_radius = 10
 
 Player.prototype.impulse_width = 1/32
 
-Player.prototype.impulse_target_color = impulse_colors["impulse_target_blue"]
-Player.prototype.impulse_color = impulse_colors["impulse_blue"]
+Player.prototype.impulse_target_color = constants.colors["impulse_target_blue"]
+Player.prototype.impulse_color = constants.colors["impulse_blue"]
 
 Player.prototype.density = 9/16
 
@@ -94,7 +102,7 @@ Player.prototype.init = function(world, x, y, impulse_game_state) {
   this.dying = false
   this.dying_length = 1000
   this.dying_duration = 0
-  this.color = impulse_colors["player_color"]
+  this.color = constants.colors["player_color"]
   this.force = this.true_force
   this.bulk_factor = 5
   this.bulked = false
@@ -407,11 +415,9 @@ Player.prototype.process = function(dt) {
     {
       for(var i = 0; i < this.level.enemies.length; i++)
       {
-        if(this.level.enemies[i] instanceof Mote && !this.level.enemies[i].is_silenced()) continue
+        if(this.level.enemies[i].type === "mote" && !this.level.enemies[i].is_silenced()) continue
 
-        if(this.level.enemies[i] instanceof Slingshot && this.level.enemies[i].empowered) continue
-
-        //if(this.level.enemies[i] instanceof BossOne) this.level.enemies[i].process_impulse_on_hands(this.attack_loc, this.impulse_force);
+        if(this.level.enemies[i].type === "slingshot" && this.level.enemies[i].empowered) continue
 
         if(this.enemies_hit.indexOf(this.level.enemies[i].id)==-1 && !this.level.enemies[i].dying)//enemy has not been hit
         {
@@ -428,10 +434,10 @@ Player.prototype.process = function(dt) {
                 this.enemies_hit.push(this.level.enemies[i].id)
                 var force = this.impulse_force;
                 // If it's a goo-ed Harpoon.
-                if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].is_gooed()) {
+                if(this.level.enemies[i].type === "harpoon"  && this.level.enemies[i].is_gooed()) {
                   force *= 2;
                 }
-                if(this.level.enemies[i] instanceof Fighter && this.level.enemies[i].is_disabled()) {
+                if(this.level.enemies[i].type === "fighter" && this.level.enemies[i].is_disabled()) {
                   force *= 3;
                 }
                 if(this.level.enemies[i].is_lightened()) {
@@ -440,7 +446,7 @@ Player.prototype.process = function(dt) {
                 this.level.enemies[i].process_impulse(this.attack_loc, force, angle)
                 break
               }
-              if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state == "engaged") {
+              if(this.level.enemies[i].type === "harpoon" && this.level.enemies[i].harpoon_state == "engaged") {
                 this.level.enemies[i].disengage_harpoon()
               }
             }
@@ -448,7 +454,7 @@ Player.prototype.process = function(dt) {
         }
 
         // if Harpoon, also check the Head
-        if(this.level.enemies[i] instanceof Harpoon && this.level.enemies[i].harpoon_state != "inactive") {
+        if(this.level.enemies[i].type === "harpoon" && this.level.enemies[i].harpoon_state != "inactive") {
           var this_harpoon_head = this.level.enemies[i].harpoon_head;
           if (this.enemies_hit.indexOf(this_harpoon_head.id) == -1) {
             var impulse_sensitive_points = this_harpoon_head.get_impulse_sensitive_pts()
@@ -520,7 +526,7 @@ Player.prototype.maybe_start_impulse = function () {
       }
 
     }
-    this.impulse_angle = utils.atan({x: this.body.GetPosition().x*layers.draw_factor, y: this.body.GetPosition().y*layers.draw_factor}, this.mouse_pos)
+    this.impulse_angle = utils.atan({x: this.body.GetPosition().x*constants.drawFactor, y: this.body.GetPosition().y*constants.drawFactor}, this.mouse_pos)
   } else if(saveData.optionsData.control_scheme == "keyboard") {
     if(!this.attacking && !this.is_silenced()) {
       var earliest_key_press = 0
@@ -657,8 +663,8 @@ Player.prototype.draw = function(context) {
       context.globalAlpha *= 1 - prog
       context.beginPath();
       context.lineWidth = Math.ceil(4 - 4 * prog);
-      context.strokeStyle = impulse_colors["impulse_blue"];
-      context.arc(this.body.GetPosition().x * layers.draw_factor, this.body.GetPosition().y * layers.draw_factor, this.shape.GetRadius() * factor * layers.draw_factor, 0, 2*Math.PI, true);
+      context.strokeStyle = constants.colors["impulse_blue"];
+      context.arc(this.body.GetPosition().x * constants.drawFactor, this.body.GetPosition().y * constants.drawFactor, this.shape.GetRadius() * factor * constants.drawFactor, 0, 2*Math.PI, true);
       context.stroke();
       context.restore();
     }
@@ -668,8 +674,8 @@ Player.prototype.draw = function(context) {
 
     if(this.is_gooed()) {
       context.beginPath()
-      context.arc(this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor,
-       this.radius* lighten_factor * layers.draw_factor, 0, 2* Math.PI, false)
+      context.arc(this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor,
+       this.radius* lighten_factor * constants.drawFactor, 0, 2* Math.PI, false)
       context.strokeStyle = "black"
       context.stroke()
 
@@ -683,16 +689,16 @@ Player.prototype.draw = function(context) {
       if (!this.is_silenced() && saveData.optionsData.control_scheme == "mouse") {
         context.fillStyle = this.impulse_target_color
 
-        context.arc(this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor, this.impulse_radius * lighten_factor* layers.draw_factor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
-        context.lineTo(this.body.GetPosition().x*layers.draw_factor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * layers.draw_factor, this.body.GetPosition().y*layers.draw_factor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*layers.draw_factor)
-        context.lineTo(this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor)
+        context.arc(this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor, this.impulse_radius * lighten_factor* constants.drawFactor, this.impulse_angle - Math.PI/3, this.impulse_angle + Math.PI/3)
+        context.lineTo(this.body.GetPosition().x*constants.drawFactor + Math.cos(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor * constants.drawFactor, this.body.GetPosition().y*constants.drawFactor + Math.sin(this.impulse_angle + Math.PI/3) * this.impulse_radius * lighten_factor*constants.drawFactor)
+        context.lineTo(this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor)
         context.fill()
       } else if(!this.is_silenced() && saveData.optionsData.control_scheme == "keyboard") {
         context.beginPath()
-        context.arc(this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor, this.impulse_radius * lighten_factor *layers.draw_factor, 0, 2 * Math.PI)
+        context.arc(this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor, this.impulse_radius * lighten_factor *constants.drawFactor, 0, 2 * Math.PI)
         context.globalAlpha /= 6
         context.lineWidth = 2
-        context.strokeStyle = impulse_colors["impulse_blue"]
+        context.strokeStyle = constants.colors["impulse_blue"]
         context.stroke()
 
       }
@@ -707,7 +713,7 @@ Player.prototype.draw = function(context) {
       context.shadowBlur = 10;
       context.shadowColor = this.impulse_color;
 
-      context.lineWidth = this.impulse_radius * this.impulse_width * layers.draw_factor * lighten_factor
+      context.lineWidth = this.impulse_radius * this.impulse_width * constants.drawFactor * lighten_factor
       var prop = ((this.attack_length - this.attack_duration)/this.attack_length);
       context.save();
       if(prop > 0.5) {
@@ -715,7 +721,7 @@ Player.prototype.draw = function(context) {
         context.globalAlpha *= (1 - prop)/(0.5) < 0 ? 0 : (1-prop)/(0.5);
       }
 
-      context.arc(this.attack_loc.x*layers.draw_factor, this.attack_loc.y*layers.draw_factor, this.impulse_radius * lighten_factor* prop * layers.draw_factor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
+      context.arc(this.attack_loc.x*constants.drawFactor, this.attack_loc.y*constants.drawFactor, this.impulse_radius * lighten_factor* prop * constants.drawFactor,  this.attack_angle - Math.PI/3, this.attack_angle + Math.PI/3);
       context.strokeStyle = this.impulse_color
       context.lineWidth = 5
       context.stroke();
@@ -725,10 +731,10 @@ Player.prototype.draw = function(context) {
     if(this.impulse_game_state.combo_enabled && saveData.optionsData.multiplier_display &&
        !this.impulse_game_state.is_boss_level) {
       context.font = "16px Muli"
-      context.fillStyle = impulse_colors["impulse_blue"]
+      context.fillStyle = constants.colors["impulse_blue"]
       context.textAlign = "center"
       context.shadowBlur = 0
-      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor + 30)
+      context.fillText("x"+this.impulse_game_state.game_numbers.combo, this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor + 30)
     }
     context.restore()
   }
@@ -736,7 +742,7 @@ Player.prototype.draw = function(context) {
 
 Player.prototype.draw_player_sprite = function(ctx, name) {
   var lighten_factor = this.get_lighten_factor()
-  renderUtils.drawSprite(ctx, this.body.GetPosition().x*layers.draw_factor, this.body.GetPosition().y*layers.draw_factor, (this.body.GetAngle()), this.shape.GetRadius() * layers.draw_factor * 2.5 * lighten_factor, this.shape.GetRadius() * layers.draw_factor * 2.5 * lighten_factor, name)
+  renderUtils.drawSprite(ctx, this.body.GetPosition().x*constants.drawFactor, this.body.GetPosition().y*constants.drawFactor, (this.body.GetAngle()), this.shape.GetRadius() * constants.drawFactor * 2.5 * lighten_factor, this.shape.GetRadius() * constants.drawFactor * 2.5 * lighten_factor, name)
 }
 
 Player.prototype.get_lighten_factor = function() {
@@ -802,3 +808,5 @@ Player.prototype.get_segment_intersection = function(seg_s, seg_f) {
   return {point: ans, dist: ans_d}
 
 }
+
+module.exports = Player;

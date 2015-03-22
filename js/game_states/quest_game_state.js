@@ -1,3 +1,14 @@
+var constants = require('../data/constants.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var layers = require('../core/layers.js');
+var spriteData = require('../data/sprite_data.js');
+
+var Fader = require('../game_states/fader_util.js');
+var GameState = require('../game_states/game_state.js');
+var IconButton = require('../ui/icon_button.js');
+var QuestButton = require('../ui/quest_button.js');
+
 QuestGameState.prototype = new GameState
 
 QuestGameState.prototype.constructor = QuestGameState
@@ -9,9 +20,9 @@ function QuestGameState() {
   });
   this.fader.set_animation("fade_in");
   this.buttons = [];
-  this.buttons.push(new IconButton("BACK", 16, dom.levelWidth/2, dom.levelHeight/2+260, 60, 65, "white", impulse_colors["impulse_blue"], function(_this){return function(){
+  this.buttons.push(new IconButton("BACK", 16, constants.levelWidth/2, constants.levelHeight/2+260, 60, 65, "white", constants.colors["impulse_blue"], function(_this){return function(){
     _this.fader.set_animation("fade_out", function() {
-      game_engine.switch_game_state(new TitleState(true))
+      game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
     });
   }}(this), "back"));
   this.set_up_quests();
@@ -28,19 +39,19 @@ QuestGameState.prototype.set_up_quests = function() {
 
   var first_row_x = 200;
   var first_row_gap = 150;
-  this.buttons.push(new QuestButton("beat_hive", dom.levelWidth/2 - 2 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("final_boss", dom.levelWidth/2 - 1 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("high_roller", dom.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("pacifist", dom.levelWidth/2 + 1 * first_row_gap, first_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("untouchable", dom.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hive", constants.levelWidth/2 - 2 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("final_boss", constants.levelWidth/2 - 1 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("high_roller", constants.levelWidth/2 + 0 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("pacifist", constants.levelWidth/2 + 1 * first_row_gap, first_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("untouchable", constants.levelWidth/2 + 2 * first_row_gap, first_row_x, quest_size, quest_size));
 
   var second_row_x = 350;
   var second_row_gap = 150;
-  this.buttons.push(new QuestButton("beat_hard", dom.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive1", dom.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive2", dom.levelWidth/2 - 0 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive3", dom.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
-  this.buttons.push(new QuestButton("blitz_hive4", dom.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("beat_hard", constants.levelWidth/2 - 2 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive1", constants.levelWidth/2 - 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive2", constants.levelWidth/2 - 0 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive3", constants.levelWidth/2 + 1 * second_row_gap, second_row_x, quest_size, quest_size));
+  this.buttons.push(new QuestButton("blitz_hive4", constants.levelWidth/2 + 2 * second_row_gap, second_row_x, quest_size, quest_size));
 }
 
 
@@ -61,9 +72,9 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   ctx.font = '24px Muli'
   ctx.fillStyle = "white"
 
-  ctx.fillText("ACHIEVEMENTS", dom.levelWidth/2, 50)
+  ctx.fillText("ACHIEVEMENTS", constants.levelWidth/2, 50)
   ctx.font = '12px Muli'
-  ctx.fillText("MOUSE OVER TO VIEW", dom.levelWidth/2, 75)
+  ctx.fillText("MOUSE OVER TO VIEW", constants.levelWidth/2, 75)
 
   for(var i = 0; i < this.buttons.length; i++)
   {
@@ -87,3 +98,5 @@ QuestGameState.prototype.on_click = function(x, y) {
     this.buttons[i].on_click(x, y)
   }
 }
+
+module.exports = QuestGameState;

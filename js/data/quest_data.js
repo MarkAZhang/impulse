@@ -45,3 +45,5 @@ questData["blitz_hive4"] = {
 questData["beat_hard"] = {
 	text: ["DEFEAT ALL HIVES", "IN HARD MODE"]
 }
+
+module.exports = questData;

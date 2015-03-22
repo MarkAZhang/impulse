@@ -1,3 +1,5 @@
+var saveData = require('../load/save_data.js');
+
 var iconRenderUtils = {};
 
 iconRenderUtils.drawPauseIcon = function(context, x, y, scale, color, key_display) {
@@ -375,3 +377,5 @@ iconRenderUtils.drawFullscreenIcon = function(context, x, y, scale, color, key_d
   context.stroke()
   context.restore()
 }
+
+module.exports = iconRenderUtils;

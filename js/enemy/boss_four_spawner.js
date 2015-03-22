@@ -1,10 +1,21 @@
+var box_2d = require('../vendor/box2d.js');
+var enemyData = require('../data/enemy_data.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+var EnemyFactory = require('../enemy/enemy_factory.js');
+
 BossFourSpawner.prototype = new Enemy()
 
 BossFourSpawner.prototype.constructor = BossFourSpawner
 
 function BossFourSpawner(world, x, y, id, impulse_game_state, enemy_type, enemy_spawn, push_force, boss, start_size) {
 
-  this.type = "boss four spawner"
+  this.type = "boss_four_spawner"
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -80,7 +91,7 @@ BossFourSpawner.prototype.additional_processing = function(dt) {
   		var loc = [this.body.GetPosition().x + this.effective_radius * 2 * Math.cos(angle),
   		this.body.GetPosition().y + this.effective_radius * 2 * Math.sin(angle)]
 
-      var temp_enemy = new (enemyData[this.enemy_type].className)(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
+      var temp_enemy = new ((EnemyFactory.getEnemyClassFromType(this.enemy_type)))(this.world, loc[0], loc[1], this.level.enemy_counter, this.impulse_game_state)
 
       var force = new box_2d.b2Vec2(Math.cos(angle), Math.sin(angle))
       force.Multiply(this.push_force)
@@ -167,13 +178,7 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
   context.globalAlpha *= 1-prog
   renderUtils.drawSprite(context, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.body.GetAngle(), this.size * draw_factor * 2, this.size* draw_factor * 2, "adrogantia_spawner", sprites.adrogantiaSprite)
 
-  //enemyRenderUtils.drawEnemy(context, enemy_name, x, y, d, rotate, status, enemy_color
   enemyRenderUtils.drawEnemyColored(context, this.enemy_type, this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, this.body.GetAngle(), "black")
-  /*context.beginPath()
-  context.arc(this.body.GetPosition().x* draw_factor, this.body.GetPosition().y* draw_factor, this.size * draw_factor * 0.7, 0, Math.PI * 2)
-  context.lineWidth = 2
-  context.strokeStyle = enemyData[this.enemy_type].color
-  context.stroke()*/
   context.restore()
 
   this.additional_drawing(context, draw_factor)
@@ -181,3 +186,5 @@ BossFourSpawner.prototype.draw  = function(context, draw_factor) {
 
 BossFourSpawner.prototype.move = function() {
 }
+
+module.exports = BossFourSpawner;

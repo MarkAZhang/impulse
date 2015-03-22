@@ -1,3 +1,6 @@
+var levelData = require('../data/level_data.js');
+var questData = require('../data/quest_data.js');
+
 var HiveNumbers = function (world_num, main_game) {
   if(world_num === undefined)return
 
@@ -60,3 +63,5 @@ HiveNumbers.prototype.createSaveObj = function () {
     'world': this.world
   };
 };
+
+module.exports = HiveNumbers;

@@ -1,22 +1,36 @@
+var constants = require('../data/constants.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var spriteData = require('../data/sprite_data.js');
+var uiRenderUtils = require('../render/ui.js');
+
+var Fader = require('../game_states/fader_util.js');
+var GameState = require('../game_states/game_state.js');
+var IconButton = require('../ui/icon_button.js');
+
 CreditsState.prototype = new GameState
 
 CreditsState.prototype.constructor = CreditsState
 
-function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
-  this.after_main_game = after_main_game;
-  this.main_game_hive_numbers = main_game_hive_numbers;
-  this.main_game_args = main_game_args;
+function CreditsState(opts) {
+  // after_main_game
+  // main_game_hive_numbers
+  // main_game_args
+
+  this.after_main_game = opts.after_main_game;
+  this.main_game_hive_numbers = opts.main_game_hive_numbers;
+  this.main_game_args = opts.main_game_args;
   this.bg_drawn = false
   this.start_clicked = false
   this.buttons = []
   var _this = this
 
 
-  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, dom.levelWidth/2 - 250, dom.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
-  this.buttons.push(new IconButton("MATT MCFARLAND", 16, dom.levelWidth/2, dom.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
-  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, dom.levelWidth/2 + 250, dom.levelHeight/2 + 50, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
-  this.buttons.push(new IconButton("JAY SALVAT", 16, dom.levelWidth/2 - 150, dom.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
-  this.buttons.push(new IconButton("ERIN CATTO", 16, dom.levelWidth/2 + 150, dom.levelHeight/2+180, 150, 70, "white", impulse_colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
+  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, constants.levelWidth/2 - 250, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
+  this.buttons.push(new IconButton("MATT MCFARLAND", 16, constants.levelWidth/2, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
+  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, constants.levelWidth/2 + 250, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
+  this.buttons.push(new IconButton("JAY SALVAT", 16, constants.levelWidth/2 - 150, constants.levelHeight/2+180, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
+  this.buttons.push(new IconButton("ERIN CATTO", 16, constants.levelWidth/2 + 150, constants.levelHeight/2+180, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
   this.buttons[0].extra_text = "MAIN MENU MUSIC"
   this.buttons[1].extra_text = "ALL OTHER MUSIC"
   this.buttons[2].extra_text = "TEXTURES"
@@ -24,9 +38,9 @@ function CreditsState(after_main_game, main_game_hive_numbers, main_game_args) {
   this.buttons[4].extra_text = "PHYSICS ENGINE"
 
   if (!this.after_main_game) {
-    this.buttons.push(new IconButton("BACK", 16, dom.levelWidth/2, dom.levelHeight/2 + 260, 60, 65, "white", impulse_colors["impulse_blue"], function(){
+    this.buttons.push(new IconButton("BACK", 16, constants.levelWidth/2, constants.levelHeight/2 + 260, 60, 65, "white", constants.colors["impulse_blue"], function(){
       _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(new TitleState(_this));
+        game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
       });
     }, "back"))
   }
@@ -59,23 +73,23 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
 
   uiRenderUtils.drawPorcelainLogo(ctx, 400, 180);
   ctx.font = '16px Muli'
-  ctx.fillStyle = impulse_colors["impulse_blue"]
+  ctx.fillStyle = constants.colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", dom.levelWidth/2, 60)
-  ctx.fillText("WITH CREDIT TO", dom.levelWidth/2, 260)
-  /*ctx.fillText("Music by Matt McFarland", dom.levelWidth/2, dom.levelHeight/2 - 20)
-  ctx.fillText("Some textures from SubtlePatterns.com", dom.levelWidth/2, dom.levelHeight/2 + 30)
-  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", dom.levelWidth/2, dom.levelHeight/2 + 80)
-  ctx.fillText("Based on the Box2dWeb Physics Engine", dom.levelWidth/2, dom.levelHeight/2 + 130)
-  ctx.fillText("Game design, UI design, programming, art", dom.levelWidth/2, dom.levelHeight/2 + 180)
-  ctx.fillText("and everything else by Mark Zhang", dom.levelWidth/2, dom.levelHeight/2 + 210)*/
+  ctx.fillText("CREATED BY", constants.levelWidth/2, 60)
+  ctx.fillText("WITH CREDIT TO", constants.levelWidth/2, 260)
+  /*ctx.fillText("Music by Matt McFarland", constants.levelWidth/2, constants.levelHeight/2 - 20)
+  ctx.fillText("Some textures from SubtlePatterns.com", constants.levelWidth/2, constants.levelHeight/2 + 30)
+  ctx.fillText("Buzz HTML5 Audio API by Jay Salvat", constants.levelWidth/2, constants.levelHeight/2 + 80)
+  ctx.fillText("Based on the Box2dWeb Physics Engine", constants.levelWidth/2, constants.levelHeight/2 + 130)
+  ctx.fillText("Game design, UI design, programming, art", constants.levelWidth/2, constants.levelHeight/2 + 180)
+  ctx.fillText("and everything else by Mark Zhang", constants.levelWidth/2, constants.levelHeight/2 + 210)*/
   if (this.after_main_game) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.font = '16px Muli'
-    ctx.fillStyle = impulse_colors["impulse_blue"];
-    ctx.fillText("PRESS ANY KEY TO CONTINUE", dom.levelWidth/2, dom.levelHeight - 30);
+    ctx.fillStyle = constants.colors["impulse_blue"];
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", constants.levelWidth/2, constants.levelHeight - 30);
     ctx.restore();
   }
 
@@ -103,7 +117,13 @@ CreditsState.prototype.on_key_down = function (keyCode) {
   if (this.after_main_game) {
     var _this = this;
     this.fader.set_animation("fade_out", function() {
-      game_engine.switch_game_state(new RewardGameState(_this.main_game_hive_numbers, true, _this.main_game_args));
+      game_engine.switch_game_state(gsKeys.REWARD_GAME_STATE, {
+        hive_numbers: _this.main_game_hive_numbers,
+        main_game: true,
+        game_args: _this.main_game_args
+      });
     });
   }
 }
+
+module.exports = CreditsState;

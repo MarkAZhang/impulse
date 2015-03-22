@@ -1,3 +1,6 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+
 var enemyData = {};
 
 enemyData["dumb_stunner"] = {
@@ -25,8 +28,6 @@ enemyData["dumb_stunner"] = {
     //"Like most enemies, will only give points if you directly cause its death # # Accidental self-induced deaths do not give points"
   ],
   snippet: "stuns on collision",
-
-  className: DumbStunner
 }
 
 enemyData["stunner"] = {
@@ -54,8 +55,6 @@ enemyData["stunner"] = {
   ],
   true_name: "shocker",
   snippet: "stuns on collision",
-
-  className: Stunner
 }
 
 enemyData["spear"] = {
@@ -82,7 +81,6 @@ enemyData["spear"] = {
 
   special_ability: "Charges you on sight. Hurls you backward on impact.",
   other_notes: "Silenced for two seconds on entering or re-entering stage. When Impulsed, silenced for five seconds.",
-  className: Spear
 }
 
 enemyData["tank"] = {
@@ -121,8 +119,6 @@ enemyData["tank"] = {
     "The explosion radius is outlined around the tank",
   ],
   snippet: "explodes on death",
-
-  className: Tank
 }
 
 enemyData["mote"] = {
@@ -145,8 +141,6 @@ enemyData["mote"] = {
     "Other enemies can be impulsed into the mote"
   ],
   snippet: "unaffected by impulse",
-  className: Mote
-
 }
 
 enemyData["goo"] = {
@@ -180,8 +174,6 @@ enemyData["goo"] = {
     //"When Impulsed, dramatically expands its area of influence for 2 seconds",
   ],
   snippet: "slows all nearby units",
-  className: Goo
-
 }
 
 enemyData["harpoon"] = {
@@ -231,9 +223,6 @@ enemyData["harpoon"] = {
     "During boss battles, will fire at any time",
   ],
   snippet: "hooks through walls",
-
-  className: Harpoon
-
 }
 
 enemyData["harpoonhead"] = {
@@ -255,8 +244,6 @@ enemyData["harpoonhead"] = {
   special_ability: "Shoots a harpoon which can latch onto you. Once you are latched, the Harpoon will attempt to drag you to your death.",
   other_notes: "In normal levels, harpoons can only fire through obstacles and are harmless up close. In boss levels, harpoons can fire at any time. Impulsing a harpoon silences it for 1 second. Harpoons will flee from you.",
   description: "Shoots a harpoon that can latch onto you. Once you are latched, it will attempt to drag you to your death.",
-  className: HarpoonHead
-
 }
 
 enemyData["fighter"] = {
@@ -298,7 +285,6 @@ enemyData["fighter"] = {
   dies_on_impact: "NO",
   special_ability: "Fires bullets at you upon sight. Bullets fling you backwards on impact. For every 2 seconds that the Fighter is idle, it loads up a piercing bullet, which cannot be Impulsed.",
   other_notes: "Normal bullets can be reflected to hit other enemies and even the Fighter itself.",
-  className: Fighter
 }
 
 enemyData["fighter_bullet"] = {
@@ -315,7 +301,6 @@ enemyData["fighter_bullet"] = {
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  className: FighterBullet
 }
 
 enemyData["piercing_fighter_bullet"] = {
@@ -332,7 +317,6 @@ enemyData["piercing_fighter_bullet"] = {
   [Math.cos(Math.PI * 3/4), Math.sin(Math.PI * 3/4)],
   [Math.cos(Math.PI * 5/4), Math.sin(Math.PI * 5/4)],
   [Math.cos(Math.PI * 7/4), Math.sin(Math.PI * 7/4)]]}],
-  className: PiercingFighterBullet
 }
 
 
@@ -372,7 +356,6 @@ enemyData["disabler"] = {
   snippet: "disables all nearby units",
   special_ability: "Leaves behind a trail of crippling poison. Everything that passes through the poison is silenced.",
   other_notes: "Passing through goo will instantly slow you down, which may help you survive blasts from other enemies. Goos are not affected by each other.",
-  className: Disabler
 }
 
 enemyData["troll"] = {
@@ -426,8 +409,6 @@ enemyData["troll"] = {
   dies_on_impact: "YES",
   special_ability: "When active, impulsing the Troll will pull it towards you. Upon impact, reverses your movement and impulse controls.",
   other_notes: "The troll alternates between active and inactive every second.",
-  className: Troll
-
 }
 
 
@@ -462,7 +443,6 @@ enemyData["slingshot"] = {
   true_name: "boomerang",
   special_ability: "When Impulsed, it will hook onto the ground and slingshot back towards you, flinging you away if it hits you.",
   other_notes: "If the boomerang hits you while not slingshoting, it will still push you back a fair way.",
-  className: Slingshot,
   enemy_info: [
     "When Impulsed, latches onto its current position # and slingshots back at you",
     "cannot be impulsed while latched",
@@ -513,7 +493,6 @@ enemyData["orbiter"] = {
   dies_on_impact: "YES",
   special_ability: "Locks onto you. Actively avoids your Impulse. Charges you if you've shot your Impulse the other way.",
   other_notes: "Intelligent and dangerous.",
-  className: Orbiter
 }
 
 enemyData["deathray"] = {
@@ -559,12 +538,10 @@ enemyData["deathray"] = {
   dies_on_impact: "NO",
   special_ability: "While in turret mode, sends a devastating ray across the level every 2 seconds.",
   other_notes: "Death rays will only enter turret mode after they are a certain distance away from the walls. Death rays take 1 seconds to enter or leave turret mode.",
-  className: DeathRay
-
 }
 
-enemyData["first boss"] = {
-  color: impulse_colors["boss 1"],
+enemyData["boss_one"] = {
+  color: constants.colors["boss 1"],
   density: 4.5,
   lin_damp: 8,
   effective_radius: 3,
@@ -617,13 +594,10 @@ enemyData["first boss"] = {
   dies_on_impact: "NO",
   special_ability: "Shoots stunners, spears, and tanks at you. Can cast a global lighten, which causes everything to lighter and much easier to push.",
   other_notes: "The color of the boss's guns reflect what it is shooting. During the global lighten, the boss will shoot faster. Use this time to clear the field of enemies.",
-  className: BossOne
-
-
 }
 
-enemyData["second boss"] = {
-  color: impulse_colors["boss 2"],
+enemyData["boss_two"] = {
+  color: constants.colors["boss 2"],
   //color: "gray",//"rgb(244, 164, 96)",
   density: 4.5,
   lin_damp: 8,
@@ -650,11 +624,9 @@ enemyData["second boss"] = {
   dies_on_impact: "NO",
   special_ability: "Exerts a gravity on the field, pulling everything towards it. The closer to the boss, the stronger the pull. The boss has four gravity arms, inside which the gravity is doubled. The boss can also send a massive shockwave through the field.",
   other_notes: "Enemies that collide with the boss will be absorbed, increasing the boss's shockwave range. If you touch the boss, you will be flung away.",
-  className: BossTwo
-
 }
 
-enemyData["third boss"] = {
+enemyData["boss_three"] = {
   color: "#C000FF",//"rgb(244, 164, 96)",
   density: 2,
   lin_damp: 8,
@@ -697,11 +669,9 @@ enemyData["third boss"] = {
   dies_on_impact: "NO",
   special_ability: "Has six turrets which fire bullets. Can cast a global silence and enter berserk mode, during which its attack speed is doubled.",
   other_notes: "Turrets which enter an obstacle cannot attack. Bullets can be reflected by Impulse to hit other enemies, including the boss.",
-  className: BossThree
-
 };
 
-enemyData["fourth boss"] = {
+enemyData["boss_four"] = {
   color: "#ff0000",
   density: 3,
   lin_damp: 10,
@@ -737,11 +707,9 @@ enemyData["fourth boss"] = {
   dies_on_impact: "NO",
   special_ability: "Periodically spawns capsules. Has a thin laser which sweeps around the field. When the sweep laser hits a capsule, the capsule spawns a large number of enemies. The boss has two additional lasers, one which paralyzes and one which exerts massive force.",
   other_notes: "The sweep laser can be blocked, preventing capsules from spawning enemies.",
-  className: BossFour
-
 }
 
-enemyData["boss four attacker"] = {
+enemyData["boss_four_attacker"] = {
   color: "white",
   density: 1.5,
   lin_damp: 1,
@@ -757,10 +725,9 @@ enemyData["boss four attacker"] = {
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}
   ],
-  className: BossFourAttacker
 }
 
-enemyData["boss four spawner"] = {
+enemyData["boss_four_spawner"] = {
   color: "rgb(0, 255, 0)",
   density: 4,
   lin_damp: 12,
@@ -775,13 +742,6 @@ enemyData["boss four spawner"] = {
   [Math.cos(Math.PI * 6/5), Math.sin(Math.PI * 6/5)],
   [Math.cos(Math.PI * 8/5), Math.sin(Math.PI * 8/5)]]}
   ],
-  className: BossFourSpawner
 }
 
-for(var i in enemyData) {
-  if(enemyData[i].batch_enemy_image) {
-    var temp_enemy = new (enemyData[i].className)(null, 0, 0, 0, null)
-    enemyData[i].images = temp_enemy.generate_images();
-  }
-}
-
+module.exports = enemyData;

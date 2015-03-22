@@ -1,3 +1,12 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 Troll.prototype = new Enemy()
 
 Troll.prototype.constructor = Troll
@@ -69,7 +78,7 @@ Troll.prototype.additional_processing = function(dt) {
     }
   }
 
-   if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+   if(!this.entered_arena && utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.silence(this.entered_arena_delay, true)
     this.entered_arena = true
   }
@@ -78,7 +87,7 @@ Troll.prototype.additional_processing = function(dt) {
     this.entered_arena_timer -= dt
   }
 
-  if(!utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.entered_arena = false
   }
 }
@@ -165,9 +174,11 @@ Troll.prototype.bulk_draw_end = function(context, draw_factor, num) {
 }
 
 Troll.prototype.modify_movement_vector = function(dir) {
-  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), constants.drawFactor)) {
     dir.Multiply(this.fast_factor)
   }
 
   dir.Multiply(this.force);
 }
+
+module.exports = Troll;

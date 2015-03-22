@@ -1,3 +1,8 @@
+var box_2d = require('../vendor/box2d.js');
+var saveData = require('../load/save_data.js');
+
+var FighterBullet = require('../enemy/fighter_bullet.js');
+
 PiercingFighterBullet.prototype = new FighterBullet()
 
 PiercingFighterBullet.prototype.constructor = PiercingFighterBullet
@@ -37,7 +42,6 @@ function PiercingFighterBullet(world, x, y, id, impulse_game_state, dir, parent_
 
   this.bullet_enemy_factor = 150;
 
-
   this.bullet_goo_factor = 0.33
 
 }
@@ -46,3 +50,5 @@ PiercingFighterBullet.prototype.process_impulse = function(attack_loc, impulse_f
 }
 
 PiercingFighterBullet.prototype.collide_with = FighterBullet.prototype.collide_with
+
+module.exports = PiercingFighterBullet;

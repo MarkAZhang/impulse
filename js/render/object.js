@@ -1,3 +1,5 @@
+var renderUtils = require('../render/utils.js');
+
 var objectRenderUtils = {};
 
 objectRenderUtils.drawMultiPowerup = function (context, x, y, prog) {
@@ -18,3 +20,5 @@ objectRenderUtils.drawMultiPowerup = function (context, x, y, prog) {
 objectRenderUtils.drawMultiFragment = function (context, x, y, angle) {
   renderUtils.drawSprite(context, x, y, angle, 12, 12, "multi")
 };
+
+module.exports = objectRenderUtils;

@@ -1,3 +1,5 @@
+var saveData = require('../load/save_data.js');
+
 var LEFT_MOUSE_BINDINGS = {
   LEFT_KEY: 37,
   UP_KEY: 38,
@@ -79,3 +81,5 @@ controls.setKeyBindings = function () {
     controls.keys = RIGHT_KEYBOARD_BINDINGS;
   }
 };
+
+module.exports = controls;

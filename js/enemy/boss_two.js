@@ -1,9 +1,21 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var Boss = require('../enemy/boss.js');
+var BossTwoSpawner = require('../enemy/boss_two_spawner.js');
+
 BossTwo.prototype = new Boss()
 
 BossTwo.prototype.constructor = BossTwo
 
 function BossTwo(world, x, y, id, impulse_game_state) {
-  this.type = "second boss"
+  this.type = "boss_two"
 
   this.init(world, x, y, id, impulse_game_state)
 
@@ -158,14 +170,14 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   if(!this.spawn_spawners) {
     this.spawn_spawners = true
     var spawner_buffer = 80
-    var locs = [[dom.levelWidth - spawner_buffer, dom.levelHeight - spawner_buffer],
+    var locs = [[constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
       [spawner_buffer, spawner_buffer]]
     if (saveData.difficultyMode == "normal") {
       locs = [
         [spawner_buffer, spawner_buffer],
-        [dom.levelWidth - spawner_buffer, spawner_buffer],
-        [dom.levelWidth - spawner_buffer, dom.levelHeight - spawner_buffer],
-        [spawner_buffer, dom.levelHeight - spawner_buffer]
+        [constants.levelWidth - spawner_buffer, spawner_buffer],
+        [constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
+        [spawner_buffer, constants.levelHeight - spawner_buffer]
       ];
     }
     for(var i = 0; i < locs.length; i++) {
@@ -358,7 +370,7 @@ BossTwo.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.black_hole_timer - this.black_hole_duration/2)/(this.black_hole_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight)
+    context.fillRect(0, 0, constants.canvasWidth, constants.canvasHeight)
     context.globalAlpha *= 2
   }
 
@@ -479,7 +491,7 @@ BossTwo.prototype.additional_drawing = function(context, draw_factor) {
 
   context.save()
   context.beginPath()
-  context.rect(0, 0, dom.levelWidth, dom.levelHeight)
+  context.rect(0, 0, constants.levelWidth, constants.levelHeight)
   context.clip()
 
   for(var j = 0; j < polygons.length; j++) {
@@ -693,7 +705,7 @@ BossTwo.prototype.draw_gateway_particles = function(ctx, draw_factor) {
                               {x: this.body.GetPosition().x, y: this.body.GetPosition().y});
     var x = draw_factor * (particle.start_x * (1 - particle.prop) + this.body.GetPosition().x * particle.prop);
     var y = draw_factor * (particle.start_y * (1 - particle.prop) + this.body.GetPosition().y * particle.prop);
-    renderUtils.drawShape(ctx, x, y, particle_shape, 2, impulse_colors["world " + this.impulse_game_state.world_num + " bright"], 1, pointer_angle)
+    renderUtils.drawShape(ctx, x, y, particle_shape, 2, constants.colors["world " + this.impulse_game_state.world_num + " bright"], 1, pointer_angle)
     ctx.restore()
   }
 }
@@ -704,3 +716,5 @@ BossTwo.prototype.get_impulse_extra_factor = function() {
   }
   return this.impulse_extra_factor;
 }
+
+module.exports = BossTwo;

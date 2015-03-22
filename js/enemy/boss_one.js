@@ -1,9 +1,21 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var music_player = require('../core/music_player.js');
+var renderUtils = require('../render/utils.js');
+var saveData = require('../load/save_data.js');
+var sprites = require('../render/sprites.js');
+var utils = require('../core/utils.js');
+
+var Boss = require('../enemy/boss.js');
+var EnemyFactory = require('../enemy/enemy_factory.js');
+
 BossOne.prototype = new Boss()
 
 BossOne.prototype.constructor = BossOne
 
 function BossOne(world, x, y, id, impulse_game_state) {
-  this.type = "first boss"
+  this.type = "boss_one"
 
   this.world = world
 
@@ -467,7 +479,7 @@ BossOne.prototype.turret_fire_enemy = function(arm) {
     spawn_loc = {x: this.body_parts['rh'].GetPosition().x + dir.x * 3,
   y: this.body_parts['rh'].GetPosition().y + dir.y * 3}
   dir.Multiply(this.spawn_force[enemy_type])
-  var new_enemy = new this.level.enemy_map[enemy_type](this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
+  var new_enemy = new (EnemyFactory.getEnemyClassFromType(enemy_type))(this.world, spawn_loc.x, spawn_loc.y, this.level.enemy_counter, this.impulse_game_state)
   this.level.spawned_enemies.push(new_enemy)
   new_enemy.body.ApplyImpulse(dir, new_enemy.body.GetWorldCenter())
   new_enemy.stun(this.max_turret_timer + 2000)
@@ -498,7 +510,7 @@ BossOne.prototype.create_hand = function(x, y) {
 }
 BossOne.prototype.create_joint = function(joint_loc, body1, body2) {
 
-  var joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef
+  var joint = new box_2d.b2RevoluteJointDef;
   joint.Initialize(body1, body2, joint_loc)
   joint.enableLimit = true;
   joint.lowerAngle = -Math.PI/2
@@ -982,7 +994,7 @@ BossOne.prototype.draw_special_attack_timer = function(context, draw_factor) {
   }
 
   context.lineWidth = 15;
-  context.strokeStyle = impulse_colors["boss 1"];
+  context.strokeStyle = constants.colors["boss 1"];
   context.stroke()
 
 }
@@ -1057,7 +1069,7 @@ BossOne.prototype.pre_draw = function(context, draw_factor) {
     var gray = Math.min(5 - Math.abs((-this.lighten_timer - this.lighten_duration/2)/(this.lighten_duration/10)), 1)
     context.globalAlpha *= gray/2
     context.fillStyle = this.color
-    context.fillRect(0, 0, dom.canvasWidth, dom.canvasHeight)
+    context.fillRect(0, 0, constants.canvasWidth, constants.canvasHeight)
   }
 
   context.restore()
@@ -1201,9 +1213,9 @@ BossOne.prototype.explode = function() {
     {
       var _angle = utils.atan(this.body.GetPosition(), this.level.enemies[i].body.GetPosition())
       this.level.enemies[i].body.ApplyImpulse(new box_2d.b2Vec2(this.punching_explode_force * Math.cos(_angle), this.punching_explode_force * Math.sin(_angle)), this.level.enemies[i].body.GetWorldCenter())
-      if(!(this.level.enemies[i] instanceof Tank))
+      if(this.level.enemies[i].type !== "tank") {
         this.level.enemies[i].open(1500)
-
+      }
     }
   }
 }
@@ -1214,3 +1226,5 @@ BossOne.prototype.get_impulse_extra_factor = function() {
   }
   return this.impulse_extra_factor;
 }
+
+module.exports = BossOne;

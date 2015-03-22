@@ -1,3 +1,6 @@
+var sprites = require('../render/sprites.js');
+var spriteData = require('../data/sprite_data.js');
+
 var renderUtils = {};
 
 renderUtils.drawRoundedRect = function(context, x, y, w, h, r, color) {
@@ -132,3 +135,5 @@ renderUtils.drawSprite = function(ctx, x, y, rotation, actualWidth, actualHeight
       -actualWidth/2, -actualHeight/2, actualWidth, actualHeight);
     ctx.restore();
 }
+
+module.exports = renderUtils;

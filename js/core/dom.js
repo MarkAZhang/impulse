@@ -1,11 +1,7 @@
+var constants = require('../data/constants.js');
+var utils = require('./utils.js');
+
 var dom = {};
-
-dom.canvasWidth = 1200;
-dom.canvasHeight = 600;
-
-dom.sideBarWidth = 200;
-dom.levelWidth = dom.canvasWidth - 2 * dom.sideBarWidth;
-dom.levelHeight = dom.canvasHeight;
 
 dom.setUpDocument = function () {
   window.oncontextmenu = function ()
@@ -16,27 +12,31 @@ dom.setUpDocument = function () {
 };
 
 dom.centerCanvas = function() {
-  var dim = utils.getWindowDimensions()
+  var dim = utils.getWindowDimensions();
+  var canvas_container = document.getElementById('canvas_container');
+  var bg_canvas_container = document.getElementById('bg_canvas_container');
+  var message = document.getElementById('message');
 
-  if(dom.canvasWidth < dim.w)
+
+  if(constants.canvasWidth < dim.w)
   {
-    offset_left = (dim.w-dom.canvasWidth)/2
-    canvas_container.style.left =  Math.round(offset_left) + 'px'
-    bg_canvas_container.style.left =  Math.round(offset_left) + 'px'
+    constants.offsetLeft = (dim.w-constants.canvasWidth)/2
+    canvas_container.style.left =  Math.round(constants.offsetLeft) + 'px'
+    bg_canvas_container.style.left =  Math.round(constants.offsetLeft) + 'px'
   }
   else
   {
-    offset_left = 0
+    constants.offsetLeft = 0
   }
-  if(dom.canvasHeight < dim.h)
+  if(constants.canvasHeight < dim.h)
   {
-    offset_top = (dim.h-dom.canvasHeight)/2
-    canvas_container.style.top = Math.round(offset_top) + 'px'
-    bg_canvas_container.style.top =  Math.round(offset_top) + 'px'
+    constants.offsetTop = (dim.h-constants.canvasHeight)/2
+    canvas_container.style.top = Math.round(constants.offsetTop) + 'px'
+    bg_canvas_container.style.top =  Math.round(constants.offsetTop) + 'px'
   }
   else
   {
-    offset_top = 0
+    constants.offsetTop = 0
   }
   message.style.display = ""
 };
@@ -48,21 +48,21 @@ dom.centerMessage = function() {
   message.setAttribute("style", "display: block" )
   if(message.clientWidth < dim.w)
   {
-    offset_left = (dim.w-message.clientWidth)/2
-    message.style.left =  Math.round(offset_left) + 'px'
+    constants.offsetLeft = (dim.w-message.clientWidth)/2
+    message.style.left =  Math.round(constants.offsetLeft) + 'px'
   }
   else
   {
-    offset_left = 0
+    constants.offsetLeft = 0
   }
   if(message.clientHeight < dim.h)
   {
-    offset_top = (dim.h-message.clientHeight )/2
-    message.style.top = Math.round(offset_top) + 'px'
+    constants.offsetTop = (dim.h-message.clientHeight )/2
+    message.style.top = Math.round(constants.offsetTop) + 'px'
   }
   else
   {
-    offset_top = 0
+    constants.offsetTop = 0
   }
 }
 
@@ -70,13 +70,10 @@ dom.redirectToChrome = function() {
   window.location = "https://www.google.com/intl/en/chrome/browser/";
 };
 
-dom.clearMessageAndStartGame = function() {
+dom.clearMessage = function() {
+  var message = document.getElementById("message");
   message.setAttribute("style", "display: none" )
-  setTimeout(function() {
-    main.executeGame()
-  }, 50)
-}
-
+};
 
 dom.IsInFullScreen = function () {
   return (document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
@@ -85,35 +82,33 @@ dom.IsInFullScreen = function () {
 
 dom.toggleFullScreen = function () {
   var isFullScreen = dom.IsInFullScreen();
+  var docElm = document.documentElement;
+  if (!isFullScreen) {
 
-    var docElm = document.documentElement;
-    if (!isFullScreen) {
-
-        if (docElm.requestFullscreen) {
-            docElm.requestFullscreen();
-        }
-        else if (docElm.mozRequestFullscreen) {
-            docElm.mozRequestFullscreen();
-        }
-        else if (docElm.webkitRequestFullscreen) {
-            docElm.webkitRequestFullscreen ();
-        }
-    } else {
-      if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-        else if (document.mozExitFullscreen) {
-            document.mozExitFullscreen();
-        }
-        else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen ();
-        }
-    }
-  if (game_engine.cur_dialog_box && game_engine.cur_dialog_box instanceof OptionsMenu) {
-    game_engine.cur_dialog_box.sendFullscreenSignal(!isFullScreen);
+      if (docElm.requestFullscreen) {
+          docElm.requestFullscreen();
+      }
+      else if (docElm.mozRequestFullscreen) {
+          docElm.mozRequestFullscreen();
+      }
+      else if (docElm.webkitRequestFullscreen) {
+          docElm.webkitRequestFullscreen ();
+      }
+  } else {
+    if (document.exitFullscreen) {
+          document.exitFullscreen();
+      }
+      else if (document.mozExitFullscreen) {
+          document.mozExitFullscreen();
+      }
+      else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen ();
+      }
   }
 }
 
 dom.isChromeBrowser = function () {
   return navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 };
+
+module.exports = dom;

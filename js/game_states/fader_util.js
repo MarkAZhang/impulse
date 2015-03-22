@@ -41,3 +41,5 @@ Fader.prototype.get_animation_progress = function() {
 Fader.prototype.get_current_animation = function() {
   return this.animation;
 }
+
+module.exports = Fader;

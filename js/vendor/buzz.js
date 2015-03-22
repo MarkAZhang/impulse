@@ -848,3 +848,5 @@ var buzz = {
         return  Math.round( ( ( total / 100 ) * percent ) * r ) / r;
     }
 };
+
+module.exports = buzz;

@@ -1,3 +1,6 @@
+var ImpulseButton = require('../ui/impulse_button.js');
+var Slider = require('../ui/slider.js');
+
 SliderOptionButton.prototype = new ImpulseButton()
 
 SliderOptionButton.prototype.constructor = SliderOptionButton
@@ -53,3 +56,5 @@ SliderOptionButton.prototype.on_mouse_move = function(x, y) {
     this.slider.on_mouse_move(x, y);
   }
 }
+
+module.exports = SliderOptionButton;

@@ -1,3 +1,9 @@
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+
+var Fragment = require('../render/fragment.js');
+var Player = require('../player/player.js');
+
 var FragmentGroup = function(enemy_type, loc, velocity, shadowed) {
   this.init(enemy_type, loc, velocity, shadowed)
 }
@@ -32,7 +38,7 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
   } else if(enemy_type=="player") {
     this.shape =
       {type: "circle", x: 0, y: 0, r: Player.prototype.radius}
-    this.color = impulse_colors["player_color"]
+    this.color = constants.colors["player_color"]
     this.original_v_damping = 0.5
     this.num_fragments = 12
     this.burst = 2
@@ -75,8 +81,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
       new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
         y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
-      this.fragments.push(new Fragment(this.shape, layers.draw_factor/3, {x: loc.x * layers.draw_factor, y: loc.y * layers.draw_factor},
-       {x: new_v.x * layers.draw_factor, y: new_v.y * layers.draw_factor}, this.color))
+      this.fragments.push(new Fragment(this.shape, constants.drawFactor/3, {x: loc.x * constants.drawFactor, y: loc.y * constants.drawFactor},
+       {x: new_v.x * constants.drawFactor, y: new_v.y * constants.drawFactor}, this.color))
     }
     if(enemy_type.slice(enemy_type.length - 4, enemy_type.length) == "boss") {
       for(var i = 0; i < num_frags_in_wave; i++) {
@@ -84,8 +90,8 @@ FragmentGroup.prototype.init = function(enemy_type, loc, velocity, shadowed) {
         new_v = {x: this.original_v_damping * velocity.x + Math.cos(dir) * (j + 1 ) / this.waves * this.burst_force,
           y: this.original_v_damping * velocity.y + Math.sin(dir) * (j + 1 ) / this.waves * this.burst_force}
 
-        this.fragments.push(new Fragment("shadow", layers.draw_factor/3, {x: loc.x * layers.draw_factor, y: loc.y * layers.draw_factor},
-         {x: new_v.x * layers.draw_factor, y: new_v.y * layers.draw_factor}, this.color))
+        this.fragments.push(new Fragment("shadow", constants.drawFactor/3, {x: loc.x * constants.drawFactor, y: loc.y * constants.drawFactor},
+         {x: new_v.x * constants.drawFactor, y: new_v.y * constants.drawFactor}, this.color))
       }
     }
   }
@@ -122,3 +128,4 @@ FragmentGroup.prototype.isDone = function() {
   return this.life_left <= 0
 }
 
+module.exports = FragmentGroup;

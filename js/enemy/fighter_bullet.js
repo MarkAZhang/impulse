@@ -1,3 +1,11 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 FighterBullet.prototype = new Enemy()
 
 FighterBullet.prototype.constructor = FighterBullet
@@ -72,14 +80,14 @@ FighterBullet.prototype.collide_with = function(other) {
   }
   else if(other.is_enemy)
   {
-    if(other instanceof FighterBullet) return
+    if(other.type === "fighter_bullet") return
 
     this.start_death("hit_enemy")
 
     if(other.id != this.parent_id || this.reflected) {
       if(!this.is_silenced()) {
         music_player.play_sound("fbullethit")
-        if(other instanceof Fighter) {
+        if(other.type === 'fighter' ) {
           other.frenzy_charge = 0
         }
         var vel = this.body.GetLinearVelocity().Copy()
@@ -93,9 +101,9 @@ FighterBullet.prototype.collide_with = function(other) {
           if (other.is_gooed()) {
             factor *= 2;
           }
-        } else if (other instanceof Fighter) {
+        } else if (other.type === "fighter") {
           factor *= 0.7
-        } else if (other instanceof Orbiter) {
+        } else if (other.type === "orbiter") {
           other.weaken()
         }
 
@@ -143,12 +151,13 @@ FighterBullet.prototype.check_death = function()
       return
     }
   }
-  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= dom.canvasWidth/layers.draw_factor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= dom.canvasWidth/layers.draw_factor + 5)
+  if(this.body.GetPosition().x <= -5 || this.body.GetPosition().x >= constants.canvasWidth/constants.drawFactor + 5 || this.body.GetPosition().y <= -5 || this.body.GetPosition().y >= constants.canvasWidth/constants.drawFactor + 5)
   {
     this.start_death("kill")
   }
 }
+
 FighterBullet.prototype.player_hit_proc = function() {
 }
 
-
+module.exports = FighterBullet;

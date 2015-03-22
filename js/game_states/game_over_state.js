@@ -1,21 +1,51 @@
+var constants = require('../data/constants.js');
+var controls = require('../core/controls.js');
+var game_engine = require('../core/game_engine.js');
+var gsKeys = constants.gsKeys;
+var layers = require('../core/layers.js');
+var levelData = require('../data/level_data.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var spriteData = require('../data/sprite_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Fader = require('../game_states/fader_util.js');
+var GameState = require('../game_states/game_state.js');
+var HiveNumbers = require('../load/hive_numbers.js');
+var IconButton = require('../ui/icon_button.js');
+
 GameOverState.prototype = new GameState
 
 GameOverState.prototype.constructor = GameOverState
 
-function GameOverState(final_game_numbers, level, world_num, visibility_graph, args) {
-  this.level = level
+function GameOverState(opts) {
+  // final_game_numbers
+  // level
+  // world_num
+  // visibility_graph
+  // args
+
+  this.game_numbers = opts.final_game_numbers
+  this.level = opts.level
   this.level_name = this.level.level_name
   this.buttons = []
-  this.world_num = world_num
-  this.visibility_graph = visibility_graph
+  this.world_num = opts.world_num
+  this.visibility_graph = opts.visibility_graph
   this.bg_drawn = false
-  this.victory = args.victory
-  this.color = impulse_colors['world '+ this.world_num + ' bright']
-  this.restart_button = new IconButton("RETRY", 16, dom.levelWidth - 70, dom.levelHeight - 40, 60, 65, this.color, "white", function(_this){
+  this.victory = opts.args.victory
+  this.color = constants.colors['world '+ this.world_num + ' bright']
+  this.restart_button = new IconButton("RETRY", 16, constants.levelWidth - 70, constants.levelHeight - 40, 60, 65, this.color, "white", function(_this){
     return function(){
       var hive_numbers = new HiveNumbers(_this.world_num, false)
       _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(new ImpulseGameState(_this.world_num, _this.level, _this.visibility_graph, hive_numbers, false, false))
+        game_engine.switch_game_state(gsKeys.IMPULSE_GAME_STATE, {
+          world: _this.world_num,
+          level: _this.level,
+          visibility_graph: _this.visibility_graph,
+          hive_numbers: hive_numbers,
+          main_game: false
+        });
       });
     }
   }(this), "start")
@@ -28,10 +58,13 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     this.restart_button.extra_text = "SHIFT KEY"
   }
 
- this.buttons.push(new IconButton("MENU", 16, 70, dom.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
+ this.buttons.push(new IconButton("MENU", 16, 70, constants.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(new WorldMapState(_this.world_num, true))
+        game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
+          world: _this.world_num,
+          is_practice_mode: true
+        });
         if (saveData.difficultyMode == "normal") {
           game_engine.setBg("Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num))
         } else {
@@ -41,82 +74,23 @@ function GameOverState(final_game_numbers, level, world_num, visibility_graph, a
     }
     else {
       _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(new TitleState(true))
+        game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
         game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
       });
     }
   }}(this), "back"))
 
-  this.game_numbers = final_game_numbers
 
   if(!this.level.is_boss_level) {
-    this.high_score = args.high_score
-    this.best_time = args.best_time ? args.best_time : 0
+    this.high_score = opts.args.high_score
+    this.best_time = opts.args.best_time ? opts.args.best_time : 0
   } else {
-    this.best_time = args.best_time ? args.best_time : 0
+    this.best_time = opts.args.best_time ? opts.args.best_time : 0
   }
 
   saveData.totalKills += this.game_numbers.kills
 
   saveData.saveGame()
-
-  var closest_enemy_type = null
-  var closest_prop = -1
-
-  /* this.drawn_enemies = null
-
-  if(this.level.is_boss_level) {
-    this.drawn_enemies = {}
-    //this.drawn_enemies[levelData[this.level_name].dominant_enemy] = null
-    //this.num_enemy_type = 1
-  }
-  else {
-    this.drawn_enemies = levelData[this.level_name].enemies
-    this.num_enemy_type = 0
-    for(var j in levelData[this.level_name].enemies) {
-      this.num_enemy_type += 1
-    }
-  }
-  this.enemy_image_size = 40
-
-  var num_row = 12
-
-  var i = 0
-
-  for(var j in this.drawn_enemies) {
-
-    var k = 0
-    var num_in_this_row = 0
-
-    while(k < i+1 && k < this.num_enemy_type) {
-      k+=num_row
-    }
-
-    if(k <= this.num_enemy_type) {
-      num_in_this_row = num_row
-    }
-    else {
-      num_in_this_row = this.num_enemy_type - (k - num_row)
-    }
-    var diff = (i - (k - num_row)) - (num_in_this_row - 1)/2
-
-    var h_diff = Math.floor(i/num_row) - (Math.ceil(this.num_enemy_type/num_row) - 1)/2
-
-    var cur_x =  dom.levelWidth/2 + (this.enemy_image_size+10) * diff
-    var cur_y = 380 + this.enemy_image_size * h_diff
-    this.buttons.push(new SmallEnemyButton(j, this.enemy_image_size, cur_x, cur_y, this.enemy_image_size, this.enemy_image_size, impulse_colors["world "+this.world_num+" lite"],
-      (function(enemy, _this) { return function() {
-        _this.fader.set_animation("fade_out", function() {
-          game_engine.set_dialog_box(new EnemyBox(enemy, _this))
-        });
-      }})(j, this)
-      ))
-
-    i+=1
-  } */
-
-  this.star_colors = ["world "+this.world_num+" bright", "silver", "gold"]
-  this.star_text = ["GATEWAY", "SILVER", "GOLD"]
 
   music_player.stop_bg()
 
@@ -137,19 +111,19 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     this.level.impulse_game_state= null
     bg_canvas.setAttribute("style", "display:none" )
 
-    bg_ctx.translate(dom.sideBarWidth, 0)//allows us to have a topbar
+    bg_ctx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
     this.level.draw_bg(bg_ctx)
     var world_bg_ctx = layers.worldMenuBgCanvas.getContext('2d')
-    uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, dom.levelWidth, dom.levelHeight, "Hive "+this.world_num)
+    uiRenderUtils.tessellateBg(world_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive "+this.world_num)
     this.bg_drawn = true
-    bg_ctx.translate(-dom.sideBarWidth, 0)
+    bg_ctx.translate(-constants.sideBarWidth, 0)
     this.bg_drawn = true
   }
   ctx.save()
-  ctx.fillStyle = impulse_colors["world "+this.world_num+" dark"]
-  ctx.fillRect(0, 0, dom.levelWidth, dom.levelHeight)
+  ctx.fillStyle = constants.colors["world "+this.world_num+" dark"]
+  ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight)
   ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num);
-  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, dom.levelWidth, dom.levelHeight, 0, 0, dom.levelWidth, dom.levelHeight)
+  ctx.drawImage(layers.worldMenuBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, 0, 0, constants.levelWidth, constants.levelHeight)
   ctx.restore()
 
   ctx.save();
@@ -161,7 +135,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
   if(!this.level.is_boss_level) {
     ctx.globalAlpha /= 3
-    uiRenderUtils.drawTessellationSign(ctx, this.world_num, dom.levelWidth/2, 230, 80, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
@@ -170,7 +144,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '20px Muli'
     if (saveData.difficultyMode == "normal") {
       ctx.textAlign = 'center'
-      ctx.fillText("HARD MODE", dom.levelWidth/2, 180)
+      ctx.fillText("HARD MODE", constants.levelWidth/2, 180)
     }
     ctx.restore();
 
@@ -179,15 +153,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '42px Muli'
     ctx.textAlign = 'center'
 
-    ctx.fillText(this.level_name, dom.levelWidth/2, 240)
+    ctx.fillText(this.level_name, constants.levelWidth/2, 240)
     ctx.fill()
     ctx.font = '36px Muli';
     if(this.victory) {
       ctx.fillStyle = "white"
-      ctx.fillText("VICTORY", dom.levelWidth/2, 300)
+      ctx.fillText("VICTORY", constants.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", dom.levelWidth/2, 300)
+      ctx.fillText("GAME OVER", constants.levelWidth/2, 300)
     }
 
     var score_y = 380;
@@ -195,15 +169,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("GAME TIME ", dom.levelWidth/2 + 100, score_y)
+    ctx.fillText("GAME TIME ", constants.levelWidth/2 + 100, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.last_time, dom.levelWidth/2 + 100, score_label_y)
+    ctx.fillText(this.game_numbers.last_time, constants.levelWidth/2 + 100, score_label_y)
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("SCORE", dom.levelWidth/2 - 100, score_y)
+    ctx.fillText("SCORE", constants.levelWidth/2 - 100, score_y)
 
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.score, dom.levelWidth/2 - 100, score_label_y)
+    ctx.fillText(this.game_numbers.score, constants.levelWidth/2 - 100, score_label_y)
 
     var line_y = 440
     if (!this.high_score) {
@@ -231,38 +205,38 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     if(this.high_score) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW HIGH SCORE!", dom.levelWidth/2 - 100, high_score_y)
+      ctx.fillText("NEW HIGH SCORE!", constants.levelWidth/2 - 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", dom.levelWidth/2  - 100, best_score_label_y)
+      ctx.fillText("HIGH SCORE", constants.levelWidth/2  - 100, best_score_label_y)
       ctx.font = '28px Muli'
       ctx.fillText(saveData.getLevelData(this.level_name).high_score,
-       dom.levelWidth/2 - 100, best_score_y)
+       constants.levelWidth/2 - 100, best_score_y)
       ctx.restore();
     }
 
     if(this.best_time) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW BEST TIME!", dom.levelWidth/2 + 100, high_score_y)
+      ctx.fillText("NEW BEST TIME!", constants.levelWidth/2 + 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", dom.levelWidth/2 + 100, best_score_label_y)
+      ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
       if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
         ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
-          dom.levelWidth/2 + 100, best_score_y)
+          constants.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED",
-          dom.levelWidth/2 + 100, best_score_y)
+          constants.levelWidth/2 + 100, best_score_y)
       }
       ctx.restore();
     }
@@ -270,7 +244,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
 
     ctx.globalAlpha /= 3
-    uiRenderUtils.drawTessellationSign(ctx, this.world_num, dom.levelWidth/2, 230, 80, true)
+    uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, 230, 80, true)
     ctx.globalAlpha *= 3
 
     ctx.save();
@@ -279,7 +253,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.font = '20px Muli'
     if (saveData.difficultyMode == "normal") {
       ctx.textAlign = 'center';
-      ctx.fillText("HARD MODE", dom.levelWidth/2, 180)
+      ctx.fillText("HARD MODE", constants.levelWidth/2, 180)
     }
     ctx.restore();
 
@@ -288,16 +262,16 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.textAlign = 'center'
 
     ctx.font = '32px Muli'
-    ctx.fillText(levelData.bossNames[this.world_num], dom.levelWidth/2, 240)
+    ctx.fillText(levelData.bossNames[this.world_num], constants.levelWidth/2, 240)
 
     ctx.fill()
     ctx.font = '48px Muli';
     if (this.level.boss_victory) {
       ctx.fillStyle = "white"
-      ctx.fillText("VICTORY", dom.levelWidth/2, 300)
+      ctx.fillText("VICTORY", constants.levelWidth/2, 300)
     } else {
       ctx.fillStyle = "red"
-      ctx.fillText("GAME OVER", dom.levelWidth/2, 300)
+      ctx.fillText("GAME OVER", constants.levelWidth/2, 300)
     }
 
     var score_y = 380;
@@ -305,9 +279,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.color
     ctx.font = '20px Muli'
-    ctx.fillText("GAME TIME ", dom.levelWidth/2, score_y)
+    ctx.fillText("GAME TIME ", constants.levelWidth/2, score_y)
     ctx.font = '42px Muli'
-    ctx.fillText(this.game_numbers.last_time, dom.levelWidth/2, score_label_y)
+    ctx.fillText(this.game_numbers.last_time, constants.levelWidth/2, score_label_y)
 
     var line_y = 440
 
@@ -327,22 +301,22 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     if(this.best_time) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
-      ctx.fillText("NEW BEST TIME!", dom.levelWidth/2, high_score_y)
+      ctx.fillText("NEW BEST TIME!", constants.levelWidth/2, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Muli'
-      ctx.fillText("BEST TIME", dom.levelWidth/2, best_score_label_y)
+      ctx.fillText("BEST TIME", constants.levelWidth/2, best_score_label_y)
       ctx.font = '28px Muli'
       if (saveData.getLevelData(this.level_name).best_time < 1000) {
         ctx.font = '28px Muli'
         ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
-          dom.levelWidth/2, best_score_y)
+          constants.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'
         ctx.fillText("UNDEFEATED",
-          dom.levelWidth/2, best_score_y)
+          constants.levelWidth/2, best_score_y)
       }
       ctx.restore();
     }
@@ -373,3 +347,5 @@ GameOverState.prototype.on_key_down = function(keyCode) {
     this.buttons[i].on_key_down(keyCode)
   }
 }
+
+module.exports = GameOverState;

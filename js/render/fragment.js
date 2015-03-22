@@ -1,3 +1,8 @@
+var constants = require('../data/constants.js');
+var objectRenderUtils = require('../render/object.js');
+var renderUtils = require('../render/utils.js');
+var utils = require('../core/utils.js');
+
 var Fragment = function(shape, size, loc, velocity, color) {
   this.init(shape, size, loc, velocity, color)
 }
@@ -24,7 +29,7 @@ Fragment.prototype.draw = function(context, prog) {
     context.globalAlpha *= prog
     var pointer_angle = utils.atan({x: 0, y: 0}, this.velocity)
     if(this.shape == "multi")
-      objectRenderUtils.drawMultiFragment(context, this.loc.x/layers.draw_factor, this.loc.y/layers.draw_factor, pointer_angle)
+      objectRenderUtils.drawMultiFragment(context, this.loc.x/constants.drawFactor, this.loc.y/constants.drawFactor, pointer_angle)
 
     context.restore()
 
@@ -43,3 +48,5 @@ Fragment.prototype.draw = function(context, prog) {
     context.restore()
   }
 }
+
+module.exports = Fragment;

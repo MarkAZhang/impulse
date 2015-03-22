@@ -1,3 +1,15 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var enemyData = require('../data/enemy_data.js');
+var enemyRenderUtils = require('../render/enemy.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+var FighterBullet = require('../enemy/fighter_bullet.js');
+var PiercingFighterBullet = require('../enemy/piercing_fighter_bullet.js');
+
 Fighter.prototype = new Enemy()
 
 Fighter.prototype.constructor = Fighter
@@ -140,7 +152,7 @@ Fighter.prototype.additional_processing = function(dt) {
   for(var i = 0; i < this.shoot_durations.length; i++) {
     if(this.shoot_durations[i] <= 0 && !this.shoot_fade_out[i] && !this.is_silenced()) {
 
-      if(utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+      if(utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
         var cur_bullet_loc = this.get_bullet_locations(i);
         this.has_sight_of_player = utils.isVisible(cur_bullet_loc, this.player.body.GetPosition(), this.level.obstacle_edges)
 
@@ -174,13 +186,13 @@ Fighter.prototype.additional_processing = function(dt) {
       this.shoot_durations[i] = this.fighter_status == "normal" ? (2 * this.shoot_interval + this.shoot_durations[i]) : this.frenzy_shoot_interval
       this.shoot_fade_out[i] = false
     }
-    if(utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+    if(utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
       this.shoot_durations[i] -= dt
     }
   }
 
 
-  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && utils.checkBounds(0, this.body.GetPosition(), layers.draw_factor)) {
+  if (this.fighter_status == "normal" && !this.is_silenced() && this.frenzy_charge < this.frenzy_charge_bars && utils.checkBounds(0, this.body.GetPosition(), constants.drawFactor)) {
     this.frenzy_charge += dt / this.frenzy_charge_interval;
   }
 
@@ -302,7 +314,7 @@ Fighter.prototype.silence = function(dur, color_silence) {
 
 Fighter.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
-  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), constants.drawFactor)) {
     dir.Multiply(this.fast_factor)
   }
 
@@ -379,3 +391,4 @@ Fighter.prototype.process_hit = function() {
   }
 }
 
+module.exports = Fighter;

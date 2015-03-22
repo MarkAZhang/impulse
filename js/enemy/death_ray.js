@@ -1,3 +1,12 @@
+var box_2d = require('../vendor/box2d.js');
+var constants = require('../data/constants.js');
+var music_player = require('../core/music_player.js');
+var saveData = require('../load/save_data.js');
+var uiRenderUtils = require('../render/ui.js');
+var utils = require('../core/utils.js');
+
+var Enemy = require('../enemy/enemy.js');
+
 DeathRay.prototype = new Enemy()
 
 DeathRay.prototype.constructor = DeathRay
@@ -88,7 +97,7 @@ DeathRay.prototype.additional_processing = function(dt) {
     this.destroyable_timer -= dt
   }
 
-  this.within_bounds = utils.checkBounds(this.interior_buffer, this.body.GetPosition(), layers.draw_factor)
+  this.within_bounds = utils.checkBounds(this.interior_buffer, this.body.GetPosition(), constants.drawFactor)
 
   if (this.recovery_timer > 0) {
     this.recovery_timer -= dt
@@ -197,11 +206,11 @@ DeathRay.prototype.get_target_point = function() {
   if(!this.safe) {
     this.goalPt = null
     var point = utils.getNearestSpawnPoint(this, this.player, this.impulse_game_state.level_name)
-    return {x: point.x/layers.draw_factor, y: point.y/layers.draw_factor}
+    return {x: point.x/constants.drawFactor, y: point.y/constants.drawFactor}
   }
   else {
     if(this.goalPt == null) {
-      this.goalPt = {x: this.level.get_starting_loc().x/layers.draw_factor, y: this.level.get_starting_loc().y/layers.draw_factor}//utils.getRandomCentralValidLocation({x: -10, y: -10})
+      this.goalPt = {x: this.level.get_starting_loc().x/constants.drawFactor, y: this.level.get_starting_loc().y/constants.drawFactor}
     }
     return this.goalPt
   }
@@ -305,7 +314,7 @@ DeathRay.prototype.get_color_for_status = function(status) {
   } else if(status == "white") {
     return "white"
   } else if(status.slice(0, 5) == "world") {
-    return impulse_colors["world "+status.slice(5,6)+" lite"]
+    return constants.colors["world "+status.slice(5,6)+" lite"]
   }
 
   return this.get_additional_color_for_status(status)
@@ -314,7 +323,7 @@ DeathRay.prototype.get_color_for_status = function(status) {
 DeathRay.prototype.modify_movement_vector = function(dir) {
   //apply impulse to move enemy
 
-  if(!utils.checkBounds(-3, this.body.GetPosition(), layers.draw_factor)) {
+  if(!utils.checkBounds(-3, this.body.GetPosition(), constants.drawFactor)) {
     dir.Multiply(this.fast_factor)
   }
 
@@ -345,3 +354,5 @@ DeathRay.prototype.modify_movement_vector = function(dir) {
 
 DeathRay.prototype.player_hit_proc = function() {
 }
+
+module.exports = DeathRay;

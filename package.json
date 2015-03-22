@@ -1,0 +1,41 @@
+{
+  "name": "impulse_game",
+  "version": "1.0.0",
+  "description": "HTML5 Top-down puzzle-shooter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarkAZhang/impulse.git"
+  },
+  "keywords": [
+    "impulse",
+    "game"
+  ],
+  "author": "Mark Zhang",
+  "bugs": {
+    "url": "https://github.com/MarkAZhang/impulse/issues"
+  },
+  "dependencies": {
+    "lazy-ass-helpful": "^0.6.1",
+    "lodash": "^3.5.0"
+  },
+  "homepage": "http://play-impulse.com",
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "gulp": "^3.8.11",
+    "gulp-concat": "2.4.2",
+    "gulp-jshint": "1.9.0",
+    "gulp-rename": "1.2.0",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "1.0.2",
+    "gulp-util": "^3.0.4",
+    "uglify-js": "^2.4.17",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^2.4.0"
+  }
+}
