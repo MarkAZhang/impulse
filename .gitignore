@@ -16,11 +16,9 @@ story.txt
 compile.txt
 beyond.txt
 *.txt
-js/compressjs.sh
 js/temp.js
 ranking.txt
 prog.txt
-js/compress_all.sh
 js/c*14.js
 js/dist/*
 screenshots/*
@@ -29,3 +27,4 @@ impulse_text.rtf
 dated_stuff/*
 marketing/*
 node_modules/*
+*.rtf
