@@ -8,6 +8,7 @@ var gsKeys = require('../data/constants.js').gsKeys;
 var io = require('./io.js');
 var graphics = require('../core/graphics.js')
 var layers = require('./layers.js');
+var music_player = require('../core/music_player.js');
 var saveData = require('../load/save_data.js');
 
 var GameStateFactory = require('../game_states/game_state_factory.js');
@@ -17,12 +18,13 @@ var main = {};
 
 main.executeGame = function() {
   EnemyFactory.setEnemyMap(enemyMap);
+  saveData.loadGame()
   io.set_up_listeners();
   dom.setUpDocument();
-  saveData.loadGame()
   layers.setUpLayers()
   controls.setKeyBindings()
   graphics.generateEnemyBufferImages();
+  music_player.setPlayerOptions();
   game_engine.injectGameStateFactory(GameStateFactory);
   game_engine.switch_game_state(gsKeys.INTRO_STATE, {});
   game_engine.step()

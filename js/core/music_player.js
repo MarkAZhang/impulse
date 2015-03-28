@@ -3,16 +3,19 @@ var buzz = require('../vendor/buzz.js');
 var saveData = require('../load/save_data.js');
 
 var MusicPlayer = function() {
-
   this.sounds = {}
   this.multisounds = {}
   this.cur_song = null
   this.initialize_multisounds();
-
   this.playing = {}
+  this.mute = false;
+  this.effects_mute = false;
+};
+
+MusicPlayer.prototype.setPlayerOptions = function () {
   this.mute = saveData.optionsData.bg_music_mute
   this.effects_mute = saveData.optionsData.effects_mute
-}
+};
 
 MusicPlayer.prototype.initialize_multisounds = function() {
   for(var multisound in audioData.multisounds) {

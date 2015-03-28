@@ -44,6 +44,9 @@ OptionsData.prototype.loadOptionsFromObj = function (saveObj) {
   if (this.isValidOptionValue(saveObj, 'bg_music_volume')) {
     this.bg_music_volume = saveObj['bg_music_volume'];
   }
+  if (this.isValidOptionValue(saveObj, 'bg_music_mute')) {
+    this.bg_music_mute = saveObj['bg_music_mute'];
+  }
   if (this.isValidOptionValue(saveObj, 'explosions')) {
     this.explosions = saveObj['explosions'];
   }
