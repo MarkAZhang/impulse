@@ -1,11 +1,11 @@
 var box_2d = require('../vendor/box2d.js');
 var constants = require('../data/constants.js');
 
-var levelData = {}
+var levels = {};
 
 //enemy format is [start_spawn_time, spawn_period, number_of_spawn, incr_of_spawn_per_minute, cap]
 
-levelData['HIVE 0-1'] = {
+levels['HIVE 0-1'] = {
   enemies_easy: {
   },
   enemies: {
@@ -24,10 +24,11 @@ levelData['HIVE 0-1'] = {
   },
   player_loc: {x: 200, y: 300},
   gateway_loc: {x: 600, y: 300},
-  impulse_disabled: true
+  impulse_disabled: true,
+  no_save: true
 }
 
-levelData['HIVE 0-2'] = {
+levels['HIVE 0-2'] = {
   enemies_easy: {
     "dumb_stunner": [0, 1, 0, 1, 0, 0, 2],
   },
@@ -53,10 +54,11 @@ levelData['HIVE 0-2'] = {
   },
   player_loc: {x: 400, y: 560},
   gateway_loc: {x: 400, y: 200},
-  impulse_disabled: true
+  impulse_disabled: true,
+  no_save: true
 }
 
-levelData['HIVE 0-3'] = {
+levels['HIVE 0-3'] = {
   enemies_easy: {
     "dumb_stunner": [0, 1, 0, 1, 1, 0, 1],
   },
@@ -82,9 +84,10 @@ levelData['HIVE 0-3'] = {
   player_loc: {x: 100, y: 300},
   gateway_loc: {x: 600, y: 300},
   show_score_interface: true,
+  no_save: true
 }
 
-levelData['HIVE 0-4'] = {
+levels['HIVE 0-4'] = {
   enemies_easy: {
     "dumb_stunner": [0, 1, 0, 1, 1, 0, 4],
   },
@@ -110,9 +113,10 @@ levelData['HIVE 0-4'] = {
   player_loc: {x: 400, y: 300},
   spawn_pattern: "spread",
   show_full_interface: true,
+  no_save: true
 }
 
-levelData['HIVE 1-0'] = {
+levels['HIVE 1-0'] = {
   enemies_easy: {
   },
   enemies: {
@@ -134,7 +138,7 @@ levelData['HIVE 1-0'] = {
   gateway_loc: {x: 400, y: 350},
 }
 
-levelData['HIVE 1-1'] = {
+levels['HIVE 1-1'] = {
   enemies_easy: {
     //"stunner": [0, 4, 1.75, 2, 50]
     "stunner": [0, 4, 1, 1, 2, 0, 50]
@@ -163,7 +167,7 @@ levelData['HIVE 1-1'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 1-2'] = {
+levels['HIVE 1-2'] = {
   enemies: {
     "stunner": [3, 3, 0, 3, 3, 2, 25],
     "spear": [0, 3, 0, 3, 2, 2, 25],
@@ -192,7 +196,7 @@ levelData['HIVE 1-2'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 1-3'] = {
+levels['HIVE 1-3'] = {
   enemies_easy: {
     "stunner": [0, 2.5, 0.5, 1, 2, 0, 40],
     "spear": [15, 6, 1.5, 1.5, 1, 0, 15],
@@ -221,7 +225,7 @@ levelData['HIVE 1-3'] = {
 
 }
 
-levelData['HIVE 1-4'] = {
+levels['HIVE 1-4'] = {
   enemies_easy: {
     "spear": [0, 5, 2, 1, 2, 0, 40],
   },
@@ -246,7 +250,7 @@ levelData['HIVE 1-4'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 1-6'] = {
+levels['HIVE 1-6'] = {
   enemies: {
     "spear": [0, 7, 0, 7, 2, 1.5, 15],
     "tank": [1, 5, 0, 5, 3, 2, 25]
@@ -274,7 +278,7 @@ levelData['HIVE 1-6'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 1-5'] = {
+levels['HIVE 1-5'] = {
   enemies: {
     "stunner": [2, 6, 0, 6, 3, 2, 25],
     "tank": [0, 8, 0, 8, 2, 3, 25]
@@ -302,7 +306,7 @@ levelData['HIVE 1-5'] = {
   player_loc: {x: 250, y: 150}
 }
 
-levelData['HIVE 1-7'] = {
+levels['HIVE 1-7'] = {
   enemies_easy: {
     "stunner": [0, 5, 1, 2, 1, 0, 30],
     "spear": [0, 6, 1.2, 2.4, 1, 0, 15],
@@ -336,7 +340,7 @@ levelData['HIVE 1-7'] = {
 
 }
 
-levelData['BOSS 1'] = {
+levels['BOSS 1'] = {
   enemies: {
               "boss_one": [0, 1, 0, 1, 0, 0, 1],
            },
@@ -351,7 +355,7 @@ levelData['BOSS 1'] = {
   defeat_time: 40,
 }
 
-levelData['HIVE 2-0'] = {
+levels['HIVE 2-0'] = {
   enemies_easy: {
   },
   enemies: {
@@ -373,7 +377,7 @@ levelData['HIVE 2-0'] = {
   gateway_loc: {x: 400, y: 350},
 }
 
-levelData['HIVE 2-1'] = {
+levels['HIVE 2-1'] = {
   enemies_easy: {
     "stunner": [0, 5, 1.5, 2, 1, 0, 15],
     "tank": [15, 12, 3, 3, 1, 0, 15],
@@ -405,7 +409,7 @@ levelData['HIVE 2-1'] = {
 
 }
 
-levelData['HIVE 2-2'] = {
+levels['HIVE 2-2'] = {
   enemies: {
     "stunner": [3, 4, 0, 4, 2, 0, 30],
     "spear": [1, 10, 2, 4, 4, 0, 20],
@@ -433,7 +437,7 @@ levelData['HIVE 2-2'] = {
 
 }
 
-levelData['HIVE 2-3'] = {
+levels['HIVE 2-3'] = {
   enemies_easy: {
     "spear": [0, 6, 2, 2, 2, 0, 30],
     "tank": [0, 8, 1, 5, 3, 0, 30],
@@ -469,7 +473,7 @@ levelData['HIVE 2-3'] = {
 
 }
 
-levelData['HIVE 2-4'] = {
+levels['HIVE 2-4'] = {
   enemies: {
     "stunner": [6, 6, 0, 6, 2, 2, 10],
     "spear": [0, 2, 0.3, 1, 2, 0, 20],
@@ -511,7 +515,7 @@ levelData['HIVE 2-4'] = {
 
 }
 
-levelData['HIVE 2-5'] = {
+levels['HIVE 2-5'] = {
   enemies_easy: {
     "stunner": [6, 6, 2, 2, 1, 0, 15],
     "mote": [8, 8, 2, 4, 1, 0, 15],
@@ -542,7 +546,7 @@ levelData['HIVE 2-5'] = {
 
 }
 
-levelData['HIVE 2-6'] = {
+levels['HIVE 2-6'] = {
   enemies: {
     "spear": [1, 10, 2, 2, 2, 0, 10],
     "tank": [2, 15, 3, 6, 2, 0, 12],
@@ -573,7 +577,7 @@ levelData['HIVE 2-6'] = {
   player_loc: {x: 400, y: 450}
 }
 
-levelData['HIVE 2-7'] = {
+levels['HIVE 2-7'] = {
   enemies_easy: {
     "stunner": [0, 30, 5, 15, 2, 0, 16],
     "spear": [2, 30, 5, 15, 2, 0, 16],
@@ -608,7 +612,7 @@ levelData['HIVE 2-7'] = {
 
 }
 
-levelData['BOSS 2'] = {
+levels['BOSS 2'] = {
   enemies: {
     "boss_two": [0, 1, 0, 1, 0, 0, 1],
     "stunner": [0, 10, 0, 10, 0, 0, 12],
@@ -630,7 +634,7 @@ levelData['BOSS 2'] = {
   defeat_time: 60,
 }
 
-levelData['HIVE 3-0'] = {
+levels['HIVE 3-0'] = {
   enemies_easy: {
   },
   enemies: {
@@ -651,7 +655,7 @@ levelData['HIVE 3-0'] = {
   gateway_loc: {x: 400, y: 350},
 }
 
-levelData['HIVE 3-1'] = {
+levels['HIVE 3-1'] = {
   enemies_easy: {
     "stunner": [7, 12, 2, 6, 2, 0, 20],
     "tank":[8, 12, 3, 3, 1, 0, 10],
@@ -695,7 +699,7 @@ levelData['HIVE 3-1'] = {
 
 }
 
-levelData['HIVE 3-2'] = {
+levels['HIVE 3-2'] = {
   enemies: {
     "spear": [0, 8, 0, 8, 2, 1, 20],
     "goo": [1, 15, 0, 15, 1, 0, 1],
@@ -742,7 +746,7 @@ levelData['HIVE 3-2'] = {
 
 }
 
-levelData['HIVE 3-3'] = {
+levels['HIVE 3-3'] = {
   enemies: {
     "tank": [6, 18, 3, 9, 2, 0, 20],
     "harpoon": [0, 20, 3, 11, 2, 0, 15],
@@ -781,7 +785,7 @@ levelData['HIVE 3-3'] = {
   player_loc: {x: 400, y: 400}
 }
 
-levelData['HIVE 3-4'] = {
+levels['HIVE 3-4'] = {
   enemies: {
     "spear": [0, 8, 1, 4, 2, 0, 15],
     "fighter": [0, 20, 4, 8, 2, 0, 10],
@@ -824,7 +828,7 @@ levelData['HIVE 3-4'] = {
   },
 }
 
-levelData['HIVE 3-6'] = {
+levels['HIVE 3-6'] = {
   enemies: {
     "spear": [0, 14, 2, 6, 2, 0, 8],
     "tank": [0, 20, 4, 8, 2, 0, 8],
@@ -863,7 +867,7 @@ levelData['HIVE 3-6'] = {
   },
 },
 
-levelData['HIVE 3-5'] = {
+levels['HIVE 3-5'] = {
   enemies: {
     "stunner": [0, 12, 2, 6, 2, 0, 15],
     "mote": [0, 20, 2, 14, 1, 0, 15],
@@ -905,7 +909,7 @@ levelData['HIVE 3-5'] = {
 
 }
 
-levelData['HIVE 3-7'] = {
+levels['HIVE 3-7'] = {
   enemies: {
     "stunner": [4, 40, 5, 15, 2, 0, 10],
     "spear": [22, 40, 5, 15, 4, 0, 10],
@@ -947,7 +951,7 @@ levelData['HIVE 3-7'] = {
 
 }
 
-levelData['BOSS 3'] = {
+levels['BOSS 3'] = {
   enemies: {
     "boss_three": [0, 1, 0, 1, 1, 0, 1],
     "stunner": [0, 6, 0, 6, 0, 0, 15],
@@ -971,7 +975,7 @@ levelData['BOSS 3'] = {
   },
 }
 
-levelData['HIVE 4-0'] = {
+levels['HIVE 4-0'] = {
   enemies_easy: {
   },
   enemies: {
@@ -993,7 +997,7 @@ levelData['HIVE 4-0'] = {
   gateway_loc: {x: 400, y: 350},
 }
 
-levelData['HIVE 4-1'] = {
+levels['HIVE 4-1'] = {
   enemies: {
     "spear": [19, 24, 4, 8, 2, 0, 10],
     "troll": [7, 24, 4, 8, 2, 0, 10],
@@ -1026,7 +1030,7 @@ levelData['HIVE 4-1'] = {
   colored_interface: true
 }
 
-levelData['HIVE 4-2'] = {
+levels['HIVE 4-2'] = {
   enemies_easy: {
     "stunner": [8, 8, 1.2, 2.4, 1, 0, 15],
     "mote": [7, 14, 2, 4, 1, 0, 10],
@@ -1070,7 +1074,7 @@ levelData['HIVE 4-2'] = {
 
 }
 
-levelData['HIVE 4-3'] = {
+levels['HIVE 4-3'] = {
   enemies_easy: {
     "spear": [20, 20, 4, 8, 1, 0, 10],
     "tank": [17, 20, 4, 8, 1, 0, 15],
@@ -1104,7 +1108,7 @@ levelData['HIVE 4-3'] = {
 
 }
 
-levelData['HIVE 4-4'] = {
+levels['HIVE 4-4'] = {
   enemies_easy: {
     "goo":  [1, 10, 0, 10, 1, 0, 1],
     "troll": [4, 20, 3, 6, 1, 0, 5],
@@ -1140,7 +1144,7 @@ levelData['HIVE 4-4'] = {
 
 }
 
-levelData['HIVE 4-6'] = {
+levels['HIVE 4-6'] = {
   enemies: {
     "tank": [9, 18, 3, 9, 2, 0, 15],
     "mote": [4, 15, 3, 6, 1, 0, 10],
@@ -1180,7 +1184,7 @@ levelData['HIVE 4-6'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 4-5'] = {
+levels['HIVE 4-5'] = {
   enemies_easy: {
     "stunner": [6, 8, 2, 3, 1, 0, 40],
     "spear": [13, 10, 2, 4, 1, 0, 20],
@@ -1217,7 +1221,7 @@ levelData['HIVE 4-5'] = {
   player_loc: {x: 400, y: 300}
 }
 
-levelData['HIVE 4-7'] = {
+levels['HIVE 4-7'] = {
   enemies_easy: {
     "stunner": [1, 30, 6, 12, 2, 0, 6],
     "spear": [5, 30, 6, 12, 2, 0, 6],
@@ -1268,7 +1272,7 @@ levelData['HIVE 4-7'] = {
 
 }
 
-levelData['BOSS 4'] = {
+levels['BOSS 4'] = {
   enemies: {
     "boss_four": [0, 1, 0, 0, 1, 0, 1],
     "stunner": [0, 0, 0, 0, 0, 0, 15],
@@ -1297,14 +1301,14 @@ levelData['BOSS 4'] = {
   },
 }
 
-for(i in levelData) {
-  levelData[i].level_name = i;
-  if(levelData[i].cutoff_scores &&  (typeof levelData[i].cutoff_scores["easy"] === "undefined"))
-    levelData[i].cutoff_scores["easy"] = levelData[i].cutoff_scores["normal"].map(function(x){return x/2})
+for(i in levels) {
+  levels[i].level_name = i;
+  if(levels[i].cutoff_scores &&  (typeof levels[i].cutoff_scores["easy"] === "undefined"))
+    levels[i].cutoff_scores["easy"] = levels[i].cutoff_scores["normal"].map(function(x){return x/2})
 
   // provide a get_obstacle_vertices method if none provided
-  if(typeof(levelData.get_obstacle_vertices) === "undefined") {
-    levelData[i].get_obstacle_vertices = function (index) {
+  if(typeof(levels.get_obstacle_vertices) === "undefined") {
+    levels[i].get_obstacle_vertices = function (index) {
       var ob_v = this.obstacle_v
 
       var ans = ob_v[index]
@@ -1317,6 +1321,9 @@ for(i in levelData) {
     };
   }
 }
+
+var levelData = {};
+levelData.levels = levels;
 
 levelData.bossNames = {
   1: "IGNAVIAM",

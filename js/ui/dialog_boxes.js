@@ -119,9 +119,9 @@ function PauseMenu(level, world_num, game_numbers, game_state, visibility_graph)
     this.num_enemy_type = 0
   }
   else {
-    this.drawn_enemies = levelData[this.level_name].enemies
+    this.drawn_enemies = levelData.levels[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in levelData[this.level_name].enemies) {
+    for(var j in levelData.levels[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }

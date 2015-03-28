@@ -20,10 +20,10 @@ levelPreviewRenderUtils.drawLevelObstaclesWithinRect = function(context, level_n
   context.restore();
   var polygons = null
   if (saveData.difficultyMode == "easy") {
-    polygons = levelData[level_name].obstacle_v_easy
+    polygons = levelData.levels[level_name].obstacle_v_easy
   }
   if (!polygons) {
-    polygons = levelData[level_name].obstacle_v
+    polygons = levelData.levels[level_name].obstacle_v
   }
 
   if(!polygons) return

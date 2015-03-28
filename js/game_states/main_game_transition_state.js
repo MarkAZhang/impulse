@@ -50,7 +50,6 @@ function MainGameTransitionState(opts) {
   this.dark_color = constants.colors["world "+this.world_num+" dark"]
   this.buttons = []
   this.bg_drawn = false
-  this.first_time = false
 
   // Set the next game state.
   if(this.last_level && !this.is_level_zero(this.last_level.level_name)) {
@@ -82,12 +81,6 @@ function MainGameTransitionState(opts) {
 
   this.load_next_level(this.loading_saved_game);
 
-  this.first_time = !saveData.getLevelData(this.level_name).seen
-  if (this.first_time) {
-    saveData.getLevelData(this.level_name).seen = true
-    saveData.saveGame()
-  }
-
   if(this.level.is_boss_level) {
     // Still give the player a moment before the BOSS, but we won't display anything in draw().
     this.level_intro_interval = 1000
@@ -109,7 +102,7 @@ function MainGameTransitionState(opts) {
 MainGameTransitionState.prototype.load_next_level = function () {
   // Set the next level to load.
   this.level_loaded = false
-  this.level = this.load_level(levelData[this.hive_numbers.current_level]);
+  this.level = this.load_level(levelData.levels[this.hive_numbers.current_level]);
   this.level_name = this.level.level_name;
 }
 
@@ -336,22 +329,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     var best_score_y = 500;
     var best_score_label_y = 470;
 
-    if(this.game_numbers.high_score) {
-      ctx.fillStyle = this.bright_color
-      ctx.font = '16px Muli'
-      ctx.fillText("NEW HIGH SCORE!", constants.levelWidth/2 - 100, high_score_y)
-    } else {
-      ctx.save();
-      ctx.globalAlpha *= 0.6;
-      ctx.fillStyle = this.bright_color
-      ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", constants.levelWidth/2  - 100, best_score_label_y)
-      ctx.font = '28px Muli'
-      ctx.fillText(saveData.getLevelData(this.last_level_name).high_score,
-       constants.levelWidth/2 - 100, best_score_y)
-      ctx.restore();
-    }
-
     if(this.game_numbers.best_time) {
       ctx.fillStyle = this.bright_color
       ctx.font = '16px Muli'
@@ -363,9 +340,9 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (saveData.getLevelData(this.last_level_name) < 1000) {
+      if (saveData.hasBeatenLevel(this.last_level_name)) {
         ctx.font = '28px Muli'
-        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.last_level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'

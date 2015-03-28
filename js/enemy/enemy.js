@@ -426,7 +426,7 @@ Enemy.prototype.adjust_position = function() {
           in_polygon = true
         } else {
           var closest_vertex = utils.closestPolygonVertexToPoint(polygons[i], this.body.GetPosition())
-          if(closest_vertex.dist < levelData[this.level.level_name].buffer_radius) {
+          if(closest_vertex.dist < levelData.levels[this.level.level_name].buffer_radius) {
             var angle = utils.atan(closest_vertex.v, this.body.GetPosition())
             in_polygon = true
           }
@@ -589,10 +589,6 @@ Enemy.prototype.start_death = function(death) {
   if(this.dying == "kill" && !this.player.dying) {
     //if the player hasn't died and this was a kill, increase score
     this.impulse_game_state.game_numbers.kills +=1
-    if(enemyData[this.type].proxy)
-      saveData.numEnemiesKilled[enemyData[this.type].proxy] += 1;
-    else
-      saveData.numEnemiesKilled[this.type] += 1;
     if(!this.level.is_boss_level) {
       var score_value = this.impulse_game_state.game_numbers.combo * this.score_value
       if(saveData.optionsData.score_labels)

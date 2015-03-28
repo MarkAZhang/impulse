@@ -88,10 +88,6 @@ function GameOverState(opts) {
     this.best_time = opts.args.best_time ? opts.args.best_time : 0
   }
 
-  saveData.totalKills += this.game_numbers.kills
-
-  saveData.saveGame()
-
   music_player.stop_bg()
 
   this.fader = new Fader({
@@ -202,22 +198,6 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     var best_score_y = 500;
     var best_score_label_y = 470;
 
-    if(this.high_score) {
-      ctx.fillStyle = this.color
-      ctx.font = '16px Muli'
-      ctx.fillText("NEW HIGH SCORE!", constants.levelWidth/2 - 100, high_score_y)
-    } else {
-      ctx.save();
-      ctx.globalAlpha *= 0.6;
-      ctx.fillStyle = this.color
-      ctx.font = '12px Muli'
-      ctx.fillText("HIGH SCORE", constants.levelWidth/2  - 100, best_score_label_y)
-      ctx.font = '28px Muli'
-      ctx.fillText(saveData.getLevelData(this.level_name).high_score,
-       constants.levelWidth/2 - 100, best_score_y)
-      ctx.restore();
-    }
-
     if(this.best_time) {
       ctx.fillStyle = this.color
       ctx.font = '16px Muli'
@@ -229,9 +209,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
       ctx.font = '28px Muli'
-      if (saveData.getLevelData(this.level_name).best_time < 1000) {
+      if (saveData.hasBeatenLevel(this.level_name)) {
         ctx.font = '28px Muli'
-        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2 + 100, best_score_y)
       } else {
         ctx.font = '24px Muli'
@@ -309,9 +289,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", constants.levelWidth/2, best_score_label_y)
       ctx.font = '28px Muli'
-      if (saveData.getLevelData(this.level_name).best_time < 1000) {
+      if (saveData.hasBeatenLevel(this.level_name)) {
         ctx.font = '28px Muli'
-        ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
+        ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2, best_score_y)
       } else {
         ctx.font = '24px Muli'

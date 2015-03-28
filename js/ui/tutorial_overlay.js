@@ -20,7 +20,7 @@ TutorialOverlayManager.prototype.on_demand_overlays = [
 
 TutorialOverlayManager.prototype.add_overlays = function() {
   if (this.impulse_game_state.is_boss_level && this.impulse_game_state.world_num == 1 && saveData.difficultyMode == "easy" &&
-      saveData.getLevelData(this.impulse_game_state.level_name).best_time === 1000) {
+      saveData.hasBeatenLevel(this.impulse_game_state.level_name)) {
     this.overlays.push(new KillBossTutorialOverlay(this.impulse_game_state));
   }
 

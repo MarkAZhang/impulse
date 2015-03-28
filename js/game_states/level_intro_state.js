@@ -70,15 +70,15 @@ function LevelIntroState(opts) {
     this.drawn_enemies = {}
   }
   else {
-    this.drawn_enemies = levelData[this.level_name].enemies
+    this.drawn_enemies = levelData.levels[this.level_name].enemies
     this.num_enemy_type = 0
-    for(var j in levelData[this.level_name].enemies) {
+    for(var j in levelData.levels[this.level_name].enemies) {
       this.num_enemy_type += 1
     }
   }
   this.enemy_image_size = 40
 
-  this.level = this.load_level(levelData[this.level_name])
+  this.level = this.load_level(levelData.levels[this.level_name])
 
   var num_row = 12
 
@@ -209,22 +209,12 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("ENEMIES",  constants.levelWidth/2, 370)
 
     ctx.fillStyle = this.bright_color
-    ctx.textAlign = 'center'
-
-    ctx.font = '12px Muli'
-    ctx.fillText("HIGH SCORE", constants.levelWidth/2 - 100, 480)
-    ctx.font = '28px Muli'
-    ctx.fillText(saveData.getLevelData(this.level_name).high_score,
-     constants.levelWidth/2 - 100, 505)
-
-
-    ctx.fillStyle = this.bright_color
     ctx.font = '12px Muli'
     ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, 480)
-    if (saveData.getLevelData(this.level_name).best_time < 1000) {
+    if (saveData.hasBeatenLevel(this.level_name)) {
       ctx.font = '28px Muli'
-      ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time),
-       constants.levelWidth/2 + 100, 505)
+      ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
+        constants.levelWidth/2 + 100, 505)
     } else {
       ctx.font = '24px Muli'
       ctx.fillText("UNDEFEATED", constants.levelWidth/2 + 100, 505)
@@ -246,11 +236,11 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText(levelData.bossNames[this.world_num], constants.levelWidth/2, constants.levelHeight/2 - 20)
     ctx.font = '24px Muli'
 
-    if(saveData.getLevelData(this.level_name).best_time < 1000) {
+    if(saveData.hasBeatenLevel(this.level_name)) {
       ctx.font = '12px Muli'
       ctx.fillText("BEST TIME", constants.levelWidth/2, 390)
       ctx.font = '28px Muli'
-      ctx.fillText(utils.convertSecondsToTimeString(saveData.getLevelData(this.level_name).best_time), constants.levelWidth/2, 415)
+      ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)), constants.levelWidth/2, 415)
     } else {
       ctx.fillStyle = constants.colors['boss '+ this.world_num]
       ctx.fillText("UNDEFEATED",  constants.levelWidth/2, 400)

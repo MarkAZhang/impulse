@@ -605,10 +605,10 @@ LevelEditorState.prototype.load_level = function(string, mode) {
   var difficulty_mode = mode ? mode : saveData.difficultyMode
 
   if (difficulty_mode == "easy") {
-    polygon_ans = levelData[string].obstacle_v_easy
+    polygon_ans = levelData.levels[string].obstacle_v_easy
   }
   if (!polygon_ans) {
-    polygon_ans = levelData[string].obstacle_v
+    polygon_ans = levelData.levels[string].obstacle_v
   }
   this.polygons = []
   for(var i = 0; i < polygon_ans.length; i++) {
@@ -624,10 +624,10 @@ LevelEditorState.prototype.load_level = function(string, mode) {
 LevelEditorState.prototype.add_level = function(string) {
   var polygon_ans = null
   if (saveData.difficultyMode == "easy") {
-    polygon_ans = levelData[string].obstacle_v_easy
+    polygon_ans = levelData.levels[string].obstacle_v_easy
   }
   if (!polygon_ans) {
-    polygon_ans = levelData[string].obstacle_v
+    polygon_ans = levelData.levels[string].obstacle_v
   }
   for(var i = 0; i < polygon_ans.length; i++) {
     var temp_p = []

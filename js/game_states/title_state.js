@@ -144,7 +144,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("MAIN GAME", 20, constants.levelWidth/2 - 100, constants.levelHeight/2-30, 200, 100, button_color, "blue",
     function(){
       var i = 1;
-      while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
+      while(i < 4 && saveData.hasBeatenWorld(i)) {
         i += 1
       }
       if(saveData.savedGame.game_numbers) {
@@ -166,7 +166,7 @@ TitleState.prototype.setup_main_menu = function() {
     this.buttons["menu"].push(new SmallButton("PRACTICE", 20, constants.levelWidth/2 - 100, constants.levelHeight/2+20, 200, 50, button_color, "blue",
       function(){
         var i = 1;
-        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
+        while(i < 4 &&saveData.hasBeatenWorld(i)) {
           i += 1
         }
         game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
@@ -214,7 +214,7 @@ TitleState.prototype.setup_main_menu = function() {
         //}, _this.fade_interval)
       } else {
         var i = 1;
-        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
+        while(i < 4 && saveData.hasBeatenWorld(i)) {
           i += 1
         }
 
@@ -237,7 +237,7 @@ TitleState.prototype.setup_main_menu = function() {
       function(){
         //_this.fade_out_duration = _this.fade_interval;
         var i = 1;
-        while(i < 4 && saveData.worldRankings[saveData.difficultyMode]["world "+i]) {
+        while(i < 4 && saveData.hasBeatenWorld(i)) {
           i += 1
         }
 

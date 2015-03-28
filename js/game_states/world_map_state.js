@@ -49,7 +49,7 @@ function WorldMapState(opts) {
 
   this.difficulties = ["easy", "normal"];
 
-  if (true) {
+  if (saveData.isHardModeUnlocked() || debugVars.dev || debugVars.god_mode) {
     this.select_difficulty_button = new SelectDifficultyButton(16, 730, constants.levelHeight/2+260, 100, 65, this.color, constants.colors["impulse_blue"], this)
     this.buttons.push(this.select_difficulty_button);
   }
@@ -122,9 +122,9 @@ WorldMapState.prototype.set_up_buttons = function() {
     this.world_unlocked[difficulty] = {
       0: true,
       1: true,
-      2: saveData.worldRankings[difficulty]["world 1"] || debugVars.dev || debugVars.god_mode,
-      3: saveData.worldRankings[difficulty]["world 2"] || debugVars.dev || debugVars.god_mode,
-      4: saveData.worldRankings[difficulty]["world 3"] || debugVars.dev || debugVars.god_mode,
+      2: saveData.hasBeatenWorldForDifficulty(1, difficulty) || debugVars.dev || debugVars.god_mode,
+      3: saveData.hasBeatenWorldForDifficulty(2, difficulty) || debugVars.dev || debugVars.god_mode,
+      4: saveData.hasBeatenWorldForDifficulty(3, difficulty) || debugVars.dev || debugVars.god_mode,
     }
   }
 
@@ -258,7 +258,7 @@ WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
       new_button.underline_on_hover = false
       new_button.level_name = level_name
       this.practice_buttons[difficulty][i].push(new_button)
-      new_button.active = saveData.getLevelData(level_name).seen ||
+      new_button.active = saveData.hasBeatenLevel(level_name) ||
         (j == 0 && this.world_unlocked[difficulty][i]) || (debugVars.dev || debugVars.god_mode)
       if(!new_button.active) {
         new_button.color = "gray"

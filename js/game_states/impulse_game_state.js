@@ -175,7 +175,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
 
   // if we've never beaten the first boss, show the tutorial
   if (this.is_boss_level && this.world_num == 1 && saveData.difficultyMode == "easy" &&
-    saveData.getLevelData(this.level_name).best_time === 1000) {
+    !saveData.hasBeatenLevel(this.level_name)) {
     this.show_tutorial = true
   }
 
@@ -245,13 +245,11 @@ ImpulseGameState.prototype.reset_game_numbers = function () {
 
 ImpulseGameState.prototype.check_new_enemies = function() {
   if (this.is_tutorial_level) return;
-  for(var enemy in levelData[this.level_name].enemies) {
-    saveData.numEnemiesSeen[enemy] += 1
-    saveData.saveGame()
-    var difficulty_level = saveData.difficultyMode
-    if(!enemyData[enemy].is_boss &&
-        saveData.numEnemiesSeen[enemy] == 1) {
+  for(var enemy in levelData.levels[this.level_name].enemies) {
+    if(!enemyData[enemy].is_boss && saveData.enemiesSeen.indexOf(enemy) === -1) {
       game_engine.set_popup_message("enemy_" + enemy, 5000, this.bright_color, this.world_num)
+      saveData.enemiesSeen.push(enemy);
+      saveData.saveGame()
     }
   }
 }
@@ -808,17 +806,17 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     !this.is_boss_level;
 
   var showLevelName = !this.is_boss_level && (
-    this.world_num != 0 || levelData[this.level_name].show_full_interface);
+    this.world_num != 0 || levelData.levels[this.level_name].show_full_interface);
 
   var showMenuHint = !this.is_boss_level && (
-    this.world_num != 0 || levelData[this.level_name].show_full_interface);
+    this.world_num != 0 || levelData.levels[this.level_name].show_full_interface);
 
   var showGameTime = this.world_num != 0 ||
-    levelData[this.level_name].show_full_interface;
+    levelData.levels[this.level_name].show_full_interface;
 
   var showScoreLabels = !this.is_boss_level && (!this.is_tutorial_level ||
-    levelData[this.level_name].show_full_interface ||
-    levelData[this.level_name].show_score_interface);
+    levelData.levels[this.level_name].show_full_interface ||
+    levelData.levels[this.level_name].show_score_interface);
 
   if (showHardMode) {
     context.font = "20px Muli"
@@ -914,8 +912,8 @@ ImpulseGameState.prototype.draw_interface = function(context) {
 }
 
 ImpulseGameState.prototype.draw_score_bar = function(ctx) {
-  if (this.is_tutorial_level && !levelData[this.level_name].show_full_interface &&
-    !levelData[this.level_name].show_score_interface) {
+  if (this.is_tutorial_level && !levelData.levels[this.level_name].show_full_interface &&
+    !levelData.levels[this.level_name].show_score_interface) {
     return;
   }
 
@@ -933,7 +931,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     ctx.font = '72px Muli'
     ctx.fillStyle = "white"
     if (this.combo_enabled) {
-      if (this.world_num != 0 || levelData[this.level_name].show_full_interface) {
+      if (this.world_num != 0 || levelData.levels[this.level_name].show_full_interface) {
         ctx.fillText("x"+this.game_numbers.combo, constants.canvasWidth - constants.sideBarWidth/2, constants.canvasHeight/2)
       }
     }
@@ -1208,11 +1206,7 @@ ImpulseGameState.prototype.level_defeated = function() {
 ImpulseGameState.prototype.on_victory = function() {
   // Check if high score and best time. If so, save.
   if (!this.is_tutorial_level && !this.is_level_zero) {
-    if(!this.is_boss_level) {
-      this.update_save_data_for_level();
-    } else {
-      this.update_save_data_for_boss_level();
-    }
+    this.update_save_data_for_level();
   }
   this.victory = true
   if(this.is_boss_level) {
@@ -1235,42 +1229,21 @@ ImpulseGameState.prototype.on_victory = function() {
 }
 
 ImpulseGameState.prototype.update_save_data_for_level = function () {
-  var saveState = saveData.getLevelData(this.level.level_name);
-  var new_score = this.game_numbers.score;
   var new_time = this.game_numbers.seconds;
 
-  if (new_score > saveState.high_score) {
-    this.game_numbers.high_score = true
-    saveState.high_score = new_score
-  } else {
-    this.game_numbers.high_score = false
-  }
-
-  if (new_time < saveState.best_time) {
-    this.game_numbers.best_time = true
-    saveState.best_time = new_time
+  if (!saveData.hasBeatenLevel(this.level.level_name) ||
+    new_time < saveData.getBestTimeForLevel(this.level.level_name)) {
+    this.game_numbers.best_time = true;
+    saveData.setBestTimeForLevel(this.level.level_name, new_time);
+    saveData.saveGame()
   } else {
     this.game_numbers.best_time = false;
   }
-  saveData.saveGame()
 }
 
 ImpulseGameState.prototype.shake_level = function (dur) {
   this.shaking_timer = dur;
   this.shaking_interval = dur;
-}
-
-ImpulseGameState.prototype.update_save_data_for_boss_level = function () {
-  var saveState = saveData.getLevelData(this.level.level_name);
-  var new_time = this.game_numbers.seconds;
-  if (new_time < saveState.best_time) {
-    this.game_numbers.best_time = true
-    saveState.best_time = new_time
-  } else {
-    this.game_numbers.best_time = false;
-  }
-
-  saveData.saveGame()
 }
 
 ImpulseGameState.prototype.add_tutorial_signal = function(signal) {

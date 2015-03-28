@@ -368,22 +368,17 @@ RewardGameState.prototype.determine_rewards = function() {
   }
 
   if (this.main_game) {
-    if(saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]
-      && saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"]) {
+    if(this.hive_numbers.world == 4 &&
+        saveData.tutorialsShown.indexOf(saveData.difficultyMode + "_final_victory") == -1) {
+      saveData.tutorialsShown.push(saveData.difficultyMode + "_final_victory");
 
-      if (this.hive_numbers.world == 4) {
-        this.rewards.push({
-          type: "final_victory",
-        })
-        if (this.initial_difficulty_mode == "easy") {
-          saveData.hardModeUnlocked = true;
-          this.hard_mode_just_unlocked = true;
-          saveData.difficultyMode = "normal";
-          saveData.saveGame();
-        }
+      this.rewards.push({
+        type: "final_victory",
+      })
+      if (this.initial_difficulty_mode == "easy") {
+        this.hard_mode_just_unlocked = true;
+        saveData.difficultyMode = "normal";
       }
-
-      saveData.worldRankings[this.initial_difficulty_mode]["world "+this.hive_numbers.world]["first_victory"] = false
       saveData.saveGame();
     }
   }

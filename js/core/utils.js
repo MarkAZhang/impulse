@@ -291,7 +291,7 @@ utils.checkBounds = function(buffer, pt, draw_factor) {
 utils.getSafestSpawnPoint = function(object, player, level_name) {
   //returns the spawn point whose angle is closest to opposite the player
 
-  var spawn_points = levelData[level_name].spawn_points
+  var spawn_points = levelData.levels[level_name].spawn_points
 
   var best_point = null
   var best_value = 0
@@ -314,7 +314,7 @@ utils.getSafestSpawnPoint = function(object, player, level_name) {
 utils.getNearestSpawnPoint = function(object, player, level_name) {
   //returns the spawn point whose angle is closest to opposite the player
 
-  var spawn_points = levelData[level_name].spawn_points
+  var spawn_points = levelData.levels[level_name].spawn_points
 
   var best_point = null
   var best_value = 1000
@@ -505,7 +505,7 @@ utils.getFirstLevelName = function (world_num) {
     return "HIVE 0-3"
   }
 
-  return "HIVE "+world_num+"-1"
+  return "HIVE "+world_num+"-7"
 }
 
 module.exports = utils;

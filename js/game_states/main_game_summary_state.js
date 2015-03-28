@@ -56,6 +56,8 @@ function MainGameSummaryState(opts) {
   this.bright_color = constants.colors["world "+this.world_num+" bright"]
   this.dark_color = constants.colors["world "+this.world_num+" dark"]
 
+  this.is_first_victory_over_world = false;
+
   if (this.world_num > 0) {
     this.total_time = Math.ceil((questData["blitz_hive" + this.world_num].time_cutoff * 1000 - this.hive_numbers.speed_run_countdown) / 1000);
     this.total_deaths = 0;
@@ -72,12 +74,14 @@ function MainGameSummaryState(opts) {
     this.calculate_deaths()
     this.send_logging();
     this.victory_text = levelData.hiveNames[this.world_num]+" DEFEATED";
-    if (!saveData.worldRankings[saveData.difficultyMode]["world " + this.world_num]) {
-      saveData.worldRankings[saveData.difficultyMode]["world "+this.world_num] =
-        {
-          "defeated": true,
-          "first_victory": true
-        }
+
+    if (!saveData.hasBeatenWorld(this.world_num)) {
+      this.is_first_victory_over_world = true;
+    }
+
+    if (!saveData.hasBeatenWorld(this.world_num) ||
+        this.total_time < saveData.getBestTimeForWorld(this.world_num)) {
+      saveData.setBestTimeForWorld(this.world_num, this.total_time);
       saveData.saveGame()
     }
   }
@@ -103,7 +107,6 @@ function MainGameSummaryState(opts) {
     this.buttons.push(this.return_to_main_button)
   }
 
-
   if (this.world_num != 0) {
     music_player.stop_bg()
   }
@@ -117,8 +120,7 @@ MainGameSummaryState.prototype.send_logging = function () {
   // Logging for world 0 occurs in Reward Game State, since user can quit tutorial with pause menu.
   if (this.world_num === 0) return;
   // Determine first-victory by checking world_rankings.
-  var first_victory =
-    saveData.worldRankings[saveData.difficultyMode]["world "+this.world_num] === undefined;
+  var first_victory = saveData.hasBeatenWorld(this.world_num);
 
   logging.send_logging_to_server('BEAT WORLD ' + this.world_num, {
     first_victory: first_victory,
@@ -395,8 +397,7 @@ MainGameSummaryState.prototype.check_quests = function() {
     saveData.setQuestCompleted("untouchable");
   }
 
-  if(saveData.worldRankings[saveData.difficultyMode]["world "+this.hive_numbers.world]
-    && saveData.worldRankings[saveData.difficultyMode]["world "+this.hive_numbers.world]["first_victory"]) {
+  if(this.is_first_victory_over_world) {
     if (this.hive_numbers.world < 4) {
       saveData.setQuestCompleted("beat_hive")
     }
@@ -413,9 +414,7 @@ MainGameSummaryState.prototype.exit_game = function() {
 
 MainGameSummaryState.prototype.go_to_next_state = function() {
   if(this.victory) {
-    if (this.world_num === 4 &&
-        saveData.worldRankings[saveData.difficultyMode]["world 4"] &&
-        saveData.worldRankings[saveData.difficultyMode]["world 4"]["first_victory"]) {
+    if (this.world_num === 4 && this.is_first_victory_over_world) {
       game_engine.switch_game_state(gsKeys.CREDITS_STATE, {
         after_main_game: true,
         main_game_hive_numbers: this.hive_numbers,
