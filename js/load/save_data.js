@@ -27,6 +27,10 @@ SaveData.prototype.resetData = function () {
 };
 
 SaveData.prototype.versionIsLessThan = function (versionOne, versionTwo) {
+  if (!versionOne) {
+    return true;
+  }
+
   var getVersionParts = function (versionString) {
     return _.map(versionString.split("."), function (token) {
       return parseInt(token);
