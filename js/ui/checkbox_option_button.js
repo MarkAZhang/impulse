@@ -28,7 +28,7 @@ CheckboxOptionButton.prototype.additional_draw = function(ctx) {
   }
 
   ctx.textAlign = 'left'
-  ctx.font = '18px Muli';
+  ctx.font = '18px Open Sans';
   ctx.fillStyle = this.mouseOver ? this.hcolor : this.color;
   ctx.fillText(this.text, this.x - this.w/2 + 10, this.y + 7);
   this.checkbox.color = this.mouseOver ? this.hcolor : this.color;

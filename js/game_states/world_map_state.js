@@ -3,6 +3,7 @@ var constants = require('../data/constants.js');
 var controls = require('../core/controls.js');
 var debugVars = require('../data/debug.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var levelData = require('../data/level_data.js');
@@ -45,7 +46,7 @@ function WorldMapState(opts) {
     _this.fader.set_animation("fade_out", function() {
       game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
     });
-    game_engine.switchBg(new Background("#181818", "Hive 0", spriteData.menuBgOpacity), 250);
+    game_engine.setBg(graphics.menuBackground);
   }, "back"));
 
   this.difficulties = ["easy", "normal"];
@@ -179,7 +180,6 @@ WorldMapState.prototype.set_up_mode_buttons = function(difficulty) {
           _this.fader.set_animation("fade_across", function() {
             _this.world_num = index;
           });
-          _this.update_bg(index, _this.cur_difficulty_mode);
           _this.next_world = index;
           _this.next_difficulty_mode = _this.cur_difficulty_mode;
         }
@@ -202,23 +202,11 @@ WorldMapState.prototype.update_on_difficulty_change = function(difficulty) {
       _this.cur_difficulty_mode = _this.next_difficulty_mode;
       _this.world_num = i;
     });
-    this.update_bg(i, difficulty);
 
     this.next_world = i;
     this.next_difficulty_mode = difficulty
   }
 };
-
-WorldMapState.prototype.update_bg = function(index, difficulty) {
-  if (index == undefined) {
-    index = this.world_num;
-  }
-  if (index != 0 && difficulty == "normal") {
-    game_engine.switchBg(new Background(constants.colors['menuBg'], "Title Alt" + index, uiRenderUtils.getWorldMapBgOpacity(index)), 250);
-  } else {
-    game_engine.switchBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity), 250);
-  }
-}
 
 WorldMapState.prototype.set_up_practice_buttons = function(difficulty) {
 
@@ -340,7 +328,7 @@ WorldMapState.prototype.draw = function(ctx, bg_ctx) {
   }
 
 
-  ctx.font = '13px Muli'
+  ctx.font = '13px Open Sans'
   ctx.fillStyle = "white"
   ctx.fillText("SELECT HIVE", constants.levelWidth/2, constants.levelHeight/2 + 215)
 
@@ -378,18 +366,18 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
   if(index != 0) {
     if (this.is_practice_mode) {
       ctx.fillStyle = "white"
-      ctx.font = "20px Muli"
+      ctx.font = "20px Open Sans"
       ctx.fillText("PRACTICE MODE", constants.levelWidth/2, this.world_button_y - 170)
     } else if (saveData.difficultyMode == "normal") {
       ctx.fillStyle = "white"
-      ctx.font = "24px Muli"
+      ctx.font = "24px Open Sans"
       ctx.fillText("HARD MODE", constants.levelWidth/2, this.world_button_y - 170)
     }
   }
 
   // draw hive name
   ctx.fillStyle = constants.colors["world "+index+" bright"]
-  ctx.font = "42px Muli"
+  ctx.font = "42px Open Sans"
   ctx.textAlign = "center"
   if (index > 0) {
     ctx.fillText(levelData.hiveNames[index], constants.levelWidth/2, this.world_button_y - 125)
@@ -402,7 +390,7 @@ WorldMapState.prototype.draw_world = function(ctx, index, difficulty) {
     this.mode_buttons[difficulty][i].draw(ctx)
     if(this.mode_buttons[difficulty][i].mouseOver) {
       ctx.textAlign = "center"
-      ctx.font = '15px Muli'
+      ctx.font = '15px Open Sans'
       if (i == 0) {
         ctx.fillStyle = constants.colors['world '+(i)+" bright"]
         ctx.fillText("TUTORIAL", constants.levelWidth/2, constants.levelHeight - 8)

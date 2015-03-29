@@ -1,5 +1,6 @@
 var constants = require('../data/constants.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var iconRenderUtils = require('../render/icons.js');
 var layers = require('../core/layers.js');
@@ -47,12 +48,7 @@ function LevelIntroState(opts) {
       else {
         game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
       }
-      // TODO: transition the bg.
-      if (saveData.difficultyMode == "normal") {
-        game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num)))
-      } else {
-        game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
-      }
+      game_engine.setBg(graphics.menuBackground);
     });
   }}(this), "back"))
 
@@ -162,14 +158,14 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 3
 
     ctx.fillStyle = "white"
-    ctx.font = '18px Muli'
+    ctx.font = '18px Open Sans'
     if (saveData.difficultyMode == "normal") {
       ctx.fillText("HARD MODE", constants.levelWidth/2, 100)
     }
 
     ctx.beginPath()
     ctx.fillStyle = constants.colors['world '+ this.world_num + ' bright']
-    ctx.font = '30px Muli'
+    ctx.font = '30px Open Sans'
     ctx.textAlign = 'center'
 
     ctx.fillText(this.level_name, constants.levelWidth/2, 140)
@@ -191,24 +187,24 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.textAlign = 'center'
       iconRenderUtils.drawLoadingIcon(ctx, constants.levelWidth - 70, constants.levelHeight - 53, 20, "gray", this.load_percentage)
-      ctx.font = '16px Muli'
+      ctx.font = '16px Open Sans'
       ctx.fillStyle = "gray"
       ctx.fillText("LOADING", constants.levelWidth - 70, constants.levelHeight - 19)
     }
 
     ctx.fillStyle = this.bright_color
-    ctx.font = '12px Muli'
+    ctx.font = '12px Open Sans'
     ctx.fillText("ENEMIES",  constants.levelWidth/2, 370)
 
     ctx.fillStyle = this.bright_color
-    ctx.font = '12px Muli'
+    ctx.font = '12px Open Sans'
     ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, 480)
     if (saveData.hasBeatenLevel(this.level_name)) {
-      ctx.font = '28px Muli'
+      ctx.font = '28px Open Sans'
       ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
         constants.levelWidth/2 + 100, 505)
     } else {
-      ctx.font = '24px Muli'
+      ctx.font = '24px Open Sans'
       ctx.fillText("UNDEFEATED", constants.levelWidth/2 + 100, 505)
     }
   } else {
@@ -216,22 +212,22 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = constants.colors['world '+ this.world_num + ' bright']
     ctx.textAlign = 'center'
 
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.shadowBlur = 0;
     ctx.save();
     ctx.globalAlpha *= 0.3
     uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, constants.levelHeight/2 - 50, 100)
     ctx.restore();
-    ctx.font = '16px Muli'
+    ctx.font = '16px Open Sans'
     ctx.fillText(this.level.level_name, constants.levelWidth/2, constants.levelHeight/2 - 60)
-    ctx.font = '40px Muli'
+    ctx.font = '40px Open Sans'
     ctx.fillText(levelData.bossNames[this.world_num], constants.levelWidth/2, constants.levelHeight/2 - 20)
-    ctx.font = '24px Muli'
+    ctx.font = '24px Open Sans'
 
     if(saveData.hasBeatenLevel(this.level_name)) {
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("BEST TIME", constants.levelWidth/2, 390)
-      ctx.font = '28px Muli'
+      ctx.font = '28px Open Sans'
       ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)), constants.levelWidth/2, 415)
     } else {
       ctx.fillStyle = constants.colors['boss '+ this.world_num]

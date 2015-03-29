@@ -3,16 +3,6 @@ var constants = require('../data/constants.js');
 var layers = {};
 
 layers.setUpLayers = function() {
-  var title_bg_canvas = document.createElement('canvas');
-  title_bg_canvas.width = constants.levelWidth;
-  title_bg_canvas.height = constants.levelHeight;
-  layers.titleBgCanvas = title_bg_canvas
-
-  var alt_title_bg_canvas = document.createElement('canvas');
-  alt_title_bg_canvas.width = constants.levelWidth;
-  alt_title_bg_canvas.height = constants.levelHeight;
-  layers.altTitleBgCanvas = alt_title_bg_canvas
-
   var world_menu_bg_canvas = document.createElement('canvas');
   world_menu_bg_canvas.width = constants.levelWidth;
   world_menu_bg_canvas.height = constants.levelHeight;

@@ -331,9 +331,9 @@ ScorePointsTutorialOverlay.prototype.draw = function(ctx) {
   var rh = 80;
   ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
-  ctx.font = '21px Muli'
+  ctx.font = '21px Open Sans'
     ctx.fillText("GOAL", constants.levelWidth + constants.sideBarWidth/2, 45)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], constants.levelWidth + constants.sideBarWidth/2, 85)
 }
 
@@ -357,9 +357,9 @@ ScorePointsReminderTutorialOverlay.prototype.draw = function(ctx) {
   var rh = 80;
   ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, 75 - rh/2 - 20, rw, rh);
   ctx.stroke();
-  ctx.font = '21px Muli'
+  ctx.font = '21px Open Sans'
     ctx.fillText("GOAL", constants.levelWidth + constants.sideBarWidth/2, 45)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.impulse_game_state.level.cutoff_scores[0], constants.levelWidth + constants.sideBarWidth/2, 85)
 }
 
@@ -389,9 +389,9 @@ EnemyIncrTutorialOverlay.prototype.draw = function(ctx) {
   var rh = 70;
   ctx.rect(-constants.sideBarWidth / 2 - rw / 2, constants.canvasHeight/2 - 20 - rh / 2, rw, rh);
   ctx.stroke();
-  ctx.font = '16px Muli';
+  ctx.font = '16px Open Sans';
   ctx.fillText("LEVEL TIME",  -constants.sideBarWidth/2, constants.canvasHeight/2 - 30);
-  ctx.font = '32px Muli';
+  ctx.font = '32px Open Sans';
   ctx.fillText(this.impulse_game_state.game_numbers.last_time, -constants.sideBarWidth/2, constants.canvasHeight/2 + 2);
 }
 
@@ -423,7 +423,7 @@ IncrMultiplierTutorialOverlay.prototype.draw = function(ctx) {
   var rh = 100;
   ctx.rect(constants.levelWidth + constants.sideBarWidth/2 - rw/2, constants.canvasHeight/2 - rh/2 - 20, rw, rh);
   ctx.stroke();
-    ctx.font = '72px Muli';
+    ctx.font = '72px Open Sans';
     ctx.fillText("x"+this.impulse_game_state.game_numbers.combo, constants.levelWidth + constants.sideBarWidth/2, constants.canvasHeight/2)
 }
 

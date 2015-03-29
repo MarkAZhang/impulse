@@ -1,6 +1,7 @@
 var constants = require('../data/constants.js');
 var controls = require('../core/controls.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var levelData = require('../data/level_data.js');
@@ -66,17 +67,13 @@ function GameOverState(opts) {
           world: _this.world_num,
           is_practice_mode: true
         });
-        if (saveData.difficultyMode == "normal") {
-          game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num)))
-        } else {
-          game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
-        }
+        game_engine.setBg(graphics.menuBackground);
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
-        game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity));
+        game_engine.setBg(graphics.menuBackground);
       });
     }
   }}(this), "back"))
@@ -138,7 +135,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     if (saveData.difficultyMode == "normal") {
       ctx.textAlign = 'center'
       ctx.fillText("HARD MODE", constants.levelWidth/2, 180)
@@ -147,12 +144,12 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.beginPath()
     ctx.fillStyle = this.color
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.textAlign = 'center'
 
     ctx.fillText(this.level_name, constants.levelWidth/2, 240)
     ctx.fill()
-    ctx.font = '36px Muli';
+    ctx.font = '36px Open Sans';
     if(this.victory) {
       ctx.fillStyle = "white"
       ctx.fillText("VICTORY", constants.levelWidth/2, 300)
@@ -165,15 +162,15 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     var score_label_y = 420;
 
     ctx.fillStyle = this.color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("GAME TIME ", constants.levelWidth/2 + 100, score_y)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.game_numbers.last_time, constants.levelWidth/2 + 100, score_label_y)
     ctx.fillStyle = this.color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("SCORE", constants.levelWidth/2 - 100, score_y)
 
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.game_numbers.score, constants.levelWidth/2 - 100, score_label_y)
 
     var line_y = 440
@@ -201,21 +198,21 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     if(this.best_time) {
       ctx.fillStyle = this.color
-      ctx.font = '16px Muli'
+      ctx.font = '16px Open Sans'
       ctx.fillText("NEW BEST TIME!", constants.levelWidth/2 + 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
-      ctx.font = '28px Muli'
+      ctx.font = '28px Open Sans'
       if (saveData.hasBeatenLevel(this.level_name)) {
-        ctx.font = '28px Muli'
+        ctx.font = '28px Open Sans'
         ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2 + 100, best_score_y)
       } else {
-        ctx.font = '24px Muli'
+        ctx.font = '24px Open Sans'
         ctx.fillText("UNDEFEATED",
           constants.levelWidth/2 + 100, best_score_y)
       }
@@ -231,7 +228,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     if (saveData.difficultyMode == "normal") {
       ctx.textAlign = 'center';
       ctx.fillText("HARD MODE", constants.levelWidth/2, 180)
@@ -242,11 +239,11 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = this.color
     ctx.textAlign = 'center'
 
-    ctx.font = '32px Muli'
+    ctx.font = '32px Open Sans'
     ctx.fillText(levelData.bossNames[this.world_num], constants.levelWidth/2, 240)
 
     ctx.fill()
-    ctx.font = '48px Muli';
+    ctx.font = '48px Open Sans';
     if (this.level.boss_victory) {
       ctx.fillStyle = "white"
       ctx.fillText("VICTORY", constants.levelWidth/2, 300)
@@ -259,9 +256,9 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
     var score_label_y = 420;
 
     ctx.fillStyle = this.color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("GAME TIME ", constants.levelWidth/2, score_y)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.game_numbers.last_time, constants.levelWidth/2, score_label_y)
 
     var line_y = 440
@@ -281,21 +278,21 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
 
     if(this.best_time) {
       ctx.fillStyle = this.color
-      ctx.font = '16px Muli'
+      ctx.font = '16px Open Sans'
       ctx.fillText("NEW BEST TIME!", constants.levelWidth/2, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("BEST TIME", constants.levelWidth/2, best_score_label_y)
-      ctx.font = '28px Muli'
+      ctx.font = '28px Open Sans'
       if (saveData.hasBeatenLevel(this.level_name)) {
-        ctx.font = '28px Muli'
+        ctx.font = '28px Open Sans'
         ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2, best_score_y)
       } else {
-        ctx.font = '24px Muli'
+        ctx.font = '24px Open Sans'
         ctx.fillText("UNDEFEATED",
           constants.levelWidth/2, best_score_y)
       }

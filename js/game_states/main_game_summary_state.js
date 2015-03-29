@@ -189,13 +189,13 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   ctx.textAlign = 'center'
 
 
-  ctx.font = '20px Muli'
+  ctx.font = '20px Open Sans'
   if(this.victory) {
     ctx.globalAlpha *= 0.3
     uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = this.bright_color
-    ctx.font = '40px Muli'
+    ctx.font = '40px Open Sans'
     ctx.fillText(this.victory_text, constants.levelWidth/2, 130)
   }
   else if(this.save_screen) {
@@ -205,9 +205,9 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.fillText("GAME SAVED" , constants.levelWidth/2, 210)
     ctx.fillStyle = this.bright_color;
-    ctx.font = '40px Muli'
+    ctx.font = '40px Open Sans'
     ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 250)
-    ctx.font = '24px Muli'
+    ctx.font = '24px Open Sans'
     ctx.fillText(this.hive_numbers.current_level, constants.levelWidth/2, 280);
 
     ctx.textAlign = 'center'
@@ -216,14 +216,14 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     var score_label_y = 420;
 
     ctx.fillStyle = this.bright_color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("TOTAL TIME ", constants.levelWidth/2 - 100, score_y)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(utils.convertSecondsToTimeString(this.total_time), constants.levelWidth/2 - 100, score_label_y)
     ctx.fillStyle = this.bright_color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("DEATHS", constants.levelWidth/2 + 100, score_y)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.total_deaths, constants.levelWidth/2 + 100, score_label_y)
 
   } else {
@@ -234,24 +234,24 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillText("GAME OVER", constants.levelWidth/2, 80)
     ctx.fillStyle = this.bright_color
     if(this.hive_numbers.continues > 0) {
-      ctx.font = '18px Muli'
+      ctx.font = '18px Open Sans'
       ctx.fillText("CONTINUES: "+this.hive_numbers.continues, constants.levelWidth/2, 175)
     }
-    ctx.font = '40px Muli'
+    ctx.font = '40px Open Sans'
     ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 130)
   }
 
   if(this.victory && this.hive_numbers.continues) {
     ctx.fillStyle = this.bright_color
-    ctx.font = '18px Muli'
+    ctx.font = '18px Open Sans'
     ctx.fillText("CONTINUES: "+this.hive_numbers.continues, constants.levelWidth/2, 250)
   }
 
   if(this.victory) {
     ctx.fillStyle = this.bright_color
-    ctx.font = '14px Muli'
+    ctx.font = '14px Open Sans'
     ctx.fillText("TOTAL TIME", constants.levelWidth/2, 167)
-    ctx.font = '24px Muli'
+    ctx.font = '24px Open Sans'
     ctx.fillText(utils.convertSecondsToTimeString(this.total_time), constants.levelWidth/2, 190)
 
   }
@@ -259,7 +259,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.save_screen) {
     ctx.shadowBlur = 0
 
-    ctx.font = '18px Muli'
+    ctx.font = '18px Open Sans'
     ctx.textAlign = 'center'
 
     var start_y = 250
@@ -303,7 +303,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     }
   }
 
-  ctx.font = '16px Muli'
+  ctx.font = '16px Open Sans'
   ctx.fillStyle = this.lite_color
   if(this.save_screen) {
     if(this.just_saved)

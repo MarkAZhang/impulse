@@ -1,5 +1,6 @@
 var constants = require('../data/constants.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var spriteData = require('../data/sprite_data.js');
@@ -59,7 +60,7 @@ QuestGameState.prototype.set_up_quests = function() {
 QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     layers.bgCanvas.setAttribute("style", "")
-    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity));
+    game_engine.setBg(graphics.menuBackground);
     this.bg_drawn = true
   }
 
@@ -70,11 +71,11 @@ QuestGameState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   ctx.textAlign = "center"
-  ctx.font = '24px Muli'
+  ctx.font = '24px Open Sans'
   ctx.fillStyle = "white"
 
   ctx.fillText("ACHIEVEMENTS", constants.levelWidth/2, 50)
-  ctx.font = '12px Muli'
+  ctx.font = '12px Open Sans'
   ctx.fillText("MOUSE OVER TO VIEW", constants.levelWidth/2, 75)
 
   for(var i = 0; i < this.buttons.length; i++)

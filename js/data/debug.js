@@ -4,10 +4,11 @@ var debugVars = {
   dev: false,
   old_menu: false,
   show_zero_level: false,
-  is_beta: false,
+  is_beta: true,
   instant_victory_enabled: false,
   hide_pause_menu: false,
   use_minified_worker: true,
+  jukebox_enabled: false
 };
 
 if (window.location.host === 'localhost' && window.location.search.indexOf("dev=1") !== -1) {

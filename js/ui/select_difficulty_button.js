@@ -37,7 +37,7 @@ SelectDifficultyButton.prototype.recalculate_state = function() {
 SelectDifficultyButton.prototype.additional_draw = function(ctx) {
   this.checkbox.draw(ctx);
   ctx.textAlign = 'center'
-  ctx.font = this.size+'px Muli';
+  ctx.font = this.size+'px Open Sans';
   ctx.fillStyle = this.color
   ctx.fillText("HARD MODE", this.x, this.y + this.h/3)
 }

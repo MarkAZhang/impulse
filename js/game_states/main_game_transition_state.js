@@ -246,18 +246,18 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.3
       uiRenderUtils.drawTessellationSign(ctx,this.world_num, constants.levelWidth/2, 300, 100)
       ctx.restore()
-      ctx.font = '24px Muli'
+      ctx.font = '24px Open Sans'
       ctx.save();
       ctx.globalAlpha *= 0.5;
       ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 250)
       ctx.restore();
-      ctx.font = '56px Muli'
+      ctx.font = '56px Open Sans'
       ctx.fillText(this.level.level_name, constants.levelWidth/2, 320)
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
       ctx.restore()
     }
@@ -274,7 +274,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
     ctx.fillStyle = "white"
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     if (saveData.difficultyMode == "normal") {
       ctx.fillText("HARD MODE", constants.levelWidth/2, 180)
     }
@@ -282,12 +282,12 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.beginPath()
     ctx.fillStyle = this.bright_color
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.textAlign = 'center'
 
     ctx.fillText(this.last_level_name, constants.levelWidth/2, 240)
     ctx.fill()
-    ctx.font = '36px Muli';
+    ctx.font = '36px Open Sans';
     ctx.fillStyle = "white"
     ctx.fillText("VICTORY", constants.levelWidth/2, 300)
 
@@ -295,15 +295,15 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
     var score_label_y = 420;
 
     ctx.fillStyle = this.bright_color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("GAME TIME ", constants.levelWidth/2 + 100, score_y)
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.game_numbers.last_time, constants.levelWidth/2 + 100, score_label_y)
     ctx.fillStyle = this.bright_color
-    ctx.font = '20px Muli'
+    ctx.font = '20px Open Sans'
     ctx.fillText("SCORE", constants.levelWidth/2 - 100, score_y)
 
-    ctx.font = '42px Muli'
+    ctx.font = '42px Open Sans'
     ctx.fillText(this.game_numbers.score, constants.levelWidth/2 - 100, score_label_y)
 
     var line_y = 440
@@ -331,21 +331,21 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
     if(this.game_numbers.best_time) {
       ctx.fillStyle = this.bright_color
-      ctx.font = '16px Muli'
+      ctx.font = '16px Open Sans'
       ctx.fillText("NEW BEST TIME!", constants.levelWidth/2 + 100, high_score_y)
     } else {
       ctx.save();
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.bright_color
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
-      ctx.font = '28px Muli'
+      ctx.font = '28px Open Sans'
       if (saveData.hasBeatenLevel(this.last_level_name)) {
-        ctx.font = '28px Muli'
+        ctx.font = '28px Open Sans'
         ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
           constants.levelWidth/2 + 100, best_score_y)
       } else {
-        ctx.font = '24px Muli'
+        ctx.font = '24px Open Sans'
         ctx.fillText("UNDEFEATED",
           constants.levelWidth/2 + 100, best_score_y)
       }
@@ -354,7 +354,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.shadowBlur = 0
 
       ctx.fillStyle = this.lite_color;
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
     }
     ctx.restore();

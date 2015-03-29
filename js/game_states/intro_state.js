@@ -1,6 +1,7 @@
 var audioData = require('../data/audio_data.js');
 var constants = require('../data/constants.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var music_player = require('../core/music_player.js');
@@ -42,7 +43,7 @@ IntroState.prototype.process = function(dt) {
 IntroState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     layers.bgCanvas.setAttribute("style", "")
-    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
+    game_engine.setBg(graphics.menuBackground);
     this.bg_drawn = true
   }
 
@@ -53,12 +54,7 @@ IntroState.prototype.draw = function(ctx, bg_ctx) {
   } else if (this.fader.get_current_animation() == "fade_out") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
-  ctx.font = '16px Muli'
-  ctx.fillStyle = constants.colors["impulse_blue"]
-  ctx.textAlign = "center"
-  ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", constants.levelWidth/2, 200)
-  uiRenderUtils.drawPorcelainLogo(ctx, 400, 300);
+  uiRenderUtils.drawPorcelainLogo(ctx, 400, 250);
   ctx.restore()
 }
 

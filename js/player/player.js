@@ -730,7 +730,7 @@ Player.prototype.draw = function(context) {
 
     if(this.impulse_game_state.combo_enabled && saveData.optionsData.multiplier_display &&
        !this.impulse_game_state.is_boss_level) {
-      context.font = "16px Muli"
+      context.font = "16px Open Sans"
       context.fillStyle = constants.colors["impulse_blue"]
       context.textAlign = "center"
       context.shadowBlur = 0

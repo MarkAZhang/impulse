@@ -824,9 +824,9 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   if (this.is_level_zero) {
     bg_ctx.fillStyle = constants.colors["world " + this.level_intro_state.world_num + " bright"];
     bg_ctx.textAlign = "center";
-    bg_ctx.font = "32px Muli";
+    bg_ctx.font = "32px Open Sans";
     bg_ctx.fillText(levelData.hiveNames[this.level_intro_state.world_num], 400, 150);
-    bg_ctx.font = "16px Muli";
+    bg_ctx.font = "16px Open Sans";
     bg_ctx.fillText("8 LEVELS", 400, 170);
   }
 

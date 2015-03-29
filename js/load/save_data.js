@@ -161,6 +161,14 @@ SaveData.prototype.hasBeatenWorldForDifficulty = function(i, difficulty) {
   return this.worldData.hasBeatenWorld('world ' + i, difficulty);
 }
 
+SaveData.prototype.latestWorld = function() {
+  var i = 1;
+  while(i < 4 && this.hasBeatenWorld(i)) {
+    i += 1
+  }
+  return i;
+}
+
 SaveData.prototype.getBestTimeForWorld = function(i) {
   return this.worldData.getBestTimeForWorld('world ' + i, this.difficultyMode);
 }

@@ -2,6 +2,7 @@
 // Also might stil take user to ult tutorial, but that will soon be deprecated.
 var constants = require('../data/constants.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var levelData = require('../data/level_data.js');
@@ -126,7 +127,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       main_message = "NEW HIVE UNLOCKED"
       main_message_teaser = this.initial_difficulty_mode == "easy" ? "STANDARD MODE" : "CHALLENGE MODE"
       ctx.textAlign = "center"
-      ctx.font = "48px Muli"
+      ctx.font = "48px Open Sans"
       ctx.fillText(levelData.hiveNames[cur_reward.data+1], constants.levelWidth/2, 270)
     }
 
@@ -137,13 +138,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.font = "24px Muli"
+      ctx.font = "24px Open Sans"
       ctx.fillText(final_message, constants.levelWidth/2, 240)
-      ctx.font = "20px Muli"
+      ctx.font = "20px Open Sans"
       ctx.fillStyle = "red"
       ctx.fillText(final_message_teaser, constants.levelWidth/2, 280)
 
-      ctx.font = "16px Muli"
+      ctx.font = "16px Open Sans"
       ctx.fillStyle = "white"
       if (this.initial_difficulty_mode == "easy") {
       } else {
@@ -159,14 +160,14 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       message_size = 32
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
-      ctx.font = "60px Muli"
+      ctx.font = "60px Open Sans"
       ctx.fillText("+"+cur_reward.data.diff, constants.levelWidth/2, main_reward_text_y + 20)
 
       ctx.textAlign = 'center'
-      ctx.font = '12px Muli'
+      ctx.font = '12px Open Sans'
       ctx.fillStyle = 'white'
       ctx.fillText("NEW SKILL RATING", constants.levelWidth/2, new_values_text_y - 25)
-      ctx.font = '48px Muli'
+      ctx.font = '48px Open Sans'
       ctx.fillText(cur_reward.data.new_rating, constants.levelWidth/2, new_values_text_y + 25)
     }
 
@@ -178,13 +179,13 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
       ctx.textAlign = "center"
       ctx.fillStyle = constants.colors["impulse_blue"]
 
-      ctx.font = '32px Muli'
+      ctx.font = '32px Open Sans'
       ctx.fillText("CHALLENGE COMPLETE!", constants.levelWidth/2, 120)
 
 
       questRenderUtils.draw_quest_button(ctx, constants.levelWidth/2, main_reward_text_y, 60, cur_reward.data.type);
 
-      ctx.font = '24px Muli'
+      ctx.font = '24px Open Sans'
       ctx.fillStyle = "white"
       for (var i = 0; i < questData[cur_reward.data.type].text.length; i++) {
         var text = questData[cur_reward.data.type].text[i];
@@ -194,12 +195,12 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     }
 
     if(cur_reward.type == "first_time_tutorial") {
-      ctx.font = "30px Muli"
+      ctx.font = "30px Open Sans"
       ctx.textAlign = "center"
       ctx.fillStyle = "white"
       ctx.fillText("INTRO TUTORIAL COMPLETE", constants.levelWidth/2, 250)
       ctx.fillStyle = "white"
-      ctx.font = "16px Muli"
+      ctx.font = "16px Open Sans"
       ctx.fillText("INITIALIZING MAIN GAME...", constants.levelWidth/2, 550)
     }
 
@@ -216,9 +217,9 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     if (main_message) {
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
-      ctx.font = "16px Muli"
+      ctx.font = "16px Open Sans"
       ctx.fillText(main_message_teaser, constants.levelWidth/2, 70)
-      ctx.font = message_size + "px Muli"
+      ctx.font = message_size + "px Open Sans"
       if (cur_reward.type == "world_victory") {
         ctx.fillStyle = constants.colors["world "+(cur_reward.data+1)+ " bright"]
       } else {
@@ -230,7 +231,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
     if (cur_reward.type != "select_difficulty") {
       ctx.textAlign = "center"
       ctx.fillStyle = cur_reward.type == "world_victory" ? constants.colors["world "+(cur_reward.data+1)+ " bright"] : "white"
-      ctx.font = "16px Muli"
+      ctx.font = "16px Open Sans"
       if (cur_reward.type != "first_time_tutorial") {
         if (cur_reward.type != "ult")
           ctx.fillText("PRESS ANY KEY TO CONTINUE", constants.levelWidth/2, constants.levelHeight - 30)
@@ -238,7 +239,7 @@ RewardGameState.prototype.draw = function(ctx, bg_ctx) {
           ctx.fillText("PRESS ANY KEY FOR ULT TUTORIAL", constants.levelWidth/2, constants.levelHeight - 30)
       }
     } else {
-      ctx.font = "16px Muli"
+      ctx.font = "16px Open Sans"
       ctx.textAlign = "center"
       ctx.fillStyle = constants.colors["impulse_blue"]
       ctx.fillText("YOU CAN SWITCH DIFFICULTY ON THE TITLE SCREEN OPTIONS MENU", constants.levelWidth/2, constants.levelHeight - 75)
@@ -298,13 +299,7 @@ RewardGameState.prototype.next_reward = function() {
 RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   // If we just unlocked hard mode, go to 1.
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
-
-  if (saveData.difficultyMode == "normal" && !saveData.firstTime && go_to_world_num !== 0) {
-    game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + go_to_world_num,
-     uiRenderUtils.getWorldMapBgOpacity(go_to_world_num)))
-  } else {
-    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
-  }
+  game_engine.setBg(graphics.menuBackground);
   game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
     world: go_to_world_num,
     is_practice_mode: is_practice_mode

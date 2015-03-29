@@ -7,7 +7,7 @@ var enemyRenderUtils = require('../render/enemy.js');
 var game_engine = require('../core/game_engine.js');
 var gsKeys = require('../data/constants.js').gsKeys;
 var io = require('./io.js');
-var graphics = require('../core/graphics.js')
+var graphics = require('../core/graphics.js');
 var layers = require('./layers.js');
 var music_player = require('../core/music_player.js');
 var saveData = require('../load/save_data.js');
@@ -25,6 +25,7 @@ main.executeGame = function() {
   layers.setUpLayers()
   controls.setKeyBindings()
   graphics.generateEnemyBufferImages();
+  graphics.generateBackgrounds();
   music_player.setPlayerOptions();
   game_engine.injectGameStateFactory(GameStateFactory);
   if (debugVars.dev) {

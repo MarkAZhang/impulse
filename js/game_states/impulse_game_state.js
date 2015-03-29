@@ -283,7 +283,7 @@ ImpulseGameState.prototype.zoom_out = function(center, target, interval) {
 ImpulseGameState.prototype.loading_screen = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath()
-  ctx.font = '30px Muli'
+  ctx.font = '30px Open Sans'
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
   ctx.fillText("LOADING", constants.levelWidth/2, (constants.levelHeight)/2)
@@ -754,7 +754,7 @@ ImpulseGameState.prototype.draw_score_labels = function(ctx) {
     {
       ctx.save()
       ctx.beginPath()
-      ctx.font = this.score_labels[i].size+'px Muli'
+      ctx.font = this.score_labels[i].size+'px Open Sans'
       var prog = this.score_labels[i].duration / this.score_labels[i].max_duration
 
       ctx.globalAlpha *= prog
@@ -776,7 +776,7 @@ ImpulseGameState.prototype.draw_boss_text = function(ctx) {
   ctx.fillStyle = constants.colors["boss "+this.world_num];
   ctx.textAlign = 'right'
 
-  ctx.font = '24px Muli'
+  ctx.font = '24px Open Sans'
   ctx.fillText(this.hive_numbers.boss_name, constants.levelWidth - 50, constants.levelHeight - 50)
   ctx.fill()
   ctx.restore();
@@ -819,7 +819,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     levelData.levels[this.level_name].show_score_interface);
 
   if (showHardMode) {
-    context.font = "20px Muli"
+    context.font = "20px Open Sans"
     context.save()
     context.globalAlpha *= 1
     context.fillText("HARD MODE", constants.sideBarWidth/2, titleTextY + 170)
@@ -829,18 +829,18 @@ ImpulseGameState.prototype.draw_interface = function(context) {
   // Draw the level name.
   if (showLevelName) {
     if (this.is_tutorial_level) {
-      context.font = '40px Muli'
+      context.font = '40px Open Sans'
       context.fillText("TUTORIAL", constants.sideBarWidth/2, titleTextY + 70)
     } else {
-      context.font = '64px Muli'
+      context.font = '64px Open Sans'
       type = this.level_name.split(" ")[0]
       context.fillText(type, constants.sideBarWidth/2, titleTextY + 70)
 
-      context.font = '80px Muli'
+      context.font = '80px Open Sans'
       if(type == "BOSS") {
         context.fillText(this.world_num, constants.sideBarWidth/2, titleTextY + 140)
       } else if(type == "HOW") {
-        context.font = '60px Muli'
+        context.font = '60px Open Sans'
         context.fillText("PLAY", constants.sideBarWidth/2, titleTextY + 130)
       } else {
         context.fillText(this.level_name.slice(5, this.level_name.length), constants.sideBarWidth/2, titleTextY + 140)
@@ -854,7 +854,7 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     var w = 190;
     var h = 30;
     context.fillStyle = this.bright_color;
-    context.font = '18px Muli';
+    context.font = '18px Open Sans';
     context.save();
     context.globalAlpha *= 0.4;
     if(saveData.optionsData.control_hand == "right") {
@@ -872,39 +872,39 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     if (saveData.difficultyMode == "normal" && this.world_num > 0 &&
       this.main_game && saveData.optionsData.speed_run_countdown) {
       context.fillStyle = "white"
-      context.font = '16px Muli';
+      context.font = '16px Open Sans';
       context.fillText("SPEED RUN", constants.sideBarWidth/2, timeY - 30);
       context.fillText("TIME LEFT", constants.sideBarWidth/2, timeY - 10);
-      context.font = '32px Muli';
+      context.font = '32px Open Sans';
       var total_time = utils.convertSecondsToTimeString(Math.max(0, Math.ceil(this.hive_numbers.speed_run_countdown / 1000)));
       context.fillText(total_time, constants.sideBarWidth/2, timeY + 22);
     } else if (!this.is_boss_level) {
       context.fillStyle = this.color;
-      context.font = '16px Muli';
+      context.font = '16px Open Sans';
       context.fillText("LEVEL TIME", constants.sideBarWidth/2, timeY - 10);
-      context.font = '32px Muli';
+      context.font = '32px Open Sans';
       context.fillText(this.game_numbers.last_time, constants.sideBarWidth/2, timeY + 22);
     }
   }
 
   if(showScoreLabels) {
     // draw score
-    context.font = '21px Muli'
+    context.font = '21px Open Sans'
     context.fillText("SCORE", constants.canvasWidth - constants.sideBarWidth/2, constants.canvasHeight - 10)
-    context.font = '40px Muli'
+    context.font = '40px Open Sans'
     context.fillText(this.game_numbers.score, constants.canvasWidth - constants.sideBarWidth/2, constants.canvasHeight - 35)
 
     if (this.gateway_unlocked)  {
       context.fillStyle = this.bright_color
-      context.font = '21px Muli'
+      context.font = '21px Open Sans'
       context.fillText("GATEWAY", constants.canvasWidth - constants.sideBarWidth/2, 45)
-      context.font = '42px Muli'
+      context.font = '42px Open Sans'
       context.fillText("OPEN", constants.canvasWidth - constants.sideBarWidth/2, 85)
     } else {
       context.fillStyle = this.lite_color
-      context.font = '21px Muli'
+      context.font = '21px Open Sans'
       context.fillText("GOAL", constants.canvasWidth - constants.sideBarWidth/2, 45)
-      context.font = '42px Muli'
+      context.font = '42px Open Sans'
       context.fillText(this.level.cutoff_scores[0], constants.canvasWidth - constants.sideBarWidth/2, 85)
     }
   }
@@ -928,7 +928,7 @@ ImpulseGameState.prototype.draw_score_bar = function(ctx) {
     uiRenderUtils.drawVProgressBar(ctx, constants.canvasWidth - constants.sideBarWidth/2, constants.canvasHeight/2,
       40, constants.canvasHeight * 3/4 - 50, this.progress_bar_prop, this.color, true)
     ctx.textAlign = 'center'
-    ctx.font = '72px Muli'
+    ctx.font = '72px Open Sans'
     ctx.fillStyle = "white"
     if (this.combo_enabled) {
       if (this.world_num != 0 || levelData.levels[this.level_name].show_full_interface) {

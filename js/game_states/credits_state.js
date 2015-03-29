@@ -1,5 +1,6 @@
 var constants = require('../data/constants.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
@@ -60,7 +61,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
+    game_engine.setBg(graphics.menuBackground);
     this.bg_drawn = true
   }
 
@@ -73,7 +74,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   }
 
   uiRenderUtils.drawPorcelainLogo(ctx, 400, 180);
-  ctx.font = '16px Muli'
+  ctx.font = '16px Open Sans'
   ctx.fillStyle = constants.colors["impulse_blue"]
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
@@ -82,7 +83,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if (this.after_main_game) {
     ctx.save();
     ctx.globalAlpha *= 0.5;
-    ctx.font = '16px Muli'
+    ctx.font = '16px Open Sans'
     ctx.fillStyle = constants.colors["impulse_blue"];
     ctx.fillText("PRESS ANY KEY TO CONTINUE", constants.levelWidth/2, constants.levelHeight - 30);
     ctx.restore();

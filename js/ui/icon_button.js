@@ -35,7 +35,7 @@ IconButton.prototype.additional_draw = function(context) {
   this.draw_icon(context)
   context.beginPath()
   context.textAlign = 'center'
-  context.font = this.size+'px Muli';
+  context.font = this.size+'px Open Sans';
   if (this.hover && this.underline_on_hover) {
     context.beginPath();
     var textWidth = context.measureText(this.text).width;
@@ -64,7 +64,7 @@ IconButton.prototype.additional_draw = function(context) {
   }
 
   if (this.extra_text) {
-    context.font = this.extra_text_size ? this.extra_text_size : this.size * 0.7 +'px Muli';
+    context.font = this.extra_text_size ? this.extra_text_size : this.size * 0.7 +'px Open Sans';
     context.fillText(this.extra_text, this.x, this.y + this.h/3 + 1 * this.size)
   }
 
@@ -261,7 +261,7 @@ IconButton.prototype.draw_icon  = function(context) {
       context.globalAlpha *= 0.3
     }
     context.textAlign = 'center'
-    context.font = "32px Muli"
+    context.font = "32px Open Sans"
     context.fillStyle = this.active ? this.color : "gray";
     context.fillText(this.text, this.x, this.y + 10)
     context.restore()

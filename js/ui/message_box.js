@@ -252,7 +252,7 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_enter_gateway") {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		if(saveData.optionsData.control_hand == "right") {
 	        renderUtils.drawRoundedRect(ctx, this.x, this.y - 10, 160, 34, 7, "white")
@@ -268,7 +268,7 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "tutorial_gateway_move") {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		ctx.fillText("MOVE TO THE GATEWAY", this.x, this.y - this.h / 2 + 25);
 		uiRenderUtils.drawFullArrow(ctx, this.x, this.y + 12, 1, "white", "down");
@@ -276,12 +276,12 @@ MessageBox.prototype.draw = function(ctx) {
 
 	if (this.type == "fullscreen_msg") {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		ctx.fillText("TOGGLE FULLSCREEN (F)", this.x, this.y - this.h / 2 + 25);
 	} else if (this.type == "mute_msg") {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		ctx.fillText("MUTE (M)", this.x, this.y - this.h / 2 + 25);
 	} else if (this.type.substring(0, 8) == "tutorial") {
@@ -293,25 +293,25 @@ MessageBox.prototype.draw = function(ctx) {
 	    }*/
 	    if (this.tutorial_text) {
 			ctx.textAlign = 'center';
-			ctx.font = "16px Muli";
+			ctx.font = "16px Open Sans";
 			ctx.fillStyle = this.color;
 			ctx.fillText(this.tutorial_text, this.x, this.y + this.h / 2 - 15);
 		}
 	} else if (this.type.substring(0, 6) == "option") {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.option_text, this.x, this.y - this.h / 2 + 25);
 	} else if (this.message_only) {
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = this.color;
 		ctx.fillText(this.message, this.x, this.y - this.h / 2 + 25);
 	} else if (this.type == "saved_alert") {
 
 		ctx.globalAlpha *= 0.5
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli"
+		ctx.font = "16px Open Sans"
 		ctx.fillStyle = this.color;
 		ctx.save()
 		ctx.globalAlpha *= 0.5
@@ -338,7 +338,7 @@ MessageBox.prototype.draw = function(ctx) {
 
 		var type = this.type.substring(6);
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli"
+		ctx.font = "16px Open Sans"
 		ctx.fillStyle = "white";
 		ctx.fillText("NEW ACHIEVEMENT", this.x + x_shift, this.y - this.h / 2 + 30);
 
@@ -349,7 +349,7 @@ MessageBox.prototype.draw = function(ctx) {
 		ctx.lineWidth = 1;
 		ctx.stroke();*/
 
-		ctx.font = "12px Muli"
+		ctx.font = "12px Open Sans"
 		var quest_text = ""
 		if (questData[type]) {
 			for (var i = 0; i < questData[type].text.length; i++) {
@@ -387,20 +387,20 @@ MessageBox.prototype.draw = function(ctx) {
 	      true_name = enemyData[type].true_name
 		}
 		ctx.textAlign = 'center';
-		ctx.font = "12px Muli"
+		ctx.font = "12px Open Sans"
 		ctx.fillStyle = "white";
 		ctx.fillText("NEW ENEMY", this.x + x_shift, this.y - this.h / 2 + 20);
 		ctx.fillStyle = enemyData[type].color
-		ctx.font = "24px Muli"
+		ctx.font = "24px Open Sans"
 		ctx.fillText(true_name.toUpperCase(), this.x + x_shift, this.y - this.h / 2 + 45);
 		ctx.fillStyle = "white";;
-		ctx.font = "16px Muli"
+		ctx.font = "16px Open Sans"
 		ctx.fillText(enemyData[type].snippet.toUpperCase(), this.x + x_shift, this.y + this.h / 2 - 15);
 		uiRenderUtils.drawEnemyButton(ctx, this.x - this.w / 2 + 40, this.y, 60, type)
 	} else {
 		// rewards
 		ctx.textAlign = 'center';
-		ctx.font = "16px Muli";
+		ctx.font = "16px Open Sans";
 		ctx.fillStyle = "white";
 		for (var i = 0; i < questData[this.type].text.length; i++) {
 			var text = questData[this.type].text[i];

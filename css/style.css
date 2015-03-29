@@ -24,12 +24,13 @@ body{
   background-color: black;
   z-index: 2147483647;
 }
+
 @font-face {
-  font-family: Muli;
-  src: local(Century Gothic), local(Futura), url('../font/Muli-Light.ttf');
+    font-family:"Open Sans";
+    src: url("../font/OpenSans-Light.ttf");
 }
 #message{
-  font-family: "Muli";
+  font-family: "Open Sans";
   display: none;
   color: #ffffff;
   position: absolute;

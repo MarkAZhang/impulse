@@ -92,17 +92,17 @@ uiRenderUtils.drawLogo = function(context, x, y, text, scale) {
   context.shadowBlur = 0
   context.fillStyle = "white"//constants.colors["impulse_blue"]
 
-  var logoScale = scale ? scale : 0.85;
+  var logoScale = scale ? scale : 1;
   context.drawImage(sprites.logoSprite, x - sprites.logoSprite.width/2 * logoScale, y - sprites.logoSprite.height * 0.75 * logoScale, sprites.logoSprite.width * logoScale, sprites.logoSprite.height * logoScale)
 
   if(text) {
     context.globalAlpha /= 2
     if (text === "BETA") {
-      context.font = '24px Muli'
+      context.font = '18px Open Sans'
       context.textAlign = "right"
-      context.fillText(text, x + sprites.logoSprite.width/2 * logoScale - 20, y + 40)
+      context.fillText(text, x + sprites.logoSprite.width/2 * logoScale - 35, y + 40)
     } else {
-      context.font = '20px Muli'
+      context.font = '20px Open Sans'
       context.textAlign = "center"
       context.fillText(text, x, y + 40)
     }
@@ -188,7 +188,7 @@ uiRenderUtils.drawArrowKeys = function(context, x, y, size, color, keysArray) {
   renderUtils.drawRoundedRect(context, x + size, y, size * 0.9, size * 0.9, size * 0.2, color)
 
   context.fillStyle = color;
-  context.font = (size * 0.4) + 'px Muli'
+  context.font = (size * 0.4) + 'px Open Sans'
   context.textAlign = "center"
   if(keysArray) {
     context.fillText(keysArray[0], x, y - size * 1)
@@ -230,7 +230,7 @@ uiRenderUtils.drawMouse = function(context, x, y, w, h, color) {
   context.save()
   context.shadowColor = color
   context.fillStyle = color
-  /*context.font = "10px Muli"
+  /*context.font = "10px Open Sans"
   context.textAlign = "center"
   context.fillText("LEFT CLICK", x, y - w/2 - 30)*/
   context.shadowBlur = 0

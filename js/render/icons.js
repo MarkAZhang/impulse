@@ -13,7 +13,7 @@ iconRenderUtils.drawPauseIcon = function(context, x, y, scale, color, key_displa
   context.fill()
 
   if(key_display) {
-    context.font = "10px Muli"
+    context.font = "10px Open Sans"
     context.textAlign = "center"
     if(saveData.optionsData.control_hand == "left") {
       context.fillText("ENTER", x+scale, y+scale)

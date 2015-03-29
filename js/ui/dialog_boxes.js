@@ -269,20 +269,20 @@ PauseMenu.prototype.additional_draw = function(ctx) {
   ctx.textAlign = "center";
 
   if(this.level.main_game && this.game_state.hive_numbers.continues > 0) {
-    ctx.font = '14px Muli'
+    ctx.font = '14px Open Sans'
     ctx.fillStyle = "red"
     ctx.shadowBlur = 10;
     ctx.shadowColor = ctx.fillStyle
     ctx.fillText("CONTINUES: "+this.game_state.hive_numbers.continues,this.x, this.y - this.h/2 + 70)
   }
 
-  ctx.font = '32px Muli';
+  ctx.font = '32px Open Sans';
   ctx.shadowBlur = 0;
   ctx.shadowColor = this.bright_color;
   ctx.fillStyle = this.bright_color;
   ctx.fillText("MENU", this.x, this.y - this.h/2 + 100)
 
-  ctx.font = '16px Muli';
+  ctx.font = '16px Open Sans';
   if(this.num_enemy_type > 0) {
     ctx.fillText("DETAILED ENEMY INFO", this.x, this.y - this.h/2 + 165)
   }
@@ -541,7 +541,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
 
   ctx.save()
   ctx.textAlign = "center"
-  ctx.font = '32px Muli';
+  ctx.font = '32px Open Sans';
   ctx.shadowBlur = 0;
   ctx.shadowColor = this.bright_color;
   ctx.fillStyle = this.bright_color;
@@ -557,7 +557,7 @@ OptionsMenu.prototype.additional_draw = function(ctx) {
 
   ctx.textAlign = 'center'
   if(this.current_help_text) {
-    ctx.font = '14px Muli'
+    ctx.font = '14px Open Sans'
     if (this.game_state.isImpulseGameState && this.game_state.level.main_game ) {
       ctx.fillText(this.current_help_text, this.x, this.y - this.h/2 + this.options_y_line_up + 180)
     } else {
@@ -731,13 +731,13 @@ ControlsMenu.prototype.additional_draw = function(ctx) {
 
   ctx.save()
   ctx.textAlign = "center"
-  ctx.font = '32px Muli';
+  ctx.font = '32px Open Sans';
   //ctx.shadowBlur = 10;
   ctx.shadowColor = this.bright_color;
   ctx.fillStyle = this.bright_color;
   ctx.fillText("CONTROLS", this.x, this.y - this.h/2 + 50)
 
-  ctx.font = '18px Muli';
+  ctx.font = '18px Open Sans';
   ctx.fillText("SELECT SCHEME", this.x, this.y - this.h/2 + 75)
   ctx.shadowBlur = 0
   for(var i = 0; i < this.buttons.length; i++) {
@@ -882,15 +882,15 @@ EnemyBox.prototype.additional_draw = function(ctx) {
 
   ctx.save()
   if(this.current_lines == null) {
-    this.current_lines = utils.getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Muli')
+    this.current_lines = utils.getLines(ctx, this.enemy_info[this.cur_page].toUpperCase(), this.text_width, '20px Open Sans')
   }
 
   ctx.beginPath()
   ctx.textAlign = "center"
   ctx.fillStyle = this.bright_color
-  ctx.font = '16px Muli'
+  ctx.font = '16px Open Sans'
   ctx.fillText("ENEMY INFO", this.x, this.y - this.h/2 + 70)
-  ctx.font = '30px Muli'
+  ctx.font = '30px Open Sans'
 
   ctx.fillText(this.true_name.toUpperCase(), this.x, this.y - this.h/2 + 120)
 
@@ -900,12 +900,12 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   ctx.globalAlpha *= 3
   enemyRenderUtils.drawEnemyRealSize(ctx, this.enemy_name, this.x, this.y - this.h/2 + 215, 1.5)
 
-  ctx.font = '12px Muli'
+  ctx.font = '12px Open Sans'
   ctx.fillText("BASE POINTS", this.x, this.y - this.h/2 + 310)
-  ctx.font = '24px Muli'
+  ctx.font = '24px Open Sans'
   ctx.fillText(enemyData[this.enemy_name].score_value, this.x, this.y - this.h/2 + 335)
 
-  ctx.font = '20px Muli'
+  ctx.font = '20px Open Sans'
 
    for(var i = 0; i < this.current_lines.length; i++) {
     var offset = i - (this.current_lines.length-1)/2
@@ -913,7 +913,7 @@ EnemyBox.prototype.additional_draw = function(ctx) {
   }
   if (this.num_pages > 1) {
     uiRenderUtils.drawArrow(ctx, this.x - 300, this.y - this.h/2 + 420, 20, "left", this.bright_color, false)
-    ctx.font = '10px Muli'
+    ctx.font = '10px Open Sans'
     ctx.fillStyle = this.bright_color
     ctx.fillText("NEXT", this.x + 302, this.y - this.h/2 + 450)
     ctx.fillText("PREV", this.x - 302, this.y - this.h/2 + 450)
@@ -1025,12 +1025,12 @@ DeleteDataDialog.prototype.additional_draw = function(ctx) {
   if (!this.deleted) {
     ctx.fillStyle = "red"
     ctx.textAlign = "center"
-    ctx.font = "24px Muli"
+    ctx.font = "24px Open Sans"
 
     ctx.fillText("ARE YOU SURE", this.x, 200)
-    ctx.font = "24px Muli"
+    ctx.font = "24px Open Sans"
     ctx.fillText(" YOU WANT TO DELETE ALL YOUR GAME DATA?", this.x, 230)
-    ctx.font = "16px Muli"
+    ctx.font = "16px Open Sans"
     ctx.fillText("THIS ACTION CANNOT BE UNDONE.", this.x, 290)
     for(var i = 0; i < this.buttons.length; i++) {
       this.buttons[i].draw(ctx)
@@ -1039,7 +1039,7 @@ DeleteDataDialog.prototype.additional_draw = function(ctx) {
   } else {
     ctx.fillStyle = "red"
     ctx.textAlign = "center"
-    ctx.font = "24px Muli"
+    ctx.font = "24px Open Sans"
     ctx.fillText("ALL GAME DATA HAS BEEN DELETED", this.x, 210)
     this.back_button.draw(ctx)
   }

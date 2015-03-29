@@ -1,4 +1,6 @@
 var enemyData = require('../data/enemy_data.js');
+
+var Background = require('../render/background.js');
 var EnemyFactory = require('../enemy/enemy_factory.js');
 
 var graphics = {};
@@ -11,5 +13,9 @@ graphics.generateEnemyBufferImages = function () {
     }
   }
 };
+
+graphics.generateBackgrounds = function () {
+    graphics.menuBackground = new Background("#231f20");
+}
 
 module.exports = graphics;

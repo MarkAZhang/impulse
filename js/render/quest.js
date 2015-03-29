@@ -107,7 +107,7 @@ questRenderUtils.draw_quest_button = function(ctx, x, y, r, type) {
     var angles_to_draw = [Math.PI/2, Math.PI * 0.36, Math.PI * 0.64, Math.PI * 0.57, Math.PI * 0.43]
     ctx.fillStyle = constants.colors["gold"]
     ctx.textAlign = "center"
-    ctx.font = "12px Muli"
+    ctx.font = "12px Open Sans"
     ctx.fillText("250K", x, y + r/2)
 
   }

@@ -24,7 +24,7 @@ SmallButton.prototype.additional_draw = function(context) {
   context.beginPath()
   context.textAlign = 'center'
 
-  context.font = this.size+'px Muli';
+  context.font = this.size+'px Open Sans';
   context.fillStyle = this.hover ? this.hover_color : this.color
   if(this.shadow) {
     context.shadowBlur = 5
@@ -53,7 +53,7 @@ SmallButton.prototype.additional_draw = function(context) {
       if(this.dim_extra_text) {
         context.globalAlpha *= 0.5
       }
-      context.font = this.size/2 + 'px Muli'
+      context.font = this.size/2 + 'px Open Sans'
       context.fillText(this.extra_text, this.x - textWidth/2 + (textStart + textEnd)/2, this.y + 3*this.size/4)
     }
   } else {
@@ -62,7 +62,7 @@ SmallButton.prototype.additional_draw = function(context) {
       if(this.dim_extra_text) {
         context.globalAlpha *= 0.5
       }
-      context.font = this.size/2 + 'px Muli'
+      context.font = this.size/2 + 'px Open Sans'
       var textWidth = context.measureText(this.text).width;
       context.fillText(this.extra_text, this.x, this.y + 3*this.size/4)
     }
