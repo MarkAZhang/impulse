@@ -502,10 +502,10 @@ utils.getNextLevelName = function(level, world_num) {
 
 utils.getFirstLevelName = function (world_num) {
   if (world_num == 0) {
-    return "HIVE 0-3"
+    return "HIVE 0-1"
   }
 
-  return "HIVE "+world_num+"-7"
+  return "HIVE "+world_num+"-1"
 }
 
 module.exports = utils;

@@ -9,6 +9,7 @@ var saveData = require('../load/save_data.js');
 var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 
+var Background = require('../render/background.js');
 var CreditsState = require('../game_states/credits_state.js');
 var Fader = require('../game_states/fader_util.js');
 var GameState = require('../game_states/game_state.js');
@@ -69,11 +70,11 @@ TitleState.prototype.process = function(dt) {
   game_engine.processAndDrawBg(dt);
 }
 
-TitleState.prototype.draw = function(ctx, bg_ctx) {
+TitleState.prototype.draw = function(ctx) {
   if(!this.bg_drawn) {
-   layers.bgCanvas.setAttribute("style", "")
-   game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
-   this.bg_drawn = true
+    layers.bgCanvas.setAttribute("style", "")
+    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
+    this.bg_drawn = true
   }
 
   ctx.save()
@@ -219,9 +220,10 @@ TitleState.prototype.setup_main_menu = function() {
         }
 
         if (_this.fader.animation == null && saveData.difficultyMode == "normal" && !saveData.firstTime) {
-          game_engine.switchBg("Title Alt" + i, 250, uiRenderUtils.getWorldMapBgOpacity(i))
+          game_engine.switchBg(new Background(
+            constants.colors["menuBg"], "Title Alt" + i, uiRenderUtils.getWorldMapBgOpacity(i)), 250);
         } else if (saveData.firstTime) {
-          game_engine.switchBg(constants.colors["world 0 dark"], 150, 1)
+          game_engine.switchBg(new Background(constants.colors["world 0 dark"]), 150)
         }
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
@@ -242,7 +244,8 @@ TitleState.prototype.setup_main_menu = function() {
         }
 
         if (_this.fader.animation == null && saveData.difficultyMode == "normal") {
-          game_engine.switchBg("Title Alt" + i, 250, uiRenderUtils.getWorldMapBgOpacity(i))
+          game_engine.switchBg(new Background(
+            constants.colors["menuBg"], "Title Alt" + i, uiRenderUtils.getWorldMapBgOpacity(i)), 250);
         }
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {

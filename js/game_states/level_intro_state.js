@@ -10,6 +10,7 @@ var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 var utils = require('../core/utils.js');
 
+var Background = require('../render/background.js');
 var EnemyBox = require('../ui/dialog_boxes.js').EnemyBox;
 var Fader = require('../game_states/fader_util.js');
 var HiveNumbers = require('../load/hive_numbers.js');
@@ -35,15 +36,6 @@ function LevelIntroState(opts) {
   this.is_boss_level = this.level_name.slice(0, 4) == "BOSS"
 
   this.buttons.push(new IconButton("BACK", 16, 70, constants.levelHeight/2+260, 60, 65, this.bright_color, "white", function(_this){return function(){
-    // When the back button is pressed, draw the world-specific background on the bg_ctx and show it.
-    layers.bgCtx.fillStyle =  constants.colors["world "+_this.world_num+" dark"]
-    layers.bgCtx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
-    layers.bgCtx.fillRect(0, 0, constants.levelWidth, constants.levelHeight)
-    layers.bgCtx.globalAlpha *= uiRenderUtils.getBgOpacity(0);
-    uiRenderUtils.tessellateBg(layers.bgCtx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive "+_this.world_num)
-    layers.bgCtx.translate(-constants.sideBarWidth, 0)//allows us to have a topbar
-    layers.bgCanvas.setAttribute("style", "")
-
 
     _this.fader.set_animation("fade_out_to_main", function() {
       if(_this.world_num) {
@@ -57,9 +49,9 @@ function LevelIntroState(opts) {
       }
       // TODO: transition the bg.
       if (saveData.difficultyMode == "normal") {
-        game_engine.setBg("Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num))
+        game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num)))
       } else {
-        game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
+        game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
       }
     });
   }}(this), "back"))

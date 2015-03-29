@@ -10,6 +10,7 @@ var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 var utils = require('../core/utils.js');
 
+var Background = require('../render/background.js');
 var Fader = require('../game_states/fader_util.js');
 var GameState = require('../game_states/game_state.js');
 var HiveNumbers = require('../load/hive_numbers.js');
@@ -66,16 +67,16 @@ function GameOverState(opts) {
           is_practice_mode: true
         });
         if (saveData.difficultyMode == "normal") {
-          game_engine.setBg("Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num))
+          game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + _this.world_num, uiRenderUtils.getWorldMapBgOpacity(_this.world_num)))
         } else {
-          game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
+          game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
         }
       });
     }
     else {
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
-        game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
+        game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity));
       });
     }
   }}(this), "back"))

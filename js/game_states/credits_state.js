@@ -4,6 +4,7 @@ var gsKeys = constants.gsKeys;
 var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 
+var Background = require('../render/background.js');
 var Fader = require('../game_states/fader_util.js');
 var GameState = require('../game_states/game_state.js');
 var IconButton = require('../ui/icon_button.js');
@@ -59,7 +60,7 @@ CreditsState.prototype.process = function(dt) {
 CreditsState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.bg_drawn) {
     bg_canvas.setAttribute("style", "")
-    game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
+    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
     this.bg_drawn = true
   }
 

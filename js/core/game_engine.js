@@ -22,6 +22,7 @@ var GameEngine = function() {
   this.altBgFile = null;
   this.lastTime = (new Date()).getTime();
   this.gameStateFactory = null;
+  this.background = null;
 };
 
 // We inject the game states in here from main.js to avoid circular dependencies.
@@ -295,44 +296,20 @@ GameEngine.prototype.toggleFullScreen = function () {
   }
 }
 
-GameEngine.prototype.switchBg = function(bg_file, duration, alpha) {
-  // Only perform the switch if the bg_file is different.
-  if (this.bgFile != bg_file) {
+GameEngine.prototype.switchBg = function(background, duration) {
+  if (!this.background || this.background.bgFile != background.bgFile) {
     this.switchBgDuration = duration;
     this.switchBgTimer = duration;
-    var alt_title_bg_ctx = layers.altTitleBgCanvas.getContext('2d');
-    // bg_file can also be a color.
-    if (bg_file.substring(0, 1) == "#") {
-      alt_title_bg_ctx.fillStyle = bg_file;
-      alt_title_bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight);
-    } else {
-      uiRenderUtils.tessellateBg(alt_title_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, bg_file)
-    }
-
-    this.altBgAlpha = alpha;
-    this.altBgFile = bg_file;
+    this.newBackground = background;
   }
-}
+};
 
 // Will immediately draw the new bg onto the bg_ctx.
-GameEngine.prototype.setBg = function(bg_file, alpha) {
-  var title_bg_ctx = layers.titleBgCanvas.getContext('2d');
-  if (bg_file.substring(0, 1) == "#") {
-    title_bg_ctx.fillStyle = bg_file;
-    title_bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight);
-  } else {
-    uiRenderUtils.tessellateBg(title_bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, bg_file)
-  }
-  this.bgAlpha = alpha;
-  this.bgFile = bg_file;
-
+GameEngine.prototype.setBg = function(background) {
   layers.bgCtx.clearRect(0, 0, canvas.width, canvas.height);
-  layers.bgCtx.fillStyle = "#000"
-  layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
-  layers.bgCtx.globalAlpha = this.bgAlpha;
-
-  layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
-  layers.bgCtx.globalAlpha = 1
+  layers.bgCtx.drawImage(background.getCanvas(), 0, 0, constants.levelWidth, constants.levelHeight,
+    constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
+  this.background = background;
 }
 
 GameEngine.prototype.processAndDrawBg = function(dt) {
@@ -340,19 +317,19 @@ GameEngine.prototype.processAndDrawBg = function(dt) {
     var prog = this.switchBgTimer / this.switchBgDuration;
 
     layers.bgCtx.clearRect(0, 0, canvas.width, canvas.height);
-    layers.bgCtx.fillStyle = "#000"
-    layers.bgCtx.fillRect(0, 0, canvas.width, canvas.height);
-    layers.bgCtx.globalAlpha = prog * this.bgAlpha
-    layers.bgCtx.drawImage(layers.titleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
-    layers.bgCtx.globalAlpha = (1 - prog) * this.altBgAlpha
-    layers.bgCtx.drawImage(layers.altTitleBgCanvas, 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
-    layers.bgCtx.globalAlpha = 1
+    layers.bgCtx.save();
+    layers.bgCtx.globalAlpha = prog;
+    layers.bgCtx.drawImage(this.background.getCanvas(), 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
+    layers.bgCtx.globalAlpha = (1 - prog);
+    layers.bgCtx.drawImage(this.newBackground.getCanvas(), 0, 0, constants.levelWidth, constants.levelHeight, constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
+    layers.bgCtx.restore();
 
     this.switchBgTimer -= dt;
   } else if (this.switchBgDuration != null) {
     // At the end of the transition, directly set the bg.
     this.switchBgDuration = null;
-    this.setBg(this.altBgFile, this.altBgAlpha);
+    this.setBg(this.newBackground);
+    this.newBackground = null;
   }
 }
 

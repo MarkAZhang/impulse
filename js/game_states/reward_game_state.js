@@ -13,6 +13,7 @@ var saveData = require('../load/save_data.js');
 var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 
+var Background = require('../render/background.js');
 var GameState = require('../game_states/game_state.js');
 var IconButton = require('../ui/icon_button.js');
 
@@ -299,9 +300,10 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
 
   if (saveData.difficultyMode == "normal" && !saveData.firstTime && go_to_world_num !== 0) {
-    game_engine.setBg("Title Alt" + go_to_world_num, uiRenderUtils.getWorldMapBgOpacity(go_to_world_num))
+    game_engine.setBg(new Background(constants.colors['menuBg'], "Title Alt" + go_to_world_num,
+     uiRenderUtils.getWorldMapBgOpacity(go_to_world_num)))
   } else {
-    game_engine.setBg("Hive 0", spriteData.hive0_bg_opacity)
+    game_engine.setBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity))
   }
   game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
     world: go_to_world_num,

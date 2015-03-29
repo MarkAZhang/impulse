@@ -22,6 +22,8 @@ impulseColors['impulse_blue_dark'] = "#13527e"
 impulseColors['rose'] = "#ff66cc";
 impulseColors['gold'] = "#edb900"
 
+impulseColors['menuBg'] = '#111111';
+
 impulseColors['world 0'] = "#333"
 impulseColors['world 0 lite'] = "#999"
 impulseColors['world 0 bright'] = "#fff"

@@ -11,6 +11,7 @@ var saveData = require('../load/save_data.js');
 var spriteData = require('../data/sprite_data.js');
 var uiRenderUtils = require('../render/ui.js');
 
+var Background = require('../render/background.js');
 var Fader = require('../game_states/fader_util.js');
 var GameState = require('../game_states/game_state.js');
 var IconButton = require('../ui/icon_button.js');
@@ -44,7 +45,7 @@ function WorldMapState(opts) {
     _this.fader.set_animation("fade_out", function() {
       game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
     });
-    game_engine.switchBg("Hive 0", 250, spriteData.hive0_bg_opacity)
+    game_engine.switchBg(new Background("#181818", "Hive 0", spriteData.menuBgOpacity), 250);
   }, "back"));
 
   this.difficulties = ["easy", "normal"];
@@ -213,9 +214,9 @@ WorldMapState.prototype.update_bg = function(index, difficulty) {
     index = this.world_num;
   }
   if (index != 0 && difficulty == "normal") {
-    game_engine.switchBg("Title Alt" + index, 250, uiRenderUtils.getWorldMapBgOpacity(index))
+    game_engine.switchBg(new Background(constants.colors['menuBg'], "Title Alt" + index, uiRenderUtils.getWorldMapBgOpacity(index)), 250);
   } else {
-    game_engine.switchBg("Hive 0", 250, spriteData.hive0_bg_opacity)
+    game_engine.switchBg(new Background(constants.colors['menuBg'], "Hive 0", spriteData.menuBgOpacity), 250);
   }
 }
 

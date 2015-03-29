@@ -40,10 +40,10 @@ uiRenderUtils.getWorldMapBgOpacity = function(world) {
   // Return opacity for the background in world-map state.
   var opacity_array = [
     spriteData.hive0_bg_opacity,
-    0.2,
-    0.35,
-    0.3,
-    0.25,
+    0.05,
+    0.1,
+    0.1,
+    0.1,
   ];
   return opacity_array[world];
 }
