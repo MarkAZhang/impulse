@@ -726,7 +726,6 @@ function EnemyBox(enemy_name, previous_menu) {
   this.max_enemy_d = 50
   this.other_notes = null
 
-  this.w = 600
   this.back_button = new IconButton("BACK", 16, this.x, this.y - this.h/2 + 560, 60, 65, this.button_color, this.hover_color, function(_this) { return function() {
     _this.fader.set_animation("fade_out", function() {
       if(_this.previous_menu.isDialogBox) {
