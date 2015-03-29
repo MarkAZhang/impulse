@@ -90,7 +90,7 @@ function BossOne(world, x, y, id, impulse_game_state) {
   this.boss_force = 30
 
   if(saveData.difficultyMode == "easy") {
-    this.boss_force = 20
+    this.boss_force = 30
   }
 
   this.joint_padding = 1
@@ -1050,7 +1050,7 @@ BossOne.prototype.explode = function() {
 
 BossOne.prototype.get_impulse_extra_factor = function() {
   if(saveData.difficultyMode == "easy") {
-    return this.impulse_extra_factor * 2;
+    return this.impulse_extra_factor * 1.5;
   }
   return this.impulse_extra_factor;
 }

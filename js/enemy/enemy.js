@@ -683,7 +683,7 @@ Enemy.prototype.enemy_hit_proc = function(other) {
 Enemy.prototype.player_hit_proc = function() {
   //what happens when hits player
   if(saveData.difficultyMode == "easy") {
-    this.player.stun(300)
+    this.player.stun(500)
   }
   if(saveData.difficultyMode == "normal") {
     this.player.stun(500)
