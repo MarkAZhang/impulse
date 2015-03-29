@@ -23,6 +23,11 @@ impulseColors['rose'] = "#ff66cc";
 impulseColors['gold'] = "#edb900"
 
 impulseColors['menuBg'] = '#111111';
+impulseColors['world 0 bg'] = '#080808';
+impulseColors['world 1 bg'] = '#000d00';
+impulseColors['world 2 bg'] = '#010310';
+impulseColors['world 3 bg'] = '#0f0013';
+impulseColors['world 4 bg'] = '#180000';
 
 impulseColors['world 0'] = "#333"
 impulseColors['world 0 lite'] = "#999"

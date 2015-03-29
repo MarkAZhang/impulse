@@ -23,18 +23,29 @@ uiRenderUtils.drawEnemyButton = function(ctx, x, y, r, type) {
   enemyRenderUtils.drawEnemy(ctx, type, x, y, 30)
 }
 
-
 uiRenderUtils.getBgOpacity = function(world) {
   // Return opacity for the background in world menus.
   var opacity_array = [
-    spriteData.hive0_bg_opacity,
-    spriteData.bg_opacity,
+    0.3,
+    0.3,
     0.8,
     0.4,
-    spriteData.bg_opacity
+    0.3
   ];
   return opacity_array[world];
 }
+
+uiRenderUtils.getLevelBgOpacity = function(world) {
+  // Return opacity for the background in world menus.
+  var opacity_array = [
+    0.3,
+    0.3,
+    1,
+    0.5,
+    0.5
+  ];
+  return opacity_array[world];
+};
 
 uiRenderUtils.getWorldMapBgOpacity = function(world) {
   // Return opacity for the background in world-map state.

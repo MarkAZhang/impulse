@@ -758,9 +758,11 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
   bg_ctx.beginPath();
   bg_ctx.rect(0, 0, constants.levelWidth, constants.levelHeight)
-  bg_ctx.fillStyle = this.dark_color;
+  bg_ctx.fillStyle = constants.colors['world ' + this.world_num + ' bg'];
   bg_ctx.fill();
   bg_ctx.clip()
+  bg_ctx.save();
+  bg_ctx.globalAlpha *= uiRenderUtils.getLevelBgOpacity(this.world_num);
 
   if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
     bg_ctx.save();
@@ -778,6 +780,7 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
     bg_ctx.fillStyle = constants.colors["world 0 bright"]
     bg_ctx.fillRect(0, 0, constants.levelWidth, constants.levelHeight)
   }
+  bg_ctx.restore();
 
   if (this.is_level_zero) {
     bg_ctx.save();

@@ -1,4 +1,5 @@
 var controls = require('./controls.js');
+var debugVars = require('../data/debug.js');
 var dom = require('./dom.js');
 var EnemyFactory = require('../enemy/enemy_factory.js');
 var enemyMap = require('../enemy/enemy_map.js');
@@ -26,7 +27,11 @@ main.executeGame = function() {
   graphics.generateEnemyBufferImages();
   music_player.setPlayerOptions();
   game_engine.injectGameStateFactory(GameStateFactory);
-  game_engine.switch_game_state(gsKeys.INTRO_STATE, {});
+  if (debugVars.dev) {
+    game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
+  } else {
+    game_engine.switch_game_state(gsKeys.INTRO_STATE, {});
+  }
   game_engine.step()
 }
 
