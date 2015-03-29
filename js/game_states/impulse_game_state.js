@@ -413,15 +413,6 @@ ImpulseGameState.prototype.process = function(dt) {
       this.boss_after_death_actions = true;
       this.level.open_gateway()
       this.gateway_unlocked = true;
-      // This automatically advances the level after the boss is dead.
-      /* if(this.zoom_state == "none" && this.zoom == 1) {
-        this.zoom_in({x:constants.levelWidth/2, y:constants.levelHeight/2}, 10, this.slow_zoom_transition_period)
-        this.fade_state = "out"
-        this.on_victory();
-      } else if(this.zoom_state == "none"){
-        this.ready = false
-        this.level_defeated();
-      } */
     }
 
     if(this.victory)
@@ -514,7 +505,6 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
-  if (this.pause && !debugVars.hide_pause_menu) return
 
   this.additional_draw(ctx, bg_ctx)
   ctx.save();

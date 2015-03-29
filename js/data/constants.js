@@ -22,7 +22,7 @@ impulseColors['impulse_blue_dark'] = "#13527e"
 impulseColors['rose'] = "#ff66cc";
 impulseColors['gold'] = "#edb900"
 
-impulseColors['menuBg'] = '#111111';
+impulseColors['menuBg'] = '#231f20';
 impulseColors['world 0 bg'] = '#080808';
 impulseColors['world 1 bg'] = '#000d00';
 impulseColors['world 2 bg'] = '#010310';

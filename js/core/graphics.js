@@ -1,3 +1,4 @@
+var constants = require('../data/constants.js');
 var enemyData = require('../data/enemy_data.js');
 
 var Background = require('../render/background.js');
@@ -15,7 +16,7 @@ graphics.generateEnemyBufferImages = function () {
 };
 
 graphics.generateBackgrounds = function () {
-    graphics.menuBackground = new Background("#231f20");
+    graphics.menuBackground = new Background(constants.colors['menuBg']);
 }
 
 module.exports = graphics;

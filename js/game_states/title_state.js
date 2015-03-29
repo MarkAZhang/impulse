@@ -32,7 +32,6 @@ TitleState.prototype.constructor = TitleState
 TitleState.prototype.isTitleState = true;
 
 function TitleState() {
-  this.menu_buttons = [];
   this.buttons = [];
   var _this = this
   this.bg_drawn = false
@@ -95,11 +94,6 @@ TitleState.prototype.draw = function(ctx) {
     this.buttons[i].draw(ctx)
   }
 
-  for(var i = 0; i < this.menu_buttons.length; i++)
-  {
-    this.menu_buttons[i].draw(ctx)
-  }
-
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].post_draw(ctx)
@@ -110,10 +104,6 @@ TitleState.prototype.draw = function(ctx) {
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
-  for(var i = 0; i < this.menu_buttons.length; i++)
-  {
-    this.menu_buttons[i].on_mouse_move(x, y)
-  }
   for(var i = 0; i < this.buttons.length; i++)
   {
     this.buttons[i].on_mouse_move(x, y)
@@ -121,9 +111,6 @@ TitleState.prototype.on_mouse_move = function(x, y) {
 }
 
 TitleState.prototype.on_click = function(x, y) {
-  for(var i = 0; i < this.menu_buttons.length; i++) {
-    this.menu_buttons[i].on_click(x, y)
-  }
   for(var i = 0; i < this.buttons.length; i++) {
     this.buttons[i].on_click(x, y)
   }
@@ -227,7 +214,7 @@ TitleState.prototype.setup_main_menu = function() {
   var _this = this;
   _.forEach(buttons_to_add, function(button_data, i) {
     var height = 292 + 36 * i;
-    _this.menu_buttons.push(new SmallButton(button_data.text, 24, 400, height, 200, 36, "#999", "#fff",
+    _this.buttons.push(new SmallButton(button_data.text, 24, 400, height, 200, 36, "#999", "#fff",
       button_data.action));
   });
 

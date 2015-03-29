@@ -233,18 +233,8 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = 'red'
     ctx.fillText("GAME OVER", constants.levelWidth/2, 80)
     ctx.fillStyle = this.bright_color
-    if(this.hive_numbers.continues > 0) {
-      ctx.font = '18px Open Sans'
-      ctx.fillText("CONTINUES: "+this.hive_numbers.continues, constants.levelWidth/2, 175)
-    }
     ctx.font = '40px Open Sans'
     ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 130)
-  }
-
-  if(this.victory && this.hive_numbers.continues) {
-    ctx.fillStyle = this.bright_color
-    ctx.font = '18px Open Sans'
-    ctx.fillText("CONTINUES: "+this.hive_numbers.continues, constants.levelWidth/2, 250)
   }
 
   if(this.victory) {

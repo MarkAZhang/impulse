@@ -1,4 +1,4 @@
-var constants = require('../data/constants.js');
+// var constants = require('../data/constants.js');
 var iconRenderUtils = require('../render/icons.js');
 var renderUtils = require('../render/utils.js');
 var saveData = require('../load/save_data.js');
@@ -24,9 +24,8 @@ function IconButton(text, size, x, y, w, h, color, hcolor, action, icon) {
   this.bg_color = null//"black"
   this.underline_on_hover = true
 
-  if (this.icon.slice(0, 5) == "world") {
+  if (this.icon.slice(0, 5) == "world" || this.icon == "close") {
     this.underline_on_hover = false;
-
   }
 };
 
@@ -59,6 +58,8 @@ IconButton.prototype.additional_draw = function(context) {
 
   if (this.icon.slice(0, 8) == "practice") {
     context.fillText(this.text, this.x - 1, this.y + this.h/6)
+  } else if (this.icon == "close") {
+    context.fillText(this.text, this.x, this.y)
   } else if (this.icon.slice(0, 5) != "world") {
     context.fillText(this.text, this.x, this.y + this.h/3)
   }
@@ -172,6 +173,12 @@ IconButton.prototype.draw_icon  = function(context) {
       iconRenderUtils.drawQuitIcon(context, this.x, this.y - this.h/6, 24, this.hover_color)
     } else {
       iconRenderUtils.drawQuitIcon(context, this.x, this.y - this.h/6, 24, this.color)
+    }
+  } else if(this.icon == "close") {
+    if(this.hover) {
+      iconRenderUtils.drawQuitIcon(context, this.x - 45, this.y - 6, 18, this.hover_color)
+    } else {
+      iconRenderUtils.drawQuitIcon(context, this.x - 45, this.y - 6, 18, this.color)
     }
   } else if(this.icon == "delete") {
     if(this.hover) {

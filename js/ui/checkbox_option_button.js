@@ -23,9 +23,6 @@ function CheckboxOptionButton(text, x, y, w, h, color, hcolor, action, check_ver
 
 CheckboxOptionButton.prototype.additional_draw = function(ctx) {
   ctx.save();
-  if (!this.mouseOver) {
-    ctx.globalAlpha *= 0.5;
-  }
 
   ctx.textAlign = 'left'
   ctx.font = '18px Open Sans';

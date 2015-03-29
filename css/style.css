@@ -2,6 +2,7 @@ body{
   background:#000;
   margin: 0px;
   padding: 0px;
+  -webkit-font-smoothing: antialiased;
 }
 #canvas_container {
   position: absolute;
@@ -28,6 +29,11 @@ body{
 @font-face {
     font-family:"Open Sans";
     src: url("../font/OpenSans-Light.ttf");
+}
+
+@font-face {
+    font-family:"Open Sans Bold";
+    src: url("../font/OpenSans-Bold.ttf");
 }
 #message{
   font-family: "Open Sans";

@@ -14,14 +14,11 @@ function SliderOptionButton(text, x, y, w, h, color, hcolor, action, starting_va
   this.slider.onselect = action
   this.hcolor = hcolor;
   this.special_mode = false;
-  this.special_text = 'MUTED (M)'
+  this.special_text = 'MUTED'
 }
 
 SliderOptionButton.prototype.additional_draw = function(ctx) {
   ctx.save();
-  if (!this.mouseOver) {
-    ctx.globalAlpha *= 0.5;
-  }
 
   ctx.textAlign = 'left'
   ctx.font = '18px Open Sans';

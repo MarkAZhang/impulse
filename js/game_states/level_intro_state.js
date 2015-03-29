@@ -198,14 +198,14 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = this.bright_color
     ctx.font = '12px Open Sans'
-    ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, 480)
+    ctx.fillText("BEST TIME", constants.levelWidth/2, 480)
     if (saveData.hasBeatenLevel(this.level_name)) {
       ctx.font = '28px Open Sans'
       ctx.fillText(utils.convertSecondsToTimeString(saveData.getBestTimeForLevel(this.level_name)),
-        constants.levelWidth/2 + 100, 505)
+        constants.levelWidth/2, 505)
     } else {
       ctx.font = '24px Open Sans'
-      ctx.fillText("UNDEFEATED", constants.levelWidth/2 + 100, 505)
+      ctx.fillText("UNDEFEATED", constants.levelWidth/2, 505)
     }
   } else {
 

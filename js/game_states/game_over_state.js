@@ -205,7 +205,7 @@ GameOverState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.6;
       ctx.fillStyle = this.color
       ctx.font = '12px Open Sans'
-      ctx.fillText("BEST TIME", constants.levelWidth/2 + 100, best_score_label_y)
+      ctx.fillText("BEST TIME", constants.levelWidth/2  + 100, best_score_label_y)
       ctx.font = '28px Open Sans'
       if (saveData.hasBeatenLevel(this.level_name)) {
         ctx.font = '28px Open Sans'
