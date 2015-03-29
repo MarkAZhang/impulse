@@ -519,6 +519,7 @@ ImpulseGameState.prototype.set_zoom_transparency = function(ctx) {
 ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
   if(!this.ready) return
 
+  this.bg_transition()
   this.additional_draw(ctx, bg_ctx)
   ctx.save();
   ctx.translate(constants.sideBarWidth, 0)//allows us to have a topbar
@@ -640,8 +641,6 @@ ImpulseGameState.prototype.draw = function(ctx, bg_ctx) {
     this.tutorial_overlay_manager.draw(ctx);
   }
   ctx.restore();
-
-  this.bg_transition()
 
   /*for(var i = 0; i < this.visibility_graph.vertices.length; i++)
   {
