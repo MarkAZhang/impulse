@@ -146,7 +146,7 @@ TitleState.prototype.setup_main_menu = function() {
     }
   });
 
-  if (!this.firstTime) {
+  if (!saveData.firstTime) {
     buttons_to_add.push({
       text: 'PRACTICE',
       action: function () {
@@ -206,6 +206,7 @@ TitleState.prototype.setup_main_menu = function() {
       action: function () {
         _this.fader.set_animation("fade_out", function() {
           game_engine.switch_game_state(gsKeys.LEVEL_EDITOR_STATE, {});
+          window.gs = game_engine.cur_game_state;
         });
       }
     })

@@ -355,16 +355,16 @@ RewardGameState.prototype.determine_rewards = function() {
   if(this.game_args.is_tutorial) {
     if(this.game_args.tutorial_type == "first_time_tutorial" || this.game_args.first_time_tutorial) {
       logging.send_logging_to_server('COMPLETED TUTORIAL', {skipped: this.game_args.skipped});
-      this.rewards.push({
+      /* this.rewards.push({
         type: "first_time_tutorial"
-      })
+      }) */
       saveData.firstTime = false;
       saveData.saveGame();
     }
     return
   }
 
-  if (this.main_game) {
+  if (this.main_game && this.victory) {
     if(this.hive_numbers.world == 4 &&
         saveData.tutorialsShown.indexOf(saveData.difficultyMode + "_final_victory") == -1) {
       saveData.tutorialsShown.push(saveData.difficultyMode + "_final_victory");

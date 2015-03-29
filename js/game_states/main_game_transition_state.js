@@ -112,12 +112,24 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
 MainGameTransitionState.prototype.should_skip_transition_state = function () {
   // Should skip the transition state entirely as soon as the level is loaded.
-  return this.world_num == 0;
+  return true;
 }
 
 MainGameTransitionState.prototype.maybe_switch_states = function () {
   // if last level of tutorial, go to summary state.
   if(this.world_num == 0 && this.last_level && this.last_level.level_name == levelData.lastTutorialLevel) {
+    game_engine.switch_game_state(gsKeys.MAIN_GAME_SUMMARY_STATE, {
+      world_num: this.world_num,
+      victory: true,
+      hive_numbers: this.hive_numbers,
+      visibility_graph: null,
+      save_screen: false,
+      just_saved: false
+    });
+    return true;
+  }
+
+  if(this.last_level && this.last_level.is_boss_level) {
     game_engine.switch_game_state(gsKeys.MAIN_GAME_SUMMARY_STATE, {
       world_num: this.world_num,
       victory: true,
@@ -140,18 +152,6 @@ MainGameTransitionState.prototype.maybe_switch_states = function () {
         main_game: true
       });
     }
-    return true;
-  }
-
-  if(this.last_level && this.last_level.is_boss_level) {
-    game_engine.switch_game_state(gsKeys.MAIN_GAME_SUMMARY_STATE, {
-      world_num: this.world_num,
-      victory: true,
-      hive_numbers: this.hive_numbers,
-      visibility_graph: null,
-      save_screen: false,
-      just_saved: false
-    });
     return true;
   }
 

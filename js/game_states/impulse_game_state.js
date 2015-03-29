@@ -297,7 +297,18 @@ ImpulseGameState.prototype.transition_to_hive0bg = function (dur) {
   this.hive0bg_canvas.width = constants.levelWidth;
   this.hive0bg_canvas.height = constants.levelHeight;
   var hive0bg_ctx = this.hive0bg_canvas.getContext('2d');
-  uiRenderUtils.tessellateBg(hive0bg_ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0")
+  this.draw_hive0bg(hive0bg_ctx);
+}
+
+ImpulseGameState.prototype.draw_hive0bg = function (ctx) {
+  ctx.beginPath();
+  ctx.rect(0, 0, constants.levelWidth, constants.levelHeight)
+  ctx.fillStyle = constants.colors['world 0 bg'];
+  ctx.fill();
+  ctx.save();
+  ctx.globalAlpha *= uiRenderUtils.getLevelBgOpacity(0);
+  uiRenderUtils.tessellateBg(ctx, 0, 0, constants.levelWidth, constants.levelHeight, "Hive 0")
+  ctx.restore();
 }
 
 ImpulseGameState.prototype.check_pause = function() {
@@ -341,8 +352,10 @@ ImpulseGameState.prototype.process = function(dt) {
       this.hive0bg_transition_timer -= dt;
     } else if (this.hive0bg_transition) {
       this.hive0bg_transition = false;
-      uiRenderUtils.tessellateBg(layers.bgCtx,
-        constants.sideBarWidth, 0, constants.levelWidth + constants.sideBarWidth, constants.levelHeight, "Hive 0")
+      layers.bgCtx.save();
+      layers.bgCtx.translate(constants.sideBarWidth, 0);
+      this.draw_hive0bg(layers.bgCtx);
+      layers.bgCtx.restore();
     }
     if (this.show_tutorial) {
       this.tutorial_overlay_manager.process(dt);

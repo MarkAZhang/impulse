@@ -37,7 +37,7 @@ WorldSaveData.prototype.addWorldDataToSaveObj = function (save_obj) {
 };
 
 WorldSaveData.prototype.getBestTimeForWorld = function(world_name, difficulty_mode) {
-  if (!this.hasBeatenLevel(world_name, difficulty_mode)) {
+  if (!this.hasBeatenWorld(world_name, difficulty_mode)) {
     return false;
   }
   return this.getWorldData(world_name, difficulty_mode).best_time;

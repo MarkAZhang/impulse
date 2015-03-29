@@ -22,7 +22,6 @@ LevelEditorState.prototype = new GameState
 LevelEditorState.prototype.constructor = LevelEditorState
 
 function LevelEditorState() {
-
   this.polygons = []
 
   this.outline_polygons = []
@@ -43,7 +42,6 @@ function LevelEditorState() {
 
   this.zoom = 1
   this.camera_center = {x:constants.levelWidth/2, y:constants.levelHeight/2}
-
 }
 
 LevelEditorState.prototype.process = function(dt) {

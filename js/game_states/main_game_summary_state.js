@@ -299,7 +299,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     if(this.just_saved)
       ctx.fillText("PRESS ANY KEY FOR MAIN MENU", constants.levelWidth/2, constants.levelHeight - 30)
   } else if(this.victory) {
-    ctx.fillText("PRESS ANY KEY FOR MAIN MENU", constants.levelWidth/2, constants.levelHeight - 30)
+    ctx.fillText("PRESS ANY KEY TO CONTINUE", constants.levelWidth/2, constants.levelHeight - 30)
   } else {
     ctx.fillText("PRESS ANY KEY FOR MAIN MENU", constants.levelWidth/2, constants.levelHeight - 30)
   }

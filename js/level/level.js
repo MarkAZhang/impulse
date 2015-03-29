@@ -758,7 +758,11 @@ Level.prototype.draw_bg = function(bg_ctx, omit_gateway) {
   bg_ctx.save()
   bg_ctx.beginPath();
   bg_ctx.rect(0, 0, constants.levelWidth, constants.levelHeight)
-  bg_ctx.fillStyle = constants.colors['world ' + this.world_num + ' bg'];
+  if (this.world_num != null && this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
+    bg_ctx.fillStyle = constants.colors['world 0 bg'];
+  } else {
+    bg_ctx.fillStyle = constants.colors['world ' + this.world_num + ' bg'];
+  }
   bg_ctx.fill();
   bg_ctx.clip()
   bg_ctx.save();
