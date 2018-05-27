@@ -73,12 +73,12 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  uiRenderUtils.drawPorcelainLogo(ctx, 400, 180);
-  ctx.font = '16px Open Sans'
-  ctx.fillStyle = constants.colors["impulse_blue"]
+  ctx.font = '24px Open Sans'
+  ctx.fillStyle = 'white'
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
-  ctx.fillText("CREATED BY", constants.levelWidth/2, 60)
+  ctx.fillText("CREATED BY MARK ZHANG", constants.levelWidth/2, 150)
+  ctx.font = '16px Open Sans'
   ctx.fillText("WITH CREDIT TO", constants.levelWidth/2, 260)
   if (this.after_main_game) {
     ctx.save();

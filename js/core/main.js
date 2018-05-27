@@ -28,11 +28,9 @@ main.executeGame = function() {
   graphics.generateBackgrounds();
   music_player.setPlayerOptions();
   game_engine.injectGameStateFactory(GameStateFactory);
-  if (debugVars.dev) {
-    game_engine.switch_game_state(gsKeys.TITLE_STATE, {});
-  } else {
-    game_engine.switch_game_state(gsKeys.INTRO_STATE, {});
-  }
+  game_engine.switch_game_state(gsKeys.TITLE_STATE, {
+    initialLoad: true,
+  });
   game_engine.step()
 }
 

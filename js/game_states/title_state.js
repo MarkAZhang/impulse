@@ -31,7 +31,7 @@ TitleState.prototype.constructor = TitleState
 
 TitleState.prototype.isTitleState = true;
 
-function TitleState() {
+function TitleState(options) {
   this.buttons = [];
   var _this = this
   this.bg_drawn = false
@@ -41,29 +41,39 @@ function TitleState() {
 
   music_player.play_bg(audioData.songs["Menu"])
 
-  this.fader = new Fader({
-    "fade_in": 500,
-    "fade_out": 250
-  });
-  this.fader.set_animation("fade_in");
+  if (options.initialLoad) {
+    this.fader = new Fader({
+      "pause": 500,
+      "fade_in": 1000,
+      "fade_out": 250
+    });
+    this.fader.set_animation("pause");
+    this.needToFadeIn = true
+  } else {
+    this.fader = new Fader({
+      "fade_in": 500,
+      "fade_out": 250
+    });
+    this.fader.set_animation("fade_in");
+  }
+
   this.trailer_fade_in = 0;
   this.trailer_fade_total = 8000;
   this.trailer_fade_delay = 7000;
-
-  if (debugVars.is_beta) {
-    this.feedback_button = new SmallButton(
-    "HELP US IMPROVE THE BETA", 18, 400, 570, 200, 50, "#999", "#fff",
-      function() {
-        window.open('http://goo.gl/forms/dmZlmtpJd0');
-    });
-    this.buttons.push(this.feedback_button);
-  }
 }
 
 TitleState.prototype.process = function(dt) {
+  // Hack to make the initial animation work.
+  if (dt > 500) {
+    return
+  }
   this.fader.process(dt);
   this.trailer_fade_in += dt
   game_engine.processAndDrawBg(dt);
+  if (this.fader.animation === null && this.needToFadeIn) {
+    this.needToFadeIn = false
+    this.fader.set_animation('fade_in')
+  }
 }
 
 TitleState.prototype.draw = function(ctx) {
@@ -75,7 +85,9 @@ TitleState.prototype.draw = function(ctx) {
 
   ctx.save()
 
-  if (this.fader.get_current_animation() == "fade_in") {
+  if (this.fader.get_current_animation() == "pause") {
+    ctx.globalAlpha *= 0
+  } else if (this.fader.get_current_animation() == "fade_in") {
     ctx.globalAlpha *= this.fader.get_animation_progress();
   } else if (this.fader.get_current_animation() == "fade_out") {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();

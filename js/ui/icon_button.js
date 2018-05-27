@@ -1,4 +1,4 @@
-// var constants = require('../data/constants.js');
+var constants = require('../data/constants.js');
 var iconRenderUtils = require('../render/icons.js');
 var renderUtils = require('../render/utils.js');
 var saveData = require('../load/save_data.js');
