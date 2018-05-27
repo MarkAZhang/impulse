@@ -15,7 +15,7 @@ var SaveData = function() {
 SaveData.prototype.version = "1.0.0";
 
 SaveData.prototype.resetData = function () {
-  this.difficultyMode = "easy";
+  this.difficultyMode = "normal";
   this.firstTime = true; // Used to change the player's experience the first time.
   this.levelData = new LevelSaveData();
   this.worldData = new WorldSaveData();
@@ -107,6 +107,9 @@ SaveData.prototype.loadGame = function() {
   if (loadObj['enemies_seen']) {
     this.enemiesSeen = loadObj['enemies_seen'];
   }
+
+  // Hack to remove "easy" mode. No more easy mode.
+  this.difficultyMode = "normal"
 };
 
 SaveData.prototype.saveGame = function() {

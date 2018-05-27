@@ -159,9 +159,6 @@ LevelIntroState.prototype.draw = function(ctx, bg_ctx) {
 
     ctx.fillStyle = "white"
     ctx.font = '18px Open Sans'
-    if (saveData.difficultyMode == "normal") {
-      ctx.fillText("HARD MODE", constants.levelWidth/2, 100)
-    }
 
     ctx.beginPath()
     ctx.fillStyle = constants.colors['world '+ this.world_num + ' bright']

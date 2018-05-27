@@ -95,7 +95,7 @@ function MainGameSummaryState(opts) {
     this.resume_button.shadow = false
     this.buttons.push(this.resume_button)
 
-    this.delete_button = new IconButton("DELETE", 16, constants.levelWidth/2, constants.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
+    this.delete_button = new IconButton("START NEW GAME", 16, constants.levelWidth/2, constants.levelHeight/2+260, 100, 65, this.bright_color, this.bright_color, function(_this){return function(){
       _this.delete_game()
     }}(this), "delete_small")
     this.buttons.push(this.delete_button)
@@ -203,12 +203,10 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, 220, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = "white"
-    ctx.fillText("GAME SAVED" , constants.levelWidth/2, 210)
+    ctx.fillText("GAME SAVED" , constants.levelWidth/2, 190)
     ctx.fillStyle = this.bright_color;
-    ctx.font = '40px Open Sans'
-    ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 250)
-    ctx.font = '24px Open Sans'
-    ctx.fillText(this.hive_numbers.current_level, constants.levelWidth/2, 280);
+    ctx.font = '60px Open Sans'
+    ctx.fillText(this.hive_numbers.current_level, constants.levelWidth/2, 250)
 
     ctx.textAlign = 'center'
 
@@ -370,9 +368,12 @@ MainGameSummaryState.prototype.resume_game = function() {
 
 MainGameSummaryState.prototype.delete_game = function() {
   saveData.clearSavedPlayerGame();
-  game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
-    world: this.world_num,
-    is_practice_mode: false
+  game_engine.switch_game_state(gsKeys.MAIN_GAME_TRANSITION_STATE, {
+    world_num: 1,
+    last_level: null,
+    visibility_graph: null,
+    hive_numbers: null,
+    loading_saved_game: false
   });
 }
 

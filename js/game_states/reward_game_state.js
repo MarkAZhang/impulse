@@ -300,10 +300,7 @@ RewardGameState.prototype.switch_to_world_map = function(is_practice_mode) {
   // If we just unlocked hard mode, go to 1.
   var go_to_world_num = this.hard_mode_just_unlocked ? 1 : this.hive_numbers.world;
   game_engine.setBg(graphics.menuBackground);
-  game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
-    world: go_to_world_num,
-    is_practice_mode: is_practice_mode
-  });
+  game_engine.switch_game_state(gsKeys.TITLE_STATE, {})
 }
 
 RewardGameState.prototype.advance_game_state = function() {

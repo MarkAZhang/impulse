@@ -63,10 +63,7 @@ function GameOverState(opts) {
  this.buttons.push(new IconButton("MENU", 16, 70, constants.levelHeight/2+260, 60, 65, this.color, "white", function(_this){return function(){
     if(_this.world_num) {
       _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
-          world: _this.world_num,
-          is_practice_mode: true
-        });
+        game_engine.switch_game_state(gsKeys.TITLE_STATE, {})
         game_engine.setBg(graphics.menuBackground);
       });
     }

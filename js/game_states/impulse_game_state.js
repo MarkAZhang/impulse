@@ -809,14 +809,6 @@ ImpulseGameState.prototype.draw_interface = function(context) {
     levelData.levels[this.level_name].show_full_interface ||
     levelData.levels[this.level_name].show_score_interface);
 
-  if (showHardMode) {
-    context.font = "20px Open Sans"
-    context.save()
-    context.globalAlpha *= 1
-    context.fillText("HARD MODE", constants.sideBarWidth/2, titleTextY + 170)
-    context.restore()
-  }
-
   // Draw the level name.
   if (showLevelName) {
     if (this.is_tutorial_level) {

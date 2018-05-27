@@ -96,9 +96,9 @@ TitleState.prototype.draw = function(ctx) {
   ctx.shadowColor = constants.colors["impulse_blue"]
   ctx.shadowBlur = 0
   if (debugVars.is_beta) {
-    uiRenderUtils.drawLogo(ctx,constants.levelWidth/2, 195, "BETA")
+    uiRenderUtils.drawLogo(ctx,constants.levelWidth/2, 245, "BETA")
   } else {
-    uiRenderUtils.drawLogo(ctx,constants.levelWidth/2, 195, "")
+    uiRenderUtils.drawLogo(ctx,constants.levelWidth/2, 245, "")
   }
 
   for(var i = 0; i < this.buttons.length; i++)
@@ -149,16 +149,19 @@ TitleState.prototype.setup_main_menu = function() {
         var i = saveData.latestWorld();
         game_engine.setBg(graphics.menuBackground);
         _this.fader.set_animation("fade_out", function() {
-          game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
-            world: i,
-            is_practice_mode: false
+          game_engine.switch_game_state(gsKeys.MAIN_GAME_TRANSITION_STATE, {
+            world_num: 1,
+            last_level: null,
+            visibility_graph: null,
+            hive_numbers: null,
+            loading_saved_game: false
           });
         });
       }
     }
   });
 
-  if (!saveData.firstTime) {
+  /* if (!saveData.firstTime) {
     buttons_to_add.push({
       text: 'PRACTICE',
       action: function () {
@@ -172,7 +175,7 @@ TitleState.prototype.setup_main_menu = function() {
         });
       }
     });
-  }
+  } */
 
   buttons_to_add.push({
     text: 'OPTIONS',
@@ -183,14 +186,14 @@ TitleState.prototype.setup_main_menu = function() {
     }
   });
 
-  buttons_to_add.push({
+  /* buttons_to_add.push({
     text: 'ACHIEVEMENTS',
     action: function () {
       _this.fader.set_animation("fade_out", function() {
         game_engine.switch_game_state(gsKeys.QUEST_GAME_STATE, {});
       });
     }
-  });
+  }); */
 
   buttons_to_add.push({
     text: 'CREDITS',
@@ -226,7 +229,7 @@ TitleState.prototype.setup_main_menu = function() {
 
   var _this = this;
   _.forEach(buttons_to_add, function(button_data, i) {
-    var height = 292 + 36 * i;
+    var height = 342 + 36 * i;
     _this.buttons.push(new SmallButton(button_data.text, 24, 400, height, 200, 36, "#999", "#fff",
       button_data.action));
   });

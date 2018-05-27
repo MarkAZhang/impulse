@@ -28,11 +28,11 @@ function CreditsState(opts) {
   var _this = this
 
 
-  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, constants.levelWidth/2 - 250, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
-  this.buttons.push(new IconButton("MATT MCFARLAND", 16, constants.levelWidth/2, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
-  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, constants.levelWidth/2 + 250, constants.levelHeight/2 + 50, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
-  this.buttons.push(new IconButton("JAY SALVAT", 16, constants.levelWidth/2 - 150, constants.levelHeight/2+180, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
-  this.buttons.push(new IconButton("ERIN CATTO", 16, constants.levelWidth/2 + 150, constants.levelHeight/2+180, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
+  this.buttons.push(new IconButton("KEVIN MACLEOD", 16, constants.levelWidth/2 - 250, constants.levelHeight/2, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://incompetech.com")}, "note"))
+  this.buttons.push(new IconButton("MATT MCFARLAND", 16, constants.levelWidth/2, constants.levelHeight/2, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.mattmcfarland.com")}, "note"))
+  this.buttons.push(new IconButton("SUBTLE PATTERNS", 16, constants.levelWidth/2 + 250, constants.levelHeight/2, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://www.subtlepatterns.com")}, "texture"))
+  this.buttons.push(new IconButton("JAY SALVAT", 16, constants.levelWidth/2 - 150, constants.levelHeight/2+130, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://buzz.jaysalvat.com/")}, "audio"))
+  this.buttons.push(new IconButton("ERIN CATTO", 16, constants.levelWidth/2 + 150, constants.levelHeight/2+130, 150, 70, "white", constants.colors["impulse_blue"], function(){window.open("http://box2d.org/")}, "physics_engine"))
   this.buttons[0].extra_text = "MAIN MENU MUSIC"
   this.buttons[1].extra_text = "ALL OTHER MUSIC"
   this.buttons[2].extra_text = "TEXTURES"
@@ -73,13 +73,13 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  ctx.font = '24px Open Sans'
+  ctx.font = '32px Open Sans'
   ctx.fillStyle = 'white'
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle
   ctx.fillText("CREATED BY MARK ZHANG", constants.levelWidth/2, 150)
   ctx.font = '16px Open Sans'
-  ctx.fillText("WITH CREDIT TO", constants.levelWidth/2, 260)
+  ctx.fillText("WITH CREDIT TO", constants.levelWidth/2, 230)
   if (this.after_main_game) {
     ctx.save();
     ctx.globalAlpha *= 0.5;

@@ -1323,17 +1323,17 @@ var levelData = {};
 levelData.levels = levels;
 
 levelData.bossNames = {
-  1: "IGNAVIAM",
-  2: "CONSUMENDI",
-  3: "NEGLIGENTIA",
-  4: "ADROGANTIA"
+  1: "BOSS 1",
+  2: "BOSS 2",
+  3: "BOSS 3",
+  4: "BOSS 4"
 };
 
 levelData.hiveNames = {
-  1: "HIVE OF HIDING",
-  2: "HIVE OF EATING",
-  3: "HIVE OF LAUGHING",
-  4: "HIVE OF PURGING"
+  1: "HIVE 1",
+  2: "HIVE 2",
+  3: "HIVE 3",
+  4: "HIVE 4"
 };
 
 levelData.lastTutorialLevel = 'HIVE 0-3';
