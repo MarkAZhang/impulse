@@ -61,13 +61,13 @@ function on_resize(event) {
 }
 
 io.set_up_listeners = function () {
-  window.addEventListener('keydown', on_key_down, false);
-  window.addEventListener('keyup', on_key_up, false);
-  window.addEventListener('click', on_click, false);
-  window.addEventListener('mousedown', on_mouse_down, false);
-  window.addEventListener('mouseup', on_mouse_up, false);
-  window.addEventListener('mousemove', on_mouse_move, false)
-  window.addEventListener('resize', on_resize, false)
+  document.addEventListener('keydown', on_key_down);
+  document.addEventListener('keyup', on_key_up);
+  document.addEventListener('click', on_click);
+  document.addEventListener('mousedown', on_mouse_down);
+  document.addEventListener('mouseup', on_mouse_up);
+  document.addEventListener('mousemove', on_mouse_move)
+  document.addEventListener('resize', on_resize)
 }
 
 module.exports = io;

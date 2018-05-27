@@ -10,14 +10,9 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <!-- RavenJS -->
-    <script src="//cdn.ravenjs.com/1.1.15/jquery,native/raven.min.js"></script>
+    <script src="https://cdn.ravenjs.com/3.25.2/raven.min.js" crossorigin="anonymous"></script>
     <script>
-        Raven.config('https://6a20852ac459407e960a0700456cea2e@app.getsentry.com/37097', {
-        }).install();
-        Raven.setUser({
-            email: 'porcelaingames@gmail.com',
-            id: 'porcelaingames'
-        });
+        Raven.config('https://3afbe13131314a1ba09d47c052a8a38e@sentry.io/1214438').install()
     </script>
     <!-- END RavenJS -->
     <script>
