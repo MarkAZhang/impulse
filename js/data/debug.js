@@ -5,7 +5,7 @@ var debugVars = {
   old_menu: false,
   show_zero_level: false,
   is_beta: true,
-  instant_victory_enabled: false,
+  instant_victory_enabled: true,
   hide_pause_menu: false,
   use_minified_worker: true,
   jukebox_enabled: false

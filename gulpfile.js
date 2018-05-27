@@ -37,8 +37,8 @@ function bundle() {
     //  .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
     //  .pipe(sourcemaps.write('./')) // writes .map file
     //
-    .pipe(gulp.dest('./js/dist'))
     .pipe(rename('impulse.min.js'))
-    .pipe(streamify(uglify()))
-    .pipe(gulp.dest('./js/dist'));
+    .pipe(gulp.dest('./js/dist'))
+    // .pipe(streamify(uglify()))
+    // .pipe(gulp.dest('./js/dist'));
 }

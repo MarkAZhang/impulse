@@ -86,15 +86,14 @@ function MainGameTransitionState(opts) {
     this.level_intro_interval = 1000
   }
 
-
-  if(this.world_num != 0 && (!this.last_level || !this.last_level.is_boss_level) &&
-      !(this.loading_saved_game && this.hive_numbers.current_level &&
-      this.hive_numbers.current_level.substring(0, 4) == "BOSS")) {
-    if (this.is_level_zero(this.level.level_name)) {
-      music_player.play_bg(audioData.songs["Menu"])
-    } else {
-      music_player.play_bg(audioData.songs["Hive "+this.world_num])
-    }
+  if(this.world_num == 4 && this.level.is_boss_level) {
+    music_player.play_bg(audioData.songs["Final Tessellation"])
+  } else if(this.world_num >= 1 && this.level.is_boss_level) {
+    music_player.play_bg(audioData.songs["Tessellation"])
+  } else if(this.world_num === 0) {
+    music_player.play_bg(audioData.songs["Menu"]);
+  } else {
+    music_player.play_bg(audioData.songs["Hive "+this.world_num])
   }
 }
 

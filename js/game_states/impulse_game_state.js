@@ -75,17 +75,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
     this.is_tutorial_level = this.world_num == 0;
     this.make_player()
-    if(this.level_name == "BOSS 4") {
-      music_player.play_bg(audioData.songs["Final Tessellation"])
-    }
-    else if(this.level_name.slice(0, 4) == "BOSS")
-      music_player.play_bg(audioData.songs["Tessellation"])
-    else if (!this.is_tutorial_level&& !this.is_level_zero) {
-      music_player.play_bg(audioData.songs["Hive "+this.world_num])
-    } else {
-      music_player.play_bg(audioData.songs["Menu"]);
-    }
-    // Set up game numbers for level.
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
       this.hive_numbers.game_numbers[this.level.level_name] = {}
       this.hive_numbers.game_numbers[this.level.level_name].visited = true
