@@ -366,9 +366,9 @@ RewardGameState.prototype.determine_rewards = function() {
         saveData.tutorialsShown.indexOf(saveData.difficultyMode + "_final_victory") == -1) {
       saveData.tutorialsShown.push(saveData.difficultyMode + "_final_victory");
 
-      this.rewards.push({
+      /* this.rewards.push({
         type: "final_victory",
-      })
+      }) */
       if (this.initial_difficulty_mode == "easy") {
         this.hard_mode_just_unlocked = true;
         saveData.difficultyMode = "normal";

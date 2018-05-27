@@ -161,21 +161,6 @@ TitleState.prototype.setup_main_menu = function() {
     }
   });
 
-  /* if (!saveData.firstTime) {
-    buttons_to_add.push({
-      text: 'PRACTICE',
-      action: function () {
-        var i = saveData.latestWorld();
-        game_engine.setBg(graphics.menuBackground);
-        _this.fader.set_animation("fade_out", function() {
-          game_engine.switch_game_state(gsKeys.WORLD_MAP_STATE, {
-            world: i,
-            is_practice_mode: true
-          });
-        });
-      }
-    });
-  } */
 
   buttons_to_add.push({
     text: 'OPTIONS',
@@ -185,15 +170,6 @@ TitleState.prototype.setup_main_menu = function() {
       });
     }
   });
-
-  /* buttons_to_add.push({
-    text: 'ACHIEVEMENTS',
-    action: function () {
-      _this.fader.set_animation("fade_out", function() {
-        game_engine.switch_game_state(gsKeys.QUEST_GAME_STATE, {});
-      });
-    }
-  }); */
 
   buttons_to_add.push({
     text: 'CREDITS',
