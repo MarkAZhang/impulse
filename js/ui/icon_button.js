@@ -176,9 +176,9 @@ IconButton.prototype.draw_icon  = function(context) {
     }
   } else if(this.icon == "close") {
     if(this.hover) {
-      iconRenderUtils.drawQuitIcon(context, this.x - 45, this.y - 6, 18, this.hover_color)
+      iconRenderUtils.drawQuitIcon(context, this.x, this.y - 6, 18, this.hover_color)
     } else {
-      iconRenderUtils.drawQuitIcon(context, this.x - 45, this.y - 6, 18, this.color)
+      iconRenderUtils.drawQuitIcon(context, this.x, this.y - 6, 18, this.color)
     }
   } else if(this.icon == "delete") {
     if(this.hover) {

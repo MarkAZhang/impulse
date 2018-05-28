@@ -179,7 +179,7 @@ PauseMenu.prototype.add_buttons = function() {
   });
 
   // resume button.
-  this.resume_button = new IconButton("CLOSE", 18, this.x + this.w / 2 - 20, this.y - this.h/2 + 30,
+  this.resume_button = new IconButton("", 18, this.x + this.w / 2 - 20, this.y - this.h/2 + 30,
     150, 100, this.button_color, this.hover_color, function(_this) { return function() {
     _this.game_state.toggle_pause()
   }}(this), "close")
