@@ -407,6 +407,7 @@ ImpulseGameState.prototype.process = function(dt) {
       this.processed_death = true
       this.level.prepare_level_for_reset();
       this.game_numbers.score = 0;
+      this.game_numbers.base_combo = 1;
       this.game_numbers.combo = 1;
 
       // Save the game when the player dies.
@@ -467,7 +468,7 @@ ImpulseGameState.prototype.process = function(dt) {
     }
     this.player.process(dt)
     if (this.combo_enabled) {
-      this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+      this.game_numbers.combo = this.game_numbers.base_combo
     }
     this.game_numbers.last_time = utils.convertSecondsToTimeString(this.game_numbers.seconds);
 
@@ -1165,7 +1166,7 @@ ImpulseGameState.prototype.check_cutoffs = function() {
 ImpulseGameState.prototype.increment_combo = function() {
   if (this.combo_enabled) {
     this.game_numbers.base_combo += 1
-    this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+    this.game_numbers.combo = this.game_numbers.base_combo
   }
 }
 
@@ -1176,7 +1177,7 @@ ImpulseGameState.prototype.reset_combo = function() {
     this.add_tutorial_signal("multiplier_reset")
   }
   this.game_numbers.base_combo = 1
-  this.game_numbers.combo = this.game_numbers.base_combo + Math.floor(this.game_numbers.seconds/10)
+  this.game_numbers.combo = this.game_numbers.base_combo
 }
 
 ImpulseGameState.prototype.level_defeated = function() {
