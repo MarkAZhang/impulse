@@ -139,6 +139,26 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.enemies_struck = []
 
   this.spawn_pattern_counter = 0
+
+  if(!this.spawn_spawners) {
+    this.spawn_spawners = true
+    var spawner_buffer = 80
+    var locs = [[constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
+      [spawner_buffer, spawner_buffer]]
+    if (saveData.difficultyMode == "normal") {
+      locs = [
+        [spawner_buffer, spawner_buffer],
+        [constants.levelWidth - spawner_buffer, spawner_buffer],
+        [constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
+        [spawner_buffer, constants.levelHeight - spawner_buffer]
+      ];
+    }
+    for(var i = 0; i < locs.length; i++) {
+      var new_spawner = new BossTwoSpawner(locs[i][0], locs[i][1], this, this.impulse_game_state)
+      new_spawner.spawn_duration = i/locs.length * new_spawner.spawn_interval
+      this.spawners.push(new_spawner)
+    }
+  }
 }
 
 BossTwo.prototype.adjust_size = function() {
@@ -165,25 +185,7 @@ BossTwo.prototype.adjust_size = function() {
 BossTwo.prototype.boss_specific_additional_processing = function(dt) {
 
   // spawn spawners if necessary
-  if(!this.spawn_spawners) {
-    this.spawn_spawners = true
-    var spawner_buffer = 80
-    var locs = [[constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
-      [spawner_buffer, spawner_buffer]]
-    if (saveData.difficultyMode == "normal") {
-      locs = [
-        [spawner_buffer, spawner_buffer],
-        [constants.levelWidth - spawner_buffer, spawner_buffer],
-        [constants.levelWidth - spawner_buffer, constants.levelHeight - spawner_buffer],
-        [spawner_buffer, constants.levelHeight - spawner_buffer]
-      ];
-    }
-    for(var i = 0; i < locs.length; i++) {
-      var new_spawner = new BossTwoSpawner(locs[i][0], locs[i][1], this, this.impulse_game_state)
-      new_spawner.spawn_duration = i/locs.length * new_spawner.spawn_interval
-      this.spawners.push(new_spawner)
-    }
-  }
+
 
   if(this.spawn_duration > 0) {
     this.spawn_duration = Math.max(this.spawn_duration - dt, 0)
