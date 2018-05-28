@@ -13,7 +13,7 @@ A shooter game for masochistic nerds.
 
 __WASD__ to move.
 
-__Left-click__ to use _Impulse_.
+__Left-click__ to use _Impulse_. __Hold the mouse to rapid fire.__
 
 __Spacebar__ to enter Portal.
 
