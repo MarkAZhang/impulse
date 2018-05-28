@@ -131,15 +131,27 @@ function BossThree(world, x, y, id, impulse_game_state) {
 
   this.spawn_count = {
    "stunner" : 14,
-   "spear" : 12,
-   "tank" : 10,
-   "mote" : 6,
+   "spear" : 10,
+   "tank" : 6,
+   "mote" : 4,
    "goo" : 1,
-   "harpoon" : 6,
+   "harpoon" : 3,
    "disabler" : 1,
-   "fighter" : 4,
-   "troll" : 10,
- }
+   "fighter" : 3,
+   "troll" : 4,
+  }
+
+  this.spawn_cluster = {
+    "stunner" : 2,
+    "spear" : 2,
+    "tank" : 2,
+    "mote" : 2,
+    "goo" : 1,
+    "harpoon" : 1,
+    "disabler" : 1,
+    "fighter" : 1,
+    "troll" : 2,
+  }
 
   if(saveData.difficultyMode == "easy") {
       this.spawn_count = {
@@ -168,15 +180,15 @@ function BossThree(world, x, y, id, impulse_game_state) {
 }
 
  this.spawn_gap = {
-  "stunner" : 500,
-  "spear" : 1000,
-  "tank" : 2000,
-  "mote" : 500,
+  "stunner" : 0,
+  "spear" : 0,
+  "tank" : 1000,
+  "mote" : 1000,
   "goo" : 0,
-  "harpoon" : 5000,
+  "harpoon" : 1000,
   "disabler" : 0,
-  "fighter" : 5000,
-  "troll" : 2000,
+  "fighter" : 1000,
+  "troll" : 1000,
   "frenzy": 1000
 }
 
@@ -188,6 +200,8 @@ this.rotation_dir = -1
 this.rotating = false
 
  this.initialize_arms()
+
+ this.frenzy_counter = 0
 }
 
 BossThree.prototype.generate_wheel_set = function() {
@@ -195,26 +209,44 @@ BossThree.prototype.generate_wheel_set = function() {
   var easy_enemies = ["stunner", "spear", "goo", "disabler"]
   var all_enemies = ["mote", "harpoon", "stunner", "spear", "goo", "disabler", "tank", "fighter", "troll"]
 
-  if(this.level.enemies.length > 6) {
-    easy_enemies.push("frenzy")
-    all_enemies.push("frenzy")
-  }
+  var counter = this.frenzy_counter
 
   var wheel_set = []
-  var tough_enemies_index = Math.floor(Math.random() * tough_enemies.length)
-  wheel_set.push(tough_enemies[tough_enemies_index])
-  all_enemies.splice(all_enemies.indexOf(tough_enemies[tough_enemies_index]), 1)
-  tough_enemies.splice(tough_enemies_index, 1)
-  var tough_enemies_index2 = Math.floor(Math.random() * tough_enemies.length)
-  wheel_set.push(tough_enemies[tough_enemies_index2])
-  all_enemies.splice(all_enemies.indexOf(tough_enemies[tough_enemies_index2]), 1)
-  var random_index = Math.floor(Math.random() * all_enemies.length)
-  wheel_set.push(all_enemies[random_index])
-  if(easy_enemies.indexOf(all_enemies[random_index])!= -1) {
-    easy_enemies.splice(easy_enemies.indexOf(all_enemies[random_index]), 1)
+  while(counter > 0) {
+    wheel_set.push("frenzy")
+    counter -= 1
   }
-  var easy_enemies_index = Math.floor(Math.random() * easy_enemies.length)
-  wheel_set.push(easy_enemies[easy_enemies_index])
+
+  if (wheel_set.length < 4) {
+    // Add tough enemy
+    var tough_enemies_index = Math.floor(Math.random() * tough_enemies.length)
+    wheel_set.push(tough_enemies[tough_enemies_index])
+    all_enemies.splice(all_enemies.indexOf(tough_enemies[tough_enemies_index]), 1)
+    tough_enemies.splice(tough_enemies_index, 1)
+  }
+
+
+  if (wheel_set.length < 4) {
+    // Add tough enemy
+    var tough_enemies_index2 = Math.floor(Math.random() * tough_enemies.length)
+    wheel_set.push(tough_enemies[tough_enemies_index2])
+    all_enemies.splice(all_enemies.indexOf(tough_enemies[tough_enemies_index2]), 1)
+  }
+
+  if (wheel_set.length < 4) {
+    // Add all enemy
+    var random_index = Math.floor(Math.random() * all_enemies.length)
+    wheel_set.push(all_enemies[random_index])
+    if(easy_enemies.indexOf(all_enemies[random_index])!= -1) {
+      easy_enemies.splice(easy_enemies.indexOf(all_enemies[random_index]), 1)
+    }
+  }
+
+  if (wheel_set.length < 4) {
+    // Add easy enemy
+    var easy_enemies_index = Math.floor(Math.random() * easy_enemies.length)
+    wheel_set.push(easy_enemies[easy_enemies_index])
+  }
 
   return wheel_set
 }
@@ -228,7 +260,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
         this.body.SetAngle(this.body.GetAngle() - 2*Math.PI * dt/this.spin_rate)
     }
 
-  if(saveData.difficultyMode == "normal") {
+  /* if(saveData.difficultyMode == "normal") {
     if(this.silence_timer < 0 && !this.silenced && (this.wheel_state != "activate" && this.wheel_state != "fadeout" && this.wheel_state != "gap")) {
       this.silence_timer = 0;
       this.silenced = true
@@ -243,7 +275,7 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
     }
 
     this.silence_timer -= dt
-  }
+  } */
 
   if(this.striking_state == "extend") {
     this.strike_transition_timer -= dt
@@ -357,13 +389,18 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
 
     if(this.wheel_activate_timer < 0) {
       if(!this.wheel_effect_activated) {
+        // Select type
         var type = this.current_wheel_set[this.wheel_cur_index];
         if(type != "frenzy") {
           for(var i = 0; i < this.spawn_count[type]; i++) {
             this.spawn_queue.push(type)
             this.wheel_activate_timer += this.spawn_enemy_intervals[type];
           }
+          if (this.frenzy_counter < 1) {
+            this.frenzy_counter += 1
+          }
         } else {
+          this.frenzy_counter = 0
           this.striking_state = "frenzy"
           this.rotating = false
           this.strike_frenzy_timer = this.strike_frenzy_duration
@@ -394,8 +431,12 @@ BossThree.prototype.boss_specific_additional_processing = function(dt) {
   if(this.spawn_queue.length > 0) {
     this.spawn_enemy_timer -= dt
     if(this.spawn_enemy_timer < 0) {
-      this.spawn_this_enemy(this.spawn_queue[0])
-      this.spawn_queue.splice(0, 1)
+      for(var i = 0; i < this.spawn_cluster[this.current_wheel_set[this.wheel_cur_index]]; i++) {
+        if (this.spawn_queue.length > 0) {
+          this.spawn_this_enemy(this.spawn_queue[0])
+          this.spawn_queue.splice(0, 1)
+        }
+      }
       this.spawn_enemy_timer = this.spawn_enemy_intervals[this.current_wheel_set[this.wheel_cur_index]]
     }
   }
@@ -868,9 +909,9 @@ BossThree.prototype.spawn_this_enemy = function(enemy_type) {
   var spread = 0;
 
   if(enemy_type == "stunner" && Math.random() < 0.7)
-    spread = Math.PI/4;
+    spread = Math.PI/2;
   if(enemy_type == "spear" && Math.random() < 0.7)
-    spread = Math.PI/8;
+    spread = Math.PI/2;
   if((enemy_type == "tank") && Math.random() < 0.9)
     spread = Math.PI;
   if((enemy_type == "mote") && Math.random() < 0.7)
@@ -963,7 +1004,7 @@ BossThree.prototype.process_impulse_specific = function(attack_loc, impulse_forc
   this.knockback_red_duration = this.knockback_red_interval
   if(this.wheel_state == "spinning") {
     this.activate_wheel()
-    this.extra_gap = this.wheel_spinning_timer
+    this.extra_gap = 0
   }
 }
 
