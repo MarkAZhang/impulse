@@ -6,7 +6,7 @@ logging.send_logging_to_server = function (msg, tags) {
     window.console.log(msg);
     window.console.log(tags);
   } else {
-    window["Raven"]["captureMessage"](msg, tags);
+    // window["Raven"]["captureMessage"](msg, tags);
   }
 };
 

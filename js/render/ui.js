@@ -39,8 +39,8 @@ uiRenderUtils.getLevelBgOpacity = function(world) {
   // Return opacity for the background in world menus.
   var opacity_array = [
     0.3,
-    0.3,
-    1,
+    0.5,
+    0.75,
     0.5,
     0.5
   ];
@@ -66,12 +66,7 @@ uiRenderUtils.tessellateBg = function(ctx, xLow, yLow, xHigh, yHigh, spriteName)
   ctx.save()
   ctx.beginPath();
   ctx.rect(xLow, yLow, xHigh - xLow, yHigh - yLow)
-  if (spriteName.substring(0, 4) === "Hive" &&
-      parseInt(spriteName.substring(5, 6)) !== 0) {
-    ctx.fillStyle = "#111"//constants.colors['world ' + parseInt(spriteName.substring(5, 6))];
-    ctx.fill();
-    ctx.globalAlpha *= 0.5;
-  }
+
   ctx.clip()
   var widthTiles = Math.ceil((xHigh - xLow) / w);
   var heightTiles = Math.ceil((yHigh - yLow) / h);
