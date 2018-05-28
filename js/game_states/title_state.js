@@ -161,6 +161,12 @@ TitleState.prototype.setup_main_menu = function() {
     }
   });
 
+  buttons_to_add.push({
+    text: 'HOW TO PLAY',
+    action: function () {
+      window.open('https://github.com/MarkAZhang/impulse/blob/master/README.md')
+    }
+  });
 
   buttons_to_add.push({
     text: 'OPTIONS',

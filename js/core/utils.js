@@ -505,7 +505,7 @@ utils.getFirstLevelName = function (world_num) {
     return "HIVE 0-1"
   }
 
-  return "HIVE "+world_num+"-7"
+  return "HIVE "+world_num+"-1"
 }
 
 module.exports = utils;
