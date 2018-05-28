@@ -71,4 +71,4 @@ The game will have challenging moments, but I know you can do it.
 
 I hope you enjoy my game.
 
-Copyright 2012-2018 by Mark Zhang.
+_Copyright 2012-2018 by Mark Zhang_
