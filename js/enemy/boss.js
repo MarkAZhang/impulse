@@ -21,7 +21,7 @@ Boss.prototype.init = function(world, x, y, id, impulse_game_state) {
   if(this.impulse_game_state.first_time && this.impulse_game_state.level.main_game)
     this.spawn_interval = 6600
   this.require_open = false;
-  this.default_dying_length = 5000
+  this.default_dying_length = 3000
 
   this.spawn_duration = this.spawn_interval
   this.aura_radius = 600;
@@ -192,7 +192,6 @@ Boss.prototype.boss_specific_final_draw = function(context, draw_factor) {
 
 Boss.prototype.additional_death_prep = function () {
   this.impulse_game_state.level.clear_obstacles();
-  this.impulse_game_state.transition_to_hive0bg(5000);
   this.impulse_game_state.shake_level(3000);
   music_player.stop_bg()
   this.additional_death_prep_specific();

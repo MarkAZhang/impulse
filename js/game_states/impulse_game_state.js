@@ -129,6 +129,8 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   this.shaking_timer = 0;
   this.shaking_interval = 0;
   this.shaking_intensity_max = 2;
+  this.gateway_open_interval = 3000;
+  this.gateway_open_timer = 0;
 
   this.camera_center = {x: constants.levelWidth/2, y: constants.levelHeight/2}
   //this.zoom = 0.1
@@ -175,7 +177,6 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     !saveData.hasBeatenLevel(this.level_name)) {
     this.show_tutorial = true
   }
-
 
   if (this.show_tutorial) {
     this.tutorial_overlay_manager = new TutorialOverlayManager(this);
@@ -332,6 +333,10 @@ ImpulseGameState.prototype.process = function(dt) {
   }
   this.fps_counter+=1
 
+  if (this.level.gateway_opened) {
+    this.gateway_open_timer -= dt
+  }
+
   // We don't want any tutorial overlay to trigger way after the event has happened. So we timeout the tutorial signals after a short period.
   for (var signal in this.tutorial_signal_timeouts) {
     this.tutorial_signal_timeouts[signal] -= dt;
@@ -421,8 +426,8 @@ ImpulseGameState.prototype.process = function(dt) {
     if(this.level.boss && this.level.boss.dying && this.level.boss.dying_duration < 0 &&
         this.level.boss.dying != "fade" && !this.player.dying && !this.boss_after_death_actions) {
       this.boss_after_death_actions = true;
-      this.level.open_gateway()
-      this.gateway_unlocked = true;
+      this.victory = true
+      this.on_victory()
     }
 
     if(this.victory)
@@ -1145,13 +1150,15 @@ ImpulseGameState.prototype.addScoreLabel = function(str, color, x, y, font_size,
 
 ImpulseGameState.prototype.check_cutoffs = function() {
 
-  // Pulse the gateway every time an enemy is killed after reaching the score.
-  if(this.game_numbers.score >= this.level.cutoff_scores[0]) {
+  // Pulse the gateway every 5 seconds after open.
+  if(this.game_numbers.score >= this.level.cutoff_scores[0] &&
+    (!this.level.gateway_opened || this.gateway_open_timer < 0)) {
     this.gateway_unlocked = true
     this.level_redraw_bg = true
     if (this.show_tutorial) {
       this.add_tutorial_signal("gateway_opened")
     }
+    this.gateway_open_timer = this.gateway_open_interval
   }
 }
 

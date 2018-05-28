@@ -579,9 +579,7 @@ Level.prototype.generate_obstacle_edges = function() {
 
 Level.prototype.draw_gateway = function(ctx, draw_factor) {
   if(this.is_boss_level) {
-    if (!this.impulse_game_state.boss_after_death_actions) {
-      return;
-    }
+    return;
   }
   var world_num = this.level_intro_state.world_num;
   if (this.is_boss_level && this.boss && (this.boss.dying || this.boss.died)) {
