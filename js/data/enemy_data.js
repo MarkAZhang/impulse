@@ -145,7 +145,7 @@ enemyData["harpoon"] = {
   lin_damp: 6,
   effective_radius: 0.7,
   force: 4.5,
-  score_value: 3000,
+  score_value: 5000,
   attack_rating: 6,
   batch_enemy_image: true,
   shape_polygons: [{type: "polygon", x: 0, y: 0, r: .7, vertices:
@@ -197,7 +197,7 @@ enemyData["fighter"] = {
   lin_damp: 6,
   effective_radius: 0.75,
   force: 2.5,
-  score_value: 4000,
+  score_value: 7500,
   attack_rating: 9,
   true_name: "hunter",
   batch_enemy_image: true,
