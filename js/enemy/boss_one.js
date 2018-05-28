@@ -598,7 +598,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     }
   }
 
-  if (saveData.difficultyMode == "normal") {
+  /* if (saveData.difficultyMode == "normal") {
     if(this.lighten_timer < 0 && this.lighten_timer > -this.lighten_duration * 0.9 && !this.lightened) {
       this.lightened = true
       music_player.play_sound("b1shrink")
@@ -634,7 +634,7 @@ BossOne.prototype.boss_specific_additional_processing = function(dt) {
     else if(this.lighten_timer < 0) {
       this.red_visibility = 1
     }
-  }
+  } */
 }
 
 BossOne.prototype.process_punching = function(arm) {

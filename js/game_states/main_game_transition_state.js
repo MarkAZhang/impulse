@@ -84,10 +84,8 @@ function MainGameTransitionState(opts) {
 
   if(this.world_num == 4 && this.level.is_boss_level) {
     // pass
-    music_player.play_bg(audioData.songs["Final Tessellation"])
   } else if(this.world_num >= 1 && this.level.is_boss_level) {
     // pass
-    music_player.play_bg(audioData.songs["Tessellation"])
   } else if(this.world_num === 0) {
     music_player.play_bg(audioData.songs["Menu"]);
   } else {
@@ -170,9 +168,6 @@ MainGameTransitionState.prototype.process = function(dt) {
 
   if(this.transition_timer < 0 || (this.level.is_boss_level && this.level_loaded)) {
     if(this.state == "last_level_summary" && this.level_loaded) {
-      if(this.level.is_boss_level) {
-        music_player.stop_bg()
-      }
       this.state = "level_intro"
       this.transition_timer = this.level_intro_interval
     } else if(this.state == "level_intro") {

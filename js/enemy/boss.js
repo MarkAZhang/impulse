@@ -62,7 +62,7 @@ Boss.prototype.getLife = function() {
 }
 
 Boss.prototype.should_show_aura_and_particles = function() {
-  return this.impulse_game_state.first_time && this.impulse_game_state.main_game;
+  return false
 }
 
 Boss.prototype.additional_processing = function (dt) {

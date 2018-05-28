@@ -47,7 +47,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
 
   this.absorbed_enemy_types = [];
 
-
   this.arm_full_rotation = 15000
 
   this.spawned = false
@@ -103,12 +102,13 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.transition_rate = 0.2
 
   this.growth_on_enemy = 0.125
+  this.growth_on_enemy_large = 0.25
 
   this.shrink_rate = 0.025
 
-  this.enemy_spawn_interval = 12000
+  this.enemy_spawn_interval = 18000
   if (saveData.difficultyMode == "easy") {
-    this.enemy_spawn_interval = 12000
+    this.enemy_spawn_interval = 18000
   }
   this.enemy_spawn_duration = 2000
 
@@ -139,8 +139,6 @@ function BossTwo(world, x, y, id, impulse_game_state) {
   this.enemies_struck = []
 
   this.spawn_pattern_counter = 0
-
-
 }
 
 BossTwo.prototype.adjust_size = function() {
@@ -276,7 +274,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
   }
 
 
-  if (saveData.difficultyMode == "normal") {
+  /* if (saveData.difficultyMode == "normal") {
     if(this.black_hole_timer < 0) {
       if (!this.black_hole_sound_played) {
         this.black_hole_sound_played = true
@@ -297,7 +295,7 @@ BossTwo.prototype.boss_specific_additional_processing = function(dt) {
       this.black_hole_sound_played = false
     }
     this.black_hole_timer -= dt
-  }
+  } */
 }
 
 // Returns the target arm_width_angle. Since we transition, the actual arm_width_angle may be off slightly.
@@ -585,7 +583,11 @@ BossTwo.prototype.collide_with = function(other) {
     music_player.play_sound("b2eat")
     if(other.type != "harpoonhead") {
       other.start_death("absorbed")
-      this.growth_factor += this.growth_on_enemy
+      if (other.type === "harpoon" || other.type === "tank") {
+        this.growth_factor += this.growth_on_enemy_large
+      } else {
+        this.growth_factor += this.growth_on_enemy
+      }
       this.enemies_struck.push(other)
       this.absorbed_enemy_types.push(other.type);
     } else {
