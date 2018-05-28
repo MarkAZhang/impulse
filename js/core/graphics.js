@@ -16,7 +16,7 @@ graphics.generateEnemyBufferImages = function () {
 };
 
 graphics.generateBackgrounds = function () {
-    graphics.menuBackground = new Background(constants.colors['menuBg']);
+  graphics.menuBackground = new Background(constants.colors['menuBg'], 'Hive 0', 0.2);
 }
 
 module.exports = graphics;

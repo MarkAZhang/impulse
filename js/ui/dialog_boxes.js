@@ -7,6 +7,7 @@ var dom = require('../core/dom.js');
 var enemyData = require('../data/enemy_data.js');
 var enemyRenderUtils = require('../render/enemy.js');
 var game_engine = require('../core/game_engine.js');
+var graphics = require('../core/graphics.js');
 var gsKeys = constants.gsKeys;
 var layers = require('../core/layers.js');
 var levelData = require('../data/level_data.js');
@@ -51,16 +52,17 @@ DialogBox.prototype.process = function(dt) {
 DialogBox.prototype.draw = function(ctx) {
   if (debugVars.hide_pause_menu) return;
   ctx.save();
-  ctx.beginPath();
-  ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h);
 
   if (this.solid) {
-    ctx.fillStyle = constants.colors['menuBg'];
+    ctx.drawImage(graphics.menuBackground.getCanvas(), 0, 0, constants.levelWidth, constants.levelHeight,
+      constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
   } else {
+    ctx.beginPath();
+    ctx.rect(this.x - this.w/2, this.y - this.h/2, this.w, this.h);
     ctx.globalAlpha *= 0.8;
     ctx.fillStyle = "#000000";
+    ctx.fill();
   }
-  ctx.fill();
   ctx.restore();
   ctx.save();
   if (this.fader.get_current_animation() == "fade_in") {
