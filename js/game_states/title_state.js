@@ -43,8 +43,8 @@ function TitleState(options) {
 
   if (options.initialLoad) {
     this.fader = new Fader({
-      "pause": 500,
-      "fade_in": 1000,
+      "pause": 250,
+      "fade_in": 500,
       "fade_out": 250
     });
     this.fader.set_animation("pause");

@@ -67,7 +67,6 @@ BossFourAttacker.prototype.collide_with = function(other) {
 
 
   if(other === this.player) {
-
       var tank_angle = utils.atan(this.body.GetPosition(), this.player.body.GetPosition())
       this.player.body.ApplyImpulse(new box_2d.b2Vec2(this.tank_force * Math.cos(tank_angle), this.tank_force * Math.sin(tank_angle)), this.player.body.GetWorldCenter())
       this.impulse_game_state.reset_combo();

@@ -75,6 +75,14 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
     this.is_boss_level = this.level_name.slice(0,4) == "BOSS"
     this.is_tutorial_level = this.world_num == 0;
     this.make_player()
+
+    if(this.level_name == "BOSS 4") {
+      music_player.play_bg(audioData.songs["Final Tessellation"])
+    }
+    else if(this.level_name.slice(0, 4) == "BOSS") {
+      music_player.play_bg(audioData.songs["Tessellation"])
+    }
+
     if(!this.hive_numbers.game_numbers.hasOwnProperty(this.level.level_name)) {
       this.hive_numbers.game_numbers[this.level.level_name] = {}
       this.hive_numbers.game_numbers[this.level.level_name].visited = true
@@ -1079,14 +1087,10 @@ ImpulseGameState.prototype.handle_collisions_on_end_contact = function(contact) 
   var second = contact.GetFixtureB().GetUserData()
 
   if(!first || !second) return
-  if (first["owner"].type != "tank" || second["owner"].type != "tank") {
-    return;
+  if (first["owner"].type == "tank" && second["owner"].type == "tank") {
+    first["owner"].collide_with(second["owner"], first["body"], second["body"])
+    second["owner"].collide_with(first["owner"], second["body"], first["body"])
   }
-
-  first["owner"].collide_with(second["owner"], first["body"], second["body"])
-  second["owner"].collide_with(first["owner"], second["body"], first["body"])
-
-  //contact.SetEnabled(false)
 }
 
 ImpulseGameState.prototype.filter_collisions = function(contact) {
@@ -1098,6 +1102,13 @@ ImpulseGameState.prototype.filter_collisions = function(contact) {
   var second_object = second["self"]
 
   if(first_object == null || second_object == null) return
+
+  // This method is a special case. Only run if both objects are tanks.
+  // When tanks are already touching each other, we want them to explode if we impulse them.
+  if (first["owner"].type == "tank" && second["owner"].type == "tank") {
+    first["owner"].collide_with(second["owner"], first["body"], second["body"])
+    second["owner"].collide_with(first["owner"], second["body"], first["body"])
+  }
 
   var harpoon_object = null
 

@@ -61,7 +61,6 @@ function Tank(world, x, y, id, impulse_game_state) {
 Tank.prototype.additional_processing = function(dt) {
 
   this.special_mode = !this.is_silenced();
-
   if (this.tank_collision_fudge_timer > 0) {
     this.tank_collision_fudge_timer -= dt;
   }
@@ -89,7 +88,6 @@ Tank.prototype.activated_processing = function(dt) {
       this.detonate_timer -= dt
     }
   }
-
 }
 
 Tank.prototype.check_death = function()

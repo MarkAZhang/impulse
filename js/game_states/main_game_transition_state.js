@@ -55,8 +55,8 @@ function MainGameTransitionState(opts) {
   if(this.last_level && !this.is_level_zero(this.last_level.level_name)) {
     this.last_level_name = this.last_level.level_name
 
-    this.state = "last_level_summary"
-    this.transition_timer = this.last_level_summary_interval
+    this.state = "level_intro"
+    this.transition_timer = this.level_intro_interval
     this.compute_last_level_stats();
   } else if (this.last_level && this.is_level_zero(this.last_level.level_name)) {
     this.state = "level_intro"
@@ -81,14 +81,12 @@ function MainGameTransitionState(opts) {
 
   this.load_next_level(this.loading_saved_game);
 
-  if(this.level.is_boss_level) {
-    // Still give the player a moment before the BOSS, but we won't display anything in draw().
-    this.level_intro_interval = 1000
-  }
 
   if(this.world_num == 4 && this.level.is_boss_level) {
+    // pass
     music_player.play_bg(audioData.songs["Final Tessellation"])
   } else if(this.world_num >= 1 && this.level.is_boss_level) {
+    // pass
     music_player.play_bg(audioData.songs["Tessellation"])
   } else if(this.world_num === 0) {
     music_player.play_bg(audioData.songs["Menu"]);
@@ -111,7 +109,7 @@ MainGameTransitionState.prototype.compute_last_level_stats = function() {
 
 MainGameTransitionState.prototype.should_skip_transition_state = function () {
   // Should skip the transition state entirely as soon as the level is loaded.
-  return true;
+  return false;
 }
 
 MainGameTransitionState.prototype.maybe_switch_states = function () {
@@ -170,7 +168,7 @@ MainGameTransitionState.prototype.process = function(dt) {
     this.transition_timer -= dt;
   }
 
-  if(this.transition_timer < 0) {
+  if(this.transition_timer < 0 || (this.level.is_boss_level && this.level_loaded)) {
     if(this.state == "last_level_summary" && this.level_loaded) {
       if(this.level.is_boss_level) {
         music_player.stop_bg()
@@ -245,13 +243,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.3
       uiRenderUtils.drawTessellationSign(ctx,this.world_num, constants.levelWidth/2, 300, 100)
       ctx.restore()
-      ctx.font = '24px Open Sans'
-      ctx.save();
-      ctx.globalAlpha *= 0.5;
-      ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 250)
-      ctx.restore();
-      ctx.font = '56px Open Sans'
-      ctx.fillText(this.level.level_name, constants.levelWidth/2, 320)
+      ctx.font = '48px Open Sans'
+      ctx.fillText(this.level.level_name, constants.levelWidth/2, 310)
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
