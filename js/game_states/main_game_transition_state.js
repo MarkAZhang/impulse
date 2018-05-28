@@ -81,7 +81,6 @@ function MainGameTransitionState(opts) {
 
   this.load_next_level(this.loading_saved_game);
 
-
   if(this.world_num == 4 && this.level.is_boss_level) {
     // pass
   } else if(this.world_num >= 1 && this.level.is_boss_level) {
@@ -205,9 +204,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
   ctx.globalAlpha *= uiRenderUtils.getBgOpacity(this.world_num);
   if (this.state == "level_intro") {
     var prog = (this.transition_timer/this.level_intro_interval);
-    if (prog < 0.5) {
-      ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
-    }
+    ctx.globalAlpha *= Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
   } else if (this.state == "last_level_summary") {
     var prog = (this.transition_timer/this.last_level_summary_interval);
     if (prog > 0.5) {
@@ -226,10 +223,8 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.globalAlpha = Math.min(1, (1 - 2*Math.abs(prog-0.5))/.5)
 
-
       ctx.fillStyle = this.bright_color;
       ctx.textAlign = 'center'
-
 
       ctx.shadowBlur = 0;
       ctx.shadowColor = "black"
@@ -345,7 +340,6 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       // ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
     }
     ctx.restore();
-
   }
 }
 

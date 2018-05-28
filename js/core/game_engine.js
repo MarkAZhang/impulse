@@ -38,7 +38,6 @@ GameEngine.prototype.switch_game_state = function (gsKey, opts) {
   this.cur_game_state = this.gameStateFactory.createGameState(gsKey, opts);
 };
 
-
 GameEngine.prototype.step = function () {
   var cur_time = (new Date()).getTime()
   layers.mainCtx.globalAlpha = 1;
@@ -50,21 +49,11 @@ GameEngine.prototype.step = function () {
     this.process_popup_message(dt)
   }
 
-  if(!(this.cur_game_state.isImpulseGameState)) {
-    layers.mainCtx.clearRect(0, 0, canvas.width, canvas.height);
-  } else if(this.cur_game_state.isImpulseGameState &&  this.cur_game_state.ready) {
-    if(this.cur_game_state.zoom != 1) {
-      layers.mainCtx.fillStyle= this.cur_game_state.dark_color;
-      layers.mainCtx.fillRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
-    } else {
-      layers.mainCtx.clearRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
-    }
-
-  }
-
   if (this.cur_game_state) {
     this.cur_game_state.process(dt)
+
     if(!(this.cur_game_state.isImpulseGameState)) {
+      layers.mainCtx.clearRect(0, 0, canvas.width, canvas.height);
       layers.mainCtx.fillStyle = "black"
       layers.mainCtx.fillRect(0, 0, constants.sideBarWidth, constants.canvasHeight);
       layers.mainCtx.fillRect(constants.canvasWidth - constants.sideBarWidth, 0, constants.sideBarWidth, constants.canvasHeight);
@@ -72,13 +61,20 @@ GameEngine.prototype.step = function () {
       this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
       layers.mainCtx.translate(-constants.sideBarWidth, 0)//allows us to have a topbar
     } else {
+      if(this.cur_game_state.ready) {
+        if(this.cur_game_state.zoom != 1) {
+          layers.mainCtx.fillStyle= this.cur_game_state.dark_color;
+          layers.mainCtx.fillRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
+        } else {
+          layers.mainCtx.clearRect(constants.sideBarWidth, 0, constants.levelWidth, constants.levelHeight);
+        }
+      }
       this.cur_game_state.draw(layers.mainCtx, layers.bgCtx);
       layers.mainCtx.save()
       this.cur_game_state.set_zoom_transparency(layers.mainCtx)
       layers.mainCtx.restore()
     }
   }
-
 
   if(this.cur_dialog_box!=null) {
     layers.mainCtx.save();

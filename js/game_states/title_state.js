@@ -112,7 +112,6 @@ TitleState.prototype.draw = function(ctx) {
   }
 
   ctx.restore()
-
 }
 
 TitleState.prototype.on_mouse_move = function(x, y) {
