@@ -169,8 +169,7 @@ ImpulseGameState.prototype.init = function(world, level, visibility_graph, hive_
   }
 
   // if this is world zero. show the tutorial.
-  this.show_tutorial = (this.is_tutorial_level ||
-    saveData.tutorialsShown.length < TutorialOverlayManager.prototype.on_demand_overlays.length)
+  this.show_tutorial = false
 
   // if we've never beaten the first boss, show the tutorial
   if (this.is_boss_level && this.world_num == 1 && saveData.difficultyMode == "easy" &&
