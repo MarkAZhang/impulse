@@ -131,6 +131,13 @@ PauseMenu.prototype.add_buttons = function() {
     }
   });
 
+  buttons_to_add.push({
+    text: "HOW TO PLAY",
+    action: function () {
+      window.open('https://github.com/MarkAZhang/impulse/blob/master/README.md')
+    }
+  });
+
   if(this.world_num != 0) {
 
     if(!this.level.main_game) {
