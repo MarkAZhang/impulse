@@ -238,14 +238,14 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
       ctx.globalAlpha *= 0.3
       uiRenderUtils.drawTessellationSign(ctx,this.world_num, constants.levelWidth/2, 300, 100)
       ctx.restore()
-      ctx.font = '48px Open Sans'
-      ctx.fillText(this.level.level_name, constants.levelWidth/2, 310)
+      ctx.font = '60px Open Sans Bold'
+      ctx.fillText(this.level.level_name, constants.levelWidth/2, 320)
 
       ctx.shadowBlur = 0
       ctx.fillStyle = this.lite_color;
       ctx.shadowColor = ctx.fillStyle
       ctx.font = '12px Open Sans'
-      ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
+      // ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
       ctx.restore()
     }
   }
@@ -342,7 +342,7 @@ MainGameTransitionState.prototype.draw = function(ctx, bg_ctx) {
 
       ctx.fillStyle = this.lite_color;
       ctx.font = '12px Open Sans'
-      ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
+      // ctx.fillText("PRESS ANY KEY TO SKIP", constants.levelWidth/2, constants.levelHeight/2 + 270)
     }
     ctx.restore();
 

@@ -73,7 +73,7 @@ CreditsState.prototype.draw = function(ctx, bg_ctx) {
     ctx.globalAlpha *= 1 - this.fader.get_animation_progress();
   }
 
-  ctx.font = '32px Open Sans'
+  ctx.font = '36px Open Sans Bold'
   ctx.fillStyle = 'white'
   ctx.textAlign = "center"
   ctx.shadowColor = ctx.fillStyle

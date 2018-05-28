@@ -195,7 +195,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     uiRenderUtils.drawTessellationSign(ctx, this.world_num, constants.levelWidth/2, 100, 80)
     ctx.globalAlpha /= 0.3
     ctx.fillStyle = this.bright_color
-    ctx.font = '40px Open Sans'
+    ctx.font = '40px Open Sans Bold'
     ctx.fillText(this.victory_text, constants.levelWidth/2, 130)
   }
   else if(this.save_screen) {
@@ -205,7 +205,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = "white"
     ctx.fillText("GAME SAVED" , constants.levelWidth/2, 190)
     ctx.fillStyle = this.bright_color;
-    ctx.font = '60px Open Sans'
+    ctx.font = '60px Open Sans Bold'
     ctx.fillText(this.hive_numbers.current_level, constants.levelWidth/2, 250)
 
     ctx.textAlign = 'center'
@@ -231,7 +231,7 @@ MainGameSummaryState.prototype.draw = function(ctx, bg_ctx) {
     ctx.fillStyle = 'red'
     ctx.fillText("GAME OVER", constants.levelWidth/2, 80)
     ctx.fillStyle = this.bright_color
-    ctx.font = '40px Open Sans'
+    ctx.font = '48px Open Sans Bold'
     ctx.fillText(this.hive_numbers.hive_name, constants.levelWidth/2, 130)
   }
 
