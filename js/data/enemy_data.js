@@ -141,7 +141,7 @@ enemyData["goo"] = {
 
 enemyData["harpoon"] = {
   color: "#00aa00",
-  density: 5,
+  density: 4.5,
   lin_damp: 6,
   effective_radius: 0.7,
   force: 4.5,
@@ -284,7 +284,7 @@ enemyData["disabler"] = {
 
 enemyData["troll"] = {
   color: "#159d31",
-  density: 1.3,
+  density: 1.2,
   lin_damp: 3,
   effective_radius: 0.7,
   force: 0.38,
