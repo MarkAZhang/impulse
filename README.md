@@ -1,7 +1,7 @@
 Impulse
 =======
 
-A shooter game for masochistic nerds. 
+Hardcore shooter game with novel repulsion-based mechanisms.
 
 [Play here](https://markazhang.github.com/impulse)
 
@@ -65,7 +65,7 @@ Kill bosses by pushing them into the wall, just like with enemies.
 
 ### Conclusion
 
-Every level is a puzzle. If you have trouble, try a different approach.
+Every level has strategies that makes things much easier. Experiment.
 
 The game will have challenging moments, but I know you can do it.
 
